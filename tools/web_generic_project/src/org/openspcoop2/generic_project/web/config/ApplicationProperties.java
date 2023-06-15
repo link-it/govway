@@ -116,7 +116,7 @@ public class ApplicationProperties {
 	public String getProperty(String name,boolean required, boolean convertEnvProperty) throws Exception{
 		String tmp = null;
 		if(convertEnvProperty){
-			tmp = this.reader.getValue_convertEnvProperties(name);
+			tmp = this.reader.getValueConvertEnvProperties(name);
 		}else{
 			tmp = this.reader.getValue(name);
 		}
@@ -133,7 +133,7 @@ public class ApplicationProperties {
 	}
 	
 	public Properties readProperties(String prefix) throws Exception{
-		return this.reader.readProperties_convertEnvProperties(prefix);
+		return this.reader.readPropertiesConvertEnvProperties(prefix);
 	}
 	 
 

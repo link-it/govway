@@ -37,7 +37,7 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 
 class PddInstanceProperties extends InstanceProperties {
 
-	PddInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	PddInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(CostantiPdD.OPENSPCOOP2_PDD_PROPERTIES,CostantiPdD.OPENSPCOOP2_PDD_LOCAL_PATH, confDir);
 	}

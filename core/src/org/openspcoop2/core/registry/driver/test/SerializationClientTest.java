@@ -249,7 +249,7 @@ public class SerializationClientTest {
 		foutJava.flush();
 		foutJava.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
 		log.info("\n");
 		
@@ -261,7 +261,7 @@ public class SerializationClientTest {
 		finJava.close();
 		SerializationClientTest.equals(soggettoTest, (Soggetto)oJavaRead, dir);
 		log.info("- OK, nome soggetto: "+((Soggetto)oJavaRead).getTipo()+"/"+((Soggetto)oJavaRead).getNome());
-		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		// Serializzazione tramite reader e writer
@@ -278,7 +278,7 @@ public class SerializationClientTest {
 		fwriterJava.flush();
 		fwriterJava.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileReader.length()));
 		log.info("\n");
 		
@@ -290,7 +290,7 @@ public class SerializationClientTest {
 		freaderJava.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJavaRead, dir);
 		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJavaRead))+" allegati:("+((AccordoServizioParteComune)oJavaRead).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		// Serializzazione tramite get e read in Object
@@ -301,7 +301,7 @@ public class SerializationClientTest {
 		String javaSerializationObject = javaSerializer.getObject(as);
 		dataFine = DateManager.getTimeMillis();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
 		log.info("\n");
 		
@@ -313,7 +313,7 @@ public class SerializationClientTest {
 		freaderJava.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJavaRead, dir);
 		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJavaRead))+" allegati:("+((AccordoServizioParteComune)oJavaRead).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		// Serializzazione Enumerations
@@ -324,7 +324,7 @@ public class SerializationClientTest {
 		javaSerializationObject = javaSerializer.getObject(TestEnumerations.VALORE1);
 		dataFine = DateManager.getTimeMillis();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
 		log.info("\n");
 		
@@ -338,7 +338,7 @@ public class SerializationClientTest {
 			throw new Exception("Enumeration originale ["+TestEnumerations.VALORE1.toString()+"] e ricostruita["+((TestEnumerations)oJavaRead).toString()+"] differiscono");
 		}
 		log.info("- OK, enum value: "+oJavaRead);
-		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		log.info("\n");
@@ -359,7 +359,7 @@ public class SerializationClientTest {
 		foutJava.flush();
 		foutJava.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
 		log.info("\n");
 		
@@ -373,7 +373,7 @@ public class SerializationClientTest {
 		SerializationClientTest.equalsOpenSPCoopObject(testSerializzazioneLista.toArray(),vJavaArray,dir);
 		log.info("- OK, nome soggetto: "+((Soggetto)vJavaArray[1]).getTipo()+"/"+((Soggetto)vJavaArray[1]).getNome()+"   nome accordo: "+
 				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJavaArray[0]))+" allegati:("+((AccordoServizioParteComune)vJavaArray[0]).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 
 		
@@ -391,7 +391,7 @@ public class SerializationClientTest {
 		foutJava.flush();
 		foutJava.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
 		log.info("\n");
 		
@@ -405,7 +405,7 @@ public class SerializationClientTest {
 		SerializationClientTest.equalsOpenSPCoopObject(testSerializzazioneLista.toArray(),vJavaList.toArray(),dir);
 		log.info("- OK, nome soggetto: "+((Soggetto)vJavaList.get(1)).getTipo()+"/"+((Soggetto)vJavaList.get(1)).getNome()+"   nome accordo: "+
 				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJavaList.get(0)))+" allegati:("+((AccordoServizioParteComune)vJavaList.get(0)).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 
 		
@@ -423,7 +423,7 @@ public class SerializationClientTest {
 		foutJava.flush();
 		foutJava.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
 		log.info("\n");
 		
@@ -436,7 +436,7 @@ public class SerializationClientTest {
 		Set<?> vJavaSet = (Set<?>)oJavaRead;
 		SerializationClientTest.equalsOpenSPCoopObject(testSerializzazioneLista.toArray(),vJavaSet.toArray(),dir);
 		log.info("- OK, dimensione set: "+vJavaSet.size()+")");
-		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		log.info("\n");
 		
@@ -489,7 +489,7 @@ public class SerializationClientTest {
 		foutJson.flush();
 		foutJson.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -503,7 +503,7 @@ public class SerializationClientTest {
 		finJson.close();
 		SerializationClientTest.equals(soggettoTest, (Soggetto)oJsonRead, dir);
 		log.info("- OK, nome soggetto: "+((Soggetto)oJsonRead).getTipo()+"/"+((Soggetto)oJsonRead).getNome()+"");
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		// Serializzazione tramite reader e writer
@@ -523,7 +523,7 @@ public class SerializationClientTest {
 		fwriterJson.flush();
 		fwriterJson.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -537,7 +537,7 @@ public class SerializationClientTest {
 		freaderJson.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJsonRead, dir);
 		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonRead))+" allegati:("+((AccordoServizioParteComune)oJsonRead).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		// Serializzazione tramite get e read in Object
@@ -551,7 +551,7 @@ public class SerializationClientTest {
 		String jsonSerializationObject = jsonSerializer.getObject(as);
 		dataFine = DateManager.getTimeMillis();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -565,7 +565,7 @@ public class SerializationClientTest {
 		freaderJson.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJsonRead, dir);
 		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonRead))+" allegati:("+((AccordoServizioParteComune)oJsonRead).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		// Serializzazione Enumerations
@@ -578,7 +578,7 @@ public class SerializationClientTest {
 		jsonSerializationObject = jsonSerializer.getObject(TestEnumerations.VALORE1);
 		dataFine = DateManager.getTimeMillis();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -592,7 +592,7 @@ public class SerializationClientTest {
 			throw new Exception("Enumeration originale ["+TestEnumerations.VALORE1.toString()+"] e ricostruita["+((TestEnumerations)oJsonRead).toString()+"] differiscono");
 		}
 		log.info("- OK, enum value: "+oJsonRead+"");
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		log.info("\n");
@@ -619,7 +619,7 @@ public class SerializationClientTest {
 		foutJson.flush();
 		foutJson.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -639,7 +639,7 @@ public class SerializationClientTest {
 		SerializationClientTest.equals(arrayJsonTestAccordi,vJsonArrayTestAccordi,dir);
 		log.info("- OK, nome accordo: "+
 				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonArray[0]))+" allegati:("+((AccordoServizioParteComune)vJsonArray[0]).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		jsonFileStream = new File(dir,"array.soggetti.json");
@@ -658,7 +658,7 @@ public class SerializationClientTest {
 		foutJson.flush();
 		foutJson.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -677,7 +677,7 @@ public class SerializationClientTest {
 		}
 		SerializationClientTest.equals(arrayJsonTestSoggetti,vJsonArrayTestSoggetti,dir);
 		log.info("- OK, nome soggetto: "+((Soggetto)vJsonArray[1]).getTipo()+"/"+((Soggetto)vJsonArray[1]).getNome());
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 
 		
@@ -698,7 +698,7 @@ public class SerializationClientTest {
 		foutJson.flush();
 		foutJson.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -716,7 +716,7 @@ public class SerializationClientTest {
 		SerializationClientTest.equals(originaleAccordi,ricostruitoAccordi,dir);
 		log.info("- OK, nome accordo: "+
 				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonList.get(0)))+" allegati:("+((AccordoServizioParteComune)vJsonList.get(0)).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		jsonFileStream = new File(dir,"list.soggetti.json");
@@ -733,7 +733,7 @@ public class SerializationClientTest {
 		foutJson.flush();
 		foutJson.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -749,7 +749,7 @@ public class SerializationClientTest {
 		Soggetto [] originaleSoggetti = testSerializzazioneSetSoggetti.toArray(new Soggetto[1]);
 		Soggetto [] ricostruitoSoggetti = vJsonList.toArray(new Soggetto[1]);
 		log.info("- OK, nome soggetto: "+((Soggetto)vJsonList.get(1)).getTipo()+"/"+((Soggetto)vJsonList.get(1)).getNome()+")");
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 
 		
@@ -770,7 +770,7 @@ public class SerializationClientTest {
 		foutJson.flush();
 		foutJson.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -787,7 +787,7 @@ public class SerializationClientTest {
 		ricostruitoAccordi = vJsonSet.toArray(new AccordoServizioParteComune[1]);
 		SerializationClientTest.equals(originaleAccordi,ricostruitoAccordi,dir);
 		log.info("- OK, dimensione set: "+vJsonSet.size()+")");
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		log.info("\n");
 		
@@ -805,7 +805,7 @@ public class SerializationClientTest {
 		foutJson.flush();
 		foutJson.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
 		log.info("\n");
 		
@@ -822,7 +822,7 @@ public class SerializationClientTest {
 		ricostruitoSoggetti = vJsonSet.toArray(new Soggetto[1]);
 		SerializationClientTest.equals(originaleSoggetti,ricostruitoSoggetti,dir);
 		log.info("- OK, dimensione set: "+vJsonSet.size()+")");
-		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		log.info("\n");
 		
@@ -862,7 +862,7 @@ public class SerializationClientTest {
 		foutJsonXML.flush();
 		foutJsonXML.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -876,7 +876,7 @@ public class SerializationClientTest {
 		finJsonXML.close();
 		SerializationClientTest.equals(soggettoTest,(Soggetto)oJsonXMLRead,dir);
 		log.info("- OK, nome soggetto: "+((Soggetto)oJsonXMLRead).getTipo()+"/"+((Soggetto)oJsonXMLRead).getNome()+"");
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		// Serializzazione tramite reader e writer
@@ -896,7 +896,7 @@ public class SerializationClientTest {
 		fwriterJsonXML.flush();
 		fwriterJsonXML.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -910,7 +910,7 @@ public class SerializationClientTest {
 		freaderJsonXML.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJsonXMLRead, dir);
 		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonXMLRead))+" allegati:("+((AccordoServizioParteComune)oJsonXMLRead).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		// Serializzazione tramite get e read in Object
@@ -924,7 +924,7 @@ public class SerializationClientTest {
 		String jsonXMLSerializationObject = jsonXMLSerializer.getObject(as);
 		dataFine = DateManager.getTimeMillis();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -938,7 +938,7 @@ public class SerializationClientTest {
 		freaderJsonXML.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJsonXMLRead, dir);
 		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonXMLRead))+" allegati:("+((AccordoServizioParteComune)oJsonXMLRead).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		// Serializzazione Enumerations
@@ -951,7 +951,7 @@ public class SerializationClientTest {
 		jsonXMLSerializationObject = jsonXMLSerializer.getObject(TestEnumerations.VALORE1);
 		dataFine = DateManager.getTimeMillis();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -965,7 +965,7 @@ public class SerializationClientTest {
 			throw new Exception("Enumeration originale ["+TestEnumerations.VALORE1.toString()+"] e ricostruita["+((TestEnumerations)oJsonXMLRead).toString()+"] differiscono");
 		}
 		log.info("- OK, enum value: "+oJsonXMLRead);
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		log.info("\n");
@@ -992,7 +992,7 @@ public class SerializationClientTest {
 		foutJsonXML.flush();
 		foutJsonXML.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -1012,7 +1012,7 @@ public class SerializationClientTest {
 		SerializationClientTest.equals(arrayJsonXMLTestAccordi,vJsonXMLArrayTestAccordi,dir);
 		log.info("- OK, nome accordo: "+
 				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonXMLArray[0]))+" allegati:("+((AccordoServizioParteComune)vJsonXMLArray[0]).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		jsonXMLFileStream = new File(dir,"array.soggetti.jsonXML");
@@ -1030,7 +1030,7 @@ public class SerializationClientTest {
 		foutJsonXML.flush();
 		foutJsonXML.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -1049,7 +1049,7 @@ public class SerializationClientTest {
 		}
 		SerializationClientTest.equals(arrayJsonXMLTestSoggetti,vJsonXMLArrayTestSoggetti,dir);
 		log.info("- OK, nome soggetto: "+((Soggetto)vJsonXMLArray[1]).getTipo()+"/"+((Soggetto)vJsonXMLArray[1]).getNome());
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 
 		
@@ -1070,7 +1070,7 @@ public class SerializationClientTest {
 		foutJsonXML.flush();
 		foutJsonXML.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -1088,7 +1088,7 @@ public class SerializationClientTest {
 		SerializationClientTest.equals(originaleAccordi,ricostruitoAccordi,dir);
 		log.info("- OK, nome accordo: "+
 				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonXMLList.get(0)))+" allegati:("+((AccordoServizioParteComune)vJsonXMLList.get(0)).sizeAllegatoList()+")");
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		
 		jsonXMLFileStream = new File(dir,"list.soggetti.jsonXML");
@@ -1105,7 +1105,7 @@ public class SerializationClientTest {
 		foutJsonXML.flush();
 		foutJsonXML.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -1121,7 +1121,7 @@ public class SerializationClientTest {
 		originaleSoggetti = testSerializzazioneSetSoggetti.toArray(new Soggetto[1]);
 		ricostruitoSoggetti = vJsonXMLList.toArray(new Soggetto[1]);
 		log.info("- OK, nome soggetto: "+((Soggetto)vJsonXMLList.get(1)).getTipo()+"/"+((Soggetto)vJsonXMLList.get(1)).getNome()+")");
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 
 		
@@ -1142,7 +1142,7 @@ public class SerializationClientTest {
 		foutJsonXML.flush();
 		foutJsonXML.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -1159,7 +1159,7 @@ public class SerializationClientTest {
 		ricostruitoAccordi = vJsonXMLSet.toArray(new AccordoServizioParteComune[1]);
 		SerializationClientTest.equals(originaleAccordi,ricostruitoAccordi,dir);
 		log.info("- OK, dimensione set: "+vJsonXMLSet.size()+")");
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		log.info("\n");
 		
@@ -1178,7 +1178,7 @@ public class SerializationClientTest {
 		foutJsonXML.flush();
 		foutJsonXML.close();
 		log.info("- OK");
-		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
 		log.info("\n");
 		
@@ -1195,7 +1195,7 @@ public class SerializationClientTest {
 		ricostruitoSoggetti = vJsonXMLSet.toArray(new Soggetto[1]);
 		SerializationClientTest.equals(originaleSoggetti,ricostruitoSoggetti,dir);
 		log.info("- OK, dimensione set: "+vJsonXMLSet.size()+")");
-		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoStringMillisecondi((dataFine-dataInizio), true));
 		log.info("\n");
 		log.info("\n");
 		

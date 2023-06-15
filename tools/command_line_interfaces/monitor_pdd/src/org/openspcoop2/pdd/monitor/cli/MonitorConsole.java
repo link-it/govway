@@ -612,29 +612,29 @@ public class MonitorConsole {
 			System.out.println("Messaggi in Consegna:");
 			System.out.println("\tNumero: "+stato.getNumMsgInConsegna());
 			if(stato.getNumMsgInConsegna()>0){
-				System.out.println("\tAttesaMedia: "+Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMedioAttesaInConsegna()*1000,false));
-				System.out.println("\tAttesaMassima: "+Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMaxAttesaInConsegna()*1000,false));
+				System.out.println("\tAttesaMedia: "+Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMedioAttesaInConsegna()*1000,false));
+				System.out.println("\tAttesaMassima: "+Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMaxAttesaInConsegna()*1000,false));
 			}
 			System.out.println("");
 			System.out.println("Messaggi in Spedizione:");
 			System.out.println("\tNumero: "+stato.getNumMsgInSpedizione());
 			if(stato.getNumMsgInSpedizione()>0){
-				System.out.println("\tAttesaMedia: "+Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMedioAttesaInSpedizione()*1000,false));
-				System.out.println("\tAttesaMassima: "+Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMaxAttesaInSpedizione()*1000,false));
+				System.out.println("\tAttesaMedia: "+Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMedioAttesaInSpedizione()*1000,false));
+				System.out.println("\tAttesaMassima: "+Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMaxAttesaInSpedizione()*1000,false));
 			}
 			System.out.println("");
 			System.out.println("Messaggi in Processamento:");
 			System.out.println("\tNumero: "+stato.getNumMsgInProcessamento());
 			if(stato.getNumMsgInProcessamento()>0){
-				System.out.println("\tAttesaMedia: "+Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMedioAttesaInProcessamento()*1000,false));
-				System.out.println("\tAttesaMassima: "+Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMaxAttesaInProcessamento()*1000,false));
+				System.out.println("\tAttesaMedia: "+Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMedioAttesaInProcessamento()*1000,false));
+				System.out.println("\tAttesaMassima: "+Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMaxAttesaInProcessamento()*1000,false));
 			}
 			System.out.println("");
 			System.out.println("Totale Messaggi:");
 			System.out.println("\tNumero: "+stato.getTotMessaggi());
 			if(stato.getTotMessaggi()>0){
-				System.out.println("\tAttesaMedia: "+Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMedioAttesa()*1000,false));
-				System.out.println("\tAttesaMassima: "+Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMaxAttesa()*1000,false));
+				System.out.println("\tAttesaMedia: "+Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMedioAttesa()*1000,false));
+				System.out.println("\tAttesaMassima: "+Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMaxAttesa()*1000,false));
 			}
 			System.out.println("");
 			System.out.println("Totale Messaggi Duplicati:");

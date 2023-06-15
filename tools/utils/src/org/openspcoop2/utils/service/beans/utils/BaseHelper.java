@@ -181,7 +181,7 @@ public class BaseHelper {
 	public static final <T> T fromMap(Map<String,Object> mapObject, Class<T> toClass) throws InstantiationException, IllegalAccessException {
 		if (mapObject == null) return null;
 		
-		T ret = Utilities.newInstance_throwInstantiationException(toClass);
+		T ret = Utilities.newInstanceThrowInstantiationException(toClass);
 		fillFromMap(mapObject, ret);
 	
 		return ret;

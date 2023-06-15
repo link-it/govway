@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
 
 
@@ -37,7 +38,7 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 */
 public class ModIInstanceProperties extends InstanceProperties {
 
-	ModIInstanceProperties(Properties reader,Logger log) throws Exception{
+	ModIInstanceProperties(Properties reader,Logger log) throws UtilsException {
 		super(ModICostanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		
 		// Leggo directory di configurazione
@@ -45,7 +46,9 @@ public class ModIInstanceProperties extends InstanceProperties {
 		if(confDir==null) {
 			try {
 				confDir = InstanceProperties.readConfDirFromGovWayProperties();
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		
 		super.setLocalFileImplementation(ModICostanti.MODIPA_PROPERTIES,ModICostanti.MODIPA_PROPERTIES_LOCAL_PATH, confDir);

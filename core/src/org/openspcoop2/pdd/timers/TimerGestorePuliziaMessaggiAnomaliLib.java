@@ -313,7 +313,7 @@ public class TimerGestorePuliziaMessaggiAnomaliLib{
 			// end
 			long endControlloRepositoryMessaggi = DateManager.getTimeMillis();
 			long diff = (endControlloRepositoryMessaggi-startControlloRepositoryMessaggi);
-			this.logTimer.info("Pulizia Messaggi Anomali terminata in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			this.logTimer.info("Pulizia Messaggi Anomali terminata in "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 
 		} 
 		catch(TimerLockNotAvailableException t) {

@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
 
 
@@ -37,7 +38,7 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 */
 public class AS4InstanceProperties extends InstanceProperties {
 
-	AS4InstanceProperties(Properties reader,Logger log) throws Exception{
+	AS4InstanceProperties(Properties reader,Logger log) throws UtilsException {
 		super(AS4Costanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		
 		// Leggo directory di configurazione
@@ -45,7 +46,9 @@ public class AS4InstanceProperties extends InstanceProperties {
 		if(confDir==null) {
 			try {
 				confDir = InstanceProperties.readConfDirFromGovWayProperties();
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		
 		super.setLocalFileImplementation(AS4Costanti.AS4_PROPERTIES,AS4Costanti.AS4_PROPERTIES_LOCAL_PATH, confDir);

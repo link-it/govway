@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 
 class BackendInstanceProperties extends InstanceProperties {
 
-	BackendInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	BackendInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(ConstantsEnv.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(ConstantsEnv.OPENSPCOOP2_BACKEND_PROPERTIES, ConstantsEnv.OPENSPCOOP2_BACKEND_LOCAL_PATH, confDir);
 	}

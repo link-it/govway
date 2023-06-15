@@ -252,7 +252,7 @@ public class AS4Properties {
 			String propertyName = "org.openspcoop2.protocol.as4.id.uuid";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -287,7 +287,7 @@ public class AS4Properties {
     public Boolean isRiferimentoIDRichiesta_PD_Required(){
     	if(this.isRiferimentoIDRichiesta_PD_RequiredRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pd.riferimentoIdRichiesta.required"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.pd.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -315,7 +315,7 @@ public class AS4Properties {
     public Boolean isRiferimentoIDRichiesta_PA_Required(){
     	if(this.isRiferimentoIDRichiesta_PA_RequiredRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pa.riferimentoIdRichiesta.required"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.pa.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -355,7 +355,7 @@ public class AS4Properties {
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
     	if(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.erroreApplicativo.faultApplicativo.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -390,7 +390,7 @@ public class AS4Properties {
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
     	if(this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.erroreApplicativo.faultPdD.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -460,7 +460,7 @@ public class AS4Properties {
 	public byte[] getPayloadProfilesDefaultPayloads() throws ProtocolException {
 		if(this.payloadProfilesDefaultPayloadsRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloads"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloads"); 
 				if (value != null){
 					value = value.trim();
 					File f  = this.getFile(value);
@@ -482,7 +482,7 @@ public class AS4Properties {
 	public byte[] getPayloadProfilesDefaultPayloadProfiles() throws ProtocolException {
 		if(this.payloadProfilesDefaultPayloadProfilesRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloadProfiles"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloadProfiles"); 
 				if (value != null){
 					value = value.trim();
 					File f  = this.getFile(value);
@@ -504,7 +504,7 @@ public class AS4Properties {
 	public byte[] getPropertiesDefault() throws ProtocolException {
 		if(this.propertiesDefaultPropertyRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.properties.defaultProperty"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.properties.defaultProperty"); 
 				if (value != null){
 					value = value.trim();
 					File f  = this.getFile(value);
@@ -526,7 +526,7 @@ public class AS4Properties {
 	public byte[] getPropertiesSetDefault() throws ProtocolException {
 		if(this.propertiesDefaultPropertySetRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.properties.defaultPropertySet"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.properties.defaultPropertySet"); 
 				if (value != null){
 					value = value.trim();
 					File f  = this.getFile(value);
@@ -547,7 +547,7 @@ public class AS4Properties {
 	public File getSecurityPoliciesFolder() throws ProtocolException {
 		if(this.securityPoliciesFolder==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.securityPolicies.folder"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.securityPolicies.folder"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -568,7 +568,7 @@ public class AS4Properties {
 	public String getSecurityPolicyDefault() throws ProtocolException {
 		if(this.securityPolicyDefault==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.securityPolicies.default"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.securityPolicies.default"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -591,7 +591,7 @@ public class AS4Properties {
 	public File getPModeTranslatorPayloadProfilesFolder() throws ProtocolException {
 		if(this.pModeTranslatorPayloadProfilesFolder==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPayloadProfilesFolder"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPayloadProfilesFolder"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -612,7 +612,7 @@ public class AS4Properties {
 	public File getPModeTranslatorPropertiesFolder() throws ProtocolException {
 		if(this.pModeTranslatorPropertiesFolder==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPropertiesFolder"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPropertiesFolder"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -639,7 +639,7 @@ public class AS4Properties {
     public Boolean isDomibusGatewayRegistry() throws ProtocolException{
     	if(this.isDomibusGatewayRegistryRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -666,7 +666,7 @@ public class AS4Properties {
 	public String getDomibusGatewayRegistrySoggettoDefault() throws ProtocolException {
 		if(this.domibusGatewayRegistrySoggettoDefault==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.default"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.default"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -689,7 +689,7 @@ public class AS4Properties {
 	public String getDomibusGatewayRegistrySoggettoCustom(String nome) throws ProtocolException {
 		if(this.domibusGatewayRegistrySoggettoCustom_Read.contains(nome)==false){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto."+nome); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto."+nome); 
 				
 				if (value != null){
 					value = value.trim();
@@ -710,7 +710,7 @@ public class AS4Properties {
 	public List<String> getDomibusGatewayRegistrySoggettoCustomList() throws ProtocolException {
 		if(this.domibusGatewayRegistrySoggettoCustomList==null){
 	    	try{  
-	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.");
+	    		Properties p = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.");
 	    		this.domibusGatewayRegistrySoggettoCustomList = new ArrayList<>();
 	    		Enumeration<?> keys = p.keys();
 	    		while (keys.hasMoreElements()) {
@@ -735,7 +735,7 @@ public class AS4Properties {
 	public String getDomibusGatewayConfigDefaultUrl() throws ProtocolException {
 		if(this.domibusGatewayConfigDefaultUrl==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.url"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.url"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -758,7 +758,7 @@ public class AS4Properties {
     public Boolean isDomibusGatewayConfigDefaultHttpsEnabled(){
     	if(this.isDomibusGatewayConfigDefaultHttpsEnabledRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.https.enabled"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.https.enabled"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -785,7 +785,7 @@ public class AS4Properties {
 	public Properties getDomibusGatewayConfigDefaultHttpsProperties() throws ProtocolException {
 		if(this.domibusGatewayConfigDefaultHttpsProperties==null){
 	    	try{  
-	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.");
+	    		Properties p = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.");
 				
 				if (p != null && p.size()>0){
 					this.domibusGatewayConfigDefaultHttpsProperties = p;
@@ -807,7 +807,7 @@ public class AS4Properties {
 	public String getDomibusGatewayConfigCustomUrl(String nome) throws ProtocolException {
 		if(this.domibusGatewayConfigCustomUrl_Read.contains(nome)==false){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".url"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".url"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -829,7 +829,7 @@ public class AS4Properties {
     public Boolean isDomibusGatewayConfigCustomHttpsEnabled(String nome) throws ProtocolException{
     	if(this.domibusGatewayConfigCustomHttsEnabled_Read.contains(nome)==false){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.enabled"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.enabled"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -853,7 +853,7 @@ public class AS4Properties {
 	public Properties getDomibusGatewayConfigCustomHttpsProperties(String nome) throws ProtocolException {
 		if(this.domibusGatewayConfigCustomHttsProperties_Read.contains(nome)==false){
 	    	try{  
-	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.property.");
+	    		Properties p = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.property.");
 				
 				if (p != null && p.size()>0){
 					this.domibusGatewayConfigCustomHttpsProperties.put(nome, p);
@@ -882,7 +882,7 @@ public class AS4Properties {
     public Boolean isDomibusGatewayJMS_debug(){
     	if(this.domibusGatewayJMS_debugRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.debug"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.debug"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -909,7 +909,7 @@ public class AS4Properties {
 	public Integer getDomibusGatewayJMS_threadsPoolSize() throws ProtocolException {
 		if(this.domibusGatewayJMS_threadsPoolSize==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.threadsPool.size"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.threadsPool.size"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -931,7 +931,7 @@ public class AS4Properties {
 	public Integer getDomibusGatewayJMS_threadCheckIntervalMs() throws ProtocolException {
 		if(this.domibusGatewayJMS_threadCheckIntervalMs==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.thread.checkIntervalMs"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.thread.checkIntervalMs"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -953,7 +953,7 @@ public class AS4Properties {
 	public Properties getDomibusGatewayJMS_jndiContext() throws ProtocolException {
 		if(this.domibusGatewayJMS_jndiContext==null){
 	    	try{  
-	    		this.domibusGatewayJMS_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.jndi.");
+	    		this.domibusGatewayJMS_jndiContext = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.jndi.");
 	    		if (this.domibusGatewayJMS_jndiContext == null || this.domibusGatewayJMS_jndiContext.size()<0){
 	    			this.domibusGatewayJMS_jndiContext = new Properties(); // context jndi vuoto
 				}
@@ -970,7 +970,7 @@ public class AS4Properties {
 	public String getDomibusGatewayJMS_connectionFactory() throws ProtocolException {
 		if(this.domibusGatewayJMS_connectionFactory==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.connectionFactory"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.connectionFactory"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -993,7 +993,7 @@ public class AS4Properties {
 	public String getDomibusGatewayJMS_username() throws ProtocolException {
 		if(this.domibusGatewayJMS_username_read==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.username"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.username"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1015,7 +1015,7 @@ public class AS4Properties {
 	public String getDomibusGatewayJMS_password() throws ProtocolException {
 		if(this.domibusGatewayJMS_password_read==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.password"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.password"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1036,7 +1036,7 @@ public class AS4Properties {
 	public String getDomibusGatewayJMS_queueReceiver() throws ProtocolException {
 		if(this.domibusGatewayJMS_queueReceiver==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.receiver"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.receiver"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1058,7 +1058,7 @@ public class AS4Properties {
 	public String getDomibusGatewayJMS_queueSender() throws ProtocolException {
 		if(this.domibusGatewayJMS_queueSender==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.sender"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.sender"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1081,7 +1081,7 @@ public class AS4Properties {
 	private String getDomibusGatewayJMS_AckProviderUrl() throws ProtocolException {
 		if(this.domibusGatewayJMS_AckProviderUrl_read==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.sender.provider.url"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.sender.provider.url"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1136,7 +1136,7 @@ public class AS4Properties {
     public Boolean isAckTraceEnabled(){
     	if(this.isAckTraceEnabled==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.enabled"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.enabled"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1160,7 +1160,7 @@ public class AS4Properties {
 	public String getAckTraceDatasource() throws ProtocolException {
 		if(this.ackTraceDatasource_read==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.dataSource"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.dataSource"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1182,7 +1182,7 @@ public class AS4Properties {
 	public String getAckTraceTipoDatabase() throws ProtocolException {
 		if(this.ackTraceTipoDatabase_read==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.tipoDatabase"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.tipoDatabase"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1203,7 +1203,7 @@ public class AS4Properties {
 	public Properties getAckTraceDatasource_jndiContext() throws ProtocolException {
 		if(this.ackTraceDatasource_jndiContext==null){
 	    	try{  
-	    		this.ackTraceDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.dataSource.property.");
+	    		this.ackTraceDatasource_jndiContext = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.dataSource.property.");
 	    		if (this.ackTraceDatasource_jndiContext == null || this.ackTraceDatasource_jndiContext.size()<0){
 	    			this.ackTraceDatasource_jndiContext = new Properties(); // context jndi vuoto
 				}
@@ -1222,7 +1222,7 @@ public class AS4Properties {
 	public String getAckDomibusDatasource() throws ProtocolException {
 		if(this.ackDomibusDatasource_read==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.dataSource"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.dataSource"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1244,7 +1244,7 @@ public class AS4Properties {
 	public String getAckDomibusTipoDatabase() throws ProtocolException {
 		if(this.ackDomibusTipoDatabase_read==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.tipoDatabase"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.tipoDatabase"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1265,7 +1265,7 @@ public class AS4Properties {
 	public Properties getAckDomibusDatasource_jndiContext() throws ProtocolException {
 		if(this.ackDomibusDatasource_jndiContext==null){
 	    	try{  
-	    		this.ackDomibusDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.dataSource.property.");
+	    		this.ackDomibusDatasource_jndiContext = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.dataSource.property.");
 	    		if (this.ackDomibusDatasource_jndiContext == null || this.ackDomibusDatasource_jndiContext.size()<0){
 	    			this.ackDomibusDatasource_jndiContext = new Properties(); // context jndi vuoto
 				}
@@ -1288,7 +1288,7 @@ public class AS4Properties {
 			String propertyName = "org.openspcoop2.protocol.as4.factory.config.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1315,7 +1315,7 @@ public class AS4Properties {
 			String propertyName = "org.openspcoop2.protocol.as4.factory.erroreApplicativo.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1342,7 +1342,7 @@ public class AS4Properties {
 			String propertyName = "org.openspcoop2.protocol.as4.factory.esito.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();

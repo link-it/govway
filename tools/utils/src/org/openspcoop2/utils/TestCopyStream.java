@@ -217,12 +217,12 @@ public class TestCopyStream {
 			if(expectedTimeout) {
 				Date endDate = new Date();
 				long time = endDate.getTime() - startDate.getTime(); 
-				throw new Exception("["+src+"->Buffer]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+bout.size()+"");
+				throw new Exception("["+src+"->Buffer]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+bout.size()+"");
 			}
 			else if(expectedLimitExceeded) {
 				Date endDate = new Date();
 				long time = endDate.getTime() - startDate.getTime(); 
-				throw new Exception("["+src+"->Buffer]["+method+"] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+bout.size()+"");
+				throw new Exception("["+src+"->Buffer]["+method+"] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+bout.size()+"");
 			}
 		}catch(Exception e) {
 			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
@@ -243,7 +243,7 @@ public class TestCopyStream {
 			if(bout.size()!=size) {
 				throw new Exception("["+src+"->Buffer]["+method+"] Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
 			}
-			System.out.println("["+src+"->Buffer]["+method+"] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+			System.out.println("["+src+"->Buffer]["+method+"] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 		}
 	}
 	
@@ -259,7 +259,7 @@ public class TestCopyStream {
 		if(bout.size()!=size) {
 			throw new Exception("["+src+"->Buffer][COPY-FILE] Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
 		}
-		System.out.println("["+src+"->Buffer][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+		System.out.println("["+src+"->Buffer][COPY-FILE] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 	}
 	
 	private static void testFile(String src, CopyStreamMethod method, InputStream is, File f, int size, 
@@ -284,12 +284,12 @@ public class TestCopyStream {
 			if(expectedTimeout) {
 				Date endDate = new Date();
 				long time = endDate.getTime() - startDate.getTime(); 
-				throw new Exception("["+src+"->File]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
+				throw new Exception("["+src+"->File]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
 			if(expectedLimitExceeded) {
 				Date endDate = new Date();
 				long time = endDate.getTime() - startDate.getTime(); 
-				throw new Exception("["+src+"->File]["+method+"] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
+				throw new Exception("["+src+"->File]["+method+"] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
 		}catch(Exception e) {
 			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
@@ -310,7 +310,7 @@ public class TestCopyStream {
 			if(f.length()!=size) {
 				throw new Exception("["+src+"->File]["+method+"] File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 			}
-			System.out.println("["+src+"->File]["+method+"] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+			System.out.println("["+src+"->File]["+method+"] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 		}
 	}
 	
@@ -335,12 +335,12 @@ public class TestCopyStream {
 			if(expectedTimeout) {
 				Date endDate = new Date();
 				long time = endDate.getTime() - startDate.getTime(); 
-				throw new Exception("["+src+"->File][COPY-FILE] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
+				throw new Exception("["+src+"->File][COPY-FILE] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
 			if(expectedLimitExceeded) {
 				Date endDate = new Date();
 				long time = endDate.getTime() - startDate.getTime(); 
-				throw new Exception("["+src+"->File][COPY-FILE] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
+				throw new Exception("["+src+"->File][COPY-FILE] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
 		}catch(Exception e) {
 			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
@@ -359,7 +359,7 @@ public class TestCopyStream {
 			if(f.length()!=size) {
 				throw new Exception("["+src+"->File][COPY-FILE] File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 			}
-			System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+			System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 		}
 	}
 	
@@ -372,6 +372,6 @@ public class TestCopyStream {
 		if(f.length()!=size) {
 			throw new Exception("["+src+"->File][COPY-FILE] File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 		}
-		System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+		System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 	}
 }

@@ -213,7 +213,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		long endControlloRepositoryMessaggi = DateManager.getTimeMillis();
 		long startControlloRepositoryMessaggi = (Long) context.get(DATA_START);
 		long diff = (endControlloRepositoryMessaggi-startControlloRepositoryMessaggi);
-		this.log.info("Controllo Repository Messaggi (Riconsegna verso ConsegnaContenutiApplicativi) terminato in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+		this.log.info("Controllo Repository Messaggi (Riconsegna verso ConsegnaContenutiApplicativi) terminato in "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 
 	}
 	

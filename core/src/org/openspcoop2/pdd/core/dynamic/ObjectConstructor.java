@@ -39,7 +39,7 @@ public class ObjectConstructor {
 	}
 	public Object instance(Class<?> classObject, Object ... params) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		if(params==null || params.length<=0) {
-			return Utilities.newInstance_throwInstantiationException(classObject);
+			return Utilities.newInstanceThrowInstantiationException(classObject);
 		}
 		else {
 			return ConstructorUtils.invokeConstructor(classObject, params);

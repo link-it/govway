@@ -242,7 +242,7 @@ public class SPCoopProperties {
 		if(this.tipoSeriale_IdentificativoBusta == null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.id.tipo");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.id.tipo");
 				if(name==null)
 					throw new Exception("proprieta non definita");
 				this.tipoSeriale_IdentificativoBusta  = name.trim();
@@ -273,7 +273,7 @@ public class SPCoopProperties {
 	public boolean isHttpEmptyResponseOneWay(){
 		if(this.isHttpEmptyResponseOneWay==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.oneway.httpEmptyResponse"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.oneway.httpEmptyResponse"); 
 
 				if (value != null){
 					value = value.trim();
@@ -304,7 +304,7 @@ public class SPCoopProperties {
 	public Integer getHttpReturnCodeEmptyResponseOneWay(){
 		if(this.getHttpReturnCodeEmptyResponseOneWay==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.oneway.httpEmptyResponse.returnCode"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.oneway.httpEmptyResponse.returnCode"); 
 
 				if (value != null){
 					value = value.trim();
@@ -338,7 +338,7 @@ public class SPCoopProperties {
 	public boolean isHttpOneWay_PD_HTTPEmptyResponse(){
 		if(this.isHttpOneWay_PD_HTTPEmptyResponse==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.oneway.httpEmptyResponse.bodyEmptyWithHeader.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.oneway.httpEmptyResponse.bodyEmptyWithHeader.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -361,7 +361,7 @@ public class SPCoopProperties {
 	public boolean isResponseMessageWithTransportCodeError_blockedTransaction(){
 		if(this.isResponseMessageWithTransportCodeError_blockedTransaction==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.responseMessageWithTransportCodeError.blockedTransaction"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.responseMessageWithTransportCodeError.blockedTransaction"); 
 
 				if (value != null){
 					value = value.trim();
@@ -392,7 +392,7 @@ public class SPCoopProperties {
 	public boolean isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo(){
 		if(this.isGenerazioneBustaErrore_strutturaMalformataHeaderBusta==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.strutturaHeaderNonCorretta.generazioneBustaRisposta"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.strutturaHeaderNonCorretta.generazioneBustaRisposta"); 
 
 				if (value != null){
 					value = value.trim();
@@ -421,7 +421,7 @@ public class SPCoopProperties {
 	public boolean isGenerazioneBustaErrore_actorScorretto(){
 		if(this.isGenerazioneBustaErrore_actorScorretto==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.strutturaHeaderNonCorretta.actorNonCorretto.generazioneBustaRisposta"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.strutturaHeaderNonCorretta.actorNonCorretto.generazioneBustaRisposta"); 
 
 				if (value != null){
 					value = value.trim();
@@ -451,7 +451,7 @@ public class SPCoopProperties {
 		if(this.intervalloScadenzaBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.scadenzaMessaggio");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.scadenzaMessaggio");
 				if(name==null)
 					throw new Exception("non definita");
 				name = name.trim();
@@ -478,7 +478,7 @@ public class SPCoopProperties {
 		if(this.dateFutureIntervalloTolleranza==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.date.intervalloTolleranza");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.date.intervalloTolleranza");
 				if(name!=null){
 					name = name.trim();
 					this.dateFutureIntervalloTolleranza = java.lang.Integer.parseInt(name);
@@ -509,7 +509,7 @@ public class SPCoopProperties {
 	public boolean isRepositoryBusteFiltraBusteScaduteRispettoOraRegistrazione() {	
 		if(this.repositoryBusteFiltraBusteScaduteRispettoOraRegistrazione==null){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione");
 				if(value==null){
 					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione' non definita (Viene utilizzato il default:true)");
 					this.repositoryBusteFiltraBusteScaduteRispettoOraRegistrazione = true;
@@ -535,7 +535,7 @@ public class SPCoopProperties {
 	public String getKeywordTipoMittenteSconosciuto(){
 		if(this.getKeywordTipoMittenteSconosciuto==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.mittenteSconosciuto.tipo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.mittenteSconosciuto.tipo"); 
 
 				if (value != null){
 					value = value.trim();
@@ -564,7 +564,7 @@ public class SPCoopProperties {
 	public String getKeywordMittenteSconosciuto(){
 		if(this.getKeywordMittenteSconosciuto==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.mittenteSconosciuto.nome"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.mittenteSconosciuto.nome"); 
 
 				if (value != null){
 					value = value.trim();
@@ -589,7 +589,7 @@ public class SPCoopProperties {
 		if(this.getSchemaXSDValidazioneXSDBusta==null){
 			String defaultSchema = "Busta.xsd";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.validazione_xsd.schema"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.validazione_xsd.schema"); 
 
 				if (value != null){
 					value = value.trim();
@@ -617,7 +617,7 @@ public class SPCoopProperties {
 
 		if(this.schemiImportatiValidazioneXSDBusta==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.validazione_xsd.schemiImportati"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.validazione_xsd.schemiImportati"); 
 
 				if (value != null){
 					value = value.trim();
@@ -654,7 +654,7 @@ public class SPCoopProperties {
 	public boolean isGenerazioneElementiNonValidabiliRispettoXSD(){
 		if(this.isGenerazioneElementiNonValidabiliRispettoXSD==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneElementiNonValidabiliRispettoXSD"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneElementiNonValidabiliRispettoXSD"); 
 
 				if (value != null){
 					value = value.trim();
@@ -683,7 +683,7 @@ public class SPCoopProperties {
 	public boolean isIgnoraEccezioniNonGravi(){
 		if(this.isBustaErrore_EccezioniNonGravi==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.bustaErrore.ignoraEccezioniNonGravi.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.bustaErrore.ignoraEccezioniNonGravi.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -712,7 +712,7 @@ public class SPCoopProperties {
     public boolean isGenerazioneListaEccezioniErroreProcessamento(){
     	if(this.isGenerazioneListaEccezioniErroreProcessamento==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.eccezioneProcessamento.generazioneListaEccezioni"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.eccezioneProcessamento.generazioneListaEccezioni"); 
 				if (value != null){
 					value = value.trim();
 					this.isGenerazioneListaEccezioniErroreProcessamento = Boolean.parseBoolean(value);
@@ -749,7 +749,7 @@ public class SPCoopProperties {
 
 		if(this.roleRichiestaManifest==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.manifestAttachments.role.richiesta"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.manifestAttachments.role.richiesta"); 
 
 				if (value != null){
 					value = value.trim();
@@ -780,7 +780,7 @@ public class SPCoopProperties {
 
 		if(this.roleRispostaManifest==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.manifestAttachments.role.risposta"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.manifestAttachments.role.risposta"); 
 
 				if (value != null){
 					value = value.trim();
@@ -811,7 +811,7 @@ public class SPCoopProperties {
 
 		if(this.roleAllegatoManifest==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.manifestAttachments.role.allegato"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.manifestAttachments.role.allegato"); 
 
 				if (value != null){
 					value = value.trim();
@@ -841,7 +841,7 @@ public class SPCoopProperties {
     public boolean isGenerateManifestAttachmentsIdWithBrackets(){
     	if(this.generateManifestAttachmentsIdWithBrackets==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.manifestAttachments.id.brackets"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.manifestAttachments.id.brackets"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -879,7 +879,7 @@ public class SPCoopProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolValidazione(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolValidazione==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -908,7 +908,7 @@ public class SPCoopProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolProcessamento==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -938,7 +938,7 @@ public class SPCoopProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.protocol.stackTrace"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.protocol.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -967,7 +967,7 @@ public class SPCoopProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1000,7 +1000,7 @@ public class SPCoopProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationServerError(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationServerError==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.integration.serverError"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.integration.serverError"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1029,7 +1029,7 @@ public class SPCoopProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationClientError(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationClientError==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.integration.clientError"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.integration.clientError"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1058,7 +1058,7 @@ public class SPCoopProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.integration.stackTrace"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.integration.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1088,7 +1088,7 @@ public class SPCoopProperties {
     public Boolean isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1125,7 +1125,7 @@ public class SPCoopProperties {
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
     	if(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.erroreApplicativo.faultApplicativo.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1160,7 +1160,7 @@ public class SPCoopProperties {
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
     	if(this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.erroreApplicativo.faultPdD.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1193,7 +1193,7 @@ public class SPCoopProperties {
     public Boolean isGestionePackageSICA(){
     	if(this.isGestionePackageSICA==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.packageSICA"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.packageSICA"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1221,7 +1221,7 @@ public class SPCoopProperties {
     	if(this.isAddPrefixSOAPENV==null){
 	    	String pName = "org.openspcoop2.protocol.spcoop.addPrefixSOAP_ENV";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1252,7 +1252,7 @@ public class SPCoopProperties {
 			String propertyName = "org.openspcoop2.protocol.spcoop.factory.config.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1279,7 +1279,7 @@ public class SPCoopProperties {
 			String propertyName = "org.openspcoop2.protocol.spcoop.factory.erroreApplicativo.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1306,7 +1306,7 @@ public class SPCoopProperties {
 			String propertyName = "org.openspcoop2.protocol.spcoop.factory.esito.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();

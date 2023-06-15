@@ -114,7 +114,7 @@ public class DatabaseProperties {
 	private String getProperty(String name,boolean required, boolean convertEnvProperty) throws Exception{
 		String tmp = null;
 		if(convertEnvProperty){
-			tmp = this.reader.getValue_convertEnvProperties(name);
+			tmp = this.reader.getValueConvertEnvProperties(name);
 		}else{
 			tmp = this.reader.getValue(name);
 		}
@@ -197,7 +197,7 @@ public class DatabaseProperties {
 	}
 	private static final String PROP_DATASOURCE_JNDI_CONTEXT = "db.datasource.jndiContext";
 	public Properties getDatasourceJNDIContext() throws Exception {
-		return this.reader.readProperties_convertEnvProperties(DatabaseProperties.PROP_DATASOURCE_JNDI_CONTEXT);
+		return this.reader.readPropertiesConvertEnvProperties(DatabaseProperties.PROP_DATASOURCE_JNDI_CONTEXT);
 	}
 	
 	private static final String PROP_CONNECTION_URL = "db.connection.url";

@@ -1150,7 +1150,7 @@ public class OpenSPCoop2Properties {
 					return false;
 			}
 			
-			Properties integrazioneProtocolPD = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pd.");
+			Properties integrazioneProtocolPD = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pd.");
 			Enumeration<?> keys = integrazioneProtocolPD.keys();
 			while (keys.hasMoreElements()) {
 				String protocollo = (String) keys.nextElement();
@@ -1212,7 +1212,7 @@ public class OpenSPCoop2Properties {
 					return false;
 			}
 			
-			Properties integrazioneProtocolPA = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pa.");
+			Properties integrazioneProtocolPA = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pa.");
 			keys = integrazioneProtocolPA.keys();
 			while (keys.hasMoreElements()) {
 				String protocollo = (String) keys.nextElement();
@@ -3662,7 +3662,7 @@ public class OpenSPCoop2Properties {
 		if(this.rootDirectory==null){
 			try{ 
 				String root = null;
-				root = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.confDirectory");
+				root = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.confDirectory");
 
 				if(root==null)
 					throw new CoreException(NON_DEFINITA);
@@ -3693,7 +3693,7 @@ public class OpenSPCoop2Properties {
 		if(this.serverJ2EE==null){
 			try{ 
 				String server = null;
-				server = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.server");
+				server = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.server");
 
 				if(server==null)
 					throw new CoreException(NON_DEFINITA);
@@ -3723,7 +3723,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.getClassLoaderRead==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.classLoader"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.classLoader"); 
 
 				if (value != null){
 					value = value.trim();
@@ -3744,7 +3744,7 @@ public class OpenSPCoop2Properties {
 		if(this.productName==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.productName");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.productName");
 				if(v!=null){
 					v = v.trim();
 					this.productName = v;
@@ -3763,7 +3763,7 @@ public class OpenSPCoop2Properties {
 		if(this.versione==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.versione");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.versione");
 				if(v!=null){
 					v = v.trim();
 					this.versione = v;
@@ -3808,7 +3808,7 @@ public class OpenSPCoop2Properties {
 		if(this.details==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.details");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.details");
 				if(v!=null){
 					v = v.trim();
 					this.details = v;
@@ -3827,7 +3827,7 @@ public class OpenSPCoop2Properties {
 		if(this.getPddDetailsForLog==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.log.details");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.log.details");
 				if(v!=null){
 					v = v.trim();
 					this.getPddDetailsForLog = v;
@@ -3854,7 +3854,7 @@ public class OpenSPCoop2Properties {
 		if(this.getPddDetailsForServices==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.details");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.details");
 				if(v!=null){
 					v = v.trim();
 					this.getPddDetailsForServices = v;
@@ -3873,7 +3873,7 @@ public class OpenSPCoop2Properties {
 		if(this.getCheckOpenSPCoopHome==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkHomeProperty");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.checkHomeProperty");
 				if(v!=null){
 					v = v.trim();
 					this.getCheckOpenSPCoopHome = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString(v);
@@ -4012,7 +4012,7 @@ public class OpenSPCoop2Properties {
 	public List<byte[]> getConfigPreLoadingLocale() {	
 		if(this.configPreLoadingLocaleRead==null){
 			try{ 
-				String resourceTmp = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.preLoading.locale");
+				String resourceTmp = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.config.preLoading.locale");
 				if(resourceTmp!=null){
 					resourceTmp = resourceTmp.trim();
 					
@@ -4082,7 +4082,7 @@ public class OpenSPCoop2Properties {
 	public String getTipoConfigurazionePDD() {	
 		if(this.tipoConfigurazionePDD==null){
 			try{ 
-				String tipo = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.tipo");
+				String tipo = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.config.tipo");
 				if(tipo==null)
 					throw new CoreException(NON_DEFINITA);
 				tipo = tipo.trim();
@@ -4107,7 +4107,7 @@ public class OpenSPCoop2Properties {
 	public boolean isCondivisioneConfigurazioneRegistroDB() {	
 		if(this.isCondivisioneConfigurazioneRegistroDB==null){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.db.condivisioneDBRegserv");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.config.db.condivisioneDBRegserv");
 				if(value==null)
 					this.isCondivisioneConfigurazioneRegistroDB = false;
 				else{
@@ -4134,7 +4134,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.config.property.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.config.property.");
 				this.jndiContext_Configurazione = prop;
 
 			}catch(java.lang.Exception e) {
@@ -4192,7 +4192,7 @@ public class OpenSPCoop2Properties {
 	public boolean isConfigurazioneDinamica(){
 		if(this.isConfigurazioneDinamica_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.refresh"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.config.refresh"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4215,7 +4215,7 @@ public class OpenSPCoop2Properties {
 	public boolean isConfigurazioneCache_ConfigPrefill(){
 		if(this.isConfigurazioneCache_ConfigPrefill_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cache.config.prefill"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.cache.config.prefill"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4238,7 +4238,7 @@ public class OpenSPCoop2Properties {
 	public boolean isConfigurazioneCache_RegistryPrefill(){
 		if(this.isConfigurazioneCache_RegistryPrefill_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cache.registry.prefill"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.cache.registry.prefill"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4261,7 +4261,7 @@ public class OpenSPCoop2Properties {
 	public boolean isConfigurazioneCache_accessiSynchronized(){
 		if(this.isConfigurazioneCache_accessiSynchronized==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cache.get.synchronized"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.cache.get.synchronized"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4284,7 +4284,7 @@ public class OpenSPCoop2Properties {
 	public boolean isConfigurazioneCache_transactionContext_accessiSynchronized(){
 		if(this.isConfigurazioneCache_transactionContext_accessiSynchronized==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cache.transactionContext.synchronized"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.cache.transactionContext.synchronized"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4394,7 +4394,7 @@ public class OpenSPCoop2Properties {
 	
 	public CacheType readCacheType(String pName){
 		try{  
-			String value = this.reader.getValue_convertEnvProperties(pName); 
+			String value = this.reader.getValueConvertEnvProperties(pName); 
 
 			if(value!=null){
 				value = value.trim();
@@ -4415,7 +4415,7 @@ public class OpenSPCoop2Properties {
 		if(this.isConfigurazioneCacheDebug==null){
 			String pName = "org.openspcoop2.pdd.cache.debug";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4439,7 +4439,7 @@ public class OpenSPCoop2Properties {
 		if(this.isConfigurazioneCacheRequestManagerUseCache==null){
 			String pName = "org.openspcoop2.pdd.cache.impl.requestManager.useCache";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4464,7 +4464,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.cache.impl.requestManager.externalResource.saveInCache";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -4486,7 +4486,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.cache.impl.requestManager.ocspResponse.saveInCache";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -4508,7 +4508,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.cache.impl.requestManager.remoteStore.saveInCache";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -4535,7 +4535,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.config.plugins.enabled";
 		if(this.isConfigurazionePluginsEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4560,7 +4560,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.config.plugins.debug";
 		if(this.isConfigurazionePluginsDebug==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4585,7 +4585,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.config.plugins.seconds";
 		if(this.getConfigurazionePluginsSeconds==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -4622,7 +4622,7 @@ public class OpenSPCoop2Properties {
 		if(this.jndiNameDatasource==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dataSource");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.dataSource");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -4649,7 +4649,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.dataSource.property.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.dataSource.property.");
 				this.jndiContextDatasource = prop;
 
 			}catch(java.lang.Exception e) {
@@ -4684,7 +4684,7 @@ public class OpenSPCoop2Properties {
 		if(this.jndiNameConnectionFactory==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.queueConnectionFactory");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.queueConnectionFactory");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -4711,7 +4711,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.connectionFactory.property.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.connectionFactory.property.");
 				this.jndiContextConnectionFactory = prop;
 
 			}catch(java.lang.Exception e) {
@@ -4734,7 +4734,7 @@ public class OpenSPCoop2Properties {
 		if(this.acknowledgeModeSessioneConnectionFactory==-1){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.queueConnectionFactory.session.AcknowledgeMode");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.queueConnectionFactory.session.AcknowledgeMode");
 
 				if(name!=null){
 					name = name.trim();
@@ -4788,7 +4788,7 @@ public class OpenSPCoop2Properties {
 					String key = (property.substring("org.openspcoop2.pdd.queue.".length()));
 					if(key != null)
 						key = key.trim();
-					String value = this.reader.getValue_convertEnvProperties(property);
+					String value = this.reader.getValueConvertEnvProperties(property);
 					if(value!=null)
 						value = value.trim();
 					if(receiverJMSActive){
@@ -4882,7 +4882,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.queue.property.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.queue.property.");
 				this.jndiContext_CodeInterne = prop;
 
 			}catch(java.lang.Exception e) {
@@ -4923,7 +4923,7 @@ public class OpenSPCoop2Properties {
 					String key = (property.substring("org.openspcoop2.pdd.timer.".length()));
 					if(key != null)
 						key = key.trim();
-					String value = this.reader.getValue_convertEnvProperties(property);
+					String value = this.reader.getValueConvertEnvProperties(property);
 					if(value!=null)
 						value = value.trim();
 					if("gestoreBusteNonRiscontrate".equals(key) && value!=null){
@@ -4979,7 +4979,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.timer.property.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.timer.property.");
 				this.jndiContext_TimerEJB = prop;
 
 			}catch(java.lang.Exception e) {
@@ -4995,7 +4995,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerAutoStart_StopTimer(){
 		if(this.isTimerAutoStart_StopTimer==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.autoStart.stop"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.autoStart.stop"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5030,7 +5030,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreRiscontriRicevuteAbilitato(){
 		if(this.isTimerGestoreRiscontriRicevuteAbilitato==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.enable"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5059,7 +5059,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreRiscontriRicevuteAbilitatoLog(){
 		if(this.isTimerGestoreRiscontriRicevuteAbilitatoLog==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.logQuery"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.logQuery"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5088,7 +5088,7 @@ public class OpenSPCoop2Properties {
 	public int getTimerGestoreRiscontriRicevuteLimit(){
 		if(this.getTimerGestoreRiscontriRicevuteLimit==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.query.limit"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.query.limit"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5112,7 +5112,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerGestoreRiscontriRicevute_lockMaxLife==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.maxLife");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
@@ -5139,7 +5139,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerGestoreRiscontriRicevute_lockIdleTime==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.idleTime");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
@@ -5167,7 +5167,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.attesaAttiva";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -5193,7 +5193,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -5227,7 +5227,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreMessaggiAbilitato(){
 		if(this.isTimerGestoreMessaggiAbilitato==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.enable"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5250,7 +5250,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata(){
 		if(this.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5273,7 +5273,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata(){
 		if(this.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5296,7 +5296,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata(){
 		if(this.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiNonGestiti.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiNonGestiti.enable"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5319,7 +5319,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata(){
 		if(this.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaCorrelazioneApplicativa.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaCorrelazioneApplicativa.enable"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5348,7 +5348,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreMessaggiAbilitatoOrderBy(){
 		if(this.isTimerGestoreMessaggiAbilitatoOrderBy==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.orderBy"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.orderBy"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5377,7 +5377,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreMessaggiAbilitatoLog(){
 		if(this.isTimerGestoreMessaggiAbilitatoLog==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.logQuery"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.logQuery"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5406,7 +5406,7 @@ public class OpenSPCoop2Properties {
 	public int getTimerGestoreMessaggiLimit(){
 		if(this.getTimerGestoreMessaggiLimit==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.query.limit"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.query.limit"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5435,7 +5435,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreMessaggiVerificaConnessioniAttive(){
 		if(this.isTimerGestoreMessaggiVerificaConnessioniAttive==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.verificaConnessioniAttive"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.verificaConnessioniAttive"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5459,7 +5459,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerGestoreMessaggi_lockMaxLife==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.lock.maxLife");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
@@ -5486,7 +5486,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerGestoreMessaggi_lockIdleTime==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.lock.idleTime");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreMessaggi.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
@@ -5514,7 +5514,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.gestoreMessaggi.lock.attesaAttiva";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -5540,7 +5540,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.gestoreMessaggi.lock.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -5574,7 +5574,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestorePuliziaMessaggiAnomaliAbilitato(){
 		if(this.isTimerGestorePuliziaMessaggiAnomaliAbilitato==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.enable"); 
 				if(value!=null){
 					value = value.trim();
 					this.isTimerGestorePuliziaMessaggiAnomaliAbilitato = Boolean.parseBoolean(value);
@@ -5602,7 +5602,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestorePuliziaMessaggiAnomaliAbilitatoOrderBy(){
 		if(this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoOrderBy==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.orderBy"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.orderBy"); 
 				if(value!=null){
 					value = value.trim();
 					this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoOrderBy = Boolean.parseBoolean(value);
@@ -5630,7 +5630,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestorePuliziaMessaggiAnomaliAbilitatoLog(){
 		if(this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoLog==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.logQuery"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.logQuery"); 
 				if(value!=null){
 					value = value.trim();
 					this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoLog = Boolean.parseBoolean(value);
@@ -5658,7 +5658,7 @@ public class OpenSPCoop2Properties {
 	public int getTimerGestorePuliziaMessaggiAnomaliLimit(){
 		if(this.getTimerGestorePuliziaMessaggiAnomaliLimit==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.query.limit"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.query.limit"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5682,7 +5682,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerGestorePuliziaMessaggiAnomali_lockMaxLife==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.maxLife");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
@@ -5709,7 +5709,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerGestorePuliziaMessaggiAnomali_lockIdleTime==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.idleTime");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
@@ -5737,7 +5737,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.attesaAttiva";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -5763,7 +5763,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -5796,7 +5796,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreRepositoryBusteAbilitato(){
 		if(this.isTimerGestoreRepositoryBusteAbilitato==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.enable"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5818,7 +5818,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreRepositoryBusteAbilitatoInitialState(){
 		if(this.isTimerGestoreRepositoryBusteAbilitatoInitialState==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5847,7 +5847,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreRepositoryBusteAbilitatoOrderBy(){
 		if(this.isTimerGestoreRepositoryBusteAbilitatoOrderBy==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.orderBy"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.orderBy"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5876,7 +5876,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerGestoreRepositoryBusteAbilitatoLog(){
 		if(this.isTimerGestoreRepositoryBusteAbilitatoLog==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.logQuery"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.logQuery"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5905,7 +5905,7 @@ public class OpenSPCoop2Properties {
 	public int getTimerGestoreRepositoryBusteLimit(){
 		if(this.getTimerGestoreRepositoryBusteLimit==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.query.limit"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.query.limit"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -5929,7 +5929,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerGestoreRepositoryBuste_lockMaxLife==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.maxLife");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
@@ -5956,7 +5956,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerGestoreRepositoryBuste_lockIdleTime==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.idleTime");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
@@ -5984,7 +5984,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.attesaAttiva";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -6010,7 +6010,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -6051,7 +6051,7 @@ public class OpenSPCoop2Properties {
 			}
 			else{			
 				try{  
-					String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable"); 
+					String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable"); 
 					if(value!=null){
 						value = value.trim();
 						this.isTimerConsegnaContenutiApplicativiAbilitato = Boolean.parseBoolean(value);
@@ -6082,7 +6082,7 @@ public class OpenSPCoop2Properties {
 			}
 			else{			
 				try{  
-					String value = this.reader.getValue_convertEnvProperties(pName); 
+					String value = this.reader.getValueConvertEnvProperties(pName); 
 					if(value!=null){
 						value = value.trim();
 						this.isTimerConsegnaContenutiApplicativiSchedulingDebug = Boolean.parseBoolean(value);
@@ -6113,7 +6113,7 @@ public class OpenSPCoop2Properties {
 			}
 			else{			
 				try{  
-					String value = this.reader.getValue_convertEnvProperties(pName); 
+					String value = this.reader.getValueConvertEnvProperties(pName); 
 					if(value!=null){
 						value = value.trim();
 						this.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica = Boolean.parseBoolean(value);
@@ -6140,7 +6140,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.code");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.code");
 				if(name==null){
 					this.getTimerConsegnaContenutiApplicativiCode = null;
 				}else{
@@ -6176,7 +6176,7 @@ public class OpenSPCoop2Properties {
 		
 		String prefix = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda."+nome+".";
 		try{ 
-			Properties p = this.reader.readProperties_convertEnvProperties(prefix);
+			Properties p = this.reader.readPropertiesConvertEnvProperties(prefix);
 			if(p==null || p.isEmpty()) {
 				throw new CoreException("Configurazione non presente");
 			}
@@ -6199,7 +6199,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita");
 				if(name==null){
 					this.getTimerConsegnaContenutiApplicativiPriorita = null;
 				}else{
@@ -6235,7 +6235,7 @@ public class OpenSPCoop2Properties {
 		
 		String prefix = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita."+nome+".";
 		try{ 
-			Properties p = this.reader.readProperties_convertEnvProperties(prefix);
+			Properties p = this.reader.readPropertiesConvertEnvProperties(prefix);
 			if(p==null || p.isEmpty()) {
 				throw new CoreException("Configurazione non presente");
 			}
@@ -6255,7 +6255,7 @@ public class OpenSPCoop2Properties {
 	public boolean isLoadBalancerDebug(){
 		if(this.isLoadBalancerDebug==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.loadBalancer.debug"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.loadBalancer.debug"); 
 				if(value!=null){
 					value = value.trim();
 					this.isLoadBalancerDebug = Boolean.parseBoolean(value);
@@ -6278,7 +6278,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerConsegnaContenutiApplicativi_lockMaxLife==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.maxLife");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
@@ -6305,7 +6305,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerConsegnaContenutiApplicativi_lockIdleTime==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.idleTime");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
@@ -6332,7 +6332,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife");
 
 				if(name!=null){
 					name = name.trim();
@@ -6360,7 +6360,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.attesaAttiva";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -6386,7 +6386,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -6414,7 +6414,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.useRuntimeManager";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -6436,7 +6436,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.dataSource";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -6456,7 +6456,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext==null){
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.dataSource.property.";
 			try{ 
-				this.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+				this.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -6472,7 +6472,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.datasource.useDSUtils";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -6498,7 +6498,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.useRuntimeManager";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -6520,7 +6520,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.dataSource";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -6540,7 +6540,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext==null){
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.dataSource.property.";
 			try{ 
-				this.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+				this.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -6556,7 +6556,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.datasource.useDSUtils";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -6581,7 +6581,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.useTransactionManager";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -6603,7 +6603,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.dataSource";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -6623,7 +6623,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext==null){
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.dataSource.property.";
 			try{ 
-				this.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+				this.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -6639,7 +6639,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.datasource.useDSUtils";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -6669,7 +6669,7 @@ public class OpenSPCoop2Properties {
 		if(this.repositoryType==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.tipo");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.tipo");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -6694,7 +6694,7 @@ public class OpenSPCoop2Properties {
 		if(this.databaseType==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.tipoDatabase");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.tipoDatabase");
 				if(name!=null)
 					name = name.trim();
 				this.databaseType = name;
@@ -6721,7 +6721,7 @@ public class OpenSPCoop2Properties {
 
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.tipo");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.tipo");
 
 				if(name!=null){
 					name = name.trim();
@@ -6755,7 +6755,7 @@ public class OpenSPCoop2Properties {
 		if(this.repositoryDirectory==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.directory");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.directory");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -6780,7 +6780,7 @@ public class OpenSPCoop2Properties {
 		if(this.repositoryJDBCAdapter==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.jdbcAdapter");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.jdbcAdapter");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -6803,7 +6803,7 @@ public class OpenSPCoop2Properties {
 
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.forceIndex");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.forceIndex");
 
 				if(name!=null){
 					name = name.trim();
@@ -6847,7 +6847,7 @@ public class OpenSPCoop2Properties {
 		if(this.isFileCacheEnable==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.attachment.fileCacheEnable");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.attachment.fileCacheEnable");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileCacheEnable' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -6870,7 +6870,7 @@ public class OpenSPCoop2Properties {
 		if(this.attachmentRepoDir==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.attachment.repositoryDir");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.attachment.repositoryDir");
 
 				if(name!=null){
 					name = name.trim();
@@ -6897,7 +6897,7 @@ public class OpenSPCoop2Properties {
 		if(this.fileThreshold==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.attachment.fileThreshold");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.attachment.fileThreshold");
 
 				if(name!=null){
 					name = name.trim();
@@ -6922,7 +6922,7 @@ public class OpenSPCoop2Properties {
 		if(this.filePrefix==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.attachment.filePrefix");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.attachment.filePrefix");
 
 				if(name!=null){
 					name = name.trim();
@@ -6947,7 +6947,7 @@ public class OpenSPCoop2Properties {
 		if(this.fileSuffix==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.attachment.fileSuffix");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.attachment.fileSuffix");
 
 				if(name!=null){
 					name = name.trim();
@@ -6972,7 +6972,7 @@ public class OpenSPCoop2Properties {
 		if(this.deleteInterval==0){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.attachment.deleteInterval");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.attachment.deleteInterval");
 
 				if(name!=null){
 					name = name.trim();
@@ -7002,7 +7002,7 @@ public class OpenSPCoop2Properties {
 		if(this.repositoryIntervalloEliminazioneMessaggi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.timer");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.timer");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -7027,7 +7027,7 @@ public class OpenSPCoop2Properties {
 		if(this.repositoryIntervalloScadenzaMessaggi == null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.scadenzaMessaggio");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.scadenzaMessaggio");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -7047,7 +7047,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soapMessage.reader";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -7069,7 +7069,7 @@ public class OpenSPCoop2Properties {
 		if(this.soapMessageReaderBufferThresholdKb==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soapMessage.reader.bufferThreshold");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soapMessage.reader.bufferThreshold");
 
 				if(name!=null){
 					name = name.trim();
@@ -7094,7 +7094,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soapMessage.reader.headerOptimization";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -7116,7 +7116,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soapMessage.passthrough";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -7138,7 +7138,7 @@ public class OpenSPCoop2Properties {
 		if(this.soapMessageSaajSaxParserPoolSize==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soapMessage.saaj.saxParserPoolSize");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soapMessage.saaj.saxParserPoolSize");
 
 				if(name!=null){
 					name = name.trim();
@@ -7164,7 +7164,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soapMessage.v12.alternativeContentTypes";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.alternativeContentTypeSoap12 = null;
 				}else{
@@ -7197,7 +7197,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.restMessage.multipart.lazy";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -7225,7 +7225,7 @@ public class OpenSPCoop2Properties {
 	public boolean isRepositoryBusteFiltraBusteScaduteRispettoOraRegistrazione() {	
 		if(this.repositoryBusteFiltraBusteScaduteRispettoOraRegistrazione==null){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione");
 				if(value==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione' non definita (Viene utilizzato il default:true)");
 					this.repositoryBusteFiltraBusteScaduteRispettoOraRegistrazione = true;
@@ -7252,7 +7252,7 @@ public class OpenSPCoop2Properties {
 		if(this.repositoryIntervalloScadenzaCorrelazioneApplicativa == null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa");
 				if(name==null){
 					//throw new CoreException(NON_DEFINITA);
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa' non definita, viene usato il valore impostato nella proprieta 'org.openspcoop2.pdd.repository.scadenzaMessaggio'");
@@ -7276,7 +7276,7 @@ public class OpenSPCoop2Properties {
 		if(this.maxLengthCorrelazioneApplicativa == null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength");
 				if(name==null){
 					//throw new CoreException(NON_DEFINITA);
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength' non definita, viene usato il valore di default: 255");
@@ -7301,7 +7301,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.blocca.truncate";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					//throw new CoreException(NON_DEFINITA);
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
@@ -7326,7 +7326,7 @@ public class OpenSPCoop2Properties {
 		if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_read == null){
 			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.blocca.truncate.length";
 			try{ 
-				String name = this.reader.getValue_convertEnvProperties(pName);
+				String name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null && StringUtils.isNotEmpty(name.trim())){
 					name = name.trim();
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = java.lang.Integer.parseInt(name);
@@ -7358,7 +7358,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.accetta.truncate";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					//throw new CoreException(NON_DEFINITA);
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
@@ -7383,7 +7383,7 @@ public class OpenSPCoop2Properties {
 		if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_read == null){
 			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.accetta.truncate.length";
 			try{ 
-				String name = this.reader.getValue_convertEnvProperties(pName);
+				String name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null && StringUtils.isNotEmpty(name.trim())){
 					name = name.trim();
 					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = java.lang.Integer.parseInt(name);
@@ -7416,7 +7416,7 @@ public class OpenSPCoop2Properties {
 		if(this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione");
 				
 				if(name!=null){
 					name = name.trim();
@@ -7441,7 +7441,7 @@ public class OpenSPCoop2Properties {
 		if(this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione.soloCorrelazioniSenzaScadenza");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione.soloCorrelazioniSenzaScadenza");
 				
 				if(name!=null){
 					name = name.trim();
@@ -7472,7 +7472,7 @@ public class OpenSPCoop2Properties {
 		if(this.msgGiaInProcessamento_AttesaAttiva==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.messaggioInProcessamento.attesaAttiva");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.messaggioInProcessamento.attesaAttiva");
 
 				if(name!=null){
 					name = name.trim();
@@ -7503,7 +7503,7 @@ public class OpenSPCoop2Properties {
 		if(this.msgGiaInProcessamento_CheckInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.messaggioInProcessamento.check");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.messaggioInProcessamento.check");
 
 				if(name!=null){
 					name = name.trim();
@@ -7528,7 +7528,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.repository.messaggioInProcessamento.useLock";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -7558,7 +7558,7 @@ public class OpenSPCoop2Properties {
 		if(this.repositoryThresholdTypesRead == false){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.threshold.tipi");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.threshold.tipi");
 				if(name==null){
 					this.repositoryThresholdTypes = null;
 				}else{
@@ -7594,7 +7594,7 @@ public class OpenSPCoop2Properties {
 	public Properties getRepositoryThresholdParameters(String tipoThreshould) {	
 		if(this.repositoryThresholdParametersRead==false){
 			try{ 
-				this.repositoryThresholdParameters = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.repository.threshold."+tipoThreshould+".");
+				this.repositoryThresholdParameters = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.repository.threshold."+tipoThreshould+".");
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold."+tipoThreshould+".*': "+e.getMessage(),e);
 				this.repositoryThresholdParameters = null;
@@ -7616,7 +7616,7 @@ public class OpenSPCoop2Properties {
 		if(this.repositoryThresholdCheckInterval == null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.threshold.checkInterval");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.threshold.checkInterval");
 				if(name!=null){
 					name = name.trim();
 					this.repositoryThresholdCheckInterval = java.lang.Long.parseLong(name);
@@ -7643,7 +7643,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneSemanticaConfigurazioneStartupXML==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.startup.config.xml.validazioneSemantica"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.startup.config.xml.validazioneSemantica"); 
 
 				if (value != null){
 					value = value.trim();
@@ -7679,7 +7679,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneSemanticaConfigurazioneStartup==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.startup.config.validazioneSemantica"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.startup.config.validazioneSemantica"); 
 
 				if (value != null){
 					value = value.trim();
@@ -7715,7 +7715,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneSemanticaRegistroServiziStartupXML==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.startup.registri.xml.validazioneSemantica"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.startup.registri.xml.validazioneSemantica"); 
 
 				if (value != null){
 					value = value.trim();
@@ -7751,7 +7751,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneSemanticaRegistroServiziStartup==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.startup.registri.validazioneSemantica"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.startup.registri.validazioneSemantica"); 
 
 				if (value != null){
 					value = value.trim();
@@ -7787,7 +7787,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneSemanticaRegistroServiziCheckURI==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.startup.registri.validazioneSemantica.checkURI"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.startup.registri.validazioneSemantica.checkURI"); 
 
 				if (value != null){
 					value = value.trim();
@@ -7873,7 +7873,7 @@ public class OpenSPCoop2Properties {
 	}
 	private boolean isAbilitatoControlloRisorse(String tipo) {	
 		try{  
-			String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo); 
+			String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo); 
 			if(value==null){
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+"' non impostata, viene utilizzato il default=false");
 				return false;
@@ -7888,7 +7888,7 @@ public class OpenSPCoop2Properties {
 	public boolean isControlloRisorseRegistriRaggiungibilitaTotale() {	
 		if(this.isControlloRisorseRegistriRaggiungibilitaTotale==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.risorse.check.registri.tipo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.check.registri.tipo"); 
 				if(value==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check.registri.tipo' non impostata, viene utilizzato il default=false");
 					this.isControlloRisorseRegistriRaggiungibilitaTotale = false;
@@ -7949,7 +7949,7 @@ public class OpenSPCoop2Properties {
 	}
 	private int getNumeroIterazioniFalliteControlloRisorse(String tipo) {	
 		try{  
-			String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo+".iterazioni"); 
+			String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo+".iterazioni"); 
 			if(value==null){
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+".iterazioni' non impostata, viene utilizzato il default=1");
 				return 1;
@@ -8005,7 +8005,7 @@ public class OpenSPCoop2Properties {
 	}
 	private int getIterazioniFalliteCheckIntervalControlloRisorse(String tipo) {	
 		try{  
-			String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo+".checkInterval"); 
+			String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo+".checkInterval"); 
 			if(value==null){
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+".checkInterval' non impostata, viene utilizzato il default=500");
 				return 500;
@@ -8028,7 +8028,7 @@ public class OpenSPCoop2Properties {
 		if(this.controlloRisorseCheckInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.risorse.checkInterval");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.checkInterval");
 				if(name!=null){
 					name = name.trim();
 					this.controlloRisorseCheckInterval = java.lang.Long.parseLong(name);
@@ -8049,7 +8049,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloRisorseRegistrazioneEvento==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.risorse.registraEvento");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.registraEvento");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.registraEvento' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -8086,7 +8086,7 @@ public class OpenSPCoop2Properties {
 		if(this.proprietaGestioneErrorePD==null){
 			String fault = null;
 			try{  
-				fault = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.fault"); 
+				fault = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.fault"); 
 				if(fault==null)
 					throw new CoreException(NON_DEFINITA);
 				fault = fault.trim();		
@@ -8097,7 +8097,7 @@ public class OpenSPCoop2Properties {
 
 			String faultCodeIntegrationNamespace = null;
 			try{  
-				faultCodeIntegrationNamespace = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultCode.integrationNamespace"); 
+				faultCodeIntegrationNamespace = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultCode.integrationNamespace"); 
 				if(faultCodeIntegrationNamespace!=null) {
 					faultCodeIntegrationNamespace = faultCodeIntegrationNamespace.trim();
 				}
@@ -8107,7 +8107,7 @@ public class OpenSPCoop2Properties {
 			
 			String faultCodeProtocolNamespace = null;
 			try{  
-				faultCodeProtocolNamespace = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultCode.protocolNamespace"); 
+				faultCodeProtocolNamespace = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultCode.protocolNamespace"); 
 				if(faultCodeProtocolNamespace!=null) {
 					faultCodeProtocolNamespace = faultCodeProtocolNamespace.trim();
 				}
@@ -8117,7 +8117,7 @@ public class OpenSPCoop2Properties {
 			
 			String faultActor = null;
 			try{  
-				faultActor = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultActor"); 
+				faultActor = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultActor"); 
 				if(faultActor==null)
 					throw new CoreException(NON_DEFINITA);
 				faultActor = faultActor.trim();		
@@ -8128,7 +8128,7 @@ public class OpenSPCoop2Properties {
 
 			String faultGeneric = null;
 			try{  
-				faultGeneric = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.genericFaultCode"); 
+				faultGeneric = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.genericFaultCode"); 
 				if(faultGeneric==null)
 					throw new CoreException(NON_DEFINITA);
 				faultGeneric = faultGeneric.trim();		
@@ -8139,7 +8139,7 @@ public class OpenSPCoop2Properties {
 
 			String faultPrefix = null;
 			try{  
-				faultPrefix = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.prefixFaultCode"); 
+				faultPrefix = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.prefixFaultCode"); 
 				if(faultPrefix!=null)
 					faultPrefix = faultPrefix.trim();		
 			}catch(java.lang.Exception e) {
@@ -8215,18 +8215,18 @@ public class OpenSPCoop2Properties {
 	public Locale getLocaleSOAPFaultString(){
 		if(this.localeSOAPFaultStringRead==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultString.language"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultString.language"); 
 				if (value != null){
 					value = value.trim();
 					
 					String language = value;
 					
-					String country = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultString.country"); 
+					String country = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultString.country"); 
 					if(country!=null) {
 						country = country.trim();
 					}
 					
-					String variant = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultString.variant"); 
+					String variant = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultString.variant"); 
 					if(variant!=null) {
 						variant = variant.trim();
 					}
@@ -8255,7 +8255,7 @@ public class OpenSPCoop2Properties {
 	public boolean isErroreApplicativoIntoDetails(){
 		if(this.isErroreApplicativoIntoDetails==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.fault.details"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.fault.details"); 
 
 				if (value != null){
 					value = value.trim();
@@ -8284,7 +8284,7 @@ public class OpenSPCoop2Properties {
 	public boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
 		if(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails"); 
 
 				if (value != null){
 					value = value.trim();
@@ -8313,7 +8313,7 @@ public class OpenSPCoop2Properties {
 	public boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
 		if(this.isAggiungiDetailErroreApplicativo_SoapFaultPdD==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails"); 
 
 				if (value != null){
 					value = value.trim();
@@ -8340,7 +8340,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.errori.http.govwayStatus";
 		if(this.getErroriHttpHeaderGovWayStatus==null){
 			try{  
-				String name = this.reader.getValue_convertEnvProperties(pName); 
+				String name = this.reader.getValueConvertEnvProperties(pName); 
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -8361,7 +8361,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.errori.http.govwayType";
 		if(this.getErroriHttpHeaderGovWayType==null){
 			try{  
-				String name = this.reader.getValue_convertEnvProperties(pName); 
+				String name = this.reader.getValueConvertEnvProperties(pName); 
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -8382,7 +8382,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.errori.http.govwayCode";
 		if(this.getErroriHttpHeaderGovWayCode==null){
 			try{  
-				String name = this.reader.getValue_convertEnvProperties(pName); 
+				String name = this.reader.getValueConvertEnvProperties(pName); 
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -8404,7 +8404,7 @@ public class OpenSPCoop2Properties {
 		if(this.isErroriSoapUseGovWayStatusAsFaultCode==null){
 			String pName = "org.openspcoop2.pdd.errori.soap.useGovWayStatusAsFaultCode";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8428,7 +8428,7 @@ public class OpenSPCoop2Properties {
 		if(this.isErroriSoapHttpHeaderGovWayCodeEnabled==null){
 			String pName = "org.openspcoop2.pdd.errori.soap.HttpHeaderGovWayCode.enabled";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8452,7 +8452,7 @@ public class OpenSPCoop2Properties {
 		if(this.isErroriGovWayStatusEnabled==null){
 			String pName = "org.openspcoop2.pdd.errori.status";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8476,7 +8476,7 @@ public class OpenSPCoop2Properties {
 		if(this.isErroriGovWayInstanceEnabled==null){
 			String pName = "org.openspcoop2.pdd.errori.instance";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8500,7 +8500,7 @@ public class OpenSPCoop2Properties {
 		if(this.isErroriGovWayForceSpecificDetails==null){
 			String pName = "org.openspcoop2.pdd.errori.forceSpecificDetails";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8524,7 +8524,7 @@ public class OpenSPCoop2Properties {
 		if(this.isErroriGovWayFaultDetailsWithProblemRFC7807==null){
 			String pName = "org.openspcoop2.pdd.errori.faultDetailsWithProblemRFC7807";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8551,7 +8551,7 @@ public class OpenSPCoop2Properties {
 		if(this.isProblemRFC7807_enrichTitleAsGovWayType==null){
 			String pName = "org.openspcoop2.pdd.problemRFC7807.enrichTitleAsGovWayType";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8576,7 +8576,7 @@ public class OpenSPCoop2Properties {
 		if(this.isProblemRFC7807_enrichTitleAsGovWayType_camelCaseDecode==null){
 			String pName = "org.openspcoop2.pdd.problemRFC7807.enrichTitleAsGovWayType.camelCaseDecode";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8601,7 +8601,7 @@ public class OpenSPCoop2Properties {
 		if(this.isProblemRFC7807_enrichTitleAsGovWayType_customClaim==null){
 			String pName = "org.openspcoop2.pdd.problemRFC7807.enrichTitleAsGovWayType.customClaim";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8627,7 +8627,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.problemRFC7807.transactionId.claim";
 		if(this.getProblemRFC7807_transactionId_claim==null){
 			try{  
-				String fault = this.reader.getValue_convertEnvProperties(pName); 
+				String fault = this.reader.getValueConvertEnvProperties(pName); 
 				if(fault==null)
 					throw new CoreException(NON_DEFINITA);
 				fault = fault.trim();
@@ -8648,7 +8648,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.problemRFC7807.code.claim";
 		if(this.getProblemRFC7807_code_claim==null){
 			try{  
-				String fault = this.reader.getValue_convertEnvProperties(pName); 
+				String fault = this.reader.getValueConvertEnvProperties(pName); 
 				if(fault==null)
 					throw new CoreException(NON_DEFINITA);
 				fault = fault.trim();
@@ -8669,7 +8669,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.problemRFC7807.type.claim";
 		if(this.getProblemRFC7807_type_claim==null){
 			try{  
-				String fault = this.reader.getValue_convertEnvProperties(pName); 
+				String fault = this.reader.getValueConvertEnvProperties(pName); 
 				if(fault==null)
 					throw new CoreException(NON_DEFINITA);
 				fault = fault.trim();
@@ -8700,7 +8700,7 @@ public class OpenSPCoop2Properties {
 	private String getIdentificativoPortaDefault(){
 		if(this.identificativoPortaDefault==null){
 			try{  
-				String fault = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.identificativoPorta.dominio"); 
+				String fault = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.identificativoPorta.dominio"); 
 				if(fault==null)
 					throw new CoreException(NON_DEFINITA);
 				fault = fault.trim();
@@ -8724,7 +8724,7 @@ public class OpenSPCoop2Properties {
 	private String getNomePortaDefault(){
 		if(this.nomePortaDefault==null){
 			try{  
-				String fault = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.identificativoPorta.nome"); 
+				String fault = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.identificativoPorta.nome"); 
 				if(fault==null)
 					throw new CoreException(NON_DEFINITA);
 				fault = fault.trim();
@@ -8750,7 +8750,7 @@ public class OpenSPCoop2Properties {
 	private String getTipoPortaDefault(){
 		if(this.tipoPortaDefault==null){
 			try{  
-				String fault = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.identificativoPorta.tipo"); 
+				String fault = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.identificativoPorta.tipo"); 
 				if(fault==null)
 					throw new CoreException(NON_DEFINITA);
 				fault = fault.trim();
@@ -8808,7 +8808,7 @@ public class OpenSPCoop2Properties {
 			
 			try{  
 				
-				String fault = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd."+protocol+".identificativoPorta.dominio"); 
+				String fault = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd."+protocol+".identificativoPorta.dominio"); 
 				if(fault==null){
 					fault = this.getIdentificativoPortaDefault();
 				}else{
@@ -8836,7 +8836,7 @@ public class OpenSPCoop2Properties {
 			
 			try{  
 				
-				String nome = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd."+protocol+".identificativoPorta.nome"); 
+				String nome = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd."+protocol+".identificativoPorta.nome"); 
 				if(nome==null){
 					nome = this.getNomePortaDefault();
 				}else{
@@ -8864,7 +8864,7 @@ public class OpenSPCoop2Properties {
 			
 			try{  
 				
-				String tipo = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd."+protocol+".identificativoPorta.tipo"); 
+				String tipo = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd."+protocol+".identificativoPorta.tipo"); 
 				if(tipo==null){
 					tipo = this.getTipoPortaDefault();
 				}else{
@@ -8952,7 +8952,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autorizzazione.lock.permits";
 		if(this.getAutorizzazione_lock_permits_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -8983,7 +8983,7 @@ public class OpenSPCoop2Properties {
 			this.getTipoAutorizzazione_lock_permits = new HashMap<>();
 			
 			try{  
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null) {
@@ -9019,7 +9019,7 @@ public class OpenSPCoop2Properties {
 	public String getTipoAutorizzazioneBuste(){
 		if(this.tipoAutorizzazioneBuste==null){
 			try{  
-				String autorizzazione = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.autorizzazioneBuste.tipo");
+				String autorizzazione = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.autorizzazioneBuste.tipo");
 				if(autorizzazione==null)
 					throw new CoreException(NON_DEFINITA);
 				autorizzazione = autorizzazione.trim();
@@ -9041,7 +9041,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.autorizzazioneBusta.autenticazioneOpzionale.soggettoFruitoreProfiloInteroperabilitaDifferenteServizio.bloccaRichiesta";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -9071,7 +9071,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autorizzazioneContenuti.lock.permits";
 		if(this.getAutorizzazioneContenuti_lock_permits_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -9102,7 +9102,7 @@ public class OpenSPCoop2Properties {
 			this.getTipoAutorizzazioneContenuti_lock_permits = new HashMap<>();
 			
 			try{  
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null) {
@@ -9156,7 +9156,7 @@ public class OpenSPCoop2Properties {
 			
 			List<NameValue> resultList = new ArrayList<NameValue>();
 			try{ 
-				java.util.Properties tmpP = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.");
+				java.util.Properties tmpP = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.");
 				if(tmpP!=null && tmpP.size()>0){
 					Enumeration<Object> keys = tmpP.keys();
 					while (keys.hasMoreElements()) {
@@ -9233,7 +9233,7 @@ public class OpenSPCoop2Properties {
 	public boolean isBypassFilterMustUnderstandEnabledForAllHeaders(){
 		if(this.isBypassFilterMustUnderstandEnabledForAllHeaders==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.BypassMustUnderstandHandler.allHeaders"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.BypassMustUnderstandHandler.allHeaders"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9264,7 +9264,7 @@ public class OpenSPCoop2Properties {
 	public boolean isControlloContentTypeAbilitatoRicezioneContenutiApplicativi(){
 		if(this.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.contentType.checkEnabled"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.contentType.checkEnabled"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9286,7 +9286,7 @@ public class OpenSPCoop2Properties {
 	public boolean isControlloContentTypeAbilitatoRicezioneBuste(){
 		if(this.isControlloContentTypeAbilitatoRicezioneBuste==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9310,7 +9310,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap==null){
 			String pName = "org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soap.charsetExpected";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9365,7 +9365,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest==null){
 			String pName = "org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.rest.charsetExpected";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9420,7 +9420,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap==null){
 			String pName = "org.openspcoop2.pdd.services.ricezioneBuste.soap.charsetExpected";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9475,7 +9475,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest==null){
 			String pName = "org.openspcoop2.pdd.services.ricezioneBuste.rest.charsetExpected";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9528,7 +9528,7 @@ public class OpenSPCoop2Properties {
 	public boolean isPrintInfoCertificate(){
 		if(this.isPrintInfoCertificate==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.certificate.printInfo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.certificate.printInfo"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9556,7 +9556,7 @@ public class OpenSPCoop2Properties {
 		String pName = prefixGestoreCredenzialiPortaDelegataProperties+"enabled";
         if(this.isGestoreCredenzialiPortaDelegataEnabled==null){
                 try{  
-                        String value = this.reader.getValue_convertEnvProperties(pName); 
+                        String value = this.reader.getValueConvertEnvProperties(pName); 
 
                         if(value!=null){
                                 value = value.trim();
@@ -9602,7 +9602,7 @@ public class OpenSPCoop2Properties {
 		String pName = prefixGestoreCredenzialiPortaApplicativaProperties+"enabled";
         if(this.isGestoreCredenzialiPortaApplicativaEnabled==null){
                 try{  
-                        String value = this.reader.getValue_convertEnvProperties(pName); 
+                        String value = this.reader.getValueConvertEnvProperties(pName); 
 
                         if(value!=null){
                                 value = value.trim();
@@ -9646,7 +9646,7 @@ public class OpenSPCoop2Properties {
 		if(this.getHSMConfig==null){
 			String pName = "org.openspcoop2.pdd.hsm.config";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					if(!"".equals(value)) {
@@ -9667,7 +9667,7 @@ public class OpenSPCoop2Properties {
 		if(this.isHSMConfigRequired==null){
 			String pName = "org.openspcoop2.pdd.hsm.required";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9690,7 +9690,7 @@ public class OpenSPCoop2Properties {
 		if(this.isHSMConfig_uniqueProviderInstance==null){
 			String pName = "org.openspcoop2.pdd.hsm.uniqueProviderInstance";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9718,7 +9718,7 @@ public class OpenSPCoop2Properties {
 		if(this.getOCSPConfig==null){
 			String pName = "org.openspcoop2.pdd.ocsp.config";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					if(!"".equals(value)) {
@@ -9739,7 +9739,7 @@ public class OpenSPCoop2Properties {
 		if(this.isOCSPConfigRequired==null){
 			String pName = "org.openspcoop2.pdd.ocsp.required";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9762,7 +9762,7 @@ public class OpenSPCoop2Properties {
 		if(this.isOCSPConfigLoadDefault==null){
 			String pName = "org.openspcoop2.pdd.ocsp.loadDefault";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9796,7 +9796,7 @@ public class OpenSPCoop2Properties {
 		if(this.nodeReceiverTimeout == null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeReceiver.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.nodeReceiver.timeout");
 				if(name!=null){
 					name = name.trim();
 					this.nodeReceiverTimeout = java.lang.Long.parseLong(name);
@@ -9823,7 +9823,7 @@ public class OpenSPCoop2Properties {
 		if(this.nodeReceiverTimeoutRicezioneContenutiApplicativi == null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeReceiver.ricezioneContenutiApplicativi.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.nodeReceiver.ricezioneContenutiApplicativi.timeout");
 				if(name!=null){
 					name = name.trim();
 					this.nodeReceiverTimeoutRicezioneContenutiApplicativi = java.lang.Long.parseLong(name);
@@ -9850,7 +9850,7 @@ public class OpenSPCoop2Properties {
 		if(this.nodeReceiverTimeoutRicezioneBuste == null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeReceiver.ricezioneBuste.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.nodeReceiver.ricezioneBuste.timeout");
 
 				if(name!=null){
 					name = name.trim();
@@ -9878,7 +9878,7 @@ public class OpenSPCoop2Properties {
 		if(this.nodeReceiverCheckInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeReceiver.check");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.nodeReceiver.check");
 				if(name!=null){
 					name = name.trim();
 					this.nodeReceiverCheckInterval = java.lang.Integer.parseInt(name);
@@ -9906,7 +9906,7 @@ public class OpenSPCoop2Properties {
 		if(this.nodeReceiverCheckDBInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeReceiver.checkDB");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.nodeReceiver.checkDB");
 
 				if(name!=null){
 					name = name.trim();
@@ -9934,7 +9934,7 @@ public class OpenSPCoop2Properties {
 	public String getNodeReceiver() {
 		if(this.nodeReceiver==null){
 			try{ 
-				this.nodeReceiver = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeReceiver");
+				this.nodeReceiver = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.nodeReceiver");
 				if(this.nodeReceiver==null)
 					throw new CoreException(NON_DEFINITA);
 				this.nodeReceiver = this.nodeReceiver.trim();
@@ -9959,7 +9959,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.singleConnection_nodeReceiver_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeReceiver.singleConnection"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.nodeReceiver.singleConnection"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -9993,7 +9993,7 @@ public class OpenSPCoop2Properties {
 	public String getNodeSender() {
 		if(this.nodeSender==null){
 			try{ 
-				this.nodeSender = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.nodeSender");
+				this.nodeSender = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.nodeSender");
 				if(this.nodeSender==null)
 					throw new CoreException(NON_DEFINITA);
 				this.nodeSender = this.nodeSender.trim();
@@ -10027,7 +10027,7 @@ public class OpenSPCoop2Properties {
 		if(this.timerEJBDeployTimeout==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.timeout");
 
 				if(name!=null){
 					name = name.trim();
@@ -10055,7 +10055,7 @@ public class OpenSPCoop2Properties {
 		if(this.timerEJBDeployCheckInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.check");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.check");
 
 				if(name!=null){
 					name = name.trim();
@@ -10093,7 +10093,7 @@ public class OpenSPCoop2Properties {
 		if(this.transactionManager_AttesaAttiva==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.attesaAttiva");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.attesaAttiva");
 
 				if(name!=null){
 					name = name.trim();
@@ -10123,7 +10123,7 @@ public class OpenSPCoop2Properties {
 		if(this.transactionManager_CheckInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.check");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.check");
 
 				if(name!=null){
 					name = name.trim();
@@ -10153,7 +10153,7 @@ public class OpenSPCoop2Properties {
 		if(this.transactionManager_CheckDBInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.checkDB");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.checkDB");
 
 				if(name!=null){
 					name = name.trim();
@@ -10184,7 +10184,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.singleConnection_TransactionManager_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.singleConnection"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.singleConnection"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -10222,7 +10222,7 @@ public class OpenSPCoop2Properties {
 		if(this.gestioneSerializableDB_AttesaAttiva==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.jdbc.serializable.attesaAttiva");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.jdbc.serializable.attesaAttiva");
 				if (name != null) {
 					name = name.trim();
 					long time = java.lang.Long.parseLong(name);
@@ -10250,7 +10250,7 @@ public class OpenSPCoop2Properties {
 		if(this.gestioneSerializableDB_CheckInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.jdbc.serializable.check");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.jdbc.serializable.check");
 				if (name != null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
@@ -10287,7 +10287,7 @@ public class OpenSPCoop2Properties {
 		if(this.gestoreRepositoryBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.repository.gestore");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.repository.gestore");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -10325,7 +10325,7 @@ public class OpenSPCoop2Properties {
 		if(this.gestoreFiltroDuplicatiRepositoryBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.filtroDuplicati");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.filtroDuplicati");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroDuplicati' non impostata, viene utilizzato il default="+CostantiConfigurazione.FILTRO_DUPLICATI_OPENSPCOOP);
 					this.gestoreFiltroDuplicatiRepositoryBuste = CostantiConfigurazione.FILTRO_DUPLICATI_OPENSPCOOP;
@@ -10370,7 +10370,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGenerazioneAttributiAsincroni==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.asincroni.attributiCorrelati.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.asincroni.attributiCorrelati.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10401,7 +10401,7 @@ public class OpenSPCoop2Properties {
 	public boolean ignoraEccezioniNonGravi_Validazione(){
 		if(this.ignoraEccezioniNonGravi_Validazione==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10430,7 +10430,7 @@ public class OpenSPCoop2Properties {
 	public boolean isForceSoapPrefixCompatibilitaOpenSPCoopV1(){
 		if(this.forceSoapPrefixCompatibilitaOpenSPCoopV1==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.backwardCompatibility.forceSoapPrefix"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.spcoop.backwardCompatibility.forceSoapPrefix"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10475,7 +10475,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGenerazioneListaTrasmissioni==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasmissione.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasmissione.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10519,7 +10519,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGenerazioneErroreFiltroDuplicati==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.filtroduplicati.generazioneErrore"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.filtroduplicati.generazioneErrore"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10563,7 +10563,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isCheckFromRegistroFiltroDuplicatiAbilitato==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.filtroDuplicati.letturaRegistro"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.filtroDuplicati.letturaRegistro"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10607,7 +10607,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isCheckFromRegistroConfermaRicezioneAbilitato==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.confermaRicezione.letturaRegistro"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.confermaRicezione.letturaRegistro"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10651,7 +10651,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isCheckFromRegistroConsegnaInOrdineAbilitato==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.consegnaInOrdine.letturaRegistro"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.consegnaInOrdine.letturaRegistro"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10695,7 +10695,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGestioneElementoCollaborazione==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.collaborazione.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.collaborazione.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10733,7 +10733,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGestioneElementoIdRiferimentoRichiesta==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.idRiferimentoRichiesta.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.idRiferimentoRichiesta.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10777,7 +10777,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGestioneConsegnaInOrdine==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.consegnaInOrdine.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.consegnaInOrdine.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10821,7 +10821,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGestioneRiscontri==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.riscontri.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.riscontri.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10871,7 +10871,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isReadQualifiedAttribute==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.validazione.readQualifiedAttribute"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.validazione.readQualifiedAttribute"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10919,7 +10919,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneIDBustaCompleta==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.validazione.idbusta.validazioneCompleta"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.validazione.idbusta.validazioneCompleta"); 
 
 				if (value != null){
 					value = value.trim();
@@ -10956,7 +10956,7 @@ public class OpenSPCoop2Properties {
 		if(this.filePddPropertiesLetto==false){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.pddProperties");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.pddProperties");
 				if(name!=null){
 					name = name.trim();
 					this.filePddProperties = name;
@@ -10988,7 +10988,7 @@ public class OpenSPCoop2Properties {
 	public String[] getTipoIntegrazionePD() {
 		if(this.tipoIntegrazionePDRead == false){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pd"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pd"); 
 				if(value==null)
 					throw new CoreException(NON_DEFINITA);
 				value = value.trim();
@@ -11014,7 +11014,7 @@ public class OpenSPCoop2Properties {
 	public String[] getTipoIntegrazionePA() {
 		if(this.tipoIntegrazionePARead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pa");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pa");
 				if(value==null)
 					throw new CoreException(NON_DEFINITA);
 				value = value.trim();
@@ -11045,7 +11045,7 @@ public class OpenSPCoop2Properties {
 			(this.tipoIntegrazionePD_perProtocollo_notExists.containsKey(protocollo)==false) 
 		){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo); 
 				if(value==null){
 					this.tipoIntegrazionePD_perProtocollo_notExists.put(protocollo, false);
 				}
@@ -11082,7 +11082,7 @@ public class OpenSPCoop2Properties {
 			(this.tipoIntegrazionePA_perProtocollo_notExists.containsKey(protocollo)==false) 
 		){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo); 
 				if(value==null){
 					this.tipoIntegrazionePA_perProtocollo_notExists.put(protocollo, false);
 				}
@@ -11120,7 +11120,7 @@ public class OpenSPCoop2Properties {
 	public boolean isIntegrazioneAsincroniConIdCollaborazioneEnabled(){
 		if(this.isIntegrazioneAsincroniConIdCollaborazioneEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.asincroni.idCollaborazione.enabled"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.asincroni.idCollaborazione.enabled"); 
 
 				if (value != null){
 					value = value.trim();
@@ -11144,7 +11144,7 @@ public class OpenSPCoop2Properties {
 		if(this.newOldMapping_backward_compatibility_trasparente_soggetto==null){
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.trasparente.soggetto.tipo.";
 			try{ 
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				this.newOldMapping_backward_compatibility_trasparente_soggetto=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
@@ -11168,7 +11168,7 @@ public class OpenSPCoop2Properties {
 		if(this.newOldMapping_backward_compatibility_trasparente_servizio==null){
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.trasparente.servizio.tipo.";
 			try{ 
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				this.newOldMapping_backward_compatibility_trasparente_servizio=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
@@ -11193,7 +11193,7 @@ public class OpenSPCoop2Properties {
 		if(this.newOldMapping_backward_compatibility_spcoop_soggetto==null){
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.spcoop.soggetto.tipo.";
 			try{ 
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				this.newOldMapping_backward_compatibility_spcoop_soggetto=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
@@ -11217,7 +11217,7 @@ public class OpenSPCoop2Properties {
 		if(this.newOldMapping_backward_compatibility_spcoop_servizio==null){
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.spcoop.servizio.tipo.";
 			try{ 
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				this.newOldMapping_backward_compatibility_spcoop_servizio=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
@@ -11242,7 +11242,7 @@ public class OpenSPCoop2Properties {
 		if(this.newOldMapping_backward_compatibility_sdi_soggetto==null){
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.sdi.soggetto.tipo.";
 			try{ 
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				this.newOldMapping_backward_compatibility_sdi_soggetto=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
@@ -11266,7 +11266,7 @@ public class OpenSPCoop2Properties {
 		if(this.newOldMapping_backward_compatibility_sdi_servizio==null){
 			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.sdi.servizio.tipo.";
 			try{ 
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				this.newOldMapping_backward_compatibility_sdi_servizio=new HashMap<>();
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
@@ -11319,7 +11319,7 @@ public class OpenSPCoop2Properties {
 
 			try{ 
 
-				this.keyValue_HeaderIntegrazioneTrasporto = _convertMapToCostantiIntegrazione(this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.keyword."));
+				this.keyValue_HeaderIntegrazioneTrasporto = _convertMapToCostantiIntegrazione(this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.keyword."));
 			
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.keyword.*': "+e.getMessage(),e);
@@ -11338,7 +11338,7 @@ public class OpenSPCoop2Properties {
 
 				this.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2 = 
 						_convertMapToCostantiIntegrazione(
-								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.trasporto.keyword."));
+								this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.trasporto.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.trasporto.keyword.*': "+e.getMessage(),e);
@@ -11357,7 +11357,7 @@ public class OpenSPCoop2Properties {
 
 				this.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1 =  
 						_convertMapToCostantiIntegrazione(
-								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.trasporto.keyword."));
+								this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.trasporto.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.trasporto.keyword.*': "+e.getMessage(),e);
@@ -11385,7 +11385,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties(pName);
+				prop = this.reader.readPropertiesConvertEnvProperties(pName);
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11429,7 +11429,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.");
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11473,7 +11473,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties(pName);
+				prop = this.reader.readPropertiesConvertEnvProperties(pName);
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11522,7 +11522,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.");
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11563,7 +11563,7 @@ public class OpenSPCoop2Properties {
 
 				this.keyValue_HeaderIntegrazioneUrlBased = 
 						_convertMapToCostantiIntegrazione(
-								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.keyword."));
+								this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.keyword.*': "+e.getMessage(),e);
@@ -11582,7 +11582,7 @@ public class OpenSPCoop2Properties {
 
 				this.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2 =  
 						_convertMapToCostantiIntegrazione(
-								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.urlBased.keyword."));
+								this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.urlBased.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.urlBased.keyword.*': "+e.getMessage(),e);
@@ -11601,7 +11601,7 @@ public class OpenSPCoop2Properties {
 
 				this.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1 =  
 						_convertMapToCostantiIntegrazione(
-								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.urlBased.keyword."));
+								this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.urlBased.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.urlBased.keyword.*': "+e.getMessage(),e);
@@ -11619,7 +11619,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled.");
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11653,7 +11653,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.");
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11687,7 +11687,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled.");
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11721,7 +11721,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.");
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11762,7 +11762,7 @@ public class OpenSPCoop2Properties {
 
 				this.keyValue_HeaderIntegrazioneSoap =  
 						_convertMapToCostantiIntegrazione(
-								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.keyword."));
+								this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.keyword.*': "+e.getMessage(),e);
@@ -11781,7 +11781,7 @@ public class OpenSPCoop2Properties {
 
 				this.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2 =  
 						_convertMapToCostantiIntegrazione(
-								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.soap.keyword."));
+								this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.soap.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.soap.keyword.*': "+e.getMessage(),e);
@@ -11800,7 +11800,7 @@ public class OpenSPCoop2Properties {
 
 				this.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1 =  
 						_convertMapToCostantiIntegrazione(
-								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.soap.keyword."));
+								this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.soap.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.soap.keyword.*': "+e.getMessage(),e);
@@ -11828,7 +11828,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties(pName);
+				prop = this.reader.readPropertiesConvertEnvProperties(pName);
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11872,7 +11872,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.");
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11915,7 +11915,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties(pName);
+				prop = this.reader.readPropertiesConvertEnvProperties(pName);
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11964,7 +11964,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.");
 				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -11995,7 +11995,7 @@ public class OpenSPCoop2Properties {
 	public String getHeaderIntegrazioneSOAPPdDVersione(){
 		if(this.headerIntegrazioneSOAPPdDVersione==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pddVersion"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pddVersion"); 
 
 				if (value != null){
 					value = value.trim();
@@ -12019,7 +12019,7 @@ public class OpenSPCoop2Properties {
 	public String getHeaderIntegrazioneSOAPPdDDetails(){
 		if(this.readHeaderIntegrazioneSOAPPdDDetails==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pddDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pddDetails"); 
 
 				if (value != null){
 					value = value.trim();
@@ -12050,7 +12050,7 @@ public class OpenSPCoop2Properties {
 	public boolean deleteHeaderIntegrazioneRequestPD(){
 		if(this.deleteHeaderIntegrazioneRequestPD==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.pd.request.readAndDelete"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.pd.request.readAndDelete"); 
 
 				if (value != null){
 					value = value.trim();
@@ -12081,7 +12081,7 @@ public class OpenSPCoop2Properties {
 	public boolean deleteHeaderIntegrazioneResponsePD(){
 		if(this.deleteHeaderIntegrazioneResponsePD==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.pd.response.readAndDelete"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.pd.response.readAndDelete"); 
 
 				if (value != null){
 					value = value.trim();
@@ -12115,7 +12115,7 @@ public class OpenSPCoop2Properties {
 		}
 		if(this.processHeaderIntegrazionePDResponse==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.pd.response.process"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.pd.response.process"); 
 
 				if (value != null){
 					value = value.trim();
@@ -12148,7 +12148,7 @@ public class OpenSPCoop2Properties {
 	public boolean deleteHeaderIntegrazioneRequestPA(){
 		if(this.deleteHeaderIntegrazioneRequestPA==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.pa.request.readAndDelete"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.pa.request.readAndDelete"); 
 
 				if (value != null){
 					value = value.trim();
@@ -12179,7 +12179,7 @@ public class OpenSPCoop2Properties {
 	public boolean deleteHeaderIntegrazioneResponsePA(){
 		if(this.deleteHeaderIntegrazioneResponsePA==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.pa.response.readAndDelete"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.pa.response.readAndDelete"); 
 
 				if (value != null){
 					value = value.trim();
@@ -12213,7 +12213,7 @@ public class OpenSPCoop2Properties {
 		}
 		if(this.processHeaderIntegrazionePARequest==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.pa.request.process"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.pa.request.process"); 
 
 				if (value != null){
 					value = value.trim();
@@ -12243,7 +12243,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapNameIntegrazione==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.headerName");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.headerName");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12262,7 +12262,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop2==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerName");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerName");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12281,7 +12281,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop1==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerName");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerName");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12305,7 +12305,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapActorIntegrazione==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.headerActor");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.headerActor");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12324,7 +12324,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop2==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerActor");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerActor");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12343,7 +12343,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop1==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerActor");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerActor");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12367,7 +12367,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapPrefixIntegrazione==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.headerPrefix");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.headerPrefix");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12386,7 +12386,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop2==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerPrefix");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerPrefix");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12405,7 +12405,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop1==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerPrefix");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerPrefix");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12429,7 +12429,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapExtProtocolInfoNomeElementoIntegrazione==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.elemento.nome");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.elemento.nome");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12447,7 +12447,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop2==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.elemento.nome");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.elemento.nome");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12465,7 +12465,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop1==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.elemento.nome");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.elemento.nome");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12488,7 +12488,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapExtProtocolInfoNomeAttributoIntegrazione==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.attributo.nome");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.attributo.nome");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12507,7 +12507,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop2==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.attributo.nome");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.attributo.nome");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12526,7 +12526,7 @@ public class OpenSPCoop2Properties {
 		if(this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.attributo.nome");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.attributo.nome");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12550,7 +12550,7 @@ public class OpenSPCoop2Properties {
 		if(this.isIntegrazioneDynamicInfoEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12573,7 +12573,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneDynamicInfoType==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12592,7 +12592,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneDynamicInfoName==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12611,7 +12611,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneDynamicInfoEncodeType==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12630,7 +12630,7 @@ public class OpenSPCoop2Properties {
 		if(this.isIntegrazioneDynamicInfoRequired==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12655,7 +12655,7 @@ public class OpenSPCoop2Properties {
 		if(this.isIntegrazioneResponseDynamicInfoEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12678,7 +12678,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneResponseDynamicInfoName==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12697,7 +12697,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneResponseDynamicInfoEncodeType==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12716,7 +12716,7 @@ public class OpenSPCoop2Properties {
 		if(this.isIntegrazioneResponseDynamicInfoRequired==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12743,7 +12743,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplateRequestPropertyTipo==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12763,7 +12763,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplateRequestPropertyFile==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12783,7 +12783,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplateResponsePropertyTipo==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12803,7 +12803,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplateResponsePropertyFile==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -12826,7 +12826,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplatePortaDelegataRequestTipo_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					this.getIntegrazioneTemplatePortaDelegataRequestTipo = UtilitiesTemplate.convert(name);
@@ -12849,7 +12849,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplatePortaDelegataRequestFile_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					this.getIntegrazioneTemplatePortaDelegataRequestFile = name;
@@ -12872,7 +12872,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplatePortaDelegataResponseTipo_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					this.getIntegrazioneTemplatePortaDelegataResponseTipo = UtilitiesTemplate.convert(name);
@@ -12895,7 +12895,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplatePortaDelegataResponseFile_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					this.getIntegrazioneTemplatePortaDelegataResponseFile = name;
@@ -12919,7 +12919,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplatePortaApplicativaRequestTipo_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					this.getIntegrazioneTemplatePortaApplicativaRequestTipo = UtilitiesTemplate.convert(name);
@@ -12942,7 +12942,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplatePortaApplicativaRequestFile_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					this.getIntegrazioneTemplatePortaApplicativaRequestFile = name;
@@ -12965,7 +12965,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplatePortaApplicativaResponseTipo_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					this.getIntegrazioneTemplatePortaApplicativaResponseTipo = UtilitiesTemplate.convert(name);
@@ -12988,7 +12988,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneTemplatePortaApplicativaResponseFile_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					this.getIntegrazioneTemplatePortaApplicativaResponseFile = name;
@@ -13016,7 +13016,7 @@ public class OpenSPCoop2Properties {
 				this.getIntegrazioneAutenticazionePortaDelegataRequestHeaders = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					String [] split = name.split(",");
@@ -13053,7 +13053,7 @@ public class OpenSPCoop2Properties {
 					for (String hdrName : getIntegrazioneAutenticazionePortaDelegataRequestHeaders) {
 						String pName = pNamePrefix+hdrName;
 						try {
-							String hdrValue = this.reader.getValue_convertEnvProperties(pName);
+							String hdrValue = this.reader.getValueConvertEnvProperties(pName);
 							if(hdrValue==null) {
 								throw new CoreException(NON_DEFINITA);
 							}
@@ -13082,7 +13082,7 @@ public class OpenSPCoop2Properties {
 				this.getIntegrazioneAutenticazionePortaApplicativaRequestHeaders = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					String [] split = name.split(",");
@@ -13119,7 +13119,7 @@ public class OpenSPCoop2Properties {
 					for (String hdrName : getIntegrazioneAutenticazionePortaApplicativaRequestHeaders) {
 						String pName = pNamePrefix+hdrName;
 						try {
-							String hdrValue = this.reader.getValue_convertEnvProperties(pName);
+							String hdrValue = this.reader.getValueConvertEnvProperties(pName);
 							if(hdrValue==null) {
 								throw new CoreException(NON_DEFINITA);
 							}
@@ -13145,7 +13145,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneAutenticazionePropertyHeaders==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -13165,7 +13165,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrazioneAutenticazionePropertyHeaderPrefix==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -13187,7 +13187,7 @@ public class OpenSPCoop2Properties {
 		if(this.isRitardoConsegnaAbilitato==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettore.ritardo.stato");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettore.ritardo.stato");
 				if(name==null)
 					throw new CoreException(NON_DEFINITA);
 				name = name.trim();
@@ -13208,7 +13208,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				long r = -1;
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettore.ritardo.fattore");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettore.ritardo.fattore");
 				if (name != null) {
 					name = name.trim();
 					r = java.lang.Long.parseLong(name);
@@ -13230,7 +13230,7 @@ public class OpenSPCoop2Properties {
 		if(this.isRitardoConsegnaEsponenzialeConMoltiplicazione==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettore.ritardo.operazione");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettore.ritardo.operazione");
 				if (name != null) {
 					name = name.trim();
 					if(name.equals("+")){
@@ -13258,7 +13258,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				long r = 0;
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettore.ritardo.limite");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettore.ritardo.limite");
 				if (name != null) {
 					name = name.trim();
 					r = java.lang.Long.parseLong(name);
@@ -13299,7 +13299,7 @@ public class OpenSPCoop2Properties {
 	public boolean isAbilitataCacheGestoreMessaggi() {
 		if(this.isAbilitataCacheGestoreMessaggi_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -13326,7 +13326,7 @@ public class OpenSPCoop2Properties {
 	public int getDimensioneCacheGestoreMessaggi() throws OpenSPCoop2ConfigurationException{	
 		if(this.dimensioneCacheGestoreMessaggi_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.dimensione"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.dimensione"); 
 				if(value!=null){
 					value = value.trim();
 					this.dimensioneCacheGestoreMessaggi_value = Integer.parseInt(value);
@@ -13351,7 +13351,7 @@ public class OpenSPCoop2Properties {
 	public String getAlgoritmoCacheGestoreMessaggi() throws OpenSPCoop2ConfigurationException{	
 		if(this.algoritmoCacheGestoreMessaggi_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.algoritmo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.algoritmo"); 
 				if(value!=null){
 					value = value.trim();
 					this.algoritmoCacheGestoreMessaggi_value = value;
@@ -13376,7 +13376,7 @@ public class OpenSPCoop2Properties {
 	public int getItemIdleTimeCacheGestoreMessaggi() throws OpenSPCoop2ConfigurationException{	
 		if(this.itemIdleTimeCacheGestoreMessaggi_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemIdleTime"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemIdleTime"); 
 				if(value!=null){
 					value = value.trim();
 					this.itemIdleTimeCacheGestoreMessaggi_value = Integer.parseInt(value);
@@ -13401,7 +13401,7 @@ public class OpenSPCoop2Properties {
 	public int getItemLifeSecondCacheGestoreMessaggi() throws OpenSPCoop2ConfigurationException{
 		if(this.itemLifeSecondCacheGestoreMessaggi_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemLifeSecond"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemLifeSecond"); 
 				if(value!=null){
 					value = value.trim();
 					this.itemLifeSecondCacheGestoreMessaggi_value = Integer.parseInt(value);
@@ -13432,7 +13432,7 @@ public class OpenSPCoop2Properties {
 	public boolean isRisorseJMXAbilitate(){
 		if(this.isRisorseJMXAbilitate==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.jmx.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.jmx.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -13462,7 +13462,7 @@ public class OpenSPCoop2Properties {
 		if(this.jndiNameMBeanServer==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.jmx.jndi.mbeanServer");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.jmx.jndi.mbeanServer");
 				if(name!=null)
 					name = name.trim();
 				this.jndiNameMBeanServer = name;
@@ -13487,7 +13487,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.core.jmx.jndi.property.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.core.jmx.jndi.property.");
 				this.jndiContextMBeanServer = prop;
 
 			}catch(java.lang.Exception e) {
@@ -13515,7 +13515,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.useLimitedInputStream";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoriUseLimitedInputStream = Boolean.parseBoolean(name);
@@ -13542,7 +13542,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.limitedInputStream.threshold";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.getLimitedInputStreamThreshold = java.lang.Long.valueOf(name);
@@ -13566,7 +13566,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.useTimeoutInputStream";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoriUseTimeoutInputStream = Boolean.parseBoolean(name);
@@ -13594,7 +13594,7 @@ public class OpenSPCoop2Properties {
 		if(this.connectionTimeout_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.connection.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.connection.timeout");
 				if(name!=null){
 					name = name.trim();
 					this.connectionTimeout_inoltroBuste = java.lang.Integer.parseInt(name);
@@ -13623,7 +13623,7 @@ public class OpenSPCoop2Properties {
 		if(this.connectionTimeout_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.timeout");
 				if(name!=null){
 					name = name.trim();
 					this.connectionTimeout_consegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
@@ -13652,7 +13652,7 @@ public class OpenSPCoop2Properties {
 		if(this.readConnectionTimeout_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.readConnection.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.readConnection.timeout");
 				if(name!=null){
 					name = name.trim();
 					this.readConnectionTimeout_inoltroBuste = java.lang.Integer.parseInt(name);
@@ -13681,7 +13681,7 @@ public class OpenSPCoop2Properties {
 		if(this.readConnectionTimeout_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.readConnection.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.readConnection.timeout");
 				if(name!=null){
 					name = name.trim();
 					this.readConnectionTimeout_consegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
@@ -13709,7 +13709,7 @@ public class OpenSPCoop2Properties {
 		if(this.connectionLife_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.connection.life");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.connection.life");
 				if(name!=null){
 					name = name.trim();
 					this.connectionLife_inoltroBuste = java.lang.Integer.parseInt(name);
@@ -13738,7 +13738,7 @@ public class OpenSPCoop2Properties {
 		if(this.connectionLife_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.life");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.life");
 				if(name!=null){
 					name = name.trim();
 					this.connectionLife_consegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
@@ -13762,7 +13762,7 @@ public class OpenSPCoop2Properties {
 		if(this.readConnectionTimeout_ricezioneContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.readConnectionTimeout_ricezioneContenutiApplicativi = java.lang.Integer.parseInt(name);
@@ -13785,7 +13785,7 @@ public class OpenSPCoop2Properties {
 		if(this.readConnectionTimeout_ricezioneBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.readConnectionTimeout_ricezioneBuste = java.lang.Integer.parseInt(name);
@@ -13810,7 +13810,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.inoltroBuste.useDiagnosticInputStream";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoriUseDiagnosticInputStream_inoltroBuste = Boolean.parseBoolean(name);
@@ -13833,7 +13833,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.useDiagnosticInputStream";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
@@ -13856,7 +13856,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.ricezioneContenutiApplicativi.useDiagnosticInputStream";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi = Boolean.parseBoolean(name);
@@ -13879,7 +13879,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.ricezioneBuste.useDiagnosticInputStream";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoriUseDiagnosticInputStream_ricezioneBuste = Boolean.parseBoolean(name);
@@ -13903,7 +13903,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.useDiagnosticInputStream.setDateEmptyStream";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoriUseDiagnosticInputStream_setDateEmptyStream = Boolean.parseBoolean(name);
@@ -13931,7 +13931,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.secureRandom";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoreHttps_useSecureRandom = Boolean.parseBoolean(name);
@@ -13954,7 +13954,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.secureRandomAlgorithm";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.getConnettoreHttps_secureRandomAlgo = name;
@@ -13974,7 +13974,7 @@ public class OpenSPCoop2Properties {
 		if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration");
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste = Boolean.parseBoolean(name);
@@ -13996,7 +13996,7 @@ public class OpenSPCoop2Properties {
 		if(this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.overrideDefaultConfiguration");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.overrideDefaultConfiguration");
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
@@ -14018,7 +14018,7 @@ public class OpenSPCoop2Properties {
 		if(this.getConnettoreHttp_urlHttps_repository_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -14052,7 +14052,7 @@ public class OpenSPCoop2Properties {
 		if(this.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -14086,7 +14086,7 @@ public class OpenSPCoop2Properties {
 		if(this.isConnettoreHttp_urlHttps_cacheEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.http.urlHttps.cache.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.http.urlHttps.cache.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.isConnettoreHttp_urlHttps_cacheEnabled = Boolean.parseBoolean(name);
@@ -14108,7 +14108,7 @@ public class OpenSPCoop2Properties {
 		if(this.getConnettoreHttp_urlHttps_cacheSize==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.http.urlHttps.cache.size");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.http.urlHttps.cache.size");
 				if(name!=null){
 					name = name.trim();
 					this.getConnettoreHttp_urlHttps_cacheSize = java.lang.Integer.parseInt(name);
@@ -14136,7 +14136,7 @@ public class OpenSPCoop2Properties {
 		if(this.isHttpDisableKeepAlive==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isHttpDisableKeepAlive = Boolean.parseBoolean(name);
@@ -14158,7 +14158,7 @@ public class OpenSPCoop2Properties {
 		if(this.serviceRequestHttpMethodPatchEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.request.method.PATCH");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.request.method.PATCH");
 				if(name!=null){
 					name = name.trim();
 					this.serviceRequestHttpMethodPatchEnabled = Boolean.parseBoolean(name);
@@ -14180,7 +14180,7 @@ public class OpenSPCoop2Properties {
 		if(this.serviceRequestHttpMethodLinkEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.request.method.LINK");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.request.method.LINK");
 				if(name!=null){
 					name = name.trim();
 					this.serviceRequestHttpMethodLinkEnabled = Boolean.parseBoolean(name);
@@ -14202,7 +14202,7 @@ public class OpenSPCoop2Properties {
 		if(this.serviceRequestHttpMethodUnlinkEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.request.method.UNLINK");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.request.method.UNLINK");
 				if(name!=null){
 					name = name.trim();
 					this.serviceRequestHttpMethodUnlinkEnabled = Boolean.parseBoolean(name);
@@ -14225,7 +14225,7 @@ public class OpenSPCoop2Properties {
 		if(this.readTransferLengthModes_ricezioneContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.httpTransferLength");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.httpTransferLength");
 				if(name!=null){
 					name = name.trim();
 					this.readTransferLengthModes_ricezioneContenutiApplicativi = TransferLengthModes.getTransferLengthModes(name);
@@ -14247,7 +14247,7 @@ public class OpenSPCoop2Properties {
 		if(this.readTransferLengthModes_ricezioneBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.httpTransferLength");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.httpTransferLength");
 				if(name!=null){
 					name = name.trim();
 					this.readTransferLengthModes_ricezioneBuste = TransferLengthModes.getTransferLengthModes(name);
@@ -14269,7 +14269,7 @@ public class OpenSPCoop2Properties {
 		if(this.readTransferLengthModes_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength");
 				if(name!=null){
 					name = name.trim();
 					this.readTransferLengthModes_inoltroBuste = TransferLengthModes.getTransferLengthModes(name);
@@ -14291,7 +14291,7 @@ public class OpenSPCoop2Properties {
 		if(this.getChunkLength_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength.chunkLength");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength.chunkLength");
 				if(name!=null){
 					name = name.trim();
 					this.getChunkLength_inoltroBuste = Integer.parseInt(name);
@@ -14313,7 +14313,7 @@ public class OpenSPCoop2Properties {
 		if(this.readTransferLengthModes_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength");
 				if(name!=null){
 					name = name.trim();
 					this.readTransferLengthModes_consegnaContenutiApplicativi = TransferLengthModes.getTransferLengthModes(name);
@@ -14335,7 +14335,7 @@ public class OpenSPCoop2Properties {
 		if(this.getChunkLength_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength.chunkLength");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength.chunkLength");
 				if(name!=null){
 					name = name.trim();
 					this.getChunkLength_consegnaContenutiApplicativi = Integer.parseInt(name);
@@ -14357,7 +14357,7 @@ public class OpenSPCoop2Properties {
 		if(this.isAcceptOnlyReturnCode_200_202_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200");
 				if(name!=null){
 					name = name.trim();
 					this.isAcceptOnlyReturnCode_200_202_inoltroBuste = Boolean.parseBoolean(name);
@@ -14379,7 +14379,7 @@ public class OpenSPCoop2Properties {
 		if(this.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200");
 				if(name!=null){
 					name = name.trim();
 					this.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
@@ -14401,7 +14401,7 @@ public class OpenSPCoop2Properties {
 		if(this.isAcceptOnlyReturnCode_307_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.3xx.acceptOnly_307");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.3xx.acceptOnly_307");
 				if(name!=null){
 					name = name.trim();
 					this.isAcceptOnlyReturnCode_307_inoltroBuste = Boolean.parseBoolean(name);
@@ -14423,7 +14423,7 @@ public class OpenSPCoop2Properties {
 		if(this.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.3xx.acceptOnly_307");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.3xx.acceptOnly_307");
 				if(name!=null){
 					name = name.trim();
 					this.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
@@ -14445,7 +14445,7 @@ public class OpenSPCoop2Properties {
 		if(this.isFollowRedirects_inoltroBuste_soap==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.soap");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.soap");
 				if(name!=null){
 					name = name.trim();
 					this.isFollowRedirects_inoltroBuste_soap = Boolean.parseBoolean(name);
@@ -14467,7 +14467,7 @@ public class OpenSPCoop2Properties {
 		if(this.isFollowRedirects_inoltroBuste_rest==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.rest");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.rest");
 				if(name!=null){
 					name = name.trim();
 					this.isFollowRedirects_inoltroBuste_rest = Boolean.parseBoolean(name);
@@ -14491,7 +14491,7 @@ public class OpenSPCoop2Properties {
 		if(this.isFollowRedirects_consegnaContenutiApplicativi_soap==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.soap");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.soap");
 				if(name!=null){
 					name = name.trim();
 					this.isFollowRedirects_consegnaContenutiApplicativi_soap = Boolean.parseBoolean(name);
@@ -14513,7 +14513,7 @@ public class OpenSPCoop2Properties {
 		if(this.isFollowRedirects_consegnaContenutiApplicativi_rest==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.rest");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.rest");
 				if(name!=null){
 					name = name.trim();
 					this.isFollowRedirects_consegnaContenutiApplicativi_rest = Boolean.parseBoolean(name);
@@ -14535,7 +14535,7 @@ public class OpenSPCoop2Properties {
 		if(this.getFollowRedirectsMaxHop_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.maxHop");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.maxHop");
 				if(name!=null){
 					name = name.trim();
 					this.getFollowRedirectsMaxHop_inoltroBuste = Integer.parseInt(name);
@@ -14557,7 +14557,7 @@ public class OpenSPCoop2Properties {
 		if(this.getFollowRedirectsMaxHop_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.maxHop");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.maxHop");
 				if(name!=null){
 					name = name.trim();
 					this.getFollowRedirectsMaxHop_consegnaContenutiApplicativi = Integer.parseInt(name);
@@ -14580,7 +14580,7 @@ public class OpenSPCoop2Properties {
 		if(this.checkSoapActionQuotedString_ricezioneContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soapAction.checkQuotedString");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soapAction.checkQuotedString");
 				if(name!=null){
 					name = name.trim();
 					this.checkSoapActionQuotedString_ricezioneContenutiApplicativi = Boolean.parseBoolean(name);
@@ -14602,7 +14602,7 @@ public class OpenSPCoop2Properties {
 		if(this.checkSoapActionQuotedString_ricezioneBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.soapAction.checkQuotedString");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.soapAction.checkQuotedString");
 				if(name!=null){
 					name = name.trim();
 					this.checkSoapActionQuotedString_ricezioneBuste = Boolean.parseBoolean(name);
@@ -14624,7 +14624,7 @@ public class OpenSPCoop2Properties {
 		if(this.httpUserAgent==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.http.userAgent");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.http.userAgent");
 				if(name!=null){
 					name = name.trim();
 					this.httpUserAgent = name;
@@ -14646,7 +14646,7 @@ public class OpenSPCoop2Properties {
 		if(this.httpServer==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.http.xPdd");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.http.xPdd");
 				if(name!=null){
 					name = name.trim();
 					this.httpServer = name;
@@ -14669,7 +14669,7 @@ public class OpenSPCoop2Properties {
 		if(this.readHttpXPdDDetails==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.http.xDetails");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.http.xDetails");
 				if(name!=null){
 					name = name.trim();
 					this.httpXPdDDetails = name;
@@ -14692,7 +14692,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = Boolean.parseBoolean(name);
@@ -14714,7 +14714,7 @@ public class OpenSPCoop2Properties {
 		if(this.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset");
 				if(name!=null){
 					name = name.trim();
 					this.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = Charset.toEnumConstant(name);
@@ -14739,7 +14739,7 @@ public class OpenSPCoop2Properties {
 		if(this.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding");
 				if(name!=null){
 					name = name.trim();
 					this.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = RFC2047Encoding.valueOf(name);
@@ -14764,7 +14764,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste = Boolean.parseBoolean(name);
@@ -14786,7 +14786,7 @@ public class OpenSPCoop2Properties {
 		if(this.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset");
 				if(name!=null){
 					name = name.trim();
 					this.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste = Charset.toEnumConstant(name);
@@ -14811,7 +14811,7 @@ public class OpenSPCoop2Properties {
 		if(this.getEncodingRFC2047HeaderValue_ricezioneBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding");
 				if(name!=null){
 					name = name.trim();
 					this.getEncodingRFC2047HeaderValue_ricezioneBuste = RFC2047Encoding.valueOf(name);
@@ -14836,7 +14836,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledEncodingRFC2047HeaderValue_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.isEnabledEncodingRFC2047HeaderValue_inoltroBuste = Boolean.parseBoolean(name);
@@ -14858,7 +14858,7 @@ public class OpenSPCoop2Properties {
 		if(this.getCharsetEncodingRFC2047HeaderValue_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset");
 				if(name!=null){
 					name = name.trim();
 					this.getCharsetEncodingRFC2047HeaderValue_inoltroBuste = Charset.toEnumConstant(name);
@@ -14883,7 +14883,7 @@ public class OpenSPCoop2Properties {
 		if(this.getEncodingRFC2047HeaderValue_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding");
 				if(name!=null){
 					name = name.trim();
 					this.getEncodingRFC2047HeaderValue_inoltroBuste = RFC2047Encoding.valueOf(name);
@@ -14908,7 +14908,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
@@ -14930,7 +14930,7 @@ public class OpenSPCoop2Properties {
 		if(this.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset");
 				if(name!=null){
 					name = name.trim();
 					this.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = Charset.toEnumConstant(name);
@@ -14955,7 +14955,7 @@ public class OpenSPCoop2Properties {
 		if(this.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding");
 				if(name!=null){
 					name = name.trim();
 					this.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = RFC2047Encoding.valueOf(name);
@@ -14981,7 +14981,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledValidazioneRFC2047HeaderNameValue_ricezioneContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerNameValue.validazione.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerNameValue.validazione.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.isEnabledValidazioneRFC2047HeaderNameValue_ricezioneContenutiApplicativi = Boolean.parseBoolean(name);
@@ -15003,7 +15003,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledValidazioneRFC2047HeaderNameValue_ricezioneBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerNameValue.validazione.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerNameValue.validazione.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.isEnabledValidazioneRFC2047HeaderNameValue_ricezioneBuste = Boolean.parseBoolean(name);
@@ -15025,7 +15025,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerNameValue.validazione.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerNameValue.validazione.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste = Boolean.parseBoolean(name);
@@ -15047,7 +15047,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerNameValue.validazione.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerNameValue.validazione.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
@@ -15069,7 +15069,7 @@ public class OpenSPCoop2Properties {
 		if(this.getGestioneCORS_returnCode_ricezioneContenutiApplicativi==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.returnCode");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.returnCode");
 				if(name!=null){
 					name = name.trim();
 					this.getGestioneCORS_returnCode_ricezioneContenutiApplicativi = java.lang.Integer.parseInt(name);
@@ -15092,7 +15092,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.resourceHttpMethodQualsiasi";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi = java.lang.Boolean.valueOf(name);
@@ -15114,7 +15114,7 @@ public class OpenSPCoop2Properties {
 		if(this.getGestioneCORS_returnCode_ricezioneBuste==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.cors.returnCode");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.cors.returnCode");
 				if(name!=null){
 					name = name.trim();
 					this.getGestioneCORS_returnCode_ricezioneBuste = java.lang.Integer.parseInt(name);
@@ -15137,7 +15137,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.services.ricezioneBuste.cors.resourceHttpMethodQualsiasi";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste = java.lang.Boolean.valueOf(name);
@@ -15161,7 +15161,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.notificaRichiestaRisposta.archiveType";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType = ArchiveType.valueOf(name.toUpperCase());
@@ -15207,7 +15207,7 @@ public class OpenSPCoop2Properties {
 		if(this.tipoTempo==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.tempo.tipo");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.tempo.tipo");
 				if(name!=null){
 					name = name.trim();
 					if(CostantiConfigurazione.TEMPO_TIPO_LOCALE.equals(name))
@@ -15242,7 +15242,7 @@ public class OpenSPCoop2Properties {
 		if(this.tipoDateManager==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.date.tipo");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.date.tipo");
 				if(name!=null)
 					name = name.trim();
 				else
@@ -15262,7 +15262,7 @@ public class OpenSPCoop2Properties {
 		if(this.tipoDateTimeFormat==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dateTimeFormat");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.dateTimeFormat");
 				if(name!=null)
 					name = name.trim();
 				else
@@ -15289,7 +15289,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.date.property.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.date.property.");
 				this.dateManagerProperties = prop;
 
 			}catch(java.lang.Exception e) {
@@ -15315,7 +15315,7 @@ public class OpenSPCoop2Properties {
 		if(this.isIntegrationManagerEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrationManager.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -15336,7 +15336,7 @@ public class OpenSPCoop2Properties {
 		if(this.isIntegrationManagerIdWithDate==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.idWithDate");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrationManager.idWithDate");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.idWithDate' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -15359,7 +15359,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrationManagerIdsLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -15380,7 +15380,7 @@ public class OpenSPCoop2Properties {
 	public boolean integrationManager_isNomePortaDelegataUrlBased() {
 		if(this.integrationManager_isNomePortaDelegataUrlBasedValue==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.service.IntegrationManager.nomePortaDelegataUrlBased"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.service.IntegrationManager.nomePortaDelegataUrlBased"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -15402,7 +15402,7 @@ public class OpenSPCoop2Properties {
 	public boolean integrationManager_readInformazioniTrasporto() {
 		if(this.integrationManager_readInformazioniTrasportoValue==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.service.IntegrationManager.infoTrasporto"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.service.IntegrationManager.infoTrasporto"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -15430,7 +15430,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.useRuntimeManager";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -15452,7 +15452,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.useConsegnePreseInCaricoManager";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -15474,7 +15474,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.dataSource";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -15494,7 +15494,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrationManager_runtime_dataSourceJndiContext==null){
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.dataSource.property.";
 			try{ 
-				this.getIntegrationManager_runtime_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+				this.getIntegrationManager_runtime_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -15510,7 +15510,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.datasource.useDSUtils";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -15535,7 +15535,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.useTransactionManager";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -15557,7 +15557,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.useConsegnePreseInCaricoManager";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -15579,7 +15579,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.dataSource";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -15599,7 +15599,7 @@ public class OpenSPCoop2Properties {
 		if(this.getIntegrationManager_transazioni_dataSourceJndiContext==null){
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.dataSource.property.";
 			try{ 
-				this.getIntegrationManager_transazioni_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+				this.getIntegrationManager_transazioni_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -15615,7 +15615,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.datasource.useDSUtils";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -15649,7 +15649,7 @@ public class OpenSPCoop2Properties {
 	public boolean isDeleteInstructionTargetMachineXml(){
 		if(this.isDeleteInstructionTargetMachineXml==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.soap.deleteInstructionTargetMachineXml"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.soap.deleteInstructionTargetMachineXml"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -15673,7 +15673,7 @@ public class OpenSPCoop2Properties {
 		if(this.tunnelSOAP_loadMailcap==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.mailcap.load");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.mailcap.load");
 				if(name!=null){
 					name = name.trim();
 					this.tunnelSOAP_loadMailcap = Boolean.parseBoolean(name);
@@ -15701,7 +15701,7 @@ public class OpenSPCoop2Properties {
 		if(this.tunnelSOAPKeyWord_headerTrasporto==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.trasporto");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.trasporto");
 				if(name!=null){
 					name = name.trim();
 					this.tunnelSOAPKeyWord_headerTrasporto = name;
@@ -15729,7 +15729,7 @@ public class OpenSPCoop2Properties {
 		if(this.tunnelSOAPKeyWordMimeType_headerTrasporto==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.trasporto");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.trasporto");
 				if(name!=null){
 					name = name.trim();
 					this.tunnelSOAPKeyWordMimeType_headerTrasporto = name;
@@ -15757,7 +15757,7 @@ public class OpenSPCoop2Properties {
 		if(this.tunnelSOAPKeyWord_urlBased==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.urlBased");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.urlBased");
 				if(name!=null){
 					name = name.trim();
 					this.tunnelSOAPKeyWord_urlBased = name;
@@ -15785,7 +15785,7 @@ public class OpenSPCoop2Properties {
 		if(this.tunnelSOAPKeyWordMimeType_urlBased==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.urlBased");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.urlBased");
 				if(name!=null){
 					name = name.trim();
 					this.tunnelSOAPKeyWordMimeType_urlBased = name;
@@ -15817,7 +15817,7 @@ public class OpenSPCoop2Properties {
 		if(this.timeoutBustaRispostaAsincrona == null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.attesaAttiva");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.attesaAttiva");
 				if(name!=null){
 					name = name.trim();
 					this.timeoutBustaRispostaAsincrona = java.lang.Long.parseLong(name) * 1000;
@@ -15845,7 +15845,7 @@ public class OpenSPCoop2Properties {
 		if(this.checkIntervalBustaRispostaAsincrona==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.check");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.check");
 				if(name!=null){
 					name = name.trim();
 					this.checkIntervalBustaRispostaAsincrona = java.lang.Integer.parseInt(name);
@@ -15872,7 +15872,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.cluster_dinamico.enabled";
 		if(this.isClusterDinamico==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -15896,7 +15896,7 @@ public class OpenSPCoop2Properties {
 		if(this.getClusterDinamicoRefreshSecondsInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.getClusterDinamicoRefreshSecondsInterval = java.lang.Integer.parseInt(name);
@@ -15918,7 +15918,7 @@ public class OpenSPCoop2Properties {
 		if(this.cluster_hostname==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cluster_id.hostname");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.cluster_id.hostname");
 				if(name==null) {
 					this.cluster_hostname = getClusterId(true);
 				}
@@ -15941,7 +15941,7 @@ public class OpenSPCoop2Properties {
 		if(this.group_id==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null) {
 					// Gestione RateLimiting senza una effettiva attivazione di un cluster dinamico
 					if(!isClusterDinamico()) {
@@ -15980,7 +15980,7 @@ public class OpenSPCoop2Properties {
 		if(this.cluster_id==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cluster_id");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.cluster_id");
 				if(name==null && required)
 					throw new CoreException(NON_DEFINITA);
 				if(name!=null){
@@ -16001,7 +16001,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.cluster_id.hash.enabled";
 		if(this.isUseHashClusterId==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -16034,7 +16034,7 @@ public class OpenSPCoop2Properties {
 	public String getClusterIdNumerico() throws ProtocolException {
 		if(this.cluster_id_numerico_read==null){
 			try{ 
-				String name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cluster_id.numeric");
+				String name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.cluster_id.numeric");
 				if(name!=null){
 					int numero = Integer.parseInt(name.trim());
 					if(numero<0 || numero>99){
@@ -16062,7 +16062,7 @@ public class OpenSPCoop2Properties {
 		if(this.getClusterDinamicoIdNumericoCifre==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.getClusterDinamicoIdNumericoCifre = java.lang.Integer.parseInt(name);
@@ -16100,7 +16100,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerLockByDatabase(){
 		if(this.isTimerLockByDatabase==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.lockDatabase"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.lockDatabase"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -16132,7 +16132,7 @@ public class OpenSPCoop2Properties {
 	public boolean isTimerLockByDatabaseNotifyLogEnabled(){
 		if(this.isTimerLockByDatabaseNotifyLogEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.lockDatabase.notify.log"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.timer.lockDatabase.notify.log"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -16155,7 +16155,7 @@ public class OpenSPCoop2Properties {
 		if(this.pddContextSerializer==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.contextSerializer");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.contextSerializer");
 				if(name!=null){
 					name = name.trim();
 					this.pddContextSerializer = name;
@@ -16187,7 +16187,7 @@ public class OpenSPCoop2Properties {
 		if(this.statelessOneWay==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.stateless.default.oneway");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.stateless.default.oneway");
 				if(name!=null){
 					name = name.trim();
 					if( (CostantiConfigurazione.ABILITATO.equals(name)==false) && (CostantiConfigurazione.DISABILITATO.equals(name)==false) ){
@@ -16218,7 +16218,7 @@ public class OpenSPCoop2Properties {
 		if(this.statelessSincrono==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.stateless.default.sincrono");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.stateless.default.sincrono");
 				if(name!=null){
 					name = name.trim();
 					if( (CostantiConfigurazione.ABILITATO.equals(name)==false) && (CostantiConfigurazione.DISABILITATO.equals(name)==false) ){
@@ -16249,7 +16249,7 @@ public class OpenSPCoop2Properties {
 		if(this.statelessAsincrono==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.stateless.default.asincroni");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.stateless.default.asincroni");
 				if(name!=null){
 					name = name.trim();
 					if( (CostantiConfigurazione.ABILITATO.equals(name)==false) && (CostantiConfigurazione.DISABILITATO.equals(name)==false) ){
@@ -16279,7 +16279,7 @@ public class OpenSPCoop2Properties {
 	public boolean isGestioneOnewayStateful_1_1(){
 		if(this.isGestioneOnewayStateful_1_1==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.stateful.oneway"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.stateful.oneway"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -16312,7 +16312,7 @@ public class OpenSPCoop2Properties {
 		if(this.statelessRouting==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.stateless.router");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.stateless.router");
 				if(name!=null){
 					name = name.trim();
 					if( (CostantiConfigurazione.ABILITATO.equals(name)==false) && (CostantiConfigurazione.DISABILITATO.equals(name)==false) ){
@@ -16343,7 +16343,7 @@ public class OpenSPCoop2Properties {
 	private boolean isRinegoziamentoConnessione(){
 		if(this.isGestioneStateful_RinegoziamentoConnessione==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.stateless.dataSource.rinegoziamentoConnessione"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.stateless.dataSource.rinegoziamentoConnessione"); 
 
 				if(value!=null){
 					value = value.trim();
@@ -16383,7 +16383,7 @@ public class OpenSPCoop2Properties {
 		if(this.mergeHandlerBuiltInAndHandlerUser==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.merge");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.merge");
 				if(v!=null){
 					v = v.trim();
 					this.mergeHandlerBuiltInAndHandlerUser = Boolean.parseBoolean(v);
@@ -16406,7 +16406,7 @@ public class OpenSPCoop2Properties {
 		if(this.printInfoHandlerBuiltIn==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.printInfo");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.printInfo");
 				if(v!=null){
 					v = v.trim();
 					this.printInfoHandlerBuiltIn = Boolean.parseBoolean(v);
@@ -16433,7 +16433,7 @@ public class OpenSPCoop2Properties {
 	public String[] getInitHandlerBuiltIn() {
 		if(this.tipiInitHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.init");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.init");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16461,7 +16461,7 @@ public class OpenSPCoop2Properties {
 	public String[] getExitHandlerBuiltIn() {
 		if(this.tipiExitHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.exit");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.exit");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16489,7 +16489,7 @@ public class OpenSPCoop2Properties {
 	public String[] getPreInRequestHandlerBuiltIn() {
 		if(this.tipiPreInRequestHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.pre-in-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.pre-in-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16518,7 +16518,7 @@ public class OpenSPCoop2Properties {
 	public String[] getInRequestHandlerBuiltIn() {
 		if(this.tipiInRequestHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.in-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.in-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16546,7 +16546,7 @@ public class OpenSPCoop2Properties {
 	public String[] getInRequestProtocolHandlerBuiltIn() {
 		if(this.tipiInRequestProtocolHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.in-protocol-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.in-protocol-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16574,7 +16574,7 @@ public class OpenSPCoop2Properties {
 	public String[] getOutRequestHandlerBuiltIn() {
 		if(this.tipiOutRequestHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.out-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.out-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16602,7 +16602,7 @@ public class OpenSPCoop2Properties {
 	public String[] getPostOutRequestHandlerBuiltIn() {
 		if(this.tipiPostOutRequestHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.post-out-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.post-out-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16630,7 +16630,7 @@ public class OpenSPCoop2Properties {
 	public String[] getPreInResponseHandlerBuiltIn() {
 		if(this.tipiPreInResponseHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.pre-in-response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.pre-in-response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16658,7 +16658,7 @@ public class OpenSPCoop2Properties {
 	public String[] getInResponseHandlerBuiltIn() {
 		if(this.tipiInResponseHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.in-response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.in-response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16686,7 +16686,7 @@ public class OpenSPCoop2Properties {
 	public String[] getOutResponseHandlerBuiltIn() {
 		if(this.tipiOutResponseHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.out-response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.out-response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16714,7 +16714,7 @@ public class OpenSPCoop2Properties {
 	public String[] getPostOutResponseHandlerBuiltIn() {
 		if(this.tipiPostOutResponseHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.post-out-response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.built-in.post-out-response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16742,7 +16742,7 @@ public class OpenSPCoop2Properties {
 	public String[] getIntegrationManagerRequestHandlerBuiltIn() {
 		if(this.tipiIntegrationManagerRequestHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.built-in.request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.built-in.request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16770,7 +16770,7 @@ public class OpenSPCoop2Properties {
 	public String[] getIntegrationManagerResponseHandlerBuiltIn() {
 		if(this.tipiIntegrationManagerResponseHandlerBuiltInRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.built-in.response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.built-in.response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16800,7 +16800,7 @@ public class OpenSPCoop2Properties {
 		if(this.printInfoHandler==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.printInfo");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.printInfo");
 				if(v!=null){
 					v = v.trim();
 					this.printInfoHandler = Boolean.parseBoolean(v);
@@ -16826,7 +16826,7 @@ public class OpenSPCoop2Properties {
 	public String[] getInitHandler() {
 		if(this.tipiInitHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.init");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.init");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16854,7 +16854,7 @@ public class OpenSPCoop2Properties {
 	public String[] getExitHandler() {
 		if(this.tipiExitHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.exit");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.exit");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16882,7 +16882,7 @@ public class OpenSPCoop2Properties {
 	public String[] getPreInRequestHandler() {
 		if(this.tipiPreInRequestHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.pre-in-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.pre-in-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16911,7 +16911,7 @@ public class OpenSPCoop2Properties {
 	public String[] getInRequestHandler() {
 		if(this.tipiInRequestHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.in-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.in-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16939,7 +16939,7 @@ public class OpenSPCoop2Properties {
 	public String[] getInRequestProtocolHandler() {
 		if(this.tipiInRequestProtocolHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.in-protocol-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.in-protocol-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16967,7 +16967,7 @@ public class OpenSPCoop2Properties {
 	public String[] getOutRequestHandler() {
 		if(this.tipiOutRequestHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.out-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.out-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -16995,7 +16995,7 @@ public class OpenSPCoop2Properties {
 	public String[] getPostOutRequestHandler() {
 		if(this.tipiPostOutRequestHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.post-out-request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.post-out-request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -17023,7 +17023,7 @@ public class OpenSPCoop2Properties {
 	public String[] getPreInResponseHandler() {
 		if(this.tipiPreInResponseHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.pre-in-response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.pre-in-response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -17051,7 +17051,7 @@ public class OpenSPCoop2Properties {
 	public String[] getInResponseHandler() {
 		if(this.tipiInResponseHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.in-response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.in-response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -17079,7 +17079,7 @@ public class OpenSPCoop2Properties {
 	public String[] getOutResponseHandler() {
 		if(this.tipiOutResponseHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.out-response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.out-response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -17107,7 +17107,7 @@ public class OpenSPCoop2Properties {
 	public String[] getPostOutResponseHandler() {
 		if(this.tipiPostOutResponseHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.post-out-response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.handler.post-out-response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -17135,7 +17135,7 @@ public class OpenSPCoop2Properties {
 	public String[] getIntegrationManagerRequestHandler() {
 		if(this.tipiIntegrationManagerRequestHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.request");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.request");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -17163,7 +17163,7 @@ public class OpenSPCoop2Properties {
 	public String[] getIntegrationManagerResponseHandler() {
 		if(this.tipiIntegrationManagerResponseHandlerRead == false){
 			try{ 
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.response");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.response");
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -17197,7 +17197,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.security.addApacheXMLDSigProvider";
 		if(this.isLoadApacheXMLDSig==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -17221,7 +17221,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isLoadBouncyCastle==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.security.addBouncyCastleProvider"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.security.addBouncyCastleProvider"); 
 
 				if (value != null){
 					value = value.trim();
@@ -17247,7 +17247,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.security.bouncyCastleProvider.secureRandomAlgorithm";
 		if(this.secureRandomBouncyCastle_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -17271,7 +17271,7 @@ public class OpenSPCoop2Properties {
 		if(this.isUseBouncyCastleProviderForCertificate==null){
 			String pName = "org.openspcoop2.pdd.security.cert.useBouncyCastleProvider";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -17296,7 +17296,7 @@ public class OpenSPCoop2Properties {
 		if(this.isUseBouncyCastleProviderForMessageDigest==null){
 			String pName = "org.openspcoop2.pdd.security.digest.useBouncyCastleProvider";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -17321,7 +17321,7 @@ public class OpenSPCoop2Properties {
 		if(this.isUseBouncyCastleProviderForWss4jCryptoMerlin==null){
 			String pName = "org.openspcoop2.pdd.security.wss4jCryptoMerlin.useBouncyCastleProvider";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -17347,7 +17347,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.security.egd";
 		if(this.securityEgd_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -17390,7 +17390,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGenerazioneActorDefault==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.actorDefault.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.actorDefault.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -17429,7 +17429,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.actorDefault==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.actorDefault.valore"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.actorDefault.valore"); 
 
 				if (value != null){
 					value = value.trim();
@@ -17459,7 +17459,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.prefixWsuId==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.prefixWsuId"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.prefixWsuId"); 
 
 				if (value != null){
 					value = value.trim();
@@ -17485,7 +17485,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.messageSecurity.wsuId.secureRandomAlgorithm";
 		if(this.secureRandomWsuId_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -17508,7 +17508,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.removeAllWsuIdRef==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.removeAllWsuIdRef"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.removeAllWsuIdRef"); 
 
 				if (value != null){
 					value = value.trim();
@@ -17533,7 +17533,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.externalPWCallbackReaded==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile"); 
 
 				if (value != null){
 					value = value.trim();
@@ -17564,7 +17564,7 @@ public class OpenSPCoop2Properties {
 	public boolean isAbilitataCacheMessageSecurityKeystore() {
 		if(this.isAbilitataCacheMessageSecurityKeystore_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.keystore.cache.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.keystore.cache.enable"); 
 				if(value!=null){
 					value = value.trim();
 					this.isAbilitataCacheMessageSecurityKeystore_value = Boolean.parseBoolean(value);
@@ -17590,7 +17590,7 @@ public class OpenSPCoop2Properties {
 	public int getDimensioneCacheMessageSecurityKeystore() throws OpenSPCoop2ConfigurationException{	
 		if(this.dimensioneCacheMessageSecurityKeystore_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.keystore.cache.dimensione"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.keystore.cache.dimensione"); 
 				if(value!=null){
 					value = value.trim();
 					this.dimensioneCacheMessageSecurityKeystore_value = Integer.parseInt(value);
@@ -17615,7 +17615,7 @@ public class OpenSPCoop2Properties {
 	public int getItemLifeSecondCacheMessageSecurityKeystore() throws OpenSPCoop2ConfigurationException{
 		if(this.itemLifeSecondCacheMessageSecurityKeystore_value==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.keystore.cache.itemLifeSecond"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.keystore.cache.itemLifeSecond"); 
 				if(value!=null){
 					value = value.trim();
 					this.itemLifeSecondCacheMessageSecurityKeystore_value = Integer.parseInt(value);
@@ -17645,7 +17645,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.lock.permits";
 		if(this.getAutenticazione_lock_permits_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -17676,7 +17676,7 @@ public class OpenSPCoop2Properties {
 			this.getTipoAutenticazione_lock_permits = new HashMap<>();
 			
 			try{  
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null) {
@@ -17706,7 +17706,7 @@ public class OpenSPCoop2Properties {
 	public CryptConfig getCryptConfigAutenticazioneApplicativi() {
 		if(this.getCryptConfigAutenticazioneApplicativi == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.autenticazione.applicativi.password"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.autenticazione.applicativi.password"); 
 				if(value!=null){
 					value = value.trim();
 					this.getCryptConfigAutenticazioneApplicativi = new CryptConfig(value);
@@ -17724,7 +17724,7 @@ public class OpenSPCoop2Properties {
 	public CryptConfig getCryptConfigAutenticazioneSoggetti() {
 		if(this.getCryptConfigAutenticazioneSoggetti == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.autenticazione.soggetti.password"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.autenticazione.soggetti.password"); 
 				if(value!=null){
 					value = value.trim();
 					this.getCryptConfigAutenticazioneSoggetti = new CryptConfig(value);
@@ -17743,7 +17743,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.basic.invalidCredentials.logPassword";
 		if(this.isAutenticazioneBasicLogPassword == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.isAutenticazioneBasicLogPassword = Boolean.valueOf(value);
@@ -17781,7 +17781,7 @@ public class OpenSPCoop2Properties {
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.basic.realm";
 			String realm = null;
 			try {
-				realm = this.reader.getValue_convertEnvProperties(pNameRealm); 
+				realm = this.reader.getValueConvertEnvProperties(pNameRealm); 
 				if(realm!=null){
 					realm = realm.trim();
 				}
@@ -17797,7 +17797,7 @@ public class OpenSPCoop2Properties {
 				String pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.basic.error_description.notFound";
 				String error_description = null;
 				try {
-					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					error_description = this.reader.getValueConvertEnvProperties(pNameErrorDescription); 
 					if(error_description!=null){
 						error_description = error_description.trim();
 						if(!"".equals(error_description)) {
@@ -17812,7 +17812,7 @@ public class OpenSPCoop2Properties {
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.basic.error_description.invalid";
 				error_description = null;
 				try {
-					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					error_description = this.reader.getValueConvertEnvProperties(pNameErrorDescription); 
 					if(error_description!=null){
 						error_description = error_description.trim();
 						if(!"".equals(error_description)) {
@@ -17839,7 +17839,7 @@ public class OpenSPCoop2Properties {
 			String pNameAuth = "org.openspcoop2.pdd.core.autenticazione.apiKey.authType";
 			String authType = null;
 			try{  
-				authType = this.reader.getValue_convertEnvProperties(pNameAuth); 
+				authType = this.reader.getValueConvertEnvProperties(pNameAuth); 
 				if(authType!=null){
 					authType = authType.trim();
 				}
@@ -17850,7 +17850,7 @@ public class OpenSPCoop2Properties {
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.apiKey.realm";
 			String realm = null;
 			try {
-				realm = this.reader.getValue_convertEnvProperties(pNameRealm); 
+				realm = this.reader.getValueConvertEnvProperties(pNameRealm); 
 				if(realm!=null){
 					realm = realm.trim();
 				}
@@ -17866,7 +17866,7 @@ public class OpenSPCoop2Properties {
 				String pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.apiKey.error_description.notFound";
 				String error_description = null;
 				try {
-					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					error_description = this.reader.getValueConvertEnvProperties(pNameErrorDescription); 
 					if(error_description!=null){
 						error_description = error_description.trim();
 						if(!"".equals(error_description)) {
@@ -17881,7 +17881,7 @@ public class OpenSPCoop2Properties {
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.apiKey.error_description.invalid";
 				error_description = null;
 				try {
-					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					error_description = this.reader.getValueConvertEnvProperties(pNameErrorDescription); 
 					if(error_description!=null){
 						error_description = error_description.trim();
 						if(!"".equals(error_description)) {
@@ -17905,7 +17905,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.validityCheck";
 		if(this.isAutenticazioneHttpsPortaDelegataValidityCheck == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.isAutenticazioneHttpsPortaDelegataValidityCheck = Boolean.valueOf(value);
@@ -17929,7 +17929,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.path";
 		if(this.getAutenticazioneHttpsPortaDelegataTruststorePath_read == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaDelegataTruststorePath = new File(value);
@@ -17960,7 +17960,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.password";
 		if(this.getAutenticazioneHttpsPortaDelegataTruststorePassword_read == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaDelegataTruststorePassword = value;
@@ -17979,7 +17979,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.type";
 		if(this.getAutenticazioneHttpsPortaDelegataTruststoreType == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaDelegataTruststoreType = value;
@@ -18001,7 +18001,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.crls";
 		if(this.getAutenticazioneHttpsPortaDelegataTruststoreCRLs_read == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaDelegataTruststoreCRLs = value;
@@ -18021,7 +18021,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.ocspPolicy";
 		if(this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy_read == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy = value;
@@ -18040,7 +18040,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.validityCheck";
 		if(this.isAutenticazioneHttpsPortaApplicativaValidityCheck == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.isAutenticazioneHttpsPortaApplicativaValidityCheck = Boolean.valueOf(value);
@@ -18064,7 +18064,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.path";
 		if(this.getAutenticazioneHttpsPortaApplicativaTruststorePath_read == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaApplicativaTruststorePath = new File(value);
@@ -18095,7 +18095,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.password";
 		if(this.getAutenticazioneHttpsPortaApplicativaTruststorePassword_read == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaApplicativaTruststorePassword = value;
@@ -18114,7 +18114,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.type";
 		if(this.getAutenticazioneHttpsPortaApplicativaTruststoreType == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreType = value;
@@ -18136,7 +18136,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.crls";
 		if(this.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs_read == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs = value;
@@ -18156,7 +18156,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.ocspPolicy";
 		if(this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy_read == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy = value;
@@ -18176,7 +18176,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.https.portaDelegata.checkSoggettiProprietari";
 		if(this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
@@ -18202,7 +18202,7 @@ public class OpenSPCoop2Properties {
 			String pNameAuth = "org.openspcoop2.pdd.core.autenticazione.https.authType";
 			String authType = null;
 			try{  
-				authType = this.reader.getValue_convertEnvProperties(pNameAuth); 
+				authType = this.reader.getValueConvertEnvProperties(pNameAuth); 
 				if(authType!=null){
 					authType = authType.trim();
 				}
@@ -18213,7 +18213,7 @@ public class OpenSPCoop2Properties {
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.https.realm";
 			String realm = null;
 			try {
-				realm = this.reader.getValue_convertEnvProperties(pNameRealm); 
+				realm = this.reader.getValueConvertEnvProperties(pNameRealm); 
 				if(realm!=null){
 					realm = realm.trim();
 				}
@@ -18229,7 +18229,7 @@ public class OpenSPCoop2Properties {
 				String pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.https.error_description.notFound";
 				String error_description = null;
 				try {
-					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					error_description = this.reader.getValueConvertEnvProperties(pNameErrorDescription); 
 					if(error_description!=null){
 						error_description = error_description.trim();
 						if(!"".equals(error_description)) {
@@ -18244,7 +18244,7 @@ public class OpenSPCoop2Properties {
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.https.error_description.invalid";
 				error_description = null;
 				try {
-					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					error_description = this.reader.getValueConvertEnvProperties(pNameErrorDescription); 
 					if(error_description!=null){
 						error_description = error_description.trim();
 						if(!"".equals(error_description)) {
@@ -18268,7 +18268,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.principal.portaDelegata.checkSoggettiProprietari";
 		if(this.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
@@ -18293,7 +18293,7 @@ public class OpenSPCoop2Properties {
 			String pNameAuth = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".authType";
 			String authType = null;
 			try{  
-				authType = this.reader.getValue_convertEnvProperties(pNameAuth); 
+				authType = this.reader.getValueConvertEnvProperties(pNameAuth); 
 				if(authType!=null){
 					authType = authType.trim();
 				}
@@ -18304,7 +18304,7 @@ public class OpenSPCoop2Properties {
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".realm";
 			String realm = null;
 			try {
-				realm = this.reader.getValue_convertEnvProperties(pNameRealm); 
+				realm = this.reader.getValueConvertEnvProperties(pNameRealm); 
 				if(realm!=null){
 					realm = realm.trim();
 				}
@@ -18322,7 +18322,7 @@ public class OpenSPCoop2Properties {
 				String pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".error_description.notFound";
 				String error_description = null;
 				try {
-					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					error_description = this.reader.getValueConvertEnvProperties(pNameErrorDescription); 
 					if(error_description!=null){
 						error_description = error_description.trim();
 						if(!"".equals(error_description)) {
@@ -18337,7 +18337,7 @@ public class OpenSPCoop2Properties {
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".error_description.invalid";
 				error_description = null;
 				try {
-					error_description = this.reader.getValue_convertEnvProperties(pNameErrorDescription); 
+					error_description = this.reader.getValueConvertEnvProperties(pNameErrorDescription); 
 					if(error_description!=null){
 						error_description = error_description.trim();
 						if(!"".equals(error_description)) {
@@ -18362,7 +18362,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.core.autenticazione.token.portaDelegata.checkSoggettiProprietari";
 		if(this.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari == null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				if(value!=null){
 					value = value.trim();
 					this.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
@@ -18390,7 +18390,7 @@ public class OpenSPCoop2Properties {
 	public String[] getTipoGestoreCredenzialiPD() {
 		if(this.tipoGestoreCredenzialiPDRead == false){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.pd.gestoriCredenziali"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.pd.gestoriCredenziali"); 
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -18416,7 +18416,7 @@ public class OpenSPCoop2Properties {
 	public String[] getTipoGestoreCredenzialiPA() {
 		if(this.tipoGestoreCredenzialiPARead == false){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.pa.gestoriCredenziali"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.pa.gestoriCredenziali"); 
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -18442,7 +18442,7 @@ public class OpenSPCoop2Properties {
 	public String[] getTipoGestoreCredenzialiIM() {
 		if(this.tipoGestoreCredenzialiIMRead == false){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali"); 
 				if(value!=null){
 					value = value.trim();
 					String [] r = value.split(",");
@@ -18479,7 +18479,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isReadObjectStatoBozza==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.registroServizi.readObjectStatoBozza"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.registroServizi.readObjectStatoBozza"); 
 
 				if (value != null){
 					value = value.trim();
@@ -18515,7 +18515,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isTracciaturaFallita_BloccaCooperazioneInCorso==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.tracciamento.registrazioneFallita.bloccaCooperazioneInCorso"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.logger.tracciamento.registrazioneFallita.bloccaCooperazioneInCorso"); 
 
 				if (value != null){
 					value = value.trim();
@@ -18544,7 +18544,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isTracciaturaFallita_BloccoServiziPdD==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.tracciamento.registrazione.bloccoServiziPdD"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.logger.tracciamento.registrazione.bloccoServiziPdD"); 
 
 				if (value != null){
 					value = value.trim();
@@ -18580,7 +18580,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isRegistrazioneDiagnosticaFile_intestazione_formatValues==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.msgDiagnostici.file.header.formatValues"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.logger.msgDiagnostici.file.header.formatValues"); 
 
 				if (value != null){
 					value = value.trim();
@@ -18610,7 +18610,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isRegistrazioneDiagnosticaFallita_BloccoServiziPdD==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.msgDiagnostici.emissioneFallita.bloccoServiziPdD"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.logger.msgDiagnostici.emissioneFallita.bloccoServiziPdD"); 
 
 				if (value != null){
 					value = value.trim();
@@ -18634,7 +18634,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isLoggerSaajDisabilitato==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.com.sun.xml.messaging.saaj.disabled"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.logger.com.sun.xml.messaging.saaj.disabled"); 
 
 				if (value != null){
 					value = value.trim();
@@ -18670,7 +18670,7 @@ public class OpenSPCoop2Properties {
 			
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.getDumpBufferImpl = name;
@@ -18697,7 +18697,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isDumpAllAttachments==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dump.allAttachments"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.logger.dump.allAttachments"); 
 
 				if (value != null){
 					value = value.trim();
@@ -18727,7 +18727,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isDumpFallitoBloccaCooperazioneInCorso==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dump.registrazioneFallita.bloccaCooperazioneInCorso"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.logger.dump.registrazioneFallita.bloccaCooperazioneInCorso"); 
 
 				if (value != null){
 					value = value.trim();
@@ -18756,7 +18756,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isDumpFallitoBloccoServiziPdD==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dump.registrazione.bloccoServiziPdD"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.logger.dump.registrazione.bloccoServiziPdD"); 
 
 				if (value != null){
 					value = value.trim();
@@ -18782,7 +18782,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.whiteList";
 			try{
 				this.getDumpHeaderWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18799,7 +18799,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.blackList";
 			try{
 				this.getDumpHeaderBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18816,7 +18816,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.whiteList";
 			try{
 				this.getDumpHeaderErogazioniWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18833,7 +18833,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.blackList";
 			try{
 				this.getDumpHeaderErogazioniBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18850,7 +18850,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.whiteList";
 			try{
 				this.getDumpHeaderFruizioniWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18867,7 +18867,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.blackList";
 			try{
 				this.getDumpHeaderFruizioniBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18884,7 +18884,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.richiesta-ingresso.whiteList";
 			try{
 				this.getDumpHeaderErogazioniRichiestaIngressoWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniRichiestaIngressoWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18901,7 +18901,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.richiesta-ingresso.blackList";
 			try{
 				this.getDumpHeaderErogazioniRichiestaIngressoBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniRichiestaIngressoBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18918,7 +18918,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.richiesta-uscita.whiteList";
 			try{
 				this.getDumpHeaderErogazioniRichiestaUscitaWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniRichiestaUscitaWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18935,7 +18935,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.richiesta-uscita.blackList";
 			try{
 				this.getDumpHeaderErogazioniRichiestaUscitaBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniRichiestaUscitaBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18952,7 +18952,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.risposta-ingresso.whiteList";
 			try{
 				this.getDumpHeaderErogazioniRispostaIngressoWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniRispostaIngressoWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18969,7 +18969,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.risposta-ingresso.blackList";
 			try{
 				this.getDumpHeaderErogazioniRispostaIngressoBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniRispostaIngressoBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -18986,7 +18986,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.risposta-uscita.whiteList";
 			try{
 				this.getDumpHeaderErogazioniRispostaUscitaWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniRispostaUscitaWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19003,7 +19003,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.erogazioni.risposta-uscita.blackList";
 			try{
 				this.getDumpHeaderErogazioniRispostaUscitaBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniRispostaUscitaBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19020,7 +19020,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.richiesta-ingresso.whiteList";
 			try{
 				this.getDumpHeaderFruizioniRichiestaIngressoWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniRichiestaIngressoWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19037,7 +19037,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.richiesta-ingresso.blackList";
 			try{
 				this.getDumpHeaderFruizioniRichiestaIngressoBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniRichiestaIngressoBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19054,7 +19054,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.richiesta-uscita.whiteList";
 			try{
 				this.getDumpHeaderFruizioniRichiestaUscitaWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniRichiestaUscitaWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19071,7 +19071,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.richiesta-uscita.blackList";
 			try{
 				this.getDumpHeaderFruizioniRichiestaUscitaBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniRichiestaUscitaBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19088,7 +19088,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.risposta-ingresso.whiteList";
 			try{
 				this.getDumpHeaderFruizioniRispostaIngressoWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniRispostaIngressoWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19105,7 +19105,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.risposta-ingresso.blackList";
 			try{
 				this.getDumpHeaderFruizioniRispostaIngressoBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniRispostaIngressoBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19122,7 +19122,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.risposta-uscita.whiteList";
 			try{
 				this.getDumpHeaderFruizioniRispostaUscitaWhiteList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName);
+				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniRispostaUscitaWhiteList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19139,7 +19139,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.logger.dump.header.fruizioni.risposta-uscita.blackList";
 			try{
 				this.getDumpHeaderFruizioniRispostaUscitaBlackList = new ArrayList<>();
-				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniRispostaUscitaBlackList, tmp);
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -19181,7 +19181,7 @@ public class OpenSPCoop2Properties {
 		if(this.isDumpEmitDiagnostic==null){
 			String pName = "org.openspcoop2.pdd.logger.dump.emitDiagnostic";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -19208,7 +19208,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isDumpBinarioRegistrazioneDatabase==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase"); 
 
 				if (value != null){
 					value = value.trim();
@@ -19233,7 +19233,7 @@ public class OpenSPCoop2Properties {
 		if(this.getDumpBinarioInMemoryThreshold==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 					this.getDumpBinarioInMemoryThreshold = java.lang.Integer.parseInt(name);
@@ -19256,7 +19256,7 @@ public class OpenSPCoop2Properties {
 		if(this.getDumpBinarioRepository==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -19298,7 +19298,7 @@ public class OpenSPCoop2Properties {
 		if(this.getDumpNonRealtimeInMemoryThreshold==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.inMemory.threshold");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.inMemory.threshold");
 				if(name!=null){
 					name = name.trim();
 					this.getDumpNonRealtimeInMemoryThreshold = java.lang.Integer.parseInt(name);
@@ -19320,7 +19320,7 @@ public class OpenSPCoop2Properties {
 		if(this.getDumpNonRealtimeMode==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.mode");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.mode");
 				if(name!=null){
 					name = name.trim();
 					if(!CostantiPdD.DUMP_NON_REALTIME_MODE_DB.equalsIgnoreCase(name) && 
@@ -19371,7 +19371,7 @@ public class OpenSPCoop2Properties {
 		if(this.getDumpNonRealtimeRepository==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.msgRepository");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.msgRepository");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -19408,7 +19408,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isDumpNonRealtimeThrowStreamingHandlerException==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.throwStreamingHandlerException"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.dump.nonRealTime.throwStreamingHandlerException"); 
 
 				if (value != null){
 					value = value.trim();
@@ -19443,7 +19443,7 @@ public class OpenSPCoop2Properties {
 		if(this.tipoIDManager==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.idGenerator");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.idGenerator");
 				if(name!=null){
 					name = name.trim();
 					this.tipoIDManager = name;
@@ -19465,7 +19465,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.idGenerator.useThreadLocal";
 		if(this.useIDManagerWithThreadLocal==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -19491,7 +19491,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.idGenerator."+this.getTipoIDManager()+".parameters";
 		if(this.listIDManagerParametersRead==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				initIDManagerParameters(value);
 
@@ -19529,7 +19529,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.idGenerator.buffer";
 		if(this.getIDManagerBufferSize==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -19566,7 +19566,7 @@ public class OpenSPCoop2Properties {
 		if(this.generazioneDateCasualiLogAbilitato==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.generazioneDateCasuali.enabled");
 				if(name!=null){
 					name = name.trim();
 					this.generazioneDateCasualiLogAbilitato = Boolean.parseBoolean(name);
@@ -19591,8 +19591,8 @@ public class OpenSPCoop2Properties {
 				throw new CoreException("Non e' possibile utilizzare la modalita' di generazione casuale delle date, se non si abilita la generazione di un ID");
 			}
 			
-			String inizioIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.inizioIntervallo");
-			String fineIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.fineIntervallo");
+			String inizioIntervallo = this.reader.getValueConvertEnvProperties("org.openspcoop2.generazioneDateCasuali.inizioIntervallo");
+			String fineIntervallo = this.reader.getValueConvertEnvProperties("org.openspcoop2.generazioneDateCasuali.fineIntervallo");
 			SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd hh:mm");
 			if(inizioIntervallo==null){
 				throw new CoreException("Non e' stato definito l'intervallo di inizio per la modalita' di generazione casuale delle date");
@@ -19623,7 +19623,7 @@ public class OpenSPCoop2Properties {
 		if(this.openspcoop2MessageFactoryRead==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messagefactory");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messagefactory");
 				if(v!=null){
 					v = v.trim();
 					this.openspcoop2MessageFactory = v;
@@ -19644,7 +19644,7 @@ public class OpenSPCoop2Properties {
 		if(this.messageSecurityContextRead==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.context");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.context");
 				if(v!=null){
 					v = v.trim();
 					this.messageSecurityContext = v;
@@ -19665,7 +19665,7 @@ public class OpenSPCoop2Properties {
 		if(this.messageSecurityDigestReaderRead==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.digestReader");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.digestReader");
 				if(v!=null){
 					v = v.trim();
 					this.messageSecurityDigestReader = v;
@@ -19685,7 +19685,7 @@ public class OpenSPCoop2Properties {
 		if(this.printInfoFactory==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messagefactory.printInfo");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messagefactory.printInfo");
 				if(v!=null){
 					v = v.trim();
 					this.printInfoFactory = Boolean.parseBoolean(v);
@@ -19706,7 +19706,7 @@ public class OpenSPCoop2Properties {
 		if(this.printInfoMessageSecurity==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.printInfo");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.messageSecurity.printInfo");
 				if(v!=null){
 					v = v.trim();
 					this.printInfoMessageSecurity = Boolean.parseBoolean(v);
@@ -19731,7 +19731,7 @@ public class OpenSPCoop2Properties {
 		if(this.freeMemoryLog==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.freememorylog");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.freememorylog");
 				if(v!=null){
 					v = v.trim();
 					this.freeMemoryLog = Boolean.parseBoolean(v);
@@ -19780,7 +19780,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.SoggettiVirtuali.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -19804,7 +19804,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneErroreProtocolloNonSupportato==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -19830,7 +19830,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -19851,7 +19851,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -19872,7 +19872,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -19893,7 +19893,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -19914,7 +19914,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -19935,7 +19935,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -19961,7 +19961,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneWsdlPortaDelegataEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pd.generateWsdl");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pd.generateWsdl");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pd.generateWsdl' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -19982,7 +19982,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneWsdlPortaApplicativaEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pa.generateWsdl");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pa.generateWsdl");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pa.generateWsdl' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -20003,7 +20003,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGenerazioneWsdlIntegrationManagerEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.im.generateWsdl");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.im.generateWsdl");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.im.generateWsdl' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -20029,7 +20029,7 @@ public class OpenSPCoop2Properties {
 		if(this.isCheckEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.check.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -20051,7 +20051,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.check.healthCheck.apiRest.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -20073,7 +20073,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.check.healthCheck.apiRest.endpoint";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Non definita");
 				}
@@ -20094,7 +20094,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.check.healthCheck.apiSoap.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -20116,7 +20116,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.check.healthCheck.apiSoap.endpoint";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Non definita");
 				}
@@ -20136,7 +20136,7 @@ public class OpenSPCoop2Properties {
 		if(this.isCheckReadJMXResourcesEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -20158,7 +20158,7 @@ public class OpenSPCoop2Properties {
 		if(this.getCheckReadJMXResourcesUsername_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.username");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.username");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20177,7 +20177,7 @@ public class OpenSPCoop2Properties {
 		if(this.getCheckReadJMXResourcesPassword_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.password");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.password");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20196,7 +20196,7 @@ public class OpenSPCoop2Properties {
 		if(this.isProxyReadJMXResourcesEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -20218,7 +20218,7 @@ public class OpenSPCoop2Properties {
 		if(this.getProxyReadJMXResourcesSchema_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.schema");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.schema");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20237,7 +20237,7 @@ public class OpenSPCoop2Properties {
 		if(this.getProxyReadJMXResourcesPort_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.port");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.port");
 				if(name!=null){
 					name = name.trim();
 					this.getProxyReadJMXResourcesPort = Integer.valueOf(name);
@@ -20256,7 +20256,7 @@ public class OpenSPCoop2Properties {
 		if(this.getProxyReadJMXResourcesUsername_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.username");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.username");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20275,7 +20275,7 @@ public class OpenSPCoop2Properties {
 		if(this.getProxyReadJMXResourcesPassword_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.password");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.password");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20294,7 +20294,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -20316,7 +20316,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.verificaHostName";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -20338,7 +20338,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -20361,7 +20361,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer.truststorePath";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20384,7 +20384,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer.truststoreType";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20407,7 +20407,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer.truststorePassword";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20428,7 +20428,7 @@ public class OpenSPCoop2Properties {
 		if(this.getProxyReadJMXResourcesConnectionTimeout==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.connection.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.connection.timeout");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20448,7 +20448,7 @@ public class OpenSPCoop2Properties {
 		if(this.getProxyReadJMXResourcesReadTimeout==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.readConnection.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.readConnection.timeout");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -20473,7 +20473,7 @@ public class OpenSPCoop2Properties {
 		if(this.isDSOp2UtilsEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.datasource.useDSUtils");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.datasource.useDSUtils");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.datasource.useDSUtils' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -20499,7 +20499,7 @@ public class OpenSPCoop2Properties {
 		if(this.isDataSourceGetConnectionCheckAutoCommitDisabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -20521,7 +20521,7 @@ public class OpenSPCoop2Properties {
 		if(this.isDataSourceGetConnectionCheckTransactionIsolationLevel==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -20543,7 +20543,7 @@ public class OpenSPCoop2Properties {
 		if(this.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,Connection.TRANSACTION_READ_COMMITTED));
 					name=Connection.TRANSACTION_READ_COMMITTED+"";
@@ -20569,7 +20569,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isNotifierInputStreamEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.notifierInputStream.enabled"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.notifierInputStream.enabled"); 
 
 				if (value != null){
 					value = value.trim();
@@ -20638,7 +20638,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isFormUrlEncodedFilterEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.formUrlEncodedFilter.enabled"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.formUrlEncodedFilter.enabled"); 
 
 				if (value != null){
 					value = value.trim();
@@ -20667,7 +20667,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.wildflyUndertowClientCertificateFilter.enabled";
 		if(this.isWildflyUndertowClientCertificateFilterEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -20697,7 +20697,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.semaphore.timeoutMS";
 		if(this.getSemaphoreTimeoutMS==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -20722,7 +20722,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.semaphore.debug";
 		if(this.isSemaphoreDebug==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -20750,7 +20750,7 @@ public class OpenSPCoop2Properties {
 			SemaphoreType defaultV = SemaphoreType.Semaphore;
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -20775,7 +20775,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.semaphore.fair";
 		if(this.isSemaphoreFair==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -20803,7 +20803,7 @@ public class OpenSPCoop2Properties {
 	public Integer getPortJminixConsole() {	
 		if(this.portJminixConsoleReaded==null){
 			try{ 
-				String p = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.jminix.port");
+				String p = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.jminix.port");
 				if(p!=null){
 					p = p.trim();
 					this.portJminixConsole = Integer.parseInt(p);
@@ -20829,7 +20829,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledFunctionPD==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.function.pd.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.function.pd.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.function.pd.enabled' non impostata, viene utilizzato il default=false");
 					name="true";
@@ -20850,7 +20850,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledFunctionPDtoSOAP==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.function.pdToSoap.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.function.pdToSoap.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.function.pdToSoap.enabled' non impostata, viene utilizzato il default=false");
 					name="true";
@@ -20871,7 +20871,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledFunctionPA==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.function.pa.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.function.pa.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.function.pa.enabled' non impostata, viene utilizzato il default=false");
 					name="true";
@@ -20892,7 +20892,7 @@ public class OpenSPCoop2Properties {
 	public FunctionContextsCustom getCustomContexts() throws UtilsException {	
 		if(this.customContexts==null){
 			try{ 
-				Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.function.custom.");
+				Properties p = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.function.custom.");
 				if(p!=null && p.size()>0) {
 					Enumeration<Object> en = p.keys();
 					while (en.hasMoreElements()) {
@@ -20922,7 +20922,7 @@ public class OpenSPCoop2Properties {
 									// lo registro dopo gli eventuali subcontext
 								}
 
-								Properties pSubContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.function.custom."+alias+".subcontext.");
+								Properties pSubContext = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.function.custom."+alias+".subcontext.");
 								if(pSubContext==null || pSubContext.size()<=0) {
 									if(!serviceFound) {
 										throw new CoreException("Service and SubContext undefined for alias '"+alias+"'");
@@ -21009,7 +21009,7 @@ public class OpenSPCoop2Properties {
 		if(this.realContainerCustomRead==null){
 			try{ 
 				String v = null;
-				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.realmContainer.custom");
+				v = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.realmContainer.custom");
 				if(v!=null){
 					v = v.trim();
 					this.realContainerCustom = v;
@@ -21031,7 +21031,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.configurazioneSistema.javaProperties.showPassword";
 		if(this.isConfigurazioneSistema_javaProperties_showPassword==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21059,7 +21059,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.startup.richiesteIngresso.timeout";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -21082,7 +21082,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.startup.richiesteIngresso.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -21105,7 +21105,7 @@ public class OpenSPCoop2Properties {
 		if(this.getStartup_lockMaxLife==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.startup.lock.maxLife");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.startup.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
@@ -21132,7 +21132,7 @@ public class OpenSPCoop2Properties {
 		if(this.getStartup_lockIdleTime==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.startup.lock.idleTime");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.startup.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
@@ -21160,7 +21160,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.startup.lock.attesaAttiva";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -21186,7 +21186,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.startup.lock.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -21278,7 +21278,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneContenutiApplicativi_debug==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.debug"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.debug"); 
 
 				if (value != null){
 					value = value.trim();
@@ -21303,7 +21303,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.buffer";
 		if(this.isValidazioneContenutiApplicativi_bufferContentRead==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21327,7 +21327,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione"); 
 
 				if (value != null){
 					value = value.trim();
@@ -21351,7 +21351,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione"); 
 
 				if (value != null){
 					value = value.trim();
@@ -21376,7 +21376,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.rpc.rootElement.unqualified.accept";
 		if(this.isValidazioneContenutiApplicativi_rpc_acceptRootElementUnqualified==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21400,7 +21400,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isValidazioneContenutiApplicativi_checkSoapAction==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check"); 
 
 				if (value != null){
 					value = value.trim();
@@ -21424,7 +21424,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.getValidazioneContenutiApplicativi_json_policyAdditionalProperties==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties"); 
 
 				if (value != null){
 					value = value.trim();
@@ -21449,7 +21449,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.getValidazioneContenutiApplicativi_openApi_jsonValidator==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator"); 
 
 				if (value != null){
 					value = value.trim();
@@ -21476,7 +21476,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.getValidazioneContenutiApplicativi_openApi_library==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21502,7 +21502,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_mergeAPISpec==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21528,7 +21528,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateAPISpec==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21554,7 +21554,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestPath==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21580,7 +21580,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestQuery==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21606,7 +21606,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21632,7 +21632,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21658,7 +21658,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestCookie==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21684,7 +21684,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateRequestBody==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21710,7 +21710,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21736,7 +21736,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateResponseBody==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21762,7 +21762,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21788,7 +21788,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21814,7 +21814,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21840,7 +21840,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21866,7 +21866,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21892,7 +21892,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21922,7 +21922,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isXmlFactoryDTDsEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21948,7 +21948,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isXsltProcessAsDOMSource==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -21978,7 +21978,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.yamlSnakeLimits_read==null){
 			try{  
-				String file = this.reader.getValue_convertEnvProperties(pName); 
+				String file = this.reader.getValueConvertEnvProperties(pName); 
 				if(file!=null && StringUtils.isNotEmpty(file)) {
 					File f = new File(file);
 					if(f.exists()) {
@@ -22017,7 +22017,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isJsonPathCacheEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22043,7 +22043,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isReadByPathBufferEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22071,7 +22071,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.getCachingResponseDigestAlgorithm==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cachingResponse.digestAlgorithm"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.cachingResponse.digestAlgorithm"); 
 
 				if (value != null){
 					value = value.trim();
@@ -22097,7 +22097,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.getCachingResponseHeaderCacheKey_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cachingResponse.header.cacheKey"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.cachingResponse.header.cacheKey"); 
 
 				if (value != null){
 					value = value.trim();
@@ -22125,7 +22125,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneToken.introspection.debug";
 		if(this.isGestioneToken_introspection_debug==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22150,7 +22150,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneToken.userInfo.debug";
 		if(this.isGestioneToken_userInfo_debug==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22176,7 +22176,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneToken.validazioneJWT.lock.permits";
 		if(this.getGestioneToken_validazioneJWT_lock_permits_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22205,7 +22205,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneToken.introspection.lock.permits";
 		if(this.getGestioneToken_introspection_lock_permits_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22234,7 +22234,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneToken.userInfo.lock.permits";
 		if(this.getGestioneToken_userInfo_lock_permits_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22263,7 +22263,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneToken.iat";
 		if(this.getGestioneToken_iatTimeCheck_milliseconds_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22288,7 +22288,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneToken.iat.future.toleranceMilliseconds";
 		if(this.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22315,7 +22315,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGestioneToken_expTimeCheck==null){
 			String pName = "org.openspcoop2.pdd.gestioneToken.exp.checkEnabled";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22341,7 +22341,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneToken.exp.toleranceMilliseconds";
 		if(this.getGestioneToken_expTimeCheck_tolerance_milliseconds_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22367,7 +22367,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGestioneToken_saveSourceTokenInfo==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.saveSourceTokenInfo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.saveSourceTokenInfo"); 
 
 				if (value != null){
 					value = value.trim();
@@ -22392,7 +22392,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGestioneToken_saveTokenInfo_validationFailed==null){
 			String pName = "org.openspcoop2.pdd.gestioneToken.saveTokenInfo.validationFailed";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22417,7 +22417,7 @@ public class OpenSPCoop2Properties {
 		if(this.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature==null){
 			String pName = "org.openspcoop2.pdd.gestioneToken.saveTokenInfo.validationFailed.excludeJwtSignature";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -22442,7 +22442,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.getGestioneTokenFormatDate_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.date.format"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.date.format"); 
 
 				if (value != null){
 					value = value.trim();
@@ -22466,7 +22466,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.getGestioneTokenHeaderTrasportoJSON==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.jsonHeader"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.jsonHeader"); 
 
 				if (value != null){
 					value = value.trim();
@@ -22490,7 +22490,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.getGestioneTokenHeaderTrasportoJWT==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.jwsHeader"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.jwsHeader"); 
 
 				if (value != null){
 					value = value.trim();
@@ -22521,7 +22521,7 @@ public class OpenSPCoop2Properties {
 
 			try{ 
 
-				this.keyValue_gestioneTokenHeaderIntegrazioneTrasporto = this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.");
+				this.keyValue_gestioneTokenHeaderIntegrazioneTrasporto = this.reader.readPropertiesAsHashMapConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.");
 				
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*': "+e.getMessage(),e);
@@ -22539,7 +22539,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.");
 				this.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -22573,7 +22573,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.");
 				this.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -22606,7 +22606,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.");
 				this.keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -22640,7 +22640,7 @@ public class OpenSPCoop2Properties {
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.");
 				this.keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
@@ -22674,7 +22674,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				this.getCustomClaimsKeys_gestioneTokenForward= new ArrayList<>();
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
 					while (en.hasMoreElements()) {
@@ -22705,7 +22705,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.gestioneTokenHeaderIntegrazioneTrasporto_audienceSeparator==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.audience.separator"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.audience.separator"); 
 
 				if (value != null){
 					value = value.trim();
@@ -22732,7 +22732,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.gestioneTokenHeaderIntegrazioneTrasporto_scopeSeparator==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.scopes.separator"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.scopes.separator"); 
 
 				if (value != null){
 					value = value.trim();
@@ -22759,7 +22759,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.gestioneTokenHeaderIntegrazioneTrasporto_roleSeparator==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.roles.separator"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.roles.separator"); 
 
 				if (value != null){
 					value = value.trim();
@@ -22789,7 +22789,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				this.getCustomClaims_name_gestioneTokenHeaderIntegrazione = new HashMap<>();
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
 					while (en.hasMoreElements()) {
@@ -22827,7 +22827,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				this.getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto = new HashMap<>();
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
 					while (en.hasMoreElements()) {
@@ -22865,7 +22865,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				this.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = new HashMap<String, Boolean>();
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
 					while (en.hasMoreElements()) {
@@ -22909,7 +22909,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				this.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = new HashMap<String, Boolean>();
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
 					while (en.hasMoreElements()) {
@@ -22952,7 +22952,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				this.getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson = new HashMap<>();
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
 					while (en.hasMoreElements()) {
@@ -22990,7 +22990,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				this.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = new HashMap<String, Boolean>();
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
 					while (en.hasMoreElements()) {
@@ -23034,7 +23034,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				this.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = new HashMap<String, Boolean>();
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
 					while (en.hasMoreElements()) {
@@ -23080,7 +23080,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.debug";
 		if(this.isGestioneRetrieveToken_debug_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23105,7 +23105,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.lock.permits";
 		if(this.getGestioneRetrieveToken_lock_permits_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23134,7 +23134,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName); 
+				String value = this.reader.getValueConvertEnvProperties(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23159,7 +23159,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName); 
+				String value = this.reader.getValueConvertEnvProperties(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23201,7 +23201,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.clientCredentials";
 		if(this.isGestioneRetrieveToken_refreshToken_grantType_clientCredentials==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23226,7 +23226,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.usernamePassword";
 		if(this.isGestioneRetrieveToken_refreshToken_grantType_usernamePassword==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23251,7 +23251,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.rfc7523_x509";
 		if(this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23276,7 +23276,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.rfc7523_clientSecret";
 		if(this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23301,7 +23301,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.custom";
 		if(this.isGestioneRetrieveToken_refreshToken_grantType_custom==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23326,7 +23326,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo";
 		if(this.isGestioneRetrieveToken_saveAsTokenInfo==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23351,7 +23351,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo.excludeJwtSignature";
 		if(this.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23376,7 +23376,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo.saveSourceRequest";
 		if(this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23401,7 +23401,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo.saveSourceRequest.date";
 		if(this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23426,7 +23426,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.grantType_rfc7523.saveClientAssertionJWTInfo.transazioniRegistrazioneInformazioniNormalizzate";
 		if(this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23451,7 +23451,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.grantType_rfc7523.saveClientAssertionJWTInfo.excludeJwtSignature";
 		if(this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23476,7 +23476,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveTokenInfo.retrieveFailed";
 		if(this.isGestioneRetrieveToken_saveTokenInfo_retrieveFailed==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23499,7 +23499,7 @@ public class OpenSPCoop2Properties {
 	private void initGestioneRetrieveTokenCacheKey() throws CoreException {
 		Properties p = null;
 		try {
-			p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.retrieveToken.cacheKey.");
+			p = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.retrieveToken.cacheKey.");
 		}catch(Exception e) {
 			throw new CoreException(e.getMessage(),e);
 		}
@@ -23542,7 +23542,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.debug";
 		if(this.isGestioneAttributeAuthority_debug==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23568,7 +23568,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.lock.permits";
 		if(this.getGestioneAttributeAuthority_lock_permits_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23596,7 +23596,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.saveSourceAttributeResponseInfo";
 		if(this.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23621,7 +23621,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.transazioniRegistrazioneAttributiInformazioniNormalizzate";
 		if(this.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23652,7 +23652,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isStatisticheViaJmx==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.jmx.statistiche"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.jmx.statistiche"); 
 
 				if (value != null){
 					value = value.trim();
@@ -23693,7 +23693,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.enable";
 		if(this.isForwardProxyEnable==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23719,7 +23719,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.header.enable";
 		if(this.isForwardProxyHeaderEnable==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23744,7 +23744,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.header.nome";
 		if(this.getForwardProxyHeaderName==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23769,7 +23769,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.header.base64";
 		if(this.isForwardProxyHeaderBase64==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23795,7 +23795,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.enable";
 		if(this.isForwardProxyQueryParameterEnable==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23820,7 +23820,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.nome";
 		if(this.getForwardProxyQueryParameterName==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23845,7 +23845,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.base64";
 		if(this.isForwardProxyQueryParameterBase64==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23870,7 +23870,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.tokenIntrospection.enable";
 		if(this.isForwardProxyTokenIntrospectionEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23895,7 +23895,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.tokenUserInfo.enable";
 		if(this.isForwardProxyTokenUserInfoEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23920,7 +23920,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.tokenRetrieve.enable";
 		if(this.isForwardProxyTokenRetrieveEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -23945,7 +23945,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.attributeAuthority.enable";
 		if(this.isForwardProxyAttributeAuthorityEnabled==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -24000,7 +24000,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.trasformazioni.readCharsetFromContentType.enable";
 		if(this.isTrasformazioni_readCharsetFromContentType==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -24026,7 +24026,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.trasformazioni.backwardCompatibility.";
 		if(this.getTrasformazioni_backwardCompatibility_read==null){
 			try{  
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 
 				if (p != null && !p.isEmpty()){
 					Enumeration<?> keys = p.keys();
@@ -24074,7 +24074,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isSOAPServicesUrlParametersForward==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.forward.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.forward.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -24100,7 +24100,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesBlackListInternalUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList.internal");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList.internal");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24126,7 +24126,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesBlackListUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24152,7 +24152,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesWhiteListUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.whiteList");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.whiteList");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24219,7 +24219,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isSOAPServicesHeadersForward==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.forward.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.forward.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -24245,7 +24245,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesBlackListBothInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.both");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.both");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24271,7 +24271,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesBlackListRequestInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.request");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.request");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24297,7 +24297,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesBlackListResponseInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.response");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.response");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24323,7 +24323,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesBlackListBothHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.both");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.both");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24349,7 +24349,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesBlackListRequestHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.request");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.request");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24375,7 +24375,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesBlackListResponseHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.response");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.response");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24401,7 +24401,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesWhiteListBothHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.both");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.both");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24427,7 +24427,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesWhiteListRequestHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.request");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.request");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24453,7 +24453,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServicesWhiteListResponseHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.response");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.response");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -24541,7 +24541,7 @@ public class OpenSPCoop2Properties {
 		if(this.isSOAPServices_inoltroBuste_proxyPassReverse==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -24562,7 +24562,7 @@ public class OpenSPCoop2Properties {
 		if(this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -24585,7 +24585,7 @@ public class OpenSPCoop2Properties {
 				this.getSOAPServices_inoltroBuste_proxyPassReverse_headers = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.headers");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.headers");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -24617,7 +24617,7 @@ public class OpenSPCoop2Properties {
 				this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -24650,7 +24650,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -24672,7 +24672,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -24694,7 +24694,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.path";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isSOAPServices_inoltroBuste_proxyPassReverse_setCookie()));
 					name=""+isSOAPServices_inoltroBuste_proxyPassReverse_setCookie();
@@ -24716,7 +24716,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.path";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie()));
 					name=""+isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
@@ -24738,7 +24738,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.domain";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isSOAPServices_inoltroBuste_proxyPassReverse_setCookie()));
 					name=""+isSOAPServices_inoltroBuste_proxyPassReverse_setCookie();
@@ -24760,7 +24760,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.domain";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie()));
 					name=""+isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
@@ -24783,7 +24783,7 @@ public class OpenSPCoop2Properties {
 				this.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.headers");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.headers");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -24815,7 +24815,7 @@ public class OpenSPCoop2Properties {
 				this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -24847,7 +24847,7 @@ public class OpenSPCoop2Properties {
 		if(this.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -24868,7 +24868,7 @@ public class OpenSPCoop2Properties {
 		if(this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -24890,7 +24890,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soap.connettori.inoltroBuste.response.securityHeaders";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -24911,7 +24911,7 @@ public class OpenSPCoop2Properties {
 		if(this.getSOAPServices_inoltroBuste_response_securityHeaders==null){
 			String pName = "org.openspcoop2.pdd.soap.connettori.inoltroBuste.response.securityHeaders.";
 			try{ 
-				this.getSOAPServices_inoltroBuste_response_securityHeaders = this.reader.readProperties_convertEnvProperties(pName);
+				this.getSOAPServices_inoltroBuste_response_securityHeaders = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -24927,7 +24927,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.response.securityHeaders";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -24948,7 +24948,7 @@ public class OpenSPCoop2Properties {
 		if(this.getSOAPServices_consegnaContenutiApplicativi_response_securityHeaders==null){
 			String pName = "org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.response.securityHeaders.";
 			try{ 
-				this.getSOAPServices_consegnaContenutiApplicativi_response_securityHeaders = this.reader.readProperties_convertEnvProperties(pName);
+				this.getSOAPServices_consegnaContenutiApplicativi_response_securityHeaders = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -24967,7 +24967,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isRESTServicesUrlParametersForward==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.forward.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.forward.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -24993,7 +24993,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesBlackListInternalUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList.internal");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList.internal");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25019,7 +25019,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesBlackListUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25045,7 +25045,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesWhiteListUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.whiteList");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.whiteList");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25112,7 +25112,7 @@ public class OpenSPCoop2Properties {
 
 		if(this.isRESTServicesHeadersForward==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.forward.enable"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.forward.enable"); 
 
 				if (value != null){
 					value = value.trim();
@@ -25138,7 +25138,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesBlackListBothInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.both");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.both");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25164,7 +25164,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesBlackListRequestInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.request");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.request");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25190,7 +25190,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesBlackListResponseInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.response");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.response");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25216,7 +25216,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesBlackListBothHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.both");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.both");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25242,7 +25242,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesBlackListRequestHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.request");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.request");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25268,7 +25268,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesBlackListResponseHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.response");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.response");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25294,7 +25294,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesWhiteListBothHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.both");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.both");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25320,7 +25320,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesWhiteListRequestHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.request");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.request");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25346,7 +25346,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServicesWhiteListResponseHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.response");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.response");
 				if(name!=null){
 					name = name.trim();
 					String [] split = name.split(",");
@@ -25434,7 +25434,7 @@ public class OpenSPCoop2Properties {
 		if(this.isRESTServices_inoltroBuste_proxyPassReverse==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -25455,7 +25455,7 @@ public class OpenSPCoop2Properties {
 		if(this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -25478,7 +25478,7 @@ public class OpenSPCoop2Properties {
 				this.getRESTServices_inoltroBuste_proxyPassReverse_headers = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.headers");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.headers");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -25510,7 +25510,7 @@ public class OpenSPCoop2Properties {
 				this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -25543,7 +25543,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -25565,7 +25565,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -25587,7 +25587,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.path";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isRESTServices_inoltroBuste_proxyPassReverse_setCookie()));
 					name=""+isRESTServices_inoltroBuste_proxyPassReverse_setCookie();
@@ -25609,7 +25609,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.path";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie()));
 					name=""+isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
@@ -25631,7 +25631,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.domain";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isRESTServices_inoltroBuste_proxyPassReverse_setCookie()));
 					name=""+isRESTServices_inoltroBuste_proxyPassReverse_setCookie();
@@ -25653,7 +25653,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.domain";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie()));
 					name=""+isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
@@ -25676,7 +25676,7 @@ public class OpenSPCoop2Properties {
 				this.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.headers");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.headers");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -25708,7 +25708,7 @@ public class OpenSPCoop2Properties {
 				this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = new ArrayList<>();
 				
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers");
 				if(name!=null){
 					name = name.trim();
 				}
@@ -25740,7 +25740,7 @@ public class OpenSPCoop2Properties {
 		if(this.isRESTServices_inoltroBuste_proxyPassReverse_useProtocolPrefix==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -25761,7 +25761,7 @@ public class OpenSPCoop2Properties {
 		if(this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -25784,7 +25784,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.rest.connettori.inoltroBuste.response.securityHeaders";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -25805,7 +25805,7 @@ public class OpenSPCoop2Properties {
 		if(this.getRESTServices_inoltroBuste_response_securityHeaders==null){
 			String pName = "org.openspcoop2.pdd.rest.connettori.inoltroBuste.response.securityHeaders.";
 			try{ 
-				this.getRESTServices_inoltroBuste_response_securityHeaders = this.reader.readProperties_convertEnvProperties(pName);
+				this.getRESTServices_inoltroBuste_response_securityHeaders = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -25821,7 +25821,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.response.securityHeaders";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -25842,7 +25842,7 @@ public class OpenSPCoop2Properties {
 		if(this.getRESTServices_consegnaContenutiApplicativi_response_securityHeaders==null){
 			String pName = "org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.response.securityHeaders.";
 			try{ 
-				this.getRESTServices_consegnaContenutiApplicativi_response_securityHeaders = this.reader.readProperties_convertEnvProperties(pName);
+				this.getRESTServices_consegnaContenutiApplicativi_response_securityHeaders = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -25861,7 +25861,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -25882,7 +25882,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniDebug==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.debug");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.debug");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.debug' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -25903,7 +25903,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniUsePddRuntimeDatasource==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -25924,7 +25924,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTransazioniDatasource==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -25943,7 +25943,7 @@ public class OpenSPCoop2Properties {
 	public Properties getTransazioniDatasourceJndiContext() throws CoreException {	
 		if(this.getTransazioniDatasourceJndiContext==null){
 			try{ 
-				this.getTransazioniDatasourceJndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource.property.");
+				this.getTransazioniDatasourceJndiContext = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource.property.");
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.property.*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -25958,7 +25958,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniDatasourceUseDBUtils==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.datasource.useDSUtils");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.datasource.useDSUtils");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.datasource.useDSUtils' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -25979,7 +25979,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniSaveTracceInUniqueTransaction==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -26000,7 +26000,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniSaveDiagnosticiInUniqueTransaction==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.diagnostici.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.diagnostici.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -26021,7 +26021,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniSaveDumpInUniqueTransaction==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.dump.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.dump.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -26043,7 +26043,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniValorizzaDataIngressoConDataAccettazione==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -26065,7 +26065,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -26086,7 +26086,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniFaultPrettyPrint==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.fault.prettyPrint");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.fault.prettyPrint");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.fault.prettyPrint' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -26108,7 +26108,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.httpStatusAsEvent.inResponseCode";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26129,7 +26129,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.httpStatusAsEvent.outResponseCode";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26151,7 +26151,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.tipoApiAsEvent";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26173,7 +26173,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.connettoriMultipliAsEvent";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26195,7 +26195,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.slowLog.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="false";
@@ -26218,7 +26218,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.slowLog.thresholdMs";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,this.getTransazioniRegistrazioneSlowLogThresholdMs_default));
 					name=""+this.getTransazioniRegistrazioneSlowLogThresholdMs_default;
@@ -26240,7 +26240,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.slowLog.buildTransactionDetails.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26262,7 +26262,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.slowLog.rateLimitingDetails.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26284,7 +26284,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.slowLog.connettoriMultipli.processTransactionSADetails.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26306,7 +26306,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.slowLog.connettoriMultipli.updateTransactionDetails.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26330,7 +26330,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniFiltroDuplicatiSaveDateEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -26354,7 +26354,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniFiltroDuplicatiTramiteTransazioniEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -26375,7 +26375,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniFiltroDuplicatiTramiteTransazioniUsePdDConnection==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -26396,7 +26396,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniFiltroDuplicatiTramiteTransazioniForceIndex==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -26420,7 +26420,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniStatefulEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -26441,7 +26441,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniStatefulDebug==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.debug");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.debug");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.debug' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -26462,7 +26462,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTransazioniStatefulTimerIntervalSeconds==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.seconds");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -26485,7 +26485,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTransazioniCredenzialiMittenteMaxLength==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -26506,7 +26506,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTransazioniCredenzialiMittenteLifeSeconds_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.credenzialiMittente.updateAfterSeconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.credenzialiMittente.updateAfterSeconds");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -26528,7 +26528,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -26549,7 +26549,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniRegistrazioneTracceHeaderRawEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -26570,7 +26570,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniRegistrazioneTracceDigestEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.digest.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.digest.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.digest.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -26595,7 +26595,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTransazioniRegistrazioneTracceManager_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.salvataggio");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.salvataggio");
 				if(name!=null){
 					name = name.trim();
 					
@@ -26627,7 +26627,7 @@ public class OpenSPCoop2Properties {
 		if(this.getTransazioniRegistrazioneDiagnosticiManager_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.diagnostici.salvataggio");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.diagnostici.salvataggio");
 				if(name!=null){
 					name = name.trim();
 					
@@ -26655,7 +26655,7 @@ public class OpenSPCoop2Properties {
 		if(this.isTransazioniRegistrazioneDumpHeadersCompactEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -26679,7 +26679,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26701,7 +26701,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26722,7 +26722,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.payload.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null || "".equals(name)){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isTransazioniFileTraceDumpBinarioPDEnabled()));
 					name=""+isTransazioniFileTraceDumpBinarioPDEnabled();
@@ -26743,7 +26743,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.headers.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null || "".equals(name)){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isTransazioniFileTraceDumpBinarioPDEnabled()));
 					name=""+isTransazioniFileTraceDumpBinarioPDEnabled();
@@ -26765,7 +26765,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26786,7 +26786,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.payload.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null || "".equals(name)){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()));
 					name=""+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
@@ -26807,7 +26807,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.headers.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null || "".equals(name)){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()));
 					name=""+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
@@ -26829,7 +26829,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26850,7 +26850,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.payload.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null || "".equals(name)){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isTransazioniFileTraceDumpBinarioPAEnabled()));
 					name=""+isTransazioniFileTraceDumpBinarioPAEnabled();
@@ -26871,7 +26871,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.headers.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null || "".equals(name)){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isTransazioniFileTraceDumpBinarioPAEnabled()));
 					name=""+isTransazioniFileTraceDumpBinarioPAEnabled();
@@ -26894,7 +26894,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -26915,7 +26915,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.payload.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null || "".equals(name)){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()));
 					name=""+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
@@ -26936,7 +26936,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.headers.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null || "".equals(name)){
 					this.logDebug(getMessaggioProprietaNonImpostata(pName,isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()));
 					name=""+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
@@ -26958,7 +26958,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.config";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -27034,7 +27034,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEventiEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.eventi.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.eventi.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27055,7 +27055,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEventiDebug==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.eventi.debug");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.eventi.debug");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.debug' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27076,7 +27076,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEventiRegistrazioneStatoPorta==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.eventi.registraStatoPorta");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.eventi.registraStatoPorta");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.registraStatoPorta' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27097,7 +27097,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEventiTimerEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.eventi.timer.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.eventi.timer.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.timer.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27118,7 +27118,7 @@ public class OpenSPCoop2Properties {
 		if(this.getEventiTimerIntervalSeconds==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.eventi.timer.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.eventi.timer.seconds");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -27143,7 +27143,7 @@ public class OpenSPCoop2Properties {
 		if(this.getFileSystemRecovery_repository==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.repository");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.repository");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -27177,7 +27177,7 @@ public class OpenSPCoop2Properties {
 		if(this.isFileSystemRecoveryDebug==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.debug");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.debug");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.debug' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27198,7 +27198,7 @@ public class OpenSPCoop2Properties {
 		if(this.isFileSystemRecoveryTimerEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27219,7 +27219,7 @@ public class OpenSPCoop2Properties {
 		if(this.getFileSystemRecoveryTimerIntervalSeconds==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.timeout");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.timeout");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -27239,7 +27239,7 @@ public class OpenSPCoop2Properties {
 		if(this.getFileSystemRecoveryTimerMaxAttempts==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.maxAttempts");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.maxAttempts");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -27259,7 +27259,7 @@ public class OpenSPCoop2Properties {
 		if(this.isFileSystemRecoveryTimerEventEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27280,7 +27280,7 @@ public class OpenSPCoop2Properties {
 		if(this.isFileSystemRecoveryTimerTransactionEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27312,7 +27312,7 @@ public class OpenSPCoop2Properties {
 				}
 				else {
 					String name = null;
-					name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.enabled");
+					name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.enabled");
 					if(name==null){
 						this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.enabled' non impostata, viene utilizzato il default=true");
 						name="true";
@@ -27334,7 +27334,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloTrafficoDebug==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.debug");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.debug");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.debug' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27355,7 +27355,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloTrafficoViolazioneGenerazioneErroreGenerico==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.erroreGenerico");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.erroreGenerico");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.erroreGenerico' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27376,7 +27376,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloTrafficoPolicyLetturaDaCacheDinamica==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27402,7 +27402,7 @@ public class OpenSPCoop2Properties {
 				throw new CoreException(e.getMessage(),e);
 			}
 			try{
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaDelegata.esitiConsiderati");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaDelegata.esitiConsiderati");
 				if(value!=null){
 					value = value.trim();
 					String [] split = value.split(",");
@@ -27465,7 +27465,7 @@ public class OpenSPCoop2Properties {
 				throw new CoreException(e.getMessage(),e);
 			}
 			try{
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaApplicativa.esitiConsiderati");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaApplicativa.esitiConsiderati");
 				if(value!=null){
 					value = value.trim();
 					String [] split = value.split(",");
@@ -27523,7 +27523,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -27545,7 +27545,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.statistiche.distribuzioneSettimanale.usaStatisticheGiornaliere";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -27567,7 +27567,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.statistiche.distribuzioneMensile.usaStatisticheGiornaliere";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -27589,7 +27589,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.statistiche.distribuzioneSettimanaleMensile.usaStatisticheGiornaliere.latenza.mediaPesata";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -27615,7 +27615,7 @@ public class OpenSPCoop2Properties {
 				throw new CoreException(e.getMessage(),e);
 			}
 			try{
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati");
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati");
 				if(value!=null){
 					value = value.trim();
 					String [] split = value.split(",");
@@ -27666,7 +27666,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -27737,7 +27737,7 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloTrafficoGestorePolicyTipo==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo");
 				if(name==null){
 					TipoGestorePolicy gestoreDefault = TipoGestorePolicy.IN_MEMORY;
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo' non impostata, viene utilizzato il default="+gestoreDefault);
@@ -27762,7 +27762,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoGestorePolicyInMemoryType==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo");
 				if(name==null){
 					this.getControlloTrafficoGestorePolicyInMemoryType = PolicyGroupByActiveThreadsType.LOCAL;
 					this.logWarn("Proprieta' 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo' non impostata; viene usato il default: "+this.getControlloTrafficoGestorePolicyInMemoryType);
@@ -27787,7 +27787,7 @@ public class OpenSPCoop2Properties {
 			for (PolicyGroupByActiveThreadsType initType : PolicyGroupByActiveThreadsType.values()) {
 				String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory."+initType.name()+".lazyInitialization";
 				try{ 
-					String name = this.reader.getValue_convertEnvProperties(pName);
+					String name = this.reader.getValueConvertEnvProperties(pName);
 					if(name==null){
 						this.logWarn("Proprieta' '"+pName+"' non impostata; viene usato il default: "+true);
 						this.getControlloTrafficoGestorePolicyInMemoryTypeLazyInitialization.put(initType, true);
@@ -27812,7 +27812,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.counters.useLocalLock";
 		if(this.isControlloTrafficoGestorePolicyInMemoryRemoteCountersUseLocalLock==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -27835,7 +27835,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.remaining.zeroValue";
 		if(this.isControlloTrafficoGestioneCluster_remaining_zeroValue==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -27858,7 +27858,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.limit.roundingDown";
 		if(this.isControlloTrafficoGestioneCluster_limit_roundingDown==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -27881,7 +27881,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.limit.normalizedQuota";
 		if(this.isControlloTrafficoGestioneCluster_limit_normalizedQuota==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -27905,7 +27905,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.useTransaction";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if (name != null) {
 					name = name.trim();
 					this.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = Boolean.valueOf(name);
@@ -27928,7 +27928,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.serializable.attesaAttiva";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if (name != null) {
 					name = name.trim();
 					long time = java.lang.Long.parseLong(name);
@@ -27952,7 +27952,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.serializable.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if (name != null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
@@ -27976,7 +27976,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.hazelcast.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -28001,7 +28001,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_MAP.config";
 
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -28029,7 +28029,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_PNCOUNTER.config";
 
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -28057,7 +28057,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_ATOMIC_LONG.config";
 
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -28086,7 +28086,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_ATOMIC_LONG_ASYNC.config";
 
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -28115,7 +28115,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_NEAR_CACHE.config";
 
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -28142,7 +28142,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.config";
 
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -28169,7 +28169,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.config";
 
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -28196,7 +28196,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_REPLICATED_MAP.config";
 
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -28224,7 +28224,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_LOCAL_CACHE.config";
 
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
@@ -28249,7 +28249,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -28274,7 +28274,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null) {
 					throw new CoreException(NON_DEFINITA);
 				}
@@ -28298,7 +28298,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null) {
 					name = name.trim();
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig = new File(name);
@@ -28331,7 +28331,7 @@ public class OpenSPCoop2Properties {
 			
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if (name != null) {
 					name = name.trim();
 					this.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval = Integer.valueOf(name);
@@ -28355,7 +28355,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.redis.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -28379,7 +28379,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException(NON_DEFINITA);
 				}else{
@@ -28414,7 +28414,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -28439,7 +28439,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
@@ -28464,7 +28464,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoGestorePolicyWSUrl==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.ws.url");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.ws.url");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -28489,7 +28489,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNotifyImpl_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.notifier.implementation");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.notifier.implementation");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNotifyImpl = (INotify) loaderOpenSPCoop.newInstance(name);
@@ -28509,7 +28509,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository = new File(name);
@@ -28549,7 +28549,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.limit");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.limit");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit = name.split(",");
@@ -28575,7 +28575,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteHeaderLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteHeaderLimit = name.split(",");
@@ -28601,7 +28601,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoOccupazioneBandaHeaderLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoOccupazioneBandaHeaderLimit = name.split(",");
@@ -28627,7 +28627,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoTempoComplessivoRispostaHeaderLimit = name.split(",");
@@ -28653,7 +28653,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoTempoMedioRispostaHeaderLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoTempoMedioRispostaHeaderLimit = name.split(",");
@@ -28679,7 +28679,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit = name.split(",");
@@ -28705,7 +28705,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit = name.split(",");
@@ -28731,7 +28731,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroFaultApplicativiHeaderLimit = name.split(",");
@@ -28757,7 +28757,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit = name.split(",");
@@ -28787,7 +28787,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteHeaderLimitWindows_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit.windows");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit.windows");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteHeaderLimitWindows = Boolean.valueOf(name);
@@ -28810,7 +28810,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoOccupazioneBandaHeaderLimitWindows_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit.windows");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit.windows");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoOccupazioneBandaHeaderLimitWindows = Boolean.valueOf(name);
@@ -28833,7 +28833,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit.windows");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit.windows");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows = Boolean.valueOf(name);
@@ -28856,7 +28856,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit.windows");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit.windows");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows = Boolean.valueOf(name);
@@ -28879,7 +28879,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit.windows");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit.windows");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows = Boolean.valueOf(name);
@@ -28902,7 +28902,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit.windows");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit.windows");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows = Boolean.valueOf(name);
@@ -28925,7 +28925,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit.windows");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit.windows");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows = Boolean.valueOf(name);
@@ -28948,7 +28948,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit.windows");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit.windows");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows = Boolean.valueOf(name);
@@ -28975,7 +28975,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.remaining");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.remaining");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining = name.split(",");
@@ -29001,7 +29001,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteHeaderRemaining_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.remaining");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.remaining");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteHeaderRemaining = name.split(",");
@@ -29027,7 +29027,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoOccupazioneBandaHeaderRemaining_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.remaining");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.remaining");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoOccupazioneBandaHeaderRemaining = name.split(",");
@@ -29053,7 +29053,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderRemaining_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.remaining");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.remaining");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoTempoComplessivoRispostaHeaderRemaining = name.split(",");
@@ -29079,7 +29079,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.remaining");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.remaining");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining = name.split(",");
@@ -29105,7 +29105,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.remaining");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.remaining");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining = name.split(",");
@@ -29131,7 +29131,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.remaining");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.remaining");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining = name.split(",");
@@ -29157,7 +29157,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.remaining");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.remaining");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining = name.split(",");
@@ -29189,7 +29189,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteHeaderReset_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.reset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.reset");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteHeaderReset = name.split(",");
@@ -29215,7 +29215,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoOccupazioneBandaHeaderReset_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.reset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.reset");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoOccupazioneBandaHeaderReset = name.split(",");
@@ -29241,7 +29241,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderReset_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.reset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.reset");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoTempoComplessivoRispostaHeaderReset = name.split(",");
@@ -29267,7 +29267,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoTempoMedioRispostaHeaderReset_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.reset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.reset");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoTempoMedioRispostaHeaderReset = name.split(",");
@@ -29293,7 +29293,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.reset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.reset");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset = name.split(",");
@@ -29319,7 +29319,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderReset_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.reset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.reset");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteFalliteHeaderReset = name.split(",");
@@ -29345,7 +29345,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderReset_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.reset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.reset");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroFaultApplicativiHeaderReset = name.split(",");
@@ -29371,7 +29371,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset = name.split(",");
@@ -29401,7 +29401,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoRetryAfterHeader_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoRetryAfterHeader = name.split(",");
@@ -29426,7 +29426,7 @@ public class OpenSPCoop2Properties {
 		if(this.getControlloTrafficoRetryAfterHeader_randomBackoff==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter.randomBackoff.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getControlloTrafficoRetryAfterHeader_randomBackoff = Integer.parseInt(name);
@@ -29457,7 +29457,7 @@ public class OpenSPCoop2Properties {
 				}
 				else {
 					String name = null;
-					name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.allarmi.enabled");
+					name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.allarmi.enabled");
 					if(name==null){
 						this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.enabled' non impostata, viene utilizzato il default=false");
 						name="false";
@@ -29479,7 +29479,7 @@ public class OpenSPCoop2Properties {
 		if(this.isAllarmiDebug==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.allarmi.debug");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.allarmi.debug");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.debug' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -29505,7 +29505,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_pd==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_pd = Integer.parseInt(name);
@@ -29527,7 +29527,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = Integer.parseInt(name);
@@ -29549,7 +29549,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_pa==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_pa = Integer.parseInt(name);
@@ -29571,7 +29571,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = Integer.parseInt(name);
@@ -29595,7 +29595,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledServiceUnavailableRetryAfter_pd_suspend==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -29616,7 +29616,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_pd_suspend==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_pd_suspend = Integer.parseInt(name);
@@ -29638,7 +29638,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.randomBackoff.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend = Integer.parseInt(name);
@@ -29660,7 +29660,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledServiceUnavailableRetryAfter_pa_suspend==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -29681,7 +29681,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_pa_suspend==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_pa_suspend = Integer.parseInt(name);
@@ -29703,7 +29703,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.randomBackoff.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend = Integer.parseInt(name);
@@ -29725,7 +29725,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -29746,7 +29746,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed = Integer.parseInt(name);
@@ -29768,7 +29768,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.randomBackoff.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed = Integer.parseInt(name);
@@ -29790,7 +29790,7 @@ public class OpenSPCoop2Properties {
 		if(this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -29811,7 +29811,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed = Integer.parseInt(name);
@@ -29833,7 +29833,7 @@ public class OpenSPCoop2Properties {
 		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.randomBackoff.seconds");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed = Integer.parseInt(name);
@@ -29855,7 +29855,7 @@ public class OpenSPCoop2Properties {
 	public boolean isServiceUnavailable_ReadTimedOut(String msg) {	
 		if(this.isReadTimedOut==null){
 			try{ 
-				Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.readTimedOut.");
+				Properties p = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.readTimedOut.");
 				this.isReadTimedOut = new ArrayList<>();
 				if(p!=null && !p.isEmpty()) {
 					Iterator<Object> it = p.values().iterator();
@@ -29892,7 +29892,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -29914,7 +29914,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheUsePddRuntimeDatasource==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -29935,7 +29935,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheUseTransazioniDatasource==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.useTransazioni");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.useTransazioni");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.useTransazioni' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -29956,7 +29956,7 @@ public class OpenSPCoop2Properties {
 		if(this.getStatisticheDatasource==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -29975,7 +29975,7 @@ public class OpenSPCoop2Properties {
 	public Properties getStatisticheDatasourceJndiContext() throws CoreException {	
 		if(this.getStatisticheDatasourceJndiContext==null){
 			try{ 
-				this.getStatisticheDatasourceJndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.property.");
+				this.getStatisticheDatasourceJndiContext = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.property.");
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.property.*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -29990,7 +29990,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheDatasourceUseDBUtils==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.datasource.useDSUtils");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.datasource.useDSUtils");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.datasource.useDSUtils' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30011,7 +30011,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneUseUnionForLatency==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30032,7 +30032,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneCustomEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.custom.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.custom.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -30053,7 +30053,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneCustomSdkEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
@@ -30074,7 +30074,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneDebug==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.debug");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.debug");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.debug' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30095,7 +30095,7 @@ public class OpenSPCoop2Properties {
 		if(this.getStatisticheOrarieGenerazioneTimerIntervalSeconds==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30115,7 +30115,7 @@ public class OpenSPCoop2Properties {
 		if(this.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30135,7 +30135,7 @@ public class OpenSPCoop2Properties {
 		if(this.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30155,7 +30155,7 @@ public class OpenSPCoop2Properties {
 		if(this.getStatisticheMensiliGenerazioneTimerIntervalSeconds==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi");
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30175,7 +30175,7 @@ public class OpenSPCoop2Properties {
 		if(this.getStatisticheGenerazioneTimerLockMaxLife==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.timer.lock.maxLife");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.timer.lock.maxLife");
 
 				if(name!=null){
 					name = name.trim();
@@ -30202,7 +30202,7 @@ public class OpenSPCoop2Properties {
 		if(this.getStatisticheGenerazioneTimerLockIdleTime==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.timer.lock.idleTime");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.timer.lock.idleTime");
 
 				if(name!=null){
 					name = name.trim();
@@ -30230,7 +30230,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.statistiche.generazione.timer.lock.attesaAttiva";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -30256,7 +30256,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.statistiche.generazione.timer.lock.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -30280,7 +30280,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneBaseOrariaEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30301,7 +30301,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneBaseGiornalieraEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30322,7 +30322,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneBaseSettimanaleEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30343,7 +30343,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneBaseMensileEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30365,7 +30365,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneBaseOrariaEnabledUltimaOra==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30386,7 +30386,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneBaseGiornalieraEnabledUltimoGiorno==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30407,7 +30407,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneBaseSettimanaleEnabledUltimaSettimana==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30428,7 +30428,7 @@ public class OpenSPCoop2Properties {
 		if(this.isStatisticheGenerazioneBaseMensileEnabledUltimoMese==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese");
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese");
 				if(name==null){
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese' non impostata, viene utilizzato il default=true");
 					name="true";
@@ -30448,7 +30448,7 @@ public class OpenSPCoop2Properties {
 	public StatisticsForceIndexConfig getStatisticheGenerazioneExternalForceIndexRepository() throws CoreException {	
 		try{ 
 			String name = null;
-			name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository");
+			name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository");
 			if(name!=null){
 				name = name.trim();
 				return readStatisticsForceIndexConfig(name);
@@ -30498,7 +30498,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					name="false";
@@ -30520,7 +30520,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.debug";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -30542,7 +30542,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.eventi.add";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -30564,7 +30564,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.eventi.update";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -30586,7 +30586,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.eventi.delete";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					name="true";
@@ -30608,7 +30608,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.remoteStore.name";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30630,7 +30630,7 @@ public class OpenSPCoop2Properties {
 			int defaultValue = 43200;
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
 					name=defaultValue+"";
@@ -30655,7 +30655,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.keys.path";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30676,7 +30676,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.path";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30697,7 +30697,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.parameter.lastEventId";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30718,7 +30718,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.parameter.limit";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30740,7 +30740,7 @@ public class OpenSPCoop2Properties {
 			int defaultValue = 100;
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
 					name=defaultValue+"";
@@ -30766,7 +30766,7 @@ public class OpenSPCoop2Properties {
 			long defaultValue = 3600;
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
 					name=defaultValue+"";
@@ -30792,7 +30792,7 @@ public class OpenSPCoop2Properties {
 			long defaultValue = 300;
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
 					name=defaultValue+"";
@@ -30817,7 +30817,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.timer.lock.maxLife";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -30845,7 +30845,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.timer.lock.idleTime";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -30873,7 +30873,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.timer.lock.attesaAttiva";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -30899,7 +30899,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.timer.lock.check";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
@@ -30924,7 +30924,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.clients.path";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30945,7 +30945,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.clients.organizationJsonPath";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30966,7 +30966,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.organizations.path";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -30989,7 +30989,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestorePDND.clientInfo.enabled";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -31016,7 +31016,7 @@ public class OpenSPCoop2Properties {
 			int defaultValue = 43200;
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
 					name=defaultValue+"";
@@ -31041,7 +31041,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestorePDND.clients.error.abortTransaction";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
@@ -31062,7 +31062,7 @@ public class OpenSPCoop2Properties {
 			String pName = "org.openspcoop2.pdd.gestorePDND.organizations.error.abortTransaction";
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
+				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}

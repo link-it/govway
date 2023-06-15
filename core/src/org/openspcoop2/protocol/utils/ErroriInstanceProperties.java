@@ -37,7 +37,7 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 */
 public class ErroriInstanceProperties extends InstanceProperties {
 
-	ErroriInstanceProperties(String confDir,Properties reader,Logger log) throws Exception{
+	ErroriInstanceProperties(String confDir,Properties reader,Logger log) {
 		super(org.openspcoop2.utils.Costanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		
 		super.setLocalFileImplementation(CostantiProtocollo.OPENSPCOOP2_ERRORI_PROPERTIES,CostantiProtocollo.OPENSPCOOP2_ERRORI_LOCAL_PATH, confDir);

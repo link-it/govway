@@ -180,7 +180,7 @@ public class TrasparenteProperties {
 			String propertyName = "org.openspcoop2.protocol.trasparente.id.uuid";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -214,7 +214,7 @@ public class TrasparenteProperties {
     public Boolean isRiferimentoIDRichiesta_PD_Required(){
     	if(this.isRiferimentoIDRichiesta_PD_RequiredRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pd.riferimentoIdRichiesta.required"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.pd.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -242,7 +242,7 @@ public class TrasparenteProperties {
     public Boolean isRiferimentoIDRichiesta_PA_Required(){
     	if(this.isRiferimentoIDRichiesta_PA_RequiredRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pa.riferimentoIdRichiesta.required"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.pa.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -280,7 +280,7 @@ public class TrasparenteProperties {
     public Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault(){
     	if(this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pa.bustaErrore.personalizzaElementiFault"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.pa.bustaErrore.personalizzaElementiFault"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -315,7 +315,7 @@ public class TrasparenteProperties {
     public Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo(){
     	if(this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pa.bustaErrore.aggiungiErroreApplicativo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.pa.bustaErrore.aggiungiErroreApplicativo"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -348,7 +348,7 @@ public class TrasparenteProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolValidazione(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolValidazione==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -377,7 +377,7 @@ public class TrasparenteProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolProcessamento==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -407,7 +407,7 @@ public class TrasparenteProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.stackTrace"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -436,7 +436,7 @@ public class TrasparenteProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -469,7 +469,7 @@ public class TrasparenteProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationServerError(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationServerError==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.serverError"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.serverError"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -498,7 +498,7 @@ public class TrasparenteProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationClientError(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationClientError==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.clientError"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.clientError"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -527,7 +527,7 @@ public class TrasparenteProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.stackTrace"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -557,7 +557,7 @@ public class TrasparenteProperties {
     public Boolean isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -596,7 +596,7 @@ public class TrasparenteProperties {
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
     	if(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.erroreApplicativo.faultApplicativo.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -631,7 +631,7 @@ public class TrasparenteProperties {
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
     	if(this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.erroreApplicativo.faultPdD.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.trasparente.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -666,7 +666,7 @@ public class TrasparenteProperties {
 			String propertyName = "org.openspcoop2.protocol.trasparente.generazioneTracce.testsuite.enabled";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -693,7 +693,7 @@ public class TrasparenteProperties {
 			String propertyName = "org.openspcoop2.protocol.trasparente.protocolProperties.testsuite.enabled";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -722,7 +722,7 @@ public class TrasparenteProperties {
 			String propertyName = "org.openspcoop2.protocol.trasparente.factory.config.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -749,7 +749,7 @@ public class TrasparenteProperties {
 			String propertyName = "org.openspcoop2.protocol.trasparente.factory.erroreApplicativo.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -776,7 +776,7 @@ public class TrasparenteProperties {
 			String propertyName = "org.openspcoop2.protocol.trasparente.factory.esito.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();

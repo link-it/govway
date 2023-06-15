@@ -1323,7 +1323,7 @@ public class StatsUtils {
 			case NUMERO_TRANSAZIONI:
 				return Utility.numberConverter(value);
 			case TEMPO_MEDIO_RISPOSTA:
-				return  Utilities.convertSystemTimeIntoString_millisecondi(value.longValue(), true);
+				return  Utilities.convertSystemTimeIntoStringMillisecondi(value.longValue(), true);
 			case DIMENSIONE_TRANSAZIONI:
 			default:
 				return Utility.fileSizeConverter(value);
@@ -1352,7 +1352,7 @@ public class StatsUtils {
 				labelValore = CostantiGrafici.NUMERO_TRANSAZIONI_LABEL;
 				break;
 			case TEMPO_MEDIO_RISPOSTA:
-				valore = Utilities.convertSystemTimeIntoString_millisecondi(value.longValue(), true);
+				valore = Utilities.convertSystemTimeIntoStringMillisecondi(value.longValue(), true);
 				String tipoLatenzaLabel = getTipoLatenzaServizioLabel(form);
 				labelValore = CostantiGrafici.TEMPO_MEDIO_RISPOSTA_LABEL+tipoLatenzaLabel;
 				break;

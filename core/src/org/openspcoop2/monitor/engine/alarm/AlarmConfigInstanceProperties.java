@@ -39,7 +39,7 @@ class AlarmConfigInstanceProperties extends InstanceProperties {
     public static final String ALARM_PROPERTIES_LOCAL_PATH = "allarmi_configurazione_local.properties";
     public static final String ALARM_PROPERTIES = "ALLARMI_CONFIGURAZIONE_PROPERTIES";
 	
-	AlarmConfigInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	AlarmConfigInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(org.openspcoop2.utils.Costanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(
 				ALARM_PROPERTIES, ALARM_PROPERTIES_LOCAL_PATH,

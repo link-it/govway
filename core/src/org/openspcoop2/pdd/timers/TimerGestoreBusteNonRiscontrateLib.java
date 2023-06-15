@@ -805,7 +805,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 			// end
 			long endControlloBusteNonRiscontrate = DateManager.getTimeMillis();
 			long diff = (endControlloBusteNonRiscontrate-startControlloBusteNonRiscontrate);
-			this.logTimer.info("Controllo Buste in attesa di riscontro terminato in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			this.logTimer.info("Controllo Buste in attesa di riscontro terminato in "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 
 		} 
 		catch(TimerLockNotAvailableException t) {

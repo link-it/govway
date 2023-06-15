@@ -337,21 +337,21 @@ public class StatisticBean {
 		bf.append(Utilities.convertBytesToFormatString(this.bytesBandaEsterna));
 		bf.append("] latenza-totale[");
 		if(this.latenzaTotale>=0){
-			bf.append(Utilities.convertSystemTimeIntoString_millisecondi(this.latenzaTotale,true));
+			bf.append(Utilities.convertSystemTimeIntoStringMillisecondi(this.latenzaTotale,true));
 		}
 		else{
 			bf.append("N.D.");
 		}
 		bf.append("] latenza-servizio[");
 		if(this.latenzaServizio>=0){
-			bf.append(Utilities.convertSystemTimeIntoString_millisecondi(this.latenzaServizio,true));
+			bf.append(Utilities.convertSystemTimeIntoStringMillisecondi(this.latenzaServizio,true));
 		}
 		else{
 			bf.append("N.D.");
 		}
 		bf.append("] latenza-porta[");
 		if(this.latenzaPorta>=0){
-			bf.append(Utilities.convertSystemTimeIntoString_millisecondi(this.latenzaPorta,true));
+			bf.append(Utilities.convertSystemTimeIntoStringMillisecondi(this.latenzaPorta,true));
 		}
 		else{
 			bf.append("N.D.");

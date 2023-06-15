@@ -138,7 +138,7 @@ public class BackendProperties {
 	/* ********  M E T O D I  ******** */
 
 	private String readProperty(boolean required,String property) throws UtilsException{
-		String tmp = this.reader.getValue_convertEnvProperties(property);
+		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
 			if(required){
 				throw new UtilsException("Property ["+property+"] not found");
@@ -171,7 +171,7 @@ public class BackendProperties {
 	}
 	
 	public Properties getDbDataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("db.dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("db.dataSource.property.");
 	}
 	
 	public String getDbTipoDatabase() throws UtilsException{

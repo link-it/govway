@@ -153,7 +153,7 @@ public class TestSuiteProperties {
 	 */
 	public boolean traceArrivedIntoDB(){
 		try{
-			return Boolean.parseBoolean(this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_IS_ARRIVED).trim());
+			return Boolean.parseBoolean(this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_IS_ARRIVED).trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_IS_ARRIVED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -163,7 +163,7 @@ public class TestSuiteProperties {
 	
 	public boolean loadMailcap(){
 		try{
-			return Boolean.parseBoolean(this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_MAILCAP).trim());
+			return Boolean.parseBoolean(this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_MAILCAP).trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_MAILCAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -173,7 +173,7 @@ public class TestSuiteProperties {
 
 	public int getDumpRequestThresholdRequestDump(){
 		try{
-			String value = this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_REQUEST_DUMP_IN_MEMORY_THRESHOLD);
+			String value = this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_REQUEST_DUMP_IN_MEMORY_THRESHOLD);
 			if(value!=null) {
 				return Integer.valueOf(value.trim());
 			}
@@ -187,7 +187,7 @@ public class TestSuiteProperties {
 	
 	public File getDumpRequestRepository(){
 		try{
-			String repoDump = this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_REQUEST_DUMP_MSG_REPOSITORY);
+			String repoDump = this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_REQUEST_DUMP_MSG_REPOSITORY);
 			if(repoDump!=null) {
 				repoDump = repoDump.trim();
 				File f = new File(repoDump);
@@ -217,7 +217,7 @@ public class TestSuiteProperties {
 	
 	public String getHeaderRispostaServletName(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_SERVLET_NAME).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_SERVLET_NAME).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_SERVLET_NAME+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -227,7 +227,7 @@ public class TestSuiteProperties {
 	
 	public Properties getHeaderRisposta(){
 		try{
-			return this.reader.readProperties_convertEnvProperties(CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_GENERICO);
+			return this.reader.readPropertiesConvertEnvProperties(CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_GENERICO);
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura delle proprieta' '"+CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_GENERICO+"*':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -247,7 +247,7 @@ public class TestSuiteProperties {
 	 */
 	public String getIdMessaggioTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_MESSAGGIO_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ID_MESSAGGIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_MESSAGGIO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -261,7 +261,7 @@ public class TestSuiteProperties {
 	 */
 	public String getRiferimentoAsincronoTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -275,7 +275,7 @@ public class TestSuiteProperties {
 	 */
 	public String getCollaborazioneTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_COLLABORAZIONE_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_COLLABORAZIONE_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_COLLABORAZIONE_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -289,7 +289,7 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoMittenteTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_MITTENTE_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -303,7 +303,7 @@ public class TestSuiteProperties {
 	 */
 	public String getMittenteTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_MITTENTE_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_MITTENTE_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_MITTENTE_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -317,7 +317,7 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoDestinatarioTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -331,7 +331,7 @@ public class TestSuiteProperties {
 	 */
 	public String getDestinatarioTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_DESTINATARIO_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_DESTINATARIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_DESTINATARIO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -345,7 +345,7 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoServizioTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -359,7 +359,7 @@ public class TestSuiteProperties {
 	 */
 	public String getNomeServizioTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_NOME_SERVIZIO_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_NOME_SERVIZIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_NOME_SERVIZIO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -373,7 +373,7 @@ public class TestSuiteProperties {
 	 */
 	public String getVersioneServizioTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -387,7 +387,7 @@ public class TestSuiteProperties {
 	 */
 	public String getAzioneTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_AZIONE_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_AZIONE_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_AZIONE_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -401,7 +401,7 @@ public class TestSuiteProperties {
 	 */
 	public String getServizioApplicativoTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -415,7 +415,7 @@ public class TestSuiteProperties {
 	 */
 	public String getIDApplicativoTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_APPLICATIVO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -429,7 +429,7 @@ public class TestSuiteProperties {
 	 */
 	public String getIDTransazioneTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -443,7 +443,7 @@ public class TestSuiteProperties {
 	 */
 	public String getCacheKeyTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_CACHE_KEY_TRASPORTO).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_CACHE_KEY_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_CACHE_KEY_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -461,7 +461,7 @@ public class TestSuiteProperties {
 	 */
 	public String getIdUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ID_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -475,7 +475,7 @@ public class TestSuiteProperties {
 	 */
 	public String getRiferimentoAsincronoUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -489,7 +489,7 @@ public class TestSuiteProperties {
 	 */
 	public String getCollaborazioneUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_COLLABORAZIONE_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_COLLABORAZIONE_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_COLLABORAZIONE_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -503,7 +503,7 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoMittenteUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_MITTENTE_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -517,7 +517,7 @@ public class TestSuiteProperties {
 	 */
 	public String getMittenteUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_MITTENTE_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_MITTENTE_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_MITTENTE_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -531,7 +531,7 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoDestinatarioUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -545,7 +545,7 @@ public class TestSuiteProperties {
 	 */
 	public String getDestinatarioUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_DESTINATARIO_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_DESTINATARIO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_DESTINATARIO_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -559,7 +559,7 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoServizioUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -573,7 +573,7 @@ public class TestSuiteProperties {
 	 */
 	public String getNomeServizioUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_NOME_SERVIZIO_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_NOME_SERVIZIO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_NOME_SERVIZIO_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -587,7 +587,7 @@ public class TestSuiteProperties {
 	 */
 	public String getVersioneServizioUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -601,7 +601,7 @@ public class TestSuiteProperties {
 	 */
 	public String getAzioneUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_AZIONE_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_AZIONE_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_AZIONE_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -615,7 +615,7 @@ public class TestSuiteProperties {
 	 */
 	public String getServizioApplicativoUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -629,7 +629,7 @@ public class TestSuiteProperties {
 	 */
 	public String getIDApplicativoUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_APPLICATIVO_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -643,7 +643,7 @@ public class TestSuiteProperties {
 	 */
 	public String getIDTransazioneUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_URL_BASED).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -661,7 +661,7 @@ public class TestSuiteProperties {
 	 */
 	public String getIdMessaggioSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_MESSAGGIO_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ID_MESSAGGIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_MESSAGGIO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -675,7 +675,7 @@ public class TestSuiteProperties {
 	 */
 	public String getRiferimentoAsincronoSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -689,7 +689,7 @@ public class TestSuiteProperties {
 	 */
 	public String getCollaborazioneSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_COLLABORAZIONE_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_COLLABORAZIONE_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_COLLABORAZIONE_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -703,7 +703,7 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoMittenteSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_MITTENTE_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -717,7 +717,7 @@ public class TestSuiteProperties {
 	 */
 	public String getMittenteSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_MITTENTE_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_MITTENTE_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_MITTENTE_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -731,7 +731,7 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoDestinatarioSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -745,7 +745,7 @@ public class TestSuiteProperties {
 	 */
 	public String getDestinatarioSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_DESTINATARIO_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_DESTINATARIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_DESTINATARIO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -759,7 +759,7 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoServizioSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -773,7 +773,7 @@ public class TestSuiteProperties {
 	 */
 	public String getNomeServizioSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_NOME_SERVIZIO_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_NOME_SERVIZIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_NOME_SERVIZIO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -787,7 +787,7 @@ public class TestSuiteProperties {
 	 */
 	public String getVersioneServizioSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -801,7 +801,7 @@ public class TestSuiteProperties {
 	 */
 	public String getAzioneSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_AZIONE_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_AZIONE_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_AZIONE_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -815,7 +815,7 @@ public class TestSuiteProperties {
 	 */
 	public String getServizioApplicativoSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -829,7 +829,7 @@ public class TestSuiteProperties {
 	 */
 	public String getIDApplicativoSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_APPLICATIVO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -843,7 +843,7 @@ public class TestSuiteProperties {
 	 */
 	public String getIDTransazioneSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_SOAP).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -859,7 +859,7 @@ public class TestSuiteProperties {
 	 */
 	public long timeToSleep_generazioneRispostaAsincrona(){
 		try{
-			return Long.parseLong(this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIME_TO_SLEEP_SERVER_ASINCRONO).trim());
+			return Long.parseLong(this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_TIME_TO_SLEEP_SERVER_ASINCRONO).trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIME_TO_SLEEP_SERVER_ASINCRONO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -873,7 +873,7 @@ public class TestSuiteProperties {
 	 */
 	public boolean attendiTerminazioneMessaggi_generazioneRispostaAsincrona(){
 		try{
-			return Boolean.parseBoolean(this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ATTESA_TERMINAZIONI_MESSAGGI_SERVER_ASINCRONO).trim());
+			return Boolean.parseBoolean(this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ATTESA_TERMINAZIONI_MESSAGGI_SERVER_ASINCRONO).trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ATTESA_TERMINAZIONI_MESSAGGI_SERVER_ASINCRONO+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -887,7 +887,7 @@ public class TestSuiteProperties {
 	 */
 	public int getTimeoutProcessamentoMessaggiOpenSPCoop(){
 		try{
-			return Integer.parseInt(this.reader.getValue_convertEnvProperties("org.openspcoop2.testsuite.completamentoProcessamento.timeout").trim());
+			return Integer.parseInt(this.reader.getValueConvertEnvProperties("org.openspcoop2.testsuite.completamentoProcessamento.timeout").trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.completamentoProcessamento.timeout':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -901,7 +901,7 @@ public class TestSuiteProperties {
 	 */
 	public int getCheckIntervalProcessamentoMessaggiOpenSPCoop(){
 		try{
-			return Integer.parseInt(this.reader.getValue_convertEnvProperties("org.openspcoop2.testsuite.completamentoProcessamento.checkInterval").trim());
+			return Integer.parseInt(this.reader.getValueConvertEnvProperties("org.openspcoop2.testsuite.completamentoProcessamento.checkInterval").trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.completamentoProcessamento.checkInterval':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -916,7 +916,7 @@ public class TestSuiteProperties {
 	 */
 	public String getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(String protocol){
 		try{
-			String url = this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_OPENSPCOOP_PD_CONSEGNA_RISPOSTA_ASINCRONA_SIMMETRICA).trim();
+			String url = this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_OPENSPCOOP_PD_CONSEGNA_RISPOSTA_ASINCRONA_SIMMETRICA).trim();
 			return url.replace("<protocol>", protocol);
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_OPENSPCOOP_PD_CONSEGNA_RISPOSTA_ASINCRONA_SIMMETRICA+"':"+e.getMessage();
@@ -928,7 +928,7 @@ public class TestSuiteProperties {
 	
 	public String getTipoRepositoryBuste(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.TIPO_REPOSITORY_BUSTE).trim();
+			return this.reader.getValueConvertEnvProperties(CostantiTestSuite.TIPO_REPOSITORY_BUSTE).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.TIPO_REPOSITORY_BUSTE+"':"+e.getMessage();
 			this.log.error(msgErrore);
@@ -939,7 +939,7 @@ public class TestSuiteProperties {
 	
 	public String getProtocolloDefault(){
 		try{
-			String p = this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROTOCOLLO_DEFAULT);
+			String p = this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROTOCOLLO_DEFAULT);
 			if(p!=null)
 				return p.trim();
 			else

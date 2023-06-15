@@ -1369,7 +1369,7 @@ public class DynamicTest {
 			
 			Date fine = DateManager.getDate();
 			long diff = fine.getTime() - inizio.getTime();
-			System.out.println("Tempo impiegato: "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			System.out.println("Tempo impiegato: "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 			
 			if(error){
 				throw new Exception("Error occurs in threads: "+exception.getMessage(),exception);
@@ -1433,7 +1433,7 @@ public class DynamicTest {
 			
 			Date fine = DateManager.getDate();
 			long diff = fine.getTime() - inizio.getTime();
-			System.out.println("Tempo impiegato: "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			System.out.println("Tempo impiegato: "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 			
 			if(error){
 				throw new Exception("Error occurs in threads: "+exception.getMessage(),exception);

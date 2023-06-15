@@ -38,7 +38,7 @@ import org.openspcoop2.web.loader.core.Costanti;
 
 class LoaderInstanceProperties extends InstanceProperties {
 
-	LoaderInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	LoaderInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(Costanti.OPENSPCOOP2_LOADER_PROPERTIES, Costanti.OPENSPCOOP2_LOADER_LOCAL_PATH, confDir);
 	}

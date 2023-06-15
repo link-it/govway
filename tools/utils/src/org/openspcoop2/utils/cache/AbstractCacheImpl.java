@@ -188,7 +188,7 @@ public abstract class AbstractCacheImpl implements ICacheImpl {
 			bf.append("IdleTime:");
 			long idleTime = this.getItemIdleTime();
 			if(idleTime>0){
-				bf.append(Utilities.convertSystemTimeIntoString_millisecondi(idleTime*1000,false));
+				bf.append(Utilities.convertSystemTimeIntoStringMillisecondi(idleTime*1000,false));
 			}
 			else if(idleTime==0){
 				bf.append("0");
@@ -203,7 +203,7 @@ public abstract class AbstractCacheImpl implements ICacheImpl {
 			bf.append("LifeTime:");
 			long lifeTime = this.getItemLifeTime();
 			if(lifeTime>0){
-				bf.append(Utilities.convertSystemTimeIntoString_millisecondi(lifeTime*1000,false));
+				bf.append(Utilities.convertSystemTimeIntoStringMillisecondi(lifeTime*1000,false));
 			}
 			else if(lifeTime==0){
 				bf.append("0");

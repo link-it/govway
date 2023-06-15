@@ -220,7 +220,7 @@ public class TimerGestoreCacheChiaviPDNDLib {
 		}
 
 		long endGenerazione = DateManager.getTimeMillis();
-		String tempoImpiegato = Utilities.convertSystemTimeIntoString_millisecondi((endGenerazione-startControlloTimer), true);
+		String tempoImpiegato = Utilities.convertSystemTimeIntoStringMillisecondi((endGenerazione-startControlloTimer), true);
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TEMPO_GESTIONE, tempoImpiegato);
 		
 		this.msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_EVENTI, size+"");

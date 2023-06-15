@@ -140,7 +140,7 @@ public class RegistroServiziRemotoProperties {
 	/* ********  M E T O D I  ******** */
 
 	private String readProperty(boolean required,String property) throws UtilsException{
-		String tmp = this.reader.getValue_convertEnvProperties(property);
+		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
 			if(required){
 				throw new UtilsException("Property ["+property+"] not found");
@@ -191,7 +191,7 @@ public class RegistroServiziRemotoProperties {
 	}
 	
 	public Properties getRegistroServiziDB_DataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("registroServizi.db.context.");
+		return this.reader.readPropertiesConvertEnvProperties("registroServizi.db.context.");
 	}
 	
 	public String getRegistroServiziDB_TipoDatabase() throws UtilsException{

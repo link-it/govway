@@ -499,7 +499,7 @@ public class TimerStatisticheLib {
 			// end
 			long endControlloTimer = DateManager.getTimeMillis();
 			long diff = (endControlloTimer-startControlloTimer);
-			this.logTimer.info("Generazione '"+this.tipoStatistica.getValue()+"' terminato in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			this.logTimer.info("Generazione '"+this.tipoStatistica.getValue()+"' terminato in "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 			
 			
 		}
@@ -561,7 +561,7 @@ public class TimerStatisticheLib {
 		}	
 				
 		long endGenerazione = DateManager.getTimeMillis();
-		String tempoImpiegato = Utilities.convertSystemTimeIntoString_millisecondi((endGenerazione-startGenerazione), true);
+		String tempoImpiegato = Utilities.convertSystemTimeIntoStringMillisecondi((endGenerazione-startGenerazione), true);
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TEMPO_GENERAZIONE, tempoImpiegato); 
 		this.msgDiag.logPersonalizzato("generazioneStatistiche.effettuata");
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("generazioneStatistiche.effettuata"));

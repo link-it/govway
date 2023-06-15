@@ -154,7 +154,7 @@ public class DAOFactoryProperties {
 	private String getProperty(String name,boolean required, boolean convertEnvProperty) throws Exception{
 		String tmp = null;
 		if(convertEnvProperty){
-			tmp = this.reader.getValue_convertEnvProperties(name);
+			tmp = this.reader.getValueConvertEnvProperties(name);
 		}else{
 			tmp = this.reader.getValue(name);
 		}
@@ -269,9 +269,9 @@ public class DAOFactoryProperties {
 	}
 	private static final String PROP_DATASOURCE_JNDI_CONTEXT = "db.datasource.jndiContext";
 	public Properties getDatasourceJNDIContext(IProjectInfo tipoDAO) throws Exception {
-		Properties p = this.reader.readProperties_convertEnvProperties(PREFIX_FACTORY+tipoDAO.getProjectName()+"."+PROP_DATASOURCE_JNDI_CONTEXT);
+		Properties p = this.reader.readPropertiesConvertEnvProperties(PREFIX_FACTORY+tipoDAO.getProjectName()+"."+PROP_DATASOURCE_JNDI_CONTEXT);
 		if(p==null || p.size()<=0){
-			p = this.reader.readProperties_convertEnvProperties(PROP_DATASOURCE_JNDI_CONTEXT);
+			p = this.reader.readPropertiesConvertEnvProperties(PROP_DATASOURCE_JNDI_CONTEXT);
 		}
 		return p;
 	}

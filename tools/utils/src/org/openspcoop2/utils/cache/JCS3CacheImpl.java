@@ -454,7 +454,7 @@ public class JCS3CacheImpl extends AbstractCacheImpl {
 				bf.append("IdleTime:");
 				long idleTime = cache.getElementAttributes().getIdleTime();
 				if(idleTime>0){
-					bf.append(Utilities.convertSystemTimeIntoString_millisecondi(idleTime*1000,false));
+					bf.append(Utilities.convertSystemTimeIntoStringMillisecondi(idleTime*1000,false));
 				}
 				else if(idleTime==0){
 					bf.append("0");
@@ -469,7 +469,7 @@ public class JCS3CacheImpl extends AbstractCacheImpl {
 				bf.append("LifeTime:");
 				long lifeTime = cache.getElementAttributes().getMaxLife();
 				if(lifeTime>0){
-					bf.append(Utilities.convertSystemTimeIntoString_millisecondi(lifeTime*1000,false));
+					bf.append(Utilities.convertSystemTimeIntoStringMillisecondi(lifeTime*1000,false));
 				}
 				else if(lifeTime==0){
 					bf.append("0");

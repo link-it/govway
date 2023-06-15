@@ -694,7 +694,7 @@ public class StatisticsJMXResource extends NotificationBroadcasterSupport implem
 	}
 	
 	private String convertTime(long time){
-		return Utilities.convertSystemTimeIntoString_millisecondi(time, true);
+		return Utilities.convertSystemTimeIntoStringMillisecondi(time, true);
 	}
 	private String convertSize(long size){
 		return Utilities.convertBytesToFormatString(size);

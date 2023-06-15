@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 import org.openspcoop2.utils.Costanti;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
 import org.slf4j.Logger;
 
@@ -36,7 +37,7 @@ import org.slf4j.Logger;
  */
 public class MonitorInstanceProperties extends InstanceProperties {
 	
-	MonitorInstanceProperties(Properties reader,Logger log) throws Exception{
+	MonitorInstanceProperties(Properties reader,Logger log) throws UtilsException {
 		super(Costanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 			
 		// Leggo directory di configurazione

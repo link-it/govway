@@ -88,28 +88,28 @@ public class StatisticsForceIndexConfig {
 	
 	public StatisticsForceIndexConfig(InstanceProperties p) throws IOException, UtilsException {
 		
-		String tmpRepo = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_REPO);
+		String tmpRepo = p.getValueConvertEnvProperties(StatisticsForceIndexConfig.P_REPO);
 		Properties pRepoExternal = this.getExternalRepository(tmpRepo);
 		
-		String groupByNumeroDimensione = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_NUMERO_DIMENSIONE);
+		String groupByNumeroDimensione = p.getValueConvertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_NUMERO_DIMENSIONE);
 		if(groupByNumeroDimensione!=null){
 			groupByNumeroDimensione = groupByNumeroDimensione.trim();
 		}
 		this.transazioniForceIndexGroupByNumeroDimensione = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_NUMERO_DIMENSIONE, groupByNumeroDimensione, pRepoExternal);
 		
-		String groupByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_LATENZA);
+		String groupByLatenza = p.getValueConvertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_LATENZA);
 		if(groupByLatenza!=null){
 			groupByLatenza = groupByLatenza.trim();
 		}
 		this.transazioniForceIndexGroupByLatenze = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_LATENZA, groupByLatenza, pRepoExternal);
 		
-		String groupCustomByNumeroDimensione = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_NUMERO_DIMENSIONE);
+		String groupCustomByNumeroDimensione = p.getValueConvertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_NUMERO_DIMENSIONE);
 		if(groupCustomByNumeroDimensione!=null){
 			groupCustomByNumeroDimensione = groupCustomByNumeroDimensione.trim();
 		}
 		this.transazioniForceIndexGroupByCustomNumeroDimensione = this.getIndexList(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_NUMERO_DIMENSIONE, groupCustomByNumeroDimensione, pRepoExternal);
 		
-		String groupCustomByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_LATENZA);
+		String groupCustomByLatenza = p.getValueConvertEnvProperties(StatisticsForceIndexConfig.P_GROUPBY_CUSTOM_LATENZA);
 		if(groupCustomByLatenza!=null){
 			groupCustomByLatenza = groupCustomByLatenza.trim();
 		}

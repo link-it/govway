@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 
 class DatasourceInstanceProperties extends InstanceProperties {
 
-	DatasourceInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	DatasourceInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(Costanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(ConstantsEnv.OPENSPCOOP2_DATASOURCE_PROPERTIES, ConstantsEnv.OPENSPCOOP2_DATASOURCE_LOCAL_PATH, confDir);
 	}

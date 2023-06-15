@@ -248,7 +248,7 @@ public class TimerGestoreChiaviPDNDLib {
 			// end
 			long endControlloTimer = DateManager.getTimeMillis();
 			long diff = (endControlloTimer-startControlloTimer);
-			this.logTimerInfo("Gestione eventi per le chiavi della PDND terminata in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			this.logTimerInfo("Gestione eventi per le chiavi della PDND terminata in "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 			
 			
 		}
@@ -422,7 +422,7 @@ public class TimerGestoreChiaviPDNDLib {
 			}
 			
 			long endGenerazione = DateManager.getTimeMillis();
-			String tempoImpiegato = Utilities.convertSystemTimeIntoString_millisecondi((endGenerazione-startGenerazione), true);
+			String tempoImpiegato = Utilities.convertSystemTimeIntoStringMillisecondi((endGenerazione-startGenerazione), true);
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TEMPO_GESTIONE, tempoImpiegato);
 			emitDiagnosticLog("gestioneEventi.effettuata");
 			

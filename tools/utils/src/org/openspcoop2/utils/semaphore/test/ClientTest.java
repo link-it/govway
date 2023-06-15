@@ -657,7 +657,7 @@ public class ClientTest {
 		
 		Date fine = DateManager.getDate();
 		long diff = fine.getTime() - inizio.getTime();
-		log.info("Tempo impiegato: "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+		log.info("Tempo impiegato: "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 		
 		int lockAcquisiti = 0;
 		int lockAggiornati = 0;

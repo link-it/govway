@@ -176,7 +176,7 @@ public class TestCopyCharStream {
 		if(bout.size()!=size) {
 			throw new Exception("Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
 		}
-		System.out.println("["+src+"->Buffer]["+method+"] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+		System.out.println("["+src+"->Buffer]["+method+"] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 	}
 	
 	private static void testBuffer(String src, File is, int size) throws Exception {
@@ -193,7 +193,7 @@ public class TestCopyCharStream {
 		if(bout.size()!=size) {
 			throw new Exception("Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
 		}
-		System.out.println("["+src+"->Buffer][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+		System.out.println("["+src+"->Buffer][COPY-FILE] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 	}
 	
 	private static void testFile(String src, CopyStreamMethod method, Reader reader, File f, int size) throws Exception {
@@ -210,7 +210,7 @@ public class TestCopyCharStream {
 		if(f.length()!=size) {
 			throw new Exception("File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 		}
-		System.out.println("["+src+"->File]["+method+"] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+		System.out.println("["+src+"->File]["+method+"] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 	}
 	
 	private static void testFile(String src, Reader reader, File f, int size) throws Exception {
@@ -222,7 +222,7 @@ public class TestCopyCharStream {
 		if(f.length()!=size) {
 			throw new Exception("File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 		}
-		System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+		System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 	}
 	
 	private static void testFile(String src, File is, File f, int size) throws Exception {
@@ -234,6 +234,6 @@ public class TestCopyCharStream {
 		if(f.length()!=size) {
 			throw new Exception("File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 		}
-		System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+		System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 	}
 }

@@ -139,7 +139,7 @@ public class QueueProperties {
 	/* ********  M E T O D I  ******** */
 
 	private String readProperty(boolean required,String property) throws UtilsException{
-		String tmp = this.reader.getValue_convertEnvProperties(property);
+		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
 			if(required){
 				throw new UtilsException("Property ["+property+"] not found");
@@ -168,7 +168,7 @@ public class QueueProperties {
 	}
 	
 	public Properties getConnectionFactoryContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("ConnectionFactory.property.");
+		return this.reader.readPropertiesConvertEnvProperties("ConnectionFactory.property.");
 	}
 	
 	public Integer getWaitTime() throws UtilsException{

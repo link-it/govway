@@ -24,15 +24,12 @@ package org.openspcoop2.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -64,6 +61,8 @@ import org.apache.logging.log4j.core.config.yaml.YamlConfigurationFactory;
  * @version $Rev$, $Date$
  */
 public class LoggerWrapperFactory {
+	
+	private LoggerWrapperFactory () {}
 
 	
 	
@@ -74,11 +73,9 @@ public class LoggerWrapperFactory {
 	// Se esistono più jar contenenti l'implementazione di un binding, non è detto che venga preso log4j.
 	
 	public static org.slf4j.Logger getLogger(Class<?> c){
-		//System.out.println("INFO NAME["+org.slf4j.LoggerFactory.getLogger(c).getClass().getName()+"] FACT["+org.slf4j.LoggerFactory.getILoggerFactory().getClass().getName()+"]");
 		return org.slf4j.LoggerFactory.getLogger(c);
 	}
 	public static org.slf4j.Logger getLogger(String name){
-		//System.out.println("INFO NAME["+org.slf4j.LoggerFactory.getLogger(name).getClass().getName()+"] FACT["+org.slf4j.LoggerFactory.getILoggerFactory().getClass().getName()+"]");
 		return org.slf4j.LoggerFactory.getLogger(name);
 	}
 	public static org.apache.logging.log4j.Logger getLoggerImpl(Class<?> c){
@@ -122,21 +119,23 @@ public class LoggerWrapperFactory {
 
 	// ** Imposta proprietà in configurazione log4J2 */
 	
-	public static void setDefaultConsoleLogConfiguration(Level level) throws UtilsException{
-		setDefaultLogConfiguration(level, true, "%p <%d{dd-MM-yyyy HH:mm:ss.SSS}> %C.%M(%L): %m %n %n", null, null);
+	private static final String FORMAT_MSG = "%p <%d{dd-MM-yyyy HH:mm:ss.SSS}> %C.%M(%L): %m %n %n";
+	
+	public static void setDefaultConsoleLogConfiguration(Level level) {
+		setDefaultLogConfiguration(level, true, FORMAT_MSG, null, null);
 	}
 	public static void setDefaultConsoleLogConfiguration(Level level,
-			String layout) throws UtilsException{
+			String layout) {
 		setDefaultLogConfiguration(level, true, layout, null, null);
 	}
 	public static void setDefaultLogConfiguration(Level level,boolean console,String layoutConsole,
-			File file,String layoutFile) throws UtilsException{
+			File file,String layoutFile) {
 		
 		if(layoutConsole==null){
-			layoutConsole="%p <%d{dd-MM-yyyy HH:mm:ss.SSS}> %C.%M(%L): %m %n %n";
+			layoutConsole=FORMAT_MSG;
 		}
 		if(layoutFile==null){
-			layoutFile="%p <%d{dd-MM-yyyy HH:mm:ss.SSS}> %C.%M(%L): %m %n %n";
+			layoutFile=FORMAT_MSG;
 		}
 		
 		ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
@@ -187,7 +186,7 @@ public class LoggerWrapperFactory {
 		String filePath = "fs";
 		try{
 			if(file==null){
-				throw new Exception("Resource file undefined");
+				throw new UtilsException("Resource file undefined");
 			}
 			filePath = file.getAbsolutePath();
 			if(file.exists()){
@@ -214,40 +213,43 @@ public class LoggerWrapperFactory {
 	private static void setLogConfiguration(LoggerContext context, String name,boolean append) throws UtilsException{
 		try{
 			if(name==null){
-				throw new Exception("Resource name undefined");
+				throw new UtilsException("Resource name undefined");
 			}
 			File f = new File(name);
-			if(f.exists()){
+			setLogConfiguration(context, name, append, f);
+		}catch(Exception e){
+			throw new UtilsException("Setting Logging Configuration failed (resource ["+name+"]): "+e.getMessage(),e);
+		}
+	}
+	private static void setLogConfiguration(LoggerContext context, String name,boolean append, File f) throws UtilsException, URISyntaxException{
+		if(f.exists()){
+			if(append){
+				appendConfiguration(context, f.toURI());
+			}
+			else{
+				newConfiguration(context, f.toURI());
+			}
+		}
+		else{
+			String newName = null;
+			if(name.trim().startsWith("/")){
+				newName = name;
+			}
+			else{
+				newName = "/" + name;
+			}
+			URL url = Utilities.class.getResource(newName);
+			if(url!=null){
 				if(append){
-					appendConfiguration(context, f.toURI());
+					appendConfiguration(context, url.toURI());
 				}
 				else{
-					newConfiguration(context, f.toURI());
+					newConfiguration(context, url.toURI());
 				}
 			}
 			else{
-				String newName = null;
-				if(name.trim().startsWith("/")){
-					newName = name;
-				}
-				else{
-					newName = "/" + name;
-				}
-				URL url = Utilities.class.getResource(newName);
-				if(url!=null){
-					if(append){
-						appendConfiguration(context, url.toURI());
-					}
-					else{
-						newConfiguration(context, url.toURI());
-					}
-				}
-				else{
-					throw new UtilsException("Resource ["+name+"] not found");
-				}
+				throw new UtilsException("Resource ["+name+"] not found");
 			}
-		}catch(Exception e){
-			throw new UtilsException("Setting Logging Configuration failed (resource ["+name+"]): "+e.getMessage(),e);
 		}
 	}
 	public static void setLogConfiguration(URL url) throws UtilsException{
@@ -259,7 +261,7 @@ public class LoggerWrapperFactory {
 	private static void setLogConfiguration(LoggerContext context, URL url,boolean append) throws UtilsException{
 		try{
 			if(url==null){
-				throw new Exception("Resource URL undefined");
+				throw new UtilsException("Resource URL undefined");
 			}
 			if(append){
 				appendConfiguration(context, url.toURI());
@@ -280,7 +282,7 @@ public class LoggerWrapperFactory {
 	private static void setLogConfiguration(LoggerContext context, URI uri,boolean append) throws UtilsException{
 		try{
 			if(uri==null){
-				throw new Exception("Resource URI undefined");
+				throw new UtilsException("Resource URI undefined");
 			}
 			if(append){
 				appendConfiguration(context, uri);
@@ -299,20 +301,21 @@ public class LoggerWrapperFactory {
 		setLogConfiguration(getContext(), props, append);
 	}
 	private static void setLogConfiguration(LoggerContext context, Properties props,boolean append) throws UtilsException{
+		if(props==null){
+			throw new UtilsException("Resource Properties undefined");
+		}
+		
 		File fTmp = null;
-		FileOutputStream foutTmp = null;
-		try{
-			if(props==null){
-				throw new Exception("Resource Properties undefined");
-			}
-			FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
-			fTmp = Files.createTempFile("op2_log", ".properties",attr).toFile();
-			foutTmp = new FileOutputStream(fTmp);
+		try {
+			fTmp = Utilities.createTempPath("op2_log", ".properties").toFile();
+		}catch(Exception e){
+			throw new UtilsException("Setting Logging Configuration failed: "+e.getMessage(),e);
+		}
+		
+		try(FileOutputStream foutTmp = new FileOutputStream(fTmp);){
 			props.store(foutTmp, "Tmp Configuration");
 			foutTmp.flush();
-			foutTmp.close();
-			foutTmp = null;
-
+			
 			if(append){
 				appendConfiguration(context, fTmp.toURI());
 			}
@@ -324,15 +327,8 @@ public class LoggerWrapperFactory {
 			throw new UtilsException("Setting Logging Configuration failed: "+e.getMessage(),e);
 		}finally{
 			try{
-				if(foutTmp!=null){
-					foutTmp.close();
-				}
-			}catch(Exception e){}
-			try{
 				if(fTmp!=null){
-					if(!fTmp.delete()) {
-						// ignore
-					}
+					Files.delete(fTmp.toPath());
 				}
 			}catch(Exception e){
 				// close
@@ -341,12 +337,12 @@ public class LoggerWrapperFactory {
 	}
 
 	
-	private static void newConfiguration(LoggerContext context, URI configUri) throws Exception{
+	private static void newConfiguration(LoggerContext context, URI configUri) {
 		context.setConfigLocation(configUri);
 	}
-	private static synchronized void appendConfiguration(LoggerContext context, URI configUri) throws Exception{
+	private static synchronized void appendConfiguration(LoggerContext context, URI configUri) {
 		
-		//System.out.println("APPEND LOG ["+configUri+"]");
+		/**System.out.println("APPEND LOG ["+configUri+"]");*/
 		
 		Configuration actualConfiguration = context.getConfiguration();
 		
@@ -358,10 +354,10 @@ public class LoggerWrapperFactory {
 		if(mapAppenders.size()>0){
 			Iterator<String> appenderNameIterator = mapAppenders.keySet().iterator();
 			while (appenderNameIterator.hasNext()) {
-				String appenderName = (String) appenderNameIterator.next();
+				String appenderName = appenderNameIterator.next();
 				Appender appender = mapAppenders.get(appenderName);
 				appender.start();
-				//System.out.println("ADD APPENDER ["+appenderName+"]");
+				/**System.out.println("ADD APPENDER ["+appenderName+"]");*/
 				actualConfiguration.addAppender(appender);
 			}
 		}
@@ -370,14 +366,14 @@ public class LoggerWrapperFactory {
 		if(mapLoggers.size()>0){
 			Iterator<String> loggerNameIterator = mapLoggers.keySet().iterator();
 			while (loggerNameIterator.hasNext()) {
-				String loggerName = (String) loggerNameIterator.next();				
+				String loggerName = loggerNameIterator.next();				
 				LoggerConfig logger = mapLoggers.get(loggerName);
-				//System.out.println("ADD LOGGER ["+loggerName+"]");
+				/**System.out.println("ADD LOGGER ["+loggerName+"]");*/
 				actualConfiguration.addLogger(loggerName, logger);
 			}
 		}
 		
-		//System.out.println("APPEND LOG ["+configUri+"] FINE");
+		/**System.out.println("APPEND LOG ["+configUri+"] FINE");*/
 		
 	}
 

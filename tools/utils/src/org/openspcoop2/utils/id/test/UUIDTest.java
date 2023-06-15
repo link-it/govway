@@ -302,7 +302,7 @@ public class UUIDTest {
 		
 		Date fine = DateManager.getDate();
 		long diff = fine.getTime() - inizio.getTime();
-		info(log, true, "Tempo impiegato: "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+		info(log, true, "Tempo impiegato: "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 		
 		boolean isDuplicati = false;
 		HashSet<String> identificativi = new HashSet<String>();

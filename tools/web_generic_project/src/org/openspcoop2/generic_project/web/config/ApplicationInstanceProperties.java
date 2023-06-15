@@ -21,6 +21,7 @@ package org.openspcoop2.generic_project.web.config;
 
 import java.util.Properties;
 
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
 import org.slf4j.Logger;
 
@@ -37,8 +38,8 @@ public class ApplicationInstanceProperties extends InstanceProperties {
 
    
 	
-	ApplicationInstanceProperties(String OPENSPCOOP2_LOCAL_HOME,Properties reader,Logger log,String localPropertyName,String localPropertiesPath) throws Exception{
-		super(OPENSPCOOP2_LOCAL_HOME,reader, log);
+	ApplicationInstanceProperties(String openspcoop2LocalHome,Properties reader,Logger log,String localPropertyName,String localPropertiesPath) throws UtilsException {
+		super(openspcoop2LocalHome,reader, log);
 			
 		// Leggo directory di configurazione
 		String confDir = super.getValue("confDirectory");

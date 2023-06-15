@@ -718,14 +718,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger(LOG_CATEGORY_STARTUP);
 			
-			Utilities.log = logCore;
-			Utilities.freeMemoryLog = propertiesReader.getFreeMemoryLog();
+			Utilities.setLog(logCore);
+			Utilities.setFreeMemoryLog(propertiesReader.getFreeMemoryLog());
 			
 			OpenSPCoop2Startup.initializeLog = true;
 			
 			if(propertiesReader.isLoggerSaajDisabilitato()) {
-				//java.util.logging.Logger logSaaj = java.util.logging.Logger.getLogger(com.sun.xml.messaging.saaj.util.LogDomainConstants.SOAP_DOMAIN
-				//																		"com.sun.xml.messaging.saaj.soap.LocalStrings");
+				/**java.util.logging.Logger logSaaj = java.util.logging.Logger.getLogger(com.sun.xml.messaging.saaj.util.LogDomainConstants.SOAP_DOMAIN
+																						"com.sun.xml.messaging.saaj.soap.LocalStrings");*/
 				java.util.logging.Logger logSaaj = java.util.logging.Logger.getLogger(com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN);
 				logSaaj.setLevel(Level.OFF);
 				logSaaj.severe("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato; questo messaggio non deve essere visualizzato");
@@ -745,7 +745,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if( propertiesReader.getLocationPddProperties()!=null ){
 				locationPddProperties = propertiesReader.getLocationPddProperties();
 			}
-			if( PddProperties.initialize(locationPddProperties,propertiesReader.getRootDirectory()) == false){
+			if( !PddProperties.initialize(locationPddProperties,propertiesReader.getRootDirectory())){
 				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'govway.pdd.properties'");
 				return;
 			}
@@ -773,7 +773,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 
 			/* ------------- MsgDiagnostici.properties --------------- */
-			if( MsgDiagnosticiProperties.initialize(null,propertiesReader.getRootDirectory()) == false){
+			if( !MsgDiagnosticiProperties.initialize(null,propertiesReader.getRootDirectory())){
 				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'govway.msgDiagnostici.properties'");
 				return;
 			}
@@ -823,7 +823,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			/* ----------- Inizializzazione Risorse DOM/SOAP ------------ */
-			List<OpenSPCoop2MessageFactory> messageFactory = new ArrayList<OpenSPCoop2MessageFactory>();
+			List<OpenSPCoop2MessageFactory> messageFactory = new ArrayList<>();
 			try{
 				// TransazioneContext
 				TransactionContext.initGestioneStateful();

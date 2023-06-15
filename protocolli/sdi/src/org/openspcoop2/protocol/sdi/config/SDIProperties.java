@@ -227,7 +227,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.soggetto.tipo";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -259,7 +259,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.soggetto.nome";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -291,7 +291,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.generazione.messaggi.compatibilitaNamespaceSenzaGov";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -323,7 +323,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.messaggi.compatibilitaNamespaceSenzaGov";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -355,7 +355,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.nomeFile.enable";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -387,7 +387,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.fatturaDaInviare";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -419,7 +419,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.notifiche.enrichInfoFromFattura";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -451,7 +451,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.nomeFile.gestione";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -477,7 +477,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.nomeFile.gestioneOpzionale";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -509,7 +509,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.notificaDaInviare";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -535,7 +535,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.access.notificaDaInviare";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -561,7 +561,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.inputIdSDI.validationAsBigInteger.notificaDaInviare";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -593,7 +593,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.consegnaFileMetadati";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -625,7 +625,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.notifiche.enrichInfoFromFattura";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -657,7 +657,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.nomeFile.gestione";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -686,7 +686,7 @@ public class SDIProperties {
 	public String getTracciamentoDatasource() throws ProtocolException {
 		if(this.tracciamentoDatasource_read==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.dataSource"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.tracce.dataSource"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -708,7 +708,7 @@ public class SDIProperties {
 	public String getTracciamentoTipoDatabase() throws ProtocolException {
 		if(this.tracciamentoTipoDatabase_read==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.tipoDatabase"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.tracce.tipoDatabase"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -729,7 +729,7 @@ public class SDIProperties {
 	public Properties getTracciamentoDatasource_jndiContext() throws ProtocolException {
 		if(this.tracciamentoDatasource_jndiContext==null){
 	    	try{  
-	    		this.tracciamentoDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.dataSource.property.");
+	    		this.tracciamentoDatasource_jndiContext = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.protocol.sdi.tracce.dataSource.property.");
 	    		if (this.tracciamentoDatasource_jndiContext == null || this.tracciamentoDatasource_jndiContext.size()<0){
 	    			this.tracciamentoDatasource_jndiContext = new Properties(); // context jndi vuoto
 				}
@@ -756,7 +756,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMetadati.enable";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -788,7 +788,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiFattura.enable";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -820,7 +820,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMessaggi.enable";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -852,7 +852,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMetadati.enable.throwError";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -884,7 +884,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiFattura.enable.throwError";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -916,7 +916,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMessaggi.enable.throwError";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -948,7 +948,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.metadati";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -980,7 +980,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.fattura";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1012,7 +1012,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.messaggi";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1044,7 +1044,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiMetadati.enable";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1076,7 +1076,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiFattura.enable";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1108,7 +1108,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiMessaggi.enable";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1143,7 +1143,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.parse.fattura.saveInContext";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1175,7 +1175,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.parse.messaggi.saveInContext";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1209,7 +1209,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.notifica.attestazioneTrasmissioneImpossibilitaRecapito.consegnaSoloAttestato";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1243,7 +1243,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.behaviour.creaProtocolloSDI";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1272,7 +1272,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.soggetti";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				this.soggettiWhiteList = new ArrayList<>();
 				
@@ -1301,7 +1301,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.servizi";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				this.serviziWhiteList = new ArrayList<>();
 				
@@ -1330,7 +1330,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.azioni";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				this.azioniWhiteList = new ArrayList<>();
 				
@@ -1359,7 +1359,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.namespace";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				this.namespaceWhiteList = new ArrayList<>();
 				
@@ -1396,7 +1396,7 @@ public class SDIProperties {
     public Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault(){
     	if(this.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.pa.bustaErrore.personalizzaElementiFault"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.pa.bustaErrore.personalizzaElementiFault"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1431,7 +1431,7 @@ public class SDIProperties {
     public Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo(){
     	if(this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.pa.bustaErrore.aggiungiErroreApplicativo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.pa.bustaErrore.aggiungiErroreApplicativo"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1464,7 +1464,7 @@ public class SDIProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolValidazione(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolValidazione==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1493,7 +1493,7 @@ public class SDIProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolProcessamento==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1523,7 +1523,7 @@ public class SDIProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.stackTrace"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1552,7 +1552,7 @@ public class SDIProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1585,7 +1585,7 @@ public class SDIProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationServerError(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationServerError==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.serverError"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.serverError"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1614,7 +1614,7 @@ public class SDIProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationClientError(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationClientError==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.clientError"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.clientError"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1643,7 +1643,7 @@ public class SDIProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.stackTrace"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1673,7 +1673,7 @@ public class SDIProperties {
     public Boolean isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1712,7 +1712,7 @@ public class SDIProperties {
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
     	if(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.erroreApplicativo.faultApplicativo.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1747,7 +1747,7 @@ public class SDIProperties {
     public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
     	if(this.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.erroreApplicativo.faultPdD.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.sdi.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1780,7 +1780,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.factory.config.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1807,7 +1807,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.factory.erroreApplicativo.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1834,7 +1834,7 @@ public class SDIProperties {
 			String propertyName = "org.openspcoop2.protocol.sdi.factory.esito.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();

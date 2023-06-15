@@ -23,10 +23,9 @@ package org.openspcoop2.pdd.config;
 
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
+import org.slf4j.Logger;
 
 /**
 * MsgDiagnosticiInstanceProperties
@@ -40,7 +39,7 @@ public class MsgDiagnosticiInstanceProperties extends InstanceProperties {
 
 	
 		
-	public MsgDiagnosticiInstanceProperties(Properties reader,Logger log,String confDir) throws UtilsException{
+	public MsgDiagnosticiInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(CostantiPdD.OPENSPCOOP2_MSGDIAGNOSTICI_PROPERTIES,CostantiPdD.OPENSPCOOP2_MSGDIAGNOSTICI_LOCAL_PATH, confDir);
 	}

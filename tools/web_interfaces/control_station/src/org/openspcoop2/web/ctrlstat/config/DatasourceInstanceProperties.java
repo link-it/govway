@@ -39,7 +39,7 @@ import org.openspcoop2.web.ctrlstat.costanti.TipoProperties;
 
 class DatasourceInstanceProperties extends InstanceProperties {
 
-	DatasourceInstanceProperties(Properties reader,Logger log,String confDir, String confPropertyName, String confLocalPathPrefix) throws Exception{
+	DatasourceInstanceProperties(Properties reader,Logger log,String confDir, String confPropertyName, String confLocalPathPrefix) {
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(
 				CostantiUtilities.get_PROPERTY_NAME(TipoProperties.DATASOURCE, confPropertyName), 

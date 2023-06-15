@@ -124,7 +124,7 @@ public class InterfaceBiggerTest {
 				maxAtteso = ambienteTestNonPerformante ? 9000 : 3500;
 				break;
 			}	
-			System.out.println("\tReader time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+			System.out.println("\tReader time:"+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 			if(time>maxAtteso) {
 				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms, trovato '"+time+"'ms");
 			}
@@ -152,7 +152,7 @@ public class InterfaceBiggerTest {
 				maxAtteso = ambienteTestNonPerformante ? 9000 : 3500;
 				break;
 			}			
-			System.out.println("\tInit validator time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+			System.out.println("\tInit validator time:"+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 			if(time>maxAtteso) {
 				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms, trovato '"+time+"'ms");
 			}
@@ -174,7 +174,7 @@ public class InterfaceBiggerTest {
 			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
 			endT = DateManager.getTimeMillis();
 			time = endT - initT;
-			System.out.println("\tInit second validator time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+			System.out.println("\tInit second validator time:"+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
 			if(time>maxAtteso) {
 				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms, trovato '"+time+"'ms");
 			}

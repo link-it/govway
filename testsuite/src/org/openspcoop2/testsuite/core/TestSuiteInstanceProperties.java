@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 
 class TestSuiteInstanceProperties extends InstanceProperties {
 
-	TestSuiteInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	TestSuiteInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(CostantiTestSuite.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(CostantiTestSuite.OPENSPCOOP2_TESTSUITE_PROPERTIES, CostantiTestSuite.OPENSPCOOP2_TESTSUITE_LOCAL_PATH, confDir);
 	}

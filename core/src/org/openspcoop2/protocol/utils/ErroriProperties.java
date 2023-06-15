@@ -790,7 +790,7 @@ public class ErroriProperties {
 	public String getProperty(String property) throws ProtocolException {
 		try{ 
 			String name = null;
-			name = this.reader.getValue_convertEnvProperties(property);
+			name = this.reader.getValueConvertEnvProperties(property);
 			if(name==null)
 				throw new Exception("proprieta non definita");
 			return name.trim();
@@ -804,7 +804,7 @@ public class ErroriProperties {
 	public String getOptionalProperty(String property) throws ProtocolException {
 		try{ 
 			String name = null;
-			name = this.reader.getValue_convertEnvProperties(property);
+			name = this.reader.getValueConvertEnvProperties(property);
 			if(name==null)
 				return null;
 			return name.trim();
@@ -818,7 +818,7 @@ public class ErroriProperties {
 	public Boolean getBooleanProperty(String property) throws ProtocolException {
 		try{ 
 			String name = null;
-			name = this.reader.getValue_convertEnvProperties(property);
+			name = this.reader.getValueConvertEnvProperties(property);
 			if(name==null)
 				throw new Exception("proprieta non definita");
 			return Boolean.parseBoolean(name.trim());

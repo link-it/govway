@@ -108,7 +108,7 @@ public class GestoreKeystoreCaching {
 				bf.append("CRLsLifeTime:");
 				long lifeTime = GestoreKeystoreCaching.getItemCrlLifeSecond();
 				if(lifeTime>0){
-					bf.append(Utilities.convertSystemTimeIntoString_millisecondi(lifeTime*1000,false));
+					bf.append(Utilities.convertSystemTimeIntoStringMillisecondi(lifeTime*1000,false));
 				}
 				else if(lifeTime==0){
 					bf.append("0");

@@ -154,7 +154,7 @@ public class DatasourceProperties {
 	/* ********  M E T O D I  ******** */
 
 	private String readProperty(boolean required,String property) throws UtilsException{
-		String tmp = this.reader.getValue_convertEnvProperties(property);
+		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
 			if(required){
 				throw new UtilsException("Property ["+property+"] not found");
@@ -184,7 +184,7 @@ public class DatasourceProperties {
 	}
 	
 	public Properties getDataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("dataSource.property.");
 	}
 	
 	public String getTipoDatabase() throws UtilsException{
@@ -216,7 +216,7 @@ public class DatasourceProperties {
 	}
 	
 	public Properties getSinglePdD_MonitorDataSourceContext(String source) throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("singlePdD.monitor."+source+".dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("singlePdD.monitor."+source+".dataSource.property.");
 	}
 	
 	public String getSinglePdD_MonitorTipoDatabase(String source) throws UtilsException{
@@ -235,7 +235,7 @@ public class DatasourceProperties {
 	}
 	
 	public Properties getSinglePdD_TracceDataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("singlePdD.tracce.dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("singlePdD.tracce.dataSource.property.");
 	}
 	
 	public String getSinglePdD_TracceTipoDatabase() throws UtilsException{
@@ -254,7 +254,7 @@ public class DatasourceProperties {
 	}
 	
 	public Properties getSinglePdD_MessaggiDiagnosticiDataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("singlePdD.msgDiagnostici.dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("singlePdD.msgDiagnostici.dataSource.property.");
 	}
 	
 	public String getSinglePdD_MessaggiDiagnosticiTipoDatabase() throws UtilsException{

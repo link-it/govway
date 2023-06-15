@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
 
 
@@ -37,7 +38,7 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 */
 public class SDIInstanceProperties extends InstanceProperties {
 
-	SDIInstanceProperties(Properties reader,Logger log) throws Exception{
+	SDIInstanceProperties(Properties reader,Logger log) throws UtilsException {
 		super(SDICostanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		
 		// Leggo directory di configurazione
@@ -45,7 +46,9 @@ public class SDIInstanceProperties extends InstanceProperties {
 		if(confDir==null) {
 			try {
 				confDir = InstanceProperties.readConfDirFromGovWayProperties();
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		
 		super.setLocalFileImplementation(SDICostanti.SDI_PROPERTIES,SDICostanti.SDI_PROPERTIES_LOCAL_PATH, confDir);

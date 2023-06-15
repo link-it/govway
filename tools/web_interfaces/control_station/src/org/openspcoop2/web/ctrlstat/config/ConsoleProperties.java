@@ -159,7 +159,7 @@ public class ConsoleProperties {
 	/* ********  M E T O D I  ******** */
 
 	private String readProperty(boolean required,String property) throws UtilsException{
-		String tmp = this.reader.getValue_convertEnvProperties(property);
+		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
 			if(required){
 				throw new UtilsException("Property ["+property+"] not found");
@@ -554,7 +554,7 @@ public class ConsoleProperties {
 	}
 	
 	public ConfigurazionePriorita getConsegnaNotificaConfigurazionePriorita(String nome) throws Exception{
-		Properties p = this.reader.readProperties_convertEnvProperties("consegnaNotifiche.priorita."+nome+".");
+		Properties p = this.reader.readPropertiesConvertEnvProperties("consegnaNotifiche.priorita."+nome+".");
 		return new ConfigurazionePriorita(nome, p);
 	}
 	
@@ -811,7 +811,7 @@ public class ConsoleProperties {
 				String key = (String) object;
 				if(key.contains(prefix)) {
 					String newKey = key.replace(prefix, "");
-					p.put(newKey, this.reader.getValue_convertEnvProperties(key));
+					p.put(newKey, this.reader.getValueConvertEnvProperties(key));
 				}
 			}
 		}
@@ -1523,7 +1523,7 @@ public class ConsoleProperties {
 	}
 	
 	public Properties getTokenPolicyTipologia() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("console.tokenPolicy.mapping.");
+		return this.reader.readPropertiesConvertEnvProperties("console.tokenPolicy.mapping.");
 	}
 	
 	public String getAttributeAuthorityForceId() throws UtilsException{
@@ -1531,7 +1531,7 @@ public class ConsoleProperties {
 	}
 	
 	public Properties getAttributeAuthorityTipologia() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("console.attributeAuthority.mapping.");
+		return this.reader.readPropertiesConvertEnvProperties("console.attributeAuthority.mapping.");
 	}
 	
 	public Boolean isEnableServiziVisualizzaModalitaElenco() throws UtilsException{

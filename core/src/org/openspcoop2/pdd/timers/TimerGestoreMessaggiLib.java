@@ -1120,7 +1120,7 @@ public class TimerGestoreMessaggiLib  {
 			// end
 			long endControlloRepositoryMessaggi = DateManager.getTimeMillis();
 			long diff = (endControlloRepositoryMessaggi-startControlloRepositoryMessaggi);
-			this.logTimer.info("Controllo Repository Messaggi terminato in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			this.logTimer.info("Controllo Repository Messaggi terminato in "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 
 		} 
 		catch(TimerLockNotAvailableException t) {
@@ -1338,7 +1338,7 @@ public class TimerGestoreMessaggiLib  {
 				// end
 				long endControlloRepositoryMessaggi = DateManager.getTimeMillis();
 				long diff = (endControlloRepositoryMessaggi-startControlloRepositoryMessaggi);
-				this.logTimer.info("Terminata verifica connessioni attive in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+				this.logTimer.info("Terminata verifica connessioni attive in "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 			}
 			else{
 				this.logTimer.warn("Non verifico connessioni attive");

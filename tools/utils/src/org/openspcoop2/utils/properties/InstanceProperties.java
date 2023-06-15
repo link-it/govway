@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -52,10 +53,10 @@ public abstract class InstanceProperties {
 	private String openspcoop2LocalHome;
 	private boolean readCallsNotSynchronized;
 	
-	protected InstanceProperties(String openspcoop2LocalHome,Properties propertiesOriginale,Logger log) throws UtilsException{
+	protected InstanceProperties(String openspcoop2LocalHome,Properties propertiesOriginale,Logger log) {
 		this(openspcoop2LocalHome, propertiesOriginale, log, true);
 	}
-	protected InstanceProperties(String openspcoop2LocalHome,Properties propertiesOriginale,Logger log, boolean readCallsNotSynchronized) throws UtilsException{
+	protected InstanceProperties(String openspcoop2LocalHome,Properties propertiesOriginale,Logger log, boolean readCallsNotSynchronized) {
 		this.propertiesOriginale = new PropertiesReader(propertiesOriginale,readCallsNotSynchronized);
 		this.log = log;
 		if(this.log==null){
@@ -63,6 +64,10 @@ public abstract class InstanceProperties {
 		}
 		this.openspcoop2LocalHome = openspcoop2LocalHome;
 		this.readCallsNotSynchronized = readCallsNotSynchronized;
+	}
+	
+	private void logError(String msg, Exception e) {
+		this.log.error(msg, e);
 	}
 	
 	public void setLocalFileImplementation(String variable,String path,String confDirectory){
@@ -85,7 +90,7 @@ public abstract class InstanceProperties {
 		return getValueEngine(key, false);
 	}
 		
-	public String getValue_convertEnvProperties(String key)throws UtilsException{
+	public String getValueConvertEnvProperties(String key)throws UtilsException{
 		return getValueEngine(key, true);
 	}
 		
@@ -93,31 +98,31 @@ public abstract class InstanceProperties {
 		return readPropertiesEngine(prefix, false);
 	}
 	
-	public java.util.Properties readProperties_convertEnvProperties (String prefix)throws UtilsException{
+	public java.util.Properties readPropertiesConvertEnvProperties (String prefix)throws UtilsException{
 		return readPropertiesEngine(prefix, true);
 	}
 	
-	public java.util.concurrent.ConcurrentHashMap<String, String> readPropertiesAsConcurrentHashMap (String prefix)throws UtilsException{
+	public ConcurrentMap<String, String> readPropertiesAsConcurrentHashMap (String prefix)throws UtilsException{
 		return Utilities.convertToConcurrentHashMap(readProperties(prefix));
 	}
 	
-	public java.util.concurrent.ConcurrentHashMap<String, String> readPropertiesAsConcurrentHashMap_convertEnvProperties (String prefix)throws UtilsException{
-		return Utilities.convertToConcurrentHashMap(readProperties_convertEnvProperties(prefix));
+	public ConcurrentMap<String, String> readPropertiesAsConcurrentHashMapConvertEnvProperties (String prefix)throws UtilsException{
+		return Utilities.convertToConcurrentHashMap(readPropertiesConvertEnvProperties(prefix));
 	}
 	
-	public java.util.HashMap<String, String> readPropertiesAsHashMap (String prefix)throws UtilsException{
+	public java.util.Map<String, String> readPropertiesAsHashMap (String prefix)throws UtilsException{
 		return Utilities.convertToHashMap(readProperties(prefix));
 	}
 	
-	public java.util.HashMap<String, String> readPropertiesAsHashMap_convertEnvProperties (String prefix)throws UtilsException{
-		return Utilities.convertToHashMap(readProperties_convertEnvProperties(prefix));
+	public java.util.Map<String, String> readPropertiesAsHashMapConvertEnvProperties (String prefix)throws UtilsException{
+		return Utilities.convertToHashMap(readPropertiesConvertEnvProperties(prefix));
 	}
 	
 	public String convertEnvProperties(String value)throws UtilsException{
 		return this.propertiesOriginale.convertEnvProperties(value);
 	}
 	
-	public java.util.Enumeration<?> propertyNames(){
+	public java.util.Enumeration<String> propertyNames(){
 		
 		java.util.Enumeration<?> enumProp = this.propertiesOriginale.propertyNames();
 		List<String> object = new ArrayList<>();
@@ -129,7 +134,7 @@ public abstract class InstanceProperties {
 			java.util.Enumeration<?> enumPropRidefinito = this.propertiesRidefinitoFile.propertyNames();
 			while(enumPropRidefinito!=null && enumPropRidefinito.hasMoreElements()){
 				String ridefinito = (String)enumPropRidefinito.nextElement();
-				if(object.contains(ridefinito)==false){
+				if(!object.contains(ridefinito)){
 					object.add(ridefinito);		
 				}
 			}
@@ -139,7 +144,7 @@ public abstract class InstanceProperties {
 			java.util.Enumeration<?> enumPropRidefinito = this.propertiesRidefinitoObject.propertyNames();
 			while(enumPropRidefinito!=null && enumPropRidefinito.hasMoreElements()){
 				String ridefinito = (String)enumPropRidefinito.nextElement();
-				if(object.contains(ridefinito)==false){
+				if(!object.contains(ridefinito)){
 					object.add(ridefinito);		
 				}
 			}
@@ -188,13 +193,12 @@ public abstract class InstanceProperties {
 								addObject[i] = addObject[i].trim();
 							}
 						}else{
-							//return tmpObject; // valore strano, lo ritorno
+							// valore strano, lo ritorno
 							addObject = new String[1];
 							addObject[0] = tmpObject;
 						}
 					}
 				}else{
-					//return tmpObject;
 					addObject = new String[1];
 					addObject[0] = tmpObject;
 				}
@@ -228,13 +232,12 @@ public abstract class InstanceProperties {
 								addFile[i] = addFile[i].trim();
 							}
 						}else{
-							//return tmpFile; // valore strano, lo ritorno
+							// valore strano, lo ritorno
 							addFile = new String[1];
 							addFile[0] = tmpFile;
 						}
 					}
 				}else{
-					//return tmpFile;
 					addFile = new String[1];
 					addFile[0] = tmpFile;
 				}
@@ -277,7 +280,7 @@ public abstract class InstanceProperties {
 			List<String> valoriAggiunti = new ArrayList<>();
 			if(addObject!=null){
 				for (int i = 0; i < addObject.length; i++) {
-					if(valoriAggiunti.contains(addObject[i])==false){
+					if(!valoriAggiunti.contains(addObject[i])){
 						if(bf.length()>0){
 							bf.append(",");
 						}
@@ -288,7 +291,7 @@ public abstract class InstanceProperties {
 			}
 			if(addFile!=null){
 				for (int i = 0; i < addFile.length; i++) {
-					if(valoriAggiunti.contains(addFile[i])==false){
+					if(!valoriAggiunti.contains(addFile[i])){
 						if(bf.length()>0){
 							bf.append(",");
 						}
@@ -297,20 +300,19 @@ public abstract class InstanceProperties {
 					}
 				}
 			}
-			if(tmp!=null){
-				if(valoriAggiunti.contains(tmp)==false){
-					if(bf.length()>0){
-						bf.append(",");
-					}
-					bf.append(tmp);
-					valoriAggiunti.add(tmp);
+			if(tmp!=null &&
+				!valoriAggiunti.contains(tmp)){
+				if(bf.length()>0){
+					bf.append(",");
 				}
+				bf.append(tmp);
+				valoriAggiunti.add(tmp);
 			}
 			
 			return bf.toString();
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura della proprieta' ["+key+"]("+convertEnvProperties+")",e);
+			this.logError("Errore durante la lettura della proprieta' ["+key+"]("+convertEnvProperties+")",e);
 			throw new UtilsException(e.getMessage(),e);
 		}
 		
@@ -366,7 +368,7 @@ public abstract class InstanceProperties {
 			}
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle proprieta' con prefix ["+prefix+"]("+convertEnvProperties+")",e);
+			this.logError("Errore durante la lettura delle proprieta' con prefix ["+prefix+"]("+convertEnvProperties+")",e);
 			throw new UtilsException(e.getMessage(),e);
 		}
 		
@@ -377,16 +379,19 @@ public abstract class InstanceProperties {
 	public static String readConfDirFromGovWayProperties() {
 		try {
 			Class<?> cOp2Props = Class.forName("org.openspcoop2.pdd.config.OpenSPCoop2Properties");
-			Method cOp2Props_methodGetInstance = cOp2Props.getMethod("getInstance");
-			Object op2Props = cOp2Props_methodGetInstance.invoke(null);
+			Method cOp2PropsMethodGetInstance = cOp2Props.getMethod("getInstance");
+			Object op2Props = cOp2PropsMethodGetInstance.invoke(null);
 			if(op2Props!=null) {
-				Method rootDir_method = op2Props.getClass().getMethod("getRootDirectory");
-				Object rootDir = rootDir_method.invoke(op2Props);
-				if(rootDir!=null && rootDir instanceof String) {
+				Method rootDirMethod = op2Props.getClass().getMethod("getRootDirectory");
+				Object rootDir = rootDirMethod.invoke(op2Props);
+				if(rootDir instanceof String) {
 					return (String) rootDir;
 				}
 			}
-		}catch(Throwable t) {}
+		}catch(Exception t) {
+			// ignore
+		}
 		return null;
 	}
+	
 }

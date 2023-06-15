@@ -138,7 +138,7 @@ public class DatasourceProperties {
 	/* ********  M E T O D I  ******** */
 
 	private String readProperty(boolean required,String property) throws UtilsException{
-		String tmp = this.reader.getValue_convertEnvProperties(property);
+		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
 			if(required){
 				throw new UtilsException("Property ["+property+"] not found");
@@ -167,7 +167,7 @@ public class DatasourceProperties {
 	}
 	
 	public Properties getConfigDataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("db.config.dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("db.config.dataSource.property.");
 	}
 	
 	public String getConfigTipoDatabase() throws UtilsException{
@@ -180,7 +180,7 @@ public class DatasourceProperties {
 	}
 	
 	public Properties getTracceDataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("db.tracce.dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("db.tracce.dataSource.property.");
 	}
 	
 	public String getTracceTipoDatabase() throws UtilsException{
@@ -193,7 +193,7 @@ public class DatasourceProperties {
 	}
 	
 	public Properties getStatisticheDataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("db.statistiche.dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("db.statistiche.dataSource.property.");
 	}
 	
 	public String getStatisticheTipoDatabase() throws UtilsException{

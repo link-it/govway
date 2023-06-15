@@ -38,7 +38,7 @@ import org.openspcoop2.web.loader.core.Costanti;
 
 class DatasourceInstanceProperties extends InstanceProperties {
 
-	DatasourceInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	DatasourceInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(Costanti.OPENSPCOOP2_DATASOURCE_PROPERTIES, Costanti.OPENSPCOOP2_DATASOURCE_LOCAL_PATH, confDir);
 	}

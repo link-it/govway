@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
 
 
@@ -37,7 +38,7 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 */
 class OpenSPCoop2InstanceProperties extends InstanceProperties {
 
-	OpenSPCoop2InstanceProperties(Properties reader,Logger log,Properties localProperties) throws Exception{
+	OpenSPCoop2InstanceProperties(Properties reader,Logger log,Properties localProperties) throws UtilsException {
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		
 		// Leggo directory di configurazione

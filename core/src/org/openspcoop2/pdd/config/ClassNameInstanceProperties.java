@@ -37,7 +37,7 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 
 public class ClassNameInstanceProperties extends InstanceProperties {
 
-	ClassNameInstanceProperties(Properties reader,Logger log) throws Exception{
+	ClassNameInstanceProperties(Properties reader,Logger log) {
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
 	}
 	

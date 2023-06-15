@@ -315,7 +315,7 @@ public class TimerGestoreRepositoryBusteLib {
 
 			long endControlloRepositoryBuste = DateManager.getTimeMillis();
 			long diff = (endControlloRepositoryBuste-startControlloRepositoryBuste);
-			this.logTimer.info("Controllo Repository Buste terminato in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			this.logTimer.info("Controllo Repository Buste terminato in "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 
 		} 
 		catch(TimerLockNotAvailableException t) {

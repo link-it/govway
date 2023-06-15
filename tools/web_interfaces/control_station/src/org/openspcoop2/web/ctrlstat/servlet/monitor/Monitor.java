@@ -1581,14 +1581,14 @@ public final class Monitor extends Action {
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA);
 					de.setType(DataElementType.TEXT);
-					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesa() * 1000, false));
+					de.setValue(Utilities.convertSystemTimeIntoStringMillisecondi(statoPdD.getTempoMaxAttesa() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.add(de);
 					// Medio
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
 					de.setType(DataElementType.TEXT);
-					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesa() * 1000, false));
+					de.setValue(Utilities.convertSystemTimeIntoStringMillisecondi(statoPdD.getTempoMedioAttesa() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.add(de);
 
@@ -1613,14 +1613,14 @@ public final class Monitor extends Action {
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA);
 					de.setType(DataElementType.TEXT);
-					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesaInConsegna() * 1000, false));
+					de.setValue(Utilities.convertSystemTimeIntoStringMillisecondi(statoPdD.getTempoMaxAttesaInConsegna() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.add(de);
 					// Medio
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
 					de.setType(DataElementType.TEXT);
-					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesaInConsegna() * 1000, false));
+					de.setValue(Utilities.convertSystemTimeIntoStringMillisecondi(statoPdD.getTempoMedioAttesaInConsegna() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.add(de);
 				}
@@ -1644,14 +1644,14 @@ public final class Monitor extends Action {
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA);
 					de.setType(DataElementType.TEXT);
-					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesaInSpedizione() * 1000, false));
+					de.setValue(Utilities.convertSystemTimeIntoStringMillisecondi(statoPdD.getTempoMaxAttesaInSpedizione() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.add(de);
 					// Medio
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
 					de.setType(DataElementType.TEXT);
-					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesaInSpedizione() * 1000, false));
+					de.setValue(Utilities.convertSystemTimeIntoStringMillisecondi(statoPdD.getTempoMedioAttesaInSpedizione() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.add(de);
 				}
@@ -1675,14 +1675,14 @@ public final class Monitor extends Action {
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA);
 					de.setType(DataElementType.TEXT);
-					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesaInProcessamento() * 1000, false));
+					de.setValue(Utilities.convertSystemTimeIntoStringMillisecondi(statoPdD.getTempoMaxAttesaInProcessamento() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.add(de);
 					// Medio
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
 					de.setType(DataElementType.TEXT);
-					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesaInProcessamento() * 1000, false));
+					de.setValue(Utilities.convertSystemTimeIntoStringMillisecondi(statoPdD.getTempoMedioAttesaInProcessamento() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.add(de);
 				}

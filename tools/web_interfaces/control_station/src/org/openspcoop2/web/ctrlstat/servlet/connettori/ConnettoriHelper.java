@@ -1314,6 +1314,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean credenzialiToken, String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA, 
 			boolean dominioEsterno, String protocollo) throws Exception{
 		
+		if(visualizzaModificaCertificato) {
+			// nop
+		}
+		
 		if(dati==null) {
 			throw new CoreException("Param dati is null");
 		}
@@ -1383,9 +1387,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 				boolean autenticazioneNessuna = autenticazioneNessunaAbilitata;
 				if (! (SoggettiCostanti.SERVLET_NAME_SOGGETTI_ADD.equals(toCall) || 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE.equals(toCall)) ) {
-					boolean creazione_modifica_SA = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD.equals(toCall) || 
+					boolean creazioneModificaSA = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD.equals(toCall) || 
 							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE.equals(toCall);
-					if (this.isModalitaStandard() || (!this.isModalitaCompleta() && creazione_modifica_SA)){
+					if (this.isModalitaStandard() || (!this.isModalitaCompleta() && creazioneModificaSA)){
 						autenticazioneNessuna = false;
 					}
 				}

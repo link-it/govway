@@ -38,7 +38,7 @@ import org.openspcoop2.web.lib.queue.costanti.Costanti;
 
 class QueueInstanceProperties extends InstanceProperties {
 
-	QueueInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	QueueInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(Costanti.OPENSPCOOP2_QUEUE_PROPERTIES, Costanti.OPENSPCOOP2_QUEUE_LOCAL_PATH, confDir);
 	}

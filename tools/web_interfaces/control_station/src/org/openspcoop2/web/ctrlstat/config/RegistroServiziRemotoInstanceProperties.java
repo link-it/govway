@@ -39,7 +39,7 @@ import org.openspcoop2.web.ctrlstat.costanti.TipoProperties;
 
 class RegistroServiziRemotoInstanceProperties extends InstanceProperties {
 
-	RegistroServiziRemotoInstanceProperties(Properties reader,Logger log,String confDir, String confPropertyName, String confLocalPathPrefix) throws Exception{
+	RegistroServiziRemotoInstanceProperties(Properties reader,Logger log,String confDir, String confPropertyName, String confLocalPathPrefix) {
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(
 				CostantiUtilities.get_PROPERTY_NAME(TipoProperties.REGISTRO, confPropertyName), 

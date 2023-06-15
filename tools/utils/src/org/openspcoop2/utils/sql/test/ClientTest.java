@@ -828,7 +828,7 @@ public class ClientTest {
 					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" gdo["+dateformat.format(rs.getTimestamp("gdo"))+"] gdo2["+dateformat.format(rs.getTimestamp("gdo2"))+
 								"] [msLatenza:"+latenza+" humanReadable:"+
-							Utilities.convertSystemTimeIntoString_millisecondi(latenza,true)+"]");
+							Utilities.convertSystemTimeIntoStringMillisecondi(latenza,true)+"]");
 					if(latenza<=oldLatenza){
 						throw new Exception("Attesa latenza con ordinamento crescente. Latenza della entry precedente aveva ["+oldLatenza+"]");
 					}

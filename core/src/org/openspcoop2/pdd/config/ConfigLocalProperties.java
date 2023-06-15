@@ -83,7 +83,7 @@ public class ConfigLocalProperties extends InstanceProperties {
 
 	private boolean configLocal = false;
 	
-	public ConfigLocalProperties(Logger log,String confDir,Properties prop) throws Exception {
+	public ConfigLocalProperties(Logger log,String confDir,Properties prop) {
 		
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,new Properties(), log);  // L'originale del file config non esiste, e' su file XML o su database
 		

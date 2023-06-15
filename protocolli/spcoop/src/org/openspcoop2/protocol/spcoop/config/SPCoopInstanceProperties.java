@@ -37,13 +37,15 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 */
 public class SPCoopInstanceProperties extends InstanceProperties {
 
-	SPCoopInstanceProperties(String confDir,Properties reader,Logger log) throws Exception{
+	SPCoopInstanceProperties(String confDir,Properties reader,Logger log) {
 		super(SPCoopCostanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		
 		if(confDir==null) {
 			try {
 				confDir = InstanceProperties.readConfDirFromGovWayProperties();
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		
 		super.setLocalFileImplementation(SPCoopCostanti.SPCOOP_PROPERTIES,SPCoopCostanti.SPCOOP_PROPERTIES_LOCAL_PATH, confDir);

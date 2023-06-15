@@ -203,18 +203,16 @@ public class SoggettiHelper extends ConnettoriHelper {
 		dati.add(de);
 		
 		boolean gestionePdd = true;
-		if(this.core.isSinglePdD()){
-			if(this.core.isGestionePddAbilitata(this)==false) {
-				gestionePdd = false;
-			}
+		if(this.core.isSinglePdD() &&
+			!this.core.isGestionePddAbilitata(this)) {
+			gestionePdd = false;
 		}
 		
 		boolean multiTenant = this.core.isMultitenant();
 		boolean hiddenDatiDominioInterno = false;
-		if(!multiTenant) {
-			if(!gestionePdd) {
-				hiddenDatiDominioInterno = SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(dominio);
-			}
+		if(!multiTenant &&
+			!gestionePdd) {
+			hiddenDatiDominioInterno = SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(dominio);
 		}
 		
 		if(gestionePdd) {
@@ -235,10 +233,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setSelected(pdd);
 					de.setPostBack(isSupportatoAutenticazioneSoggetti);
 					if (this.core.isSinglePdD()) {
-						if(pdd==null || "".equals(pdd)){
-							if(nomePddGestioneLocale!=null){
-								de.setSelected(nomePddGestioneLocale);
-							}
+						if( 
+								(pdd==null || "".equals(pdd))
+								&&
+								nomePddGestioneLocale!=null
+							){
+							de.setSelected(nomePddGestioneLocale);
 						}
 					}else{
 						de.setRequired(true);
@@ -376,21 +376,19 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setSelected(tipoprov);
 		}
 		else {
-			//de.setType(DataElementType.TEXT);
 			de.setType(DataElementType.HIDDEN);
-			if( (tipoprov==null || "".equals(tipoprov)) && tipiLabel!=null && tipiLabel.length>0) {
+			if( 
+					((tipoprov==null || "".equals(tipoprov)) && tipiLabel!=null && tipiLabel.length>0)
+					||
+					(tipoprov!=null && tipiLabel!=null && tipiLabel.length>0 && !tipoprov.equals(tipiLabel[0])) // fix per cambio protocollo
+			) {
 				tipoprov = tipiLabel[0];
-			}
-			else if(tipoprov!=null && tipiLabel!=null && tipiLabel.length>0 && !tipoprov.equals(tipiLabel[0])) {
-				tipoprov = tipiLabel[0]; // fix per cambio protocollo
 			}
 			de.setValue(tipoprov);
 		}
 		de.setSize(this.getSize());
-		//		de.setOnChange("CambiaDatiSoggetto('" + tipoOp + "')");
 		de.setPostBack(true);
 		dati.add(de);
-		//}
 
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME);
@@ -427,11 +425,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		if (!isSupportatoIdentificativoPorta) {
 			de.setType(DataElementType.HIDDEN);
 		}else{
-//			if (this.isModalitaStandard()) {
-//				de.setType(DataElementType.HIDDEN);
-//			}else{
 			de.setType(DataElementType.TEXT_EDIT);
-			//}
 		}
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
 		de.setSize(this.getSize());
@@ -477,7 +471,6 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 		de.setSize(this.getSize());
 		dati.add(de);
-		//}
 
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_IS_PRIVATO);
@@ -494,7 +487,6 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_IS_ROUTER);
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
-		//if (!this.core.isSinglePdD() && !InterfaceType.STANDARD.equals(user.getInterfaceType())) {
 		// Un router lo si puo' voler creare anche in singlePdD.
 		if (this.isModalitaAvanzata() && this.core.isShowGestioneSoggettiRouter()) {
 			de.setType(DataElementType.CHECKBOX);
@@ -510,19 +502,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 
-//			boolean showConnettore = !this.isModalitaStandard() && 
-//					this.core.isRegistroServiziLocale() &&
-//					(this.isModalitaCompleta() || this.pddCore.isPddEsterna(pdd) || multiTenant );
 			boolean showConnettore = this.core.isRegistroServiziLocale() && this.isModalitaCompleta();
-				
-//			if(!showConnettore) {
-//				// guardo se fosse previsto un connettore static
-//				boolean connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
-//				if(connettoreStatic) {
-//					showConnettore = true; // e' l'unico modo di indicare un connettore da utilizzare come info di registro (es. nel pmode per eDelivery)
-//				}
-//			}
-			
+						
 			if(showConnettore){
 				
 				de = new DataElement();
@@ -543,7 +524,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			
-			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
+			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
 			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, nomeprov);
 			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
@@ -552,7 +533,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
 			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_PROPRIETA_LIST, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
-			if (contaListe) {
+			if (contaListe!=null && contaListe.booleanValue()) {
 				de.setValue(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA+"(" + numeroProprieta + ")");
 			} else {
 				de.setValue(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA);
@@ -588,6 +569,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			boolean showCredenziali = true;
 			if(this.pddCore.isPddEsterna(pdd)){
 				if(SoggettiCostanti.SOGGETTO_RUOLO_FRUITORE.equals(tipologia) || SoggettiCostanti.SOGGETTO_RUOLO_ENTRAMBI.equals(tipologia)){
+					/**autenticazioneNessunaAbilitata = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);*/
 					autenticazioneNessunaAbilitata = false;
 				}
 				if(SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE.equals(tipologia)){
@@ -659,10 +641,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			if (contaListe) {
 				// BugFix OP-674
-				//List<String> lista1 = this.soggettiCore.soggettiRuoliList(Long.parseLong(id),new Search(true));
+				/**List<String> lista1 = this.soggettiCore.soggettiRuoliList(Long.parseLong(id),new Search(true));*/
 				ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 				this.soggettiCore.soggettiRuoliList(Long.parseLong(id),searchForCount);
-				//int numRuoli = lista1.size();
 				int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
 				ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,Long.valueOf(numRuoli));
 			} else{

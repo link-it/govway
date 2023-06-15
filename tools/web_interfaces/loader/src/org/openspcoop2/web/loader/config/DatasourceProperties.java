@@ -138,7 +138,7 @@ public class DatasourceProperties {
 	/* ********  M E T O D I  ******** */
 
 	private String readProperty(boolean required,String property) throws UtilsException{
-		String tmp = this.reader.getValue_convertEnvProperties(property);
+		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
 			if(required){
 				throw new UtilsException("Property ["+property+"] not found");
@@ -161,7 +161,7 @@ public class DatasourceProperties {
 	}
 	
 	public Properties getRegistroServizi_DataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("registroServizi.dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("registroServizi.dataSource.property.");
 	}
 	
 	public String getRegistroServizi_TipoDatabase() throws UtilsException{
@@ -178,7 +178,7 @@ public class DatasourceProperties {
 	}
 	
 	public Properties getConfigurazione_DataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("configPdD.dataSource.property.");
+		return this.reader.readPropertiesConvertEnvProperties("configPdD.dataSource.property.");
 	}
 	
 	public String getConfigurazione_TipoDatabase() throws UtilsException{

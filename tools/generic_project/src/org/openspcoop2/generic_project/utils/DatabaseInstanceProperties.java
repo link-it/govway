@@ -21,6 +21,7 @@ package org.openspcoop2.generic_project.utils;
 
 import java.util.Properties;
 
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
 import org.slf4j.Logger;
 
@@ -36,13 +37,13 @@ public class DatabaseInstanceProperties extends InstanceProperties {
 
     public static final String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
-	DatabaseInstanceProperties(String PROPERTIES_LOCAL_PATH, String PROPERTIES_NAME, Properties reader,Logger log) throws Exception{
+	DatabaseInstanceProperties(String propertiesLocalPath, String propertiesName, Properties reader,Logger log) throws UtilsException {
 		super(OPENSPCOOP2_LOCAL_HOME,reader, log);
 			
 		// Leggo directory di configurazione
 		String confDir = super.getValue("confDirectory");
 		
-		super.setLocalFileImplementation(PROPERTIES_NAME,PROPERTIES_LOCAL_PATH, confDir);
+		super.setLocalFileImplementation(propertiesName,propertiesLocalPath, confDir);
 		
 	}
 	

@@ -380,7 +380,7 @@ public class ConnettoreUtils {
 					sb.append(newLine);
 					sb.append(CostantiLabel.LABEL_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
 					sb.append(separator);
-					sb.append(Utilities.convertSystemTimeIntoString_millisecondi(l, true, false, " "," ",""));
+					sb.append(Utilities.convertSystemTimeIntoStringMillisecondi(l, true, false, " "," ",""));
 				}
 			}catch(Throwable t) {}
 		}
@@ -392,7 +392,7 @@ public class ConnettoreUtils {
 					sb.append(newLine);
 					sb.append(CostantiLabel.LABEL_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
 					sb.append(separator);
-					sb.append(Utilities.convertSystemTimeIntoString_millisecondi(l, true, false, " "," ",""));
+					sb.append(Utilities.convertSystemTimeIntoStringMillisecondi(l, true, false, " "," ",""));
 				}
 			}catch(Throwable t) {}
 		}

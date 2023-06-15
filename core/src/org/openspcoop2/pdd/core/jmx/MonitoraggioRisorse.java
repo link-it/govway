@@ -673,21 +673,21 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 				this.totMessaggi = stato.getTotMessaggi();
 				this.totMessaggiDuplicati = stato.getTotMessaggiDuplicati();
 				if(stato.getTempoMaxAttesa()>0)
-					this.tempoMaxAttesa = Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMaxAttesa()*1000, false);
+					this.tempoMaxAttesa = Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMaxAttesa()*1000, false);
 				if(stato.getTempoMaxAttesaInConsegna()>0)
-					this.tempoMaxAttesaInConsegna = Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMaxAttesaInConsegna()*1000, false);
+					this.tempoMaxAttesaInConsegna = Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMaxAttesaInConsegna()*1000, false);
 				if(stato.getTempoMaxAttesaInSpedizione()>0)
-					this.tempoMaxAttesaInSpedizione = Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMaxAttesaInSpedizione()*1000, false);
+					this.tempoMaxAttesaInSpedizione = Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMaxAttesaInSpedizione()*1000, false);
 				if(stato.getTempoMaxAttesaInProcessamento()>0)
-					this.tempoMaxAttesaInProcessamento = Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMaxAttesaInProcessamento()*1000, false);
+					this.tempoMaxAttesaInProcessamento = Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMaxAttesaInProcessamento()*1000, false);
 				if(stato.getTempoMedioAttesa()>0)
-					this.tempoMedioAttesa = Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMedioAttesa()*1000, false);
+					this.tempoMedioAttesa = Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMedioAttesa()*1000, false);
 				if(stato.getTempoMedioAttesaInConsegna()>0)
-					this.tempoMedioAttesaInConsegna = Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMedioAttesaInConsegna()*1000, false);
+					this.tempoMedioAttesaInConsegna = Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMedioAttesaInConsegna()*1000, false);
 				if(stato.getTempoMedioAttesaInSpedizione()>0)
-					this.tempoMedioAttesaInSpedizione = Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMedioAttesaInSpedizione()*1000, false);
+					this.tempoMedioAttesaInSpedizione = Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMedioAttesaInSpedizione()*1000, false);
 				if(stato.getTempoMedioAttesaInProcessamento()>0)
-					this.tempoMedioAttesaInProcessamento = Utilities.convertSystemTimeIntoString_millisecondi(stato.getTempoMedioAttesaInProcessamento()*1000, false);
+					this.tempoMedioAttesaInProcessamento = Utilities.convertSystemTimeIntoStringMillisecondi(stato.getTempoMedioAttesaInProcessamento()*1000, false);
 			
 				this.datiMonitoraggioPdD = "Aggiornati al "+DateManager.getDate().toString();
 			}else{

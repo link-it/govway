@@ -37,7 +37,7 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 */
 public class EsitiInstanceProperties extends InstanceProperties {
 
-	EsitiInstanceProperties(String confDir,Properties reader,Logger log) throws Exception{
+	EsitiInstanceProperties(String confDir,Properties reader,Logger log) {
 		super(org.openspcoop2.utils.Costanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		
 		super.setLocalFileImplementation(CostantiProtocollo.OPENSPCOOP2_ESITI_PROPERTIES,CostantiProtocollo.OPENSPCOOP2_ESITI_LOCAL_PATH, confDir);

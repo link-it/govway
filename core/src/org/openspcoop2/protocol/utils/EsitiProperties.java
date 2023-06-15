@@ -1348,7 +1348,7 @@ public class EsitiProperties {
 	private List<EsitoTransportContextIdentification> readEsitoTransportContextIdentification(String pName) throws ProtocolException{
 		try{
 			List<EsitoTransportContextIdentification> l = new ArrayList<EsitoTransportContextIdentification>();
-			Properties p = this.reader.readProperties_convertEnvProperties(pName);
+			Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 			if(p.size()>0){
 				List<String> keys = new ArrayList<>();
 				Enumeration<?> enKeys = p.keys();
@@ -1398,7 +1398,7 @@ public class EsitiProperties {
 	public String getProperty(String property) throws ProtocolException {
 		try{ 
 			String name = null;
-			name = this.reader.getValue_convertEnvProperties(property);
+			name = this.reader.getValueConvertEnvProperties(property);
 			if(name==null)
 				throw new Exception("proprieta non definita");
 			return name.trim();
@@ -1412,7 +1412,7 @@ public class EsitiProperties {
 	public String getOptionalProperty(String property) throws ProtocolException {
 		try{ 
 			String name = null;
-			name = this.reader.getValue_convertEnvProperties(property);
+			name = this.reader.getValueConvertEnvProperties(property);
 			if(name==null)
 				return null;
 			return name.trim();
@@ -1441,7 +1441,7 @@ public class EsitiProperties {
 		List<String> lista = null;
 		String name = null;
 		try{ 
-			name = this.reader.getValue_convertEnvProperties(property);
+			name = this.reader.getValueConvertEnvProperties(property);
 			if(name==null)
 				throw new Exception("proprieta non definita");
 			else

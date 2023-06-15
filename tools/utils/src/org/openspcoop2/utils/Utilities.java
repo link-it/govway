@@ -25,12 +25,19 @@ package org.openspcoop2.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +45,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,6 +57,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 
@@ -120,14 +130,14 @@ public class Utilities {
 		return null;
 	}
 	
-	public static <T> T newInstance_throwInstantiationException(String className) throws InstantiationException {
+	public static <T> T newInstanceThrowInstantiationException(String className) throws InstantiationException {
 		try {
 			return newInstance(className);
 		}catch(Exception e) {
 			throw new InstantiationException(e.getMessage());
 		}
 	}
-	public static <T> T newInstance_throwInstantiationException(Class<T> classType) throws InstantiationException {
+	public static <T> T newInstanceThrowInstantiationException(Class<T> classType) throws InstantiationException {
 		try {
 			return newInstance(classType);
 		}catch(Exception e) {
@@ -156,19 +166,9 @@ public class Utilities {
 	}
 	public static String getAsString(URL url,String charsetName,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
-			InputStream openStream = null;
 			String content = null;
-			try{
-				openStream = url.openStream();
+			try (InputStream openStream = url.openStream();){
 				content = Utilities.getAsString(openStream,charsetName,throwExceptionInputStreamEmpty);
-			}finally{
-				try{
-					if(openStream!=null) {
-						openStream.close();
-					}
-				}catch(Throwable e){
-					// ignore
-				}
 			}
 			return content;
 		}
@@ -176,7 +176,7 @@ public class Utilities {
 			throw e;
 		}
 		catch (java.lang.Exception e) {
-			throw new UtilsException("Utilities.readBytes error "+e.getMessage(),e);
+			throw new UtilsException("Utilities.getAsString error "+e.getMessage(),e);
 		}
 	}
 	public static String getAsString(InputStream is,String charsetName) throws UtilsException{
@@ -186,12 +186,12 @@ public class Utilities {
 		try{
 			StringBuilder sb = Utilities.getAsInputStreamReader(is,charsetName,throwExceptionInputStreamEmpty);
 			if(sb==null){
+				/** se si entra qua throwExceptionInputStreamEmpty e' per forza false
 				if(throwExceptionInputStreamEmpty){
 					throw new UtilsException("getAsInputStreamReader is null");
 				}
-				else{
-					return null;
-				}
+				else{*/
+				return null;
 			}
 			return sb.toString();			
 		}
@@ -206,8 +206,8 @@ public class Utilities {
 		return getAsInputStreamReader(isParam, charsetName, true);
 	}
 	public static StringBuilder getAsInputStreamReader(InputStream isParam,String charsetName,boolean throwExceptionInputStreamEmpty) throws UtilsException{
-		InputStreamReader isr = null;
-//		java.io.BufferedReader bufferedReader = null;
+		
+		InputStream is = null;
 		try{
 			if(isParam==null){
 				if(throwExceptionInputStreamEmpty){
@@ -218,64 +218,45 @@ public class Utilities {
 				}
 			}
 			
-			InputStream is = normalizeStream(isParam, throwExceptionInputStreamEmpty);
+			is = normalizeStream(isParam, throwExceptionInputStreamEmpty);
 			if(is==null) {
 				// nel caso serva l'eccezione, viene lanciata nel normalizeStream.
 				// NOTA: al metodo normalizeStream viene passato per forza un oggetto non null, altrimenti si entra nel controllo precedente
-				
-				// rifaccio il controllo nonostante l'eccezione venga lanciata nel normalizeStream
-				//if(throwExceptionInputStreamEmpty){
-				//	throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
-				//}
-				//else{
 				return null;
-				//}
 			}
+		} catch (Exception e) {
+			throw parseException(e, "getAsInputStreamReader");
+		} 
+		
+		try (InputStreamReader isr = new InputStreamReader(is, charsetName);){
 			
-			isr = new InputStreamReader(is, charsetName);
 			StringWriter writer = new StringWriter();
-//			bufferedReader = new BufferedReader(isr);
-//	        char[] buf = new char[Utilities.DIMENSIONE_BUFFER];
-//	        int numRead=0;
-//	        while((numRead=bufferedReader.read(buf)) != -1){
-//	            String readData = String.valueOf(buf, 0, numRead);
-//	            buffer.append(readData);
-//	        }
 			CopyCharStream.copy(isr, writer);
 	        return new StringBuilder(writer.toString());
 			
-		} catch (java.lang.Exception e) {
-			if(e instanceof java.io.IOException){
-				if(isEmpytMessageException(e)==false){
-					throw new UtilsException(e.getMessage(),e);
-				}
+		} catch (Exception e) {
+			throw parseException(e, "getAsInputStreamReader");
+		} 
+	}
+	private static UtilsException parseException(Exception e, String method) {
+		if(e instanceof java.io.IOException){
+			if(!isEmpytMessageException(e)){
+				return new UtilsException(e.getMessage(),e);
 			}
-			else if(existsInnerException(e, java.io.IOException.class)){
-				Throwable tInternal = getInnerException(e, java.io.IOException.class);
-				if(isEmpytMessageException(tInternal)==false){
-					throw new UtilsException(tInternal.getMessage(),e);
-				}
+		}
+		else if(existsInnerException(e, java.io.IOException.class)){
+			Throwable tInternal = getInnerException(e, java.io.IOException.class);
+			if(!isEmpytMessageException(tInternal)){
+				return new UtilsException(tInternal.getMessage(),e);
 			}
+		}
 
-			Throwable tInternal = getInnerNotEmptyMessageException(e);
-			if(tInternal!=null){
-				throw new UtilsException(tInternal.getMessage(),e);
-			}
-			else{
-				throw new UtilsException("Utilities.getAsString error",e);
-			}
-		
-		} finally{
-			try{
-//				if(bufferedReader!=null){
-//					bufferedReader.close();
-//				}
-				if(isr!=null){
-					isr.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
+		Throwable tInternal = getInnerNotEmptyMessageException(e);
+		if(tInternal!=null){
+			return new UtilsException(tInternal.getMessage(),e);
+		}
+		else{
+			return new UtilsException("Utilities."+method+" error",e);
 		}
 	}
 	
@@ -286,19 +267,9 @@ public class Utilities {
 	}
 	public static byte[] getAsByteArray(URL url,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
-			InputStream openStream = null;
 			byte[] content = null;
-			try{
-				openStream = url.openStream();
+			try (InputStream openStream = url.openStream();){
 				content = Utilities.getAsByteArray(openStream,throwExceptionInputStreamEmpty);
-			}finally{
-				try{
-					if(openStream!=null) {
-						openStream.close();
-					}
-				}catch(Throwable e){
-					// ignore
-				}
 			}
 			return content;
 		}
@@ -314,12 +285,13 @@ public class Utilities {
 	}
 	public static byte[] getAsByteArray(InputStream is,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
+			byte[] returnNull = null;
 			ByteArrayOutputStream bout = Utilities.getAsByteArrayOuputStream(is,throwExceptionInputStreamEmpty);
 			if(bout!=null) {
 				return bout.toByteArray();
 			}
 			else {
-				return null; // puo' succedere solo se throwExceptionInputStreamEmpty e' false
+				return returnNull; // puo' succedere solo se throwExceptionInputStreamEmpty e' false
 			}
 		}
 		catch (UtilsException e) {
@@ -359,47 +331,13 @@ public class Utilities {
 			if(is==null) {
 				// nel caso serva l'eccezione, viene lanciata nel normalizeStream.
 				// NOTA: al metodo normalizeStream viene passato per forza un oggetto non null, altrimenti si entra nel controllo precedente
-				
-				// rifaccio il controllo nonostante l'eccezione venga lanciata nel normalizeStream
-				//if(throwExceptionInputStreamEmpty){
-				//	throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
-				//}
-				//else{
 				return;
-				//}
 			}			
 			
-//			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
-//			int letti = 0;
-//			while( (letti=is.read(buffer)) != -1 ){
-//				bout.write(buffer, 0, letti);
-//			}
-//			bout.flush();
-//			bout.close();
 			CopyStream.copy(CopyStreamMethod.AUTO, is, bout);
 			
-			return;
 		} catch (java.lang.Exception e) {
-			if(e instanceof java.io.IOException){
-				if(isEmpytMessageException(e)==false){
-					throw new UtilsException(e.getMessage(),e);
-				}
-			}
-			else if(existsInnerException(e, java.io.IOException.class)){
-				Throwable tInternal = getInnerException(e, java.io.IOException.class);
-				if(tInternal!=null && (isEmpytMessageException(tInternal)==false)){
-					throw new UtilsException(tInternal.getMessage(),e);
-				}
-			}
-
-			Throwable tInternal = getInnerNotEmptyMessageException(e);
-			if(tInternal!=null){
-				throw new UtilsException(tInternal.getMessage(),e);
-			}
-			else{
-				throw new UtilsException("Utilities.readBytes error",e);
-			}
-		
+			throw parseException(e, "writeAsByteArrayOuputStream");
 		}
 	}
 
@@ -418,7 +356,6 @@ public class Utilities {
 					}
 				} else {
 					// Metodo alternativo: java.io.PushbackInputStream
-					//System.out.println("NORMALIZED BY FROM ["+this.isResponse.getClass().getName()+"] ...");
 					byte [] b = null;
 					if(letti==2) {
 						b = buffer;
@@ -443,12 +380,6 @@ public class Utilities {
 	public static void copy(InputStream is,OutputStream os) throws UtilsException{
 		try{
 			CopyStream.copy(CopyStreamMethod.AUTO, is, os);
-//			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
-//			int letti = 0;
-//			while( (letti=is.read(buffer)) != -1 ){
-//				os.write(buffer, 0, letti);
-//			}
-//			os.flush();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -473,24 +404,13 @@ public class Utilities {
 	}
 	
 	public static java.util.Properties getAsProperties(byte[] content) throws UtilsException{
-		ByteArrayInputStream bin = null;
-		try{
-			if(content==null){
-				throw new UtilsException("Utilities.getAsProperties error: Content is null");
-			}
-			bin = new ByteArrayInputStream(content);
+		if(content==null){
+			throw new UtilsException("Utilities.getAsProperties error: Content is null");
+		}
+		try (ByteArrayInputStream bin = new ByteArrayInputStream(content);){
 			return getAsProperties(bin);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
-		}
-		finally{
-			try{
-				if(bin!=null){
-					bin.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
 		}
 	}
 	
@@ -528,7 +448,7 @@ public class Utilities {
 		java.util.Properties prop = new java.util.Properties();
 		try{ 
 			java.util.Enumeration<?> en = sorgente.propertyNames();
-			for (; en.hasMoreElements() ;) {
+			while (en.hasMoreElements()) {
 				String property = (String) en.nextElement();
 				if(property.startsWith(prefix)){
 					String key = (property.substring(prefix.length()));
@@ -575,22 +495,22 @@ public class Utilities {
 	 * @param millisecondiCheck Se true verranno indicati anche i millisecondi
 	 * @return String unix_timestamp
 	 */
-	public static String convertSystemTimeIntoString_millisecondi(long time,boolean millisecondiCheck){
-		return convertSystemTimeIntoString_millisecondi(time, millisecondiCheck, true, ":",".","");
+	public static String convertSystemTimeIntoStringMillisecondi(long time,boolean millisecondiCheck){
+		return convertSystemTimeIntoStringMillisecondi(time, millisecondiCheck, true, ":",".","");
 	}
-	public static String convertSystemTimeIntoString_millisecondi(long time,boolean millisecondiCheck, boolean printZeroValues, 
+	public static String convertSystemTimeIntoStringMillisecondi(long time,boolean millisecondiCheck, boolean printZeroValues, 
 			String separatorUnit,String separatorMs, String separatorValue){
-		//System.out.println("VALORE PASSATO: ["+time+"]");
+		/**System.out.println("VALORE PASSATO: ["+time+"]");*/
 		long millisecondi = time % 1000;
-		//System.out.println("Millisecondi (Valore%1000): ["+millisecondi+"]");
+		/**System.out.println("Millisecondi (Valore%1000): ["+millisecondi+"]");*/
 		long diff = (time)/1000;
-		//System.out.println("Diff... (valore/1000) ["+diff+"]");
+		/**System.out.println("Diff... (valore/1000) ["+diff+"]");*/
 		long ore = diff/3600;
-		//System.out.println("Ore... (diff/3600) ["+ore+"]");
+		/**System.out.println("Ore... (diff/3600) ["+ore+"]");*/
 		long minuti = (diff%3600) / 60;
-		//System.out.println("Minuti... (diff%3600) / 60 ["+minuti+"]");
+		/**System.out.println("Minuti... (diff%3600) / 60 ["+minuti+"]");*/
 		long secondi = (diff%3600) % 60;
-		//System.out.println("Secondi... (diff%3600) % 60 ["+secondi+"]");
+		/**System.out.println("Secondi... (diff%3600) % 60 ["+secondi+"]");*/
 		StringBuilder bf = new StringBuilder();
 
 		long giorni = ore/24;
@@ -843,11 +763,11 @@ public class Utilities {
 	}
 	
 	
-	public static String camelCase(String value) throws UtilsException{
+	public static String camelCase(String value) {
 		char [] delimiters = new char[] {'.' , '_' , '-' , ':' , ';' , ',' , ' ' };
 		return camelCase(delimiters, value);
 	}
-	public static String camelCase(char [] delimiters, String value) throws UtilsException{
+	public static String camelCase(char [] delimiters, String value) {
 				
 		String s = WordUtils.capitalizeFully(value, delimiters);
 		for (int i = 0; i < delimiters.length; i++) {
@@ -868,8 +788,6 @@ public class Utilities {
 	
 	public static String[] split(String value, char separator) throws UtilsException{
 		
-		//System.out.println("SUBJECT SPLIT ["+separator+"]");
-		
 		StringBuilder bf = new StringBuilder();
 		List<String> splitResults = new ArrayList<>();
 		if(value==null || value.length()<=0){
@@ -878,19 +796,11 @@ public class Utilities {
 		for (int i = 0; i < value.length(); i++) {
 			if(value.charAt(i) == separator){
 				
-//				if(i>0){
-//					boolean v = (value.charAt(i-1) != '\\');
-//					System.out.println("SUBJECT SERPARATOR FOUND i["+i+"] value["+value.charAt(i)+"] value-1["+value.charAt(i-1)+"] ("+v+")");
-//				}
-//				else{
-//					System.out.println("SUBJECT SERPARATOR FOUND i["+i+"] value["+value.charAt(i)+"]");
-//				}
-				
-				if(i>0 && (value.charAt(i-1) != '\\') ){
-					splitResults.add(bf.toString());
-					bf.delete(0, bf.length());
-				}
-				else if (i==0){
+				if(
+						(i>0 && (value.charAt(i-1) != '\\'))
+								||
+						(i==0)
+				){
 					splitResults.add(bf.toString());
 					bf.delete(0, bf.length());
 				}
@@ -902,8 +812,6 @@ public class Utilities {
 				bf.append(value.charAt(i));
 			}
 		}
-		
-		//System.out.println("SUBJECT SPLIT FINE ["+splitResults+"]");
 		
 		splitResults.add(bf.toString());
 		return splitResults.toArray(new String[1]);
@@ -919,14 +827,24 @@ public class Utilities {
 
 	// Metodi per il logging dell'heap space
 
-	public static boolean freeMemoryLog = false;
-	public static Logger log;
+	private static boolean freeMemoryLog = false;
+	public static boolean isFreeMemoryLog() {
+		return freeMemoryLog;
+	}
+	public static void setFreeMemoryLog(boolean freeMemoryLog) {
+		Utilities.freeMemoryLog = freeMemoryLog;
+	}
+	private static Logger log;
+	public static void setLog(Logger log) {
+		Utilities.log = log;
+	}
 	public static final Runtime s_runtime = Runtime.getRuntime ();
 	public static final long INITIAL_SIZE = Utilities.s_runtime.freeMemory();
 	public static void printFreeMemory(String descr){
 		if(Utilities.freeMemoryLog){
 			long currentSize = Utilities.s_runtime.freeMemory();
-			Utilities.log.debug("[Free Memory Space]" + "[CURRENT: " + Utilities.convertBytesToFormatString(currentSize) + "] [DIFF: " + Utilities.convertBytesToFormatString(Utilities.INITIAL_SIZE - Utilities.s_runtime.freeMemory()) + "] " + descr);
+			String msg = "[Free Memory Space]" + "[CURRENT: " + Utilities.convertBytesToFormatString(currentSize) + "] [DIFF: " + Utilities.convertBytesToFormatString(Utilities.INITIAL_SIZE - Utilities.s_runtime.freeMemory()) + "] " + descr;
+			Utilities.log.debug(msg);
 		}
 	}
 
@@ -957,28 +875,19 @@ public class Utilities {
 	}
 	
 	public static boolean isEmpytMessageException(Throwable e){
-		if(e.getMessage()==null ||
+		return e==null || e.getMessage()==null ||
 				"".equals(e.getMessage()) || 
-				"null".equalsIgnoreCase(e.getMessage()) ){
-			return true;
-		}
-		else{
-			return false;
-		}
+				"null".equalsIgnoreCase(e.getMessage());
 	}
 	
 	public static boolean existsInnerInstanceException(Throwable e,Class<?> found){
-		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+found+")");
 		if(found.isInstance(e) ){
-			//System.out.println("OK ["+e.getClass().getName()+"]");
 			return true;
 		}else{
 			if(e.getCause()!=null){
-				//System.out.println("INNER ["+e.getClass().getName()+"]...");
 				return Utilities.existsInnerInstanceException(e.getCause(), found);
 			}
 			else{
-				//System.out.println("ESCO ["+e.getClass().getName()+"]");
 				return false;
 			}
 		}
@@ -988,30 +897,24 @@ public class Utilities {
 	}
 	
 	public static Throwable getInnerInstanceException(Throwable e,Class<?> found, boolean last){
-		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+found+")");
 		if(found.isInstance(e) ){
 			
 			if(last) {
 				if(e.getCause()!=null && existsInnerInstanceException(e.getCause(), found)) {
-					//System.out.println("INNER ["+e.getClass().getName()+"]...");
 					return Utilities.getInnerInstanceException(e.getCause(), found, last);
 				}
 				else {
-					//System.out.println("OK ["+e.getClass().getName()+"]");
 					return e;
 				}
 			}
 			else {
-				//System.out.println("OK ["+e.getClass().getName()+"]");
 				return e;
 			}
 		}else{
 			if(e.getCause()!=null){
-				//System.out.println("INNER ["+e.getClass().getName()+"]...");
 				return Utilities.getInnerInstanceException(e.getCause(), found, last);
 			}
 			else{
-				//System.out.println("ESCO ["+e.getClass().getName()+"]");
 				return null;
 			}
 		}
@@ -1024,17 +927,13 @@ public class Utilities {
 		return Utilities.existsInnerException(e,found.getName());
 	}
 	public static boolean existsInnerException(Throwable e,String found){
-		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+found+")");
 		if(e.getClass().getName().equals(found) ){
-			//System.out.println("OK ["+e.getClass().getName()+"]");
 			return true;
 		}else{
 			if(e.getCause()!=null){
-				//System.out.println("INNER ["+e.getClass().getName()+"]...");
 				return Utilities.existsInnerException(e.getCause(), found);
 			}
 			else{
-				//System.out.println("ESCO ["+e.getClass().getName()+"]");
 				return false;
 			}
 		}
@@ -1044,17 +943,13 @@ public class Utilities {
 		return Utilities.getInnerException(e,found.getName());
 	}
 	public static Throwable getInnerException(Throwable e,String found){
-		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+found+")");
 		if(e.getClass().getName().equals(found) ){
-			//System.out.println("OK ["+e.getClass().getName()+"]");
 			return e;
 		}else{
 			if(e.getCause()!=null){
-				//System.out.println("INNER ["+e.getClass().getName()+"]...");
 				return Utilities.getInnerException(e.getCause(), found);
 			}
 			else{
-				//System.out.println("ESCO ["+e.getClass().getName()+"]");
 				return null;
 			}
 		}
@@ -1070,7 +965,6 @@ public class Utilities {
 	}
 
 	public static boolean existsInnerMessageException(Throwable e,String msg,boolean contains){
-		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+found+")");
 		boolean search = false;
 		if(contains){
 			search = e.getMessage()!=null && e.getMessage().contains(msg);
@@ -1078,22 +972,18 @@ public class Utilities {
 			search = e.getMessage()!=null && e.getMessage().equals(msg);
 		}
 		if( search ){
-			//System.out.println("OK ["+e.getClass().getName()+"]");
 			return true;
 		}else{
 			if(e.getCause()!=null){
-				//System.out.println("INNER ["+e.getClass().getName()+"]...");
 				return Utilities.existsInnerMessageException(e.getCause(), msg, contains);
 			}
 			else{
-				//System.out.println("ESCO ["+e.getClass().getName()+"]");
 				return false;
 			}
 		}
 	}
 
 	public static Throwable getInnerMessageException(Throwable e,String msg,boolean contains){
-		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+found+")");
 		boolean search = false;
 		if(contains){
 			search = e.getMessage()!=null && e.getMessage().contains(msg);
@@ -1101,15 +991,12 @@ public class Utilities {
 			search = e.getMessage()!=null && e.getMessage().equals(msg);
 		}
 		if( search ){
-			//System.out.println("OK ["+e.getClass().getName()+"]");
 			return e;
 		}else{
 			if(e.getCause()!=null){
-				//System.out.println("INNER ["+e.getClass().getName()+"]...");
 				return Utilities.getInnerMessageException(e.getCause(), msg, contains);
 			}
 			else{
-				//System.out.println("ESCO ["+e.getClass().getName()+"]");
 				return null;
 			}
 		}
@@ -1117,13 +1004,11 @@ public class Utilities {
 
 
 	public static Throwable getInnerNotEmptyMessageException(Throwable e){
-		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+e.getMessage()+")");
 		if(e.getMessage()!=null && !"".equals(e.getMessage()) && !"null".equalsIgnoreCase(e.getMessage())){
 			return e;
 		}
 
 		if(e.getCause()!=null){
-			//System.out.println("INNER ["+e.getClass().getName()+"]...");
 			return Utilities.getInnerNotEmptyMessageException(e.getCause());
 		}
 		else{
@@ -1139,14 +1024,14 @@ public class Utilities {
 		if(t.getClass().getName().equals(className)){
 			return true;
 		}
-//		else if(t.getClass().getSuperclass()!=null && t.getClass().getSuperclass().equals(className)){
-//			return true;
-//		}
+/**		else if(t.getClass().getSuperclass()!=null && t.getClass().getSuperclass().equals(className)){
+			return true;
+		}*/
 		else{
 			try{
 				Class<?> c = Class.forName(className); 
 				return c.isInstance(t);
-			}catch(Throwable tException){
+			}catch(Exception tException){
 				return false;
 			}
 		}
@@ -1183,7 +1068,6 @@ public class Utilities {
 				index++;
 			}
 
-			//System.out.println("Replace ["+replaceString.toString()+"]");
 			tmp = StringUtils.replace(tmp, replaceString.toString(), "");
 
 			indexOfValueWrong = tmp.indexOf(keyword);
@@ -1205,11 +1089,8 @@ public class Utilities {
 		return "Visualizzazione non riuscita: la dimensione del pacchetto fornito ("+Utilities.convertBytesToFormatString(length)+") supera il limite consentito ("+Utilities.convertBytesToFormatString(maxLength)+")";
 	}
 	public static String convertToPrintableText(byte [] b,int maxBytes) throws UtilsException{
-		ByteArrayOutputStream bout = null;
-		try{
+		try (ByteArrayOutputStream bout = new ByteArrayOutputStream();){
 
-			bout = new ByteArrayOutputStream();
-			
 			if(b.length>maxBytes){
 				throw new UtilsException(getErrorMessagePrintableTextMaxLength(b.length,maxBytes));
 			}
@@ -1222,10 +1103,7 @@ public class Utilities {
 
 			bout.write(b);
 			bout.flush();
-			bout.close();
-			String tmp = bout.toString();
-			bout = null;
-			return tmp;
+			return bout.toString();
 			
 		}
 		catch(UtilsException e){
@@ -1233,26 +1111,12 @@ public class Utilities {
 		}
 		catch(Exception e){
 			throw new UtilsException("Visualizzazione non riuscita: Documento binario?",e);
-		}finally{
-			try{
-				if(bout!=null){
-					bout.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
 		}
 
 	}
 
 	public static boolean isPrintableChar( char c ) {
-		if ( Character.isDefined(c))
-		{
-			return true;
-		}
-		else{
-			return false;
-		}
+		return Character.isDefined(c);
 	}
 	
 	
@@ -1279,51 +1143,9 @@ public class Utilities {
 		bf.append(locale.getDisplayName());
 		bf.append(separator);
 		
-		bf.append("Language: ");
-		if(locale.getLanguage()!=null && !"".equals(locale.getLanguage().trim())){
-			bf.append(locale.getLanguage());
-			bf.append(" (");
-			bf.append(locale.getDisplayLanguage());
-			bf.append(") [ISO3:");
-			try{
-				if(locale.getISO3Language()!=null){
-					bf.append(locale.getISO3Language());
-				}
-				else{
-					bf.append("-");
-				}
-			}catch(Exception e){
-				bf.append(e.getMessage());
-			}
-			bf.append("]");	
-		}
-		else{
-			bf.append("-");
-		}
-		bf.append(separator);
+		addLanguage(locale, bf, separator);
 		
-		bf.append("Country: ");
-		if(locale.getCountry()!=null && !"".equals(locale.getCountry().trim())){
-			bf.append(locale.getCountry());
-			bf.append(" (");
-			bf.append(locale.getDisplayCountry());
-			bf.append(") [ISO3:");
-			try{
-				if(locale.getISO3Language()!=null){
-					bf.append(locale.getISO3Country());
-				}
-				else{
-					bf.append("-");
-				}
-			}catch(Exception e){
-				bf.append(e.getMessage());
-			}
-			bf.append("]");	
-		}
-		else{
-			bf.append("-");
-		}
-		bf.append(separator);
+		addCountry(locale, bf, separator);
 				
 		bf.append("Script: ");
 		if(locale.getScript()!=null && !"".equals(locale.getScript().trim())){
@@ -1349,27 +1171,75 @@ public class Utilities {
 		}
 		bf.append(separator);
 		
-//		Iterator<String> it = locale.getUnicodeLocaleAttributes().iterator();
-//		while (it.hasNext()) {
-//			String attribute = (String) it.next();
-//			bf.append("Attribute["+attribute+"]");
-//			bf.append(separator);
-//		}
-//		
-//		Iterator<Character> itC = locale.getExtensionKeys().iterator();
-//		while (itC.hasNext()) {
-//			Character character = (Character) itC.next();
-//			bf.append("Extension["+character+"]=["+locale.getExtension(character)+"]");
-//			bf.append(separator);
-//		}
-//		
-//		it = locale.getUnicodeLocaleKeys().iterator();
-//		while (it.hasNext()) {
-//			String key = (String) it.next();
-//			bf.append("Key["+key+"]=["+locale.getUnicodeLocaleType(key)+"]");
-//			bf.append(separator);
-//		}
+		/**Iterator<String> it = locale.getUnicodeLocaleAttributes().iterator();
+		while (it.hasNext()) {
+			String attribute = (String) it.next();
+			bf.append("Attribute["+attribute+"]");
+			bf.append(separator);
+		}
+		
+		Iterator<Character> itC = locale.getExtensionKeys().iterator();
+		while (itC.hasNext()) {
+			Character character = (Character) itC.next();
+			bf.append("Extension["+character+"]=["+locale.getExtension(character)+"]");
+			bf.append(separator);
+		}
+		
+		it = locale.getUnicodeLocaleKeys().iterator();
+		while (it.hasNext()) {
+			String key = (String) it.next();
+			bf.append("Key["+key+"]=["+locale.getUnicodeLocaleType(key)+"]");
+			bf.append(separator);
+		}*/
 	
+	}
+	private static void addLanguage(java.util.Locale locale, StringBuilder bf, String separator) {
+		bf.append("Language: ");
+		if(locale.getLanguage()!=null && !"".equals(locale.getLanguage().trim())){
+			bf.append(locale.getLanguage());
+			bf.append(" (");
+			bf.append(locale.getDisplayLanguage());
+			bf.append(") [ISO3:");
+			try{
+				if(locale.getISO3Language()!=null){
+					bf.append(locale.getISO3Language());
+				}
+				else{
+					bf.append("-");
+				}
+			}catch(Exception e){
+				bf.append(e.getMessage());
+			}
+			bf.append("]");	
+		}
+		else{
+			bf.append("-");
+		}
+		bf.append(separator);
+	}
+	private static void addCountry(java.util.Locale locale, StringBuilder bf, String separator) {
+		bf.append("Country: ");
+		if(locale.getCountry()!=null && !"".equals(locale.getCountry().trim())){
+			bf.append(locale.getCountry());
+			bf.append(" (");
+			bf.append(locale.getDisplayCountry());
+			bf.append(") [ISO3:");
+			try{
+				if(locale.getISO3Language()!=null){
+					bf.append(locale.getISO3Country());
+				}
+				else{
+					bf.append("-");
+				}
+			}catch(Exception e){
+				bf.append(e.getMessage());
+			}
+			bf.append("]");	
+		}
+		else{
+			bf.append("-");
+		}
+		bf.append(separator);
 	}
 	
 	
@@ -1421,11 +1291,12 @@ public class Utilities {
 	
 	// ** ConcurrentHashMap **
 	
-	public static ConcurrentHashMap<String, String> convertToConcurrentHashMap(Properties map) {
+	public static ConcurrentMap<String, String> convertToConcurrentHashMap(Properties map) {
+		ConcurrentMap<String, String> mapReturnNull = null;
 		if(map==null || map.isEmpty()) {
-			return null;
+			return mapReturnNull;
 		}
-		ConcurrentHashMap<String, String> newMap = new ConcurrentHashMap<String, String>();
+		ConcurrentHashMap<String, String> newMap = new ConcurrentHashMap<>();
 		Iterator<Object> it = map.keySet().iterator();
 		while (it.hasNext()) {
 			Object k = it.next();
@@ -1436,14 +1307,15 @@ public class Utilities {
 		}
 		return newMap;
 	}
-	public static <K,V> ConcurrentHashMap<K, V> convertToConcurrentHashMap(Map<K, V> map) {
+	public static <K,V> ConcurrentMap<K, V> convertToConcurrentHashMap(Map<K, V> map) {
+		ConcurrentMap<K,V> mapReturnNull = null;
 		if(map==null || map.isEmpty()) {
-			return null;
+			return mapReturnNull;
 		}
-		ConcurrentHashMap<K, V> newMap = new ConcurrentHashMap<K, V>();
+		ConcurrentHashMap<K, V> newMap = new ConcurrentHashMap<>();
 		Iterator<K> it = map.keySet().iterator();
 		while (it.hasNext()) {
-			K k = (K) it.next();
+			K k = it.next();
 			newMap.put(k, map.get(k));
 		}
 		return newMap;
@@ -1451,9 +1323,10 @@ public class Utilities {
 	
 	// ** HashMap **
 	
-	public static HashMap<String, String> convertToHashMap(Properties map) {
+	public static Map<String, String> convertToHashMap(Properties map) {
+		Map<String, String> mapReturnNull = null;
 		if(map==null || map.isEmpty()) {
-			return null;
+			return mapReturnNull;
 		}
 		HashMap<String, String> newMap = new HashMap<>();
 		Iterator<Object> it = map.keySet().iterator();
@@ -1465,5 +1338,53 @@ public class Utilities {
 			}
 		}
 		return newMap;
+	}
+	
+	
+	
+	
+	
+	
+	
+	// ** S.O. **
+	
+	public static boolean isOSUnix() {
+		return SystemUtils.IS_OS_UNIX;
+	}
+	public static boolean isOSWindows() {
+		return SystemUtils.IS_OS_WINDOWS;
+	}
+	public static boolean isOSMac() {
+		return SystemUtils.IS_OS_MAC;
+	}
+	
+	
+	
+	
+	// ** File temporaneo **
+	
+	public static Path createTempPath(String prefix, String suffix) throws IOException{
+		return createTempPath(null, prefix, suffix);
+	}
+	public static Path createTempPath(Path dir, String prefix, String suffix) throws IOException{
+		// Make sure publicly writable directories are used safely here.
+		// Using publicly writable directories is security-sensitivejava:S5443
+		if(SystemUtils.IS_OS_UNIX) {
+			FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+			return dir!=null ? Files.createTempFile(dir, prefix, suffix, attr) : Files.createTempFile(prefix, suffix, attr);
+		}
+		else {
+			final File f = dir!=null ? Files.createTempFile(dir, prefix, suffix).toFile() : Files.createTempFile(org.apache.commons.io.FileUtils.getTempDirectory().toPath(), prefix, suffix).toFile(); 
+			if(!f.setReadable(true, true)) {
+				// ignore
+			}
+			if(!f.setWritable(true, true)) {
+				// ignore
+			}
+			if(!f.setExecutable(true, true)) {
+				// ignore
+			}
+			return f.toPath();
+		}
 	}
 }

@@ -54,6 +54,7 @@ import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
@@ -164,15 +165,17 @@ public final class SoggettiAdd extends Action {
 			String tipoCredenzialiSSLAliasCertificatoNotBefore= soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
 			String tipoCredenzialiSSLAliasCertificatoNotAfter = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER); 
 			String tipoCredenzialiSSLVerificaTuttiICampi = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-			if (tipoCredenzialiSSLVerificaTuttiICampi == null || StringUtils.isEmpty(tipoCredenzialiSSLVerificaTuttiICampi)) {
-				if( (soggettiHelper.isEditModeInProgress() && soggettiHelper.getPostBackElementName()==null) 
+			if (
+					(tipoCredenzialiSSLVerificaTuttiICampi == null || StringUtils.isEmpty(tipoCredenzialiSSLVerificaTuttiICampi))
+					&&
+					( (soggettiHelper.isEditModeInProgress() && soggettiHelper.getPostBackElementName()==null) 
 						||
 						 SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO.equalsIgnoreCase(soggettiHelper.getPostBackElementName())
 						 ||
 						 SoggettiCostanti.PARAMETRO_SOGGETTO_TIPOLOGIA.equalsIgnoreCase(soggettiHelper.getPostBackElementName())
-						) { // prima volta
-					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
-				}
+					)
+				){ // prima volta
+				tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 			}
 			String tipoCredenzialiSSLConfigurazioneManualeSelfSigned= soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED);
 			if (tipoCredenzialiSSLConfigurazioneManualeSelfSigned == null) {
@@ -255,10 +258,10 @@ public final class SoggettiAdd extends Action {
 				pddEsterneList = pddEsterne.toArray(new String[1]);
 
 				// Gestione pdd
-				if(soggettiCore.isGestionePddAbilitata(soggettiHelper)==false) {
+				if(!soggettiCore.isGestionePddAbilitata(soggettiHelper)) {
 
 					if(nomePddGestioneLocale==null) {
-						throw new Exception("Non è stata rilevata una pdd di tipologia 'operativo'");
+						throw new ControlStationCoreException("Non è stata rilevata una pdd di tipologia 'operativo'");
 					}
 
 					if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(strutsBean.dominio)) {

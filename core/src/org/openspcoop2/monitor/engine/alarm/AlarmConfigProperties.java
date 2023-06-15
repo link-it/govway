@@ -140,7 +140,7 @@ public class AlarmConfigProperties {
 	public String getProperty(String name,String defaultValue, boolean convertEnvProperty) throws UtilsException{
 		String tmp = null;
 		if(convertEnvProperty){
-			tmp = this.reader.getValue_convertEnvProperties(name);
+			tmp = this.reader.getValueConvertEnvProperties(name);
 		}else{
 			tmp = this.reader.getValue(name);
 		}
@@ -154,7 +154,7 @@ public class AlarmConfigProperties {
 	public String getProperty(String name,boolean required, boolean convertEnvProperty) throws UtilsException{
 		String tmp = null;
 		if(convertEnvProperty){
-			tmp = this.reader.getValue_convertEnvProperties(name);
+			tmp = this.reader.getValueConvertEnvProperties(name);
 		}else{
 			tmp = this.reader.getValue(name);
 		}

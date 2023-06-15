@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 
 class ServerInstanceProperties extends InstanceProperties {
 
-	ServerInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	ServerInstanceProperties(Properties reader,Logger log,String confDir) {
 		super(ConstantsEnv.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		super.setLocalFileImplementation(ConstantsEnv.OPENSPCOOP2_WSCONFIG_PROPERTIES, ConstantsEnv.OPENSPCOOP2_WSCONFIG_LOCAL_PATH, confDir);
 	}

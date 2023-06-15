@@ -436,7 +436,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.id.uuid";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -484,7 +484,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioCertificatiTrustStoreTipo() {
     	if(this.sicurezzaMessaggioCertificatiTrustStoreTipoReaded==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.tipo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.tipo"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -506,7 +506,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioCertificatiTrustStorePath() throws ProtocolException{
     	if(this.sicurezzaMessaggioCertificatiTrustStorePath==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -529,7 +529,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioCertificatiTrustStorePassword() throws ProtocolException{
     	if(this.sicurezzaMessaggioCertificatiTrustStorePassword==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.password"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.password"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -554,7 +554,7 @@ public class ModIProperties {
     	if(this.sicurezzaMessaggioCertificatiTrustStoreCrlsReaded==null){
     		String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.crls";
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -578,7 +578,7 @@ public class ModIProperties {
     	if(this.sicurezzaMessaggioCertificatiTrustStoreOcspPolicyReaded==null){
     		String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.ocspPolicy";
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -619,7 +619,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioSslTrustStoreTipo() {
     	if(this.sicurezzaMessaggioSslTrustStoreTipoReaded==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.tipo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.tipo"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -641,7 +641,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioSslTrustStorePath() throws ProtocolException{
     	if(this.sicurezzaMessaggioSslTrustStorePath==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -664,7 +664,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioSslTrustStorePassword() throws ProtocolException{
     	if(this.sicurezzaMessaggioSslTrustStorePassword==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.password"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.password"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -689,7 +689,7 @@ public class ModIProperties {
 		if(this.sicurezzaMessaggioSslTrustStoreCrlsReaded==null){
 			String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.crls";
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -714,7 +714,7 @@ public class ModIProperties {
     	if(this.sicurezzaMessaggioSslTrustStoreOcspPolicyReaded==null){
     		String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.ocspPolicy";
         	try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -755,7 +755,7 @@ public class ModIProperties {
     	if(this.remoteStoreConfig==null){
     		String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStores";
         	try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -784,7 +784,7 @@ public class ModIProperties {
 				String debugPrefix = "Configurazione per remoteStore '"+rsc+"'";
 				
 				String propertyPrefix = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore."+rsc+".";
-				Properties p = this.reader.readProperties_convertEnvProperties(propertyPrefix);
+				Properties p = this.reader.readPropertiesConvertEnvProperties(propertyPrefix);
 				if(p==null || p.isEmpty()) {
 					throw new ProtocolException(debugPrefix+" non trovata");
 				}
@@ -872,7 +872,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioCertificatiKeyStoreTipo() {
     	if(this.sicurezzaMessaggioCertificatiKeyStoreTipoReaded==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.tipo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.tipo"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -894,7 +894,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioCertificatiKeyStorePath() throws ProtocolException{
     	if(this.sicurezzaMessaggioCertificatiKeyStorePath==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -917,7 +917,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioCertificatiKeyStorePassword() throws ProtocolException{
     	if(this.sicurezzaMessaggioCertificatiKeyStorePassword==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.password"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.password"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -940,7 +940,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioCertificatiKeyAlias() throws ProtocolException{
     	if(this.sicurezzaMessaggioCertificatiKeyAlias==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.alias"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.alias"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -963,7 +963,7 @@ public class ModIProperties {
 	public String getSicurezzaMessaggioCertificatiKeyPassword() throws ProtocolException{
     	if(this.sicurezzaMessaggioCertificatiKeyPassword==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.password"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.password"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -988,7 +988,7 @@ public class ModIProperties {
     	if(this.sicurezzaMessaggioCertificatiKeyClientIdRead==null){
 	    	String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.clientId";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1014,7 +1014,7 @@ public class ModIProperties {
     	if(this.sicurezzaMessaggioCertificatiKeyKidRead==null){
 	    	String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.kid";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1047,7 +1047,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1072,7 +1072,7 @@ public class ModIProperties {
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.rest.codice_ente";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1097,7 +1097,7 @@ public class ModIProperties {
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.rest.user";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1122,7 +1122,7 @@ public class ModIProperties {
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.rest.ipuser";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1148,7 +1148,7 @@ public class ModIProperties {
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.soap.codice_ente";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1176,7 +1176,7 @@ public class ModIProperties {
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.soap.user";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1201,7 +1201,7 @@ public class ModIProperties {
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.corniceSicurezza.soap.ipuser";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1283,7 +1283,7 @@ public class ModIProperties {
     	if(this.auditConfig==null){
     		String pName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern";
         	try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1326,7 +1326,7 @@ public class ModIProperties {
     	if(this.getSecurityTokenHeaderAudit==null){
 	    	String name = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.securityToken.header";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1354,7 +1354,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.x509.kid";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1381,7 +1381,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.soap.x509.x5c";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1408,7 +1408,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.soap.x509.x5c.singleCertificate";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1435,7 +1435,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.soap.x509.x5u";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1462,7 +1462,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.soap.x509.x5t";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1489,7 +1489,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.addPurposeId";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1516,7 +1516,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.expectedPurposeId";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1543,7 +1543,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.compareAuthorizationPurposeId";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1570,7 +1570,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.dnonce.size";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1597,7 +1597,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.digest.algo";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1631,7 +1631,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.generazioneTracce.enabled";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1658,7 +1658,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneToken.enabled";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1685,7 +1685,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneCustomClaims.enabled";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1710,7 +1710,7 @@ public class ModIProperties {
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneCustomClaims.blackList";
     		try{  
-    			String value = this.reader.getValue_convertEnvProperties(propertyName); 
+    			String value = this.reader.getValueConvertEnvProperties(propertyName); 
     			if(value!=null && StringUtils.isNotEmpty(value)) {
     				this.getGenerazioneTracceRegistraCustomClaimsBlackList = ModISecurityConfig.convertToList(value);
     			}
@@ -1736,7 +1736,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.usaVersioneBozza";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1767,7 +1767,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenHeader==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.header";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1795,7 +1795,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.rest.securityToken.x509.kid";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1822,7 +1822,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.rest.securityToken.integrity_01.addPurposeId";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1849,7 +1849,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.rest.securityToken.integrity_02.addPurposeId";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -1874,7 +1874,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenClaimsIssuerEnabledReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.iss.enabled";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1901,7 +1901,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenClaimsIssuerHeaderValueReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.iss";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1926,7 +1926,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenClaimsSubjectEnabledReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.sub.enabled";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1953,7 +1953,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenClaimsSubjectHeaderValueReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.sub";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -1977,7 +1977,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenClaimsClientIdHeader==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.client_id";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2002,7 +2002,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenClaimSignedHeaders==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.signedHeaders";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2028,7 +2028,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenClaimRequestDigest==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.requestDigest";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2054,7 +2054,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenSignedHeaders==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.signedHeaders";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2096,7 +2096,7 @@ public class ModIProperties {
 			
 			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.iat.future.toleranceMilliseconds";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 
 				if (value != null){
 					value = value.trim();
@@ -2133,7 +2133,7 @@ public class ModIProperties {
 			
 			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.iat.minutes";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 
 				if (value != null){
 					value = value.trim();
@@ -2167,7 +2167,7 @@ public class ModIProperties {
     	if(this.isRestSecurityTokenClaimsExpTimeCheck==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.exp.checkEnabled";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2196,7 +2196,7 @@ public class ModIProperties {
 			
 			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.exp.toleranceMilliseconds";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 
 				if (value != null){
 					value = value.trim();
@@ -2230,7 +2230,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenDigestDefaultEncoding==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.digest.encoding";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2258,7 +2258,7 @@ public class ModIProperties {
     	if(this.isRestSecurityTokenDigestEncodingChoice==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.digest.encoding.choice";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2283,7 +2283,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenDigestEncodingAccepted==null){
     		String name = "org.openspcoop2.protocol.modipa.rest.securityToken.digest.encoding.accepted";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2339,7 +2339,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenRequestDigestCleanReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.request.digest.clean";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2367,7 +2367,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenResponseDigestCleanReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.response.digest.clean";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2395,7 +2395,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenResponseDigestHEADuseServerHeaderReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.response.digest.HEAD.useServerHeader";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2423,7 +2423,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenFaultProcessEnabledReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.fault.securityToken";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2451,7 +2451,7 @@ public class ModIProperties {
     	if(this.getRestResponseSecurityTokenAudienceDefaultReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.response.securityToken.audience.default";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				if (value != null){
 					value = value.trim();
 					this.getRestResponseSecurityTokenAudienceDefault = value;
@@ -2544,7 +2544,7 @@ public class ModIProperties {
     	if(this.getRestCorrelationIdHeader==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.correlationId.header";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2569,7 +2569,7 @@ public class ModIProperties {
     	if(this.getRestReplyToHeader==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.replyTo.header";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2594,7 +2594,7 @@ public class ModIProperties {
     	if(this.getRestLocationHeader==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.location.header";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2620,7 +2620,7 @@ public class ModIProperties {
     	if(this.getRestProfiliInterazioneCheckCompatibilityReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.profiliInterazione.checkCompatibility";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2649,7 +2649,7 @@ public class ModIProperties {
     	if(this.getRestBloccanteHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.bloccante.httpStatus";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2685,7 +2685,7 @@ public class ModIProperties {
 	    	String name = "org.openspcoop2.protocol.modipa.rest.bloccante.httpMethod";
     		try{
     			this.getRestBloccanteHttpMethod = new ArrayList<>();
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2713,7 +2713,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenPushReplyToUpdateOrCreate==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.replyTo.header.updateOrCreate";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2738,7 +2738,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenPushReplyToUpdate==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.replyTo.header.update";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2763,7 +2763,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.request.correlationId.header.useTransactionIdIfNotExists";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2788,7 +2788,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenPushRequestHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.request.httpStatus";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2818,7 +2818,7 @@ public class ModIProperties {
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.request.httpMethod";
     		try{
     			this.getRestNonBloccantePushRequestHttpMethod = new ArrayList<>();
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2843,7 +2843,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenPushResponseHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.response.httpStatus";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2873,7 +2873,7 @@ public class ModIProperties {
 	    	String name = "org.openspcoop2.protocol.modipa.rest.push.response.httpMethod";
     		try{
     			this.getRestNonBloccantePushResponseHttpMethod = new ArrayList<>();
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2926,7 +2926,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenPullRequestHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.request.httpStatus";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2956,7 +2956,7 @@ public class ModIProperties {
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.request.httpMethod";
     		try{
     			this.getRestNonBloccantePullRequestHttpMethod = new ArrayList<>();
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -2981,7 +2981,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenPullRequestStateNotReadyHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.requestState.notReady.httpStatus";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3010,7 +3010,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenPullRequestStateOkHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.requestState.ok.httpStatus";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3040,7 +3040,7 @@ public class ModIProperties {
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.requestState.httpMethod";
     		try{
     			this.getRestNonBloccantePullRequestStateHttpMethod = new ArrayList<>();
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3065,7 +3065,7 @@ public class ModIProperties {
     	if(this.getRestSecurityTokenPullResponseHttpStatus==null){
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.response.httpStatus";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3095,7 +3095,7 @@ public class ModIProperties {
 	    	String name = "org.openspcoop2.protocol.modipa.rest.pull.response.httpMethod";
     		try{
     			this.getRestNonBloccantePullResponseHttpMethod = new ArrayList<>();
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3165,7 +3165,7 @@ public class ModIProperties {
     	if(this.getSoapSecurityTokenMustUnderstandReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.securityToken.mustUnderstand";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3193,7 +3193,7 @@ public class ModIProperties {
     	if(this.getSoapSecurityTokenActorReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.securityToken.actor";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3222,7 +3222,7 @@ public class ModIProperties {
 			
 			String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.created.minutes";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 
 				if (value != null){
 					value = value.trim();
@@ -3259,7 +3259,7 @@ public class ModIProperties {
 			
 			String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.created.future.toleranceMilliseconds";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 
 				if (value != null){
 					value = value.trim();
@@ -3294,7 +3294,7 @@ public class ModIProperties {
     	if(this.getSoapSecurityTokenFaultProcessEnabledReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.fault.securityToken";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3321,7 +3321,7 @@ public class ModIProperties {
     	if(this.isSoapSecurityTokenTimestampExpiresTimeCheck==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.expires.checkEnabled";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3350,7 +3350,7 @@ public class ModIProperties {
 			
 			String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.expires.toleranceMilliseconds";
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 
 				if (value != null){
 					value = value.trim();
@@ -3385,7 +3385,7 @@ public class ModIProperties {
     	if(this.getSoapWSAddressingMustUnderstandReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.wsaddressing.mustUnderstand";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3413,7 +3413,7 @@ public class ModIProperties {
     	if(this.getSoapWSAddressingActorReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.wsaddressing.actor";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3440,7 +3440,7 @@ public class ModIProperties {
     	if(this.getSoapWSAddressingSchemaValidationReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.wsaddressing.schemaValidation";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3468,7 +3468,7 @@ public class ModIProperties {
     	if(this.getSoapCorrelationIdName==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.correlationId.name";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3493,7 +3493,7 @@ public class ModIProperties {
     	if(this.getSoapCorrelationIdNamespace==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.correlationId.namespace";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3522,7 +3522,7 @@ public class ModIProperties {
     	if(this.getSoapCorrelationIdPrefix==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.correlationId.prefix";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3548,7 +3548,7 @@ public class ModIProperties {
     	if(this.getSoapCorrelationIdMustUnderstandReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.correlationId.mustUnderstand";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3576,7 +3576,7 @@ public class ModIProperties {
     	if(this.getSoapCorrelationIdActorReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.correlationId.actor";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3605,7 +3605,7 @@ public class ModIProperties {
     	if(this.getSoapReplyToName==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.replyTo.name";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3630,7 +3630,7 @@ public class ModIProperties {
     	if(this.getSoapReplyToNamespace==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.replyTo.namespace";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3659,7 +3659,7 @@ public class ModIProperties {
     	if(this.getSoapReplyToPrefix==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.replyTo.prefix";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3685,7 +3685,7 @@ public class ModIProperties {
     	if(this.getSoapReplyToMustUnderstandReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.replyTo.mustUnderstand";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3713,7 +3713,7 @@ public class ModIProperties {
     	if(this.getSoapReplyToActorReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.replyTo.actor";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3740,7 +3740,7 @@ public class ModIProperties {
     	if(this.getSoapRequestDigestName==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.name";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3765,7 +3765,7 @@ public class ModIProperties {
     	if(this.getSoapRequestDigestNamespace==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.namespace";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3794,7 +3794,7 @@ public class ModIProperties {
     	if(this.getSoapRequestDigestPrefix==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.prefix";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3820,7 +3820,7 @@ public class ModIProperties {
     	if(this.getSoapRequestDigestMustUnderstandReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.mustUnderstand";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3848,7 +3848,7 @@ public class ModIProperties {
     	if(this.getSoapRequestDigestActorReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.requestDigest.actor";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3875,7 +3875,7 @@ public class ModIProperties {
     	if(this.getSoapSecurityTokenWsaToReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.securityToken.wsaTo";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				if (value != null){
 					value = value.trim();
 					this.getSoapSecurityTokenWsaTo = value;
@@ -3923,7 +3923,7 @@ public class ModIProperties {
     	if(this.getSoapResponseSecurityTokenAudienceDefaultReaded==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.response.securityToken.audience.default";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				if (value != null){
 					value = value.trim();
 					this.getSoapResponseSecurityTokenAudienceDefault = value;
@@ -3953,7 +3953,7 @@ public class ModIProperties {
     	if(this.getSoapSecurityTokenPushReplyToUpdateOrCreate==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.push.replyTo.header.updateOrCreate";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -3978,7 +3978,7 @@ public class ModIProperties {
     	if(this.getSoapSecurityTokenPushReplyToUpdate==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.push.replyTo.header.update";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4003,7 +4003,7 @@ public class ModIProperties {
     	if(this.getSoapSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.push.request.correlationId.header.useTransactionIdIfNotExists";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4028,7 +4028,7 @@ public class ModIProperties {
     	if(this.getSoapSecurityTokenPullCorrelationIdUseTransactionIdIfNotExists==null){
 	    	String name = "org.openspcoop2.protocol.modipa.soap.pull.request.correlationId.header.useTransactionIdIfNotExists";
     		try{  
-				String value = this.reader.getValue_convertEnvProperties(name); 
+				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4058,7 +4058,7 @@ public class ModIProperties {
     	if(this.isReadByPathBufferEnabled==null){
     		String pName = "org.openspcoop2.protocol.modipa.readByPath.buffer";
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4082,7 +4082,7 @@ public class ModIProperties {
     	if(this.isValidazioneBufferEnabled==null){
     		String pName = "org.openspcoop2.protocol.modipa.validazione.buffer";
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
+				String value = this.reader.getValueConvertEnvProperties(pName); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4112,7 +4112,7 @@ public class ModIProperties {
     public Boolean isRiferimentoIDRichiestaPortaDelegataRequired(){
     	if(this.isRiferimentoIDRichiestaPortaDelegataRequiredRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.pd.riferimentoIdRichiesta.required"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.pd.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4140,7 +4140,7 @@ public class ModIProperties {
     public Boolean isRiferimentoIDRichiestaPortaApplicativaRequired(){
     	if(this.isRiferimentoIDRichiestaPortaApplicativaRequiredRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.pa.riferimentoIdRichiesta.required"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.pa.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4178,7 +4178,7 @@ public class ModIProperties {
     public Boolean isPortaApplicativaBustaErrorePersonalizzaElementiFault(){
     	if(this.isPortaApplicativaBustaErrorePersonalizzaElementiFaultRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.pa.bustaErrore.personalizzaElementiFault"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.pa.bustaErrore.personalizzaElementiFault"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4213,7 +4213,7 @@ public class ModIProperties {
     public Boolean isPortaApplicativaBustaErroreAggiungiErroreApplicativo(){
     	if(this.isPortaApplicativaBustaErroreAggiungiErroreApplicativoRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.pa.bustaErrore.aggiungiErroreApplicativo"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.pa.bustaErrore.aggiungiErroreApplicativo"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4246,7 +4246,7 @@ public class ModIProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolValidazione(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolValidazione==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4275,7 +4275,7 @@ public class ModIProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolProcessamento==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4305,7 +4305,7 @@ public class ModIProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.protocol.stackTrace"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.protocol.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4334,7 +4334,7 @@ public class ModIProperties {
     public boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche(){
     	if(this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4367,7 +4367,7 @@ public class ModIProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationServerError(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationServerError==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.integration.serverError"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.integration.serverError"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4396,7 +4396,7 @@ public class ModIProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationClientError(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationClientError==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.integration.clientError"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.integration.clientError"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4425,7 +4425,7 @@ public class ModIProperties {
     public boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.integration.stackTrace"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.integration.stackTrace"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4455,7 +4455,7 @@ public class ModIProperties {
     public Boolean isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche(){
     	if(this.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4494,7 +4494,7 @@ public class ModIProperties {
     public BooleanNullable isAggiungiDetailErroreApplicativoSoapFaultApplicativo(){
     	if(this.isAggiungiDetailErroreApplicativoSoapFaultApplicativoRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.erroreApplicativo.faultApplicativo.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4529,7 +4529,7 @@ public class ModIProperties {
     public BooleanNullable isAggiungiDetailErroreApplicativoSoapFaultPdD(){
     	if(this.isAggiungiDetailErroreApplicativoSoapFaultPdDRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.erroreApplicativo.faultPdD.enrichDetails"); 
+				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.modipa.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
@@ -4564,7 +4564,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.factory.config.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -4591,7 +4591,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.factory.erroreApplicativo.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
@@ -4618,7 +4618,7 @@ public class ModIProperties {
 			String propertyName = "org.openspcoop2.protocol.modipa.factory.esito.staticInstance";
 			
 			try{  
-				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();

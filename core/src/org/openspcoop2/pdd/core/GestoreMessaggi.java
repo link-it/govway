@@ -5102,7 +5102,7 @@ public class GestoreMessaggi  {
 			long endDateSQLCommand = DateManager.getTimeMillis();
 			long diffSQLCommand = endDateSQLCommand - startDateSQLCommand;
 			if(debug) {
-				loggerSql.debug("[UPDATE] (Messaggi."+idOperazione+") ["+comandoSql+"] [row:"+result+"] effettuato in "+Utilities.convertSystemTimeIntoString_millisecondi(diffSQLCommand, true));
+				loggerSql.debug("[UPDATE] (Messaggi."+idOperazione+") ["+comandoSql+"] [row:"+result+"] effettuato in "+Utilities.convertSystemTimeIntoStringMillisecondi(diffSQLCommand, true));
 			}
 			
 			return result;
@@ -5335,7 +5335,7 @@ public class GestoreMessaggi  {
 					long endDateSQLCommand = DateManager.getTimeMillis();
 					long diffSQLCommand = endDateSQLCommand - startDateSQLCommand;
 					if(debug) {
-						loggerSql.debug("[QUERY] (Messaggi.daRispedire.computeMinDate) ["+comandoSql+"] effettuata in "+Utilities.convertSystemTimeIntoString_millisecondi(diffSQLCommand, true));
+						loggerSql.debug("[QUERY] (Messaggi.daRispedire.computeMinDate) ["+comandoSql+"] effettuata in "+Utilities.convertSystemTimeIntoStringMillisecondi(diffSQLCommand, true));
 					}
 					
 					if(rs.next()){
@@ -5622,7 +5622,7 @@ public class GestoreMessaggi  {
 				long endDateSQLCommand = DateManager.getTimeMillis();
 				long diffSQLCommand = endDateSQLCommand - startDateSQLCommand;
 				if(debug) {
-					loggerSql.debug("[QUERY] (Messaggi.daRispedire) ["+comandoSql+"] effettuata in "+Utilities.convertSystemTimeIntoString_millisecondi(diffSQLCommand, true));
+					loggerSql.debug("[QUERY] (Messaggi.daRispedire) ["+comandoSql+"] effettuata in "+Utilities.convertSystemTimeIntoStringMillisecondi(diffSQLCommand, true));
 				}
 				
 				int countLimit = 0;
@@ -5809,7 +5809,7 @@ public class GestoreMessaggi  {
 				long endDateSQLCommand = DateManager.getTimeMillis();
 				long diffSQLCommand = endDateSQLCommand - startDateSQLCommand;
 				if(debug)
-					log.debug("[QUERY] (Messaggi.readDestinatari) ["+queryString+"] 1["+this.idBusta+"] 2["+tipo+"]"+terzoArgomento+" effettuata in "+Utilities.convertSystemTimeIntoString_millisecondi(diffSQLCommand, true));
+					log.debug("[QUERY] (Messaggi.readDestinatari) ["+queryString+"] 1["+this.idBusta+"] 2["+tipo+"]"+terzoArgomento+" effettuata in "+Utilities.convertSystemTimeIntoStringMillisecondi(diffSQLCommand, true));
 
 				while(rs.next()){
 					MessaggioServizioApplicativo msg = new MessaggioServizioApplicativo();

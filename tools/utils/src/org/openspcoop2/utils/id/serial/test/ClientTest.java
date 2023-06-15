@@ -725,7 +725,7 @@ public class ClientTest {
 		
 		Date fine = DateManager.getDate();
 		long diff = fine.getTime() - inizio.getTime();
-		log.info("Tempo impiegato: "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+		log.info("Tempo impiegato: "+Utilities.convertSystemTimeIntoStringMillisecondi(diff, true));
 		
 		for (int i = 0; i < conThreads.size(); i++) {
 			ClientTestThread c = threads.get("Thread-"+i);

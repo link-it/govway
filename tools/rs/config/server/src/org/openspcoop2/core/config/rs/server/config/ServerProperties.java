@@ -128,7 +128,7 @@ public class ServerProperties  {
 	/* ********  M E T O D I  ******** */
 
 	public String readProperty(boolean required,String property) throws UtilsException{
-		String tmp = this.reader.getValue_convertEnvProperties(property);
+		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
 			if(required){
 				throw new UtilsException("Property ["+property+"] not found");
@@ -146,7 +146,7 @@ public class ServerProperties  {
 		Enumeration<?> names = this.reader.propertyNames();
 		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
-			p.put(name, this.reader.getValue_convertEnvProperties(name));
+			p.put(name, this.reader.getValueConvertEnvProperties(name));
 		}
 		return p;
 	}
@@ -297,7 +297,7 @@ public class ServerProperties  {
 	
 	
 	public Properties getConsolePasswordCryptConfig() throws Exception{
-		return this.reader.readProperties_convertEnvProperties("console.password.");
+		return this.reader.readPropertiesConvertEnvProperties("console.password.");
 	}
 	
 	public boolean isConsolePasswordCrypt_backwardCompatibility() throws Exception{
