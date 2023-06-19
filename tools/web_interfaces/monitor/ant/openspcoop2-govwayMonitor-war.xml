@@ -246,7 +246,6 @@
 			</lib>
 			<lib dir="${required_lib}/reports"> <!-- I report CSV vengono anche utilizzati per l'esportazione delle transazioni -->
 				<include name="dynamicreports-core-6.12.1.jar"/>
-				<include name="itext-2.1.7.js7.jar"/>
 				<include name="jcommon-1.0.24.jar"/>
 				<include name="jasperreports-6.20.0.jar"/>
 				<include name="jasperreports-metadata-6.20.0.jar"/>
@@ -255,6 +254,12 @@
 				<include name="net.tascalate.javaflow.api-2.7.3.jar"/>
 				<include name="jfreechart-1.5.3.jar"/>
 				<include name="${ecj_jar}"/>
+			</lib>
+			<lib dir="${required_lib}/pdf">
+				<include name="layout-8.0.0.jar"/>
+				<include name="kernel-8.0.0.jar"/>	
+				<include name="io-8.0.0.jar"/>
+				<include name="commons-8.0.0.jar"/>
 			</lib>
 			<lib dir="${deploy_govwayMonitor}/modulo-jsf12/com/sun/jsf-impl/mojarra-1.2_15">
 				<include name="${jsf_module_jar}"/>

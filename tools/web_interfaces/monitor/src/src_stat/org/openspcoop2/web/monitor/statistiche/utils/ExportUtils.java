@@ -24,6 +24,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.export;
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,21 +47,27 @@ import org.openspcoop2.web.monitor.core.converter.DurataConverter;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
+import org.openspcoop2.web.monitor.core.report.Colonna;
 import org.openspcoop2.web.monitor.core.report.Templates;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.slf4j.Logger;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.jasper.builder.export.JasperCsvExporterBuilder;
-import net.sf.dynamicreports.jasper.builder.export.JasperPdfExporterBuilder;
 import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
 import net.sf.dynamicreports.jasper.constant.JasperProperty;
 import net.sf.dynamicreports.report.builder.column.ColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
 
 /**
  * ExportUtils
@@ -266,72 +273,68 @@ public class ExportUtils {
 	}
 
 	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws Exception{
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws IOException, JRException {
 		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
 	}
 
 	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws Exception{
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws IOException, JRException {
 		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
 	}
 	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,  boolean distribuzionePerEsiti) throws Exception{
-		JasperPdfExporterBuilder builder = export.pdfExporter(outputStream);
-
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,  boolean distribuzionePerEsiti) throws IOException, JRException {
+		
 		String headerValueLabel = "";
 		String headerValueCategory = "";
 
-		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();
-		TextColumnBuilder<String> nomeColumn = col.column(headerLabel, "nome", type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
-		colonne.add(nomeColumn);
-
+		List<Colonna> colonne = new ArrayList<>();
+		
+		colonne.add(new Colonna("nome", headerLabel, HorizontalAlignment.CENTER));
+		
 		if(distribuzionePerEsiti){
-
 			headerValueCategory = "ok";
 			headerValueLabel = "Ok";
-			colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
-
+			colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+			
 			headerValueCategory = "faultApplicativo";
 			headerValueLabel = "Fault Applicativo";
-			colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
-
+			colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+			
 			headerValueCategory = "errore";
 			headerValueLabel = "Fallite";
-			colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
-
+			colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 		}
 		else{
 			switch (tipoStatistica) {
 			case DISTRIBUZIONE_ERRORI:
 				headerValueCategory = "parent_0";
 				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.DESCRIZIONE_LABEL_KEY);
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));	
+				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
 				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				
 				headerValueCategory = "parent_1";
 				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 			case DISTRIBUZIONE_SERVIZIO:
-				
 				headerValueCategory = "parent_0";
 				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 					headerValueCategory = "parent_0";
 					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LABEL_KEY);
-					colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+					colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 					
 					if (StringUtils.isNotBlank(identificazione) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(identificazione)) {
 						headerValueCategory = "parent_1";
 						headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_KEY);
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+						colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 					}
 				}
 				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
@@ -339,14 +342,13 @@ public class ExportUtils {
 						try {
 							org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(tokenClaim);
 							if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm)) {
-								
 								headerValueCategory = "parent_0";
 								headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_APPLICATIVO_LABEL_KEY);
-								colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+								colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 								
 								headerValueCategory = "parent_1";
 								headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LABEL_KEY);
-								colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+								colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 							}
 						}catch(Throwable t) {}
 					}
@@ -366,18 +368,18 @@ public class ExportUtils {
 					case COMPLESSIVA:
 						headerValueCategory = "occupazioneBandaComplessiva";
 						headerValueLabel = "Occupazione Banda Complessiva";
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+						colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 						break;
 					case INTERNA:
 						headerValueCategory = "occupazioneBandaInterna";
 						headerValueLabel = "Occupazione Banda Interna";
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+						colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 						break;
 					case ESTERNA:
 					default:
 						headerValueCategory = "occupazioneBandaEsterna";
 						headerValueLabel = "Occupazione Banda Esterna";
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+						colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 						break;
 					}
 				}
@@ -386,7 +388,7 @@ public class ExportUtils {
 			case NUMERO_TRANSAZIONI:
 				headerValueCategory = "numeroRichieste";
 				headerValueLabel = "Numero Transazioni";
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 
 			case TEMPO_MEDIO_RISPOSTA:
@@ -395,19 +397,19 @@ public class ExportUtils {
 					case LATENZA_PORTA:
 						headerValueCategory = "latenzaMediaPorta";
 						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_PORTA;
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+						colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 						break;
 					case LATENZA_SERVIZIO:
 						headerValueCategory = "latenzaMediaServizio";
 						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_SERVIZIO;
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+						colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 						break;
 
 					case LATENZA_TOTALE:
 					default:
 						headerValueCategory = "latenzaMediaTotale";
 						headerValueLabel = CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE;
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+						colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 						break;
 					}
 				}
@@ -416,12 +418,20 @@ public class ExportUtils {
 			}
 		}
 
-		report
-		.title(Templates.createTitleComponent(titoloReport,""))
-		.setTemplate(Templates.reportTemplate)
-		.columns(colonne.toArray(new ColumnBuilder[colonne.size()]));
-
-		report.toPdf(builder);
+		List<List<String>> dati = Templates.estraiDatiPerTabellaPdfDaDataSource(report, colonne);
+		
+		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputStream));
+		Document doc = new Document(pdfDoc);
+		doc.setMargins(Templates.MARGIN, Templates.MARGIN,
+				Templates.MARGIN, Templates.MARGIN);
+		
+		Templates.createTitleComponent(titoloReport, "", doc);
+		
+		Table table = Templates.createTableComponent(colonne, dati);
+		
+		doc.add(table);
+		
+		doc.close();
 	}
 
 	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
@@ -1014,13 +1024,11 @@ public class ExportUtils {
 
 	public static void esportaPdfAndamentoTemporalePersonalizzato(OutputStream outputStream, JasperReportBuilder report, Map<String, List<Res>> results, 
 			String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza) throws Exception{
-		JasperPdfExporterBuilder builder = export.pdfExporter(outputStream);
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza) throws IOException, JRException{
 
-		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();
-		TextColumnBuilder<String> nomeColumn = col.column(headerLabel, "nome", type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER);
-		colonne.add(nomeColumn);
-
+		List<Colonna> colonne = new ArrayList<>();
+		colonne.add(new Colonna("nome", headerLabel, HorizontalAlignment.CENTER));
+		
 		if (results != null && results.size() > 0) {
 			Set<String> keys = results.keySet();
 			Iterator<String> it = keys.iterator();
@@ -1029,19 +1037,27 @@ public class ExportUtils {
 				String key = it.next();
 
 				// aggiungo la categoria
-				colonne.add(col.column(key, "r"+i, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+				colonne.add(new Colonna("r"+i, key, HorizontalAlignment.CENTER));
 				i++;
 			}
 
 
 		}
-
-		report
-		.title(Templates.createTitleComponent(titoloReport,""))
-		.setTemplate(Templates.reportTemplate)
-		.columns(colonne.toArray(new ColumnBuilder[colonne.size()]));
-
-		report.toPdf(builder);
+		
+		List<List<String>> dati = Templates.estraiDatiPerTabellaPdfDaDataSource(report, colonne);
+		
+		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputStream));
+		Document doc = new Document(pdfDoc);
+		doc.setMargins(Templates.MARGIN, Templates.MARGIN,
+				Templates.MARGIN, Templates.MARGIN);
+		
+		Templates.createTitleComponent(titoloReport, "", doc);
+		
+		Table table = Templates.createTableComponent(colonne, dati);
+		
+		doc.add(table);
+		
+		doc.close();
 	}
 
 	private static JRDataSource getDatasourceAndamentoTemporalePersonalizzato (Map<String, List<Res>> results, Logger log,TipoVisualizzazione tipoVisualizzazione, 

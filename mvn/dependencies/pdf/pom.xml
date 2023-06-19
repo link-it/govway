@@ -17,6 +17,8 @@
 
 		<jar.group.name>pdf</jar.group.name>
 		
+		<com.itextpdf.version>8.0.0</com.itextpdf.version>
+		
 		<pdfbox.version>2.0.27</pdfbox.version>
 
 	</properties>
@@ -38,6 +40,54 @@
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>fontbox</artifactId>
 			<version>${pdfbox.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.itextpdf</groupId>
+		    <artifactId>layout</artifactId>
+		    <version>${com.itextpdf.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.itextpdf</groupId>
+		    <artifactId>kernel</artifactId>
+		    <version>${com.itextpdf.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.itextpdf</groupId>
+		    <artifactId>io</artifactId>
+		    <version>${com.itextpdf.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.itextpdf</groupId>
+		    <artifactId>commons</artifactId>
+		    <version>${com.itextpdf.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
