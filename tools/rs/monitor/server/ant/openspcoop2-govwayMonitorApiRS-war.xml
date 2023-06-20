@@ -152,9 +152,9 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="herasaf-xacml-core-2.0.4.jar"/>
-				<include name="bcpkix-jdk18on-1.72.jar"/>
-				<include name="bcprov-ext-jdk18on-1.72.jar"/>
-				<include name="bcutil-jdk18on-1.72.jar"/>
+				<include name="bcpkix-jdk18on-1.74.jar"/>
+				<include name="bcprov-ext-jdk18on-1.74.jar"/>
+				<include name="bcutil-jdk18on-1.74.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/faces">

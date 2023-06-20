@@ -27,7 +27,7 @@
 		-->
 		<!--
         <resources>
-        	<resource-root path="lib/bcprov-ext-jdk18on-1.72.jar" use-physical-code-source="true"/>
+        	<resource-root path="lib/bcprov-ext-jdk18on-1.74.jar" use-physical-code-source="true"/>
         </resources>
         -->
         

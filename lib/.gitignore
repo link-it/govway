@@ -7,6 +7,7 @@ axis14
 bean-validation
 commons
 cxf
+coverage
 dynamicAnalysis
 faces
 git
@@ -21,6 +22,7 @@ log
 lucene
 opensaml
 openapi4j
+pdf
 redis
 reports
 saaj

@@ -1,5 +1,11 @@
 2023-06-20  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-33201: aggiornata libreria 'org.bouncycastle:*' alla versione 1.74
+
+2023-06-20  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole, InstallerVersioneBinaria]
 	Aggiunta funzionalità OP-1596
 	La modalità di installazione con gestione dei nodi 'dinamica' prevede che alcune operazioni effettuate tramite la console di gestione quali reset della cache, modifiche degli stati etc ...

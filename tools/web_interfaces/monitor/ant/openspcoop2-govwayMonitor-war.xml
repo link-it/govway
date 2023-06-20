@@ -224,9 +224,9 @@
 			<lib dir="${required_lib}/security">
 				<include name="xmlsec-2.3.0.jar"/>
 				<include name="neethi-3.2.0.jar" />
-				<include name="bcpkix-jdk18on-1.72.jar"/>
-				<include name="bcprov-ext-jdk18on-1.72.jar"/>
-				<include name="bcutil-jdk18on-1.72.jar"/>
+				<include name="bcpkix-jdk18on-1.74.jar"/>
+				<include name="bcprov-ext-jdk18on-1.74.jar"/>
+				<include name="bcutil-jdk18on-1.74.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/json">

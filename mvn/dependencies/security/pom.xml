@@ -17,9 +17,9 @@
 
 		<jar.group.name>security</jar.group.name>
 		
-		<bcpkix-jdk18on.version>1.72</bcpkix-jdk18on.version>
-		<bcprov-ext-jdk18on.version>1.72</bcprov-ext-jdk18on.version>
-		<bcutil-jdk18on.version>1.72</bcutil-jdk18on.version>
+		<bcpkix-jdk18on.version>1.74</bcpkix-jdk18on.version>
+		<bcprov-ext-jdk18on.version>1.74</bcprov-ext-jdk18on.version>
+		<bcutil-jdk18on.version>1.74</bcutil-jdk18on.version>
 		<cryptacular.version>1.2.5</cryptacular.version>
 		<herasaf-xacml-core.version>2.0.4</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>

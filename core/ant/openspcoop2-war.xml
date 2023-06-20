@@ -244,9 +244,9 @@
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk18on-1.72.jar"/>
-				<include name="bcpkix-jdk18on-1.72.jar"/>
-				<include name="bcutil-jdk18on-1.72.jar"/>
+				<include name="bcprov-ext-jdk18on-1.74.jar"/>
+				<include name="bcpkix-jdk18on-1.74.jar"/>
+				<include name="bcutil-jdk18on-1.74.jar"/>
 				<include name="neethi-3.2.0.jar"/>
 				<include name="xmlsec-2.3.0.jar"/>
 				<include name="cryptacular-1.2.5.jar"/>

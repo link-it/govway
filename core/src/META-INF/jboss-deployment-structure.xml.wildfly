@@ -10,9 +10,9 @@
 			Message-Security(Sender): Security processing failed. ; error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC
 		-->
 		<resources>
-			<resource-root path="lib/bcprov-ext-jdk18on-1.72.jar" use-physical-code-source="true"/>
-			<resource-root path="lib/bcpkix-jdk18on-1.72.jar" use-physical-code-source="true"/>
-			<resource-root path="lib/bcutil-jdk18on-1.72.jar" use-physical-code-source="true"/>
+			<resource-root path="lib/bcprov-ext-jdk18on-1.74.jar" use-physical-code-source="true"/>
+			<resource-root path="lib/bcpkix-jdk18on-1.74.jar" use-physical-code-source="true"/>
+			<resource-root path="lib/bcutil-jdk18on-1.74.jar" use-physical-code-source="true"/>
 		</resources>
 		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
 		<exclude-subsystems>
