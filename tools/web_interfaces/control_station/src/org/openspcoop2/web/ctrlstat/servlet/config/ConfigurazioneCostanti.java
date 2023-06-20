@@ -532,6 +532,9 @@ public class ConfigurazioneCostanti {
 	
 	public static final String LABEL_CONFIGURAZIONE = "Configurazione";
 	
+	public static final String LABEL_CONFIGURAZIONE_ABILITATA = "abilitata";
+	public static final String LABEL_CONFIGURAZIONE_DISABILITATA = "disabilitata";
+	
 	public static final String LABEL_CONFIGURAZIONE_GENERALE_MENU = "Generale";
 	public static final String LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU = "Tracciamento";
 	
@@ -693,6 +696,7 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_CACHE_DATI_RICHIESTE = "Cache (Dati delle Richieste)";
 	
 	public static final String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
+	public static final String LABEL_INFORMAZIONE_NON_DISPONIBILE_CLUSTER_ASYNC_UPDATE = "Informazione non disponibile in modalità cluster con async update";
 	
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME = "Runtime";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI = "Stato Servizi";
@@ -724,6 +728,7 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO = "Monitoraggio Risorse";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_SISTEMA = "Attività di Sistema";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND = "Repository Chiavi PDND";
+	public static final String LABEL_CONFIGURAZIONE_SISTEMA_STATO_TIMER_PREFIX = "stato del timer ";
 	
 	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
 	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
@@ -1035,6 +1040,8 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART = "allarmiAttiviRestart";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND = "timerChiaviPDND";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND = "timerCacheChiaviPDND";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_OPERAZIONI_REMOTE = "timerGestoreOpRemote";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_SVECCHIAMENTO_OPERAZIONI_REMOTE = "timerDeleteOpRemote";
 	
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
@@ -1605,6 +1612,8 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI = "Mensili";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND = "Gestione Eventi";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND = "Gestione Cache";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_OPERAZIONI_REMOTE = "Esecuzione Operazioni Remote";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_SVECCHIAMENTO_OPERAZIONI_REMOTE = "Svecchiamento Operazioni";
 	
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA = "Utilizzo";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA_TEMPLATE = "ISTANZA";
@@ -1785,6 +1794,7 @@ public class ConfigurazioneCostanti {
 	public static final String RIAVVIO = "<BR><b>Attenzione:</b> Le modifiche saranno operative al prossimo riavvio di GovWay";
 	public static final String TEMPORANEE = "<BR><b>Attenzione:</b> Le modifiche saranno operative fino al prossimo riavvio di GovWay";
 	public static final String PERSISTENTI = "<BR><b>Attenzione:</b> La modifica effettuata rimarrà persistente anche dopo un riavvio di GovWay";
+	public static final String CLOUD_DINAMICO = "<BR><b>Attenzione:</b> Solo dopo che l'operazione verrà evasa il nuovo stato verrà visualizzato in questa sezione 'Runtime'";
 	public static final String LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO_SOLO_DATI_CONSOLE = "Configurazione modificata con successo";
 	public static final String LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO = "Configurazione Generale modificata con successo"+RIAVVIO;
 	public static final String LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_REGISTRO+" modificata con successo"+RIAVVIO;

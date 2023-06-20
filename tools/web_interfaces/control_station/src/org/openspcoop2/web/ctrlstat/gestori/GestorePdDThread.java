@@ -1005,8 +1005,8 @@ public class GestorePdDThread extends GestoreGeneral {
 			throw new Exception("Inizializzazione di " + this.getClass().getSimpleName() + "FALLITA");
 		}
 		
-		String pddQueuePrefix = this.consoleProperties.getGestioneCentralizzata_PrefissoNomeCodaConfigurazionePdd();
-		boolean enginePDD = this.consoleProperties.isGestioneCentralizzata_SincronizzazionePdd();
+		String pddQueuePrefix = this.consoleProperties.getGestioneCentralizzataPrefissoNomeCodaConfigurazionePdd();
+		boolean enginePDD = this.consoleProperties.isGestioneCentralizzataSincronizzazionePdd();
 		this.singlePdD = this.consoleProperties.isSinglePdD();
 		
 		if (enginePDD == false) {
@@ -1105,21 +1105,21 @@ public class GestorePdDThread extends GestoreGeneral {
 			this.soggettoPort = this.soggettoService.getSoggettoPortSoap11();
 			
 			((BindingProvider)this.portaApplicativaPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-					prefixUrl+this.consoleProperties.getGestioneCentralizzata_WSConfigurazione_endpointSuffixPortaApplicativa());
+					prefixUrl+this.consoleProperties.getGestioneCentralizzataWSConfigurazioneEndpointSuffixPortaApplicativa());
 			((BindingProvider)this.portaDelegataPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-					prefixUrl+this.consoleProperties.getGestioneCentralizzata_WSConfigurazione_endpointSuffixPortaDelegata());
+					prefixUrl+this.consoleProperties.getGestioneCentralizzataWSConfigurazioneEndpointSuffixPortaDelegata());
 			((BindingProvider)this.servizioApplicativoPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-					prefixUrl+this.consoleProperties.getGestioneCentralizzata_WSConfigurazione_endpointSuffixServizioApplicativo());
+					prefixUrl+this.consoleProperties.getGestioneCentralizzataWSConfigurazioneEndpointSuffixServizioApplicativo());
 			((BindingProvider)this.soggettoPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-					prefixUrl+this.consoleProperties.getGestioneCentralizzata_WSConfigurazione_endpointSuffixSoggetto());
+					prefixUrl+this.consoleProperties.getGestioneCentralizzataWSConfigurazioneEndpointSuffixSoggetto());
 			
 			((BindingProvider)this.portaApplicativaPort).getRequestContext().put("schema-validation-enabled", true);
 			((BindingProvider)this.portaDelegataPort).getRequestContext().put("schema-validation-enabled", true);
 			((BindingProvider)this.servizioApplicativoPort).getRequestContext().put("schema-validation-enabled", true);
 			((BindingProvider)this.soggettoPort).getRequestContext().put("schema-validation-enabled", true);
 			
-			String username = this.consoleProperties.getGestioneCentralizzata_WSConfigurazione_credenzialiBasic_username();
-			String password = this.consoleProperties.getGestioneCentralizzata_WSConfigurazione_credenzialiBasic_password();
+			String username = this.consoleProperties.getGestioneCentralizzataWSConfigurazioneCredenzialiBasicUsername();
+			String password = this.consoleProperties.getGestioneCentralizzataWSConfigurazioneCredenzialiBasicPassword();
 			if(username !=null && password!=null){
 				// to use Basic HTTP Authentication: 
 				

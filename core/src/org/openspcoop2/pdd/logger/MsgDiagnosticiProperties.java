@@ -773,6 +773,8 @@ public class MsgDiagnosticiProperties {
 	public static final String MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI="timerConsegnaContenutiApplicativi.";
 	public static final String MSG_DIAG_TIMER_STATISTICHE="timerStatistiche.";
 	public static final String MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND="timerGestoreChiaviPDND.";
+	public static final String MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE="timerGestoreOperazioniAsincrone.";
+	public static final String MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE="timerSvecchiamentoOperazioniAsincrone.";
 	public static final String MSG_DIAG_OPENSPCOOP_STARTUP="openspcoopStartup.";
 	public static final String MSG_DIAG_ALL="all.";
 	private static final String[] MSG_DIAGNOSTICI_PERSONALIZZATI = {
@@ -1431,6 +1433,22 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"letturaCacheKeys",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"letturaCacheKeys.effettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND+"letturaCacheKeys.nonNecessaria",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"avvioInCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"avvioEffettuato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"disabilitato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"letturaOperazioni",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"gestioneOperazioni.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"gestioneOperazioni.analisi",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"gestioneOperazioni.effettuata",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"gestioneOperazioni.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"gestioneOperazioni.operazione",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE+"gestioneOperazioni.operazione.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE+"avvioInCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE+"avvioEffettuato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE+"disabilitato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE+"svecchiamento.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE+"svecchiamento.effettuata",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE+"svecchiamento.fallita",		
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"pdd",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"IntegrationManager",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"erroreGenerico",

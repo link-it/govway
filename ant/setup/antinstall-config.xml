@@ -64,6 +64,12 @@
 	<hidden property="antinstaller_gestione_nodi_proxy_url" value=""/>
 	<hidden property="antinstaller_gestione_nodi_proxy_username" value="GovWayProxy"/>
 	<hidden property="antinstaller_gestione_nodi_proxy_password" value=""/>
+	<hidden property="antinstaller_gestione_nodi_proxy_asyncUpdate" value="true"/>
+	<hidden property="antinstaller_gestione_nodi_proxy_asyncUpdate_schema" value="http"/>
+	<hidden property="antinstaller_gestione_nodi_proxy_asyncUpdate_hostname" value="localhost"/>
+	<hidden property="antinstaller_gestione_nodi_proxy_asyncUpdate_port" value="8082"/>
+	<hidden property="antinstaller_gestione_nodi_proxy_asyncUpdate_checkInterval" value="60"/>
+	<hidden property="antinstaller_gestione_nodi_proxy_asyncUpdate_classname" value=""/>
 
 	<hidden property="antinstaller_batch_dir" value=""/>
 	<hidden property="antinstaller_batch_system_out" value=""/>

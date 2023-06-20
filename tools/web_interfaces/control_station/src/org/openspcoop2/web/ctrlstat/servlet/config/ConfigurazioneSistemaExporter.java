@@ -122,9 +122,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String versionePdD = null;
 		try{
-			versionePdD = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(alias));
+			versionePdD = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoVersionePdD(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura della versione della PdD (jmxResourcePdD): "+e.getMessage(),e);
 			versionePdD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -132,9 +132,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String versioneBaseDati = null;
 		try{
-			versioneBaseDati = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(alias));
+			versioneBaseDati = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura della versione della base dati (jmxResourcePdD): "+e.getMessage(),e);
 			versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -142,9 +142,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String confDir = null;
 		try{
-			confDir = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
+			confDir = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura della directory di configurazione (jmxResourcePdD): "+e.getMessage(),e);
 			confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -152,9 +152,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String versioneJava = null;
 		try{
-			versioneJava = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(alias));
+			versioneJava = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoVersioneJava(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura della versione di java (jmxResourcePdD): "+e.getMessage(),e);
 			versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -162,9 +162,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String vendorJava = null;
 		try{
-			vendorJava = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_vendorJava(alias));
+			vendorJava = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoVendorJava(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sul vendor di java (jmxResourcePdD): "+e.getMessage(),e);
 			vendorJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -172,9 +172,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String messageFactory = null;
 		try{
-			messageFactory = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
+			messageFactory = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoMessageFactory(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura della message factory (jmxResourcePdD): "+e.getMessage(),e);
 			messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -182,9 +182,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPD = null;
 		try{
-			statoServizioPD = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));
+			statoServizioPD = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
 			statoServizioPD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -192,9 +192,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPD_abilitazioni = null;
 		try{
-			statoServizioPD_abilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali(alias));
+			statoServizioPD_abilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataAbilitazioniPuntuali(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Delegata 'Abilitazioni Puntuali' (jmxResourcePdD): "+e.getMessage(),e);
 			statoServizioPD_abilitazioni = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -202,9 +202,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPD_disabilitazioni = null;
 		try{
-			statoServizioPD_disabilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali(alias));
+			statoServizioPD_disabilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataDisabilitazioniPuntuali(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Delegata 'Disabilitazioni Puntuali' (jmxResourcePdD): "+e.getMessage(),e);
 			statoServizioPD_disabilitazioni = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -212,9 +212,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPA = null;
 		try{
-			statoServizioPA = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
+			statoServizioPA = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
 			statoServizioPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -222,9 +222,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPA_abilitazioni = null;
 		try{
-			statoServizioPA_abilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali(alias));
+			statoServizioPA_abilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaAbilitazioniPuntuali(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Applicativa 'Abilitazioni Puntuali' (jmxResourcePdD): "+e.getMessage(),e);
 			statoServizioPA_abilitazioni = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -232,9 +232,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPA_disabilitazioni = null;
 		try{
-			statoServizioPA_disabilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali(alias));
+			statoServizioPA_disabilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaDisabilitazioniPuntuali(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Applicativa 'Disabilitazioni Puntuali' (jmxResourcePdD): "+e.getMessage(),e);
 			statoServizioPA_disabilitazioni = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -242,9 +242,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioIM = null;
 		try{
-			statoServizioIM = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
+			statoServizioIM = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Integration Manager (jmxResourcePdD): "+e.getMessage(),e);
 			statoServizioIM = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -252,9 +252,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String livelloSeveritaDiagnostici = null;
 		try{
-			livelloSeveritaDiagnostici = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias));
+			livelloSeveritaDiagnostici = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura del livello di severità dei diagnostici (jmxResourcePdD): "+e.getMessage(),e);
 			livelloSeveritaDiagnostici = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -262,49 +262,49 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String livelloSeveritaDiagnosticiLog4j = null;
 		try{
-			livelloSeveritaDiagnosticiLog4j = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias));
+			livelloSeveritaDiagnosticiLog4j = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura del livello di severità log4j dei diagnostici (jmxResourcePdD): "+e.getMessage(),e);
 			livelloSeveritaDiagnosticiLog4j = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		String log4j_diagnostica = null;
+		String log4jDiagnostica = null;
 		try{
-			log4j_diagnostica = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(alias));
+			log4jDiagnostica = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_diagnostici.log (jmxResourcePdD): "+e.getMessage(),e);
-			log4j_diagnostica = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			log4jDiagnostica = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		String log4j_openspcoop = null;
+		String log4jOpenspcoop = null;
 		try{
-			log4j_openspcoop = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop(alias));
+			log4jOpenspcoop = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway.log (jmxResourcePdD): "+e.getMessage(),e);
-			log4j_openspcoop = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			log4jOpenspcoop = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		String log4j_integrationManager = null;
+		String log4jIntegrationManager = null;
 		try{
-			log4j_integrationManager = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager(alias));
+			log4jIntegrationManager = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
-			log4j_integrationManager = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			log4jIntegrationManager = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
 		String tracciamento = null;
 		try{
-			tracciamento = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias));
+			tracciamento = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTracciamento(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del tracciamento buste (jmxResourcePdD): "+e.getMessage(),e);
 			tracciamento = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -312,9 +312,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String dumpPD = null;
 		try{
-			dumpPD = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
+			dumpPD = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoDumpPD(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del dump binario della Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
 			dumpPD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -322,9 +322,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String dumpPA = null;
 		try{
-			dumpPA = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias));
+			dumpPA = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoDumpPA(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del dump binario della Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
 			dumpPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -332,9 +332,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String log4j_tracciamento = null;
 		try{
-			log4j_tracciamento = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento(alias));
+			log4j_tracciamento = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
 			log4j_tracciamento = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -342,9 +342,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String log4j_dump = null;
 		try{
-			log4j_dump = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(alias));
+			log4j_dump = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDump(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_dump.log (jmxResourcePdD): "+e.getMessage(),e);
 			log4j_dump = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -352,9 +352,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String fileTraceGovWayState = null;
 		try{
-			fileTraceGovWayState = confCore.getInvoker().invokeJMXMethod(alias, confCore.getJmxPdD_configurazioneSistema_type(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(alias));
+			fileTraceGovWayState = confCore.getInvoker().invokeJMXMethod(alias, confCore.getJmxPdDConfigurazioneSistemaType(alias),
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura dello stato di configurazione del file trace (jmxResourcePdD): "+e.getMessage(),e);
 			log4j_dump = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -363,9 +363,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorSpecificTypeProcessRequest = null;
 		try{
-			errorSpecificTypeProcessRequest = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias));
+			errorSpecificTypeProcessRequest = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError(alias));
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST+")";
@@ -375,9 +375,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorSpecificTypeProcessResponse_1 = null;
 		try{
-			errorSpecificTypeProcessResponse_1 = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias));
+			errorSpecificTypeProcessResponse_1 = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse(alias));
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE+")";
@@ -386,9 +386,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		}
 		String errorSpecificTypeProcessResponse_2 = null;
 		try{
-			errorSpecificTypeProcessResponse_2 = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias));
+			errorSpecificTypeProcessResponse_2 = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError(alias));
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE+")";
@@ -408,9 +408,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorSpecificTypeInternalError = null;
 		try{
-			errorSpecificTypeInternalError = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias));
+			errorSpecificTypeInternalError = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError(alias));
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR+")";
@@ -420,9 +420,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorStatus = null;
 		try{
-			errorStatus = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias));
+			errorStatus = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode(alias));
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE+")";
@@ -432,9 +432,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorStatusInSoapFaultCode = null;
 		try{
-			errorStatusInSoapFaultCode = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias));
+			errorStatusInSoapFaultCode = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode(alias));
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT+")";
@@ -444,9 +444,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorSpecificDetails = null;
 		try{
-			errorSpecificDetails = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias));
+			errorSpecificDetails = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails(alias));
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS+")";
@@ -456,9 +456,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorInstanceId = null;
 		try{
-			errorInstanceId = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias));
+			errorInstanceId = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId(alias));
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID+")";
@@ -468,9 +468,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorGenerateHttpErrorCodeInSoap = null;
 		try{
-			errorGenerateHttpErrorCodeInSoap = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias));
+			errorGenerateHttpErrorCodeInSoap = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode(alias));
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE+")";
@@ -480,9 +480,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 
 		String infoDatabase = null;
 		try{
-			infoDatabase = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
+			infoDatabase = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
 			infoDatabase = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -493,9 +493,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		try{
 			int numeroDatasource = 0;
 			try{
-				String stato = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-						confCore.getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(alias));
+				String stato = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(alias),
+						confCore.getJmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW(alias));
 				if(stato!=null && !"".equals(stato)) {
 					numeroDatasource = Integer.valueOf(stato);
 				}
@@ -503,9 +503,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				ControlStationCore.logDebug("Numero di datasource attivi non ottenibili: "+e.getMessage());
 			}
 			if(numeroDatasource>0) {
-				String nomiDatasource = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-						confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(alias));
+				String nomiDatasource = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(alias),
+						confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW(alias));
 				if(nomiDatasource!=null && !"".equals(nomiDatasource)) {
 					/* Esempio:
 					 * 3 datasource allocati: 
@@ -523,23 +523,25 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 									try{
 										String idDS = tmp[1].split(":")[1];
 										
-										String statoInfo = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-												confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-												confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias),
+										String statoInfo = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+												confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(alias),
+												confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW(alias),
 												idDS);
 										if(infoConnessioneAltriDB==null) {
 											infoConnessioneAltriDB = new HashMap<>();
 										}
 										infoConnessioneAltriDB.put(nomeDS,statoInfo);
 										
-										String statoConnessioni = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-												confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-												confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias),
-												idDS);
-										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<>();
+										if(!confCore.isClusterAsyncUpdate()) {
+											String statoConnessioni = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+													confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(alias),
+													confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW(alias),
+													idDS);
+											if(statoConnessioniAltriDB==null) {
+												statoConnessioniAltriDB = new HashMap<>();
+											}
+											statoConnessioniAltriDB.put(nomeDS,statoConnessioni);
 										}
-										statoConnessioniAltriDB.put(nomeDS,statoConnessioni);
 										
 									}catch(Exception e){
 										ControlStationCore.logError("Errore durante la lettura delle informazioni verso il database "+nomeDS+" (jmxResourcePdD): "+e.getMessage(),e);
@@ -549,10 +551,12 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 										}
 										infoConnessioneAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 										
-										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<>();
+										if(!confCore.isClusterAsyncUpdate()) {
+											if(statoConnessioniAltriDB==null) {
+												statoConnessioniAltriDB = new HashMap<>();
+											}
+											statoConnessioniAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 										}
-										statoConnessioniAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 									}		
 								}
 							}
@@ -568,19 +572,27 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			}
 			infoConnessioneAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 			
+			if(!confCore.isClusterAsyncUpdate()) {
+				if(statoConnessioniAltriDB==null) {
+					statoConnessioniAltriDB = new HashMap<>();
+				}
+				statoConnessioniAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			}
+		}
+		if(confCore.isClusterAsyncUpdate()) {
 			if(statoConnessioniAltriDB==null) {
 				statoConnessioniAltriDB = new HashMap<>();
 			}
-			statoConnessioniAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			statoConnessioniAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE_CLUSTER_ASYNC_UPDATE);
 		}
 		
 		
 		
 		String infoSSL = null;
 		try{
-			infoSSL = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(alias));
+			infoSSL = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteSSL(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
 			infoSSL = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -588,9 +600,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoCryptographyKeyLength = null;
 		try{
-			infoCryptographyKeyLength = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
+			infoCryptographyKeyLength = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
 			infoCryptographyKeyLength = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -598,9 +610,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoCharset = null;
 		try{
-			infoCharset = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(alias));
+			infoCharset = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sul charset (jmxResourcePdD): "+e.getMessage(),e);
 			infoCharset = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -608,9 +620,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoInternazionalizzazione = null;
 		try{
-			infoInternazionalizzazione = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(alias));
+			infoInternazionalizzazione = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteInternazionalizzazione(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
 			infoInternazionalizzazione = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -618,9 +630,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoTimeZone = null;
 		try{
-			infoTimeZone = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(alias));
+			infoTimeZone = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteTimeZone(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
 			infoTimeZone = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -628,9 +640,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoProprietaJavaNetworking = null;
 		try{
-			infoProprietaJavaNetworking = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking(alias));
+			infoProprietaJavaNetworking = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteProprietaJavaNetworking(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sulle proprietà java di networking (jmxResourcePdD): "+e.getMessage(),e);
 			infoProprietaJavaNetworking = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -638,9 +650,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoProprietaJavaAltro = null;
 		try{
-			infoProprietaJavaAltro = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro(alias));
+			infoProprietaJavaAltro = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaAltro(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sulle proprietà java (escluse quelle di networking) (jmxResourcePdD): "+e.getMessage(),e);
 			infoProprietaJavaAltro = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -648,9 +660,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoProprietaSistema = null;
 		try{
-			infoProprietaSistema = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema(alias));
+			infoProprietaSistema = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaSistema(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sulle proprietà di sistema (jmxResourcePdD): "+e.getMessage(),e);
 			infoProprietaSistema = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -658,9 +670,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoProtocolli = null;
 		try{
-			infoProtocolli = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));
+			infoProtocolli = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sui protocolli (jmxResourcePdD): "+e.getMessage(),e);
 			infoProtocolli = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -668,7 +680,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		InformazioniStatoPortaCache [] cacheArray = null;
 		
-		List<String> caches = confCore.getJmxPdD_caches(alias);
+		List<String> caches = confCore.getJmxPdDCaches(alias);
 		if(caches!=null && caches.size()>0){
 			
 			cacheArray = new InformazioniStatoPortaCache[caches.size()];
@@ -677,9 +689,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				
 				boolean enabled = false;
 				try{
-					String stato = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					String stato = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
 							cacheName,
-							confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+							confCore.getJmxPdDCacheNomeAttributoCacheAbilitata(alias));
 					if(stato.equalsIgnoreCase("true")){
 						enabled = true;
 					}
@@ -692,9 +704,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				if(enabled){
 					String params = null;
 					try{
-						params = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_cache_type(alias), 
+						params = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDCacheType(alias), 
 								cacheName,
-								confCore.getJmxPdD_cache_nomeMetodo_statoCache(alias));
+								confCore.getJmxPdDCacheNomeMetodoStatoCache(alias));
 					}catch(Exception e){
 						ControlStationCore.logError("Errore durante la lettura dello stato della cache ["+cacheName+"](jmxResourcePdD): "+e.getMessage(),e);
 						params = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -707,52 +719,72 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		}
 		
 		String statoConnessioniDB = null;
-		try{
-			statoConnessioniDB = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
-		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al database (jmxResourcePdD): "+e.getMessage(),e);
-			statoConnessioniDB = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		if(!confCore.isClusterAsyncUpdate()) {
+			try{
+				statoConnessioniDB = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						confCore.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB(alias));
+			}catch(Exception e){
+				ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al database (jmxResourcePdD): "+e.getMessage(),e);
+				statoConnessioniDB = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}
+		else {
+			statoConnessioniDB = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE_CLUSTER_ASYNC_UPDATE;
 		}
 		
 		// statoConnessioniAltriDB, letto prima durante l'acquisizione delle informazioni
 				
 		String statoConnessioniJMS = null;
-		try{
-			statoConnessioniJMS = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
-		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al broker JMS (jmxResourcePdD): "+e.getMessage(),e);
-			statoConnessioniJMS = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		if(!confCore.isClusterAsyncUpdate()) {
+			try{
+				statoConnessioniJMS = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						confCore.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS(alias));
+			}catch(Exception e){
+				ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al broker JMS (jmxResourcePdD): "+e.getMessage(),e);
+				statoConnessioniJMS = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}
+		else {
+			statoConnessioniJMS = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE_CLUSTER_ASYNC_UPDATE;
 		}
 		
 		String statoTransazioniId = null;
-		try{
-			statoTransazioniId = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(alias));
-		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura degli identificativi delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
-			statoTransazioniId = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		if(!confCore.isClusterAsyncUpdate()) {
+			try{
+				statoTransazioniId = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						confCore.getJmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive(alias));
+			}catch(Exception e){
+				ControlStationCore.logError("Errore durante la lettura degli identificativi delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
+				statoTransazioniId = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}
+		else {
+			statoTransazioniId = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE_CLUSTER_ASYNC_UPDATE;
 		}
 		
 		String statoTransazioniIdProtocollo = null;
-		try{
-			statoTransazioniIdProtocollo = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(alias));
-		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura degli identificativi di protocollo delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
-			statoTransazioniIdProtocollo = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		if(!confCore.isClusterAsyncUpdate()) {
+			try{
+				statoTransazioniIdProtocollo = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						confCore.getJmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive(alias));
+			}catch(Exception e){
+				ControlStationCore.logError("Errore durante la lettura degli identificativi di protocollo delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
+				statoTransazioniIdProtocollo = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}
+		else {
+			statoTransazioniIdProtocollo = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE_CLUSTER_ASYNC_UPDATE;
 		}
 		
 		String statoTimerVerificaConnessioni = null;
 		try{
-			statoTimerVerificaConnessioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(alias));
+			statoTimerVerificaConnessioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE+"'";
@@ -761,30 +793,40 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		}
 		
 		String statoConnessioniPD = null;
-		try{
-			statoConnessioniPD = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
-		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al servizio PD (jmxResourcePdD): "+e.getMessage(),e);
-			statoConnessioniPD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		if(!confCore.isClusterAsyncUpdate()) {
+			try{
+				statoConnessioniPD = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						confCore.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD(alias));
+			}catch(Exception e){
+				ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al servizio PD (jmxResourcePdD): "+e.getMessage(),e);
+				statoConnessioniPD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}
+		else {
+			statoConnessioniPD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE_CLUSTER_ASYNC_UPDATE;
 		}
 		
 		String statoConnessioniPA = null;
-		try{
-			statoConnessioniPA = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
-		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al servizio PA (jmxResourcePdD): "+e.getMessage(),e);
-			statoConnessioniPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		if(!confCore.isClusterAsyncUpdate()) {
+			try{
+				statoConnessioniPA = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						confCore.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA(alias));
+			}catch(Exception e){
+				ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al servizio PA (jmxResourcePdD): "+e.getMessage(),e);
+				statoConnessioniPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}
+		else {
+			statoConnessioniPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE_CLUSTER_ASYNC_UPDATE;
 		}
 		
 		String statoTimerConsegnaAsincrona = null;
 		try{
-			statoTimerConsegnaAsincrona = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias));
+			statoTimerConsegnaAsincrona = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE+"'";
@@ -807,9 +849,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			
 				String stato = null;
 				try{
-					stato = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias),
+					stato = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+							confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias),
+							confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus(alias),
 							coda);
 				}catch(Exception e){
 					ControlStationCore.logError("Errore durante la lettura dello stato del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
@@ -818,9 +860,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				
 				String configurazione = null;
 				try{
-					configurazione = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(alias),
+					configurazione = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+							confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias),
+							confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig(alias),
 							coda);
 				}catch(Exception e){
 					ControlStationCore.logError("Errore durante la lettura della configurazione del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
@@ -829,9 +871,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				
 				String connettoriPrioritari = null;
 				try{
-					connettoriPrioritari = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(alias),
+					connettoriPrioritari = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+							confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias),
+							confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari(alias),
 							coda);
 				}catch(Exception e){
 					ControlStationCore.logError("Errore durante la lettura della configurazione (connettori prioritari) del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
@@ -840,9 +882,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				
 				String applicativiPrioritari = null;
 				try{
-					applicativiPrioritari = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(alias),
+					applicativiPrioritari = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+							confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias),
+							confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetApplicativiPrioritari(alias),
 							coda);
 				}catch(Exception e){
 					ControlStationCore.logError("Errore durante la lettura della configurazione (applicativi prioritari) del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
@@ -857,9 +899,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerGenerazioneStatisticheOrarie = null;
 		try{
-			statoTimerGenerazioneStatisticheOrarie = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(alias));
+			statoTimerGenerazioneStatisticheOrarie = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie(alias));
 		}catch(Exception e){
 			String tipo ="stato timer 'Statistiche "+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE+"'";
@@ -869,9 +911,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerGenerazioneStatisticheGiornaliere = null;
 		try{
-			statoTimerGenerazioneStatisticheGiornaliere = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(alias));
+			statoTimerGenerazioneStatisticheGiornaliere = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere(alias));
 		}catch(Exception e){
 			String tipo ="stato timer 'Statistiche "+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE+"'";
@@ -881,9 +923,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerGenerazioneStatisticheSettimanali = null;
 		try{
-			statoTimerGenerazioneStatisticheSettimanali = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(alias));
+			statoTimerGenerazioneStatisticheSettimanali = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali(alias));
 		}catch(Exception e){
 			String tipo ="stato timer 'Statistiche "+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI+"'";
@@ -893,9 +935,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerGenerazioneStatisticheMensili = null;
 		try{
-			statoTimerGenerazioneStatisticheMensili = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(alias));
+			statoTimerGenerazioneStatisticheMensili = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(alias));
 		}catch(Exception e){
 			String tipo ="stato timer 'Statistiche "+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI+"'";
@@ -905,9 +947,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMessaggiEliminati = null;
 		try{
-			statoTimerMessaggiEliminati = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias));
+			statoTimerMessaggiEliminati = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI+"'";
@@ -917,9 +959,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMessaggiScaduti = null;
 		try{
-			statoTimerMessaggiScaduti = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(alias));
+			statoTimerMessaggiScaduti = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI+"'";
@@ -929,9 +971,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerBuste = null;
 		try{
-			statoTimerBuste = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(alias));
+			statoTimerBuste = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE+"'";
@@ -941,9 +983,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerCorrelazioneApplicativa = null;
 		try{
-			statoTimerCorrelazioneApplicativa = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias));
+			statoTimerCorrelazioneApplicativa = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA+"'";
@@ -953,9 +995,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMessaggiNonGestiti = null;
 		try{
-			statoTimerMessaggiNonGestiti = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(alias));
+			statoTimerMessaggiNonGestiti = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI+"'";
@@ -965,9 +1007,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMessaggiAnomali = null;
 		try{
-			statoTimerMessaggiAnomali = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(alias));
+			statoTimerMessaggiAnomali = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI+"'";
@@ -977,9 +1019,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMonitoraggioRisorse = null;
 		try{
-			statoTimerMonitoraggioRisorse = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(alias));
+			statoTimerMonitoraggioRisorse = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD+"'";
@@ -989,9 +1031,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerThreshold = null;
 		try{
-			statoTimerThreshold = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias));
+			statoTimerThreshold = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD+"'";
@@ -1001,9 +1043,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerEventi = null;
 		try{
-			statoTimerEventi = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(alias));
+			statoTimerEventi = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerEventi(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI+"'";
@@ -1013,9 +1055,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerFileSystemRecovery = null;
 		try{
-			statoTimerFileSystemRecovery = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(alias));
+			statoTimerFileSystemRecovery = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY+"'";
@@ -1025,9 +1067,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerBusteOneway = null;
 		try{
-			statoTimerBusteOneway = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(alias));
+			statoTimerBusteOneway = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE+"'";
@@ -1037,9 +1079,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerBusteAsincrone = null;
 		try{
-			statoTimerBusteAsincrone = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(alias));
+			statoTimerBusteAsincrone = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE+"'";
@@ -1049,9 +1091,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerRepositoryStateful = null;
 		try{
-			statoTimerRepositoryStateful = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(alias));
+			statoTimerRepositoryStateful = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread(alias));
 		}catch(Exception e){
 			String tipo ="stato timer '"+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD+"'";
@@ -1061,9 +1103,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 
 		String infoInstallazione = null;
 		try{
-			infoInstallazione = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione(alias));
+			infoInstallazione = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni sull'installazione (jmxResourcePdD): "+e.getMessage(),e);
 			infoInstallazione = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -1074,7 +1116,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				statoServizioPA,statoServizioPA_abilitazioni,statoServizioPA_disabilitazioni,
 				statoServizioIM,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
-				"true".equals(log4j_diagnostica), "true".equals(log4j_openspcoop), "true".equals(log4j_integrationManager), 
+				"true".equals(log4jDiagnostica), "true".equals(log4jOpenspcoop), "true".equals(log4jIntegrationManager), 
 				"true".equals(tracciamento), "true".equals(dumpPD), "true".equals(dumpPA),
 				"true".equals(log4j_tracciamento), "true".equals(log4j_dump), 
 				fileTraceGovWayState,

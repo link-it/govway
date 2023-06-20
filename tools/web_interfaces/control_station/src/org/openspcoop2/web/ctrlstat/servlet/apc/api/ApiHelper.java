@@ -35,6 +35,8 @@ import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.GruppiAccordo;
@@ -43,10 +45,12 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.GruppoSintetico;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
@@ -56,6 +60,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
@@ -90,11 +95,11 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 	}
 
 
-	public void prepareApiList(List<AccordoServizioParteComuneSintetico> lista, ISearch ricerca, String tipoAccordo) throws Exception {
+	public void prepareApiList(List<AccordoServizioParteComuneSintetico> lista, ISearch ricerca, String tipoAccordo) throws DriverControlStationException {
 		try {
 
 			if(lista==null) {
-				throw new Exception("Param lista is null");
+				throw new DriverControlStationException("Param lista is null");
 			}
 			
 			ServletUtils.addListElementIntoSession(this.request, this.session, ApiCostanti.OBJECT_NAME_APC_API,
@@ -425,51 +430,50 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			this.pd.setAddButton(true);
 
 			// preparo bottoni
-			if(lista!=null && !lista.isEmpty()){
-				if (this.core.isShowPulsantiImportExport()) {
+			if(lista!=null && !lista.isEmpty() &&
+				this.core.isShowPulsantiImportExport()) {
 
-					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					boolean exists = false;
+				ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+				boolean exists = false;
+				if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
+					exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.request, this.session);
+				}
+				else{
+					exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.request, this.session);
+				}
+				if(exists){
+
+					List<AreaBottoni> bottoni = new ArrayList<>();
+
+					AreaBottoni ab = new AreaBottoni();
+					List<DataElement> otherbott = new ArrayList<>();
+					DataElement de = new DataElement();
+					de.setValue(AccordiServizioParteComuneCostanti.LABEL_APC_ESPORTA_SELEZIONATI);
 					if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
-						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.request, this.session);
+						de.setOnClick(AccordiServizioParteComuneCostanti.LABEL_APC_ESPORTA_SELEZIONATI_ONCLICK);
 					}
 					else{
-						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.request, this.session);
+						de.setOnClick(AccordiServizioParteComuneCostanti.LABEL_ASC_ESPORTA_SELEZIONATI_ONCLICK);
 					}
-					if(exists){
+					de.setDisabilitaAjaxStatus();
+					otherbott.add(de);
+					ab.setBottoni(otherbott);
+					bottoni.add(ab);
 
-						List<AreaBottoni> bottoni = new ArrayList<>();
-
-						AreaBottoni ab = new AreaBottoni();
-						List<DataElement> otherbott = new ArrayList<>();
-						DataElement de = new DataElement();
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_APC_ESPORTA_SELEZIONATI);
-						if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
-							de.setOnClick(AccordiServizioParteComuneCostanti.LABEL_APC_ESPORTA_SELEZIONATI_ONCLICK);
-						}
-						else{
-							de.setOnClick(AccordiServizioParteComuneCostanti.LABEL_ASC_ESPORTA_SELEZIONATI_ONCLICK);
-						}
-						de.setDisabilitaAjaxStatus();
-						otherbott.add(de);
-						ab.setBottoni(otherbott);
-						bottoni.add(ab);
-
-						this.pd.setAreaBottoni(bottoni);
-
-					}
+					this.pd.setAreaBottoni(bottoni);
 
 				}
+
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
 
-	public void prepareApiChange(TipoOperazione tipoOp, AccordoServizioParteComune as) throws Exception{
+	public void prepareApiChange(TipoOperazione tipoOp, AccordoServizioParteComune as) throws DriverControlStationException, DriverRegistroServiziException, ProtocolException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		
 		String tipoAccordo = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 		Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
@@ -532,13 +536,13 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		this.makeMenu();
 		
 		// Uso lo stessoAlias
-		List<String> aliases = this.apcCore.getJmxPdD_aliases();
+		List<String> aliases = this.apcCore.getJmxPdDAliases();
 		String alias = null;
 		if(aliases!=null && !aliases.isEmpty()) {
 			alias = aliases.get(0);
 		}
-		this.apcCore.invokeJmxMethodAllNodesAndSetResult(this.pd, this.apcCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-				this.apcCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi(alias),
+		this.apcCore.invokeJmxMethodAllNodesAndSetResult(this.pd, this.apcCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+				this.apcCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApi(alias),
 				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelASTitle),
 				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelASTitle),
 				as.getId());
@@ -555,10 +559,9 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<AccordoServizioParteComuneSintetico> lista = null;
-			if(this.apcCore.isRegistroServiziLocale()){
-				if(!ServletUtils.isSearchDone(this)) {
-					lista = ServletUtils.getRisultatiRicercaFromSession(this.request, this.session, idLista,  AccordoServizioParteComuneSintetico.class);
-				}
+			if(this.apcCore.isRegistroServiziLocale() &&
+				!ServletUtils.isSearchDone(this)) {
+				lista = ServletUtils.getRisultatiRicercaFromSession(this.request, this.session, idLista,  AccordoServizioParteComuneSintetico.class);
 			}
 
 			ricerca = this.checkSearchParameters(idLista, ricerca);
@@ -587,7 +590,11 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 
 
 	private List<List<DataElement>> addApiToDati(List<List<DataElement>> datiPagina, TipoOperazione tipoOp,
-			AccordoServizioParteComune as, String tipoAccordo, String tipoProtocollo, ServiceBinding serviceBinding) throws Exception {
+			AccordoServizioParteComune as, String tipoAccordo, String tipoProtocollo, ServiceBinding serviceBinding) throws DriverRegistroServiziException, DriverControlStationException, ProtocolException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		
+		if(tipoOp!=null) {
+			// nop
+		}
 		
 		this.pd.setCustomListViewName(ApiCostanti.APC_API_NOME_VISTA_CUSTOM_FORM_API);
 		

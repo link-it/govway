@@ -118,10 +118,10 @@ public class MonitorUtilities {
 		}
 		String prefixUrl = protocollo + "://" + ipPdd + ":" + porta + "/";
 		if(statoPdD){
-			return prefixUrl + Monitor.consoleProperties.getGestioneCentralizzata_WSMonitor_endpointSuffixStatoPdd();
+			return prefixUrl + Monitor.consoleProperties.getGestioneCentralizzataWSMonitorEndpointSuffixStatoPdd();
 		}
 		else{
-			return prefixUrl + Monitor.consoleProperties.getGestioneCentralizzata_WSMonitor_endpointSuffixMessaggio();
+			return prefixUrl + Monitor.consoleProperties.getGestioneCentralizzataWSMonitorEndpointSuffixMessaggio();
 		}
 	}
 	
@@ -132,8 +132,8 @@ public class MonitorUtilities {
 		((BindingProvider)messaggioPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
 				getWSUrl(pddName, false));
 		((BindingProvider)messaggioPort).getRequestContext().put("schema-validation-enabled", true);
-		String username = Monitor.consoleProperties.getGestioneCentralizzata_WSMonitor_credenzialiBasic_username();
-		String password = Monitor.consoleProperties.getGestioneCentralizzata_WSMonitor_credenzialiBasic_password();
+		String username = Monitor.consoleProperties.getGestioneCentralizzataWSMonitorCredenzialiBasicUsername();
+		String password = Monitor.consoleProperties.getGestioneCentralizzataWSMonitorCredenzialiBasicPassword();
 		if(username !=null && password!=null){
 			// to use Basic HTTP Authentication: 
 			((BindingProvider)messaggioPort).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
@@ -149,8 +149,8 @@ public class MonitorUtilities {
 		((BindingProvider)statoPddPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
 				getWSUrl(pddName, true));
 		((BindingProvider)statoPddPort).getRequestContext().put("schema-validation-enabled", true);
-		String username = Monitor.consoleProperties.getGestioneCentralizzata_WSMonitor_credenzialiBasic_username();
-		String password = Monitor.consoleProperties.getGestioneCentralizzata_WSMonitor_credenzialiBasic_password();
+		String username = Monitor.consoleProperties.getGestioneCentralizzataWSMonitorCredenzialiBasicUsername();
+		String password = Monitor.consoleProperties.getGestioneCentralizzataWSMonitorCredenzialiBasicPassword();
 		if(username !=null && password!=null){
 			// to use Basic HTTP Authentication: 
 			((BindingProvider)statoPddPort).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);

@@ -153,7 +153,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			saHelper.makeMenu();
 			
 			// Prendo la lista di aliases
-			List<String> aliases = confCore.getJmxPdD_aliases();
+			List<String> aliases = confCore.getJmxPdDAliases();
 			if(aliases==null || aliases.isEmpty()){
 				throw new CoreException("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
@@ -381,10 +381,10 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							int index = 0;
 							for (String aliasForVerificaConnettore : aliasesForCheck) {
 								
-								String risorsa = confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
+								String risorsa = confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
 
 								StringBuilder bfExternal = new StringBuilder();
-								String descrizione = confCore.getJmxPdD_descrizione(aliasForVerificaConnettore);
+								String descrizione = confCore.getJmxPdDDescrizione(aliasForVerificaConnettore);
 								if(aliases.size()>1) {
 									if(index>0) {
 										bfExternal.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
@@ -393,13 +393,17 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 								}						
 								try{
 									Boolean slowOperation = true; // altrimenti un eventuale connection timeout (es. 10 secondi) termina dopo il readTimeout associato all'invocazione dell'operazione via http check e quindi viene erroneamenteo ritornato un readTimeout
-									String nomeMetodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(aliasForVerificaConnettore);
-									String stato = confCore.getInvoker().invokeJMXMethod(aliasForVerificaConnettore, confCore.getJmxPdD_configurazioneSistema_type(aliasForVerificaConnettore),
+									String nomeMetodo = confCore.getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById(aliasForVerificaConnettore);
+									String stato = confCore.getInvoker().invokeJMXMethod(aliasForVerificaConnettore, confCore.getJmxPdDConfigurazioneSistemaType(aliasForVerificaConnettore),
 											risorsa, 
 											nomeMetodo,
 											slowOperation,
 											connettore.getId()+"");
-									if(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)){
+									if(
+											JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)
+											||
+											(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX))
+										){
 										bfExternal.append(CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_EFFETTUATO_CON_SUCCESSO);
 									}
 									else{
@@ -459,10 +463,10 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 									
 						CertificateChecker certificateChecker = null;
 						if(all) {
-							certificateChecker = soggettiCore.getJmxPdD_certificateChecker();
+							certificateChecker = soggettiCore.getJmxPdDCertificateChecker();
 						}
 						else {
-							certificateChecker = soggettiCore.newJmxPdD_certificateChecker(aliasesForCheck);
+							certificateChecker = soggettiCore.newJmxPdDCertificateChecker(aliasesForCheck);
 						}
 						StringBuilder sbDetailsError = new StringBuilder(); 
 						

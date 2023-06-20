@@ -139,7 +139,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			if(resetElementoCache) {
 				
 				// Uso lo stessoAlias
-				List<String> aliases = confCore.getJmxPdD_aliases();
+				List<String> aliases = confCore.getJmxPdDAliases();
 				String alias = null;
 				if(aliases!=null && !aliases.isEmpty()) {
 					alias = aliases.get(0);
@@ -147,16 +147,16 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				
 				String metodo = null;
 				if(attributeAuthority) {
-					metodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority(alias);
+					metodo = confCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority(alias);
 				}
 				else {
 					boolean validazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN.equals(genericProperties.getTipologia());
 					boolean negoziazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(genericProperties.getTipologia());
 					if(validazione) {
-						metodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione(alias);
+						metodo = confCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyValidazione(alias);
 					}
 					else if(negoziazione) {
-						metodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione(alias);
+						metodo = confCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyNegoziazione(alias);
 					}
 					else {
 						throw new Exception("Tipologia '"+genericProperties.getTipologia()+"' non supportata");
@@ -164,7 +164,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				}
 				
 				String labelPolicy = genericProperties.getNome();
-				confCore.invokeJmxMethodAllNodesAndSetResult(pd, confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+				confCore.invokeJmxMethodAllNodesAndSetResult(pd, confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
 						metodo,
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelPolicy),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelPolicy),

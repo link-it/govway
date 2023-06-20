@@ -40,6 +40,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -96,6 +97,7 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
+import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -132,6 +134,7 @@ import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.InvokerNodiRuntime;
+import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
@@ -209,6 +212,7 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
+import org.openspcoop2.web.lib.mvc.properties.exception.ValidationException;
 import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
@@ -461,33 +465,33 @@ public class ControlStationCore {
 	}
 
 	/** Tracciamento */
-	private boolean tracce_showConfigurazioneCustomAppender = false;
-	private boolean tracce_sameDBWebUI = true;
-	private boolean tracce_showSorgentiDatiDatabase = false;
-	private String tracce_datasource = null;
-	private String tracce_tipoDatabase = null;
-	private Properties tracce_ctxDatasource = null;
+	private boolean tracceShowConfigurazioneCustomAppender = false;
+	private boolean tracceSameDBWebUI = true;
+	private boolean tracceShowSorgentiDatiDatabase = false;
+	private String tracceDatasource = null;
+	private String tracceTipoDatabase = null;
+	private Properties tracceCtxDatasource = null;
 	private DriverTracciamento driverTracciamento = null;
-	public DriverTracciamento getDriverTracciamento()  throws Exception {
+	public DriverTracciamento getDriverTracciamento()  throws DriverControlStationException {
 		return this.getDriverTracciamento(null, false);
 	}
-	public DriverTracciamento getDriverTracciamento(String nomeDs)  throws Exception {
+	public DriverTracciamento getDriverTracciamento(String nomeDs)  throws DriverControlStationException {
 		return this.getDriverTracciamento(nomeDs, false);
 	}
-	public DriverTracciamento getDriverTracciamento(String nomeDs, boolean forceChange)  throws Exception {
+	public DriverTracciamento getDriverTracciamento(String nomeDs, boolean forceChange)  throws DriverControlStationException {
 		if(this.driverTracciamento==null || forceChange){
 			initDriverTracciamento(nomeDs, forceChange);
 		}
 		return this.driverTracciamento;
 	}
-	public boolean isTracce_showConfigurazioneCustomAppender() {
-		return this.tracce_showConfigurazioneCustomAppender;
+	public boolean isTracceShowConfigurazioneCustomAppender() {
+		return this.tracceShowConfigurazioneCustomAppender;
 	}
-	public boolean isTracce_showSorgentiDatiDatabase() {
-		return this.tracce_showSorgentiDatiDatabase;
+	public boolean isTracceShowSorgentiDatiDatabase() {
+		return this.tracceShowSorgentiDatiDatabase;
 	}
-	public boolean isTracce_sameDBWebUI() {
-		return this.tracce_sameDBWebUI;
+	public boolean isTracceSameDBWebUI() {
+		return this.tracceSameDBWebUI;
 	}
 
 	/** MsgDiagnostici */
@@ -498,13 +502,13 @@ public class ControlStationCore {
 	private String msgDiagnostici_tipoDatabase = null;
 	private Properties msgDiagnostici_ctxDatasource = null;
 	private DriverMsgDiagnostici driverMSGDiagnostici = null;
-	public DriverMsgDiagnostici getDriverMSGDiagnostici()  throws Exception {
+	public DriverMsgDiagnostici getDriverMSGDiagnostici()  throws DriverControlStationException {
 		return this.getDriverMSGDiagnostici(null, false);
 	}
-	public DriverMsgDiagnostici getDriverMSGDiagnostici(String nomeDs)  throws Exception {
+	public DriverMsgDiagnostici getDriverMSGDiagnostici(String nomeDs)  throws DriverControlStationException {
 		return this.getDriverMSGDiagnostici(nomeDs, false);
 	}
-	public DriverMsgDiagnostici getDriverMSGDiagnostici(String nomeDs, boolean forceChange)  throws Exception {
+	public DriverMsgDiagnostici getDriverMSGDiagnostici(String nomeDs, boolean forceChange)  throws DriverControlStationException {
 		if(this.driverMSGDiagnostici==null || forceChange){
 			initDriverMSGDiagnostici(nomeDs, forceChange);
 		}
@@ -622,7 +626,7 @@ public class ControlStationCore {
 		return this.utenzePasswordManager_backwardCompatibility;
 	}
 	
-	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) throws Exception { 
+	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) throws DriverControlStationException { 
 		if(passwordVerifier != null) {
 			return this.isLoginApplication() && passwordVerifier.isCheckPasswordExpire();
 		}
@@ -1135,33 +1139,33 @@ public class ControlStationCore {
 		return this.allarmiConfig;
 	}
 	private boolean showAllarmiIdentificativoRuntime = false;
-	public Boolean isShowAllarmiIdentificativoRuntime() throws UtilsException{
+	public Boolean isShowAllarmiIdentificativoRuntime() {
 		return this.showAllarmiIdentificativoRuntime;
 	}
 	private boolean showAllarmiFormNomeSuggeritoCreazione = false;
-	public Boolean isShowAllarmiFormNomeSuggeritoCreazione() throws UtilsException{
+	public Boolean isShowAllarmiFormNomeSuggeritoCreazione() {
 		return this.showAllarmiFormNomeSuggeritoCreazione;
 	}
 	private boolean showAllarmiFormStatoAllarme = false;
-	public Boolean isShowAllarmiFormStatoAllarme() throws UtilsException{
+	public Boolean isShowAllarmiFormStatoAllarme() {
 		return this.showAllarmiFormStatoAllarme;
 	}
 	private boolean showAllarmiFormStatoAllarmeHistory = false;
-	public Boolean isShowAllarmiFormStatoAllarmeHistory() throws UtilsException{
+	public Boolean isShowAllarmiFormStatoAllarmeHistory() {
 		return this.showAllarmiFormStatoAllarmeHistory;
 	}
 	private boolean showAllarmiSearchStatiAllarmi = false;
-	public Boolean isShowAllarmiSearchStatiAllarmi() throws UtilsException{
+	public Boolean isShowAllarmiSearchStatiAllarmi() {
 		return this.showAllarmiSearchStatiAllarmi;
 	}
 	private boolean showAllarmiElenchiStatiAllarmi = false;
-	public Boolean isShowAllarmiElenchiStatiAllarmi() throws UtilsException{
+	public Boolean isShowAllarmiElenchiStatiAllarmi() {
 		return this.showAllarmiElenchiStatiAllarmi;
 	}
 	
 	/** Registrazione Messaggi */
 	private boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled = false;
-	public Boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled() throws UtilsException{
+	public Boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled() {
 		return this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled;
 	}
 	
@@ -1187,6 +1191,16 @@ public class ControlStationCore {
 		return this.verificaCertificati_sceltaClusterId;
 	}
 	
+	/** Cluster */
+	private boolean isClusterAsyncUpdate;
+	private int clusterAsyncUpdateCheckInterval;
+	public boolean isClusterAsyncUpdate() {
+		return this.isClusterAsyncUpdate;
+	}
+	public int getClusterAsyncUpdateCheckInterval() {
+		return this.clusterAsyncUpdateCheckInterval;
+	}
+
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -1563,168 +1577,170 @@ public class ControlStationCore {
 	}
 	
 	/** Opzioni Accesso JMX della PdD */
-	private boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = false;
+	private boolean isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = false;
 	private InvokerNodiRuntime invoker = null;
 	private ConfigurazioneNodiRuntime configurazioneNodiRuntime = null;
-	private List<String> jmxPdD_aliases = new ArrayList<>();
-	private Map<String,List<String>>  jmxPdD_gruppi_aliases = new HashMap<>();
-	private Map<String, String> jmxPdD_descrizioni = new HashMap<>();
-	private CertificateChecker jmxPdD_certificateChecker;
-	private Map<String, String> jmxPdD_configurazioneSistema_type = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsa = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versioneJava = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_vendorJava = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = new HashMap<>();
-	private boolean jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = false;
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getFileTrace = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_tracciamento = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_dumpPD = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_dumpPA = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode = new HashMap<>();	
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerEventi = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus  = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig  = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari  = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari  = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari  = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari  = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache = new HashMap<>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache = new HashMap<>();
-	private Map<String, List<String>> jmxPdD_caches = new HashMap<>();
-	private Map<String, List<String>> jmxPdD_caches_prefill = new HashMap<>();
-	private Map<String, String> jmxPdD_cache_type = new HashMap<>();
-	private Map<String, String> jmxPdD_cache_nomeAttributo_cacheAbilitata = new HashMap<>();
-	private Map<String, String> jmxPdD_cache_nomeMetodo_statoCache = new HashMap<>();
-	private Map<String, String> jmxPdD_cache_nomeMetodo_resetCache = new HashMap<>();
-	private Map<String, String> jmxPdD_cache_nomeMetodo_prefillCache = new HashMap<>();
+	private List<String> jmxPdDAliases = new ArrayList<>();
+	private Map<String,List<String>>  jmxPdDGruppiAliases = new HashMap<>();
+	private Map<String, String> jmxPdDDescrizioni = new HashMap<>();
+	private CertificateChecker jmxPdDCertificateChecker;
+	private Map<String, String> jmxPdDConfigurazioneSistemaType = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsa = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoVersionePdD = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoVersioneJava = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoVendorJava = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoTipoDatabase = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniSSL = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteSSL = new HashMap<>();
+	private boolean jmxPdDConfigurazioneSistemaShowInformazioniCryptographyKeyLength = false;
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInternazionalizzazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteInternazionalizzazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniTimeZone = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteTimeZone = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaNetworking = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteProprietaJavaNetworking = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaAltro = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaSistema = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoMessageFactory = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTracciamento = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoDumpPD = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoDumpPA = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoLog4jDump = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode = new HashMap<>();	
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerEventi = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreById = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyValidazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyNegoziazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreAttributeAuthority = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyValidazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyNegoziazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreAttributeAuthority = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoEnableConnettoreMultiplo = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoDisableConnettoreMultiplo = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiplo = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiplo = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAccordoCooperazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApi = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheSoggetto = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApplicativo = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheRuolo = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheScope = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyValidazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyNegoziazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataAbilitazioniPuntuali = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataDisabilitazioniPuntuali = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaAbilitazioniPuntuali = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaDisabilitazioniPuntuali = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioIntegrationManager = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaDelegata = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaApplicativa = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioIntegrationManager = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioIntegrationManager = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus  = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig  = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetApplicativiPrioritari  = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari  = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoUpdateConnettoriPrioritari  = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari  = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache = new HashMap<>();
+	private Map<String, List<String>> jmxPdDCaches = new HashMap<>();
+	private Map<String, List<String>> jmxPdDCachesPrefill = new HashMap<>();
+	private Map<String, String> jmxPdDCacheType = new HashMap<>();
+	private Map<String, String> jmxPdDCacheNomeAttributoCacheAbilitata = new HashMap<>();
+	private Map<String, String> jmxPdDCacheNomeMetodoStatoCache = new HashMap<>();
+	private Map<String, String> jmxPdDCacheNomeMetodoResetCache = new HashMap<>();
+	private Map<String, String> jmxPdDCacheNomeMetodoPrefillCache = new HashMap<>();
 	
-	public boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus() {
-		return this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus;
+	public boolean isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus() {
+		return this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus;
 	}
-	public List<String> getJmxPdD_aliases() {
-		return this.jmxPdD_aliases;
+	public List<String> getJmxPdDAliases() {
+		return this.jmxPdDAliases;
 	}
-	public Map<String, List<String>> getJmxPdD_gruppi_aliases() {
-		return this.jmxPdD_gruppi_aliases;
+	public Map<String, List<String>> getJmxPdDGruppiAliases() {
+		return this.jmxPdDGruppiAliases;
 	}
-	public String getJmxPdD_descrizione(String alias) throws Exception {
-		String descrizione = this.jmxPdD_descrizioni.get(alias);
+	public String getJmxPdDDescrizione(String alias) throws DriverControlStationException, DriverControlStationNotFound {
+		String descrizione = this.jmxPdDDescrizioni.get(alias);
 		if(descrizione==null || "".equals(descrizione)){
 			if(this.singlePdD){
 				descrizione = alias; // uso lo stesso nome dell'alias
@@ -1742,440 +1758,446 @@ public class ControlStationCore {
 		}
 		return descrizione;
 	}
-	public CertificateChecker getJmxPdD_certificateChecker() {
-		return this.jmxPdD_certificateChecker;
+	public CertificateChecker getJmxPdDCertificateChecker() {
+		return this.jmxPdDCertificateChecker;
 	}
-	public CertificateChecker newJmxPdD_certificateChecker(List<String> alias) throws Exception {
+	public CertificateChecker newJmxPdDCertificateChecker(List<String> alias) throws OpenSPCoop2ConfigurationException {
 		return new CertificateChecker(log, this.invoker, this.configurazioneNodiRuntime, alias, ConsoleProperties.getInstance());
 	}
-	public String getJmxPdD_configurazioneSistema_type(String alias) {
-		return this.jmxPdD_configurazioneSistema_type.get(alias);
+	public String getJmxPdDConfigurazioneSistemaType(String alias) {
+		return this.jmxPdDConfigurazioneSistemaType.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsa(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeRisorsa.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsa(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsa.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoVersionePdD(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoVersionePdD.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoVersioneJava(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoVersioneJava.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_vendorJava(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_vendorJava.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoVendorJava(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoVendorJava.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoTipoDatabase(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoTipoDatabase.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniSSL(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniSSL.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteSSL(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteSSL.get(alias);
 	}
-	public boolean isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength() {
-		return this.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength;
+	public boolean isJmxPdD_configurazioneSistemaShowInformazioniCryptographyKeyLength() {
+		return this.jmxPdDConfigurazioneSistemaShowInformazioniCryptographyKeyLength;
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInternazionalizzazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInternazionalizzazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteInternazionalizzazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteInternazionalizzazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniTimeZone(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniTimeZone.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteTimeZone(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteTimeZone.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaNetworking(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaNetworking.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteProprietaJavaNetworking(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteProprietaJavaNetworking.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaAltro(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaAltro.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaSistema(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaSistema.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoMessageFactory(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoMessageFactory.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getFileTrace.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_tracciamento.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTracciamento(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTracciamento.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPD.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoDumpPD(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoDumpPD.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPA.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoDumpPA(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoDumpPA.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDump(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jDump.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerEventi.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerEventi(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerEventi.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreById(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreById.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyValidazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyValidazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyNegoziazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyNegoziazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreAttributeAuthority(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreAttributeAuthority.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyValidazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyValidazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyNegoziazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyNegoziazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreAttributeAuthority(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreAttributeAuthority.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnablePortaDelegata(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaDelegata.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisablePortaDelegata(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaDelegata.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnablePortaApplicativa(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaApplicativa.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisablePortaApplicativa(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaApplicativa.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnableConnettoreMultiplo(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoEnableConnettoreMultiplo.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisableConnettoreMultiplo(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoDisableConnettoreMultiplo.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiplo(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiplo.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiplo(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiplo.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiploRuntimeRepository(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiploRuntimeRepository.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiploRuntimeRepository(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiploRuntimeRepository.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAccordoCooperazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAccordoCooperazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApi(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApi.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheSoggetto(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheSoggetto.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApplicativo(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApplicativo.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheRuolo(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheRuolo.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheScope(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheScope.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyValidazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyValidazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyNegoziazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyNegoziazione.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataAbilitazioniPuntuali(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataAbilitazioniPuntuali.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataDisabilitazioniPuntuali(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataDisabilitazioniPuntuali.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaAbilitazioniPuntuali(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaAbilitazioniPuntuali.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaDisabilitazioniPuntuali(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaDisabilitazioniPuntuali.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioIntegrationManager(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioIntegrationManager.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaDelegata(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaDelegata.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaDelegata(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaDelegata.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaApplicativa(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaApplicativa.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaApplicativa(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaApplicativa.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioIntegrationManager(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioIntegrationManager.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioIntegrationManager(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioIntegrationManager.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetApplicativiPrioritari(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetApplicativiPrioritari.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoUpdateConnettoriPrioritari(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateConnettoriPrioritari.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration.get(alias);
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste.get(alias);
 	}
-	public List<String> getJmxPdD_caches(String alias) {
-		return this.jmxPdD_caches.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache.get(alias);
 	}
-	public List<String> getJmxPdD_caches_prefill(String alias) {
-		return this.jmxPdD_caches_prefill.get(alias);
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache.get(alias);
 	}
-	public String getJmxPdD_cache_type(String alias) {
-		return this.jmxPdD_cache_type.get(alias);
+	public List<String> getJmxPdDCaches(String alias) {
+		return this.jmxPdDCaches.get(alias);
 	}
-	public String getJmxPdD_cache_nomeAttributo_cacheAbilitata(String alias) {
-		return this.jmxPdD_cache_nomeAttributo_cacheAbilitata.get(alias);
+	public List<String> getJmxPdDCachesPrefill(String alias) {
+		return this.jmxPdDCachesPrefill.get(alias);
 	}
-	public String getJmxPdD_cache_nomeMetodo_statoCache(String alias) {
-		return this.jmxPdD_cache_nomeMetodo_statoCache.get(alias);
+	public String getJmxPdDCacheType(String alias) {
+		return this.jmxPdDCacheType.get(alias);
 	}
-	public String getJmxPdD_cache_nomeMetodo_resetCache(String alias) {
-		return this.jmxPdD_cache_nomeMetodo_resetCache.get(alias);
+	public String getJmxPdDCacheNomeAttributoCacheAbilitata(String alias) {
+		return this.jmxPdDCacheNomeAttributoCacheAbilitata.get(alias);
 	}
-	public String getJmxPdD_cache_nomeMetodo_prefillCache(String alias) {
-		return this.jmxPdD_cache_nomeMetodo_prefillCache.get(alias);
+	public String getJmxPdDCacheNomeMetodoStatoCache(String alias) {
+		return this.jmxPdDCacheNomeMetodoStatoCache.get(alias);
+	}
+	public String getJmxPdDCacheNomeMetodoResetCache(String alias) {
+		return this.jmxPdDCacheNomeMetodoResetCache.get(alias);
+	}
+	public String getJmxPdDCacheNomeMetodoPrefillCache(String alias) {
+		return this.jmxPdDCacheNomeMetodoPrefillCache.get(alias);
 	}
 
 	public InvokerNodiRuntime getInvoker() {
@@ -2393,12 +2415,12 @@ public class ControlStationCore {
 		this.utentiConVisioneGlobale = core.utentiConVisioneGlobale;
 
 		/** Tracciamento */
-		this.tracce_showConfigurazioneCustomAppender = core.tracce_showConfigurazioneCustomAppender;
-		this.tracce_sameDBWebUI = core.tracce_sameDBWebUI;
-		this.tracce_showSorgentiDatiDatabase = core.tracce_showSorgentiDatiDatabase;
-		this.tracce_datasource = core.tracce_datasource;
-		this.tracce_tipoDatabase = core.tracce_tipoDatabase;
-		this.tracce_ctxDatasource = core.tracce_ctxDatasource;
+		this.tracceShowConfigurazioneCustomAppender = core.tracceShowConfigurazioneCustomAppender;
+		this.tracceSameDBWebUI = core.tracceSameDBWebUI;
+		this.tracceShowSorgentiDatiDatabase = core.tracceShowSorgentiDatiDatabase;
+		this.tracceDatasource = core.tracceDatasource;
+		this.tracceTipoDatabase = core.tracceTipoDatabase;
+		this.tracceCtxDatasource = core.tracceCtxDatasource;
 		this.driverTracciamento = core.driverTracciamento;
 
 		/** MsgDiagnostici */
@@ -2582,6 +2604,10 @@ public class ControlStationCore {
 		this.verificaCertificati_warning_expirationDays = core.verificaCertificati_warning_expirationDays;
 		this.verificaCertificati_sceltaClusterId = core.verificaCertificati_sceltaClusterId; 
 		
+		/** Cluster */
+		this.isClusterAsyncUpdate = core.isClusterAsyncUpdate;
+		this.clusterAsyncUpdateCheckInterval = core.clusterAsyncUpdateCheckInterval;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -2679,154 +2705,156 @@ public class ControlStationCore {
 		/** Opzioni Accesso JMX della PdD */
 		this.invoker = core.invoker;
 		this.configurazioneNodiRuntime = core.configurazioneNodiRuntime;
-		this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = core.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus;
-		this.jmxPdD_aliases = core.jmxPdD_aliases;
-		this.jmxPdD_gruppi_aliases = core.jmxPdD_gruppi_aliases;
-		this.jmxPdD_descrizioni = core.jmxPdD_descrizioni;
-		this.jmxPdD_certificateChecker = core.jmxPdD_certificateChecker;
-		this.jmxPdD_configurazioneSistema_type = core.jmxPdD_configurazioneSistema_type;
-		this.jmxPdD_configurazioneSistema_nomeRisorsa = core.jmxPdD_configurazioneSistema_nomeRisorsa;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = core.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati = core.jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava = core.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_vendorJava = core.jmxPdD_configurazioneSistema_nomeMetodo_vendorJava;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase = core.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL;
-		this.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = core.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = core.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = core.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = core.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getFileTrace = core.jmxPdD_configurazioneSistema_nomeMetodo_getFileTrace;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace = core.jmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace;
-		this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = core.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive = core.jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive = core.jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA;
-		this.jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD = core.jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici = core.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j = core.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_tracciamento = core.jmxPdD_configurazioneSistema_nomeAttributo_tracciamento;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPD = core.jmxPdD_configurazioneSistema_nomeAttributo_dumpPD;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPA = core.jmxPdD_configurazioneSistema_nomeAttributo_dumpPA;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode = core.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi = core.jmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerEventi = core.jmxPdD_configurazioneSistema_nomeAttributo_timerEventi;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery = core.jmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread = core.jmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread = core.jmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie = core.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere = core.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali = core.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili = core.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND = core.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread = core.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo = core.jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo = core.jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo = core.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo = core.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository = core.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository = core.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority;
-		this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = core.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi;
-		this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager;
-		this.jmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW = core.jmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW = core.jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW = core.jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW = core.jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = core.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW;
-		this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = core.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus = core.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig = core.jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari = core.jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari = core.jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari = core.jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari = core.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari;
-		this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = core.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration;
-		this.jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste = core.jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache = core.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache;
-		this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache = core.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache;
-		this.jmxPdD_caches = core.jmxPdD_caches;
-		this.jmxPdD_caches_prefill = core.jmxPdD_caches_prefill;
-		this.jmxPdD_cache_type = core.jmxPdD_cache_type;
-		this.jmxPdD_cache_nomeAttributo_cacheAbilitata = core.jmxPdD_cache_nomeAttributo_cacheAbilitata;
-		this.jmxPdD_cache_nomeMetodo_statoCache = core.jmxPdD_cache_nomeMetodo_statoCache;
-		this.jmxPdD_cache_nomeMetodo_resetCache = core.jmxPdD_cache_nomeMetodo_resetCache;
-		this.jmxPdD_cache_nomeMetodo_prefillCache = core.jmxPdD_cache_nomeMetodo_prefillCache;
+		this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = core.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus;
+		this.jmxPdDAliases = core.jmxPdDAliases;
+		this.jmxPdDGruppiAliases = core.jmxPdDGruppiAliases;
+		this.jmxPdDDescrizioni = core.jmxPdDDescrizioni;
+		this.jmxPdDCertificateChecker = core.jmxPdDCertificateChecker;
+		this.jmxPdDConfigurazioneSistemaType = core.jmxPdDConfigurazioneSistemaType;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsa = core.jmxPdDConfigurazioneSistemaNomeRisorsa;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoVersionePdD = core.jmxPdDConfigurazioneSistemaNomeMetodoVersionePdD;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati = core.jmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoVersioneJava = core.jmxPdDConfigurazioneSistemaNomeMetodoVersioneJava;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoVendorJava = core.jmxPdDConfigurazioneSistemaNomeMetodoVendorJava;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoTipoDatabase = core.jmxPdDConfigurazioneSistemaNomeMetodoTipoDatabase;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniSSL = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniSSL;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteSSL = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteSSL;
+		this.jmxPdDConfigurazioneSistemaShowInformazioniCryptographyKeyLength = core.jmxPdDConfigurazioneSistemaShowInformazioniCryptographyKeyLength;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInternazionalizzazione = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInternazionalizzazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteInternazionalizzazione = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteInternazionalizzazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniTimeZone = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniTimeZone;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteTimeZone = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteTimeZone;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaNetworking = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaNetworking;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteProprietaJavaNetworking = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteProprietaJavaNetworking;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaAltro = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaAltro;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaSistema = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaSistema;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoMessageFactory = core.jmxPdDConfigurazioneSistemaNomeMetodoMessageFactory;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione = core.jmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols = core.jmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione = core.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace = core.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace = core.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio = core.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive = core.jmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive = core.jmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD = core.jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici = core.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j = core.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTracciamento = core.jmxPdDConfigurazioneSistemaNomeAttributoTracciamento;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoDumpPD = core.jmxPdDConfigurazioneSistemaNomeAttributoDumpPD;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoDumpPA = core.jmxPdDConfigurazioneSistemaNomeAttributoDumpPA;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica = core.jmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop = core.jmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager = core.jmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento = core.jmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jDump = core.jmxPdDConfigurazioneSistemaNomeAttributoLog4jDump;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode = core.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId = core.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse = core.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError = core.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError = core.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError = core.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails = core.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode = core.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode = core.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerEventi = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerEventi;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById = core.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreById = core.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreById;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyValidazione = core.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyValidazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyNegoziazione = core.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyNegoziazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreAttributeAuthority = core.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreAttributeAuthority;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyValidazione = core.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyValidazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyNegoziazione = core.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyNegoziazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreAttributeAuthority = core.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreAttributeAuthority;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaDelegata = core.jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaDelegata;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaDelegata = core.jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaDelegata;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaApplicativa = core.jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaApplicativa;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaApplicativa = core.jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaApplicativa;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoEnableConnettoreMultiplo = core.jmxPdDConfigurazioneSistemaNomeMetodoEnableConnettoreMultiplo;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoDisableConnettoreMultiplo = core.jmxPdDConfigurazioneSistemaNomeMetodoDisableConnettoreMultiplo;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiplo = core.jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiplo;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiplo = core.jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiplo;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiploRuntimeRepository = core.jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiploRuntimeRepository;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiploRuntimeRepository = core.jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiploRuntimeRepository;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAccordoCooperazione = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAccordoCooperazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApi = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApi;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheSoggetto = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheSoggetto;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApplicativo = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApplicativo;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheRuolo = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheRuolo;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheScope = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheScope;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyValidazione = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyValidazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyNegoziazione = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyNegoziazione;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority = core.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi = core.jmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD = core.jmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata = core.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataAbilitazioniPuntuali = core.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataAbilitazioniPuntuali;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataDisabilitazioniPuntuali = core.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataDisabilitazioniPuntuali;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa = core.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaAbilitazioniPuntuali = core.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaAbilitazioniPuntuali;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaDisabilitazioniPuntuali = core.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaDisabilitazioniPuntuali;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioIntegrationManager = core.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioIntegrationManager;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaDelegata = core.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaDelegata;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaDelegata = core.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaDelegata;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaApplicativa = core.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaApplicativa;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaApplicativa = core.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaApplicativa;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioIntegrationManager = core.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioIntegrationManager;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioIntegrationManager = core.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioIntegrationManager;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW = core.jmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW = core.jmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW = core.jmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW = core.jmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW = core.jmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi = core.jmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus = core.jmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig = core.jmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetApplicativiPrioritari = core.jmxPdDConfigurazioneSistemaNomeMetodoGetApplicativiPrioritari;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari = core.jmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateConnettoriPrioritari = core.jmxPdDConfigurazioneSistemaNomeMetodoUpdateConnettoriPrioritari;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari = core.jmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD = core.jmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration = core.jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration;
+		this.jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste = core.jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache = core.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache = core.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache;
+		this.jmxPdDCaches = core.jmxPdDCaches;
+		this.jmxPdDCachesPrefill = core.jmxPdDCachesPrefill;
+		this.jmxPdDCacheType = core.jmxPdDCacheType;
+		this.jmxPdDCacheNomeAttributoCacheAbilitata = core.jmxPdDCacheNomeAttributoCacheAbilitata;
+		this.jmxPdDCacheNomeMetodoStatoCache = core.jmxPdDCacheNomeMetodoStatoCache;
+		this.jmxPdDCacheNomeMetodoResetCache = core.jmxPdDCacheNomeMetodoResetCache;
+		this.jmxPdDCacheNomeMetodoPrefillCache = core.jmxPdDCacheNomeMetodoPrefillCache;
 	}
 
 
@@ -2838,7 +2866,7 @@ public class ControlStationCore {
 	 * Prova ad ottenere una istanza del DBManager per utilizzare le connessioni
 	 * del pool
 	 * 
-	 * @throws Exception
+	 * @throws DriverControlStationException
 	 */
 	private void initConnections() throws ControlStationCoreException {
 
@@ -2855,18 +2883,18 @@ public class ControlStationCore {
 			this.tipoDB = datasourceProperties.getTipoDatabase();
 			
 			if(this.singlePdD){
-				this.tracce_sameDBWebUI = datasourceProperties.isSinglePdD_TracceStessoDBConsole();
-				if(this.tracce_sameDBWebUI==false){
-					this.tracce_datasource = datasourceProperties.getSinglePdD_TracceDataSource();
-					this.tracce_ctxDatasource = datasourceProperties.getSinglePdD_TracceDataSourceContext();
-					this.tracce_tipoDatabase = datasourceProperties.getSinglePdD_TracceTipoDatabase();
+				this.tracceSameDBWebUI = datasourceProperties.isSinglePddTracceStessoDBConsole();
+				if(!this.tracceSameDBWebUI){
+					this.tracceDatasource = datasourceProperties.getSinglePddTracceDataSource();
+					this.tracceCtxDatasource = datasourceProperties.getSinglePddTracceDataSourceContext();
+					this.tracceTipoDatabase = datasourceProperties.getSinglePddTracceTipoDatabase();
 				}
 				
-				this.msgDiagnostici_sameDBWebUI = datasourceProperties.isSinglePdD_MessaggiDiagnosticiStessoDBConsole();
-				if(this.msgDiagnostici_sameDBWebUI==false){
-					this.msgDiagnostici_datasource = datasourceProperties.getSinglePdD_MessaggiDiagnosticiDataSource();
-					this.msgDiagnostici_ctxDatasource = datasourceProperties.getSinglePdD_MessaggiDiagnosticiDataSourceContext();
-					this.msgDiagnostici_tipoDatabase = datasourceProperties.getSinglePdD_MessaggiDiagnosticiTipoDatabase();
+				this.msgDiagnostici_sameDBWebUI = datasourceProperties.isSinglePddMessaggiDiagnosticiStessoDBConsole();
+				if(!this.msgDiagnostici_sameDBWebUI){
+					this.msgDiagnostici_datasource = datasourceProperties.getSinglePddMessaggiDiagnosticiDataSource();
+					this.msgDiagnostici_ctxDatasource = datasourceProperties.getSinglePddMessaggiDiagnosticiDataSourceContext();
+					this.msgDiagnostici_tipoDatabase = datasourceProperties.getSinglePddMessaggiDiagnosticiTipoDatabase();
 				}
 			}
 			
@@ -2916,19 +2944,19 @@ public class ControlStationCore {
 			
 			// Funzionalità Generiche
 			this.protocolloDefault = consoleProperties.getProtocolloDefault();
-			this.jdbcSerializableAttesaAttiva = consoleProperties.getGestioneSerializableDB_AttesaAttiva();
-			this.jdbcSerializableCheck = consoleProperties.getGestioneSerializableDB_CheckInterval();
+			this.jdbcSerializableAttesaAttiva = consoleProperties.getGestioneSerializableDBattesaAttiva();
+			this.jdbcSerializableCheck = consoleProperties.getGestioneSerializableDBcheckInterval();
 			this.singlePdD = consoleProperties.isSinglePdD();
-			this.enabledToken_generazioneAutomaticaPorteDelegate = consoleProperties.isToken_GenerazioneAutomaticaPorteDelegate_enabled();
-			this.enabledAutenticazione_generazioneAutomaticaPorteDelegate = consoleProperties.isAutenticazione_GenerazioneAutomaticaPorteDelegate_enabled();
-			this.autenticazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutenticazione_GenerazioneAutomaticaPorteDelegate();
-			this.enabledAutorizzazione_generazioneAutomaticaPorteDelegate = consoleProperties.isAutorizzazione_GenerazioneAutomaticaPorteDelegate_enabled();
-			this.autorizzazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteDelegate();		
-			this.enabledToken_generazioneAutomaticaPorteApplicative = consoleProperties.isToken_GenerazioneAutomaticaPorteApplicative_enabled();
-			this.enabledAutenticazione_generazioneAutomaticaPorteApplicative = consoleProperties.isAutenticazione_GenerazioneAutomaticaPorteApplicative_enabled();
-			this.autenticazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutenticazione_GenerazioneAutomaticaPorteApplicative();
-			this.enabledAutorizzazione_generazioneAutomaticaPorteApplicative = consoleProperties.isAutorizzazione_GenerazioneAutomaticaPorteApplicative_enabled();
-			this.autorizzazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteApplicative();
+			this.enabledToken_generazioneAutomaticaPorteDelegate = consoleProperties.isTokenGenerazioneAutomaticaPorteDelegateEnabled();
+			this.enabledAutenticazione_generazioneAutomaticaPorteDelegate = consoleProperties.isAutenticazioneGenerazioneAutomaticaPorteDelegateEnabled();
+			this.autenticazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutenticazioneGenerazioneAutomaticaPorteDelegate();
+			this.enabledAutorizzazione_generazioneAutomaticaPorteDelegate = consoleProperties.isAutorizzazioneGenerazioneAutomaticaPorteDelegateEnabled();
+			this.autorizzazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutorizzazioneGenerazioneAutomaticaPorteDelegate();		
+			this.enabledToken_generazioneAutomaticaPorteApplicative = consoleProperties.isTokenGenerazioneAutomaticaPorteApplicativeEnabled();
+			this.enabledAutenticazione_generazioneAutomaticaPorteApplicative = consoleProperties.isAutenticazioneGenerazioneAutomaticaPorteApplicativeEnabled();
+			this.autenticazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutenticazioneGenerazioneAutomaticaPorteApplicative();
+			this.enabledAutorizzazione_generazioneAutomaticaPorteApplicative = consoleProperties.isAutorizzazioneGenerazioneAutomaticaPorteApplicativeEnabled();
+			this.autorizzazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutorizzazioneGenerazioneAutomaticaPorteApplicative();
 			this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
 			this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
 			this.utenzePasswordConfiguration = consoleProperties.getConsoleUtenzePassword();
@@ -3003,11 +3031,13 @@ public class ControlStationCore {
 				this.showAllarmiSearchStatiAllarmi = consoleProperties.isShowAllarmiSearchStatiAllarmi();
 				this.showAllarmiElenchiStatiAllarmi = consoleProperties.isShowAllarmiElenchiStatiAllarmi();
 			}
-			this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = consoleProperties.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
-			this.isClusterDinamico_enabled = consoleProperties.isClusterDinamico_enabled();
+			this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = consoleProperties.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
+			this.isClusterDinamico_enabled = consoleProperties.isClusterDinamicoEnabled();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
-			this.verificaCertificati_warning_expirationDays = consoleProperties.getVerificaCertificati_warning_expirationDays();
-			this.verificaCertificati_sceltaClusterId = consoleProperties.isVerificaCertificati_sceltaClusterId();
+			this.verificaCertificati_warning_expirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
+			this.verificaCertificati_sceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
+			this.isClusterAsyncUpdate = consoleProperties.isClusterAsyncUpdate();
+			this.clusterAsyncUpdateCheckInterval = consoleProperties.getClusterAsyncUpdateCheckInterval();
 		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
@@ -3040,10 +3070,10 @@ public class ControlStationCore {
 			this.showGestioneSoggettiRouter = consoleProperties.isConsoleGestioneSoggettiRouter();
 			this.showGestioneSoggettiVirtuali = consoleProperties.isConsoleGestioneSoggettiVirtuali();
 			this.showGestioneWorkflowStatoDocumenti = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti();
-			this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_visualizzaStatoLista();
-			this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
-			this.showInterfacceAPI = consoleProperties.isConsoleInterfacceAPI_visualizza();
-			this.showAllegati = consoleProperties.isConsoleAllegati_visualizza();
+			this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista = consoleProperties.isConsoleGestioneWorkflowStatoDocumentiVisualizzaStatoLista();
+			this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale();
+			this.showInterfacceAPI = consoleProperties.isConsoleInterfacceAPIVisualizza();
+			this.showAllegati = consoleProperties.isConsoleAllegatiVisualizza();
 			this.showFlagPrivato = consoleProperties.isMenuVisualizzaFlagPrivato();
 			this.showAllConnettori = consoleProperties.isMenuVisualizzaListaCompletaConnettori();
 			this.showDebugOptionConnettore = consoleProperties.isMenuVisualizzaOpzioneDebugConnettore();
@@ -3059,14 +3089,14 @@ public class ControlStationCore {
 			this.showPulsantiImportExport = consoleProperties.isElenchiMenuVisualizzazionePulsantiImportExportPackage();
 			this.elenchiMenuIdentificativiLunghezzaMassima = consoleProperties.getElenchiMenuIdentificativiLunghezzaMassima();
 			this.enableAutoMappingWsdlIntoAccordo = consoleProperties.isEnableAutoMappingWsdlIntoAccordo();
-			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
+			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes();
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();
 			this.portaCorrelazioneApplicativaMaxLength = consoleProperties.getPortaCorrelazioneApplicativaMaxLength();
 			this.showPortaDelegataLocalForward = consoleProperties.isMenuPortaDelegataLocalForward();
-			this.isProprietaErogazioni_showModalitaStandard = consoleProperties.isProprietaErogazioni_showModalitaStandard();
-			this.isProprietaFruizioni_showModalitaStandard = consoleProperties.isProprietaFruizioni_showModalitaStandard();
+			this.isProprietaErogazioni_showModalitaStandard = consoleProperties.isProprietaErogazioniShowModalitaStandard();
+			this.isProprietaFruizioni_showModalitaStandard = consoleProperties.isProprietaFruizioniShowModalitaStandard();
 			this.isPortTypeObbligatorioImplementazioniSOAP = consoleProperties.isPortTypeObbligatorioImplementazioniSOAP();
-			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
+			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
 			this.isVisualizzazioneConfigurazioneDiagnosticaLog4J = consoleProperties.isVisualizzazioneConfigurazioneDiagnosticaLog4J();
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();
 			this.tokenPolicyForceIdEnabled = StringUtils.isNotEmpty(this.tokenPolicyForceId);
@@ -3084,48 +3114,48 @@ public class ControlStationCore {
 			this.cspHeaderValue = consoleProperties.getCSPHeaderValue();
 			
 			// Gestione govwayConsole centralizzata
-			if(this.singlePdD == false){
-				this.sincronizzazionePddEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazionePdd();
-				this.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd = consoleProperties.getGestioneCentralizzata_PrefissoNomeCodaConfigurazionePdd();
-				this.sincronizzazionePddEngineEnabled_scriptShell_Path = consoleProperties.getGestioneCentralizzata_GestorePddd_ScriptShell_Path();
-				this.sincronizzazionePddEngineEnabled_scriptShell_Args = consoleProperties.getGestioneCentralizzata_GestorePddd_ScriptShell_Args();
-				this.sincronizzazioneRegistroEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazioneRegistro();
-				this.sincronizzazioneGEEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazioneGestoreEventi();
+			if(!this.singlePdD){
+				this.sincronizzazionePddEngineEnabled = consoleProperties.isGestioneCentralizzataSincronizzazionePdd();
+				this.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd = consoleProperties.getGestioneCentralizzataPrefissoNomeCodaConfigurazionePdd();
+				this.sincronizzazionePddEngineEnabled_scriptShell_Path = consoleProperties.getGestioneCentralizzataGestorePddScriptShellPath();
+				this.sincronizzazionePddEngineEnabled_scriptShell_Args = consoleProperties.getGestioneCentralizzataGestorePddScriptShellArgs();
+				this.sincronizzazioneRegistroEngineEnabled = consoleProperties.isGestioneCentralizzataSincronizzazioneRegistro();
+				this.sincronizzazioneGEEngineEnabled = consoleProperties.isGestioneCentralizzataSincronizzazioneGestoreEventi();
 				
-				this.smistatoreQueue = consoleProperties.getGestioneCentralizzata_NomeCodaSmistatore();
+				this.smistatoreQueue = consoleProperties.getGestioneCentralizzataNomeCodaSmistatore();
 				
-				this.sincronizzazioneGE_TipoSoggetto = consoleProperties.getGestioneCentralizzata_GestoreEventiTipoSoggetto();
-				this.sincronizzazioneGE_NomeSoggetto = consoleProperties.getGestioneCentralizzata_GestoreEventiNomeSoggetto();
-				this.sincronizzazioneGE_NomeServizioApplicativo = consoleProperties.getGestioneCentralizzata_GestoreEventiNomeServizioApplicativo();
+				this.sincronizzazioneGE_TipoSoggetto = consoleProperties.getGestioneCentralizzataGestoreEventiTipoSoggetto();
+				this.sincronizzazioneGE_NomeSoggetto = consoleProperties.getGestioneCentralizzataGestoreEventiNomeSoggetto();
+				this.sincronizzazioneGE_NomeServizioApplicativo = consoleProperties.getGestioneCentralizzataGestoreEventiNomeServizioApplicativo();
 				
-				this.suffissoConnettoreAutomatico = consoleProperties.getGestioneCentralizzata_URLContextCreazioneAutomaticaSoggetto();
+				this.suffissoConnettoreAutomatico = consoleProperties.getGestioneCentralizzataURLContextCreazioneAutomaticaSoggetto();
 				
-				this.indirizzoPubblico = consoleProperties.getGestioneCentralizzata_PddIndirizzoIpPubblico();
-				this.portaPubblica = consoleProperties.getGestioneCentralizzata_PddPortaPubblica();
-				this.indirizzoGestione = consoleProperties.getGestioneCentralizzata_PddIndirizzoIpGestione();
-				this.portaGestione = consoleProperties.getGestioneCentralizzata_PddPortaGestione();
+				this.indirizzoPubblico = consoleProperties.getGestioneCentralizzataPddIndirizzoIpPubblico();
+				this.portaPubblica = consoleProperties.getGestioneCentralizzataPddPortaPubblica();
+				this.indirizzoGestione = consoleProperties.getGestioneCentralizzataPddIndirizzoIpGestione();
+				this.portaGestione = consoleProperties.getGestioneCentralizzataPddPortaGestione();
 			}
 			
 			// Gestione govwayConsole locale
 			if(this.singlePdD){
-				this.gestionePddAbilitata = consoleProperties.isSinglePdD_GestionePdd();
+				this.gestionePddAbilitata = consoleProperties.isSinglePddGestionePdd();
 				
-				this.registroServiziLocale = consoleProperties.isSinglePdD_RegistroServiziLocale();
+				this.registroServiziLocale = consoleProperties.isSinglePddRegistroServiziLocale();
 				
-				this.tracce_showConfigurazioneCustomAppender = consoleProperties.isSinglePdD_TracceConfigurazioneCustomAppender();
-				this.tracce_showSorgentiDatiDatabase = consoleProperties.isSinglePdD_TracceGestioneSorgentiDatiPrelevataDaDatabase();
+				this.tracceShowConfigurazioneCustomAppender = consoleProperties.isSinglePddTracceConfigurazioneCustomAppender();
+				this.tracceShowSorgentiDatiDatabase = consoleProperties.isSinglePddTracceGestioneSorgentiDatiPrelevataDaDatabase();
 				
-				this.msgDiagnostici_showConfigurazioneCustomAppender = consoleProperties.isSinglePdD_MessaggiDiagnosticiConfigurazioneCustomAppender();
-				this.msgDiagnostici_showSorgentiDatiDatabase = consoleProperties.isSinglePdD_MessaggiDiagnosticiGestioneSorgentiDatiPrelevataDaDatabase();
+				this.msgDiagnostici_showConfigurazioneCustomAppender = consoleProperties.isSinglePddMessaggiDiagnosticiConfigurazioneCustomAppender();
+				this.msgDiagnostici_showSorgentiDatiDatabase = consoleProperties.isSinglePddMessaggiDiagnosticiGestioneSorgentiDatiPrelevataDaDatabase();
 				
-				this.dump_showConfigurazioneCustomAppender = consoleProperties.isSinglePdD_DumpConfigurazioneCustomAppender();
-				this.dump_showConfigurazioneDumpRealtime = consoleProperties.isSinglePdD_DumpConfigurazioneRealtime();
+				this.dump_showConfigurazioneCustomAppender = consoleProperties.isSinglePddDumpConfigurazioneCustomAppender();
+				this.dump_showConfigurazioneDumpRealtime = consoleProperties.isSinglePddDumpConfigurazioneRealtime();
 			}
 			
 			// Opzioni di importazione/esportazione Archivi
-			this.importArchivi_tipoPdD = consoleProperties.getImportArchive_tipoPdD();
-			this.exportArchive_configurazione_soloDumpCompleto = consoleProperties.isExportArchive_configurazione_soloDumpCompleto();
-			this.exportArchive_servizi_standard = consoleProperties.isExportArchive_servizi_standard();
+			this.importArchivi_tipoPdD = consoleProperties.getImportArchiveTipoPdD();
+			this.exportArchive_configurazione_soloDumpCompleto = consoleProperties.isExportArchiveConfigurazioneSoloDumpCompleto();
+			this.exportArchive_servizi_standard = consoleProperties.isExportArchiveServiziStandard();
 			
 			// Multitenant
 			// Inizializzato dopo aver attivato il Database, per leggere la configurazione su DB
@@ -3135,8 +3165,8 @@ public class ControlStationCore {
 			this.utentiConVisioneGlobale.addAll(consoleProperties.getUtentiConVisibilitaGlobale());
 
 			/// Opzioni per Plugins
-			this.pluginMenu = this.newIExtendedMenu(consoleProperties.getPlugins_Menu());
-			this.pluginConfigurazione = this.newIExtendedFormServlet(consoleProperties.getPlugins_Configurazione());
+			this.pluginMenu = this.newIExtendedMenu(consoleProperties.getPluginsMenu());
+			this.pluginConfigurazione = this.newIExtendedFormServlet(consoleProperties.getPluginsConfigurazione());
 			if(this.pluginConfigurazione!=null){
 				for (IExtendedFormServlet formPluginConfigurazione : this.pluginConfigurazione) {
 					IExtendedListServlet listPluginConfigurazione = formPluginConfigurazione.getExtendedInternalList();
@@ -3145,9 +3175,9 @@ public class ControlStationCore {
 					}
 				}
 			}
-			this.pluginConnettore = this.newIExtendedConnettore(consoleProperties.getPlugins_Connettore());
-			this.pluginPortaDelegata = this.newIExtendedListServlet(consoleProperties.getPlugins_PortaDelegata());
-			this.pluginPortaApplicativa = this.newIExtendedListServlet(consoleProperties.getPlugins_PortaApplicativa());
+			this.pluginConnettore = this.newIExtendedConnettore(consoleProperties.getPluginsConnettore());
+			this.pluginPortaDelegata = this.newIExtendedListServlet(consoleProperties.getPluginsPortaDelegata());
+			this.pluginPortaApplicativa = this.newIExtendedListServlet(consoleProperties.getPluginsPortaApplicativa());
 
 		} catch (java.lang.Exception e) {
 			ControlStationCore.logError("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
@@ -3186,18 +3216,18 @@ public class ControlStationCore {
 			this.configurazioneNodiRuntime = consoleProperties.getConfigurazioneNodiRuntime();
 			this.invoker = new InvokerNodiRuntime(log, this.configurazioneNodiRuntime);
 			
-			this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = consoleProperties.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus();
-			this.jmxPdD_aliases = consoleProperties.getJmxPdD_aliases();
+			this.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus = consoleProperties.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus();
+			this.jmxPdDAliases = consoleProperties.getJmxPdDAliases();
 			if(this.singlePdD==false){
 				// se esistono degli alias allora assegno poi come alias i nomi delle pdd operative
-				if(this.jmxPdD_aliases!=null && this.jmxPdD_aliases.size()>0){
-					this.jmxPdD_aliases = new ArrayList<>();
+				if(this.jmxPdDAliases!=null && this.jmxPdDAliases.size()>0){
+					this.jmxPdDAliases = new ArrayList<>();
 					PddCore pddCore = new PddCore(this);
 					try{
 						List<PdDControlStation> pddList = pddCore.pddList(null, new ConsoleSearch(true));
 						for (PdDControlStation pddControlStation : pddList) {
 							if(PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
-								this.jmxPdD_aliases.add(pddControlStation.getNome());
+								this.jmxPdDAliases.add(pddControlStation.getNome());
 							}
 						}
 					}catch(Exception e){
@@ -3206,16 +3236,16 @@ public class ControlStationCore {
 				}
 			}
 			
-			this.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = consoleProperties.isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength();
+			this.jmxPdDConfigurazioneSistemaShowInformazioniCryptographyKeyLength = consoleProperties.isJmxPdDConfigurazioneSistemaShowInformazioniCryptographyKeyLength();
 			
-			if(this.jmxPdD_aliases!=null){
+			if(this.jmxPdDAliases!=null){
 				
-				this.jmxPdD_certificateChecker = new CertificateChecker(log, this.invoker, this.configurazioneNodiRuntime, this.jmxPdD_aliases, consoleProperties);
+				this.jmxPdDCertificateChecker = new CertificateChecker(log, this.invoker, this.configurazioneNodiRuntime, this.jmxPdDAliases, consoleProperties);
 								
-				for (String alias : this.jmxPdD_aliases) {
-					String descrizione = consoleProperties.getJmxPdD_descrizione(alias);
+				for (String alias : this.jmxPdDAliases) {
+					String descrizione = consoleProperties.getJmxPdDDescrizione(alias);
 					if(descrizione!=null)
-						this.jmxPdD_descrizioni.put(alias,descrizione);
+						this.jmxPdDDescrizioni.put(alias,descrizione);
 					
 					if(this.singlePdD==false){
 						String url = this.configurazioneNodiRuntime.getResourceUrl(alias);
@@ -3231,154 +3261,156 @@ public class ControlStationCore {
 						this.configurazioneNodiRuntime.addForceResourceUrl(alias, url);
 					}
 					
-					this.jmxPdD_configurazioneSistema_type.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_type(alias));
-					this.jmxPdD_configurazioneSistema_nomeRisorsa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsa(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_vendorJava.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_vendorJava(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getFileTrace.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace(alias));
-					this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
-					this.jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_tracciamento.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPA.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jDiagnostica(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jOpenspcoop(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jIntegrationManager(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jTracciamento(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jDump(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerEventi.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias));	
-					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority(alias));
-					this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(alias));
-					this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(alias));
-					this.jmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias));
-					this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaGestioneConsegnaApplicativi(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(alias));
-					this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(alias));
-					this.jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache(alias));
-					this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache(alias));
-					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));
-					this.jmxPdD_caches_prefill.put(alias, consoleProperties.getJmxPdD_caches_prefill(alias));
-					this.jmxPdD_cache_type.put(alias, consoleProperties.getJmxPdD_cache_type(alias));
-					this.jmxPdD_cache_nomeAttributo_cacheAbilitata.put(alias, consoleProperties.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
-					this.jmxPdD_cache_nomeMetodo_statoCache.put(alias, consoleProperties.getJmxPdD_cache_nomeMetodo_statoCache(alias));
-					this.jmxPdD_cache_nomeMetodo_resetCache.put(alias, consoleProperties.getJmxPdD_cache_nomeMetodo_resetCache(alias));
-					if(this.jmxPdD_caches_prefill.get(alias).size()>0){
-						this.jmxPdD_cache_nomeMetodo_prefillCache.put(alias, consoleProperties.getJmxPdD_cache_nomeMetodo_prefillCache(alias));
+					this.jmxPdDConfigurazioneSistemaType.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaType(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsa.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoVersionePdD.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoVersionePdD(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoVersioneJava.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoVersioneJava(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoVendorJava.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoVendorJava(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoTipoDatabase.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoTipoDatabase(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniSSL.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniSSL(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteSSL.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteSSL(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInternazionalizzazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInternazionalizzazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteInternazionalizzazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteInternazionalizzazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniTimeZone.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniTimeZone(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteTimeZone.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteTimeZone(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaNetworking.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaNetworking(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteProprietaJavaNetworking.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteProprietaJavaNetworking(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaAltro.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaAltro(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaSistema.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaSistema(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoMessageFactory.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoMessageFactory(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTracciamento.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTracciamento(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoDumpPD.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoDumpPD(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoDumpPA.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoDumpPA(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoLog4jDump.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDump(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerEventi.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerEventi(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread(alias));	
+					this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreById.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreById(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyValidazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyValidazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyNegoziazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyNegoziazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreAttributeAuthority.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreAttributeAuthority(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyValidazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyValidazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyNegoziazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyNegoziazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreAttributeAuthority.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreAttributeAuthority(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaDelegata.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoEnablePortaDelegata(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaDelegata.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoDisablePortaDelegata(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoEnablePortaApplicativa.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoEnablePortaApplicativa(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoDisablePortaApplicativa.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoDisablePortaApplicativa(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoEnableConnettoreMultiplo.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoEnableConnettoreMultiplo(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoDisableConnettoreMultiplo.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoDisableConnettoreMultiplo(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiplo.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiplo(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiplo.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiplo(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiploRuntimeRepository.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiploRuntimeRepository(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiploRuntimeRepository.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiploRuntimeRepository(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAccordoCooperazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAccordoCooperazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApi.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApi(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheSoggetto.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheSoggetto(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApplicativo.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApplicativo(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheRuolo.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheRuolo(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheScope.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheScope(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyValidazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyValidazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyNegoziazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyNegoziazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataAbilitazioniPuntuali.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataAbilitazioniPuntuali(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataDisabilitazioniPuntuali.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataDisabilitazioniPuntuali(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaAbilitazioniPuntuali.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaAbilitazioniPuntuali(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaDisabilitazioniPuntuali.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaDisabilitazioniPuntuali(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoStatoServizioIntegrationManager.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioIntegrationManager(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaDelegata.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaDelegata(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaDelegata.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaDelegata(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaApplicativa(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaApplicativa(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioIntegrationManager(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioIntegrationManager(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaGestioneConsegnaApplicativi(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetApplicativiPrioritari.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetApplicativiPrioritari(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoUpdateConnettoriPrioritari.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoUpdateConnettoriPrioritari(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration(alias));
+					this.jmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache.put(alias, consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache(alias));
+					this.jmxPdDCaches.put(alias, consoleProperties.getJmxPdDCaches(alias));
+					this.jmxPdDCachesPrefill.put(alias, consoleProperties.getJmxPdDCachesPrefill(alias));
+					this.jmxPdDCacheType.put(alias, consoleProperties.getJmxPdDCacheType(alias));
+					this.jmxPdDCacheNomeAttributoCacheAbilitata.put(alias, consoleProperties.getJmxPdDCacheNomeAttributoCacheAbilitata(alias));
+					this.jmxPdDCacheNomeMetodoStatoCache.put(alias, consoleProperties.getJmxPdDCacheNomeMetodoStatoCache(alias));
+					this.jmxPdDCacheNomeMetodoResetCache.put(alias, consoleProperties.getJmxPdDCacheNomeMetodoResetCache(alias));
+					if(!this.jmxPdDCachesPrefill.get(alias).isEmpty()){
+						this.jmxPdDCacheNomeMetodoPrefillCache.put(alias, consoleProperties.getJmxPdDCacheNomeMetodoPrefillCache(alias));
 					}
 				}
 			}
 			
-			this.jmxPdD_gruppi_aliases = consoleProperties.getJmxPdD_gruppi_aliases();
+			this.jmxPdDGruppiAliases = consoleProperties.getJmxPdDGruppiAliases();
 			
 		} catch (java.lang.Exception e) {
 			ControlStationCore.logError("[ControlStationCore::initCoreJmxResources] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
@@ -3390,17 +3422,17 @@ public class ControlStationCore {
 	/**
 	 * Inizializza il driver di tracciamento.
 	 * 
-	 * @throws Exception
+	 * @throws DriverControlStationException
 	 */
-	private synchronized void initDriverTracciamento(String nomeDs, boolean forceChange) throws Exception {
+	private synchronized void initDriverTracciamento(String nomeDs, boolean forceChange) throws DriverControlStationException {
 		if (this.driverTracciamento == null || forceChange) {
 			try {
 				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
-					if(this.tracce_sameDBWebUI){
+					if(this.tracceSameDBWebUI){
 						this.driverTracciamento = new DriverTracciamento(ControlStationCore.dbM.getDataSourceName(),this.tipoDB,ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log);
 					}
 					else{
-						this.driverTracciamento = new DriverTracciamento(this.tracce_datasource, this.tracce_tipoDatabase, this.tracce_ctxDatasource,ControlStationCore.log);
+						this.driverTracciamento = new DriverTracciamento(this.tracceDatasource, this.tracceTipoDatabase, this.tracceCtxDatasource,ControlStationCore.log);
 					}
 				} else {
 
@@ -3436,7 +3468,7 @@ public class ControlStationCore {
 				}
 			} catch (java.lang.Exception e) {
 				ControlStationCore.logError("[pdd] Inizializzazione DriverTracciamento non riuscita : " + e.getMessage(),e);
-				throw new Exception("[pdd] Inizializzazione DriverTracciamento non riuscita : " + e.getMessage(),e);
+				throw new DriverControlStationException("[pdd] Inizializzazione DriverTracciamento non riuscita : " + e.getMessage(),e);
 			}
 
 		}
@@ -3446,9 +3478,9 @@ public class ControlStationCore {
 	/**
 	 * Inizializza il driver della diagnostica.
 	 * 
-	 * @throws Exception
+	 * @throws DriverControlStationException
 	 */
-	private synchronized void initDriverMSGDiagnostici(String nomeDs, boolean forceChange) throws Exception {
+	private synchronized void initDriverMSGDiagnostici(String nomeDs, boolean forceChange) throws DriverControlStationException {
 		if (this.driverMSGDiagnostici == null || forceChange) {
 			try {
 				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
@@ -3472,7 +3504,7 @@ public class ControlStationCore {
 					}
 					
 					if(od==null) {
-						throw new Exception("Sorgente Dati non trovata");
+						throw new DriverControlStationException("Sorgente Dati non trovata");
 					}
 					
 					//proprieta
@@ -3492,7 +3524,7 @@ public class ControlStationCore {
 				}
 			} catch (java.lang.Exception e) {
 				ControlStationCore.logError("[pdd] Inizializzazione DriverMSGDiagnostici non riuscita : " + e.getMessage(),e);
-				throw new Exception("[pdd] Inizializzazione DriverMSGDiagnostici non riuscita : " + e.getMessage(),e);
+				throw new DriverControlStationException("[pdd] Inizializzazione DriverMSGDiagnostici non riuscita : " + e.getMessage(),e);
 			}
 
 		}
@@ -5718,7 +5750,7 @@ public class ControlStationCore {
 			ControlStationCore.semaphoreAuditLock.release("clearAuditManager");
 		}
 	}
-	private static synchronized void initializeAuditManager(String tipoDatabase) throws Exception{
+	private static synchronized void initializeAuditManager(String tipoDatabase) throws DriverControlStationException{
 		ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("initializeAuditManager");
 		try {
 			if(ControlStationCore.auditManager==null){
@@ -5736,7 +5768,7 @@ public class ControlStationCore {
 					ControlStationCore.checkAuditDBAppender(configurazioneAuditing, tipoDatabase);
 
 				}catch(Exception e){
-					throw new Exception("Inizializzazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
+					throw new DriverControlStationException("Inizializzazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
 				}finally{
 					try{
 						if(con!=null)
@@ -5749,16 +5781,16 @@ public class ControlStationCore {
 				try{
 					ControlStationCore.auditManager.initializeAudit(configurazioneAuditing, IDBuilder.getIDBuilder());
 				}catch(Exception e){
-					throw new Exception("Inizializzazione auditManager non riuscita: "+e.getMessage(),e);
+					throw new DriverControlStationException("Inizializzazione auditManager non riuscita: "+e.getMessage(),e);
 				}
 			}
 		}finally {
 			ControlStationCore.semaphoreAuditLock.release("initializeAuditManager");
 		}
 	}
-	public static synchronized void updateAuditManagerConfiguration(String tipoDatabase) throws Exception{
+	public static synchronized void updateAuditManagerConfiguration(String tipoDatabase) throws DriverControlStationException{
 		if(ControlStationCore.auditManager==null){
-			throw new Exception("AuditManager non inizializzato");
+			throw new DriverControlStationException("AuditManager non inizializzato");
 		}
 		ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("updateAuditManagerConfiguration");
 		try {
@@ -5767,14 +5799,14 @@ public class ControlStationCore {
 			try{
 				con = ControlStationCore.dbM.getConnection();
 				if (con == null)
-					throw new Exception("Connessione non disponibile");
+					throw new DriverControlStationException("Connessione non disponibile");
 
 				DriverAudit driverAudit = new DriverAudit(con,tipoDatabase);
 				configurazioneAuditing = driverAudit.getConfigurazione();
 				ControlStationCore.checkAuditDBAppender(configurazioneAuditing, tipoDatabase);
 
 			}catch(Exception e){
-				throw new Exception("Aggiornamento configurazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
+				throw new DriverControlStationException("Aggiornamento configurazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
 			}finally{
 				try{
 					if(con!=null)
@@ -5787,7 +5819,7 @@ public class ControlStationCore {
 			try{
 				ControlStationCore.auditManager.updateConfigurazioneAuditing(configurazioneAuditing);
 			}catch(Exception e){
-				throw new Exception("Aggiornamento configurazione auditManager non riuscita: "+e.getMessage(),e);
+				throw new DriverControlStationException("Aggiornamento configurazione auditManager non riuscita: "+e.getMessage(),e);
 			}
 		}finally {
 			ControlStationCore.semaphoreAuditLock.release("updateAuditManagerConfiguration");
@@ -5830,7 +5862,7 @@ public class ControlStationCore {
 			}
 		}
 	}	
-	public static AuditAppender getAuditManagerInstance(String tipoDatabase)throws Exception{
+	public static AuditAppender getAuditManagerInstance(String tipoDatabase)throws DriverControlStationException{
 		if(ControlStationCore.auditManager==null){
 			ControlStationCore.initializeAuditManager(tipoDatabase);
 		}
@@ -6111,7 +6143,7 @@ public class ControlStationCore {
 		}
 	}
 
-	private String generaMsgAuditing(String user,Stato statoOperazione,Tipologia tipoOperazione,Object oggetto) throws Exception{
+	private String generaMsgAuditing(String user,Stato statoOperazione,Tipologia tipoOperazione,Object oggetto) throws DriverRegistroServiziException {
 		String msg = user+":"+statoOperazione.toString()+":"+tipoOperazione.toString();
 
 		// ControlStation
@@ -7716,7 +7748,7 @@ public class ControlStationCore {
 	
 	public List<ServiceBinding> getServiceBindingList(IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException{
 		String nomeMetodo = "getServiceBindingList";
-		List<ServiceBinding> lst = new ArrayList<ServiceBinding>();
+		List<ServiceBinding> lst = new ArrayList<>();
 		try {
 			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
 			if(defaultServiceBindingConfiguration.isServiceBindingSupported(ServiceBinding.REST))
@@ -7732,7 +7764,7 @@ public class ControlStationCore {
 	
 	public List<ServiceBinding> getServiceBindingListProtocollo(String protocollo) throws DriverConfigurazioneException{
 		String nomeMetodo = "getServiceBindingListProtocollo";
-		List<ServiceBinding> lst = new ArrayList<ServiceBinding>();
+		List<ServiceBinding> lst = new ArrayList<>();
 		try {
 			IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocollo); 
 			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
@@ -7749,7 +7781,7 @@ public class ControlStationCore {
 	
 	public List<MessageType> getMessageTypeList(IProtocolFactory<?> protocolFactory,ServiceBinding serviceBinding) throws DriverConfigurazioneException{
 		String nomeMetodo = "getMessageTypeList";
-		List<MessageType> messageTypeSupported = new ArrayList<MessageType>();
+		List<MessageType> messageTypeSupported = new ArrayList<>();
 		try {
 			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
 			messageTypeSupported = defaultServiceBindingConfiguration.getMessageTypeSupported(serviceBinding);
@@ -7763,7 +7795,7 @@ public class ControlStationCore {
 	
 	public List<InterfaceType> getInterfaceTypeList(IProtocolFactory<?> protocolFactory,ServiceBinding serviceBinding) throws DriverConfigurazioneException{
 		String nomeMetodo = "getInterfaceTypeList";
-		List<InterfaceType> interfacceSupportate = new ArrayList<InterfaceType>();
+		List<InterfaceType> interfacceSupportate = new ArrayList<>();
 		try {
 			interfacceSupportate = protocolFactory.createProtocolConfiguration().getInterfacceSupportate(serviceBinding);
 		} catch (Exception e) {
@@ -7775,7 +7807,7 @@ public class ControlStationCore {
 	
 	public List<InterfaceType> getInterfaceTypeList(String protocollo, ServiceBinding serviceBinding) throws DriverConfigurazioneException{
 		String nomeMetodo = "getInterfaceTypeList";
-		List<InterfaceType> interfacceSupportate = new ArrayList<InterfaceType>();
+		List<InterfaceType> interfacceSupportate = new ArrayList<>();
 		try {
 			interfacceSupportate = this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getInterfacceSupportate(serviceBinding);
 		} catch (Exception e) {
@@ -7814,10 +7846,9 @@ public class ControlStationCore {
 	}
 	
 	public Map<String,String> getAzioniConLabel(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
-			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate) throws Exception{
-		Map<String,String> mapAzioni = getMapAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, throwException, filtraAzioniUtilizzate,
+			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate) throws DriverConfigurazioneException {
+		return getMapAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, throwException, filtraAzioniUtilizzate,
 				true, true);
-		return mapAzioni;
 	}
 	
 	public ServiceBinding toMessageServiceBinding(org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
@@ -8092,7 +8123,7 @@ public class ControlStationCore {
 		}
 	}
 	
-	public void updatePluginClassLoader() throws Exception {
+	public void updatePluginClassLoader() throws Exception  {
 		// Aggiorno classLoader interno
 		PluginLoader pluginLoader = ((PluginLoader)CorePluginLoader.getInstance());
 		if(pluginLoader.isPluginManagerEnabled()) {
@@ -8203,15 +8234,17 @@ public class ControlStationCore {
 	
 	public void invokeJmxMethodAllNodesAndSetResult(PageData pd, String risorsa, String metodo, 
 			String msgSuccesso, String msgFallimento,
-			Object ... parametri) throws Exception {
+			Object ... parametri) throws DriverControlStationException, DriverControlStationNotFound {
 		boolean rilevatoErrore = false;
-		String messagePerOperazioneEffettuata = "";
+		StringBuilder sbMessagePerOperazioneEffettuata = new StringBuilder();
+		String msgSuccessoAlternativo = null;
 		int index = 0;
-		List<String> aliases = this.getJmxPdD_aliases();
+		List<String> aliases = this.getJmxPdDAliases();
 		for (String alias : aliases) {
 			
 			StringBuilder bfExternal = new StringBuilder();
-			String descrizione = this.getJmxPdD_descrizione(alias);
+			String descrizione = this.getJmxPdDDescrizione(alias);
+			
 			if(aliases.size()>1) {
 				if(index>0) {
 					bfExternal.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
@@ -8219,17 +8252,33 @@ public class ControlStationCore {
 				bfExternal.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER).append(" ").append(descrizione).append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 			}						
 			try{
-				String stato = this.getInvoker().invokeJMXMethod(alias, this.getJmxPdD_configurazioneSistema_type(alias),
+				String stato = this.getInvoker().invokeJMXMethod(alias, this.getJmxPdDConfigurazioneSistemaType(alias),
 						risorsa, 
 						metodo, 
 						parametri);
 				if(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)){
 					bfExternal.append(msgSuccesso);
 				}
+				else if(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX)){
+					StringBuilder bfStateSuccess = new StringBuilder();
+					
+					String suffix = stato.length()>JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX.length() ? stato.substring(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX.length()) : "";
+					bfStateSuccess.append(msgSuccesso);
+					if(suffix!=null && StringUtils.isNotEmpty(suffix)) {
+						bfStateSuccess.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						bfStateSuccess.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						bfStateSuccess.append(suffix);
+					}
+					if(msgSuccessoAlternativo==null) {
+						msgSuccessoAlternativo = bfStateSuccess.toString(); // dovrebbe essere uguale per tutti i nodi
+					}
+					
+					bfExternal.append(bfStateSuccess.toString());
+				}
 				else{
 					rilevatoErrore = true;
 					bfExternal.append(msgFallimento);
-					if(stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
+					if(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
 						bfExternal.append(stato.substring(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA.length()));
 					}
 					else {
@@ -8249,20 +8298,20 @@ public class ControlStationCore {
 				}
 			}
 
-			if(messagePerOperazioneEffettuata.length()>0){
-				messagePerOperazioneEffettuata+= org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+			if(sbMessagePerOperazioneEffettuata.length()>0){
+				sbMessagePerOperazioneEffettuata.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 			}
-			messagePerOperazioneEffettuata+= bfExternal.toString();
+			sbMessagePerOperazioneEffettuata.append(bfExternal.toString());
 			
 			index++;
 		}
-		if(messagePerOperazioneEffettuata!=null){
+		if(sbMessagePerOperazioneEffettuata.length()>0){
 			if(rilevatoErrore) {
-				pd.setMessage(messagePerOperazioneEffettuata);
+				pd.setMessage(sbMessagePerOperazioneEffettuata.toString());
 			}else { 
-				//pd.setMessage(messagePerOperazioneEffettuata,Costanti.MESSAGE_TYPE_INFO);
+				/**pd.setMessage(sbMessagePerOperazioneEffettuata.toString(),Costanti.MESSAGE_TYPE_INFO);*/
 				// non riporto elenco dei nodi ma solamente che l'operazione è andata a buon fine
-				pd.setMessage(msgSuccesso,Costanti.MESSAGE_TYPE_INFO);
+				pd.setMessage(msgSuccessoAlternativo!=null ? msgSuccessoAlternativo : msgSuccesso,Costanti.MESSAGE_TYPE_INFO);
 			}
 		}
 	}
@@ -8316,7 +8365,7 @@ public class ControlStationCore {
 		ConfigUtils.addFromSortedListMap(proprieta, map);
 	}
 	
-	public ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap) throws Exception{
+	public ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap) throws ValidationException, CoreException, ProviderException {
 		ExternalResources externalResources = new ExternalResources();
 		externalResources.setLog(ControlStationCore.getLog());
 		externalResources.setTipoDB(this.tipoDB);

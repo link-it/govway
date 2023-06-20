@@ -78,6 +78,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
@@ -290,12 +291,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		try {
 
-			long idAccordoLong = Long.valueOf(strutsBean.id);
+			long idAccordoLong = Long.parseLong(strutsBean.id);
 
 			as = apcCore.getAccordoServizioFull(idAccordoLong);
 			
 			if(as==null) {
-				throw new Exception("AccordoServizioParteComune con id '"+idAccordoLong+"' non trovato");
+				throw new DriverControlStationException("AccordoServizioParteComune con id '"+idAccordoLong+"' non trovato");
 			}
 			
 			idAccordoOLD = idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());

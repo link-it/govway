@@ -11,11 +11,13 @@
 -- DROP INDEX index_config_url_regole_1;
 -- DROP INDEX REMOTE_STORE_CREATE;
 -- DROP INDEX REMOTE_STORE_UPDATE;
+-- DROP INDEX INDEX_NODI_OP;
 -- DROP INDEX index_registro_plug_jar_1;
 -- DROP INDEX index_generic_property_1;
 -- DROP INDEX index_dump_config_1;
 DROP TABLE remote_store_key;
 DROP TABLE remote_store;
+DROP TABLE nodi_runtime_operations;
 DROP TABLE nodi_runtime;
 DROP TABLE config_handlers;
 DROP TABLE registro_plug_jar;

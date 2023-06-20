@@ -919,20 +919,26 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 	}
 	
 	private void resetConnettoriPrioritari(String coda, PorteApplicativeCore porteApplicativeCore) {
-		List<String> aliasJmx = porteApplicativeCore.getJmxPdD_aliases();
+		List<String> aliasJmx = porteApplicativeCore.getJmxPdDAliases();
 		if(aliasJmx!=null && !aliasJmx.isEmpty()) {
 			for (String alias : aliasJmx) {
-				String metodo = porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari(alias);
+				String metodo = porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeMetodoUpdateConnettoriPrioritari(alias);
 				try{
 					String stato = porteApplicativeCore.getInvoker().invokeJMXMethod(alias, 
-							porteApplicativeCore.getJmxPdD_configurazioneSistema_type(alias),
-							porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias), 
+							porteApplicativeCore.getJmxPdDConfigurazioneSistemaType(alias),
+							porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias), 
 							metodo, 
 							coda);
 					if(stato==null) {
 						throw new ServletException("Aggiornamento fallito");
 					}
-					if(!JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)) {
+					if(
+							!(
+								JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)
+								||
+								(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX))
+							)
+						){
 						throw new ServletException(stato);
 					}
 				}catch(Exception e){

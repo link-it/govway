@@ -46,8 +46,11 @@ public class JMXUtils {
 	public static final String CACHE_METHOD_NAME_REMOVE_OBJECT = "removeObjectCache";
 	
 	/** Messaggi */
+	public static final String MSG_OPERAZIONE_REGISTRATA_SUCCESSO_TEMPLATE_SECONDI = "SECONDI";
+	public static final String MSG_OPERAZIONE_REGISTRATA_SUCCESSO = "la richiesta è stata registrata e verrà evasa entro "+MSG_OPERAZIONE_REGISTRATA_SUCCESSO_TEMPLATE_SECONDI+" secondi";
 	public static final String MSG_OPERAZIONE_NON_EFFETTUATA = "Operazione non riuscita: ";
 	public static final String MSG_OPERAZIONE_EFFETTUATA_SUCCESSO = "Operazione effettuata con successo";
+	public static final String MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX = "Operazione effettuata con successo; ";
 	public static final String MSG_RESET_CACHE_EFFETTUATO_SUCCESSO = "Operazione di reset effettuata con successo";
 	public static final String MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO = "Operazione pre-fill cache effettuata con successo";
 	public static final String MSG_ABILITAZIONE_CACHE_EFFETTUATA = "Abilitazione cache effettuata con successo";

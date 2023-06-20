@@ -37,7 +37,6 @@ import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.timers.TimerException;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.pdd.timers.TimerState;
-import org.openspcoop2.pdd.timers.TimerStatisticheThread;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.keystore.cache.RemoteStoreCache;
@@ -126,7 +125,7 @@ public class TimerGestoreCacheChiaviPDNDLib {
 		
 		// Controllo che il sistema non sia andando in shutdown
 		if(OpenSPCoop2Startup.contextDestroyed){
-			this.logTimerError("["+TimerStatisticheThread.ID_MODULO+"] Rilevato sistema in shutdown");
+			this.logTimerError("["+TimerGestoreCacheChiaviPDND.ID_MODULO+"] Rilevato sistema in shutdown");
 			return;
 		}
 
@@ -140,11 +139,11 @@ public class TimerGestoreCacheChiaviPDNDLib {
 
 		// Controllo risorse di sistema disponibili
 		if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
-			this.logTimerError("["+TimerStatisticheThread.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+			this.logTimerError("["+TimerGestoreCacheChiaviPDND.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 			return;
 		}
 		if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
-			this.logTimerError("["+TimerStatisticheThread.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
+			this.logTimerError("["+TimerGestoreCacheChiaviPDND.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 			return;
 		}
 		

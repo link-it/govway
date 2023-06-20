@@ -142,7 +142,7 @@ public final class Monitor extends Action {
 				DatasourceProperties datasourceProperties = null;
 				try {
 					datasourceProperties = DatasourceProperties.getInstance();
-					sorgentiDriverMonitoraggioLocale = datasourceProperties.getSinglePdD_MonitorSorgentiDati();
+					sorgentiDriverMonitoraggioLocale = datasourceProperties.getSinglePddMonitorSorgentiDati();
 					if(sorgentiDriverMonitoraggioLocale==null || sorgentiDriverMonitoraggioLocale.isEmpty()) {
 						throw new Exception("Nessuna sorgente dati definita");
 					}
@@ -152,7 +152,7 @@ public final class Monitor extends Action {
 				} 
 				
 				labelSorgentiDriverMonitoraggioLocale = new ArrayList<>();
-				driverMonitoraggioLocale = new HashMap<String, DriverMonitoraggio>();
+				driverMonitoraggioLocale = new HashMap<>();
 				for (String sorgente : sorgentiDriverMonitoraggioLocale) {
 					
 					String label = null;
@@ -160,10 +160,10 @@ public final class Monitor extends Action {
 					Properties jndiProp = null;
 					String tipoDatabase = null;
 					try {
-						label = datasourceProperties.getSinglePdD_MonitorLabel(sorgente);
-						jndiName = datasourceProperties.getSinglePdD_MonitorDataSource(sorgente);
-						jndiProp = datasourceProperties.getSinglePdD_MonitorDataSourceContext(sorgente);
-						tipoDatabase = datasourceProperties.getSinglePdD_MonitorTipoDatabase(sorgente);
+						label = datasourceProperties.getSinglePddMonitorLabel(sorgente);
+						jndiName = datasourceProperties.getSinglePddMonitorDataSource(sorgente);
+						jndiProp = datasourceProperties.getSinglePddMonitorDataSourceContext(sorgente);
+						tipoDatabase = datasourceProperties.getSinglePddMonitorTipoDatabase(sorgente);
 						
 					} catch (java.lang.Exception e) {
 						ControlStationLogger.getPddConsoleCoreLogger().error("[govwayConsole] Lettura proprieta' non riuscita per la sorgente dati '"+sorgente+"' : " + e.getMessage());
@@ -1215,7 +1215,7 @@ public final class Monitor extends Action {
                 de.setType(DataElementType.SELECT);
                 de.setName(MonitorCostanti.PARAMETRO_MONITOR_PDD);
                 de.setValues(nomiPdD.toArray(new String[nomiPdD.size()]));
-                de.setSelected(mb != null ? mb.getPdd() : consoleProperties.getGestioneCentralizzata_WSMonitor_pddDefault());
+                de.setSelected(mb != null ? mb.getPdd() : consoleProperties.getGestioneCentralizzataWSMonitorPddDefault());
                 dati.add(de);
 			}
 			

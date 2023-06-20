@@ -1,3 +1,7 @@
+2023-06-16  Andrea Poli <apoli@link.it>
+
+	Aggiunta tabella che consente di registrare le operazioni da richiedere ai nodi 'run' in un ambiente dinamico: nodi_runtime_operations
+
 2023-05-16  Andrea Poli <apoli@link.it>
 
 	Rinominata colonna della tabella 'CORRELAZIONE_APPLICATIVA':

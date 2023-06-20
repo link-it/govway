@@ -114,7 +114,7 @@ public final class ConfigurazioneCanaliNodiChange extends Action {
 			}
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
-			List<String> aliases = confCore.getJmxPdD_aliases();
+			List<String> aliases = confCore.getJmxPdDAliases();
 			boolean selectListNode = false;
 			if(aliases!=null && aliases.size()>1){
 				selectListNode = true;

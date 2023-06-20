@@ -195,22 +195,28 @@ public final class PorteDelegateAbilitazione extends Action {
 	            String userLogin = ServletUtils.getUserLoginFromSession(session);
 				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
 				
-				List<String> aliasJmx = porteDelegateCore.getJmxPdD_aliases();
+				List<String> aliasJmx = porteDelegateCore.getJmxPdDAliases();
 				if(aliasJmx!=null && !aliasJmx.isEmpty()) {
 					for (String alias : aliasJmx) {
 						String metodo = StatoFunzionalita.ABILITATO.equals(portaDelegata.getStato()) ? 
-								porteDelegateCore.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(alias) :
-									porteDelegateCore.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(alias);
+								porteDelegateCore.getJmxPdDConfigurazioneSistemaNomeMetodoEnablePortaDelegata(alias) :
+									porteDelegateCore.getJmxPdDConfigurazioneSistemaNomeMetodoDisablePortaDelegata(alias);
 						try{
 							String stato = porteDelegateCore.getInvoker().invokeJMXMethod(alias, 
-									porteDelegateCore.getJmxPdD_configurazioneSistema_type(alias),
-									porteDelegateCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+									porteDelegateCore.getJmxPdDConfigurazioneSistemaType(alias),
+									porteDelegateCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
 									metodo, 
 									portaDelegata.getNome());
 							if(stato==null) {
 								throw new ServletException("Aggiornamento fallito");
 							}
-							if(!JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)) {
+							if(
+									!(
+										JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)
+										||
+										(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX))
+									)
+								){
 								throw new ServletException(stato);
 							}
 						}catch(Exception e){

@@ -365,7 +365,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.session;
 	}
 	
-	private void logError(String msg,Exception e) {
+	protected void logError(String msg,Exception e) {
 		this.log.error(msg,e);
 	}
 	
@@ -1992,7 +1992,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 				}
 				
-				List<String> aliases = this.confCore.getJmxPdD_aliases();
+				List<String> aliases = this.confCore.getJmxPdDAliases();
 				
 				boolean showCodaMessaggi = pu.isCodeMessaggi() && this.core.showCodaMessage();
 				
@@ -17250,10 +17250,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		List<String> labels = new ArrayList<>();
 		values.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
 		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
-		values.addAll(this.confCore.getJmxPdD_aliases());
-		for (String alias : this.confCore.getJmxPdD_aliases()) {
+		values.addAll(this.confCore.getJmxPdDAliases());
+		for (String alias : this.confCore.getJmxPdDAliases()) {
 			try {
-				labels.add(this.confCore.getJmxPdD_descrizione(alias));
+				labels.add(this.confCore.getJmxPdDDescrizione(alias));
 			}catch(Exception e) {
 				throw new DriverControlStationException(e.getMessage(),e);
 			}
@@ -23090,10 +23090,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		List<String> labels = new ArrayList<>();
 		values.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
 		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
-		values.addAll(this.confCore.getJmxPdD_aliases());
-		for (String alias : this.confCore.getJmxPdD_aliases()) {
+		values.addAll(this.confCore.getJmxPdDAliases());
+		for (String alias : this.confCore.getJmxPdDAliases()) {
 			try {
-				labels.add(this.confCore.getJmxPdD_descrizione(alias));
+				labels.add(this.confCore.getJmxPdDDescrizione(alias));
 			}catch(Exception e) {
 				throw new DriverControlStationException(e.getMessage(),e);
 			}

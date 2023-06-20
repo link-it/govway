@@ -142,6 +142,12 @@
 			antinstaller_gestione_nodi_proxy_url=
 			antinstaller_gestione_nodi_proxy_username=
 			antinstaller_gestione_nodi_proxy_password=
+			antinstaller_gestione_nodi_proxy_asyncUpdate=
+			antinstaller_gestione_nodi_proxy_asyncUpdate_schema=
+			antinstaller_gestione_nodi_proxy_asyncUpdate_hostname=
+			antinstaller_gestione_nodi_proxy_asyncUpdate_port=
+			antinstaller_gestione_nodi_proxy_asyncUpdate_checkInterval=
+			antinstaller_gestione_nodi_proxy_asyncUpdate_classname=
 
 		Configurazione Utenze
 			antinstaller_pddconsole_username=amministratore

@@ -146,15 +146,15 @@ public class SmistatoreThread extends Thread {
 			// Leggo le informazioni da console.properties
 			
 			// nomi code
-			smistatoreQueue = this.consoleProperties.getGestioneCentralizzata_NomeCodaSmistatore();
-			registroServiziQueue = this.consoleProperties.getGestioneCentralizzata_NomeCodaRegistroServizi();
-			gestoreEventiQueue = this.consoleProperties.getGestioneCentralizzata_NomeCodaGestoreEventi();
-			pddQueuePrefix = this.consoleProperties.getGestioneCentralizzata_PrefissoNomeCodaConfigurazionePdd();
+			smistatoreQueue = this.consoleProperties.getGestioneCentralizzataNomeCodaSmistatore();
+			registroServiziQueue = this.consoleProperties.getGestioneCentralizzataNomeCodaRegistroServizi();
+			gestoreEventiQueue = this.consoleProperties.getGestioneCentralizzataNomeCodaGestoreEventi();
+			pddQueuePrefix = this.consoleProperties.getGestioneCentralizzataPrefissoNomeCodaConfigurazionePdd();
 			
 			// Abilitazione Engine
-			enginePDD = this.consoleProperties.isGestioneCentralizzata_SincronizzazionePdd();
-			engineRegistro = this.consoleProperties.isGestioneCentralizzata_SincronizzazioneRegistro();
-			engineGestoreEventi = this.consoleProperties.isGestioneCentralizzata_SincronizzazioneGestoreEventi();
+			enginePDD = this.consoleProperties.isGestioneCentralizzataSincronizzazionePdd();
+			engineRegistro = this.consoleProperties.isGestioneCentralizzataSincronizzazioneRegistro();
+			engineGestoreEventi = this.consoleProperties.isGestioneCentralizzataSincronizzazioneGestoreEventi();
 			
 			// Altre informazioni
 			singlePdD = this.consoleProperties.isSinglePdD();

@@ -41,6 +41,7 @@ import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -104,7 +105,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		for (int i=0; i<attributesNames.length; i++){
 			try{
 				list.add(new Attribute(attributesNames[i],getAttribute(attributesNames[i])));
-			}catch(JMException ex){}
+			}catch(JMException ex){
+				// ignore
+			}
 		}
 		return list;
 	}
@@ -163,7 +166,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				Attribute attribute = (Attribute) it.next();
 				setAttribute(attribute);
 				ret.add(attribute);
-			}catch(JMException ex){}
+			}catch(JMException ex){
+				// ignore
+			}
 		}
 		
 		return ret;
@@ -674,11 +679,11 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	/* Metodi di management JMX */
 	public String resetCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			org.openspcoop2.protocol.registry.RegistroServiziReader.resetCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -686,11 +691,11 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	
 	public String prefillCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			org.openspcoop2.protocol.registry.RegistroServiziReader.prefillCache(this.openspcoopProperties.getCryptConfigAutenticazioneSoggetti());
 			return JMXUtils.MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -698,20 +703,20 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	
 	public String printStatCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			return org.openspcoop2.protocol.registry.RegistroServiziReader.printStatsCache("\n");
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
 	
-	public void abilitaCache() throws JMException{
+	public void abilitaCache() {
 		try{
 			org.openspcoop2.protocol.registry.RegistroServiziReader.abilitaCache();
 			this.cacheAbilitata = true;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 		}
 	}
@@ -722,7 +727,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 					this.openspcoopProperties.getCryptConfigAutenticazioneSoggetti());
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -733,7 +738,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		try{
 			org.openspcoop2.protocol.registry.RegistroServiziReader.disabilitaCache();
 			this.cacheAbilitata = false;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			throw new JMException(e.getMessage());
 		}
@@ -742,7 +747,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		try{
 			disabilitaCache();
 			return JMXUtils.MSG_DISABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -750,10 +755,10 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	
 	public String listKeysCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			return org.openspcoop2.protocol.registry.RegistroServiziReader.listKeysCache("\n");
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -761,10 +766,10 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	
 	public String getObjectCache(String key){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			return org.openspcoop2.protocol.registry.RegistroServiziReader.getObjectCache(key);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -772,11 +777,11 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	
 	public String removeObjectCache(String key){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			org.openspcoop2.protocol.registry.RegistroServiziReader.removeObjectCache(key);
 			return JMXUtils.MSG_RIMOZIONE_CACHE_EFFETTUATA;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -786,7 +791,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		try{
 			ConnettoreCheck.check(idConnettore, true, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -796,7 +801,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		try{
 			ConnettoreCheck.check(nomeConnettore, true, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -805,7 +810,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	public String getCertificatiConnettoreById(long idConnettore) {
 		try{
 			return ConnettoreCheck.getCertificati(idConnettore, true);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -814,7 +819,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	public String getCertificatiConnettoreByNome(String nomeConnettore) {
 		try{
 			return ConnettoreCheck.getCertificati(nomeConnettore, true);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -828,7 +833,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiConnettoreHttpsByIdWithoutCache(idConnettore, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -842,7 +847,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatoSoggettoWithoutCache(idSoggetto, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -851,11 +856,11 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	public String checkCertificatoSoggettoByNome(String idSoggetto, int sogliaWarningGiorni) {
 		try{
 			if(!idSoggetto.contains("/")) {
-				throw new Exception("Formato non valido (tipoSoggetto/nomeSoggetto)");
+				throw new CoreException("Formato non valido (tipoSoggetto/nomeSoggetto)");
 			}
 			String [] tmp = idSoggetto.split("/");
 			if(tmp==null || tmp.length!=2 || tmp[0]==null || tmp[1]==null) {
-				throw new Exception("Formato non valido (tipoSoggetto/nomeSoggetto)");
+				throw new CoreException("Formato non valido (tipoSoggetto/nomeSoggetto)");
 			}
 			else {
 				String tipoSoggetto = tmp[0];
@@ -869,7 +874,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 						addCertificateDetails, separator, newLine);
 				return statoCheck.toString(newLine);
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -883,7 +888,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiModIErogazioneByIdWithoutCache(idErogazione, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -897,7 +902,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiModIFruizioneByIdWithoutCache(idFruizione, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}

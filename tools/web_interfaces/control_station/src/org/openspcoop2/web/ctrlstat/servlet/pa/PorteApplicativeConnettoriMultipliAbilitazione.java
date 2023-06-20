@@ -268,7 +268,7 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
 				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 				
-				List<String> aliasJmx = porteApplicativeCore.getJmxPdD_aliases();
+				List<String> aliasJmx = porteApplicativeCore.getJmxPdDAliases();
 				if(aliasJmx!=null && !aliasJmx.isEmpty()) {
 					
 					boolean repositoryUpdated = false;
@@ -280,25 +280,31 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 						String metodo = null;
 						if(scheduling) {
 							metodo = StatoFunzionalita.ABILITATO.equals(datiConnettore.getScheduling()) ? 
-									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo(alias) :
-									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo(alias);
+									porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiplo(alias) :
+									porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiplo(alias);
 						}
 						else {
 							metodo = StatoFunzionalita.ABILITATO.equals(datiConnettore.getStato()) ? 
-									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo(alias) :
-									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo(alias);
+									porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeMetodoEnableConnettoreMultiplo(alias) :
+									porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeMetodoDisableConnettoreMultiplo(alias);
 						}
 						try{
 							String stato = porteApplicativeCore.getInvoker().invokeJMXMethod(alias, 
-									porteApplicativeCore.getJmxPdD_configurazioneSistema_type(alias),
-									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+									porteApplicativeCore.getJmxPdDConfigurazioneSistemaType(alias),
+									porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
 									metodo, 
 									pa.getNome(),
 									nomeConnettore);
 							if(stato==null) {
 								throw new ServletException("Aggiornamento fallito");
 							}
-							if(!JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)) {
+							if(
+									!(
+										JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)
+										||
+										(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX))
+									)
+								){
 								throw new ServletException(stato);
 							}
 							else {
@@ -312,13 +318,13 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 						if(scheduling && !repositoryUpdated && success) {
 							// repository
 							metodo = StatoFunzionalita.ABILITATO.equals(datiConnettore.getScheduling()) ? 
-									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository(alias) :
-									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(alias);
+									porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiploRuntimeRepository(alias) :
+									porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiploRuntimeRepository(alias);
 							try{
 								boolean slowOperation = true;
 								String stato = porteApplicativeCore.getInvoker().invokeJMXMethod(alias, 
-										porteApplicativeCore.getJmxPdD_configurazioneSistema_type(alias),
-										porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+										porteApplicativeCore.getJmxPdDConfigurazioneSistemaType(alias),
+										porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
 										metodo, 
 										slowOperation,
 										pa.getNome(),
@@ -326,7 +332,13 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 								if(stato==null) {
 									throw new ServletException("Aggiornamento fallito");
 								}
-								if(!stato.startsWith(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO)) {
+								if(
+										!(
+											JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)
+											||
+											(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX))
+										)
+									){
 									throw new ServletException(stato);
 								}
 								else {

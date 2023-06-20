@@ -74,7 +74,7 @@ public class CheckStatoPdD extends HttpServlet {
 		sendError(res, log, msg, code, msg, e);
 	}
 	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg) {
-		sendError(res, log, msg, code, msg, null);
+		sendError(res, log, msg, code, logMsg, null);
 	}
 	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg, Throwable e)  {
 		String prefix = "[GovWayCheck] ";
@@ -89,11 +89,22 @@ public class CheckStatoPdD extends HttpServlet {
 		res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 		try {
 			res.getOutputStream().write(msg.getBytes());
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			log.error("[CheckStato] SendError failed: "+t.getMessage(),t);
 		}
 	}
+	
+	private String getPrefixLetturaRisorsa(String resourceName) {
+		return "Lettura risorsa ["+resourceName+"] ";
+	}
+	private String getMsgRisorsaNonAutorizzata(String resourceName) {
+		return getPrefixLetturaRisorsa(resourceName)+"non autorizzata";
+	}
 
+	private String getMsgDellaRisorsaNonRiuscita(String resourceName) {
+		 return "della risorsa ["+resourceName+"] non riuscita";
+	}
+	
 	public static void serializeNotInitializedResponse(HttpServletResponse res, Logger log)  {
 		String msg = "API Gateway GovWay non inzializzato";
 		sendError(res, log, msg, 503);  // viene volutamente utilizzato il codice 503
@@ -133,13 +144,13 @@ public class CheckStatoPdD extends HttpServlet {
 			if(username!=null && password!=null){
 				HttpServletCredential identity = new HttpServletCredential(req, log);
 				if(!username.equals(identity.getUsername())){
-					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
+					String msg = getMsgRisorsaNonAutorizzata(resourceName);
 					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] sconosciuto";
 					sendError(res, log, msg, 500, logMsg); 
 					return;
 				}
 				if(!password.equals(identity.getPassword())){
-					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
+					String msg = getMsgRisorsaNonAutorizzata(resourceName);
 					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] (password errata)";
 					sendError(res, log, msg, 500, logMsg); 
 					return;
@@ -159,7 +170,7 @@ public class CheckStatoPdD extends HttpServlet {
 						}
 						OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.setAttribute(resourceName, attributeName, v);	
 					}catch(Exception e){
-						String msg = "Aggiornamento attributo ["+attributeName+"] della risorsa ["+resourceName+"] non riuscita (valore:"+attributeValue+"): "+e.getMessage();
+						String msg = "Aggiornamento attributo ["+attributeName+"] "+getMsgDellaRisorsaNonRiuscita(resourceName)+" (valore:"+attributeValue+"): "+e.getMessage();
 						sendError(res, log, msg, 500, e); 	
 						return;
 					}
@@ -167,16 +178,17 @@ public class CheckStatoPdD extends HttpServlet {
 				else{
 					try{
 						Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.getAttribute(resourceName, attributeName);
+						res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 						res.getOutputStream().write(value.toString().getBytes());	
 					}catch(Exception e){
-						String msg = "Lettura attributo ["+attributeName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
+						String msg = "Lettura attributo ["+attributeName+"] "+getMsgDellaRisorsaNonRiuscita(resourceName)+": "+e.getMessage();
 						sendError(res, log, msg, 500, e); 	
 						return;
 					}
 				}
 			}
 			else if(attributeValue!=null){
-				String msg = "Lettura risorsa ["+resourceName+"] non effettuata, fornito un valore di attributo senza aver indicato il nome";
+				String msg = getPrefixLetturaRisorsa(resourceName)+"non effettuata, fornito un valore di attributo senza aver indicato il nome";
 				sendError(res, log, msg, 500); 	
 				return;
 			}
@@ -192,23 +204,24 @@ public class CheckStatoPdD extends HttpServlet {
 						params = paramsL.toArray(new Object[1]);
 						signatures = signaturesL.toArray(new String[1]);
 					}
-				}catch(Throwable e) {
-					String msg = "Invocazione metodo ["+methodName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
+				}catch(Exception e) {
+					String msg = "Invocazione metodo ["+methodName+"] "+getMsgDellaRisorsaNonRiuscita(resourceName)+": "+e.getMessage();
 					sendError(res, log, msg, 500, e); 
 					return;
 				}
 				
 				try{
 					Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.invoke(resourceName, methodName, params, signatures);
+					res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 					res.getOutputStream().write(value.toString().getBytes());	
 				}catch(Exception e){
-					String msg = "Invocazione metodo ["+methodName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
+					String msg = "Invocazione metodo ["+methodName+"] "+getMsgDellaRisorsaNonRiuscita(resourceName)+": "+e.getMessage();
 					sendError(res, log, msg, 500, e); 
 					return;
 				}
 			}
 			else{
-				String msg = "Lettura risorsa ["+resourceName+"] non effettuata, nessun attributo o metodo richiesto";
+				String msg = getPrefixLetturaRisorsa(resourceName)+"non effettuata, nessun attributo o metodo richiesto";
 				sendError(res, log, msg, 500); 
 				return;
 			}
@@ -266,7 +279,7 @@ public class CheckStatoPdD extends HttpServlet {
 				HttpResponse response = HttpUtilities.httpInvoke(request);
 				
 				if(response.getResultHTTPOperation()!=200) {
-					String responseS = "";
+					StringBuilder sb = new StringBuilder();
 					if(response.getHeadersValues()!=null && !response.getHeadersValues().isEmpty()) {
 						for (String hdrName : response.getHeadersValues().keySet()) {
 							if(HttpConstants.RETURN_CODE.equals(hdrName)) {
@@ -275,23 +288,23 @@ public class CheckStatoPdD extends HttpServlet {
 							List<String> values = response.getHeaderValues(hdrName);
 							if(values!=null && !values.isEmpty()) {
 								for (String v : values) {
-									responseS += "\n"+hdrName+":"+v;		
+									sb.append("\n").append(hdrName).append(":").append(v);
 								}
 							}
 						}
 					}
 					else {
 						if(response.getContentType()!=null) {
-							responseS += "\n"+HttpConstants.CONTENT_TYPE+":"+response.getContentType();
+							sb.append("\n").append(HttpConstants.CONTENT_TYPE).append(":").append(response.getContentType());	
 						}
 					}
 					if(response.getContent()!=null) {
-						responseS += "\n\n"+(new String(response.getContent()));
+						sb.append("\n\n").append(new String(response.getContent()));
 					}
-					throw new Exception("HTTP Result:"+response.getResultHTTPOperation()+responseS);
+					throw new CoreException("HTTP Result:"+response.getResultHTTPOperation()+sb.toString());
 				}
 				
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				String msg = "API REST HealthCheck failed ("+endpoint+")\n"+t.getMessage();
 				sendError(res, log, msg, 500, t); 
 				return;
@@ -316,7 +329,7 @@ public class CheckStatoPdD extends HttpServlet {
 				HttpResponse response = HttpUtilities.httpInvoke(request);
 				
 				if(response.getResultHTTPOperation()!=200) {
-					String responseS = "";
+					StringBuilder sb = new StringBuilder();
 					if(response.getHeadersValues()!=null && !response.getHeadersValues().isEmpty()) {
 						for (String hdrName : response.getHeadersValues().keySet()) {
 							if(HttpConstants.RETURN_CODE.equals(hdrName)) {
@@ -325,23 +338,23 @@ public class CheckStatoPdD extends HttpServlet {
 							List<String> values = response.getHeaderValues(hdrName);
 							if(values!=null && !values.isEmpty()) {
 								for (String v : values) {
-									responseS += "\n"+hdrName+":"+v;		
+									sb.append("\n").append(hdrName).append(":").append(v);
 								}
 							}
 						}
 					}
 					else {
 						if(response.getContentType()!=null) {
-							responseS += "\n"+HttpConstants.CONTENT_TYPE+":"+response.getContentType();
+							sb.append("\n").append(HttpConstants.CONTENT_TYPE).append(":").append(response.getContentType());
 						}
 					}
 					if(response.getContent()!=null) {
-						responseS += "\n\n"+(new String(response.getContent()));
+						sb.append("\n\n").append(new String(response.getContent()));
 					}
-					throw new ServletException("HTTP Result:"+response.getResultHTTPOperation()+responseS);
+					throw new ServletException("HTTP Result:"+response.getResultHTTPOperation()+sb.toString());
 				}
 				
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				String msg = "API SOAP HealthCheck failed ("+endpoint+")\n"+t.getMessage();
 				sendError(res, log, msg, 500, t); 
 			}
@@ -349,7 +362,7 @@ public class CheckStatoPdD extends HttpServlet {
 
 	}
 
-	private void addParameter(List<Object> params, List<String> signatures, HttpServletRequest req) throws Exception {
+	private void addParameter(List<Object> params, List<String> signatures, HttpServletRequest req) throws CoreException {
 		
 		boolean add = addParameter(params, signatures, req,
 				CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE,
@@ -430,7 +443,8 @@ public class CheckStatoPdD extends HttpServlet {
 			params.add(Long.valueOf(paramLongValue));
 			signatures.add(Long.class.getName());
 		}
-		else if(paramBooleanDefined){
+		/**else if(paramBooleanDefined){*/
+		else {
 			params.add(Boolean.valueOf(paramBooleanValue));
 			signatures.add(Boolean.class.getName());
 		}

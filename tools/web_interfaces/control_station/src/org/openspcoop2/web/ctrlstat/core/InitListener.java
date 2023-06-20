@@ -205,14 +205,14 @@ public class InitListener implements ServletContextListener {
 					throw new Exception("DatasourceProperties not initialized");
 				}
 				
-				if(consoleProperties.isSinglePdD_RegistroServiziLocale()==false){
+				if(!consoleProperties.isSinglePddRegistroServiziLocale()){
 					if(RegistroServiziRemotoProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)==false){
 						throw new Exception("RegistroServiziRemotoProperties not initialized");
 					}
 				}
 				
-				if(consoleProperties.isSinglePdD()==false){
-					if(QueueProperties.initialize(confDir,InitListener.log)==false){
+				if(!consoleProperties.isSinglePdD()){
+					if(!QueueProperties.initialize(confDir,InitListener.log)){
 						throw new Exception("QueueProperties not initialized");
 					}
 				}
@@ -302,7 +302,7 @@ public class InitListener implements ServletContextListener {
 			
 			try{
 				if(consoleProperties.isGestoreConsistenzaDatiEnabled()){
-					this.gestoreConsistenzaDati = new GestoreConsistenzaDati(consoleProperties.isGestoreConsistenzaDati_forceCheckMapping());
+					this.gestoreConsistenzaDati = new GestoreConsistenzaDati(consoleProperties.isGestoreConsistenzaDatiForceCheckMapping());
 	                new Thread(this.gestoreConsistenzaDati).start();
 	                InitListener.log.info("Gestore Controllo Consistenza Dati avviato con successo.");
 				}
@@ -363,9 +363,9 @@ public class InitListener implements ServletContextListener {
 			
 			// inizializza nodi runtime
 			try {
-				ConfigurazioneNodiRuntimeProperties backwardCompatibility = new ConfigurazioneNodiRuntimeProperties(consoleProperties.getJmxPdD_backwardCompatibilityPrefix(), 
-						consoleProperties.getJmxPdD_backwardCompatibilityProperties());
-				ConfigurazioneNodiRuntime.initialize(consoleProperties.getJmxPdD_externalConfiguration(), backwardCompatibility);
+				ConfigurazioneNodiRuntimeProperties backwardCompatibility = new ConfigurazioneNodiRuntimeProperties(consoleProperties.getJmxPdDBackwardCompatibilityPrefix(), 
+						consoleProperties.getJmxPdDBackwardCompatibilityProperties());
+				ConfigurazioneNodiRuntime.initialize(consoleProperties.getJmxPdDExternalConfiguration(), backwardCompatibility);
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del gestore dei nodi run: " + e.getMessage();
 				InitListener.log.error(

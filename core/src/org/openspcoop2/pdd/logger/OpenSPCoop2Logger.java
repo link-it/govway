@@ -187,6 +187,9 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per il gestore delle chiavi PDND */
 	protected static Logger loggerOpenSPCoopGestoreChiaviPDND = null;
 	protected static Logger loggerOpenSPCoopGestoreChiaviPDNDError = null;
+	/**  Logger log4j utilizzato per il gestore delle operazioni remote */
+	protected static Logger loggerOpenSPCoopGestoreOperazioniRemote = null;
+	protected static Logger loggerOpenSPCoopGestoreOperazioniRemoteError = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
 	public static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<>(); 
 	public static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<>();
@@ -729,6 +732,16 @@ public class OpenSPCoop2Logger {
 			if(OpenSPCoop2Logger.loggerOpenSPCoopGestoreChiaviPDNDError==null)
 				throw new CoreException("Logger govway.gestoreChiaviPDND.error non trovato");
 			
+			// GESTORE OPERAZIONI REMOTE LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopGestoreOperazioniRemote = LoggerWrapperFactory.getLogger("govway.gestoreOperazioniRemote");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopGestoreOperazioniRemote==null)
+				throw new CoreException("Logger govway.gestoreOperazioniRemote non trovato");
+			
+			// GESTORE OPERAZIONI REMOTE LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopGestoreOperazioniRemoteError = LoggerWrapperFactory.getLogger("govway.gestoreOperazioniRemote.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopGestoreOperazioniRemoteError==null)
+				throw new CoreException("Logger govway.gestoreOperazioniRemote.error non trovato");
+			
 			// CONSOLE
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging correttamente inizializzato.");
 			
@@ -761,7 +774,7 @@ public class OpenSPCoop2Logger {
 			Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();
 			while (ridefinito.hasMoreElements()) {
 				String key = (String) ridefinito.nextElement();
-				String value = (String) loggerPropertiesRidefinito.get(key);
+				String value = loggerPropertiesRidefinito.get(key);
 				if(loggerProperties.containsKey(key)){
 					//Object o = 
 					loggerProperties.remove(key);
@@ -1414,6 +1427,15 @@ public class OpenSPCoop2Logger {
 		}
 		else {
 			return OpenSPCoop2Logger.loggerOpenSPCoopGestoreChiaviPDNDError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopGestoreOperazioniRemote(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopGestoreOperazioniRemote;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopGestoreOperazioniRemoteError;
 		}
 	}
 	

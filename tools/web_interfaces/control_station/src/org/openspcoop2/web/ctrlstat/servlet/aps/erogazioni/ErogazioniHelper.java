@@ -85,6 +85,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -658,11 +659,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				addFilterCanale(canali, filterCanale, false);
 			}
 			
-			if(this.isShowGestioneWorkflowStatoDocumenti()){
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
-					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
-					this.addFilterStatoAccordo(filterStatoAccordo,false);
-				}
+			if(this.isShowGestioneWorkflowStatoDocumenti() &&
+				this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+				this.addFilterStatoAccordo(filterStatoAccordo,false);
 			}
 			
 			if(gestioneFruitori) {
@@ -816,7 +816,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			boolean showConfigurazionePD = false;
 
 			if(tipologia==null) {
-				throw new Exception("Parametro TipologiaErogazione non puo' essere vuoto");
+				throw new DriverControlStationException("Parametro TipologiaErogazione non puo' essere vuoto");
 			}
 
 			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
@@ -1494,8 +1494,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						List<Parameter> listParametersServizioFruitoriModificaProfilo = null;
 						listParametersServizioModificaProfilo = new ArrayList<>();
 						listParametersServizioModificaProfilo.addAll(listParameters);
-						listParametersServizioModificaProfilo.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO, "true"));
-						listParametersServizioModificaProfilo.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA, "true"));
+						listParametersServizioModificaProfilo.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO, true+""));
+						listParametersServizioModificaProfilo.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA, true+""));
 						
 						if(gestioneFruitori) {
 							listParametersServizioFruitoriModificaProfilo = new ArrayList<>();
@@ -1529,40 +1529,38 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			this.pd.setAddButton(true);
 
 			// preparo bottoni
-			// String gestioneWSBL = (String) this.session
-			// .getAttribute("GestioneWSBL");
-			if(lista!=null && lista.size()>0){
-				if (this.core.isShowPulsantiImportExport()) {
+			if(lista!=null && !lista.isEmpty() &&
+				this.core.isShowPulsantiImportExport()) {
 
-					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.request, this.session)){
+				ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+				if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.request, this.session)){
 
-						List<AreaBottoni> bottoni = new ArrayList<>();
+					List<AreaBottoni> bottoni = new ArrayList<>();
 
-						AreaBottoni ab = new AreaBottoni();
-						List<DataElement> otherbott = new ArrayList<>();
-						DataElement de = new DataElement();
-						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ESPORTA_SELEZIONATI);
-						if(gestioneFruitori) {
-							de.setOnClick(AccordiServizioParteSpecificaCostanti.LABEL_FRUIZIONI_ESPORTA_SELEZIONATI_ONCLICK);
-						}
-						else {
-							de.setOnClick(AccordiServizioParteSpecificaCostanti.LABEL_EROGAZIONI_ESPORTA_SELEZIONATI_ONCLICK);
-						}
-						de.setDisabilitaAjaxStatus();
-						otherbott.add(de);
-						ab.setBottoni(otherbott);
-						bottoni.add(ab);
-
-						this.pd.setAreaBottoni(bottoni);
-
+					AreaBottoni ab = new AreaBottoni();
+					List<DataElement> otherbott = new ArrayList<>();
+					DataElement de = new DataElement();
+					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ESPORTA_SELEZIONATI);
+					if(gestioneFruitori) {
+						de.setOnClick(AccordiServizioParteSpecificaCostanti.LABEL_FRUIZIONI_ESPORTA_SELEZIONATI_ONCLICK);
 					}
+					else {
+						de.setOnClick(AccordiServizioParteSpecificaCostanti.LABEL_EROGAZIONI_ESPORTA_SELEZIONATI_ONCLICK);
+					}
+					de.setDisabilitaAjaxStatus();
+					otherbott.add(de);
+					ab.setBottoni(otherbott);
+					bottoni.add(ab);
+
+					this.pd.setAreaBottoni(bottoni);
+
 				}
+				
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1582,7 +1580,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			this.pd.setCustomListViewName(ErogazioniCostanti.ASPS_EROGAZIONI_NOME_VISTA_CUSTOM_FORM_EROGAZIONE);
 
 		if(asps==null) {
-			throw new Exception("Param asps is null");
+			throw new DriverControlStationException("Param asps is null");
 		}
 		
 		boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
@@ -1741,7 +1739,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		de.setType(DataElementType.TEXT);
 		List<Parameter> listParametersServizioModifica = new ArrayList<>();
 		listParametersServizioModifica.addAll(listaParametriChange);
-		listParametersServizioModifica.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API, "false")); 
+		listParametersServizioModifica.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API, false+"")); 
 		
 		DataElementImage imageChangeStato = null;
 		if(gestioneErogatori) {			
@@ -1819,7 +1817,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			List<Parameter> listParametersServizioModificaSoggettoErogatore = new ArrayList<>();
 			listParametersServizioModificaSoggettoErogatore.addAll(listaParametriChange);
-			listParametersServizioModificaSoggettoErogatore.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE, "true"));
+			listParametersServizioModificaSoggettoErogatore.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE, true+""));
 			
 			DataElementImage image = new DataElementImage();
 			image.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,	listParametersServizioModificaSoggettoErogatore.toArray(new Parameter[1]));
@@ -1849,7 +1847,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		de.setType(DataElementType.BUTTON);
 		
 		List<String> labelsGruppi = new ArrayList<>();
-		List<String> ValuesGruppi = new ArrayList<>();
+		List<String> valuesGruppi = new ArrayList<>();
 		
 		List<GruppoSintetico> gruppi = as.getGruppo();
 		if(gruppi != null) {
@@ -1866,12 +1864,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
 				
 				labelsGruppi.add(gruppo.getNome());
-				ValuesGruppi.add("label-info-"+ indexOf);
+				valuesGruppi.add("label-info-"+ indexOf);
 			}
 		}	
 		
 		de.setLabels(labelsGruppi);
-		de.setValues(ValuesGruppi);
+		de.setValues(valuesGruppi);
 		
 		
 		// Lista di Accordi Compatibili
@@ -1900,11 +1898,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						if(soloAccordiConsistentiSoap) {
 							if(asps!=null && asps.getPortType()!=null) {
 								for (int i = 0; i < accordoServizioParteComune.sizePortTypeList(); i++) {
-									if(accordoServizioParteComune.getPortType(i).getNome().equals(asps.getPortType())) {
-										if(accordoServizioParteComune.getPortType(i).sizeAzioneList()>0) {
-											isValid = true;
-											break;
-										}
+									if(accordoServizioParteComune.getPortType(i).getNome().equals(asps.getPortType()) &&
+										accordoServizioParteComune.getPortType(i).sizeAzioneList()>0) {
+										isValid = true;
+										break;
 									}
 								}
 							}
@@ -1936,7 +1933,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		if(apiImplementataCambiabile) {
 			List<Parameter> listParametersServizioModificaApi = new ArrayList<>();
 			listParametersServizioModificaApi.addAll(listaParametriChange);
-			listParametersServizioModificaApi.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_API, "true"));
+			listParametersServizioModificaApi.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_API, true+""));
 			
 			DataElementImage image = new DataElementImage();
 			image.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,	listParametersServizioModificaApi.toArray(new Parameter[1]));
@@ -1950,7 +1947,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		if(asParteComuneCompatibili!=null && asParteComuneCompatibili.size()>1) {
 			List<Parameter> listParametersServizioModificaApi = new ArrayList<>();
 			listParametersServizioModificaApi.addAll(listaParametriChange);
-			listParametersServizioModificaApi.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API, "true"));
+			listParametersServizioModificaApi.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API, true+""));
 			
 			DataElementImage image = new DataElementImage();
 			image.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,	listParametersServizioModificaApi.toArray(new Parameter[1]));
@@ -1990,7 +1987,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			else {
 				listParametersServizioModificaProfilo.addAll(listParametersServizioModificaProfiloOrVerificaCertificati);
 			}
-			listParametersServizioModificaProfilo.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO, "true"));
+			listParametersServizioModificaProfilo.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO, true+""));
 			
 			if(modificaDatiProfilo) {
 				
@@ -2186,8 +2183,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersVerificaConnettore.add(paIdAsps);
 					listParametersVerificaConnettore.add(paConnettoreDaListaAPS);
 					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""));
-					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "false"));
-					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false"));
+					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, false+""));
+					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, false+""));
 					
 					image = new DataElementImage();
 					image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
@@ -2205,9 +2202,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersConfigutazioneConnettoriMultipli.add(paIdPorta);
 					listParametersConfigutazioneConnettoriMultipli.add(paIdAsps);
 					listParametersConfigutazioneConnettoriMultipli.add(paConnettoreDaListaAPS);
-//					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""));
-					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "false"));
-					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false"));
+					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, false+""));
+					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, false+""));
 					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, "0"));
 					
 					image = new DataElementImage();
@@ -2424,8 +2420,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						listParametersVerificaConnettore.add(pIdSoggPD);
 						listParametersVerificaConnettore.add(pIdAsps);
 						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""));
-						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "false"));
-						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "true"));
+						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, false+""));
+						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, true+""));
 						image = new DataElementImage();
 						
 						image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
@@ -2498,11 +2494,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		}
 		
 
-		Parameter pGruppiTrue = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI,"true");
-		Parameter pGruppiFalse = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI,"false");
+		Parameter pGruppiTrue = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI,true+"");
+		Parameter pGruppiFalse = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI,false+"");
 		
-		Parameter pConfigurazioneTrue =new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,"true");
-		Parameter pConfigurazioneFalse =new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,"false");
+		Parameter pConfigurazioneTrue =new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,true+"");
+		Parameter pConfigurazioneFalse =new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,false+"");
 		
 
 		
@@ -2598,7 +2594,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				PortaApplicativa paAssociata = listaPorteApplicativeAssociate.get(d);
 
 				// controllo se la configurazione deve essere visualizzata
-				boolean showConfigurazione = (mapping.isDefault() && allActionRedefined) ? false : true;
+				boolean showConfigurazione = !(mapping.isDefault() && allActionRedefined);
 
 				int numeroConfigurazioniAttive = 0;
 
@@ -3013,7 +3009,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					if(this.isModalitaAvanzata()) {
 						// proprieta'
 
-
+/**
 						//						// opzioni avanzate
 						//						de = new DataElement();
 						//						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
@@ -3029,7 +3025,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						//						de = new DataElement();
 						//						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneAltro);
 						//						ServletUtils.setDataElementVisualizzaLabel(de);
-						//						e.add(de);
+						//						e.add(de);*/
 
 
 					}
@@ -3052,7 +3048,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					de = new DataElement();
 					de.setName(ErogazioniCostanti.ASPS_EROGAZIONI_PARAMETRO_NUOVA_CONFIGURAZIONE+"_"+ d);
 					de.setLabel(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI_PARAMETRO_NUOVA_CONFIGURAZIONE);
-					if(labelDisponibili.size() > 0) {
+					if(!labelDisponibili.isEmpty()) {
 						de.setType(DataElementType.SELECT);
 						de.setValues(urlDisponibili);
 						de.setLabels(labelDisponibili);
@@ -3113,7 +3109,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				PortaDelegata pdAssociata = listaPorteDelegateAssociate.get(d);
 
 				// controllo se la configurazione deve essere visualizzata
-				boolean showConfigurazione = (mapping.isDefault() && allActionRedefined) ? false : true;
+				boolean showConfigurazione = !(mapping.isDefault() && allActionRedefined);
 
 				int numeroConfigurazioniDisponibili = 1;
 				int numeroConfigurazioniAttive = 0;
@@ -3277,12 +3273,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				nomeSoggettoFruitore = fruitore.getNome();
 			}
 			
-			dati = this.addHiddenFieldsToDati(tipoOp, id, idsogg, id, asps.getId()+"", 
+			this.addHiddenFieldsToDati(tipoOp, id, idsogg, id, asps.getId()+"", 
 					idFruizione, tipoSoggettoFruitore, nomeSoggettoFruitore,
 					dati);
 		}
 		else {
-			dati = this.addHiddenFieldsToDati(tipoOp, asps.getId()+"", null, null, dati);
+			this.addHiddenFieldsToDati(tipoOp, asps.getId()+"", null, null, dati);
 		}
 		
 		datiPagina = this.addErogazioneToDati(datiPagina, tipoOp, asps, as, tipoProtocollo, serviceBinding, gestioneErogatori, gestioneFruitori, listaMappingErogazionePortaApplicativa, listaPorteApplicativeAssociate, listaMappingFruzionePortaDelegata, listaPorteDelegateAssociate, fruitore);
@@ -3368,7 +3364,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		}
 		
 		// Uso lo stessoAlias
-		List<String> aliases = this.apcCore.getJmxPdD_aliases();
+		List<String> aliases = this.apcCore.getJmxPdDAliases();
 		String alias = null;
 		if(aliases!=null && !aliases.isEmpty()) {
 			alias = aliases.get(0);
@@ -3377,7 +3373,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		long idOjectLong = -1;
 		if(gestioneFruitori) {
 			if(fruitore==null) {
-				throw new Exception("Fruitore non trovato");
+				throw new DriverControlStationException("Fruitore non trovato");
 			}
 			idOjectLong = fruitore.getId();
 		}
@@ -3385,10 +3381,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			idOjectLong = asps.getId();
 		}
 		
-		this.apcCore.invokeJmxMethodAllNodesAndSetResult(this.pd, this.apcCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+		this.apcCore.invokeJmxMethodAllNodesAndSetResult(this.pd, this.apcCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
 				gestioneFruitori ?
-						this.apcCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione(alias) :
-						this.apcCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione(alias),
+						this.apcCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione(alias) :
+						this.apcCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione(alias),
 				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelServizio),
 				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelServizio),
 				idOjectLong);

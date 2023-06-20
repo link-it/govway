@@ -191,6 +191,10 @@ import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDND;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDNDLib;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDND;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
+import org.openspcoop2.pdd.timers.proxy.TimerGestoreOperazioniRemote;
+import org.openspcoop2.pdd.timers.proxy.TimerGestoreOperazioniRemoteLib;
+import org.openspcoop2.pdd.timers.proxy.TimerSvecchiamentoOperazioniRemote;
+import org.openspcoop2.pdd.timers.proxy.TimerSvecchiamentoOperazioniRemoteLib;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
@@ -328,6 +332,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerGestoreChiaviPDND threadGestoreChiaviPDND;
 	private TimerGestoreCacheChiaviPDND threadGestoreCacheChiaviPDND;
 	private boolean threadGestoreChiaviPDNDEnabled = false;
+	
+	/** Timer per la gestione delle operazioni remote in un cluster dinamico */
+	private TimerGestoreOperazioniRemote threadGestoreOperazioniRemote;
+	private TimerSvecchiamentoOperazioniRemote threadSvecchiamentoOperazioniRemote;
+	private boolean threadGestoreOperazioniRemoteEnabled = false;
 	
 	/** DynamicCluster */
 	private static TimerClusterDinamicoThread threadClusterDinamico;
@@ -3575,6 +3584,47 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/* ------------ Avvia il thread per la gestione delle operazioni remote in un cluster dinamico ------------ */
+			
+			if(propertiesReader.isProxyReadJMXResourcesAsyncProcessByTimer()) {
+				
+				OpenSPCoop2Startup.this.threadGestoreOperazioniRemoteEnabled = true;
+				
+				try{
+					OpenSPCoop2Startup.this.threadGestoreOperazioniRemote = 
+							new TimerGestoreOperazioniRemote(propertiesReader.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval());
+					OpenSPCoop2Startup.this.threadGestoreOperazioniRemote.start();
+					TimerGestoreOperazioniRemoteLib.setState( TimerState.ENABLED );
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerGestoreOperazioniRemote.ID_MODULO+"'");
+				}
+				
+				try{
+					OpenSPCoop2Startup.this.threadSvecchiamentoOperazioniRemote = 
+							new TimerSvecchiamentoOperazioniRemote(propertiesReader.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval());
+					OpenSPCoop2Startup.this.threadSvecchiamentoOperazioniRemote.start();
+					TimerSvecchiamentoOperazioniRemoteLib.setState( TimerState.ENABLED );
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerSvecchiamentoOperazioniRemote.ID_MODULO+"'");
+				}
+			}
+			else {
+				msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE);
+				
+				msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerGestoreOperazioniRemote.ID_MODULO);
+				msgDiag.logPersonalizzato("disabilitato");
+				
+				msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE);
+				
+				msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerSvecchiamentoOperazioniRemote.ID_MODULO);
+				msgDiag.logPersonalizzato("disabilitato");
+				
+				msgDiag.setPrefixMsgPersonalizzati(null);
+			}
+			
+			
+			
+			
 			/* ------------ Avvia il thread per la gestione Stateful delle transazioni ------------ */
 			Logger forceLogTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(true);
 			try{
@@ -4062,6 +4112,44 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			// ignore
 		}
 		
+		// Timer per la gestione delle operazioni remote in un cluster dinamico
+		
+		try{
+			if(properties!=null && OpenSPCoop2Startup.this.threadGestoreOperazioniRemoteEnabled){
+				boolean debug = properties.isProxyReadJMXResourcesAsyncProcessByTimerDebug();
+			
+				Logger logGestoreOperazioniRemote = OpenSPCoop2Logger.getLoggerOpenSPCoopGestoreOperazioniRemote(debug);
+				if(debug)
+					logGestoreOperazioniRemote.debug("Recupero thread per la gestione delle operazioni remote ...");
+				if(OpenSPCoop2Startup.this.threadGestoreOperazioniRemote!=null){
+					OpenSPCoop2Startup.this.threadGestoreOperazioniRemote.setStop(true);
+					if(debug)
+						logGestoreOperazioniRemote.debug("Richiesto stop al thread per la gestione delle operazioni remote");
+				}else{
+					throw new CoreException("Thread per la gestione delle operazioni remote non trovato");
+				}	
+			}
+		}catch (Throwable e) {
+			// ignore
+		}
+		try{
+			if(properties!=null && OpenSPCoop2Startup.this.threadGestoreOperazioniRemoteEnabled){
+				boolean debug = properties.isProxyReadJMXResourcesAsyncProcessByTimerDebug();
+			
+				Logger logGestoreOperazioniRemote = OpenSPCoop2Logger.getLoggerOpenSPCoopGestoreOperazioniRemote(debug);
+				if(debug)
+					logGestoreOperazioniRemote.debug("Recupero thread per lo svecchiamento delle operazioni remote ...");
+				if(OpenSPCoop2Startup.this.threadSvecchiamentoOperazioniRemote!=null){
+					OpenSPCoop2Startup.this.threadSvecchiamentoOperazioniRemote.setStop(true);
+					if(debug)
+						logGestoreOperazioniRemote.debug("Richiesto stop al thread per lo svecchiamento delle operazioni remote");
+				}else{
+					throw new CoreException("Thread per lo svecchiamento delle operazioni remote non trovato");
+				}	
+			}
+		}catch (Throwable e) {
+			// ignore
+		}
 		
 		// ExitHandler
 		try{

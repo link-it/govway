@@ -112,7 +112,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 			boolean arrivoDaLista = "true".equalsIgnoreCase(verificaCertificatiFromLista);
 			
 			// Prendo la lista di aliases
-			List<String> aliases = confCore.getJmxPdD_aliases();
+			List<String> aliases = confCore.getJmxPdDAliases();
 			if(aliases==null || aliases.isEmpty()){
 				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
@@ -333,10 +333,10 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 							int index = 0;
 							for (String aliasForVerificaConnettore : aliasesForCheck) {
 								
-								String risorsa = confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
+								String risorsa = confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
 
 								StringBuilder bfExternal = new StringBuilder();
-								String descrizione = confCore.getJmxPdD_descrizione(aliasForVerificaConnettore);
+								String descrizione = confCore.getJmxPdDDescrizione(aliasForVerificaConnettore);
 								if(aliases.size()>1) {
 									if(index>0) {
 										bfExternal.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
@@ -346,27 +346,31 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 								try{
 									String nomeMetodo = null;
 									if(attributeAuthority) {
-										nomeMetodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority(aliasForVerificaConnettore);
+										nomeMetodo = confCore.getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreAttributeAuthority(aliasForVerificaConnettore);
 									}
 									else if(validazione) {
-										nomeMetodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione(aliasForVerificaConnettore);
+										nomeMetodo = confCore.getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyValidazione(aliasForVerificaConnettore);
 									}
 									else if(negoziazione) {
-										nomeMetodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione(aliasForVerificaConnettore);
+										nomeMetodo = confCore.getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyNegoziazione(aliasForVerificaConnettore);
 									}
 									Boolean slowOperation = true; // altrimenti un eventuale connection timeout (es. 10 secondi) termina dopo il readTimeout associato all'invocazione dell'operazione via http check e quindi viene erroneamenteo ritornato un readTimeout
-									String stato = confCore.getInvoker().invokeJMXMethod(aliasForVerificaConnettore, confCore.getJmxPdD_configurazioneSistema_type(aliasForVerificaConnettore),
+									String stato = confCore.getInvoker().invokeJMXMethod(aliasForVerificaConnettore, confCore.getJmxPdDConfigurazioneSistemaType(aliasForVerificaConnettore),
 											risorsa, 
 											nomeMetodo, 
 											slowOperation,
 											genericProperties.getNome());
-									if(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)){
+									if(
+											JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)
+											||
+											(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX))
+											){
 										bfExternal.append(CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_EFFETTUATO_CON_SUCCESSO);
 									}
 									else{
 										rilevatoErrore = true;
 										bfExternal.append(CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_FALLITA);
-										if(stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
+										if(stato!=null && stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
 											bfExternal.append(stato.substring(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA.length()));
 										}
 										else {
@@ -420,10 +424,10 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						
 						CertificateChecker certificateChecker = null;
 						if(all) {
-							certificateChecker = confCore.getJmxPdD_certificateChecker();
+							certificateChecker = confCore.getJmxPdDCertificateChecker();
 						}
 						else {
-							certificateChecker = confCore.newJmxPdD_certificateChecker(aliasesForCheck);
+							certificateChecker = confCore.newJmxPdDCertificateChecker(aliasesForCheck);
 						}
 						StringBuilder sbDetailsError = new StringBuilder(); 
 						

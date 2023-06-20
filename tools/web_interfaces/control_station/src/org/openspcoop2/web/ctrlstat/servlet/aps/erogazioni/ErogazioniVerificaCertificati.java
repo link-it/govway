@@ -188,7 +188,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 			apsHelper.makeMenu();
 						
 			// Prendo la lista di aliases
-			List<String> aliases = apsCore.getJmxPdD_aliases();
+			List<String> aliases = apsCore.getJmxPdDAliases();
 			if(aliases==null || aliases.isEmpty()){
 				throw new CoreException("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
@@ -549,10 +549,10 @@ public class ErogazioniVerificaCertificati  extends Action {
 					
 					CertificateChecker certificateChecker = null;
 					if(all) {
-						certificateChecker = apsCore.getJmxPdD_certificateChecker();
+						certificateChecker = apsCore.getJmxPdDCertificateChecker();
 					}
 					else {
-						certificateChecker = apsCore.newJmxPdD_certificateChecker(aliasesForCheck);
+						certificateChecker = apsCore.newJmxPdDCertificateChecker(aliasesForCheck);
 					}
 					StringBuilder sbDetailsError = new StringBuilder(); 
 					

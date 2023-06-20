@@ -40,6 +40,7 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.pdd.config.ConfigurazionePdD;
@@ -562,11 +563,11 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	/* Metodi di management JMX */
 	public String resetCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			GestoreLoadBalancerCaching.resetCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -574,10 +575,10 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	
 	public String printStatCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			return GestoreLoadBalancerCaching.printStatsCache("\n");
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -587,7 +588,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			GestoreLoadBalancerCaching.abilitaCache();
 			this.cacheAbilitata = true;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 		}
 	}
@@ -597,7 +598,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 			GestoreLoadBalancerCaching.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -607,7 +608,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			GestoreLoadBalancerCaching.disabilitaCache();
 			this.cacheAbilitata = false;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			throw new JMException(e.getMessage());
 		}
@@ -616,7 +617,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			disabilitaCache();
 			return JMXUtils.MSG_DISABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -625,9 +626,9 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	public String listKeysCache(){
 		try{
 			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+				throw new CoreException("Cache non abilitata");
 			return GestoreLoadBalancerCaching.listKeysCache("\n");
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -636,9 +637,9 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	public String getObjectCache(String key){
 		try{
 			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+				throw new CoreException("Cache non abilitata");
 			return GestoreLoadBalancerCaching.getObjectCache(key);
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -647,10 +648,10 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	public String removeObjectCache(String key){
 		try{
 			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+				throw new CoreException("Cache non abilitata");
 			GestoreLoadBalancerCaching.removeObjectCache(key);
 			return JMXUtils.MSG_RIMOZIONE_CACHE_EFFETTUATA;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -660,10 +661,10 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
 					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
-				throw new Exception("Coda '"+queue+"' non esistente");
+				throw new CoreException("Coda '"+queue+"' non esistente");
 			}
 			return OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.get(queue).getThreadsImage();
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -673,10 +674,10 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
 					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
-				throw new Exception("Coda '"+queue+"' non esistente");
+				throw new CoreException("Coda '"+queue+"' non esistente");
 			}
 			return OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.get(queue).getQueueConfig();
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -686,7 +687,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
 					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
-				throw new Exception("Coda '"+queue+"' non esistente");
+				throw new CoreException("Coda '"+queue+"' non esistente");
 			}
 			List<IDConnettore> list = ConfigurazionePdDManager.getInstance().getConnettoriConsegnaNotifichePrioritarie(queue);
 			if(list==null || list.isEmpty()) {
@@ -702,7 +703,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 				}
 				return sb.toString();
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -712,7 +713,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
 					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
-				throw new Exception("Coda '"+queue+"' non esistente");
+				throw new CoreException("Coda '"+queue+"' non esistente");
 			}
 			List<IDConnettore> list = ConfigurazionePdDManager.getInstance().getConnettoriConsegnaNotifichePrioritarie(queue);
 			if(list==null || list.isEmpty()) {
@@ -728,7 +729,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 				}
 				return sb.toString();
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -738,13 +739,13 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
 					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
-				throw new Exception("Coda '"+queue+"' non esistente");
+				throw new CoreException("Coda '"+queue+"' non esistente");
 			}
 			
 			ConfigurazionePdDReader.removeObjectCache(ConfigurazionePdD.getKey_getConnettoriConsegnaNotifichePrioritarie(queue));
 			
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -754,7 +755,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
 					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
-				throw new Exception("Coda '"+queue+"' non esistente");
+				throw new CoreException("Coda '"+queue+"' non esistente");
 			}
 			
 			ConfigurazionePdDManager.getInstance().resetConnettoriConsegnaNotifichePrioritarie(queue);
@@ -762,7 +763,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 			ConfigurazionePdDReader.removeObjectCache(ConfigurazionePdD.getKey_getConnettoriConsegnaNotifichePrioritarie(queue));
 			
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}

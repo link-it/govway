@@ -613,7 +613,7 @@ public class PddHelper extends ConsoleHelper {
 
 			User user = ServletUtils.getUserFromSession(this.request, this.session);
 			boolean showConfigurazioneSistema = user!=null && user.getPermessi()!=null && user.getPermessi().isSistema() &&
-					this.pddCore.getJmxPdD_aliases()!=null && this.pddCore.getJmxPdD_aliases().size()>0;
+					this.pddCore.getJmxPdDAliases()!=null && this.pddCore.getJmxPdDAliases().size()>0;
 			
 			// setto le label delle colonne
 			List<String> listLabels = new ArrayList<>();

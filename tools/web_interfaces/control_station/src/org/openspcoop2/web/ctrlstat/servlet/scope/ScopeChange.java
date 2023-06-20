@@ -100,14 +100,14 @@ public final class ScopeChange extends Action {
 			if(resetElementoCache) {
 				
 				// Uso lo stessoAlias
-				List<String> aliases = scopeCore.getJmxPdD_aliases();
+				List<String> aliases = scopeCore.getJmxPdDAliases();
 				String alias = null;
 				if(aliases!=null && !aliases.isEmpty()) {
 					alias = aliases.get(0);
 				}
 				String labelScope = scope.getNome();
-				scopeCore.invokeJmxMethodAllNodesAndSetResult(pd, scopeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-						scopeCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope(alias),
+				scopeCore.invokeJmxMethodAllNodesAndSetResult(pd, scopeCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+						scopeCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheScope(alias),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelScope),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelScope),
 						scope.getId());				

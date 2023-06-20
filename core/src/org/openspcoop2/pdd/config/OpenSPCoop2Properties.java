@@ -1923,18 +1923,31 @@ public class OpenSPCoop2Properties {
 			this.getCheckReadJMXResourcesUsername();
 			this.getCheckReadJMXResourcesPassword();
 			if(this.isProxyReadJMXResourcesEnabled()) {
+				
+				if(this.isProxyReadJMXResourcesAsyncProcessByTimer()) {
+					this.getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClass();
+					this.isProxyReadJMXResourcesAsyncProcessByTimerDebug();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerSchema();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerHostname();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerPort();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerLimit();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes();
+				}
+				
 				this.getProxyReadJMXResourcesSchema();
 				this.getProxyReadJMXResourcesPort();
 				if(this.isProxyReadJMXResourcesHttpsEnabled()) {
-					this.isProxyReadJMXResourcesHttpsEnabled_verificaHostName();
-					if(this.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer()) {
-						if(this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath()==null) {
+					this.isProxyReadJMXResourcesHttpsEnabledVerificaHostName();
+					if(this.isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer()) {
+						if(this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePath()==null) {
 							return false;
 						}
-						if(this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType()==null) {
+						if(this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreType()==null) {
 							return false;
 						}
-						if(this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword()==null) {
+						if(this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePassword()==null) {
 							return false;
 						}
 					}
@@ -20153,16 +20166,16 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String getCheckReadJMXResourcesUsername = null;
-	private Boolean getCheckReadJMXResourcesUsername_read = null;
+	private Boolean getCheckReadJMXResourcesUsernameRead = null;
 	public String getCheckReadJMXResourcesUsername() {	
-		if(this.getCheckReadJMXResourcesUsername_read==null){
+		if(this.getCheckReadJMXResourcesUsernameRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.username");
 				if(name!=null){
 					name = name.trim();
 				}
-				this.getCheckReadJMXResourcesUsername_read = true;
+				this.getCheckReadJMXResourcesUsernameRead = true;
 				this.getCheckReadJMXResourcesUsername = name;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.username': "+e.getMessage(),e);
@@ -20172,16 +20185,16 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String getCheckReadJMXResourcesPassword = null;
-	private Boolean getCheckReadJMXResourcesPassword_read = null;
+	private Boolean getCheckReadJMXResourcesPasswordRead = null;
 	public String getCheckReadJMXResourcesPassword() {	
-		if(this.getCheckReadJMXResourcesPassword_read==null){
+		if(this.getCheckReadJMXResourcesPasswordRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.password");
 				if(name!=null){
 					name = name.trim();
 				}
-				this.getCheckReadJMXResourcesPassword_read = true;
+				this.getCheckReadJMXResourcesPasswordRead = true;
 				this.getCheckReadJMXResourcesPassword = name;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.password': "+e.getMessage(),e);
@@ -20212,17 +20225,232 @@ public class OpenSPCoop2Properties {
 		return this.isProxyReadJMXResourcesEnabled;
 	}
 	
+	private Boolean isProxyReadJMXResourcesAsyncProcessByTimer = null;
+	public boolean isProxyReadJMXResourcesAsyncProcessByTimer() {	
+		if(this.isProxyReadJMXResourcesAsyncProcessByTimer==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate");
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				this.isProxyReadJMXResourcesAsyncProcessByTimer = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate': "+e.getMessage(),e);
+				this.isProxyReadJMXResourcesAsyncProcessByTimer = false;
+			}    
+		}
+
+		return this.isProxyReadJMXResourcesAsyncProcessByTimer;
+	}
+	
+	private String getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClass = null;
+	private Boolean getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClassRead = null;
+	public String getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClass() {	
+		if(this.getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClassRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.serviceClass");
+				if(name!=null){
+					name = name.trim();
+				}
+				this.getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClassRead = true;
+				this.getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClass = name;
+			} catch(java.lang.Exception e) {
+				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.serviceClass': "+e.getMessage(),e);
+			}    
+		}
+		return this.getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClass;
+	}
+	
+	private Boolean isProxyReadJMXResourcesAsyncProcessByTimerDebug = null;
+	public boolean isProxyReadJMXResourcesAsyncProcessByTimerDebug() {	
+		if(this.isProxyReadJMXResourcesAsyncProcessByTimerDebug==null){
+			String pName = "org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.debug";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isProxyReadJMXResourcesAsyncProcessByTimerDebug = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isProxyReadJMXResourcesAsyncProcessByTimerDebug = true;
+			}    
+		}
+
+		return this.isProxyReadJMXResourcesAsyncProcessByTimerDebug;
+	}
+	
+	private String getProxyReadJMXResourcesAsyncProcessByTimerHostname = null;
+	private Boolean getProxyReadJMXResourcesAsyncProcessByTimerHostnameRead = null;
+	public String getProxyReadJMXResourcesAsyncProcessByTimerHostname() {	
+		if(this.getProxyReadJMXResourcesAsyncProcessByTimerHostnameRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.hostname");
+				if(name!=null){
+					name = name.trim();
+				}
+				this.getProxyReadJMXResourcesAsyncProcessByTimerHostnameRead = true;
+				this.getProxyReadJMXResourcesAsyncProcessByTimerHostname = name;
+			} catch(java.lang.Exception e) {
+				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.hostname': "+e.getMessage(),e);
+			}    
+		}
+		return this.getProxyReadJMXResourcesAsyncProcessByTimerHostname;
+	}
+	
+	private String getProxyReadJMXResourcesAsyncProcessByTimerSchema = null;
+	private Boolean getProxyReadJMXResourcesAsyncProcessByTimerSchemaRead = null;
+	public String getProxyReadJMXResourcesAsyncProcessByTimerSchema() {	
+		if(this.getProxyReadJMXResourcesAsyncProcessByTimerSchemaRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.schema");
+				if(name!=null){
+					name = name.trim();
+				}
+				this.getProxyReadJMXResourcesAsyncProcessByTimerSchemaRead = true;
+				this.getProxyReadJMXResourcesAsyncProcessByTimerSchema = name;
+			} catch(java.lang.Exception e) {
+				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.schema': "+e.getMessage(),e);
+			}    
+		}
+		return this.getProxyReadJMXResourcesAsyncProcessByTimerSchema;
+	}
+	
+	private Integer getProxyReadJMXResourcesAsyncProcessByTimerPort = null;
+	private Boolean getProxyReadJMXResourcesAsyncProcessByTimerPortRead = null;
+	public Integer getProxyReadJMXResourcesAsyncProcessByTimerPort() {	
+		if(this.getProxyReadJMXResourcesAsyncProcessByTimerPortRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.port");
+				if(name!=null){
+					name = name.trim();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerPort = Integer.valueOf(name);
+				}
+				this.getProxyReadJMXResourcesAsyncProcessByTimerPortRead = true;
+			} catch(java.lang.Exception e) {
+				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.port': "+e.getMessage(),e);
+			}    
+		}
+		return this.getProxyReadJMXResourcesAsyncProcessByTimerPort;
+	}
+	
+	private Integer getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval = null;
+	private Boolean getProxyReadJMXResourcesAsyncProcessByTimerCheckIntervalRead = null;
+	public Integer getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval() {	
+		if(this.getProxyReadJMXResourcesAsyncProcessByTimerCheckIntervalRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.checkInterval");
+				if(name!=null){
+					name = name.trim();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval = Integer.valueOf(name);
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.checkInterval' non impostata, viene utilizzato il default=60");
+					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval = 60;
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.checkInterval': "+e.getMessage()+". Viene utilizzato il default=60",e);
+				this.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval = 60;
+			}
+			this.getProxyReadJMXResourcesAsyncProcessByTimerCheckIntervalRead = true;
+		}
+		return this.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval;
+	}
+	
+	private Integer getProxyReadJMXResourcesAsyncProcessByTimerLimit = null;
+	private Boolean getProxyReadJMXResourcesAsyncProcessByTimerLimitRead = null;
+	public Integer getProxyReadJMXResourcesAsyncProcessByTimerLimit() {	
+		if(this.getProxyReadJMXResourcesAsyncProcessByTimerLimitRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.limit");
+				if(name!=null){
+					name = name.trim();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerLimit = Integer.valueOf(name);
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.limit' non impostata, viene utilizzato il default=100");
+					this.getProxyReadJMXResourcesAsyncProcessByTimerLimit = 100;
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.limit': "+e.getMessage()+". Viene utilizzato il default=100",e);
+				this.getProxyReadJMXResourcesAsyncProcessByTimerLimit = 100;
+			}
+			this.getProxyReadJMXResourcesAsyncProcessByTimerLimitRead = true;
+		}
+		return this.getProxyReadJMXResourcesAsyncProcessByTimerLimit;
+	}
+	
+	private Integer getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval = null;
+	private Boolean getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordIntervalRead = null;
+	public Integer getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval() {	
+		if(this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordIntervalRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.checkInterval");
+				if(name!=null){
+					name = name.trim();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval = Integer.valueOf(name);
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.checkInterval' non impostata, viene utilizzato il default=3600");
+					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval = 3600;
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.checkInterval': "+e.getMessage()+". Viene utilizzato il default=3600",e);
+				this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval = 3600;
+			}
+			this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordIntervalRead = true;
+		}
+		return this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval;
+	}
+	
+	private Integer getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes = null;
+	private Boolean getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutesRead = null;
+	public Integer getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes() {	
+		if(this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutesRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.olderThanMinutes");
+				if(name!=null){
+					name = name.trim();
+					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes = Integer.valueOf(name);
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.olderThanMinutes' non impostata, viene utilizzato il default=60");
+					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes = 60;
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.olderThanMinutes': "+e.getMessage()+". Viene utilizzato il default=60",e);
+				this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes = 60;
+			}
+			this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutesRead = true;
+		}
+		return this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes;
+	}
+	
 	private String getProxyReadJMXResourcesSchema = null;
-	private Boolean getProxyReadJMXResourcesSchema_read = null;
+	private Boolean getProxyReadJMXResourcesSchemaRead = null;
 	public String getProxyReadJMXResourcesSchema() {	
-		if(this.getProxyReadJMXResourcesSchema_read==null){
+		if(this.getProxyReadJMXResourcesSchemaRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.schema");
 				if(name!=null){
 					name = name.trim();
 				}
-				this.getProxyReadJMXResourcesSchema_read = true;
+				this.getProxyReadJMXResourcesSchemaRead = true;
 				this.getProxyReadJMXResourcesSchema = name;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.schema': "+e.getMessage(),e);
@@ -20232,9 +20460,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private Integer getProxyReadJMXResourcesPort = null;
-	private Boolean getProxyReadJMXResourcesPort_read = null;
+	private Boolean getProxyReadJMXResourcesPortRead = null;
 	public Integer getProxyReadJMXResourcesPort() {	
-		if(this.getProxyReadJMXResourcesPort_read==null){
+		if(this.getProxyReadJMXResourcesPortRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.port");
@@ -20242,7 +20470,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getProxyReadJMXResourcesPort = Integer.valueOf(name);
 				}
-				this.getProxyReadJMXResourcesPort_read = true;
+				this.getProxyReadJMXResourcesPortRead = true;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.port': "+e.getMessage(),e);
 			}    
@@ -20250,17 +20478,32 @@ public class OpenSPCoop2Properties {
 		return this.getProxyReadJMXResourcesPort;
 	}
 	
+	// utile per debug: invoco tutte le volte
+	public Integer getProxyReadJMXResourcesPort(String hostname) {	
+		try{ 
+			String name = null;
+			name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.port."+hostname);
+			if(name!=null){
+				name = name.trim();
+				return Integer.valueOf(name);
+			}
+		} catch(java.lang.Exception e) {
+			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.port."+hostname+"': "+e.getMessage(),e);
+		}    
+		return null;
+	}
+	
 	private String getProxyReadJMXResourcesUsername = null;
-	private Boolean getProxyReadJMXResourcesUsername_read = null;
+	private Boolean getProxyReadJMXResourcesUsernameRead = null;
 	public String getProxyReadJMXResourcesUsername() {	
-		if(this.getProxyReadJMXResourcesUsername_read==null){
+		if(this.getProxyReadJMXResourcesUsernameRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.username");
 				if(name!=null){
 					name = name.trim();
 				}
-				this.getProxyReadJMXResourcesUsername_read = true;
+				this.getProxyReadJMXResourcesUsernameRead = true;
 				this.getProxyReadJMXResourcesUsername = name;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.username': "+e.getMessage(),e);
@@ -20270,16 +20513,16 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String getProxyReadJMXResourcesPassword = null;
-	private Boolean getProxyReadJMXResourcesPassword_read = null;
+	private Boolean getProxyReadJMXResourcesPasswordRead = null;
 	public String getProxyReadJMXResourcesPassword() {	
-		if(this.getProxyReadJMXResourcesPassword_read==null){
+		if(this.getProxyReadJMXResourcesPasswordRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.password");
 				if(name!=null){
 					name = name.trim();
 				}
-				this.getProxyReadJMXResourcesPassword_read = true;
+				this.getProxyReadJMXResourcesPasswordRead = true;
 				this.getProxyReadJMXResourcesPassword = name;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.password': "+e.getMessage(),e);
@@ -20310,9 +20553,9 @@ public class OpenSPCoop2Properties {
 		return this.isProxyReadJMXResourcesHttpsEnabled;
 	}
 	
-	private Boolean isProxyReadJMXResourcesHttpsEnabled_verificaHostName = null;
-	public boolean isProxyReadJMXResourcesHttpsEnabled_verificaHostName() {	
-		if(this.isProxyReadJMXResourcesHttpsEnabled_verificaHostName==null){
+	private Boolean isProxyReadJMXResourcesHttpsEnabledVerificaHostName = null;
+	public boolean isProxyReadJMXResourcesHttpsEnabledVerificaHostName() {	
+		if(this.isProxyReadJMXResourcesHttpsEnabledVerificaHostName==null){
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.verificaHostName";
 			try{ 
 				String name = null;
@@ -20322,19 +20565,19 @@ public class OpenSPCoop2Properties {
 					name="true";
 				}
 				name = name.trim();
-				this.isProxyReadJMXResourcesHttpsEnabled_verificaHostName = Boolean.parseBoolean(name);
+				this.isProxyReadJMXResourcesHttpsEnabledVerificaHostName = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				this.isProxyReadJMXResourcesHttpsEnabled_verificaHostName = true;
+				this.isProxyReadJMXResourcesHttpsEnabledVerificaHostName = true;
 			}    
 		}
 
-		return this.isProxyReadJMXResourcesHttpsEnabled_verificaHostName;
+		return this.isProxyReadJMXResourcesHttpsEnabledVerificaHostName;
 	}
 	
-	private Boolean isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer = null;
-	public boolean isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer() {	
-		if(this.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer==null){
+	private Boolean isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer = null;
+	public boolean isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer() {	
+		if(this.isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer==null){
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer";
 			try{ 
 				String name = null;
@@ -20344,20 +20587,20 @@ public class OpenSPCoop2Properties {
 					name="true";
 				}
 				name = name.trim();
-				this.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer = Boolean.parseBoolean(name);
+				this.isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				this.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer = true;
+				this.isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer = true;
 			}    
 		}
 
-		return this.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer;
+		return this.isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer;
 	}
 	
-	private String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath = null;
-	private Boolean getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath_read = null;
-	public String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath() {	
-		if(this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath_read==null){
+	private String getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePath = null;
+	private Boolean getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePathRead = null;
+	public String getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePath() {	
+		if(this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePathRead==null){
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer.truststorePath";
 			try{ 
 				String name = null;
@@ -20368,19 +20611,19 @@ public class OpenSPCoop2Properties {
 				else {
 					throw new CoreException(NON_DEFINITA);
 				}
-				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath_read = true;
-				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath = name;
+				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePathRead = true;
+				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePath = name;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
-		return this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath;
+		return this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePath;
 	}
 	
-	private String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType = null;
-	private Boolean getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType_read = null;
-	public String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType() {	
-		if(this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType_read==null){
+	private String getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreType = null;
+	private Boolean getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreTypeRead = null;
+	public String getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreType() {	
+		if(this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreTypeRead==null){
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer.truststoreType";
 			try{ 
 				String name = null;
@@ -20391,19 +20634,19 @@ public class OpenSPCoop2Properties {
 				else {
 					throw new CoreException(NON_DEFINITA);
 				}
-				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType_read = true;
-				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType = name;
+				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreTypeRead = true;
+				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreType = name;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
-		return this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType;
+		return this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreType;
 	}
 	
-	private String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword = null;
-	private Boolean getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword_read = null;
-	public String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword() {	
-		if(this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword_read==null){
+	private String getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePassword = null;
+	private Boolean getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePasswordRead = null;
+	public String getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePassword() {	
+		if(this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePasswordRead==null){
 			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer.truststorePassword";
 			try{ 
 				String name = null;
@@ -20414,13 +20657,13 @@ public class OpenSPCoop2Properties {
 				else {
 					throw new CoreException(NON_DEFINITA);
 				}
-				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword_read = true;
-				this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword = name;
+				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePasswordRead = true;
+				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePassword = name;
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
-		return this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword;
+		return this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePassword;
 	}
 	
 	private Integer getProxyReadJMXResourcesConnectionTimeout = null;

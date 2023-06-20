@@ -166,7 +166,7 @@ public class GestorePdDInitThread extends Thread {
 	
 	public void initGestore() throws Exception {
 
-		this.enginePDD = this.consoleProperties.isGestioneCentralizzata_SincronizzazionePdd();
+		this.enginePDD = this.consoleProperties.isGestioneCentralizzataSincronizzazionePdd();
 		this.singlePdD = this.consoleProperties.isSinglePdD();
 
 		if (this.enginePDD == false) {

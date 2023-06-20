@@ -201,6 +201,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiFruizioni;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -717,7 +718,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -767,7 +768,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -838,7 +839,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -874,7 +875,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				if(oa==null) {
-					throw new Exception("Appender non trovato");
+					throw new DriverControlStationException("Appender non trovato");
 				}
 				
 				Property oap = null;
@@ -894,7 +895,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -967,7 +968,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1004,7 +1005,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				if(od==null) {
-					throw new Exception("Datasource non trovato");
+					throw new DriverControlStationException("Datasource non trovato");
 				}
 				
 				List<Property> lista1 = od.getPropertyList();
@@ -1025,7 +1026,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1098,7 +1099,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1137,7 +1138,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1208,7 +1209,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1247,7 +1248,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1345,7 +1346,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1381,7 +1382,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				if(oa==null) {
-					throw new Exception("Appender non trovato");
+					throw new DriverControlStationException("Appender non trovato");
 				}
 				
 				Property oap = null;
@@ -1401,7 +1402,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1472,7 +1473,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1553,25 +1554,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
 	public void refreshSystemProperties() {
 		// reimposto proprietà
-		List<String> aliases = this.confCore.getJmxPdD_aliases();
+		List<String> aliases = this.confCore.getJmxPdDAliases();
 		boolean resetOk = false;
-		if(aliases!=null && aliases.size()>0){
+		if(aliases!=null && !aliases.isEmpty()){
 			resetOk = true;
 			for (String alias : aliases) {
 				String stato = null;
 				try{
-					stato = this.confCore.getInvoker().invokeJMXMethod(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-							this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(alias),
-							this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(alias));
+					stato = this.confCore.getInvoker().invokeJMXMethod(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+							this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD(alias),
+							this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration(alias));
 					if(this.isErroreHttp(stato, "refresh System Properties")){
 						// e' un errore
-						throw new Exception(stato);
+						throw new DriverControlStationException(stato);
 					}
 				}catch(Exception e){
 					ControlStationCore.getLog().error("Errore durante il refresh via jmx delle system properties (alias: "+alias+"): "+e.getMessage(),e);
@@ -1648,7 +1649,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1735,7 +1736,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1818,7 +1819,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -1838,7 +1839,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -1898,7 +1899,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2007,7 +2008,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2087,7 +2088,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2183,7 +2184,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2237,7 +2238,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2433,7 +2434,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2497,7 +2498,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	private boolean canaleDatiCheckData(String canaliNome, String canaliDescrizione) throws Exception {
@@ -2536,7 +2537,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2554,7 +2555,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2572,7 +2573,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2590,7 +2591,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2608,7 +2609,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2637,7 +2638,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2655,7 +2656,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2673,7 +2674,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -2691,7 +2692,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2766,7 +2767,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2805,7 +2806,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2876,7 +2877,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -2912,7 +2913,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				if(oa==null) {
-					throw new Exception("Appender non trovato");
+					throw new DriverControlStationException("Appender non trovato");
 				}
 				
 				Property oap = null;
@@ -2932,7 +2933,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -3012,7 +3013,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -3062,7 +3063,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -3130,7 +3131,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -3167,7 +3168,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				if(od==null) {
-					throw new Exception("Datasource non trovato");
+					throw new DriverControlStationException("Datasource non trovato");
 				}
 				
 				List<Property> lista1 = od.getPropertyList();
@@ -3188,7 +3189,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -3488,7 +3489,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 		de.setValues(tipoReg);
 		de.setSelected(tipo);
-		//				de.setOnChange("CambiaTipo('add')");
 		de.setPostBack(true);
 		dati.add(de);
 
@@ -4537,7 +4537,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		boolean showTitleSection = 
 				(this.isModalitaCompleta()) 
 				||
-				(this.isModalitaAvanzata() && (this.confCore.isTracce_showConfigurazioneCustomAppender() || this.confCore.isTracce_showSorgentiDatiDatabase()));
+				(this.isModalitaAvanzata() && (this.confCore.isTracceShowConfigurazioneCustomAppender() || this.confCore.isTracceShowSorgentiDatiDatabase()));
 				
 		if(showTitleSection) {
 			if(this.isModalitaAvanzata()){
@@ -4568,7 +4568,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 	
 		if (this.isModalitaAvanzata()) {
-			if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
+			if (this.confCore.isTracceShowConfigurazioneCustomAppender()) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST);
@@ -4582,7 +4582,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
 				dati.add(de);
 			}
-			if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
+			if (this.confCore.isTracceShowSorgentiDatiDatabase()) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST);
@@ -4657,10 +4657,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.MULTI_SELECT);
-		de.setValues(this.confCore.getJmxPdD_aliases());
+		de.setValues(this.confCore.getJmxPdDAliases());
 		List<String> labels = new ArrayList<>();
-		for (String alias : this.confCore.getJmxPdD_aliases()) {
-			labels.add(this.confCore.getJmxPdD_descrizione(alias));
+		for (String alias : this.confCore.getJmxPdDAliases()) {
+			labels.add(this.confCore.getJmxPdDDescrizione(alias));
 		}
 		de.setLabels(labels);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODI_CLUSTER);
@@ -4678,18 +4678,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 				
 		boolean resetAllCaches = false;
-		if(this.confCore.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus()) {
-			for (String alias : this.confCore.getJmxPdD_aliases()) {
+		if(this.confCore.isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus()) {
+			for (String alias : this.confCore.getJmxPdDAliases()) {
 				
-				List<String> caches = this.confCore.getJmxPdD_caches(alias);
+				List<String> caches = this.confCore.getJmxPdDCaches(alias);
 				if(caches!=null && caches.size()>0){
 					for (String cache : caches) {
 					
 						String stato = null;
 						try{
-							stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+							stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
 									cache,
-									this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+									this.confCore.getJmxPdDCacheNomeAttributoCacheAbilitata(alias));
 							if(stato.equalsIgnoreCase("true")){
 								stato = "abilitata";
 							}
@@ -4697,7 +4697,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								stato = "disabilitata";
 							}
 							else{
-								throw new Exception("Stato ["+stato+"] sconosciuto");
+								throw new DriverControlStationException("Stato ["+stato+"] sconosciuto");
 							}
 						}catch(Exception e){
 							this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
@@ -4749,7 +4749,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSize(this.getSize());
 			dati.add(de);
 			
-			 Map<String, List<String>> map = this.confCore.getJmxPdD_gruppi_aliases();
+			 Map<String, List<String>> map = this.confCore.getJmxPdDGruppiAliases();
 			 if(map!=null && !map.isEmpty()) {
 				 List<String> gruppi = new ArrayList<>();
 				 for (String gruppo : map.keySet()) {
@@ -4833,15 +4833,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 
 		boolean resetAllCaches = false;
-		List<String> caches = this.confCore.getJmxPdD_caches(alias);
-		if(caches!=null && caches.size()>0){
+		List<String> caches = this.confCore.getJmxPdDCaches(alias);
+		if(caches!=null && !caches.isEmpty()){
 			for (String cache : caches) {
 			
 				String stato = null;
 				try{
-					stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
 							cache,
-							this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+							this.confCore.getJmxPdDCacheNomeAttributoCacheAbilitata(alias));
 					if(stato.equalsIgnoreCase("true")){
 						stato = "abilitata";
 					}
@@ -4849,7 +4849,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						stato = "disabilitata";
 					}
 					else{
-						throw new Exception("Stato ["+stato+"] sconosciuto");
+						throw new DriverControlStationException("Stato ["+stato+"] sconosciuto");
 					}
 				}catch(Exception e){
 					this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
@@ -4868,7 +4868,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES+
-					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_cache_nomeMetodo_resetCache(alias));
+					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdDCacheNomeMetodoResetCache(alias));
 			de.setType(DataElementType.LINK);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
@@ -4885,9 +4885,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String versionePdD = null;
 		try{
-			versionePdD = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(alias));
+			versionePdD = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoVersionePdD(alias));
 			if(this.isErroreHttp(versionePdD, "versione della PdD")){
 				// e' un errore
 				versionePdD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -4910,9 +4910,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String versioneBaseDati = null;
 		try{
-			versioneBaseDati = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(alias));
+			versioneBaseDati = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati(alias));
 			if(this.isErroreHttp(versioneBaseDati, "versione della base dati")){
 				// e' un errore
 				versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -4937,9 +4937,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String confDir = null;
 		try{
-			confDir = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
+			confDir = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione(alias));
 			if(this.isErroreHttp(confDir, "directory di configurazione")){
 				// e' un errore
 				confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -4964,9 +4964,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String vendorJava = null;
 		try{
-			vendorJava = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_vendorJava(alias));
+			vendorJava = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoVendorJava(alias));
 			if(this.isErroreHttp(vendorJava, "vendor di java")){
 				// e' un errore
 				vendorJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -4989,9 +4989,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String versioneJava = null;
 		try{
-			versioneJava = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(alias));
+			versioneJava = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoVersioneJava(alias));
 			if(this.isErroreHttp(versioneJava, "versione di java")){
 				// e' un errore
 				versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -5016,9 +5016,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String messageFactory = null;
 		try{
-			messageFactory = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
+			messageFactory = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoMessageFactory(alias));
 			if(this.isErroreHttp(messageFactory, "message factory")){
 				// e' un errore
 				messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -5027,9 +5027,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Errore durante la lettura della message factory (jmxResourcePdD): "+e.getMessage(),e);
 			messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
-//		if(messageFactory!=null){
-//			messageFactory = StringEscapeUtils.escapeHtml(messageFactory);
-//		}
+		/**if(messageFactory!=null){
+			messageFactory = StringEscapeUtils.escapeHtml(messageFactory);
+		}*/
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
 		de.setValue(messageFactory.trim().contains(" ") ? messageFactory.trim().replaceAll(" ", "\n") : messageFactory);
@@ -5049,9 +5049,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata(alias));
 			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5071,9 +5071,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa(alias));
 			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5093,9 +5093,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 			
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioIntegrationManager(alias));
 			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5124,9 +5124,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 
 		try{
-			String livelloSeverita = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias));
+			String livelloSeverita = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici(alias));
 			
 			String[] tipoMsg = { LogLevels.LIVELLO_OFF, LogLevels.LIVELLO_FATAL, LogLevels.LIVELLO_ERROR_PROTOCOL, LogLevels.LIVELLO_ERROR_INTEGRATION, 
 					LogLevels.LIVELLO_INFO_PROTOCOL, LogLevels.LIVELLO_INFO_INTEGRATION,
@@ -5147,9 +5147,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String livelloSeverita = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias));
+			String livelloSeverita = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j(alias));
 			
 			String[] tipoMsg = { LogLevels.LIVELLO_OFF, LogLevels.LIVELLO_FATAL, LogLevels.LIVELLO_ERROR_PROTOCOL, LogLevels.LIVELLO_ERROR_INTEGRATION, 
 					LogLevels.LIVELLO_INFO_PROTOCOL, LogLevels.LIVELLO_INFO_INTEGRATION,
@@ -5176,9 +5176,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String log4j_diagnostica = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(alias));
+			String log4j_diagnostica = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica(alias));
 			boolean enable = "true".equals(log4j_diagnostica);
 			
 			de = newDataElementStyleRuntime();
@@ -5196,9 +5196,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String log4j_openspcoop = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop(alias));
+			String log4j_openspcoop = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop(alias));
 			boolean enable = "true".equals(log4j_openspcoop);
 			
 			de = newDataElementStyleRuntime();
@@ -5216,9 +5216,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String log4j_integrationManager = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager(alias));
+			String log4j_integrationManager = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager(alias));
 			boolean enable = "true".equals(log4j_integrationManager);
 			
 			de = newDataElementStyleRuntime();
@@ -5246,9 +5246,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTracciamento(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5280,9 +5280,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 			
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoDumpPA(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5303,9 +5303,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoDumpPD(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5326,9 +5326,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 					
 		try{
-			String log4j_tracciamento = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento(alias));
+			String log4j_tracciamento = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento(alias));
 			boolean enable = "true".equals(log4j_tracciamento);
 			
 			de = newDataElementStyleRuntime();
@@ -5346,9 +5346,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String log4j_dump = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(alias));
+			String log4j_dump = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDump(alias));
 			boolean enable = "true".equals(log4j_dump);
 			
 			de = newDataElementStyleRuntime();
@@ -5366,9 +5366,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String fileTraceGovWayState = this.confCore.getInvoker().invokeJMXMethod(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias),
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(alias));
+			String fileTraceGovWayState = this.confCore.getInvoker().invokeJMXMethod(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias),
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace(alias));
 			FileTraceGovWayState state = FileTraceGovWayState.toConfig(fileTraceGovWayState);
 
 			if(state.isEnabled()) {
@@ -5435,9 +5435,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5462,12 +5462,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias));
-			String value2 = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse(alias));
+			String value2 = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError(alias));
 			boolean enable = "true".equals(value) && "true".equals(value2);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5492,9 +5492,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5524,9 +5524,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5548,9 +5548,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5577,9 +5577,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5606,9 +5606,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5635,9 +5635,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.add(de);
 		
 		try{
-			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias));
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode(alias));
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -5668,9 +5668,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoDatabase = null;
 		try{
-			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase(alias));
 			if(this.isErroreHttp(tmp, "informazioni sul database")){
 				// e' un errore
 				tmp = null;
@@ -5714,13 +5714,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		try{
 			int numeroDatasource = 0;
 			try{
-				String stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-						this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(alias));
+				String stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW(alias));
 				if(stato!=null && !"".equals(stato)) {
 					if(this.isErroreHttp(stato, "stato delle connessioni verso altri database")){
 						// e' un errore
-						throw new Exception(stato);
+						throw new DriverControlStationException(stato);
 					}
 					numeroDatasource = Integer.valueOf(stato);
 				}
@@ -5728,13 +5728,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ControlStationCore.logDebug("Numero di datasource attivi non ottenibili: "+e.getMessage());
 			}
 			if(numeroDatasource>0) {
-				String nomiDatasource = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(alias));
+				String nomiDatasource = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW(alias));
 				if(nomiDatasource!=null && !"".equals(nomiDatasource)) {
 					if(this.isErroreHttp(nomiDatasource, "stato delle connessioni verso altri database")){
 						// e' un errore
-						throw new Exception(nomiDatasource);
+						throw new DriverControlStationException(nomiDatasource);
 					}
 					/* Esempio:
 					 * 3 datasource allocati: 
@@ -5757,27 +5757,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										int indexOf_paramIdentificazioneDataSource = tmp[2].indexOf(":");
 										String paramIdentificazioneDataSource = tmp[2].substring(indexOf_paramIdentificazioneDataSource+1, tmp[2].length());
 										
-										String statoInfo = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias),
+										String statoInfo = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+												this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(alias),
+												this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW(alias),
 												paramIdentificazioneDataSource);
 										if(infoConnessioneAltriDB==null) {
 											infoConnessioneAltriDB = new HashMap<>();
 										}
 										infoConnessioneAltriDB.put(nomeDS,statoInfo);
 										
-										String statoDB = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias),
-												paramIdentificazioneDataSource);
-										if(this.isErroreHttp(statoDB, "stato delle connessioni verso database "+nomeDS)){
-											// e' un errore
-											throw new Exception(statoDB);
+										if(!this.confCore.isClusterAsyncUpdate()) {
+											String statoDB = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+													this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(alias),
+													this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW(alias),
+													paramIdentificazioneDataSource);
+											if(this.isErroreHttp(statoDB, "stato delle connessioni verso database "+nomeDS)){
+												// e' un errore
+												throw new DriverControlStationException(statoDB);
+											}
+											if(statoConnessioniAltriDB==null) {
+												statoConnessioniAltriDB = new HashMap<>();
+											}
+											statoConnessioniAltriDB.put(nomeDS,statoDB);
 										}
-										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<>();
-										}
-										statoConnessioniAltriDB.put(nomeDS,statoDB);
 										
 									}catch(Exception e){
 										ControlStationCore.logError("Errore durante la lettura delle informazioni verso il database "+nomeDS+" (jmxResourcePdD): "+e.getMessage(),e);
@@ -5787,10 +5789,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										}
 										infoConnessioneAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 										
-										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<>();
+										if(!this.confCore.isClusterAsyncUpdate()) {
+											if(statoConnessioniAltriDB==null) {
+												statoConnessioniAltriDB = new HashMap<>();
+											}
+											statoConnessioniAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 										}
-										statoConnessioniAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 									}		
 								}
 							}
@@ -5806,10 +5810,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			infoConnessioneAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 			
-			if(statoConnessioniAltriDB==null) {
-				statoConnessioniAltriDB = new HashMap<>();
+			if(!this.confCore.isClusterAsyncUpdate()) {
+				if(statoConnessioniAltriDB==null) {
+					statoConnessioniAltriDB = new HashMap<>();
+				}
+				statoConnessioniAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 			}
-			statoConnessioniAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
 		}
 		
 		if(infoConnessioneAltriDB!=null && infoConnessioneAltriDB.size()>0) {
@@ -5870,9 +5876,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoSSL = null;
 		try{
-			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL(alias));
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniSSL(alias));
 			if(this.isErroreHttp(tmp, "informazioni SSL")){
 				// e' un errore
 				tmp = null;
@@ -5913,7 +5919,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		if(this.core.isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength()){
+		if(this.core.isJmxPdD_configurazioneSistemaShowInformazioniCryptographyKeyLength()){
 		
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH);
@@ -5922,9 +5928,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			String [] infoCryptoKeyLength = null;
 			try{
-				String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
+				String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength(alias));
 				if(this.isErroreHttp(tmp, "informazioni CryptographyKeyLength")){
 					// e' un errore
 					tmp = null;
@@ -5981,9 +5987,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoCharset = null;
 		try{
-			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(alias));
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset(alias));
 			if(this.isErroreHttp(tmp, "informazioni Charset")){
 				// e' un errore
 				tmp = null;
@@ -6043,9 +6049,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoInternazionalizzazione = null;
 		try{
-			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(alias));
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInternazionalizzazione(alias));
 			if(this.isErroreHttp(tmp, "informazioni Internazionalizzazione")){
 				// e' un errore
 				tmp = null;
@@ -6103,9 +6109,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoTimezone = null;
 		try{
-			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(alias));
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniTimeZone(alias));
 			if(this.isErroreHttp(tmp, "informazioni Internazionalizzazione")){
 				// e' un errore
 				tmp = null;
@@ -6160,9 +6166,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoJavaNet = null;
 		try{
-			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking(alias));
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaNetworking(alias));
 			if(this.isErroreHttp(tmp, "informazioni Java Networking")){
 				// e' un errore
 				tmp = null;
@@ -6230,9 +6236,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoProtocolli = null;
 		try{
-			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols(alias));
 			infoProtocolli = tmp.split("\n");
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sui protocolli (jmxResourcePdD): "+e.getMessage(),e);
@@ -6303,8 +6309,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
-		caches = this.confCore.getJmxPdD_caches(alias);
-		if(caches!=null && caches.size()>0){
+		caches = this.confCore.getJmxPdDCaches(alias);
+		if(caches!=null && !caches.isEmpty()){
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE);
@@ -6320,9 +6326,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				String stato = null;
 				try{
-					stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
 							cache,
-							this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+							this.confCore.getJmxPdDCacheNomeAttributoCacheAbilitata(alias));
 					if(stato.equalsIgnoreCase("true")){
 						stato = "abilitata";
 					}
@@ -6330,7 +6336,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						stato = "disabilitata";
 					}
 					else{
-						throw new Exception("Stato ["+stato+"] sconosciuto");
+						throw new DriverControlStationException("Stato ["+stato+"] sconosciuto");
 					}
 				}catch(Exception e){
 					this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
@@ -6344,20 +6350,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+cache+
-							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_cache_nomeMetodo_resetCache(alias));
+							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdDCacheNomeMetodoResetCache(alias));
 					de.setType(DataElementType.LINK);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET_SINGOLA);
 					de.setSize(this.getSize());
 					dati.add(de);
 					
-					if(this.confCore.getJmxPdD_caches_prefill(alias).contains(cache)){
+					if(this.confCore.getJmxPdDCachesPrefill(alias).contains(cache)){
 						de = newDataElementStyleRuntime();
 						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
 						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 								"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+cache+
-								"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_cache_nomeMetodo_prefillCache(alias));
+								"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdDCacheNomeMetodoPrefillCache(alias));
 						de.setType(DataElementType.LINK);
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
 						de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
@@ -6379,9 +6385,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					String [] params = null;
 					try{
-						String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_cache_type(alias), 
+						String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDCacheType(alias), 
 								cache,
-								this.confCore.getJmxPdD_cache_nomeMetodo_statoCache(alias));
+								this.confCore.getJmxPdDCacheNomeMetodoStatoCache(alias));
 						params = tmp.split("\n");
 					}catch(Exception e){
 						this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
@@ -6510,184 +6516,190 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 			
 		
-		
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI);
-		de.setType(DataElementType.TITLE);
-		dati.add(de);
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE);
-		de.setType(DataElementType.SUBTITLE);
-		dati.add(de);
-		
 		String stato = null;
-		try{
-			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
-			if(this.isErroreHttp(stato, "stato delle connessioni al database")){
-				// e' un errore
-				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-			}
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura dello stato delle connessioni al database (jmxResourcePdD): "+e.getMessage(),e);
-			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-		}
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml(stato);
-		}
-		de.setValue(stato);
-		de.setLabelAffiancata(false);
-		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_DB);
-		de.setSize(this.getSize());
-		de.setRows(6);
-		de.setCols(80);
-		dati.add(de);
-		
-		
-		// statoConnessioniAltriDB, letto prima durante l'acquisizione delle informazion
-		if(statoConnessioniAltriDB!=null && statoConnessioniAltriDB.size()>0) {
-			Iterator<String> it = statoConnessioniAltriDB.keySet().iterator();
-			int index = 0;
-			while (it.hasNext()) {
-				String idAltroDB = (String) it.next();
-				String statoConnessioniAltroDB = statoConnessioniAltriDB.get(idAltroDB);
 				
-				de = newDataElementStyleRuntime();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE+" "+idAltroDB.split(" ")[0]);
-				de.setType(DataElementType.SUBTITLE);
-				dati.add(de);
-				
-				de = newDataElementStyleRuntime();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-				if(statoConnessioniAltroDB!=null){
-					statoConnessioniAltroDB = StringEscapeUtils.escapeHtml(statoConnessioniAltroDB);
+		
+		if(!this.confCore.isClusterAsyncUpdate()) {
+		
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI);
+			de.setType(DataElementType.TITLE);
+			dati.add(de);
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+			
+			try{
+				stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB(alias));
+				if(this.isErroreHttp(stato, "stato delle connessioni al database")){
+					// e' un errore
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
-				de.setValue(statoConnessioniAltroDB);
-				de.setLabelAffiancata(false);
-				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_DB+"_ds"+index++);
-				de.setSize(this.getSize());
-				de.setRows(6);
-				de.setCols(80);
-				dati.add(de);
-			}
-		}
-		
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);
-		de.setType(DataElementType.SUBTITLE);
-		dati.add(de);
-		
-		stato = null;
-		try{
-			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
-			if(this.isErroreHttp(stato, "stato delle connessioni JMS")){
-				// e' un errore
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura dello stato delle connessioni al database (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura dello stato delle connessioni JMS (jmxResourcePdD): "+e.getMessage(),e);
-			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-		}
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml(stato);
-		}
-		de.setValue(stato);
-		de.setLabelAffiancata(false);
-		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_JMS);
-		de.setSize(this.getSize());
-		de.setRows(6);
-		de.setCols(80);
-		dati.add(de);
-		
-		
-		
-		
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI);
-		de.setType(DataElementType.TITLE);
-		dati.add(de);
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
-		de.setType(DataElementType.SUBTITLE);
-		dati.add(de);
-		
-		stato = null;
-		try{
-			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(alias));
-			if(this.isErroreHttp(stato, "identificativi delle transazioni attive")){
-				// e' un errore
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_DB);
+			de.setSize(this.getSize());
+			de.setRows(6);
+			de.setCols(80);
+			dati.add(de);
+			
+			
+			// statoConnessioniAltriDB, letto prima durante l'acquisizione delle informazion
+			if(statoConnessioniAltriDB!=null && statoConnessioniAltriDB.size()>0) {
+				Iterator<String> it = statoConnessioniAltriDB.keySet().iterator();
+				int index = 0;
+				while (it.hasNext()) {
+					String idAltroDB = it.next();
+					String statoConnessioniAltroDB = statoConnessioniAltriDB.get(idAltroDB);
+					
+					de = newDataElementStyleRuntime();
+					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE+" "+idAltroDB.split(" ")[0]);
+					de.setType(DataElementType.SUBTITLE);
+					dati.add(de);
+					
+					de = newDataElementStyleRuntime();
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+					if(statoConnessioniAltroDB!=null){
+						statoConnessioniAltroDB = StringEscapeUtils.escapeHtml(statoConnessioniAltroDB);
+					}
+					de.setValue(statoConnessioniAltroDB);
+					de.setLabelAffiancata(false);
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_DB+"_ds"+index++);
+					de.setSize(this.getSize());
+					de.setRows(6);
+					de.setCols(80);
+					dati.add(de);
+				}
+			}
+			
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+			
+			stato = null;
+			try{
+				stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS(alias));
+				if(this.isErroreHttp(stato, "stato delle connessioni JMS")){
+					// e' un errore
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura dello stato delle connessioni JMS (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura degli identificativi delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
-			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_JMS);
+			de.setSize(this.getSize());
+			de.setRows(6);
+			de.setCols(80);
+			dati.add(de);
+			
 		}
 		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
-		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml(stato);
-		}
-		de.setValue(stato);
-		de.setLabelAffiancata(false);
-		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
-		de.setSize(this.getSize());
-		de.setRows(6);
-		de.setCols(80);
-		dati.add(de);
 		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
-		de.setType(DataElementType.SUBTITLE);
-		dati.add(de);
 		
-		stato = null;
-		try{
-			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(alias));
-			if(this.isErroreHttp(stato, "identificativi di protocollo delle transazioni attive")){
-				// e' un errore
+		if(!this.confCore.isClusterAsyncUpdate()) {
+		
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI);
+			de.setType(DataElementType.TITLE);
+			dati.add(de);
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+			
+			stato = null;
+			try{
+				stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive(alias));
+				if(this.isErroreHttp(stato, "identificativi delle transazioni attive")){
+					// e' un errore
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura degli identificativi delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura degli identificativi di protocollo delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
-			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
+			de.setSize(this.getSize());
+			de.setRows(6);
+			de.setCols(80);
+			dati.add(de);
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+			
+			stato = null;
+			try{
+				stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive(alias));
+				if(this.isErroreHttp(stato, "identificativi di protocollo delle transazioni attive")){
+					// e' un errore
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura degli identificativi di protocollo delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
+			de.setSize(this.getSize());
+			de.setRows(6);
+			de.setCols(80);
+			dati.add(de);
+			
 		}
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
-		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml(stato);
-		}
-		de.setValue(stato);
-		de.setLabelAffiancata(false);
-		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
-		de.setSize(this.getSize());
-		de.setRows(6);
-		de.setCols(80);
-		dati.add(de);
 		
 		
 		
@@ -6699,77 +6711,81 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TITLE);
 		dati.add(de);
 				
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE);
 		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD);
-		de.setType(DataElementType.SUBTITLE);
-		dati.add(de);
+		if(!this.confCore.isClusterAsyncUpdate()) {
 		
-		stato = null;
-		try{
-			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
-			if(this.isErroreHttp(stato, "stato delle connessioni http verso le PD")){
-				// e' un errore
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+			
+			stato = null;
+			try{
+				stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD(alias));
+				if(this.isErroreHttp(stato, "stato delle connessioni http verso le PD")){
+					// e' un errore
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PD (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PD (jmxResourcePdD): "+e.getMessage(),e);
-			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-		}
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml(stato);
-		}
-		de.setValue(stato);
-		de.setLabelAffiancata(false);
-		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD);
-		de.setSize(this.getSize());
-		de.setRows(6);
-		de.setCols(80);
-		dati.add(de);
-		
-		
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
-		de.setType(DataElementType.SUBTITLE);
-		dati.add(de);
-		
-		stato = null;
-		try{
-			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
-			if(this.isErroreHttp(stato, "stato delle connessioni http verso le PA")){
-				// e' un errore
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD);
+			de.setSize(this.getSize());
+			de.setRows(6);
+			de.setCols(80);
+			dati.add(de);
+			
+			
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+			
+			stato = null;
+			try{
+				stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA(alias));
+				if(this.isErroreHttp(stato, "stato delle connessioni http verso le PA")){
+					// e' un errore
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PA (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PA (jmxResourcePdD): "+e.getMessage(),e);
-			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PA);
+			de.setSize(this.getSize());
+			de.setRows(6);
+			de.setCols(80);
+			dati.add(de);
+			
 		}
-		
-		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml(stato);
-		}
-		de.setValue(stato);
-		de.setLabelAffiancata(false);
-		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PA);
-		de.setSize(this.getSize());
-		de.setRows(6);
-		de.setCols(80);
-		dati.add(de);
 		
 		
 		
@@ -6797,7 +6813,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.add(de);
 		
-		boolean timerAttivo = addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias), 
+		boolean timerAttivo = addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI);
 				
@@ -6815,9 +6831,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				stato = null;
 				try{
-					stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-							this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-							this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias),
+					stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+							this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias),
+							this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus(alias),
 							coda);
 					if(this.isErroreHttp(stato, "stato del thread pool per la consegna agli applicativi")){
 						// e' un errore
@@ -6844,9 +6860,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				String configurazioneCoda = null;
 				try{
-					configurazioneCoda = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-							this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-							this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(alias),
+					configurazioneCoda = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+							this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias),
+							this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig(alias),
 							coda);
 					if(this.isErroreHttp(configurazioneCoda, "Configurazione del thread pool '"+labelCoda+"' per la consegna agli applicativi")){
 						// e' un errore
@@ -6873,9 +6889,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				String connettoriPrioritari = null;
 				try{
-					connettoriPrioritari = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-							this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-							this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(alias),
+					connettoriPrioritari = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+							this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConsegnaContenutiApplicativi(alias),
+							this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari(alias),
 							coda);
 					if(this.isErroreHttp(connettoriPrioritari, "Connettori prioritari del thread pool '"+labelCoda+"' per la consegna agli applicativi")){
 						// e' un errore
@@ -6912,7 +6928,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+coda+
-							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(alias));
+							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari(alias));
 					de.setType(DataElementType.LINK);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI);
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI);
@@ -6936,19 +6952,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SUBTITLE);
 		dati.add(de);
 
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI);
 		
@@ -6959,57 +6975,68 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.SUBTITLE);
 			dati.add(de);
 			
-			addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND(alias), 
+			addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND(alias), 
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND, 
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND);
 			
-			addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND(alias), 
+			addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND(alias), 
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND, 
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND);
 		}
-
-		
+			
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME);
 		de.setType(DataElementType.SUBTITLE);
 		dati.add(de);
 
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA);
 		
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI);
 		
+		if(this.confCore.isClusterAsyncUpdate()) {
+			
+			addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote(alias), 
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_OPERAZIONI_REMOTE, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_OPERAZIONI_REMOTE, 
+					true);
+			
+			addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote(alias), 
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_SVECCHIAMENTO_OPERAZIONI_REMOTE, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_SVECCHIAMENTO_OPERAZIONI_REMOTE);
+			
+		}
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO);
 		de.setType(DataElementType.SUBTITLE);
 		dati.add(de);
 
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD);
 		
@@ -7019,23 +7046,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SUBTITLE);
 		dati.add(de);
 
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerEventi(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE);
 		
-		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD);
 
@@ -7120,9 +7147,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 	private boolean addTimerState(List<DataElement> dati, String alias, String nomeAttributo, String nomeParametro, String labelParametro) {
+		return addTimerState(dati, alias, nomeAttributo, nomeParametro, labelParametro, false);
+	}
+	private boolean addTimerState(List<DataElement> dati, String alias, String nomeAttributo, String nomeParametro, String labelParametro, boolean forceText) {
 		try{
-			String stato = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+			String stato = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
 					nomeAttributo);
 			
 			TimerState timerState = TimerState.valueOf(stato);
@@ -7133,6 +7163,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(TimerState.OFF.equals(timerState)) {
 				de.setType(DataElementType.TEXT);
 				de.setValue(TimerState.OFF.name());
+			}
+			else if(forceText) {
+				de.setType(DataElementType.TEXT);
+				switch (timerState) {
+				case ENABLED:
+					de.setValue(CostantiConfigurazione.ABILITATO.getValue());
+					break;
+				case DISABLED:
+					de.setValue(CostantiConfigurazione.DISABILITATO.getValue());
+					break;
+				default:
+					de.setValue(TimerState.OFF.name());
+					break;
+				}	
 			}
 			else {
 				String[] labels = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
@@ -7519,9 +7563,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addConfigurazioneControlloTrafficoJmxStateToDati(List<DataElement> dati, TipoOperazione tipoOperazione) throws Exception {
 		// jmx
 		
-		List<String> aliases = this.getCore().getJmxPdD_aliases();
+		List<String> aliases = this.getCore().getJmxPdDAliases();
 		if(aliases==null || aliases.size()<=0){
-			throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
+			throw new DriverControlStationException("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 		}
 		
 		DataElement de = new DataElement();
@@ -7541,7 +7585,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		for (String alias : aliases) {
 			
-			String descrizioneAlias = this.getCore().getJmxPdD_descrizione(alias);
+			String descrizioneAlias = this.getCore().getJmxPdDDescrizione(alias);
 			
 			de = new DataElement();
 			de.setLabel(descrizioneAlias);
@@ -7812,7 +7856,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				long l = Long.parseLong(numRichieste);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				controlloTraffico.setControlloMaxThreadsSoglia(l);
 			}catch(Exception e){
@@ -7872,7 +7916,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				int t = Integer.parseInt(threshold);
 				if(t<=0 || t>100){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				controlloTraffico.setControlloCongestioneThreshold(t);
 			}catch(Exception e){
@@ -8010,7 +8054,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				int l = Integer.parseInt(connectionTimeout);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				tempiRispostaFruizione.setConnectionTimeout(l);
 			}catch(Exception e){
@@ -8033,7 +8077,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				int l = Integer.parseInt(readTimeout);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				tempiRispostaFruizione.setReadTimeout(l);
 			}catch(Exception e){
@@ -8056,7 +8100,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				int l = Integer.parseInt(tempoMedioRisposta);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				tempiRispostaFruizione.setTempoMedioRisposta(l);
 			}catch(Exception e){
@@ -8088,7 +8132,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				int l = Integer.parseInt(connectionTimeout);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				tempiRispostaErogazione.setConnectionTimeout(l);
 			}catch(Exception e){
@@ -8111,7 +8155,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				int l = Integer.parseInt(readTimeout);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				tempiRispostaErogazione.setReadTimeout(l);
 			}catch(Exception e){
@@ -8134,7 +8178,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				int l = Integer.parseInt(tempoMedioRisposta);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				tempiRispostaErogazione.setTempoMedioRisposta(l);
 			}catch(Exception e){
@@ -8174,7 +8218,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				long l = Long.parseLong(cacheDimensione);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				cache.setSize(l);
 			}catch(Exception e){
@@ -8201,7 +8245,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				long l = Long.parseLong(cacheItemLife);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				cache.setLifeTime(l);
 			}catch(Exception e){
@@ -8227,7 +8271,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				long l = Long.parseLong(cacheItemIdle);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				cache.setIdleTime(l);
 			}catch(Exception e){
@@ -8254,7 +8298,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				if(!CacheAlgorithm.LRU.name().equals(cacheAlgorithm) && 
 						!CacheAlgorithm.MRU.name().equals(cacheAlgorithm)){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				cache.setAlgorithm(CacheAlgorithm.toEnumConstant(cacheAlgorithm));
 			}catch(Exception e){
@@ -8509,7 +8553,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -9115,7 +9159,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -9459,7 +9503,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				long l = Long.parseLong(id);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				policy.setId(l);
 			}catch(Exception e){
@@ -9575,7 +9619,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				try{
 					int i = Integer.parseInt(valore);
 					if(i<=0){
-						throw new Exception("Valore non nell'intervallo");
+						throw new DriverControlStationException("Valore non nell'intervallo");
 					}
 					policy.setValore((long)i);
 				}catch(Exception e){
@@ -9589,7 +9633,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				try{
 					long l = Long.parseLong(valore);
 					if(l<=0){
-						throw new Exception("Valore non nell'intervallo");
+						throw new DriverControlStationException("Valore non nell'intervallo");
 					}
 					policy.setValore(l);
 				}catch(Exception e){
@@ -9692,7 +9736,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					try{
 						int i = Integer.parseInt(periodo);
 						if(i<=0){
-							throw new Exception("Valore non nell'intervallo");
+							throw new DriverControlStationException("Valore non nell'intervallo");
 						}
 						policy.setIntervalloOsservazione(i);
 					}catch(Exception e){
@@ -9775,7 +9819,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				try{
 					int i = Integer.parseInt(valore2);
 					if(i<=0){
-						throw new Exception("Valore non nell'intervallo");
+						throw new DriverControlStationException("Valore non nell'intervallo");
 					}
 					policy.setValore2((long)i);
 				}catch(Exception e){
@@ -9981,7 +10025,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				try{
 					int i = Integer.parseInt(periodo);
 					if(i<=0){
-						throw new Exception("Valore non nell'intervallo");
+						throw new DriverControlStationException("Valore non nell'intervallo");
 					}
 					policy.setDegradoAvgTimeIntervalloOsservazione(i);
 				}catch(Exception e){
@@ -10089,7 +10133,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				try{
 					int i = Integer.parseInt(stato);
 					if(i<0){
-						throw new Exception("Valore non nell'intervallo");
+						throw new DriverControlStationException("Valore non nell'intervallo");
 					}
 					policy.setAllarmeStato(i);
 				}catch(Exception e){
@@ -11949,7 +11993,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		long l = policy.getValore();
 		try{
 			if(l<0){
-				throw new Exception("Valore non nell'intervallo");
+				throw new DriverControlStationException("Valore non nell'intervallo");
 			}
 		}catch(Exception e){
 			String messaggio = "Il valore ("+policy.getValore()+") indicato in '"+name+"' deve essere un numero intero maggiore o uguale a 0";
@@ -11993,7 +12037,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				long i = policy.getValore2();
 				if(i<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 			}catch(Exception e){
 				String messaggio = "Il valore ("+policy.getValore2()+") indicato in '"+labelDimensione+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
@@ -12076,7 +12120,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				long l = Long.parseLong(id);
 				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+					throw new DriverControlStationException("Valore non nell'intervallo");
 				}
 				policy.setId(l);
 			}catch(Exception e){
@@ -12140,7 +12184,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					try{
 						Integer i = Integer.parseInt(valore);
 						if(i<=0){
-							throw new Exception("Valore non nell'intervallo");
+							throw new DriverControlStationException("Valore non nell'intervallo");
 						}
 						policy.setValore((long)i);
 					}catch(Exception e){
@@ -12154,7 +12198,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					try{
 						long l = Long.parseLong(valore);
 						if(l<=0){
-							throw new Exception("Valore non nell'intervallo");
+							throw new DriverControlStationException("Valore non nell'intervallo");
 						}
 						policy.setValore(l);
 					}catch(Exception e){
@@ -12190,7 +12234,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					try{
 						Integer i = Integer.parseInt(valore2);
 						if(i<=0){
-							throw new Exception("Valore non nell'intervallo");
+							throw new DriverControlStationException("Valore non nell'intervallo");
 						}
 						policy.setValore2((long)i);
 					}catch(Exception e){
@@ -12772,7 +12816,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				tipoRisorsaSelezionata = TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA;
 			}
 			else {
-				throw new Exception("Risorsa '"+valoreRisorsa+"' sconosciuta");
+				throw new DriverControlStationException("Risorsa '"+valoreRisorsa+"' sconosciuta");
 			}
 			return tipoRisorsaSelezionata;
 			
@@ -12781,7 +12825,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.toEnumConstant(valoreRisorsa, false);
 			if(tipoRisorsaPolicyAttiva==null) {
-				throw new Exception("Risorsa '"+valoreRisorsa+"' sconosciuta");
+				throw new DriverControlStationException("Risorsa '"+valoreRisorsa+"' sconosciuta");
 			}
 			return tipoRisorsaPolicyAttiva.getTipoRisorsa(true);
 			
@@ -12833,7 +12877,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_DIMENSIONE_MASSIMA;
 			}
 			
-			throw new Exception("Tipo risorsa '"+tipoRisorsa+"' non gestita");
+			throw new DriverControlStationException("Tipo risorsa '"+tipoRisorsa+"' non gestita");
 		}
 		else {
 			TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.getTipo(tipoRisorsa, simultanee);
@@ -12867,7 +12911,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return null;
 			}
 			
-			throw new Exception("Tipo risorsa '"+tipoRisorsa+"' non gestita");
+			throw new DriverControlStationException("Tipo risorsa '"+tipoRisorsa+"' non gestita");
 		}
 		else {
 			return null;
@@ -12907,7 +12951,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						continue;
 					}
 					if(modalitaIntervallo==null) {
-						throw new Exception("Intervallo Temporale non definito");
+						throw new DriverControlStationException("Intervallo Temporale non definito");
 					}
 					TipoPeriodoRealtime tipo = TipoPeriodoRealtime.toEnumConstant(modalitaIntervallo, true);
 					if(!tipo.equals(info.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo())) {
@@ -13780,9 +13824,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// jmx
 			
-			List<String> aliases = this.core.getJmxPdD_aliases();
+			List<String> aliases = this.core.getJmxPdDAliases();
 			if(aliases==null || aliases.size()<=0){
-				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
+				throw new DriverControlStationException("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 			
 			String jmxResetParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET);
@@ -13849,7 +13893,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			int i=0;
 			for (String alias : aliases) {
 				
-				String descrizioneAlias = this.core.getJmxPdD_descrizione(alias);
+				String descrizioneAlias = this.core.getJmxPdDDescrizione(alias);
 				
 				de = new DataElement();
 				de.setLabel(descrizioneAlias);
@@ -16155,7 +16199,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				long l = policy.getValore();
 				try{
 					if(l<=0){
-						throw new Exception("Valore non nell'intervallo");
+						throw new DriverControlStationException("Valore non nell'intervallo");
 					}
 				}catch(Exception e){
 					String max = Long.MAX_VALUE+"";
@@ -16187,7 +16231,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					l = policy.getValore2();
 					try{
 						if(l<=0){
-							throw new Exception("Valore non nell'intervallo");
+							throw new DriverControlStationException("Valore non nell'intervallo");
 						}
 					}catch(Exception e){
 						String messaggio = "Il valore ("+policy.getValore2()+") indicato in '"+name+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
@@ -16556,9 +16600,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 	public String eseguiResetJmx(TipoOperazione tipoOperazione, RuoloPolicy ruoloPorta, String nomePorta) throws Exception{
 		try{
-			List<String> aliases = this.core.getJmxPdD_aliases();
+			List<String> aliases = this.core.getJmxPdDAliases();
 			if(aliases==null || aliases.size()<=0){
-				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
+				throw new DriverControlStationException("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
 			for (String alias : aliases) {
 				
@@ -16618,9 +16662,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String params = null;
 				try{
 					TipoPdD tipoPdD = null;
-					risorsa = this.core.getJmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste(alias);
+					risorsa = this.core.getJmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste(alias);
 					if(nomePorta!=null && !"".equals(nomePorta)) {
-						methodName = this.core.getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache(alias);
+						methodName = this.core.getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache(alias);
 						tipoPdD = RuoloPolicy.DELEGATA.equals(ruoloPorta)?TipoPdD.DELEGATA : TipoPdD.APPLICATIVA;
 						params = tipoPdD.getTipo() + ", " + nomePorta;
 						resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE,
@@ -16629,7 +16673,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								tipoPdD.getTipo(), nomePorta);
 					}
 					else {
-						methodName = this.core.getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache(alias);
+						methodName = this.core.getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache(alias);
 						params = "non sono previsti parametri";
 						resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE,
 								risorsa,
@@ -16784,7 +16828,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -17406,7 +17450,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -17542,7 +17586,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -17688,7 +17732,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 		
 	}
@@ -17759,7 +17803,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	public void prepareCanaleNodoConfigurazioneList(ConsoleSearch ricerca, List<CanaleConfigurazioneNodo> lista) throws Exception { 
@@ -17858,7 +17902,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 		
 	}
@@ -17989,7 +18033,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -18191,7 +18235,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -18422,7 +18466,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -18519,7 +18563,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 
@@ -18662,7 +18706,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSelect(visualizzaElimina);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -18828,7 +18872,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	public List<DataElement> addPluginClassiToDati(TipoOperazione tipoOp, List<DataElement> dati, String idPluginS,
@@ -19083,7 +19127,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -19112,7 +19156,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -19141,7 +19185,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	public void prepareAllarmiList(ConsoleSearch ricerca, List<ConfigurazioneAllarmeBean> lista,
@@ -19281,7 +19325,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -19832,7 +19876,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	} 
 	
@@ -19854,7 +19898,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					this.log.debug("Invoked ["+url+"] Status["+response.getResultHTTPOperation()+"]");
 				}
 				if(response.getResultHTTPOperation()>202){
-					throw new Exception("Error occurs during invoke url["+url+"] Status["+response.getResultHTTPOperation()+"] Message["+new String(response.getContent())+"]");	
+					throw new DriverControlStationException("Error occurs during invoke url["+url+"] Status["+response.getResultHTTPOperation()+"] Message["+new String(response.getContent())+"]");	
 				}	
 			}
 		}
@@ -23652,7 +23696,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSelect(false);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -23886,7 +23930,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	
@@ -24192,7 +24236,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw new DriverControlStationException(e);
 		}
 	}
 	public void updateHandler(ConfigurazioneHandler handlerDestinazione, ConfigurazioneHandler handlerSorgente,

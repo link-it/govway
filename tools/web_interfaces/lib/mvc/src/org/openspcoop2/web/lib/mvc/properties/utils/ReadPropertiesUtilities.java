@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.mvc.properties.Collection;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Item;
@@ -32,12 +33,14 @@ import org.openspcoop2.core.mvc.properties.Section;
 import org.openspcoop2.core.mvc.properties.Subsection;
 import org.openspcoop2.core.mvc.properties.provider.ExternalResources;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
+import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.utils.Costanti;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.SectionBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.SubsectionBean;
+import org.openspcoop2.web.lib.mvc.properties.exception.ValidationException;
 
 /***
  * 
@@ -49,6 +52,8 @@ import org.openspcoop2.web.lib.mvc.properties.beans.SubsectionBean;
  *
  */
 public class ReadPropertiesUtilities {
+	
+	private ReadPropertiesUtilities() {}
 	
 	public static List<String> getListaNomiProperties(Config config){
 		List<String> lista = new ArrayList<>();
@@ -64,14 +69,14 @@ public class ReadPropertiesUtilities {
 		return lista;
 	}
 
-	public static ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws Exception{
+	public static ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws ValidationException, CoreException, ProviderException {
 		
 		IProvider provider = null;
 		if(StringUtils.isNotEmpty(config.getProvider())) {
 			try {
 				provider = (IProvider) ClassLoaderUtilities.newInstance(config.getProvider());
 			}catch(Exception e) {
-				throw new Exception("Errore durante l'istanziazione del provider ["+config.getProvider()+"]: "+e.getMessage(),e);
+				throw new CoreException("Errore durante l'istanziazione del provider ["+config.getProvider()+"]: "+e.getMessage(),e);
 			}
 		}
 		
@@ -93,7 +98,7 @@ public class ReadPropertiesUtilities {
 		return configurazione;
 	}
 
-	public static void addSectionBean(ConfigBean configurazione, Section section, String sectionIdx, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws Exception {
+	public static void addSectionBean(ConfigBean configurazione, Section section, String sectionIdx, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws ValidationException, ProviderException {
 		SectionBean sectionBean = new SectionBean(section,sectionIdx, configurazione.getProvider());
 		configurazione.addItem(sectionBean);
 		
@@ -113,7 +118,7 @@ public class ReadPropertiesUtilities {
 		}
 	}
 	
-	public static void addSubsectionBean(ConfigBean configurazione, Subsection subSection, String subsectionIdx, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws Exception {
+	public static void addSubsectionBean(ConfigBean configurazione, Subsection subSection, String subsectionIdx, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws ValidationException, ProviderException {
 		SubsectionBean subsectionBean = new SubsectionBean(subSection,subsectionIdx, configurazione.getProvider());
 		configurazione.addItem(subsectionBean);
 		
@@ -126,7 +131,7 @@ public class ReadPropertiesUtilities {
 	}
 	
 	
-	public static void addItemBean(ConfigBean configurazione, Item item, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws Exception{
+	public static void addItemBean(ConfigBean configurazione, Item item, Map<String, Properties> propertiesMap, ExternalResources externalResources) throws ProviderException, ValidationException {
 		ItemBean itemBean = new ItemBean(item, item.getName(), configurazione.getProvider()); 
 		String name = item.getProperty() != null ? item.getProperty().getName() : item.getName();
 		
@@ -136,7 +141,7 @@ public class ReadPropertiesUtilities {
 		}
 		
 		String propertyValue = getPropertyValue(propertiesMap, name, collectionName);
-//		System.out.println("READ -> Item: Name ["+item.getName()+"]-----------------");  
+/**		System.out.println("READ -> Item: Name ["+item.getName()+"]-----------------");*/  
 		
 		// Lettura di un valore aggregato
 		if(item.getProperty() != null && item.getProperty().isAppend()) {
@@ -146,17 +151,17 @@ public class ReadPropertiesUtilities {
 				String [] chiaviSalvate = propertiesKeysValues.split(Costanti.KEY_PROPERTIES_DEFAULT_SEPARATOR);
 				String [] propertyValueSplit = propertyValue.split(item.getProperty().getAppendSeparator());
 				
-//				System.out.println("READ -> SPLITPATTERN ["+item.getProperty().getAppendSeparator()+"]");
+/**				System.out.println("READ -> SPLITPATTERN ["+item.getProperty().getAppendSeparator()+"]");
 //				System.out.println("READ -> #KEYS ["+chiaviSalvate.length+"] #VALUES ["+propertyValueSplit.length+"]");
-//				System.out.println("READ -> KEYS ["+propertiesKeysValues+"] VALUES ["+propertyValue+"]");
+//				System.out.println("READ -> KEYS ["+propertiesKeysValues+"] VALUES ["+propertyValue+"]");*/
 				
 				String propertyValueTmp = null;
 				for (int j = 0; j < chiaviSalvate.length; j++) {
 					String key = chiaviSalvate[j];
-//					System.out.println("READ -> CHECK KEY ["+key+"] ITEM ["+item.getName()+"]");  
+/**					System.out.println("READ -> CHECK KEY ["+key+"] ITEM ["+item.getName()+"]");*/  
 					if(key.equals(item.getName())) {
 						propertyValueTmp = propertyValueSplit[j];
-//						System.out.println("READ -> KEY ["+key+"] Values ["+propertyValueTmp+"]");  
+/**						System.out.println("READ -> KEY ["+key+"] Values ["+propertyValueTmp+"]");*/  
 						break;
 					}
 				}
@@ -165,11 +170,11 @@ public class ReadPropertiesUtilities {
 			}
 		} 
 		
-//		System.out.println("READ -> Item: Name ["+item.getName()+"] Value ["+propertyValue+"], INIT in corso...");  
+/**		System.out.println("READ -> Item: Name ["+item.getName()+"] Value ["+propertyValue+"], INIT in corso...");*/  
 		itemBean.init(propertyValue, externalResources); 
-//		System.out.println("READ -> INIT -> Item: Name ["+item.getName()+"] Value ["+itemBean.getValue()+"]");  
+/**		System.out.println("READ -> INIT -> Item: Name ["+item.getName()+"] Value ["+itemBean.getValue()+"]");  
 		
-//		System.out.println("----------------------------------------\n");
+//		System.out.println("----------------------------------------\n");*/
 		configurazione.addItem(itemBean);
 	}
 
@@ -180,7 +185,7 @@ public class ReadPropertiesUtilities {
 		if(propertiesMap == null)
 			return null;
 		
-		if(propertiesMap.containsKey(collectionName)==false) {
+		if(!propertiesMap.containsKey(collectionName)) {
 			return null;
 		}
 		

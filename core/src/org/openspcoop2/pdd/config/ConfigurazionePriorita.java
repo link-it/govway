@@ -22,6 +22,8 @@ package org.openspcoop2.pdd.config;
 
 import java.util.Properties;
 
+import org.openspcoop2.utils.UtilsException;
+
 /**
  * ConfigurazioneCoda
  *
@@ -37,26 +39,26 @@ public class ConfigurazionePriorita {
 
 	private String label;
 	
-	public ConfigurazionePriorita(String name, Properties p) throws Exception {
+	public ConfigurazionePriorita(String name, Properties p) throws UtilsException {
 		this.name = name;
 		this.percentuale = getIntProperty(this.name, p, "percentuale");
 		this.label = getProperty(this.name, p, "label");
 		this.nessunaPriorita = this.percentuale<=0;
 	}
 	
-	private static String getProperty(String coda, Properties p, String name) throws Exception {
+	private static String getProperty(String coda, Properties p, String name) throws UtilsException {
 		String tmp = p.getProperty(name);
 		if(tmp==null) {
-			throw new Exception("[Queue:"+coda+"] Property '"+name+"' not found");
+			throw new UtilsException("[Queue:"+coda+"] Property '"+name+"' not found");
 		}
 		return tmp.trim();
 	}
-	private static int getIntProperty(String coda, Properties p, String name) throws Exception {
+	private static int getIntProperty(String coda, Properties p, String name) throws UtilsException {
 		String tmp = getProperty(coda, p, name);
 		try {
 			return Integer.valueOf(tmp);
 		}catch(Exception e) {
-			throw new Exception("[Queue:"+coda+"] Property '"+name+"' uncorrect (value:"+tmp+"): "+e.getMessage(),e);
+			throw new UtilsException("[Queue:"+coda+"] Property '"+name+"' uncorrect (value:"+tmp+"): "+e.getMessage(),e);
 		}
 	}
 	

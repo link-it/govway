@@ -70,89 +70,89 @@ public class CertificateChecker extends AbstractConfigChecker {
 	
 	@Override
 	public boolean isUseApiCertificatoApplicativoById() throws Exception{
-		return this.consoleProperties.isApplicativiVerificaCertificati_checkCertificatoApplicativoById_useApi();
+		return this.consoleProperties.isApplicativiVerificaCertificatiCheckCertificatoApplicativoByIdUseApi();
 	}
 	@Override
 	public boolean isUseApiCertificatoSoggettoById() throws Exception{
-		return this.consoleProperties.isSoggettiVerificaCertificati_checkCertificatoSoggettoById_useApi();
+		return this.consoleProperties.isSoggettiVerificaCertificatiCheckCertificatoSoggettoByIdUseApi();
 	}
 	
 	@Override
 	public String getJmxResourceType() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_type(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaType(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeRisorsaConfigurazionePdD() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeRisorsaAccessoRegistroServizi() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi(this.aliasDefault);
 	}
 	
 	@Override
 	public String getJmxResourceNomeMetodoCheckConnettoreById() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatoApplicativoById() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatoApplicativoById(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatoApplicativoById(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatoModIApplicativoById() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatoModIApplicativoById(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatoModIApplicativoById(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatoSoggettoById() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatoSoggettoById(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatoSoggettoById(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsById() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsById(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsById(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiModIErogazioneById() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiModIErogazioneById(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiModIErogazioneById(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiModIFruizioneById() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiModIFruizioneById(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiModIFruizioneById(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiJvm() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiJvm(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiJvm(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsTokenPolicyValidazione(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiValidazioneJwtTokenPolicyValidazione() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiValidazioneJwtTokenPolicyValidazione(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiValidazioneJwtTokenPolicyValidazione(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiForwardToJwtTokenPolicyValidazione() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiForwardToJwtTokenPolicyValidazione(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiForwardToJwtTokenPolicyValidazione(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyNegoziazione() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyNegoziazione(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiSignedJwtTokenPolicyNegoziazione(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsAttributeAuthority(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRichiesta() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiAttributeAuthorityJwtRichiesta(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiAttributeAuthorityJwtRichiesta(this.aliasDefault);
 	}
 	@Override
 	public String getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRisposta() throws Exception{
-		return this.consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiAttributeAuthorityJwtRisposta(this.aliasDefault);
+		return this.consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiAttributeAuthorityJwtRisposta(this.aliasDefault);
 	}
 	
 }

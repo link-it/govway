@@ -165,12 +165,14 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.connector" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.connector.messages" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.connector.proxy" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.core" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.error" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.service" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.skeleton" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.timers" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.timers.pdnd" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.timers.proxy" />
 																							
 				<!-- org.openspcoop.2.pdd -->
 				<antcall target="compile_src_openspcoop2">

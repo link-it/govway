@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -48,10 +49,14 @@ import org.openspcoop2.pdd.core.jmx.MonitoraggioRisorse;
 import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.pdd.services.connector.proxy.IProxyOperationService;
+import org.openspcoop2.pdd.services.connector.proxy.ProxyOperation;
+import org.openspcoop2.pdd.services.connector.proxy.ProxyOperationServiceFactory;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.datasource.JmxDataSource;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -76,6 +81,19 @@ public class Proxy extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static final String SERVIZIO_NON_ABILITATO = "Servizio non abilitato";
+	private static final String SERVIZIO_NON_DISPONIBILE = "Servizio non disponibile";
+	
+	private static void logError(Logger log, String msg, Throwable e) {
+		log.error(msg, e);
+	}
+	private static void logError(Logger log, String msg) {
+		log.error(msg);
+	}
+	private static void logDebug(Logger log, String msg) {
+		log.debug(msg);
+	}
+	
 	private static void sendError(HttpServletResponse res, Logger log, String msg, int code) {
 		sendError(res, log, msg, code, msg, null);
 	}
@@ -84,26 +102,33 @@ public class Proxy extends HttpServlet {
 		sendError(res, log, msg, code, msg, e);
 	}
 	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg) {
-		sendError(res, log, msg, code, msg, null);
+		sendError(res, log, msg, code, logMsg, null);
 	}
 	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg, Throwable e) {
 		String prefix = "[Proxy] ";
 		if(e!=null) {
-			log.error(prefix+logMsg, e);
+			logError(log,prefix+logMsg, e);
 		}
 		else {
-			log.error(prefix+logMsg);
+			logError(log,prefix+logMsg);
 		}
 		res.setStatus(code);
 		res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 		try {
 			res.getOutputStream().write(msg.getBytes());
-		}catch(Throwable t) {
-			log.error("[Proxy] SendError failed: "+t.getMessage(),t);
+		}catch(Exception t) {
+			logError(log,"[Proxy] SendError failed: "+t.getMessage(),t);
 		}
 	}
-	
 
+	private static boolean saveContextOnlyOperation = true;
+	public static boolean isSaveContextOnlyOperation() {
+		return saveContextOnlyOperation;
+	}
+	public static void setSaveContextOnlyOperation(boolean saveContextOnlyOperation) {
+		Proxy.saveContextOnlyOperation = saveContextOnlyOperation;
+	}
+	
 	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		
@@ -111,7 +136,7 @@ public class Proxy extends HttpServlet {
 		if(log==null)
 			log = LoggerWrapperFactory.getLogger(Proxy.class);
 		
-		if( OpenSPCoop2Startup.initialize == false){
+		if( !OpenSPCoop2Startup.initialize){
 			CheckStatoPdD.serializeNotInitializedResponse(res, log);
 			return;
 		}
@@ -122,8 +147,8 @@ public class Proxy extends HttpServlet {
 		if(properties!=null && properties.isProxyReadJMXResourcesEnabled() ){
 			proxyEnabled = true;
 		}
-		if(proxyEnabled==false){
-			String msg = "Servizio non abilitato";
+		if(!proxyEnabled){
+			String msg = SERVIZIO_NON_ABILITATO;
 			sendError(res, log, msg, 500); 
 			return;
 		}
@@ -132,51 +157,94 @@ public class Proxy extends HttpServlet {
 		List<String> list = null;
 		try {
 			list = DynamicClusterManager.getInstance().getHostnames(log);
-		}catch(Throwable e) {
-			String msg = "Servizio non disponibile";
+		}catch(Exception e) {
+			String msg = SERVIZIO_NON_DISPONIBILE;
 			String logMsg = msg+": "+e.getMessage();
 			sendError(res, log, msg, 500, logMsg, e); 
 			return;
 		}
 		
-		// Costruisco nuova url
+		boolean asyncMode = properties.isProxyReadJMXResourcesAsyncProcessByTimer();
+		IProxyOperationService proxyOperationService = null;
+		if(asyncMode) {
+			String className = properties.getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClass();
+			try {
+				proxyOperationService = ProxyOperationServiceFactory.newInstance(className, log);
+			}catch(Exception e) {
+				String msg = SERVIZIO_NON_DISPONIBILE;
+				String logMsg = msg+": "+e.getMessage();
+				sendError(res, log, msg, 500, logMsg, e); 
+				return;
+			}
+		}
+				
+		// === Costruisco nuova url ===
+		
+		// schema
 		String protocolSchema = properties.getProxyReadJMXResourcesSchema();
+		if(asyncMode) {
+			String tmp = properties.getProxyReadJMXResourcesAsyncProcessByTimerSchema();
+			if(tmp!=null && StringUtils.isNotEmpty(tmp)) {
+				protocolSchema = tmp;
+			}
+		}
 		if(protocolSchema==null || StringUtils.isEmpty(protocolSchema)) {
 			protocolSchema = req.getScheme();
 		}
 		String protocol = (protocolSchema!=null && protocolSchema.trim().toLowerCase().startsWith("https")) ? "https://" : "http://";
+		
+		// hostname (solo in caso async-mode)
+		String hostnameAsync = null;
+		if(asyncMode) {
+			hostnameAsync = properties.getProxyReadJMXResourcesAsyncProcessByTimerHostname();
+		}
+		
+		// port
 		int port = req.getLocalPort();
-		if(properties.getProxyReadJMXResourcesPort()!=null && properties.getProxyReadJMXResourcesPort().intValue()>0) {
+		if(asyncMode && properties.getProxyReadJMXResourcesAsyncProcessByTimerPort()!=null && properties.getProxyReadJMXResourcesAsyncProcessByTimerPort().intValue()>0) {
+			port = properties.getProxyReadJMXResourcesAsyncProcessByTimerPort().intValue();
+		}
+		else if(properties.getProxyReadJMXResourcesPort()!=null && properties.getProxyReadJMXResourcesPort().intValue()>0) {
 			port = properties.getProxyReadJMXResourcesPort().intValue();
 		}
+		
+		// context
 		String context = req.getContextPath();
 		if(!context.endsWith("/")) {
 			context = context + "/";
 		}
 		context = context + URLProtocolContext.Check_FUNCTION;
+		
+		// paramters
 		Map<String, List<String>> parameters = buildParameters(req);
+		
 		// Https
 		boolean https = properties.isProxyReadJMXResourcesHttpsEnabled();
 		boolean verificaHostname = false;
 		boolean autenticazioneServer = false;
-		String autenticazioneServer_path = null;
-		String autenticazioneServer_type = null;
-		String autenticazioneServer_password = null;
+		String autenticazioneServerPath = null;
+		String autenticazioneServerType = null;
+		String autenticazioneServerPassword = null;
 		if(https) {
-			verificaHostname = properties.isProxyReadJMXResourcesHttpsEnabled_verificaHostName();
-			autenticazioneServer = properties.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer();
+			verificaHostname = properties.isProxyReadJMXResourcesHttpsEnabledVerificaHostName();
+			autenticazioneServer = properties.isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer();
 			if(autenticazioneServer) {
-				autenticazioneServer_path = properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath();
-				autenticazioneServer_type = properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType();
-				autenticazioneServer_password = properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword();
+				autenticazioneServerPath = properties.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePath();
+				autenticazioneServerType = properties.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreType();
+				autenticazioneServerPassword = properties.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePassword();
 			}
 		}
+		
 		// Timeout
 		int readTimeout = properties.getProxyReadJMXResourcesReadTimeout();
 		int connectTimeout = properties.getProxyReadJMXResourcesConnectionTimeout();
+		
 		// Vengono utilizzate le credenziali del servizio check che dovranno essere uguali su tutti i nodi
 		String usernameCheck = properties.getCheckReadJMXResourcesUsername();
 		String passwordCheck = properties.getCheckReadJMXResourcesPassword();
+		
+		
+		// === Avvio gestione ===
 		
 		String resourceName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME);
 		if(resourceName!=null && !"".equals(resourceName)){
@@ -186,13 +254,13 @@ public class Proxy extends HttpServlet {
 			String password = properties.getProxyReadJMXResourcesPassword();
 			if(username!=null && password!=null){
 				HttpServletCredential identity = new HttpServletCredential(req, log);
-				if(username.equals(identity.getUsername())==false){
+				if(!username.equals(identity.getUsername())){
 					String msg = "Servizio non autorizzato";
 					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] sconosciuto";
 					sendError(res, log, msg, 500, logMsg); 	
 					return;
 				}
-				if(password.equals(identity.getPassword())==false){
+				if(!password.equals(identity.getPassword())){
 					String msg = "Servizio non autorizzato";
 					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] (password errata)";
 					sendError(res, log, msg, 500, logMsg); 	
@@ -216,15 +284,28 @@ public class Proxy extends HttpServlet {
 			String attributeBooleanValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_BOOLEAN_VALUE);
 			String methodName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME);
 			String parameterValues = formatParameters(req);
-			log.debug("==============");
+			logDebug(log,"==============");
 			if(attributeName!=null){
-				log.debug("resourceName["+resourceName+"] attributeName["+attributeName+"] attributeValue["+attributeValue+"] attributeBooleanValue["+attributeBooleanValue+"] ...");
+				logDebug(log,"resourceName["+resourceName+"] attributeName["+attributeName+"] attributeValue["+attributeValue+"] attributeBooleanValue["+attributeBooleanValue+"] ...");
 			}
 			else {
-				log.debug("resourceName["+resourceName+"] methodName["+methodName+"]"+parameterValues+" ...");
+				logDebug(log,"resourceName["+resourceName+"] methodName["+methodName+"]"+parameterValues+" ...");
 			}
 			boolean invokeAllNodes = false;
 			boolean aggregate = false;
+			
+			String resourcePrefix = "[resource: "+resourceName+"] ";
+			String tipoOperazioneAsync = null;
+			int asyncCheckInterval = properties.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval();
+			if(asyncMode) {
+				if(attributeName!=null && (attributeValue!=null || attributeBooleanValue!=null)) {
+					tipoOperazioneAsync = resourcePrefix+"setAttribute '"+attributeName+"'";		
+				}
+				else {
+					tipoOperazioneAsync = resourcePrefix+methodName;
+				}
+			}
+			
 			if(attributeName!=null && (attributeValue!=null || attributeBooleanValue!=null)) {
 				invokeAllNodes = true; // setAttribute
 			}
@@ -244,6 +325,8 @@ public class Proxy extends HttpServlet {
 				else if(CostantiPdD.JMX_CONFIGURAZIONE_PDD.equals(resourceName)
 						&&
 						(
+								methodName.startsWith(ConfigurazionePdD.RIPULISCI_RIFERIMENTI_CACHE_PREFIX)
+								||
 								ConfigurazionePdD.ABILITA_PORTA_DELEGATA.equals(methodName)
 								||
 								ConfigurazionePdD.DISABILITA_PORTA_DELEGATA.equals(methodName)
@@ -251,6 +334,18 @@ public class Proxy extends HttpServlet {
 								ConfigurazionePdD.ABILITA_PORTA_APPLICATIVA.equals(methodName)
 								||
 								ConfigurazionePdD.DISABILITA_PORTA_APPLICATIVA.equals(methodName)
+								||
+								ConfigurazionePdD.ABILITA_CONNETTORE_MULTIPLO.equals(methodName)
+								||
+								ConfigurazionePdD.DISABILITA_CONNETTORE_MULTIPLO.equals(methodName)
+								||
+								ConfigurazionePdD.ABILITA_SCHEDULING_CONNETTORE_MULTIPLO.equals(methodName)
+								||
+								ConfigurazionePdD.DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO.equals(methodName)
+								||
+								ConfigurazionePdD.ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME.equals(methodName)
+								||
+								ConfigurazionePdD.DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME.equals(methodName)
 						)
 						) {
 					invokeAllNodes = true;
@@ -273,36 +368,59 @@ public class Proxy extends HttpServlet {
 						) {
 					invokeAllNodes = true;
 				}
-				else if(CostantiPdD.JMX_MONITORAGGIO_RISORSE.equals(resourceName) 
+				else if(CostantiPdD.JMX_LOAD_BALANCER.equals(resourceName)
 						&&
 						(
-						MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER.equals(methodName)
-						||
-						MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER.equals(methodName)
-						||
-						MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID.equals(methodName)
-						||
-						MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID_PROTOCOLLO.equals(methodName)
-						||
-						MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD.equals(methodName)
-						||
-						MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PA.equals(methodName)
+								GestoreConsegnaApplicativi.UPDATE_CONNETTORI_PRIORITARI.equals(methodName)
+								||
+								GestoreConsegnaApplicativi.RESET_CONNETTORI_PRIORITARI.equals(methodName)
 						)
 						) {
 					invokeAllNodes = true;
-					aggregate = true;
 				}
-				else if(Costanti.JMX_NAME_DATASOURCE_PDD.equals(resourceName)
-						&&
-						JmxDataSource.CONNESSIONI_ALLOCATE.equals(methodName)){
+				else if(
+						(
+								CostantiPdD.JMX_MONITORAGGIO_RISORSE.equals(resourceName) 
+								&&
+								(
+									MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER.equals(methodName)
+									||
+									MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER.equals(methodName)
+									||
+									MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID.equals(methodName)
+									||
+									MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID_PROTOCOLLO.equals(methodName)
+									||
+									MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD.equals(methodName)
+									||
+									MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PA.equals(methodName)
+								)	
+						)
+						
+						||
+						
+						(
+								Costanti.JMX_NAME_DATASOURCE_PDD.equals(resourceName)
+								&&
+								JmxDataSource.CONNESSIONI_ALLOCATE.equals(methodName)
+						)
+						
+						||
+						
+						(
+								CostantiPdD.JMX_LOAD_BALANCER.equals(resourceName)
+								&&
+								GestoreConsegnaApplicativi.THREAD_POOL_STATUS.equals(methodName)
+						)
+					){
 					invokeAllNodes = true;
 					aggregate = true;
-				} 
-				else if(CostantiPdD.JMX_LOAD_BALANCER.equals(resourceName)
-						&&
-						GestoreConsegnaApplicativi.THREAD_POOL_STATUS.equals(methodName)) {
-					invokeAllNodes = true;
-					aggregate = true;
+					if(asyncMode) {
+						String msg = SERVIZIO_NON_DISPONIBILE;
+						String logMsg = msg+". L'operazione richiesta ("+resourcePrefix+methodName+") richiede un'aggregazione non attuabile in modalità asincrona";
+						sendError(res, log, msg, 500, logMsg); 	
+						return;
+					}
 				}
 						
 			}
@@ -310,36 +428,68 @@ public class Proxy extends HttpServlet {
 			if(invokeAllNodes) {
 				
 				// Se anche solo uno dei nodi restituisce errore, viene ritornato quell’errore (si tratta di un caso anormale).
-				@SuppressWarnings("unused")
-				String url_httpResponseFailed = null;
+				/**String urlHttpResponseFailed = null;*/
 				HttpResponse httpResponseFailed = null;
-				@SuppressWarnings("unused")
-				String url_httpResponseOk = null;
+				/**String urlHttpResponseOk = null;*/
 				HttpResponse httpResponseOk = null;
-				String url_t = null;
+				String urlT = null;
 				Throwable t = null;
 				ResultAggregate resultAggregate = null;
 				
-				log.debug("Invoke all node ...");
+				logDebug(log,"Invoke all node ...");
+								
+				List<String> lUsed = list;
+				if(asyncMode) {
+					// effettuo solo una registrazione
+					lUsed = new ArrayList<>();
+					lUsed.add("localhost"); // verra poi sostituito con hostnameAsync
+				}
 				
-				for (String hostname : list) {
+				for (String hostname : lUsed) {
 					String url = null;
 					try {
-//						System.out.println("DEBUG");
-//						if("Erogatore".equals(hostname)) {
-//							port = 8180;
-//						}
-//						else {
-//							port = 8080;
-//						}
-//						System.out.println("DEBUG");
+						/**System.out.println("DEBUG");
+						if("Erogatore".equals(hostname)) {
+							port = 8180;
+						}
+						else {
+							port = 8080;
+						}
+						System.out.println("DEBUG");*/
 						
-						url = buildUrl(log, protocol, hostname, port, context, parameters);
-						HttpResponse httpResponse = invokeHttp(url, 
-								readTimeout, connectTimeout, 
-								usernameCheck, passwordCheck,
-								https, verificaHostname, autenticazioneServer,
-								autenticazioneServer_path, autenticazioneServer_type,  autenticazioneServer_password);
+						String hostnameUsed = hostname;
+						if(asyncMode && hostnameAsync!=null && StringUtils.isNotEmpty(hostnameAsync)) {
+							hostnameUsed = hostnameAsync;
+						}
+						
+						int portUsed = port;
+						Integer portHostname = properties.getProxyReadJMXResourcesPort(hostname);
+						if(portHostname!=null && portHostname.intValue()>0) {
+							portUsed = portHostname.intValue();
+						}
+						
+						boolean addContext = !asyncMode || !saveContextOnlyOperation;
+						url = buildUrl(log, addContext, protocol, hostnameUsed, portUsed, context, parameters);
+						
+						if(aggregate && asyncMode) {
+							// c'e' un controllo prima e quindi questa eccezione non dovrebbe avvenire
+							throw new CoreException("L'operazione richiesta ("+url+") richiede un'aggregazione non attuabile in modalità asincrona");
+						}
+						
+						HttpResponse httpResponse = null;
+						if(asyncMode) {
+							/**System.out.println("SAVE ALL METHOD BY URL '"+url+"'");*/
+							httpResponse = saveOperation(proxyOperationService, url, tipoOperazioneAsync, log, asyncCheckInterval);
+						}
+						else {
+							/**System.out.println("INVOKE ALL METHOD BY URL '"+url+"'");*/
+							httpResponse = invokeHttp(url, 
+									readTimeout, connectTimeout, 
+									usernameCheck, passwordCheck,
+									https, verificaHostname, autenticazioneServer,
+									autenticazioneServerPath, autenticazioneServerType,  autenticazioneServerPassword);
+						}
+						
 						String sResponse = null;
 						if(httpResponse.getContent()!=null) {
 							sResponse = new String(httpResponse.getContent());
@@ -349,7 +499,7 @@ public class Proxy extends HttpServlet {
 						if(httpResponse.getResultHTTPOperation()==200 && !error) {
 							if(httpResponseOk==null) {
 								httpResponseOk = httpResponse;
-								url_httpResponseOk = url;
+								/**urlHttpResponseOk = url;*/
 							}
 							if(aggregate) {
 								if(resultAggregate==null) {
@@ -361,16 +511,16 @@ public class Proxy extends HttpServlet {
 						else {
 							if(httpResponseFailed==null) {
 								httpResponseFailed = httpResponse;
-								url_httpResponseFailed = url;
+								/**urlHttpResponseFailed = url;*/
 							}
 						}
 						
-						log.debug("Invoked '"+hostname+"' ("+httpResponse.getResultHTTPOperation()+")");
+						logDebug(log,"Invoked '"+hostname+"' ("+httpResponse.getResultHTTPOperation()+")");
 						
-					}catch(Throwable e) {
+					}catch(Exception e) {
 						String msg = "("+hostname+") Servizio non disponibile";
 						t = new Exception(msg, e);
-						url_t = url;
+						urlT = url;
 					}
 				}
 				
@@ -380,79 +530,105 @@ public class Proxy extends HttpServlet {
 					sendError(res, log, msg, 500, logMsg, t); 	
 				}
 				else if(httpResponseFailed!=null) {
-					log.debug("Invoke all node complete 'ERROR'");
+					logDebug(log,"Invoke all node complete 'ERROR'");
 					writeResponse(httpResponseFailed, res, log);
 				}
 				else if(resultAggregate!=null) {
-					log.debug("Invoke all node complete 'Aggregate OK'");
+					logDebug(log,"Invoke all node complete 'Aggregate OK'");
 					writeResponse(resultAggregate.getHttpResponse(), res, log);
 				}
 				else if(httpResponseOk!=null) {
-					log.debug("Invoke all node complete 'OK'");
+					logDebug(log,"Invoke all node complete 'OK'");
 					writeResponse(httpResponseOk, res, log);
 				}
 				else {
-					String msg = "Servizio non disponibile";
-					String logMsg = "'CasoNonPrevisto' (url: "+url_t+") "+msg;
+					String msg = SERVIZIO_NON_DISPONIBILE;
+					String logMsg = "'CasoNonPrevisto' (url: "+urlT+") "+msg;
 					sendError(res, log, msg, 500, logMsg); 	
 				}
-				return;
+
 			}
 			else {
 				
-				log.debug("Invoke single node '"+list.get(0)+"' ...");
+				logDebug(log,"Invoke single node '"+list.get(0)+"' ...");
 				
 				// Viene invocato un nodo a caso (il primo essendo quello piu' vecchio)
 				String url = null;
 				try {
-					url = buildUrl(log, protocol, list.get(0), port, context, parameters);
+					
+					String hostname = list.get(0);
+					String hostnameUsed = hostname;
+					if(asyncMode && hostnameAsync!=null && StringUtils.isNotEmpty(hostnameAsync)) {
+						hostnameUsed = hostnameAsync;
+					}
+					
+					int portUsed = port;
+					Integer portHostname = properties.getProxyReadJMXResourcesPort(hostname);
+					if(portHostname!=null && portHostname.intValue()>0) {
+						portUsed = portHostname.intValue();
+					}
+					
+					url = buildUrl(log, true, protocol, hostnameUsed, portUsed, context, parameters);
+					/**System.out.println("INVOKE SINGLE METHOD BY URL '"+url+"'");*/
 					HttpResponse httpResponse = invokeHttp(url, 
 							readTimeout, connectTimeout, 
 							usernameCheck, passwordCheck,
 							https, verificaHostname, autenticazioneServer,
-							autenticazioneServer_path, autenticazioneServer_type,  autenticazioneServer_password);
+							autenticazioneServerPath, autenticazioneServerType,  autenticazioneServerPassword);
 					writeResponse(httpResponse, res, log);
-				}catch(Throwable e) {
-					String msg = "Servizio non disponibile";
+					
+				}catch(Exception e) {
+					String msg = SERVIZIO_NON_DISPONIBILE;
 					String logMsg = msg+" (url: "+url+"): "+e.getMessage();
 					sendError(res, log, msg, 500, logMsg, e); 	
-					return;
 				}
 			}
 			
 		}
 		else {
 			
-			log.debug("Invoke single node CHECK '"+list.get(0)+"' ...");
+			logDebug(log,"Invoke single node CHECK '"+list.get(0)+"' ...");
 			
 			// Servizio check del gateway
 			// Viene invocato un nodo a caso (il primo essendo quello piu' vecchio)
 			String url = null;
 			try {
-				url = buildUrl(log, protocol, list.get(0), port, context, parameters);
+				
+				String hostname = list.get(0);
+				String hostnameUsed = hostname;
+				if(asyncMode && hostnameAsync!=null && StringUtils.isNotEmpty(hostnameAsync)) {
+					hostnameUsed = hostnameAsync;
+				}
+				
+				int portUsed = port;
+				Integer portHostname = properties.getProxyReadJMXResourcesPort(hostname);
+				if(portHostname!=null && portHostname.intValue()>0) {
+					portUsed = portHostname.intValue();
+				}
+				
+				url = buildUrl(log, true, protocol, hostnameUsed, portUsed, context, parameters);
+				/**System.out.println("INVOKE SINGLE ATTRIBUTE BY URL '"+url+"'");*/
 				HttpResponse httpResponse = invokeHttp(url, 
 								readTimeout, connectTimeout, 
 								usernameCheck, passwordCheck,
 								https, verificaHostname, autenticazioneServer,
-								autenticazioneServer_path, autenticazioneServer_type,  autenticazioneServer_password);
+								autenticazioneServerPath, autenticazioneServerType,  autenticazioneServerPassword);
 				writeResponse(httpResponse, res, log);
-			}catch(Throwable e) {
-				String msg = "Servizio non disponibile";
+			}catch(Exception e) {
+				String msg = SERVIZIO_NON_DISPONIBILE;
 				String logMsg = msg+" (url: "+url+"): "+e.getMessage();
 				sendError(res, log, msg, 500, logMsg, e); 	
-				return;
 			}
 		}
 		
-		return;
 
 	}
 	
-	private HttpResponse invokeHttp(String url, 
+	public static HttpResponse invokeHttp(String url, 
 			int readTimeout, int connectTimeout, 
 			String usernameCheck, String passwordCheck,
 			boolean https, boolean verificaHostname, boolean autenticazioneServer,
-			String autenticazioneServer_path, String autenticazioneServer_type, String autenticazioneServer_password) throws UtilsException {
+			String autenticazioneServerPath, String autenticazioneServerType, String autenticazioneServerPassword) throws UtilsException {
 		HttpResponse response = null;
 		if(https) {
 			HttpRequest httpRequest = new HttpRequest();
@@ -464,9 +640,9 @@ public class Proxy extends HttpServlet {
 			httpRequest.setMethod(HttpRequestMethod.GET);
 			httpRequest.setHostnameVerifier(verificaHostname);
 			if(autenticazioneServer) {
-				httpRequest.setTrustStorePath(autenticazioneServer_path);
-				httpRequest.setTrustStoreType(autenticazioneServer_type);
-				httpRequest.setTrustStorePassword(autenticazioneServer_password);
+				httpRequest.setTrustStorePath(autenticazioneServerPath);
+				httpRequest.setTrustStoreType(autenticazioneServerType);
+				httpRequest.setTrustStorePassword(autenticazioneServerPassword);
 			}
 			else {
 				httpRequest.setTrustAllCerts(true);
@@ -480,6 +656,27 @@ public class Proxy extends HttpServlet {
 		}
 		return response;
 	}
+	private HttpResponse saveOperation(IProxyOperationService proxyOperationService, String url, String description, Logger log, int asyncCheckInterval) {
+		HttpResponse response = new HttpResponse();
+		try {
+			
+			ProxyOperation proxyOperation = new ProxyOperation();
+			proxyOperation.setCommand(url);
+			proxyOperation.setDescription(description);
+			proxyOperation.setRegistrationTime(DateManager.getDate());
+			proxyOperationService.save(proxyOperation);
+			
+			response.setResultHTTPOperation(200);
+			response.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
+			response.setContent((JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX+JMXUtils.MSG_OPERAZIONE_REGISTRATA_SUCCESSO.replace(JMXUtils.MSG_OPERAZIONE_REGISTRATA_SUCCESSO_TEMPLATE_SECONDI, asyncCheckInterval+"")).getBytes());
+		}catch(Exception t) {
+			response.setResultHTTPOperation(500);
+			response.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
+			logError(log,"[Proxy] saveOperation failed: "+t.getMessage(),t);
+			response.setContent((JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+t.getMessage()).getBytes());
+		}
+		return response;
+	}
 
 	private void writeResponse(HttpResponse httpResponse, HttpServletResponse res, Logger log) {
 		try {
@@ -490,17 +687,19 @@ public class Proxy extends HttpServlet {
 			if(httpResponse.getContent()!=null) {
 				res.getOutputStream().write(httpResponse.getContent());
 			}
-		}catch(Throwable t) {
-			log.error("[Proxy] WriteResponse failed: "+t.getMessage(),t);
+		}catch(Exception t) {
+			logError(log,"[Proxy] WriteResponse failed: "+t.getMessage(),t);
 		}
 	}
 	
-	private String buildUrl(Logger log, String protocol, String hostname, int port, String context, Map<String, List<String>> parameters ) {
+	private String buildUrl(Logger log, boolean addContext, String protocol, String hostname, int port, String context, Map<String, List<String>> parameters ) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(protocol);
-		sb.append(hostname);
-		sb.append(":");
-		sb.append(port);
+		if(addContext) {
+			sb.append(protocol);
+			sb.append(hostname);
+			sb.append(":");
+			sb.append(port);
+		}
 		sb.append(context);
 		return TransportUtils.buildUrlWithParameters(parameters, sb.toString(), log);
 	}
@@ -516,11 +715,9 @@ public class Proxy extends HttpServlet {
 				for (int i = 0; i < s.length; i++) {
 					String value = s[i];
 					values.add(value);
-					//logCore.info("Parameter ["+nomeProperty+"] valore-"+i+" ["+value+"]");
 				}
 			}
 			else {
-				//logCore.info("Parameter ["+nomeProperty+"] valore ["+req.getParameter(nomeProperty)+"]");
 				values.add(req.getParameter(nomeProperty));
 			}
 			parameters.put(nomeProperty,values);
@@ -680,28 +877,28 @@ class ResultAggregate {
 				String[] risorseConsegnePreseInCaricoTransazioni = null;
 				String[] risorseConsegneMessageBoxRuntime = null;
 				String[] risorseConsegneMessageBoxTransazioni = null;
-				if(this.list1!=null && this.list1.size()>0) {
+				if(this.list1!=null && !this.list1.isEmpty()) {
 					risorse = this.list1.toArray(new String[1]);
 				}
-				if(this.list2!=null && this.list2.size()>0) {
+				if(this.list2!=null && !this.list2.isEmpty()) {
 					risorseTransaction = this.list2.toArray(new String[1]);
 				}
-				if(this.list3!=null && this.list3.size()>0) {
+				if(this.list3!=null && !this.list3.isEmpty()) {
 					risorseStatistiche = this.list3.toArray(new String[1]);
 				}
-				if(this.list4!=null && this.list4.size()>0) {
+				if(this.list4!=null && !this.list4.isEmpty()) {
 					risorseConsegnePreseInCaricoSmistatore = this.list4.toArray(new String[1]);
 				}
-				if(this.list5!=null && this.list5.size()>0) {
+				if(this.list5!=null && !this.list5.isEmpty()) {
 					risorseConsegnePreseInCaricoRuntime = this.list5.toArray(new String[1]);
 				}
-				if(this.list6!=null && this.list6.size()>0) {
+				if(this.list6!=null && !this.list6.isEmpty()) {
 					risorseConsegnePreseInCaricoTransazioni = this.list6.toArray(new String[1]);
 				}
-				if(this.list7!=null && this.list7.size()>0) {
+				if(this.list7!=null && !this.list7.isEmpty()) {
 					risorseConsegneMessageBoxRuntime = this.list7.toArray(new String[1]);
 				}
-				if(this.list8!=null && this.list8.size()>0) {
+				if(this.list8!=null && !this.list8.isEmpty()) {
 					risorseConsegneMessageBoxTransazioni = this.list8.toArray(new String[1]);
 				}
 				if(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER.equals(this.methodName)) {
@@ -728,22 +925,21 @@ class ResultAggregate {
 		}
 		else if(Costanti.JMX_NAME_DATASOURCE_PDD.equals(this.resourceName)) {
 			String[] risorse = null;
-			if(this.list1!=null && this.list1.size()>0) {
+			if(this.list1!=null && !this.list1.isEmpty()) {
 				risorse = this.list1.toArray(new String[1]);
 			}
 			content = JmxDataSource.getResultUsedDBConnections(risorse);
 		}
-		else if(CostantiPdD.JMX_LOAD_BALANCER.equals(this.resourceName)) {
-			if(this.list1!=null && this.list1.size()>0) {
-				StringBuilder sb = new StringBuilder();
-				for (String l : this.list1) {
-					if(sb.length()>0) {
-						sb.append("\n");
-					}
-					sb.append(l);
+		else if(CostantiPdD.JMX_LOAD_BALANCER.equals(this.resourceName) &&
+			this.list1!=null && !this.list1.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			for (String l : this.list1) {
+				if(sb.length()>0) {
+					sb.append("\n");
 				}
-				content = sb.toString();
+				sb.append(l);
 			}
+			content = sb.toString();
 		}
 		
 		if(content!=null) {

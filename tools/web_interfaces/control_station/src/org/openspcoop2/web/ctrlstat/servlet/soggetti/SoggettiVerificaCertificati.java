@@ -121,7 +121,7 @@ public class SoggettiVerificaCertificati extends Action {
 			boolean arrivoDaLista = "true".equalsIgnoreCase(verificaCertificatiFromLista);
 			
 			// Prendo la lista di aliases
-			List<String> aliases = confCore.getJmxPdD_aliases();
+			List<String> aliases = confCore.getJmxPdDAliases();
 			if(aliases==null || aliases.isEmpty()){
 				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
@@ -251,10 +251,10 @@ public class SoggettiVerificaCertificati extends Action {
 					
 					CertificateChecker certificateChecker = null;
 					if(all) {
-						certificateChecker = soggettiCore.getJmxPdD_certificateChecker();
+						certificateChecker = soggettiCore.getJmxPdDCertificateChecker();
 					}
 					else {
-						certificateChecker = soggettiCore.newJmxPdD_certificateChecker(aliasesForCheck);
+						certificateChecker = soggettiCore.newJmxPdDCertificateChecker(aliasesForCheck);
 					}
 					StringBuilder sbDetailsError = new StringBuilder(); 
 					

@@ -1095,8 +1095,8 @@ public class GestoreRegistroThread extends GestoreGeneral {
 		}
 		
 		this.log.debug("Lettura dei parametri da console.properties");
-		String registroServiziQueue = this.consoleProperties.getGestioneCentralizzata_NomeCodaRegistroServizi();
-		boolean engineRegistro = this.consoleProperties.isGestioneCentralizzata_SincronizzazioneRegistro();
+		String registroServiziQueue = this.consoleProperties.getGestioneCentralizzataNomeCodaRegistroServizi();
+		boolean engineRegistro = this.consoleProperties.isGestioneCentralizzataSincronizzazioneRegistro();
 		this.singlePdD = this.consoleProperties.isSinglePdD();
 		boolean trovato = false;
 
@@ -1161,15 +1161,15 @@ public class GestoreRegistroThread extends GestoreGeneral {
 			this.pddPort = this.pddService.getPortaDominioPortSoap11();
 			
 			((BindingProvider)this.accordoCooperazionePort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-					this.consoleProperties.getGestioneCentralizzata_WSRegistroServizi_endpointAccordoCooperazione());
+					this.consoleProperties.getGestioneCentralizzataWSRegistroServiziEndpointAccordoCooperazione());
 			((BindingProvider)this.accordoServizioParteComunePort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-					this.consoleProperties.getGestioneCentralizzata_WSRegistroServizi_endpointAccordoServizioParteComune());
+					this.consoleProperties.getGestioneCentralizzataWSRegistroServiziEndpointAccordoServizioParteComune());
 			((BindingProvider)this.accordoServizioParteSpecificaPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-					this.consoleProperties.getGestioneCentralizzata_WSRegistroServizi_endpointAccordoServizioParteSpecifica());
+					this.consoleProperties.getGestioneCentralizzataWSRegistroServiziEndpointAccordoServizioParteSpecifica());
 			((BindingProvider)this.soggettoPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-					this.consoleProperties.getGestioneCentralizzata_WSRegistroServizi_endpointSoggetto());
+					this.consoleProperties.getGestioneCentralizzataWSRegistroServiziEndpointSoggetto());
 			((BindingProvider)this.pddPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-					this.consoleProperties.getGestioneCentralizzata_WSRegistroServizi_endpointPdd());
+					this.consoleProperties.getGestioneCentralizzataWSRegistroServiziEndpointPdd());
 			
 			((BindingProvider)this.accordoCooperazionePort).getRequestContext().put("schema-validation-enabled", true);
 			((BindingProvider)this.accordoServizioParteComunePort).getRequestContext().put("schema-validation-enabled", true);
@@ -1177,8 +1177,8 @@ public class GestoreRegistroThread extends GestoreGeneral {
 			((BindingProvider)this.soggettoPort).getRequestContext().put("schema-validation-enabled", true);
 			((BindingProvider)this.pddPort).getRequestContext().put("schema-validation-enabled", true);
 			
-			String username = this.consoleProperties.getGestioneCentralizzata_WSRegistroServizi_credenzialiBasic_username();
-			String password = this.consoleProperties.getGestioneCentralizzata_WSRegistroServizi_credenzialiBasic_password();
+			String username = this.consoleProperties.getGestioneCentralizzataWSRegistroServiziCredenzialiBasicUsername();
+			String password = this.consoleProperties.getGestioneCentralizzataWSRegistroServiziCredenzialiBasicPassword();
 			if(username !=null && password!=null){
 				// to use Basic HTTP Authentication: 
 				

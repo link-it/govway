@@ -627,6 +627,14 @@ public class CostantiPdD {
     public static final String KEY_DETTAGLI_EVENTO = "@DETTAGLI_EVENTO@";
     /** Costante che identifica una keyword per rappresentare un intervallo temporale */
     public static final String KEY_TEMPO_GESTIONE = "@TEMPO_GESTIONE@";
+    /** Costante che indica la data di aggiornamento */
+    public static final String DATA_AGGIORNAMENTO = "@DATA_AGGIORNAMENTO@";
+    /** Costante che identifica una keyword per rappresentare il numero di operazioni */
+    public static final String KEY_NUMERO_OPERAZIONI = "@NUMERO_OPERAZIONI@";
+    /** Costante che identifica una keyword per rappresentare i dati di una operazione */
+    public static final String KEY_DATI_OPERAZIONE = "@DATI_OPERAZIONE@";
+    /** Costante che identifica una keyword per rappresentare il dettaglio di una operazione */
+    public static final String KEY_DETTAGLI_OPERAZIONE = "@DETTAGLI_OPERAZIONE@";
     /** Costante che identifica una keyword per rappresentare un tipo di statistica */
     public static final String KEY_TIPO_STATISTICA = "@TIPO_STATISTICA@";
     /** Costante che identifica una keyword per rappresentare un intervallo temporale */

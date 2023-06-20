@@ -41,6 +41,7 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -85,6 +86,8 @@ import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDND;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreCacheChiaviPDNDLib;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDND;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
+import org.openspcoop2.pdd.timers.proxy.TimerGestoreOperazioniRemoteLib;
+import org.openspcoop2.pdd.timers.proxy.TimerSvecchiamentoOperazioniRemoteLib;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.utils.ErroriProperties;
@@ -144,6 +147,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public static final String TIMER_STATISTICHE_MENSILI = "timerStatisticheMensili";
 	public static final String TIMER_GESTORE_CHIAVI_PDND = "timerGestoreChiaviPDND";
 	public static final String TIMER_GESTORE_CACHE_CHIAVI_PDND = "timerGestoreCacheChiaviPDND";
+	public static final String TIMER_GESTORE_OPERAZIONI_REMOTE = "timerGestoreOperazioniRemote";
+	public static final String TIMER_SVECCHIAMENTO_OPERAZIONI_REMOTE = "timerSvecchiamentoOperazioniRemote";
 	public static final String TIMER_THRESHOLD_THREAD = "timerThresholdThread";
 	public static final String TIMER_CLUSTER_DINAMICO = "timerClusterDinamico";
 		
@@ -183,17 +188,18 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public static final String DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO = "disableSchedulingConnettoreMultiplo";
 	public static final String ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME = "enableSchedulingConnettoreMultiploRuntimeRepository";
 	public static final String DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME = "disableSchedulingConnettoreMultiploRuntimeRepository";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_ACCORDO_COOPERAZIONE = "ripulisciRiferimentiCacheAccordoCooperazione";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_API = "ripulisciRiferimentiCacheApi";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_EROGAZIONE = "ripulisciRiferimentiCacheErogazione";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_FRUIZIONE = "ripulisciRiferimentiCacheFruizione";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_SOGGETTO = "ripulisciRiferimentiCacheSoggetto";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_APPLICATIVO = "ripulisciRiferimentiCacheApplicativo";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_RUOLO = "ripulisciRiferimentiCacheRuolo";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_SCOPE = "ripulisciRiferimentiCacheScope";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_VALIDAZIONE = "ripulisciRiferimentiCacheTokenPolicyValidazione";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_NEGOZIAZIONE = "ripulisciRiferimentiCacheTokenPolicyNegoziazione";
-	public static final String RIPULISCI_RIFERIMENTI_CACHE_ATTRIBUTE_AUTHORITY = "ripulisciRiferimentiCacheAttributeAuthority";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_PREFIX = "ripulisciRiferimentiCache";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_ACCORDO_COOPERAZIONE = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"AccordoCooperazione";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_API = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"Api";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_EROGAZIONE = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"Erogazione";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_FRUIZIONE = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"Fruizione";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_SOGGETTO = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"Soggetto";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_APPLICATIVO = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"Applicativo";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_RUOLO = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"Ruolo";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_SCOPE = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"Scope";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_VALIDAZIONE = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"TokenPolicyValidazione";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_NEGOZIAZIONE = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"TokenPolicyNegoziazione";
+	public static final String RIPULISCI_RIFERIMENTI_CACHE_ATTRIBUTE_AUTHORITY = RIPULISCI_RIFERIMENTI_CACHE_PREFIX+"AttributeAuthority";
 	
 	
 	/** Attributi */
@@ -211,6 +217,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	private boolean log4jTracciamentoAbilitato = false;
 	private boolean log4jDumpAbilitato = false;
 		
+	private static final String PARAMETRO_NON_FORNITO = "parametro richiesto non fornito";
+	private static final String FORMATO_NON_VALIDO_NOME_SOGGETTO = "Formato non valido (nome@tipoSoggetto/nomeSoggetto)";
 	
 	/** getAttribute */
 	@Override
@@ -344,6 +352,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_CACHE_CHIAVI_PDND))
 			return TimerGestoreCacheChiaviPDNDLib.getState().name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_OPERAZIONI_REMOTE))
+			return TimerGestoreOperazioniRemoteLib.getState().name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_SVECCHIAMENTO_OPERAZIONI_REMOTE))
+			return TimerSvecchiamentoOperazioniRemoteLib.getState().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
 			return TimerThresholdThread.getSTATE().name();
@@ -505,6 +519,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_CACHE_CHIAVI_PDND))
 				TimerGestoreCacheChiaviPDNDLib.setState( getTimerState(attribute.getValue()) );
 			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_OPERAZIONI_REMOTE))
+				TimerGestoreOperazioniRemoteLib.setState( getTimerState(attribute.getValue()) );
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_SVECCHIAMENTO_OPERAZIONI_REMOTE))
+				TimerSvecchiamentoOperazioniRemoteLib.setState( getTimerState(attribute.getValue()) );
+			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
 				TimerThresholdThread.setSTATE( getTimerState(attribute.getValue()) );
 			
@@ -663,7 +683,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_BY_ID+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_BY_ID+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.checkConnettoreById(param1);
 		}
@@ -739,7 +759,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+GET_CERTIFICATI_CONNETTORE_BY_ID+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+GET_CERTIFICATI_CONNETTORE_BY_ID+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.getCertificatiConnettoreById(param1);
 		}
@@ -825,7 +845,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.checkCertificatiConnettoreHttpsById(param1, soglia);
 		}
@@ -856,7 +876,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.checkCertificatoApplicativoById(param1, soglia);
 		}
@@ -878,7 +898,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.checkCertificatoApplicativoByNome(param1, soglia);
 		}
@@ -909,7 +929,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.checkCertificatoModiApplicativoById(param1, soglia);
 		}
@@ -931,7 +951,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.checkCertificatoModiApplicativoByNome(param1, soglia);
 		}
@@ -964,10 +984,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			String tipo = null;
-			if(params.length == 3) {
-				if(params[1]!=null && !"".equals(params[1])){
-					tipo = (String)params[1];
-				}
+			if(params.length == 3 &&
+				params[1]!=null && !"".equals(params[1])){
+				tipo = (String)params[1];
 			}
 			
 			int soglia = -1;
@@ -1299,7 +1318,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_ACCORDO_COOPERAZIONE+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_ACCORDO_COOPERAZIONE+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheAccordoCooperazione(param1);
 		}
@@ -1322,7 +1341,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_API+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_API+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheApi(param1);
 		}
@@ -1345,7 +1364,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_EROGAZIONE+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_EROGAZIONE+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheErogazione(param1);
 		}
@@ -1368,7 +1387,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_FRUIZIONE+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_FRUIZIONE+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheFruizione(param1);
 		}
@@ -1391,7 +1410,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_SOGGETTO+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_SOGGETTO+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheSoggetto(param1);
 		}
@@ -1414,7 +1433,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_APPLICATIVO+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_APPLICATIVO+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheApplicativo(param1);
 		}
@@ -1437,7 +1456,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_RUOLO+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_RUOLO+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheRuolo(param1);
 		}
@@ -1460,7 +1479,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_SCOPE+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_SCOPE+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheScope(param1);
 		}
@@ -1483,7 +1502,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_VALIDAZIONE+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_VALIDAZIONE+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheTokenPolicyValidazione(param1);
 		}
@@ -1506,7 +1525,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_NEGOZIAZIONE+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_NEGOZIAZIONE+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheTokenPolicyNegoziazione(param1);
 		}
@@ -1529,7 +1548,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			if(param1==null) {
-				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_ATTRIBUTE_AUTHORITY+"] parametro richiesto non fornito"));
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_ATTRIBUTE_AUTHORITY+"] "+PARAMETRO_NON_FORNITO));
 			}
 			return this.ripulisciRiferimentiCacheAttributeAuthority(param1);
 		}
@@ -2392,6 +2411,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	org.openspcoop2.pdd.config.ConfigurazionePdDManager configReader = null;
 	org.openspcoop2.pdd.config.OpenSPCoop2Properties openspcoopProperties = null;
 	
+	private void logError(String msg, Exception e) {
+		this.log.error(msg, e);
+	}
+	
 	/* Costruttore */
 	public ConfigurazionePdD(){
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -2455,36 +2478,36 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	/* Metodi di management JMX */
 	public String resetCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.resetCache();
 			FileTraceConfig.resetFileTraceAssociatePorte();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
 	
 	public String prefillCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.prefillCache(this.openspcoopProperties.getCryptConfigAutenticazioneApplicativi());
 			return JMXUtils.MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
 	
 	public String printStatCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			return org.openspcoop2.pdd.config.ConfigurazionePdDReader.printStatsCache("\n");
-		}catch(Throwable e){
-			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2493,8 +2516,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.abilitaCache();
 			this.cacheAbilitata = true;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 		}
 	}
 
@@ -2504,8 +2527,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					this.openspcoopProperties.getCryptConfigAutenticazioneApplicativi());
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2514,8 +2537,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.disabilitaCache();
 			this.cacheAbilitata = false;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			throw new JMException(e.getMessage());
 		}
 	}
@@ -2523,42 +2546,42 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			disabilitaCache();
 			return JMXUtils.MSG_DISABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
 	
 	public String listKeysCache(){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			return org.openspcoop2.pdd.config.ConfigurazionePdDReader.listKeysCache("\n");
-		}catch(Throwable e){
-			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
 	
 	public String getObjectCache(String key){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			return org.openspcoop2.pdd.config.ConfigurazionePdDReader.getObjectCache(key);
-		}catch(Throwable e){
-			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
 	
 	public String removeObjectCache(String key){
 		try{
-			if(this.cacheAbilitata==false)
-				throw new Exception("Cache non abilitata");
+			if(!this.cacheAbilitata)
+				throw new CoreException("Cache non abilitata");
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.removeObjectCache(key);
 			return JMXUtils.MSG_RIMOZIONE_CACHE_EFFETTUATA;
-		}catch(Throwable e){
-			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2619,8 +2642,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			ErroriProperties.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST( 
 					value,
 					this.openspcoopProperties.getRootDirectory(), this.log, Loader.getInstance());
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 		}
 	}
 	
@@ -2629,8 +2652,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			ErroriProperties.setFORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE( 
 					value,
 					this.openspcoopProperties.getRootDirectory(), this.log, Loader.getInstance());
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 		}
 	}
 	
@@ -2639,8 +2662,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			ErroriProperties.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR( 
 					value,
 					this.openspcoopProperties.getRootDirectory(), this.log, Loader.getInstance());
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 		}
 	}
 		
@@ -2649,8 +2672,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			ErroriProperties.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR( 
 					value,
 					this.openspcoopProperties.getRootDirectory(), this.log, Loader.getInstance());
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 		}
 	}
 
@@ -2658,8 +2681,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			ConnettoreCheck.check(idConnettore, false, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2668,8 +2691,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			ConnettoreCheck.check(nomeConnettore, false, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2678,8 +2701,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			ConnettoreCheck.checkTokenPolicyValidazione(nomePolicy, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2687,8 +2710,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			ConnettoreCheck.checkTokenPolicyValidazione(nomePolicy, tipoConnettore, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2697,8 +2720,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			ConnettoreCheck.checkTokenPolicyNegoziazione(nomePolicy, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2707,8 +2730,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			ConnettoreCheck.checkAttributeAuthority(nomePolicy, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2716,8 +2739,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String getCertificatiConnettoreById(long idConnettore) {
 		try{
 			return ConnettoreCheck.getCertificati(idConnettore, true);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2725,8 +2748,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String getCertificatiConnettoreByNome(String nomeConnettore) {
 		try{
 			return ConnettoreCheck.getCertificati(nomeConnettore, true);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2734,16 +2757,16 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String getCertificatiConnettoreTokenPolicyValidazione(String nomePolicy) {
 		try{
 			return ConnettoreCheck.getCertificatiTokenPolicyValidazione(nomePolicy, this.logConnettori);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
 	public String getCertificatiConnettoreTokenPolicyValidazione(String nomePolicy, String tipoConnettore) {
 		try{
 			return ConnettoreCheck.getCertificatiTokenPolicyValidazione(nomePolicy, tipoConnettore, this.logConnettori);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2751,8 +2774,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String getCertificatiConnettoreTokenPolicyNegoziazione(String nomePolicy) {
 		try{
 			return ConnettoreCheck.getCertificatiTokenPolicyNegoziazione(nomePolicy, this.logConnettori);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2760,8 +2783,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String getCertificatiConnettoreAttributeAuthority(String nomePolicy) {
 		try{
 			return ConnettoreCheck.getCertificatiAttributeAuthority(nomePolicy, this.logConnettori);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2774,8 +2797,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsByIdWithoutCache(idConnettore, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2788,8 +2811,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoApplicativoWithoutCache(idApplicativo, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2797,21 +2820,21 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String checkCertificatoApplicativoByNome(String idApplicativo, int sogliaWarningGiorni) {
 		try{
 			if(!idApplicativo.contains("@") || !idApplicativo.contains("/")) {
-				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+				throw new CoreException(FORMATO_NON_VALIDO_NOME_SOGGETTO);
 			}
 			String [] tmp = idApplicativo.split("@");
 			if(tmp==null || tmp.length!=2 || tmp[0]==null || tmp[1]==null) {
-				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+				throw new CoreException(FORMATO_NON_VALIDO_NOME_SOGGETTO);
 			}
 			else {
 				String nome = tmp[0];
 				if(!tmp[1].contains("/")) {
-					throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+					throw new CoreException(FORMATO_NON_VALIDO_NOME_SOGGETTO);
 				}
 				else {
 					String [] tmp2 = tmp[1].split("/");
 					if(tmp2==null || tmp2.length!=2 || tmp2[0]==null || tmp2[1]==null) {
-						throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+						throw new CoreException(FORMATO_NON_VALIDO_NOME_SOGGETTO);
 					}
 					else {
 						String tipoSoggetto = tmp2[0];
@@ -2829,8 +2852,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					}
 				}
 			}
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2843,8 +2866,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoModiApplicativoWithoutCache(idApplicativo, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2852,21 +2875,21 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String checkCertificatoModiApplicativoByNome(String idApplicativo, int sogliaWarningGiorni) {
 		try{
 			if(!idApplicativo.contains("@") || !idApplicativo.contains("/")) {
-				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+				throw new CoreException(FORMATO_NON_VALIDO_NOME_SOGGETTO);
 			}
 			String [] tmp = idApplicativo.split("@");
 			if(tmp==null || tmp.length!=2 || tmp[0]==null || tmp[1]==null) {
-				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+				throw new CoreException(FORMATO_NON_VALIDO_NOME_SOGGETTO);
 			}
 			else {
 				String nome = tmp[0];
 				if(!tmp[1].contains("/")) {
-					throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+					throw new CoreException(FORMATO_NON_VALIDO_NOME_SOGGETTO);
 				}
 				else {
 					String [] tmp2 = tmp[1].split("/");
 					if(tmp2==null || tmp2.length!=2 || tmp2[0]==null || tmp2[1]==null) {
-						throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+						throw new CoreException(FORMATO_NON_VALIDO_NOME_SOGGETTO);
 					}
 					else {
 						String tipoSoggetto = tmp2[0];
@@ -2884,8 +2907,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					}
 				}
 			}
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2898,8 +2921,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiJvm(sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2908,8 +2931,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			ConnettoreCheck.checkProxyJvm(this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2922,8 +2945,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsTokenPolicyValidazione(nomePolicy, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2935,8 +2958,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsTokenPolicyValidazione(nomePolicy, tipo, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2949,8 +2972,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiValidazioneJwtTokenPolicyValidazione(nomePolicy, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2963,8 +2986,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiForwardToJwtTokenPolicyValidazione(nomePolicy, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2977,8 +3000,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(nomePolicy, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -2991,8 +3014,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiSignedJwtTokenPolicyNegoziazione(nomePolicy, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3005,8 +3028,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsAttributeAuthority(nomePolicy, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3019,8 +3042,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiAttributeAuthorityJwtRichiesta(nomePolicy, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3034,8 +3057,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiAttributeAuthorityJwtRisposta(nomePolicy, sogliaWarningGiorni, 
 					addCertificateDetails, separator, newLine);
 			return statoCheck.toString(newLine);
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3046,8 +3069,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			idPD.setNome(nomePorta);
 			this.configReader.updateStatoPortaDelegata(idPD, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3058,8 +3081,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			idPA.setNome(nomePorta);
 			this.configReader.updateStatoPortaApplicativa(idPA, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3070,11 +3093,11 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			idPA.setNome(nomePorta);
 			String nomeServizioApplicativo = this.configReader.updateStatoConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 			if(nomeServizioApplicativo==null) {
-				throw new Exception("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
+				throw new CoreException("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
 			}
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3085,11 +3108,11 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			idPA.setNome(nomePorta);
 			String nomeServizioApplicativo = this.configReader.updateSchedulingConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 			if(nomeServizioApplicativo==null) {
-				throw new Exception("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
+				throw new CoreException("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
 			}
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3110,7 +3133,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				}
 			}
 			if(nomeServizioApplicativo==null) {
-				throw new Exception("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
+				throw new CoreException("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
 			}
 			
 			DBManager dbManager = DBManager.getInstance();
@@ -3134,20 +3157,19 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 							OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(debug), c,  debug);
 				}
 				if(row>=0) {
-					return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO+"; "+op+" scheduling in "+row+" messagg"+(row==1 ? "io" : "i");
+					return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO_PREFIX+op+" scheduling in "+row+" messagg"+(row==1 ? "io" : "i");
 				}
 			}finally {
 				try{
-					if(dbManager!=null)
-						dbManager.releaseResource(dominio, modulo, resource);
+					dbManager.releaseResource(dominio, modulo, resource);
 				}catch(Exception eClose){
 					// close
 				}
 			}
 			
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3156,8 +3178,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeAccordoCooperazione(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3166,8 +3188,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeAccordoServizioParteComune(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3176,8 +3198,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeErogazione(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3186,8 +3208,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeFruizione(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3196,8 +3218,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeSoggetto(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3206,8 +3228,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeApplicativo(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3216,8 +3238,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeRuolo(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3226,8 +3248,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeScope(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3236,8 +3258,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeGenericProperties(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3246,8 +3268,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeGenericProperties(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
@@ -3256,8 +3278,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			GestoreCacheCleaner.removeGenericProperties(id);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
-		}catch(Throwable e){
-			this.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			this.logError(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}

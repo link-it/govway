@@ -168,7 +168,7 @@ public class DatasourceProperties {
 	}
 	private Boolean readBooleanProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.readProperty(required, property);
-		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
 			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
 		}
 		return Boolean.parseBoolean(tmp);
@@ -194,7 +194,7 @@ public class DatasourceProperties {
 	
 	/* ----- Database di Monitoraggio ------- */
 	
-	public List<String> getSinglePdD_MonitorSorgentiDati() throws UtilsException{
+	public List<String> getSinglePddMonitorSorgentiDati() throws UtilsException{
 		List<String> l = new ArrayList<>();
 		String p = this.readProperty(false, "singlePdD.monitor.sorgentiDati");
 		if(p!=null && !"".equals(p.trim())){
@@ -207,57 +207,57 @@ public class DatasourceProperties {
 		return l;
 	}
 	
-	public String getSinglePdD_MonitorLabel(String source) throws UtilsException{
+	public String getSinglePddMonitorLabel(String source) throws UtilsException{
 		return this.readProperty(true, "singlePdD.monitor."+source+".label");
 	}
 	
-	public String getSinglePdD_MonitorDataSource(String source) throws UtilsException{
+	public String getSinglePddMonitorDataSource(String source) throws UtilsException{
 		return this.readProperty(true, "singlePdD.monitor."+source+".dataSource");
 	}
 	
-	public Properties getSinglePdD_MonitorDataSourceContext(String source) throws UtilsException{
+	public Properties getSinglePddMonitorDataSourceContext(String source) throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("singlePdD.monitor."+source+".dataSource.property.");
 	}
 	
-	public String getSinglePdD_MonitorTipoDatabase(String source) throws UtilsException{
+	public String getSinglePddMonitorTipoDatabase(String source) throws UtilsException{
 		return this.readProperty(true, "singlePdD.monitor."+source+".tipoDatabase");
 	}
 	
 	
 	/* ----- Database di Tracciamento ------- */
 		
-	public Boolean isSinglePdD_TracceStessoDBConsole() throws UtilsException{
+	public Boolean isSinglePddTracceStessoDBConsole() throws UtilsException{
 		return this.readBooleanProperty(true, "singlePdD.tracce.sameDBWebUI");
 	}
 	
-	public String getSinglePdD_TracceDataSource() throws UtilsException{
+	public String getSinglePddTracceDataSource() throws UtilsException{
 		return this.readProperty(true, "singlePdD.tracce.dataSource");
 	}
 	
-	public Properties getSinglePdD_TracceDataSourceContext() throws UtilsException{
+	public Properties getSinglePddTracceDataSourceContext() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("singlePdD.tracce.dataSource.property.");
 	}
 	
-	public String getSinglePdD_TracceTipoDatabase() throws UtilsException{
+	public String getSinglePddTracceTipoDatabase() throws UtilsException{
 		return this.readProperty(true, "singlePdD.tracce.tipoDatabase");
 	}
 	
 	
 	/* ----- Database dei Messaggi Diagnostici ------- */
 	
-	public Boolean isSinglePdD_MessaggiDiagnosticiStessoDBConsole() throws UtilsException{
+	public Boolean isSinglePddMessaggiDiagnosticiStessoDBConsole() throws UtilsException{
 		return this.readBooleanProperty(true, "singlePdD.msgDiagnostici.sameDBWebUI");
 	}
 	
-	public String getSinglePdD_MessaggiDiagnosticiDataSource() throws UtilsException{
+	public String getSinglePddMessaggiDiagnosticiDataSource() throws UtilsException{
 		return this.readProperty(true, "singlePdD.msgDiagnostici.dataSource");
 	}
 	
-	public Properties getSinglePdD_MessaggiDiagnosticiDataSourceContext() throws UtilsException{
+	public Properties getSinglePddMessaggiDiagnosticiDataSourceContext() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("singlePdD.msgDiagnostici.dataSource.property.");
 	}
 	
-	public String getSinglePdD_MessaggiDiagnosticiTipoDatabase() throws UtilsException{
+	public String getSinglePddMessaggiDiagnosticiTipoDatabase() throws UtilsException{
 		return this.readProperty(true, "singlePdD.msgDiagnostici.tipoDatabase");
 	}
 	

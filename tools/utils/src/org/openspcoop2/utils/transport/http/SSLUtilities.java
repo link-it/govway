@@ -514,7 +514,7 @@ public class SSLUtilities {
 						if(hsmTruststore) {
 							org.openspcoop2.utils.certificate.KeyStore ks = hsmManager.getKeystore(sslConfig.getTrustStoreType());
 							if(ks==null) {
-								throw new UtilsException("Keystore not found");
+								throw new UtilsException("Truststore not found");
 							}
 							truststoreParam = ks.getKeystore();
 							truststoreProvider = truststoreParam.getProvider();
@@ -528,9 +528,9 @@ public class SSLUtilities {
 								finTrustStore = SSLUtilities.class.getResourceAsStream(location);
 							}
 							if(finTrustStore == null) {
-								throw new UtilsException("Keystore not found");
+								throw new UtilsException("Truststore not found");
 							}		
-							truststoreParam = KeystoreUtils.readKeystore(finTrustStore, sslConfig.getKeyStoreType(), sslConfig.getKeyStorePassword());
+							truststoreParam = KeystoreUtils.readKeystore(finTrustStore, sslConfig.getTrustStoreType(), sslConfig.getTrustStorePassword());
 						}
 					}
 					

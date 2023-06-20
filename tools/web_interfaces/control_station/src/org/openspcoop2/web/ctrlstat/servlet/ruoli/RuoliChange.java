@@ -103,14 +103,14 @@ public final class RuoliChange extends Action {
 			if(resetElementoCache) {
 				
 				// Uso lo stessoAlias
-				List<String> aliases = ruoliCore.getJmxPdD_aliases();
+				List<String> aliases = ruoliCore.getJmxPdDAliases();
 				String alias = null;
 				if(aliases!=null && !aliases.isEmpty()) {
 					alias = aliases.get(0);
 				}
 				String labelRuolo = ruolo.getNome();
-				ruoliCore.invokeJmxMethodAllNodesAndSetResult(pd, ruoliCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-						ruoliCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo(alias),
+				ruoliCore.invokeJmxMethodAllNodesAndSetResult(pd, ruoliCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+						ruoliCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheRuolo(alias),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelRuolo),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelRuolo),
 						ruolo.getId());				

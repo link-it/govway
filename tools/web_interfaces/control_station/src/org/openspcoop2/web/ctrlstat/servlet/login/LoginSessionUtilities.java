@@ -65,7 +65,7 @@ public class LoginSessionUtilities {
 		
 		Boolean singlePdD = core.isSinglePdD();
 		
-		Boolean sameDBWebUI = core.isTracce_sameDBWebUI();
+		Boolean sameDBWebUI = core.isTracceSameDBWebUI();
 		
 		Boolean showAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
 		

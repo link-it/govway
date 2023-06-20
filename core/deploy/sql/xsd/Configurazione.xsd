@@ -61,6 +61,7 @@
                                 <linkit:sql-table object-name="handlers" object-type="handlers"/>
                                 <linkit:sql-comment><![CDATA[**** Nodi Runtime ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="nodi-runtime" object-type="nodi-runtime"/>
+				<linkit:sql-table object-name="nodi-runtime-operations" object-type="nodi-runtime-operations"/>
 				<linkit:sql-comment><![CDATA[**** Keystore ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="remote-store" object-type="remote-store"/>
 				<linkit:sql-table object-name="remote-store-key" object-type="remote-store-key"/>
@@ -3213,6 +3214,62 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:element name="nodi-runtime-operations">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="nodi_runtime_operations"
+                        comment="Operazioni richieste ai nodi">
+		    	<linkit:sql-table-index name="INDEX_NODI_OP">
+		    		<linkit:sql-table-index-field name="data-registrazione" ignoreTypeCompatibility="true"/>
+		    	</linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="descrizione" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping varchar="4000"/>
+                                <linkit:sql-ddl-column-comment>Descrizione dell'operazione</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="operazione" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping varchar="4000"/>
+                                <linkit:sql-ddl-column-comment>Operazione da effettuare</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data-registrazione" type="xsd:dateTime" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="data_registrazione" />
+                                <linkit:sql-ddl-column-comment>Data di registrazione dell'operazione</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+
 
 
 

@@ -245,6 +245,16 @@ public final class CostantiDB {
     public static final String TRASFORMAZIONI_COLUMN_IDENTIFICAZIONE_FALLITA = "identificazione_fallita";
     
     public static final String CONFIG_NODI_RUNTIME = "nodi_runtime";
+    public static final String CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME = "hostname";
+    public static final String CONFIG_NODI_RUNTIME_COLUMN_GRUPPO = "gruppo";
+    public static final String CONFIG_NODI_RUNTIME_COLUMN_ID_NUMERICO = "id_numerico";
+    public static final String CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH = "data_refresh";
+    public static final String CONFIG_NODI_RUNTIME_COLUMN_DATA_REGISTRAZIONE = "data_registrazione";
+    
+    public static final String CONFIG_NODI_RUNTIME_OPERATIONS = "nodi_runtime_operations";
+    public static final String CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DESCRIZIONE = "descrizione";
+    public static final String CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_OPERAZIONE = "operazione";
+    public static final String CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DATA_REGISTRAZIONE = "data_registrazione";
     
     public static final String CONFIG_URL_INVOCAZIONE = "config_url_invocazione";
     public static final String CONFIG_URL_REGOLE = "config_url_regole";

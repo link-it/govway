@@ -77,6 +77,7 @@ import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.XMLException;
 import org.openspcoop2.utils.xml.XSDSchemaCollection;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
@@ -172,19 +173,13 @@ public class DocumentoExporter extends HttpServlet {
 
 			if( ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_DOCUMENTO.equals(tipoDocumentoDaScaricare) ){
 
-				long idAllegatoInt = Long.valueOf(idAllegato);
+				long idAllegatoInt = Long.parseLong(idAllegato);
 
-				if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoDocumento)){
-					Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
-					fileName = doc.getFile();
-					docBytes = doc.getByteContenuto();
-				}
-				else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA.equals(tipoDocumento)){
-					Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
-					fileName = doc.getFile();
-					docBytes = doc.getByteContenuto();
-				}
-				else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_COOPERAZIONE.equals(tipoDocumento)){
+				if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoDocumento)
+						||
+						ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA.equals(tipoDocumento)
+						||
+						ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_COOPERAZIONE.equals(tipoDocumento)){
 					Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
 					fileName = doc.getFile();
 					docBytes = doc.getByteContenuto();
@@ -266,10 +261,9 @@ public class DocumentoExporter extends HttpServlet {
 							AccordoServizioUtils asUtils = new AccordoServizioUtils(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), ControlStationCore.getLog());
 							XSDSchemaCollection schemaCollection = asUtils.buildSchemaCollection(asConAllegati, true);
 							fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION;
-							//docBytes = schemaCollection.serialize(ControlStationCore.getLog());
 							docBytes = this.serializeWsdl(ControlStationCore.getLog(), schemaCollection, asConAllegati);
 						}
-						catch(Throwable e){
+						catch(Exception e){
 							ControlStationCore.getLog().error("XSDSchemaCollection build error: "+e.getMessage(),e);
 							fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION_ERROR;
 							String msg = e.getMessage();
@@ -335,7 +329,7 @@ public class DocumentoExporter extends HttpServlet {
 				}
 				else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY.equals(tipoDocumento)){
 					if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PROTOCOL_PROPERTY_BINARY.equals(tipoDocumentoDaScaricare)){
-						long idAllegatoInt = Long.valueOf(idAllegato);
+						long idAllegatoInt = Long.parseLong(idAllegato);
 						ProtocolProperty bp = ppCore.getProtocolPropertyBinaria(idAllegatoInt);
 						fileName = bp.getFile();
 						docBytes = bp.getByteFile();
@@ -408,9 +402,9 @@ public class DocumentoExporter extends HttpServlet {
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] '"+tipo+"' non disponibile per il tipo archivio ["+tipoDocumento+"]: tipo non supportato");
 						}
 						
-//						if(fileName==null) {
+/**						if(fileName==null) {
 //							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] '"+tipo+"' non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
-//						}
+//						}*/
 
 						docBytes = richiesta.getConversioneTemplate();
 					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
@@ -905,6 +899,7 @@ public class DocumentoExporter extends HttpServlet {
 								credenziali = soggetto.getCredenziali(posizioneCredenziale);
 							}
 						}catch(RegistryNotFound r){
+							// rilancio
 							throw r;
 						}
 						
@@ -937,10 +932,9 @@ public class DocumentoExporter extends HttpServlet {
 						
 						InvocazionePorta ip = sa.getInvocazionePorta();
 						Credenziali credenziali = null;
-						if (ip != null) {
-							if(ip.sizeCredenzialiList()>0) {
-								credenziali = ip.getCredenziali(posizioneCredenziale);
-							}
+						if (ip != null &&
+							ip.sizeCredenzialiList()>0) {
+							credenziali = ip.getCredenziali(posizioneCredenziale);
 						}
 						
 						if(credenziali != null && credenziali.getTipo() != null && credenziali.getTipo().equals(org.openspcoop2.core.config.constants.CredenzialeTipo.SSL)) {
@@ -975,44 +969,44 @@ public class DocumentoExporter extends HttpServlet {
 					
 					String risorsa = null;
 					if(connettoreRegistro) {
-						risorsa = archiviCore.getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(aliasForVerificaConnettore);
+						risorsa = archiviCore.getJmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi(aliasForVerificaConnettore);
 					}
 					else {
-						risorsa = archiviCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
+						risorsa = archiviCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
 					}
 					
 					String metodo = null;
 					List<Object> parameters = new ArrayList<>();
 					if(idConnettore!=null) {
-						metodo = archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(aliasForVerificaConnettore);
+						metodo = archiviCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreById(aliasForVerificaConnettore);
 						parameters.add(idConnettore+"");
 					}
 					else if(tokenTipologia!=null) {
 						if(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN.equals(tokenTipologia)) {
-							metodo = archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione(aliasForVerificaConnettore);
+							metodo = archiviCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyValidazione(aliasForVerificaConnettore);
 							parameters.add(tokenNome);
 							if(tokenConnettoreTipo!=null && StringUtils.isNotEmpty(tokenConnettoreTipo)) {
 								parameters.add(tokenConnettoreTipo);
 							}
 						}
 						else if(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(tokenTipologia)) {
-							metodo = archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione(aliasForVerificaConnettore);
+							metodo = archiviCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyNegoziazione(aliasForVerificaConnettore);
 							parameters.add(tokenNome);
 						}
 						else if(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY.equals(tokenTipologia)) {
-							metodo = archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority(aliasForVerificaConnettore);
+							metodo = archiviCore.getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreAttributeAuthority(aliasForVerificaConnettore);
 							parameters.add(tokenNome);
 						}
 						else {
-							throw new Exception("Tipologia '"+tokenTipologia+"' da utilizzare per l'export dei certificati server non supportata");
+							throw new DriverControlStationException("Tipologia '"+tokenTipologia+"' da utilizzare per l'export dei certificati server non supportata");
 						}
 					}
 					else {
-						throw new Exception("Nessuna risorsa definita da cui effettuare l'export dei certificati server");
+						throw new DriverControlStationException("Nessuna risorsa definita da cui effettuare l'export dei certificati server");
 					}
 					
 					try{
-						String stato = archiviCore.getInvoker().invokeJMXMethod(aliasForVerificaConnettore, archiviCore.getJmxPdD_configurazioneSistema_type(aliasForVerificaConnettore),
+						String stato = archiviCore.getInvoker().invokeJMXMethod(aliasForVerificaConnettore, archiviCore.getJmxPdDConfigurazioneSistemaType(aliasForVerificaConnettore),
 								risorsa, 
 								metodo, 
 								parameters.toArray());
@@ -1028,7 +1022,7 @@ public class DocumentoExporter extends HttpServlet {
 					}catch(Exception e){
 						String msgErrore = "Errore durante il recupero dei certificati server del "+labelConnettore+" con parametri '"+parameters+"' (jmxResource '"+risorsa+"') (node:"+aliasForVerificaConnettore+"): "+e.getMessage();
 						ControlStationCore.logError(msgErrore, e);
-						//throw new ServletException(msgErrore);
+						/**throw new ServletException(msgErrore);*/
 						// se lancio una eccezione ho il crash dell'interfaccia. Ritorno anzi un file errato.
 						fileName+=".error";
 						docBytes = msgErrore.getBytes();
@@ -1048,7 +1042,7 @@ public class DocumentoExporter extends HttpServlet {
 					}catch(Exception e){
 						String msgErrore = "Errore durante il recupero dell'archivio jar '"+nomeJar+"' del plugin "+nomePlugin+": "+e.getMessage();
 						ControlStationCore.logError(msgErrore, e);
-						//throw new ServletException(msgErrore);
+						/**throw new ServletException(msgErrore);*/
 						// se lancio una eccezione ho il crash dell'interfaccia. Ritorno anzi un file errato.
 						fileName+=".error";
 						docBytes = msgErrore.getBytes();
@@ -1140,7 +1134,7 @@ public class DocumentoExporter extends HttpServlet {
 
 			zipOut.putNextEntry(new ZipEntry(nomeFile));
 			zipOut.write(bout.toByteArray());
-		}catch(Throwable e){
+		}catch(Exception e){
 			String tipo = "Erogatore";
 			if(!erogatore){
 				tipo = "Fruitore";

@@ -605,14 +605,14 @@ public final class SoggettiChange extends Action {
 			if(resetElementoCache) {
 				
 				// Uso lo stessoAlias
-				List<String> aliases = soggettiCore.getJmxPdD_aliases();
+				List<String> aliases = soggettiCore.getJmxPdDAliases();
 				String alias = null;
 				if(aliases!=null && !aliases.isEmpty()) {
 					alias = aliases.get(0);
 				}
 				String labelSoggetto = soggettiHelper.getLabelNomeSoggetto(strutsBean.protocollo, oldtipoprov , oldnomeprov);
-				soggettiCore.invokeJmxMethodAllNodesAndSetResult(pd, soggettiCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-						soggettiCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto(alias),
+				soggettiCore.invokeJmxMethodAllNodesAndSetResult(pd, soggettiCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+						soggettiCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheSoggetto(alias),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelSoggetto),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelSoggetto),
 						idSogg);				

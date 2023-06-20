@@ -1,3 +1,14 @@
+2023-06-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, InstallerVersioneBinaria]
+	Aggiunta funzionalità OP-1596
+	La modalità di installazione con gestione dei nodi 'dinamica' prevede che alcune operazioni effettuate tramite la console di gestione quali reset della cache, modifiche degli stati etc ...
+	utilizzino un servizio "proxy" esposto da un nodo runtime qualsiasi (scelto tramite un bilanciatore) che a sua volta ha il compito di invocare tutti gli altri nodi registrati sul cluster dinamico.
+	Questa modalità prevede che i nodi runtime siano direttamente invocabili tra loro, requisito che non è più attuabile su alcune nuove architetture cloud (es. kubernates).
+	Alla modalità suddetta è stata quindi affiancata una nuova modalità di funzionamento in cui il servizio proxy registra le operazioni da propagare sulla base dati.
+	In questa nuova modalità ogni nodo runtime possiede un timer adibito alla ricerca di nuove operazioni registrate sulla base dati da eseguire localmente sul nodo (es. reset della cache).
+        Nella nuova modalità si avrà una propagazione delle operazioni "near real-time" dove per default il timer è configurato per cercare nuove operazioni ogni minuto.
+
 2023-06-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

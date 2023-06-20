@@ -83,7 +83,7 @@ public class ConsoleProperties {
 	 *
 	 * 
 	 */
-	public ConsoleProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws Exception {
+	public ConsoleProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws UtilsException {
 
 		if(log!=null)
 			this.log = log;
@@ -96,17 +96,18 @@ public class ConsoleProperties {
 		try{  
 			properties = ConsoleProperties.class.getResourceAsStream("/console.properties");
 			if(properties==null){
-				throw new Exception("File '/console.properties' not found");
+				throw new UtilsException("File '/console.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'console.properties': \n\n"+e.getMessage());
-		    throw new Exception("ConsoleProperties initialize error: "+e.getMessage());
+			String msg = "Riscontrato errore durante la lettura del file 'console.properties': \n\n"+e.getMessage();
+			this.log.error(msg);
+		    throw new UtilsException("ConsoleProperties initialize error: "+e.getMessage());
 		}finally{
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Throwable er){
+		    }catch(Exception er){
 		    	// close
 		    }
 		}
@@ -114,6 +115,9 @@ public class ConsoleProperties {
 		this.reader = new ConsoleInstanceProperties(propertiesReader, this.log, confDir, confPropertyName, confLocalPathPrefix);
 	}
 
+	private boolean parse(BooleanNullable b, boolean defaultValue) {
+		return (b!=null && b.getValue()!=null) ? b.getValue() : defaultValue;
+	}
 
 	/**
 	 * Il Metodo si occupa di inizializzare il propertiesReader 
@@ -158,11 +162,18 @@ public class ConsoleProperties {
 
 	/* ********  M E T O D I  ******** */
 
+	private String getPropertyPrefix(String property) {
+		return "Property ["+property+"] ";
+	}
+	private String getMessageUncorrectValue(String tmp) {
+		return "with uncorrect value ["+tmp+"]"; 
+	}
+	
 	private String readProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.reader.getValueConvertEnvProperties(property);
 		if(tmp==null){
 			if(required){
-				throw new UtilsException("Property ["+property+"] not found");
+				throw new UtilsException(getPropertyPrefix(property)+"not found");
 			}
 			else{
 				return null;
@@ -179,8 +190,8 @@ public class ConsoleProperties {
 		if(tmp==null && !required) {
 			return BooleanNullable.NULL(); // se e' required viene sollevata una eccezione dal metodo readProperty
 		}
-		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
-			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
+			throw new UtilsException(getPropertyPrefix(property)+getMessageUncorrectValue(tmp)+" (true/value expected)");
 		}
 		return Boolean.parseBoolean(tmp) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 	}
@@ -192,7 +203,7 @@ public class ConsoleProperties {
 		try{
 			return Integer.parseInt(tmp);
 		}catch(Exception e){
-			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (int value expected)");
+			throw new UtilsException(getPropertyPrefix(property)+getMessageUncorrectValue(tmp)+" (int value expected)");
 		}
 	}
 	private Long readLongProperty(boolean required,String property) throws UtilsException{
@@ -203,7 +214,7 @@ public class ConsoleProperties {
 		try{
 			return Long.parseLong(tmp);
 		}catch(Exception e){
-			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (long value expected)");
+			throw new UtilsException(getPropertyPrefix(property)+getMessageUncorrectValue(tmp)+" (long value expected)");
 		}
 	}
 	
@@ -219,11 +230,11 @@ public class ConsoleProperties {
 		return this.readProperty(false, "protocolloDefault");
 	}
 	
-	public long getGestioneSerializableDB_AttesaAttiva() throws UtilsException {	
+	public long getGestioneSerializableDBattesaAttiva() throws UtilsException {	
 		return this.readLongProperty(false, "jdbc.serializable.attesaAttiva");
 	}
 	
-	public int getGestioneSerializableDB_CheckInterval() throws UtilsException {	
+	public int getGestioneSerializableDBcheckInterval() throws UtilsException {	
 		return this.readIntegerProperty(false, "jdbc.serializable.check");
 	}
 	
@@ -231,39 +242,39 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("singlePdD");
 	}
 	
-	public Boolean isToken_GenerazioneAutomaticaPorteDelegate_enabled() throws UtilsException{
+	public Boolean isTokenGenerazioneAutomaticaPorteDelegateEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteDelegate.token.enabled");
 	}
 	
-	public Boolean isAutenticazione_GenerazioneAutomaticaPorteDelegate_enabled() throws UtilsException{
+	public Boolean isAutenticazioneGenerazioneAutomaticaPorteDelegateEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteDelegate.autenticazione.enabled");
 	}
-	public String getAutenticazione_GenerazioneAutomaticaPorteDelegate() throws UtilsException{
+	public String getAutenticazioneGenerazioneAutomaticaPorteDelegate() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteDelegate.autenticazione");
 	}
 	
-	public Boolean isAutorizzazione_GenerazioneAutomaticaPorteDelegate_enabled() throws UtilsException{
+	public Boolean isAutorizzazioneGenerazioneAutomaticaPorteDelegateEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteDelegate.autorizzazione.enabled");
 	}
-	public String getAutorizzazione_GenerazioneAutomaticaPorteDelegate() throws UtilsException{
+	public String getAutorizzazioneGenerazioneAutomaticaPorteDelegate() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteDelegate.autorizzazione");
 	}
 	
-	public Boolean isToken_GenerazioneAutomaticaPorteApplicative_enabled() throws UtilsException{
+	public Boolean isTokenGenerazioneAutomaticaPorteApplicativeEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteApplicative.token.enabled");
 	}
 	
-	public Boolean isAutenticazione_GenerazioneAutomaticaPorteApplicative_enabled() throws UtilsException{
+	public Boolean isAutenticazioneGenerazioneAutomaticaPorteApplicativeEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteApplicative.autenticazione.enabled");
 	}
-	public String getAutenticazione_GenerazioneAutomaticaPorteApplicative() throws UtilsException{
+	public String getAutenticazioneGenerazioneAutomaticaPorteApplicative() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteApplicative.autenticazione");
 	}
 	
-	public Boolean isAutorizzazione_GenerazioneAutomaticaPorteApplicative_enabled() throws UtilsException{
+	public Boolean isAutorizzazioneGenerazioneAutomaticaPorteApplicativeEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("generazioneAutomaticaPorteApplicative.autorizzazione.enabled");
 	}
-	public String getAutorizzazione_GenerazioneAutomaticaPorteApplicative() throws UtilsException{
+	public String getAutorizzazioneGenerazioneAutomaticaPorteApplicative() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteApplicative.autorizzazione");
 	}
 	
@@ -275,15 +286,15 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("accordi.implementazioneUnicaPerSoggetto");
 	}
 	
-	public String getImportArchive_tipoPdD() throws UtilsException{
+	public String getImportArchiveTipoPdD() throws UtilsException{
 		return this.readProperty(true, "importArchive.tipoPdD");
 	}
 	
-	public boolean isExportArchive_configurazione_soloDumpCompleto() throws UtilsException{
+	public boolean isExportArchiveConfigurazioneSoloDumpCompleto() throws UtilsException{
 		return this.readBooleanRequiredProperty("exportArchive.configurazione.soloDumpCompleto");
 	}
 	
-	public boolean isExportArchive_servizi_standard() throws UtilsException{
+	public boolean isExportArchiveServiziStandard() throws UtilsException{
 		return this.readBooleanRequiredProperty("exportArchive.servizi.standard");
 	}
 	
@@ -291,18 +302,18 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("gestoreConsistenzaDati");
 	}
 	
-	public boolean isGestoreConsistenzaDati_forceCheckMapping() throws UtilsException{
+	public boolean isGestoreConsistenzaDatiForceCheckMapping() throws UtilsException{
 		return this.readBooleanRequiredProperty("gestoreConsistenzaDati.forceCheckMapping");
 	}
 		
 	public PropertiesSourceConfiguration getMessageSecurityPropertiesSourceConfiguration() throws UtilsException {
-		return _getSourceConfiguration("messageSecurity", 
+		return getSourceConfigurationEngine("messageSecurity", 
 				"messageSecurity.dir", "messageSecurity.dir.refresh", 
 				"messageSecurity.builtIn", "messageSecurity.builtIn.refresh");
 	}
 	
 	public PropertiesSourceConfiguration getPolicyGestioneTokenPropertiesSourceConfiguration() throws UtilsException {
-		return _getSourceConfiguration("policyGestioneToken", 
+		return getSourceConfigurationEngine("policyGestioneToken", 
 				"policyGestioneToken.dir", "policyGestioneToken.dir.refresh", 
 				"policyGestioneToken.builtIn", "policyGestioneToken.builtIn.refresh");
 	}
@@ -325,7 +336,7 @@ public class ConsoleProperties {
 	}
 	
 	public PropertiesSourceConfiguration getAttributeAuthorityPropertiesSourceConfiguration() throws UtilsException {
-		return _getSourceConfiguration("attributeAuthority", 
+		return getSourceConfigurationEngine("attributeAuthority", 
 				"attributeAuthority.dir", "attributeAuthority.dir.refresh", 
 				"attributeAuthority.builtIn", "attributeAuthority.builtIn.refresh");
 	}
@@ -347,7 +358,7 @@ public class ConsoleProperties {
 	}
 	
 	public List<PolicyGroupByActiveThreadsType> getControlloTrafficoPolicyRateLimitingTipiGestori() throws UtilsException{
-		List<PolicyGroupByActiveThreadsType> l = new ArrayList<PolicyGroupByActiveThreadsType>();
+		List<PolicyGroupByActiveThreadsType> l = new ArrayList<>();
 		String p = this.readProperty(false, "controlloTraffico.policyRateLimiting.tipiGestori");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
@@ -382,14 +393,14 @@ public class ConsoleProperties {
 	public boolean isSoggettiVerificaCertificati() throws UtilsException{
 		return this.readBooleanRequiredProperty("soggetti.verificaCertificati");
 	}
-	public boolean isSoggettiVerificaCertificati_checkCertificatoSoggettoById_useApi() throws UtilsException{
+	public boolean isSoggettiVerificaCertificatiCheckCertificatoSoggettoByIdUseApi() throws UtilsException{
 		return this.readBooleanRequiredProperty("soggetti.verificaCertificati.checkCertificatoSoggettoById.useApi");
 	}
 	
 	public boolean isApplicativiVerificaCertificati() throws UtilsException{
 		return this.readBooleanRequiredProperty("applicativi.verificaCertificati");
 	}
-	public boolean isApplicativiVerificaCertificati_checkCertificatoApplicativoById_useApi() throws UtilsException{
+	public boolean isApplicativiVerificaCertificatiCheckCertificatoApplicativoByIdUseApi() throws UtilsException{
 		return this.readBooleanRequiredProperty("applicativi.verificaCertificati.checkCertificatoApplicativoById.useApi");
 	}
 	
@@ -427,27 +438,29 @@ public class ConsoleProperties {
 		String pName = "api.yaml.snakeLimits";
 		
 		try{  
+			Properties pNull = null;
+			
 			String file = this.readProperty(false, pName);
 			if(file!=null && StringUtils.isNotEmpty(file)) {
 				File f = new File(file);
 				if(f.exists()) {
 					if(!f.isFile()) {
-						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
+						throw new UtilsException("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
 					}
 					if(!f.canRead()) {
-						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
+						throw new UtilsException("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
 					}
 					try(InputStream is = new FileInputStream(f)){
 						Properties p = new Properties();
 						p.load(is);
-						if (p != null && !p.isEmpty()){
+						if (!p.isEmpty()){
 							return p;
 						}
 					}
 				}
 			}
 		
-			return null;
+			return pNull;
 			
 		}catch(java.lang.Exception e) {
 			throw new UtilsException("Proprieta' '"+pName+"' non impostate, errore:"+e.getMessage(),e);
@@ -553,7 +566,7 @@ public class ConsoleProperties {
 		return l;
 	}
 	
-	public ConfigurazionePriorita getConsegnaNotificaConfigurazionePriorita(String nome) throws Exception{
+	public ConfigurazionePriorita getConsegnaNotificaConfigurazionePriorita(String nome) throws UtilsException{
 		Properties p = this.reader.readPropertiesConvertEnvProperties("consegnaNotifiche.priorita."+nome+".");
 		return new ConfigurazionePriorita(nome, p);
 	}
@@ -576,7 +589,7 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("plugins.enabled");
 	}
 	
-	public Integer getPluginsSeconds() throws Exception{
+	public Integer getPluginsSeconds() throws UtilsException{
 		String cacheV = this.readProperty(true, "plugins.seconds");
 		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
 			Integer i = Integer.valueOf(cacheV);
@@ -595,7 +608,7 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("allarmi.enabled");
 	}
 	
-	public String getAllarmiConfigurazione() throws Exception{
+	public String getAllarmiConfigurazione() throws UtilsException{
 		return this.readProperty(true, "allarmi.configurazione");
 	}
 	
@@ -618,35 +631,35 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("allarmi.elenchi.statoAllarme");
 	}
 	
-	public Boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled() throws UtilsException{
+	public Boolean isRegistrazioneMessaggiMultipartPayloadParsingEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("registrazioneMessaggi.multipartPayloadParsing.enabled");
 	}
 	
-	public Boolean isClusterDinamico_enabled() throws UtilsException{
+	public Boolean isClusterDinamicoEnabled() throws UtilsException{
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
 		if(config!=null) {
 			return config.isClusterDinamico();
 		}
 		else {
-			//return getBackwardCompatibilityConfigurazioneNodiRuntime().isClusterDinamico();
+			/**return getBackwardCompatibilityConfigurazioneNodiRuntime().isClusterDinamico();*/
 			// abbiamo cambiato il nome della proprietà nella gestione 'ConfigurazioneNodiRuntime'
 			return this.readBooleanRequiredProperty("cluster_dinamico.enabled");
 		}
 	}
 
-	public String getHSMConfigurazione() throws Exception{
+	public String getHSMConfigurazione() throws UtilsException{
 		return this.readProperty(false, "hsm.config");
 	}
 	public boolean isHSMRequired() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "hsm.required");
-		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
+		return parse(b, false);
 	}
 	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "hsm.keyPassword");
-		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
+		return parse(b, false);
 	}
 	
-	public Integer getVerificaCertificati_warning_expirationDays() throws Exception{
+	public Integer getVerificaCertificatiWarningExpirationDays() throws UtilsException{
 		String cacheV = this.readProperty(true, "verificaCertificati.warning.expirationDays");
 		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
 			Integer i = Integer.valueOf(cacheV);
@@ -657,25 +670,40 @@ public class ConsoleProperties {
 		return 10;
 	}
 	
-	public String getOCSPConfigurazione() throws Exception{
+	public String getOCSPConfigurazione() throws UtilsException{
 		return this.readProperty(false, "ocsp.config");
 	}
 	public boolean isOCSPRequired() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "ocsp.required");
-		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
+		return parse(b, false);
 	}
 	public boolean isOCSPLoadDefault() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "ocsp.loadDefault");
-		return (b!=null && b.getValue()!=null) ? b.getValue() : true;
+		return parse(b, true);
 	}
 	public boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "ocsp.https.verificaServerDisabilitata.policyChoice");
-		return (b!=null && b.getValue()!=null) ? b.getValue() : false;
+		return parse(b, false);
 	}
 	
-	public boolean isVerificaCertificati_sceltaClusterId() throws UtilsException{
+	public boolean isVerificaCertificatiSceltaClusterId() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "verificaCertificati.sceltaClusterId");
-		return (b!=null && b.getValue()!=null) ? b.getValue() : true;
+		return parse(b, true);
+	}
+	
+	public boolean isClusterAsyncUpdate() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "cluster.asyncUpdate");
+		return parse(b, true);
+	}
+	public int getClusterAsyncUpdateCheckInterval() throws UtilsException{
+		String cacheV = this.readProperty(true, "cluster.asyncUpdate.checkInterval");
+		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
+			Integer i = Integer.valueOf(cacheV);
+			if(i.intValue()>0) {
+				return i.intValue();
+			}
+		}
+		return 60;
 	}
 	
 	
@@ -769,15 +797,15 @@ public class ConsoleProperties {
 		return Integer.parseInt(lunghezzaS); 
 	}
 	
-	public String getLogoHeaderImage() throws Exception{
+	public String getLogoHeaderImage() throws UtilsException{
 		return this.readProperty(false,"console.header.logo.image");
 	}
 
-	public String getLogoHeaderTitolo() throws Exception{
+	public String getLogoHeaderTitolo() throws UtilsException{
 		return this.readProperty(false,"console.header.logo.titolo");
 	}
 
-	public String getLogoHeaderLink() throws Exception{
+	public String getLogoHeaderLink() throws UtilsException{
 		return this.readProperty(false,"console.header.logo.link");
 	}
 	
@@ -787,27 +815,27 @@ public class ConsoleProperties {
 	
 	/* ----- Opzioni Accesso JMX della PdD ------- */
 	
-	public boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus() throws UtilsException{
+	public boolean isVisualizzaLinkClearAllCachesRemoteCheckCacheStatus() throws UtilsException{
 		return this.readBooleanRequiredProperty("risorseJmxPdd.linkClearAllCaches.remoteCheckCacheStatus");
 	}
 	
-	public String getJmxPdD_externalConfiguration() throws UtilsException{
+	public String getJmxPdDExternalConfiguration() throws UtilsException{
 		return this.readProperty(false, "risorseJmxPdd.configurazioneNodiRun");
 	}
 	
-	public String getJmxPdD_backwardCompatibilityPrefix() {
+	public String getJmxPdDBackwardCompatibilityPrefix() {
 		return "risorseJmxPdd.";
 	}
 	
-	public Properties getJmxPdD_backwardCompatibilityProperties() throws UtilsException{
+	public Properties getJmxPdDBackwardCompatibilityProperties() throws UtilsException{
 		
-		String prefix = getJmxPdD_backwardCompatibilityPrefix();
+		String prefix = getJmxPdDBackwardCompatibilityPrefix();
 		
 		Properties p = new Properties();
 		Enumeration<?> en = this.reader.propertyNames();
 		while (en.hasMoreElements()) {
-			Object object = (Object) en.nextElement();
-			if(object !=null && object instanceof String) {
+			Object object = en.nextElement();
+			if(object instanceof String) {
 				String key = (String) object;
 				if(key.contains(prefix)) {
 					String newKey = key.replace(prefix, "");
@@ -827,47 +855,53 @@ public class ConsoleProperties {
 			backwardCompatibilityConfigurazioneNodiRuntime = ConfigurazioneNodiRuntime.getConfigurazioneNodiRuntime(prefix);
 		}
 	}
-	private ConfigurazioneNodiRuntime _getConfigurazioneNodiRuntime() {
+	private ConfigurazioneNodiRuntime getConfigurazioneNodiRuntimeEngine() {
 		if(backwardCompatibilityConfigurazioneNodiRuntime==null) {
-			initConfigurazioneNodiRuntime(getJmxPdD_backwardCompatibilityPrefix());
+			initConfigurazioneNodiRuntime(getJmxPdDBackwardCompatibilityPrefix());
 		}
 		return externalConfigurazioneNodiRuntime;
 	}
-	private ConfigurazioneNodiRuntime _getBackwardCompatibilityConfigurazioneNodiRuntime() {
+	private ConfigurazioneNodiRuntime getBackwardCompatibilityConfigurazioneNodiRuntimeEngine() {
 		if(backwardCompatibilityConfigurazioneNodiRuntime==null) {
-			initConfigurazioneNodiRuntime(getJmxPdD_backwardCompatibilityPrefix());
+			initConfigurazioneNodiRuntime(getJmxPdDBackwardCompatibilityPrefix());
 		}
 		return backwardCompatibilityConfigurazioneNodiRuntime;
 	}
 	public ConfigurazioneNodiRuntime getConfigurazioneNodiRuntime() {
-		ConfigurazioneNodiRuntime config = _getConfigurazioneNodiRuntime();
+		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntimeEngine();
 		if(config==null) {
-			config = _getBackwardCompatibilityConfigurazioneNodiRuntime();
+			config = getBackwardCompatibilityConfigurazioneNodiRuntimeEngine();
 		}
 		return config;
 	}
 	
-	public List<String> getJmxPdD_aliases() throws UtilsException {
+	public List<String> getJmxPdDAliases() {
+		
+		List<String> lReturn = null;
+		
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
 		if(config!=null) {
 			return config.getAliases();
 		}
 		else {
-			return null;
+			return lReturn;
 		}
 	}
 	
-	public Map<String,List<String>> getJmxPdD_gruppi_aliases() throws UtilsException {
+	public Map<String,List<String>> getJmxPdDGruppiAliases() {
+		
+		Map<String,List<String>> mapReturn = null;
+		
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
 		if(config!=null) {
 			return config.getGruppi_aliases();
 		}
 		else {
-			return null;
+			return mapReturn;
 		}
 	}
 	
-	public String getJmxPdD_descrizione(String alias) throws UtilsException {
+	public String getJmxPdDDescrizione(String alias) throws UtilsException {
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
 		if(config!=null) {
 			return config.getDescrizione(alias);
@@ -877,7 +911,7 @@ public class ConsoleProperties {
 		}
 	}
 	
-	private String _getJmxPdD_value(boolean required, String alias, String prop) throws UtilsException{
+	private String getJmxPdDValueEngine(boolean required, String alias, String prop) throws UtilsException{
 		String tmp = this.readProperty(false, alias+"."+prop);
 		if(tmp==null || "".equals(tmp)){
 			tmp = this.readProperty(required, prop);
@@ -885,478 +919,484 @@ public class ConsoleProperties {
 		return tmp;
 	}
 	
-	public String getJmxPdD_dominio(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.dominio");
+	public String getJmxPdDDominio(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.dominio");
 	}
-	public String getJmxPdD_configurazioneSistema_type(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.tipo");
+	public String getJmxPdDConfigurazioneSistemaType(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.tipo");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsa(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsa");
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsa(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsa");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.versionePdD");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoVersionePdD(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.versionePdD");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.versioneBaseDati");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoVersioneBaseDati(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.versioneBaseDati");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.versioneJava");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoVersioneJava(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.versioneJava");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_vendorJava(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.vendorJava");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoVendorJava(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.vendorJava");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.tipoDatabase");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoTipoDatabase(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.tipoDatabase");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoDatabase");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniDatabase(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoDatabase");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoSSL");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniSSL(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoSSL");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoSSLComplete");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteSSL(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoSSLComplete");
 	}
-	public boolean isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength() throws UtilsException {
+	public boolean isJmxPdDConfigurazioneSistemaShowInformazioniCryptographyKeyLength() throws UtilsException {
 		String tmp = this.readProperty(false, "risorseJmxPdd.configurazioneSistema.infoCryptographyKeyLength.show");
 		if(tmp==null || "".equals(tmp)){
 			return false;
 		}
 		return "true".equalsIgnoreCase(tmp.trim());
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoCryptographyKeyLength");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCryptographyKeyLength(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoCryptographyKeyLength");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoCharset");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCharset(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoCharset");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInternazionalizzazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInternazionalizzazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInternazionalizzazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInternazionalizzazioneComplete");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteInternazionalizzazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInternazionalizzazioneComplete");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoTimeZone");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniTimeZone(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoTimeZone");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoTimeZoneComplete");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteTimeZone(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoTimeZoneComplete");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoProprietaJavaNetworking");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaNetworking(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoProprietaJavaNetworking");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoProprietaJavaNetworkingComplete");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniCompleteProprietaJavaNetworking(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoProprietaJavaNetworkingComplete");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoProprietaJavaAltro");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaJavaAltro(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoProprietaJavaAltro");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoProprietaSistema");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniProprietaSistema(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoProprietaSistema");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.messageFactory");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoMessageFactory(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.messageFactory");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.confDir");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDirectoryConfigurazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.confDir");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.pluginProtocols");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.pluginProtocols");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInstallazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoInformazioniInstallazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInstallazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getFileTrace");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetFileTrace(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getFileTrace");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_updateFileTrace(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.updateFileTrace");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoUpdateFileTrace(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.updateFileTrace");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaMonitoraggio");
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaMonitoraggio");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniDB");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniDB(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniDB");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniJMS");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniJMS(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniJMS");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.transazioniID");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.transazioniID");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.transazioniIDProtocollo");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.transazioniIDProtocollo");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniPD");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniPD");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniPA");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniPA");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaConfigurazionePdD");
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaConfigurazionePdD");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.severitaDiagnostici");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.severitaDiagnostici");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.severitaDiagnosticiLog4j");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.severitaDiagnosticiLog4j");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.tracciamento");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTracciamento(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.tracciamento");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.dumpBinarioPD");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoDumpPD(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.dumpBinarioPD");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.dumpBinarioPA");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoDumpPA(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.dumpBinarioPA");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jDiagnostica(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jDiagnostica");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDiagnostica(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jDiagnostica");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jOpenspcoop(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jOpenspcoop");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jOpenspcoop(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jOpenspcoop");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jIntegrationManager(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jIntegrationManager");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jIntegrationManager(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jIntegrationManager");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jTracciamento(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jTracciamento");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jTracciamento(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jTracciamento");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jDump(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jDump");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoLog4jDump(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jDump");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorStatusCode");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorStatusCode(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorStatusCode");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorInstanceId");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorInstanceId(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorInstanceId");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeBadResponse");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeBadResponse(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeBadResponse");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeInternalResponseError");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalResponseError(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeInternalResponseError");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeInternalRequestError");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalRequestError(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeInternalRequestError");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeInternalError");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorTypeInternalError(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorTypeInternalError");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorDetails");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionSpecificErrorDetails(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionSpecificErrorDetails");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorUseStatusCodeAsFaultCode");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorUseStatusCodeAsFaultCode(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorUseStatusCodeAsFaultCode");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorGenerateHttpHeaderGovWayCode");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTransactionErrorGenerateHttpHeaderGovWayCode(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.transactionErrorGenerateHttpHeaderGovWayCode");
 	}	
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerConsegnaContenutiApplicativi");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerConsegnaContenutiApplicativi");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerEventi");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerEventi(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerEventi");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerFileSystemRecovery");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerFileSystemRecovery(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerFileSystemRecovery");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreBusteOnewayNonRiscontrate");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteOnewayNonRiscontrate(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreBusteOnewayNonRiscontrate");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreBusteAsincroneNonRiscontrate");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreBusteAsincroneNonRiscontrate(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreBusteAsincroneNonRiscontrate");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaMessaggiEliminati");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaMessaggiEliminati");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaMessaggiScaduti");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiScaduti(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaMessaggiScaduti");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaMessaggiNonGestiti");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiNonGestiti(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaMessaggiNonGestiti");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaCorrelazioneApplicativa");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaCorrelazioneApplicativa(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiPuliziaCorrelazioneApplicativa");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiVerificaConnessioniAttive");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreMessaggiVerificaConnessioniAttive");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestorePuliziaMessaggiAnomali");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestorePuliziaMessaggiAnomali(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestorePuliziaMessaggiAnomali");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreRepositoryBuste");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreRepositoryBuste(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreRepositoryBuste");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerMonitoraggioRisorseThread");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerMonitoraggioRisorseThread(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerMonitoraggioRisorseThread");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerRepositoryStatefulThread");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerRepositoryStatefulThread(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerRepositoryStatefulThread");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheOrarie");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheOrarie");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheGiornaliere");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheGiornaliere");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheSettimanali");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheSettimanali");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheMensili");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheMensili");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreChiaviPDND(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreChiaviPDND");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreChiaviPDND");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreCacheChiaviPDND(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreCacheChiaviPDND");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreCacheChiaviPDND");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerThresholdThread");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreOperazioniRemote");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreById");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerSvecchiamentoOperazioniRemote(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerSvecchiamentoOperazioniRemote");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreById");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerThresholdThread(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerThresholdThread");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreTokenPolicyValidazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreById");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreTokenPolicyNegoziazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreById");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreAttributeAuthority");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyValidazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreTokenPolicyValidazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreTokenPolicyValidazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreTokenPolicyNegoziazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreTokenPolicyNegoziazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckConnettoreAttributeAuthority(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreAttributeAuthority");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreAttributeAuthority");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyValidazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreTokenPolicyValidazione");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreTokenPolicyNegoziazione");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetCertificatiConnettoreAttributeAuthority(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreAttributeAuthority");
 	}	
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaDelegata");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnablePortaDelegata(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaDelegata");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaDelegata");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisablePortaDelegata(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaDelegata");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaApplicativa");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnablePortaApplicativa(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaApplicativa");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaApplicativa");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisablePortaApplicativa(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaApplicativa");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enableConnettoreMultiplo");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnableConnettoreMultiplo(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enableConnettoreMultiplo");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableConnettoreMultiplo");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisableConnettoreMultiplo(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableConnettoreMultiplo");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enableSchedulingConnettoreMultiplo");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiplo(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enableSchedulingConnettoreMultiplo");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableSchedulingConnettoreMultiplo");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiplo(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableSchedulingConnettoreMultiplo");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enableSchedulingConnettoreMultiploRuntimeRepository");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoEnableSchedulingConnettoreMultiploRuntimeRepository(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enableSchedulingConnettoreMultiploRuntimeRepository");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableSchedulingConnettoreMultiploRuntimeRepository");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisableSchedulingConnettoreMultiploRuntimeRepository(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableSchedulingConnettoreMultiploRuntimeRepository");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheAccordoCooperazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAccordoCooperazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheAccordoCooperazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheApi");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApi(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheApi");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheErogazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheErogazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheErogazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheFruizione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheFruizione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheFruizione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheSoggetto");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheSoggetto(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheSoggetto");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheApplicativo");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApplicativo(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheApplicativo");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheRuolo");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheRuolo(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheRuolo");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheScope");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheScope(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheScope");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheTokenPolicyValidazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyValidazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheTokenPolicyValidazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheTokenPolicyNegoziazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheTokenPolicyNegoziazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheAttributeAuthority");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheAttributeAuthority(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheAttributeAuthority");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatoApplicativoById(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatoApplicativoById");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatoApplicativoById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatoApplicativoById");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatoModIApplicativoById(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatoModIApplicativoById");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatoModIApplicativoById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatoModIApplicativoById");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsById(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsById");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsById");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiJvm(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiJvm");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiJvm(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiJvm");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsTokenPolicyValidazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsTokenPolicyValidazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsTokenPolicyValidazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiValidazioneJwtTokenPolicyValidazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiValidazioneJwtTokenPolicyValidazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiValidazioneJwtTokenPolicyValidazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiValidazioneJwtTokenPolicyValidazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiForwardToJwtTokenPolicyValidazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiForwardToJwtTokenPolicyValidazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiForwardToJwtTokenPolicyValidazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiForwardToJwtTokenPolicyValidazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsTokenPolicyNegoziazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsTokenPolicyNegoziazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiSignedJwtTokenPolicyNegoziazione(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiSignedJwtTokenPolicyNegoziazione");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiSignedJwtTokenPolicyNegoziazione");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsAttributeAuthority(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsAttributeAuthority");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsAttributeAuthority");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiAttributeAuthorityJwtRichiesta(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiAttributeAuthorityJwtRichiesta");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiAttributeAuthorityJwtRichiesta(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiAttributeAuthorityJwtRichiesta");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiAttributeAuthorityJwtRisposta(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiAttributeAuthorityJwtRisposta");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiAttributeAuthorityJwtRisposta(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiAttributeAuthorityJwtRisposta");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaAccessoRegistroServizi");
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaAccessoRegistroServizi(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaAccessoRegistroServizi");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaStatoServiziPdD");
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaStatoServiziPdD(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaStatoServiziPdD");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaDelegata");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegata(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaDelegata");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaDelegataAbilitazioniPuntuali");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataAbilitazioniPuntuali(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaDelegataAbilitazioniPuntuali");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaDelegataDisabilitazioniPuntuali");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaDelegataDisabilitazioniPuntuali(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaDelegataDisabilitazioniPuntuali");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaApplicativa");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativa(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaApplicativa");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaApplicativaAbilitazioniPuntuali");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaAbilitazioniPuntuali(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaApplicativaAbilitazioniPuntuali");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaApplicativaDisabilitazioniPuntuali");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioPortaApplicativaDisabilitazioniPuntuali(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioPortaApplicativaDisabilitazioniPuntuali");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioIntegrationManager");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoStatoServizioIntegrationManager(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.statoServizioIntegrationManager");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.abilitaServizioPortaDelegata");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaDelegata(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.abilitaServizioPortaDelegata");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disabilitaServizioPortaDelegata");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaDelegata(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disabilitaServizioPortaDelegata");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.abilitaServizioPortaApplicativa");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioPortaApplicativa(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.abilitaServizioPortaApplicativa");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disabilitaServizioPortaApplicativa");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioPortaApplicativa(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disabilitaServizioPortaApplicativa");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.abilitaServizioIntegrationManager");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoAbilitaServizioIntegrationManager(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.abilitaServizioIntegrationManager");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disabilitaServizioIntegrationManager");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoDisabilitaServizioIntegrationManager(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disabilitaServizioIntegrationManager");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatoSoggettoById(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatoSoggettoById");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatoSoggettoById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatoSoggettoById");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsByIdRegistro(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsByIdRegistro");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsByIdRegistro(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsByIdRegistro");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiModIErogazioneById(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiModIErogazioneById");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiModIErogazioneById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiModIErogazioneById");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiModIFruizioneById(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiModIFruizioneById");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiModIFruizioneById(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiModIFruizioneById");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaDatasourceGW");
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaDatasourceGW(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaDatasourceGW");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.numeroDatasourceGW");
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoNumeroDatasourceGW(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.numeroDatasourceGW");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getDatasourcesGW");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetDatasourcesGW(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getDatasourcesGW");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getUsedConnectionsDatasourcesGW");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetUsedConnectionsDatasourcesGW(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getUsedConnectionsDatasourcesGW");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getInformazioniDatabaseDatasourcesGW");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetInformazioniDatabaseDatasourcesGW(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getInformazioniDatabaseDatasourcesGW");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaGestioneConsegnaApplicativi(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaGestioneConsegnaApplicativi");
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaGestioneConsegnaApplicativi(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaGestioneConsegnaApplicativi");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getThreadPoolStatus");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetThreadPoolStatus(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getThreadPoolStatus");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getQueueConfig");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetQueueConfig(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getQueueConfig");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getApplicativiPrioritari");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetApplicativiPrioritari(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getApplicativiPrioritari");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getConnettoriPrioritari");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoGetConnettoriPrioritari(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getConnettoriPrioritari");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.updateConnettoriPrioritari");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoUpdateConnettoriPrioritari(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.updateConnettoriPrioritari");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.resetConnettoriPrioritari");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoResetConnettoriPrioritari(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.resetConnettoriPrioritari");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaSystemPropertiesPdD");
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaSystemPropertiesPdD(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaSystemPropertiesPdD");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.refreshPersistentConfiguration");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRefreshPersistentConfiguration(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.refreshPersistentConfiguration");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaDatiRichieste");
+	public String getJmxPdDConfigurazioneSistemaNomeRisorsaDatiRichieste(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaDatiRichieste");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.removeRateLimitingGlobalConfigCache");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingGlobalConfigCache(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.removeRateLimitingGlobalConfigCache");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.removeRateLimitingAPIConfigCache");
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoRemoveRateLimitingAPIConfigCache(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.removeRateLimitingAPIConfigCache");
 	}
-	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
-		return this.read_jmx_caches(alias, "risorseJmxPdd.caches");
+	public List<String> getJmxPdDCaches(String alias) throws UtilsException {
+		return this.readJmxCaches(alias, "risorseJmxPdd.caches");
 	}
-	public List<String> getJmxPdD_caches_prefill(String alias) throws UtilsException {
-		return this.read_jmx_caches(alias, "risorseJmxPdd.caches.prefill");
+	public List<String> getJmxPdDCachesPrefill(String alias) throws UtilsException {
+		return this.readJmxCaches(alias, "risorseJmxPdd.caches.prefill");
 	}
-	private List<String> read_jmx_caches(String alias,String property) throws UtilsException {
+	private List<String> readJmxCaches(String alias,String property) throws UtilsException {
 		List<String> list = new ArrayList<>();
-		String tipo = _getJmxPdD_value(false, alias, property);
+		String tipo = getJmxPdDValueEngine(false, alias, property);
 		if(tipo!=null && !"".equals(tipo)){
 			String [] tmp = tipo.split(",");
 			for (int i = 0; i < tmp.length; i++) {
@@ -1365,20 +1405,20 @@ public class ConsoleProperties {
 		}
 		return list;
 	}
-	public String getJmxPdD_cache_type(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.tipo");
+	public String getJmxPdDCacheType(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.cache.tipo");
 	}
-	public String getJmxPdD_cache_nomeAttributo_cacheAbilitata(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.nomeAttributo.cacheAbilitata");
+	public String getJmxPdDCacheNomeAttributoCacheAbilitata(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.cache.nomeAttributo.cacheAbilitata");
 	}
-	public String getJmxPdD_cache_nomeMetodo_statoCache(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.nomeMetodo.statoCache");
+	public String getJmxPdDCacheNomeMetodoStatoCache(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.cache.nomeMetodo.statoCache");
 	}
-	public String getJmxPdD_cache_nomeMetodo_resetCache(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.nomeMetodo.resetCache");
+	public String getJmxPdDCacheNomeMetodoResetCache(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.cache.nomeMetodo.resetCache");
 	}
-	public String getJmxPdD_cache_nomeMetodo_prefillCache(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.nomeMetodo.prefillCache");
+	public String getJmxPdDCacheNomeMetodoPrefillCache(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.cache.nomeMetodo.prefillCache");
 	}
 	
 	
@@ -1386,12 +1426,7 @@ public class ConsoleProperties {
 	
 	public Boolean isShowJ2eeOptions() throws UtilsException{
 		String tmp = this.readProperty(true, "server.tipo");
-		if("web".equals(tmp)){
-			return false;
-		}
-		else{
-			return true;
-		}
+		return !"web".equals(tmp);
 	}
 	
 	public Boolean isConsoleConfigurazioniPersonalizzate() throws UtilsException{
@@ -1410,19 +1445,19 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("console.gestioneWorkflowStatoDocumenti");
 	}
 	
-	public Boolean isConsoleGestioneWorkflowStatoDocumenti_visualizzaStatoLista() throws UtilsException{
+	public Boolean isConsoleGestioneWorkflowStatoDocumentiVisualizzaStatoLista() throws UtilsException{
 		return this.readBooleanRequiredProperty("console.gestioneWorkflowStatoDocumenti.visualizzaStatoLista");
 	}
 	
-	public Boolean isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale() throws UtilsException{
+	public Boolean isConsoleGestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale() throws UtilsException{
 		return this.readBooleanRequiredProperty("console.gestioneWorkflowStatoDocumenti.finale.ripristinoStatoOperativo");
 	}
 	
-	public Boolean isConsoleInterfacceAPI_visualizza() throws UtilsException{
+	public Boolean isConsoleInterfacceAPIVisualizza() throws UtilsException{
 		return this.readBooleanRequiredProperty("console.interfacceAPI.visualizza");
 	}
 	
-	public Boolean isConsoleAllegati_visualizza() throws UtilsException{
+	public Boolean isConsoleAllegatiVisualizza() throws UtilsException{
 		return this.readBooleanRequiredProperty("console.allegati.visualizza");
 	}
 	
@@ -1430,7 +1465,7 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("console.gestioneWsdl.autoMappingInAccordo");
 	}
 	
-	public Boolean isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes() throws UtilsException{
+	public Boolean isEnableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes() throws UtilsException{
 		return this.readBooleanRequiredProperty("console.gestioneWsdl.autoMappingInAccordo.estrazioneSchemiInWsdlTypes");
 	}
 	
@@ -1466,11 +1501,11 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("menu.porte.localForward");
 	}
 	
-	public boolean isProprietaErogazioni_showModalitaStandard() throws UtilsException{
+	public boolean isProprietaErogazioniShowModalitaStandard() throws UtilsException{
 		return this.readBooleanRequiredProperty("menu.proprietaErogazioni.showModalitaStandard");
 	}
 	
-	public boolean isProprietaFruizioni_showModalitaStandard() throws UtilsException{
+	public boolean isProprietaFruizioniShowModalitaStandard() throws UtilsException{
 		return this.readBooleanRequiredProperty("menu.proprietaFruizioni.showModalitaStandard");
 	}
 	
@@ -1484,7 +1519,7 @@ public class ConsoleProperties {
 		if(tmp==null){
 			return true; // standard per default
 		}
-		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
+		if(!"true".equalsIgnoreCase(tmp) && !"false".equalsIgnoreCase(tmp)){
 			throw new UtilsException("Property ["+p+"] with uncorrect value ["+tmp+"] (true/value expected)");
 		}
 		return Boolean.parseBoolean(tmp);
@@ -1506,7 +1541,7 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("elenchi.accordi.visualizzaColonnaAzioni");
 	}
 	
-	public Boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() throws UtilsException{
+	public Boolean isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona() throws UtilsException{
 		return this.readBooleanRequiredProperty("elenchi.serviziApplicativi.asincroniNonSupportati.visualizzazioneRispostaAsincrona");
 	}
 	
@@ -1542,11 +1577,11 @@ public class ConsoleProperties {
 		return this.readIntegerProperty(true, "console.selectListSoggettiOperativi.numeroMassimoSoggettiVisualizzati");
 	}
 	
-	public Integer getLunghezzaMassimaLabelSoggettiOperativiMenuUtente() throws Exception{
+	public Integer getLunghezzaMassimaLabelSoggettiOperativiMenuUtente() throws UtilsException{
 		return this.readIntegerProperty(true, "console.selectListSoggettiOperativi.lunghezzaMassimaLabel");
 	}
 	
-	public Integer getLunghezzaMassimaInformazioneView() throws Exception{
+	public Integer getLunghezzaMassimaInformazioneView() throws UtilsException{
 		return this.readIntegerProperty(true, "console.view.lunghezzaMassimaInformazione");
 	}
 	
@@ -1555,7 +1590,7 @@ public class ConsoleProperties {
 	}
 	
 	/* ----- Gestione vulnerabilita' console ------- */
-	public Integer getValiditaTokenCsrf() throws Exception{
+	public Integer getValiditaTokenCsrf() throws UtilsException{
 		return this.readIntegerProperty(true, "console.csrf.token.validita");
 	}
 	
@@ -1565,147 +1600,147 @@ public class ConsoleProperties {
 	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 
-	public Boolean isGestioneCentralizzata_SincronizzazionePdd() throws UtilsException{
+	public Boolean isGestioneCentralizzataSincronizzazionePdd() throws UtilsException{
 		return this.readBooleanRequiredProperty("sincronizzazionePdd");
 	}
 	
-	public Boolean isGestioneCentralizzata_SincronizzazioneRegistro() throws UtilsException{
+	public Boolean isGestioneCentralizzataSincronizzazioneRegistro() throws UtilsException{
 		return this.readBooleanRequiredProperty("sincronizzazioneRegistro");
 	}
 	
-	public Boolean isGestioneCentralizzata_SincronizzazioneGestoreEventi() throws UtilsException{
+	public Boolean isGestioneCentralizzataSincronizzazioneGestoreEventi() throws UtilsException{
 		return this.readBooleanRequiredProperty("sincronizzazioneGE");
 	}
 	
-	public String getGestioneCentralizzata_NomeCodaSmistatore() throws UtilsException{
+	public String getGestioneCentralizzataNomeCodaSmistatore() throws UtilsException{
 		return this.readProperty(true, "SmistatoreQueue");
 	}
 	
-	public String getGestioneCentralizzata_NomeCodaRegistroServizi() throws UtilsException{
+	public String getGestioneCentralizzataNomeCodaRegistroServizi() throws UtilsException{
 		return this.readProperty(true, "RegistroServiziQueue");
 	}
 	
-	public String getGestioneCentralizzata_WSRegistroServizi_endpointPdd() throws UtilsException{
+	public String getGestioneCentralizzataWSRegistroServiziEndpointPdd() throws UtilsException{
 		return this.readProperty(true, "RegistroServiziWS.endpoint.portaDominio");
 	}
 	
-	public String getGestioneCentralizzata_WSRegistroServizi_endpointSoggetto() throws UtilsException{
+	public String getGestioneCentralizzataWSRegistroServiziEndpointSoggetto() throws UtilsException{
 		return this.readProperty(true, "RegistroServiziWS.endpoint.soggetto");
 	}
 	
-	public String getGestioneCentralizzata_WSRegistroServizi_endpointAccordoCooperazione() throws UtilsException{
+	public String getGestioneCentralizzataWSRegistroServiziEndpointAccordoCooperazione() throws UtilsException{
 		return this.readProperty(true, "RegistroServiziWS.endpoint.accordoCooperazione");
 	}
 	
-	public String getGestioneCentralizzata_WSRegistroServizi_endpointAccordoServizioParteComune() throws UtilsException{
+	public String getGestioneCentralizzataWSRegistroServiziEndpointAccordoServizioParteComune() throws UtilsException{
 		return this.readProperty(true, "RegistroServiziWS.endpoint.accordoServizioParteComune");
 	}
 	
-	public String getGestioneCentralizzata_WSRegistroServizi_endpointAccordoServizioParteSpecifica() throws UtilsException{
+	public String getGestioneCentralizzataWSRegistroServiziEndpointAccordoServizioParteSpecifica() throws UtilsException{
 		return this.readProperty(true, "RegistroServiziWS.endpoint.accordoServizioParteSpecifica");
 	}
 	
-	public String getGestioneCentralizzata_WSRegistroServizi_credenzialiBasic_username() throws UtilsException{
+	public String getGestioneCentralizzataWSRegistroServiziCredenzialiBasicUsername() throws UtilsException{
 		return this.readProperty(false, "RegistroServiziWS.username");
 	}
 	
-	public String getGestioneCentralizzata_WSRegistroServizi_credenzialiBasic_password() throws UtilsException{
+	public String getGestioneCentralizzataWSRegistroServiziCredenzialiBasicPassword() throws UtilsException{
 		return this.readProperty(false, "RegistroServiziWS.password");
 	}
 	
-	public String getGestioneCentralizzata_PrefissoNomeCodaConfigurazionePdd() throws UtilsException{
+	public String getGestioneCentralizzataPrefissoNomeCodaConfigurazionePdd() throws UtilsException{
 		return this.readProperty(true, "PdDQueuePrefix");
 	}
 	
-	public String getGestioneCentralizzata_GestorePddd_ScriptShell_Path() throws UtilsException{
+	public String getGestioneCentralizzataGestorePddScriptShellPath() throws UtilsException{
 		return this.readProperty(false, "GestorePdD.script.path");
 	}
 	
-	public String getGestioneCentralizzata_GestorePddd_ScriptShell_Args() throws UtilsException{
+	public String getGestioneCentralizzataGestorePddScriptShellArgs() throws UtilsException{
 		return this.readProperty(false, "GestorePdD.script.args");
 	}
 	
-	public String getGestioneCentralizzata_WSConfigurazione_endpointSuffixPortaApplicativa() throws UtilsException{
+	public String getGestioneCentralizzataWSConfigurazioneEndpointSuffixPortaApplicativa() throws UtilsException{
 		return this.readProperty(true, "ConfigurazioneWS.endpoint.suffix.portaApplicativa");
 	}
 	
-	public String getGestioneCentralizzata_WSConfigurazione_endpointSuffixPortaDelegata() throws UtilsException{
+	public String getGestioneCentralizzataWSConfigurazioneEndpointSuffixPortaDelegata() throws UtilsException{
 		return this.readProperty(true, "ConfigurazioneWS.endpoint.suffix.portaDelegata");
 	}
 	
-	public String getGestioneCentralizzata_WSConfigurazione_endpointSuffixServizioApplicativo() throws UtilsException{
+	public String getGestioneCentralizzataWSConfigurazioneEndpointSuffixServizioApplicativo() throws UtilsException{
 		return this.readProperty(true, "ConfigurazioneWS.endpoint.suffix.servizioApplicativo");
 	}
 	
-	public String getGestioneCentralizzata_WSConfigurazione_endpointSuffixSoggetto() throws UtilsException{
+	public String getGestioneCentralizzataWSConfigurazioneEndpointSuffixSoggetto() throws UtilsException{
 		return this.readProperty(true, "ConfigurazioneWS.endpoint.suffix.soggetto");
 	}
 	
-	public String getGestioneCentralizzata_WSConfigurazione_credenzialiBasic_username() throws UtilsException{
+	public String getGestioneCentralizzataWSConfigurazioneCredenzialiBasicUsername() throws UtilsException{
 		return this.readProperty(false, "ConfigurazioneWS.username");
 	}
 	
-	public String getGestioneCentralizzata_WSConfigurazione_credenzialiBasic_password() throws UtilsException{
+	public String getGestioneCentralizzataWSConfigurazioneCredenzialiBasicPassword() throws UtilsException{
 		return this.readProperty(false, "ConfigurazioneWS.password");
 	}
 	
-	public String getGestioneCentralizzata_NomeCodaGestoreEventi() throws UtilsException{
+	public String getGestioneCentralizzataNomeCodaGestoreEventi() throws UtilsException{
 		return this.readProperty(true, "GestoreEventiQueue");
 	}
 	
-	public String getGestioneCentralizzata_PrefissoWSGestoreEventi() throws UtilsException{
+	public String getGestioneCentralizzataPrefissoWSGestoreEventi() throws UtilsException{
 		return this.readProperty(true, "UrlWebServiceGestoreEventi");
 	}
 	
-	public String getGestioneCentralizzata_GestoreEventiTipoSoggetto() throws UtilsException{
+	public String getGestioneCentralizzataGestoreEventiTipoSoggetto() throws UtilsException{
 		return this.readProperty(true, "gestoreEventi.tipo_soggetto");
 	}
 	
-	public String getGestioneCentralizzata_GestoreEventiNomeSoggetto() throws UtilsException{
+	public String getGestioneCentralizzataGestoreEventiNomeSoggetto() throws UtilsException{
 		return this.readProperty(true, "gestoreEventi.nome_soggetto");
 	}
 	
-	public String getGestioneCentralizzata_GestoreEventiNomeServizioApplicativo() throws UtilsException{
+	public String getGestioneCentralizzataGestoreEventiNomeServizioApplicativo() throws UtilsException{
 		return this.readProperty(true, "gestoreEventi.nome_servizio_applicativo");
 	}
 	
-	public String getGestioneCentralizzata_WSMonitor_pddDefault() throws UtilsException{
+	public String getGestioneCentralizzataWSMonitorPddDefault() throws UtilsException{
 		return this.readProperty(true, "MonitoraggioWS.pdd.default");
 	}
 	
-	public String getGestioneCentralizzata_WSMonitor_endpointSuffixStatoPdd() throws UtilsException{
+	public String getGestioneCentralizzataWSMonitorEndpointSuffixStatoPdd() throws UtilsException{
 		return this.readProperty(true, "MonitoraggioWS.endpoint.suffix.statoPdd");
 	}
 	
-	public String getGestioneCentralizzata_WSMonitor_endpointSuffixMessaggio() throws UtilsException{
+	public String getGestioneCentralizzataWSMonitorEndpointSuffixMessaggio() throws UtilsException{
 		return this.readProperty(true, "MonitoraggioWS.endpoint.suffix.messaggio");
 	}
 	
-	public String getGestioneCentralizzata_WSMonitor_credenzialiBasic_username() throws UtilsException{
+	public String getGestioneCentralizzataWSMonitorCredenzialiBasicUsername() throws UtilsException{
 		return this.readProperty(false, "MonitoraggioWS.username");
 	}
 	
-	public String getGestioneCentralizzata_WSMonitor_credenzialiBasic_password() throws UtilsException{
+	public String getGestioneCentralizzataWSMonitorCredenzialiBasicPassword() throws UtilsException{
 		return this.readProperty(false, "MonitoraggioWS.password");
 	}
 	
-	public String getGestioneCentralizzata_URLContextCreazioneAutomaticaSoggetto() throws UtilsException{
+	public String getGestioneCentralizzataURLContextCreazioneAutomaticaSoggetto() throws UtilsException{
 		return this.readProperty(true, "UrlConnettoreSoggetto");
 	}
 	
-	public String getGestioneCentralizzata_PddIndirizzoIpPubblico() throws UtilsException{
+	public String getGestioneCentralizzataPddIndirizzoIpPubblico() throws UtilsException{
 		return this.readProperty(true, "pdd.indirizzoIP.pubblico");
 	}
 	
-	public Integer getGestioneCentralizzata_PddPortaPubblica() throws UtilsException{
+	public Integer getGestioneCentralizzataPddPortaPubblica() throws UtilsException{
 		return this.readIntegerProperty(true, "pdd.porta.pubblica");
 	}
 	
-	public String getGestioneCentralizzata_PddIndirizzoIpGestione() throws UtilsException{
+	public String getGestioneCentralizzataPddIndirizzoIpGestione() throws UtilsException{
 		return this.readProperty(true, "pdd.indirizzoIP.gestione");
 	}
 	
-	public Integer getGestioneCentralizzata_PddPortaGestione() throws UtilsException{
+	public Integer getGestioneCentralizzataPddPortaGestione() throws UtilsException{
 		return this.readIntegerProperty(true, "pdd.porta.gestione");
 	}
 	
@@ -1713,35 +1748,35 @@ public class ConsoleProperties {
 	
 	/* ---------------- Gestione govwayConsole locale ----------------------- */
 
-	public Boolean isSinglePdD_GestionePdd() throws UtilsException{
+	public Boolean isSinglePddGestionePdd() throws UtilsException{
 		return this.readBooleanRequiredProperty("singlePdD.pdd.enabled");
 	}
 	
-	public Boolean isSinglePdD_RegistroServiziLocale() throws UtilsException{
+	public Boolean isSinglePddRegistroServiziLocale() throws UtilsException{
 		return this.readBooleanRequiredProperty("singlePdD.registroServizi.locale");
 	}
 	
-	public Boolean isSinglePdD_TracceConfigurazioneCustomAppender() throws UtilsException{
+	public Boolean isSinglePddTracceConfigurazioneCustomAppender() throws UtilsException{
 		return this.readBooleanRequiredProperty("tracce.configurazioneCustomAppender");
 	}
 	
-	public Boolean isSinglePdD_TracceGestioneSorgentiDatiPrelevataDaDatabase() throws UtilsException{
+	public Boolean isSinglePddTracceGestioneSorgentiDatiPrelevataDaDatabase() throws UtilsException{
 		return this.readBooleanRequiredProperty("tracce.sorgentiDati.database");
 	}
 	
-	public Boolean isSinglePdD_MessaggiDiagnosticiConfigurazioneCustomAppender() throws UtilsException{
+	public Boolean isSinglePddMessaggiDiagnosticiConfigurazioneCustomAppender() throws UtilsException{
 		return this.readBooleanRequiredProperty("msgDiagnostici.configurazioneCustomAppender");
 	}
 	
-	public Boolean isSinglePdD_MessaggiDiagnosticiGestioneSorgentiDatiPrelevataDaDatabase() throws UtilsException{
+	public Boolean isSinglePddMessaggiDiagnosticiGestioneSorgentiDatiPrelevataDaDatabase() throws UtilsException{
 		return this.readBooleanRequiredProperty("msgDiagnostici.sorgentiDati.database");
 	}
 	
-	public Boolean isSinglePdD_DumpConfigurazioneCustomAppender() throws UtilsException{
+	public Boolean isSinglePddDumpConfigurazioneCustomAppender() throws UtilsException{
 		return this.readBooleanRequiredProperty("dump.configurazioneCustomAppender");
 	}
 	
-	public Boolean isSinglePdD_DumpConfigurazioneRealtime() throws UtilsException{
+	public Boolean isSinglePddDumpConfigurazioneRealtime() throws UtilsException{
 		return this.readBooleanRequiredProperty("dump.configurazioneRealtime");
 	}
 	
@@ -1758,7 +1793,10 @@ public class ConsoleProperties {
 		return this.readProperty(false, "extendedInfo.portaApplicativa");
 	}
 	
-	public String[] getPlugins_Menu() throws UtilsException{
+	public String[] getPluginsMenu() throws UtilsException{
+
+		String[] retNull = null;
+		
 		String p = this.readProperty(false, "plugins.menu");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
@@ -1767,10 +1805,13 @@ public class ConsoleProperties {
 			}
 			return tmp;
 		}
-		return null;
+		return retNull;
 	}
 	
-	public String[] getPlugins_Configurazione() throws UtilsException{
+	public String[] getPluginsConfigurazione() throws UtilsException{
+		
+		String[] retNull = null;
+		
 		String p = this.readProperty(false, "plugins.configurazione");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
@@ -1779,14 +1820,17 @@ public class ConsoleProperties {
 			}
 			return tmp;
 		}
-		return null;
+		return retNull;
 	}
 	
-	public String getPlugins_ConfigurazioneList() throws UtilsException{
+	public String getPluginsConfigurazioneList() throws UtilsException{
 		return this.readProperty(false, "plugins.configurazione.list");
 	}
 	
-	public String[] getPlugins_Connettore() throws UtilsException{
+	public String[] getPluginsConnettore() throws UtilsException{
+
+		String[] retNull = null;
+		
 		String p = this.readProperty(false, "plugins.connettore");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
@@ -1795,14 +1839,14 @@ public class ConsoleProperties {
 			}
 			return tmp;
 		}
-		return null;
+		return retNull;
 	}
 	
-	public String getPlugins_PortaDelegata() throws UtilsException{
+	public String getPluginsPortaDelegata() throws UtilsException{
 		return this.readProperty(false, "plugins.portaDelegata");
 	}
 	
-	public String getPlugins_PortaApplicativa() throws UtilsException{
+	public String getPluginsPortaApplicativa() throws UtilsException{
 		return this.readProperty(false, "plugins.portaApplicativa");
 	}
 	
@@ -1812,11 +1856,7 @@ public class ConsoleProperties {
 
 	public Boolean isVisibilitaOggettiGlobale() throws UtilsException{
 		String tmp = this.readProperty(true, "visibilitaOggetti");
-		if("locale".equals(tmp)){
-			return false;
-		}else{
-			return true;
-		}
+		return !"locale".equals(tmp);
 	}
 	
 	public List<String> getUtentiConVisibilitaGlobale() throws UtilsException{
@@ -1836,7 +1876,7 @@ public class ConsoleProperties {
 
 	/* ---- Utiltiies interne ------ */
 	
-	public PropertiesSourceConfiguration _getSourceConfiguration(String id, 
+	private PropertiesSourceConfiguration getSourceConfigurationEngine(String id, 
 			String propertyExternalDir, String propertyExternalDirRefresh,
 			String propertyBuiltIn, String propertyBuiltInRefresh) throws UtilsException {
 		
@@ -1851,75 +1891,62 @@ public class ConsoleProperties {
 			}
 		}
 		
-		String dir_refresh = this.readProperty(false, propertyExternalDirRefresh);
-		if(dir_refresh!=null) {
-			config.setUpdate("true".equalsIgnoreCase(dir_refresh.trim()));
+		String dirRefresh = this.readProperty(false, propertyExternalDirRefresh);
+		if(dirRefresh!=null) {
+			config.setUpdate("true".equalsIgnoreCase(dirRefresh.trim()));
 		}
 		
 		String buildInt = this.readProperty(false, propertyBuiltIn);
 		if(buildInt!=null) {
-			try {
-				//System.out.println("BASE: "+buildInt);
-				InputStream is = ConsoleProperties.class.getResourceAsStream(buildInt);
-				try {
-					if(is!=null) {
-						byte [] zipContent = Utilities.getAsByteArray(is);
-						is.close();
-						is = null;
-						File fTmp = FileSystemUtilities.createTempFile("propertiesSourceConfiguration", ".zip");
-						//System.out.println("TMP: "+fTmp.getAbsolutePath());
-						try {
-							FileSystemUtilities.writeFile(fTmp, zipContent);
-							ZipFile zip = new ZipFile(fTmp);
-							Iterator<ZipEntry> itZip = ZipUtilities.entries(zip, true);
-							List<byte[]> builtIdList = new ArrayList<>();
-							while (itZip.hasNext()) {
-								ZipEntry zipEntry = (ZipEntry) itZip.next();
-								if(zipEntry.isDirectory() == false) {
-									InputStream isZip = zip.getInputStream(zipEntry);
-									try {
-										//System.out.println("LEGGO ["+zipEntry.getName()+"]");
-										byte [] bytes = Utilities.getAsByteArray(isZip);
-										builtIdList.add(bytes);
-									}finally {
-										try {
-											if(isZip!=null) {
-												isZip.close();
-											}
-										}catch(Exception e) {
-											// close
-										}
-									}
-								}
-							}
-							config.setBuiltIn(builtIdList);
-						}finally {
-							if(!fTmp.delete()) {
-								// ignore
-							}
-						}
-					}
-				}finally {
-					try {
-						if(is!=null) {
-							is.close();
-						}
-					}catch(Exception e) {
-						// close
-					}
-				}
-			}catch(Exception e) {
-				throw new UtilsException(e.getMessage(),e);
-			}
+			read(config, buildInt);
 		}
 		
-		String builtIn_refresh = this.readProperty(false, propertyBuiltInRefresh);
-		if(builtIn_refresh!=null) {
-			config.setUpdate("true".equalsIgnoreCase(builtIn_refresh.trim()));
+		String builtInRefresh = this.readProperty(false, propertyBuiltInRefresh);
+		if(builtInRefresh!=null) {
+			config.setUpdate("true".equalsIgnoreCase(builtInRefresh.trim()));
 		}
 		
 		return config;
 
+	}
+	private void read(PropertiesSourceConfiguration config, String buildInt) throws UtilsException {
+		try {
+			try (InputStream is = ConsoleProperties.class.getResourceAsStream(buildInt);){
+				if(is!=null) {
+					byte [] zipContent = Utilities.getAsByteArray(is);
+
+					File fTmp = FileSystemUtilities.createTempFile("propertiesSourceConfiguration", ".zip");
+					try {
+						FileSystemUtilities.writeFile(fTmp, zipContent);
+						try (ZipFile zip = new ZipFile(fTmp);){
+							Iterator<ZipEntry> itZip = ZipUtilities.entries(zip, true);
+							List<byte[]> builtIdList = new ArrayList<>();
+							while (itZip.hasNext()) {
+								ZipEntry zipEntry = itZip.next();
+								if(!zipEntry.isDirectory()) {
+									try (InputStream isZip = zip.getInputStream(zipEntry);){
+										byte [] bytes = Utilities.getAsByteArray(isZip);
+										builtIdList.add(bytes);
+									}
+								}
+							}
+							config.setBuiltIn(builtIdList);
+						}
+					}finally {
+						deleteFile(fTmp);
+					}
+				}
+			}
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	private void deleteFile(File fTmp) {
+		try {
+			java.nio.file.Files.delete(fTmp.toPath());
+		}catch(Exception e) {
+			// ignore
+		}
 	}
 	
 	// propertiy per la gestione del console.font
@@ -1927,7 +1954,7 @@ public class ConsoleProperties {
 	private String consoleFontFamilyName = null;
 	private int consoleFontStyle = -1;
 	
-	public String getConsoleFont() throws Exception{
+	public String getConsoleFont() throws UtilsException{
 		return this.readProperty(true,"console.font");
 	}
 	
@@ -1955,54 +1982,54 @@ public class ConsoleProperties {
 	}
 	
 	// properties per la gestione del login
-	public String getLoginTipo() throws Exception{
+	public String getLoginTipo() throws UtilsException{
 		return this.readProperty(true,"login.tipo");
 	}
 
-	public boolean isLoginApplication() throws Exception{
+	public boolean isLoginApplication() throws UtilsException{
 		return this.readBooleanRequiredProperty("login.application");
 	}
 
-	public Properties getLoginProperties() throws Exception{
+	public Properties getLoginProperties() throws UtilsException{
 		return this.reader.readProperties("login.props.");
 	}
 	
-	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws Exception{
+	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}
 		return this.readProperty(true,"login.utenteNonAutorizzato.redirectUrl");
 	}
 
-	public String getLoginUtenteNonValidoRedirectUrl() throws Exception{
+	public String getLoginUtenteNonValidoRedirectUrl() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}
 		return this.readProperty(true,"login.utenteNonValido.redirectUrl");
 	}
 	
-	public String getLoginErroreInternoRedirectUrl() throws Exception{
+	public String getLoginErroreInternoRedirectUrl() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}
 		return this.readProperty(true,"login.erroreInterno.redirectUrl");
 	}
 
-	public String getLoginSessioneScadutaRedirectUrl() throws Exception{
+	public String getLoginSessioneScadutaRedirectUrl() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}
 		return this.readProperty(true,"login.sessioneScaduta.redirectUrl");
 	}
 
-	public boolean isMostraButtonLogout() throws Exception{
+	public boolean isMostraButtonLogout() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return true;
 		}
 		return this.readBooleanRequiredProperty("logout.mostraButton.enabled");
 	}
 
-	public String getLogoutUrlDestinazione() throws Exception{
+	public String getLogoutUrlDestinazione() throws UtilsException{
 		if(this.isLoginApplication()) {
 			return "";
 		}

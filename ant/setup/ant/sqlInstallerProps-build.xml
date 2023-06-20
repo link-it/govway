@@ -282,6 +282,86 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 					</else>
 				</if>
 
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-020:Gestione dei Nodi - Servizio Proxy AsyncUpdate:antinstaller_gestione_nodi_proxy_asyncUpdate', '@VALORE@');
+</concat>
+				<if>
+					<equals arg1="${antinstaller_gestione_nodi_proxy_asyncUpdate}" arg2=""/>
+					<then>
+						<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+					</then>
+					<else>
+						<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_gestione_nodi_proxy_asyncUpdate}"/>
+					</else>
+				</if>
+
+				<if>
+					<equals arg1="${antinstaller_gestione_nodi_proxy_asyncUpdate}" arg2="true"/>
+					<then>
+
+						<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-021:Gestione dei Nodi - Servizio Proxy AsyncUpdate Schema:antinstaller_gestione_nodi_proxy_asyncUpdate_schema', '@VALORE@');
+</concat>
+						<if>
+							<equals arg1="${antinstaller_gestione_nodi_proxy_asyncUpdate_schema}" arg2=""/>
+							<then>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+							</then>
+							<else>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_schema}"/>
+							</else>
+						</if>
+
+						<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-022:Gestione dei Nodi - Servizio Proxy AsyncUpdate Hostname:antinstaller_gestione_nodi_proxy_asyncUpdate_hostname', '@VALORE@');
+</concat>
+						<if>
+							<equals arg1="${antinstaller_gestione_nodi_proxy_asyncUpdate_hostname}" arg2=""/>
+							<then>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+							</then>
+							<else>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_hostname}"/>
+							</else>
+						</if>
+
+						<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-023:Gestione dei Nodi - Servizio Proxy AsyncUpdate Port:antinstaller_gestione_nodi_proxy_asyncUpdate_port', '@VALORE@');
+</concat>
+						<if>
+							<equals arg1="${antinstaller_gestione_nodi_proxy_asyncUpdate_port}" arg2=""/>
+							<then>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+							</then>
+							<else>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_port}"/>
+							</else>
+						</if>
+
+						<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-024:Gestione dei Nodi - Servizio Proxy AsyncUpdate CheckInterval:antinstaller_gestione_nodi_proxy_asyncUpdate_checkInterval', '@VALORE@');
+</concat>
+						<if>
+							<equals arg1="${antinstaller_gestione_nodi_proxy_asyncUpdate_checkInterval}" arg2=""/>
+							<then>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+							</then>
+							<else>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_checkInterval}"/>
+							</else>
+						</if>
+
+						<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-025:Gestione dei Nodi - Servizio Proxy AsyncUpdate Service Classname:antinstaller_gestione_nodi_proxy_asyncUpdate_classname', '@VALORE@');
+</concat>
+						<if>
+							<equals arg1="${antinstaller_gestione_nodi_proxy_asyncUpdate_classname}" arg2=""/>
+							<then>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="Default"/>
+							</then>
+							<else>
+								<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_classname}"/>
+							</else>
+						</if>
+
+					</then>
+
+				</if>
+
 			</then>
 		</if>
 

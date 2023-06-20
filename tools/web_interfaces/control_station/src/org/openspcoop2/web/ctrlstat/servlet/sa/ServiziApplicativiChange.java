@@ -788,14 +788,14 @@ public final class ServiziApplicativiChange extends Action {
 			if(resetElementoCache) {
 				
 				// Uso lo stessoAlias
-				List<String> aliases = soggettiCore.getJmxPdD_aliases();
+				List<String> aliases = soggettiCore.getJmxPdDAliases();
 				String alias = null;
 				if(aliases!=null && !aliases.isEmpty()) {
 					alias = aliases.get(0);
 				}
 				String labelApplicativo = (saHelper.isSoggettoMultitenantSelezionato() ? sa.getNome() : saHelper.getLabelServizioApplicativoConDominioSoggetto(oldIdServizioApplicativo));
-				saCore.invokeJmxMethodAllNodesAndSetResult(pd, soggettiCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-						soggettiCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo(alias),
+				saCore.invokeJmxMethodAllNodesAndSetResult(pd, soggettiCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
+						soggettiCore.getJmxPdDConfigurazioneSistemaNomeMetodoRipulisciRiferimentiCacheApplicativo(alias),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelApplicativo),
 						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelApplicativo),
 						idServizioApplicativoLong);				

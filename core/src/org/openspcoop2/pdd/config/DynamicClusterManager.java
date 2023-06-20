@@ -23,8 +23,10 @@ package org.openspcoop2.pdd.config;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -32,6 +34,8 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.pdd.services.ServicesUtils;
+import org.openspcoop2.pdd.services.connector.proxy.ProxyOperation;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -39,6 +43,7 @@ import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 /**
@@ -93,6 +98,10 @@ public class DynamicClusterManager {
 		return this.identificativoNumerico;
 	}
 	
+	private String getSuffixMessageUpdate(int row) {
+		return " nella tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")";
+	}
+	
 	public void register(Logger log) throws CoreException {
 		Connection con = null;
 		int oldTransactionIsolation = -1;
@@ -119,16 +128,16 @@ public class DynamicClusterManager {
 
 			boolean updateEffettuato = false;
 			
-			long gestioneSerializableDB_AttesaAttiva = this.op2Properties.getGestioneSerializableDB_AttesaAttiva();
-			int gestioneSerializableDB_CheckInterval = this.op2Properties.getGestioneSerializableDB_CheckInterval();
-			long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDB_AttesaAttiva;
+			long gestioneSerializableDBattesaAttiva = this.op2Properties.getGestioneSerializableDB_AttesaAttiva();
+			int gestioneSerializableDBcheckInterval = this.op2Properties.getGestioneSerializableDB_CheckInterval();
+			long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDBattesaAttiva;
 			
 			Exception eLast = null;
 			
-			while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
+			while(!updateEffettuato && DateManager.getTimeMillis() < scadenzaWhile){
 
 				try{
-					this._register(con, log);
+					this.registerEngine(con, log);
 
 					updateEffettuato = true;
 
@@ -138,20 +147,20 @@ public class DynamicClusterManager {
 				}
 				catch(Exception e) {
 					eLast = e;
-					//System.out.println("Serializable error:"+e.getMessage());
+					/**System.out.println("Serializable error:"+e.getMessage());*/
 				}
 
-				if(updateEffettuato == false){
+				if(!updateEffettuato){
 					// Per aiutare ad evitare conflitti
 					try{
-						Utilities.sleep((ServicesUtils.getRandom()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+						Utilities.sleep((ServicesUtils.getRandom()).nextInt(gestioneSerializableDBcheckInterval)); // random da 0ms a checkIntervalms
 					}catch(Exception eRandom){
 						// ignore
 					}
 				}
 			}
 						
-			if(updateEffettuato == false){
+			if(!updateEffettuato){
 				throw new CoreException("Registrazione fallita: "+eLast.getMessage(), eLast);
 			}
 		}
@@ -163,33 +172,73 @@ public class DynamicClusterManager {
 			try{
 				con.setTransactionIsolation(oldTransactionIsolation);
 			} catch(Exception er) {
-				er.printStackTrace(System.out);
-				//throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
+				if(log!=null) {
+					log.error("(ripristinoIsolation) "+er.getMessage(),er);
+				}
+				else {
+					LoggerWrapperFactory.getLogger(DynamicClusterManager.class).error("(ripristinoIsolation) "+er.getMessage(),er);
+				}
 			}
 			try{
 				con.setAutoCommit(true);
 			}catch(Exception eRollback){
-				//eRollback.printStackTrace(System.out);
+				/**if(log!=null) {
+					log.error("(setAutoCommit) "+eRollback.getMessage(),eRollback);
+				}
+				else {
+					LoggerWrapperFactory.getLogger(DynamicClusterManager.class).error("(setAutoCommit) "+eRollback.getMessage(),eRollback);
+				}*/
 			}
 			try {
 				if(con!=null) {
 					this.driverConfigurazioneDB.releaseConnection(con);
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 		}
 	}
 	
-	private void _register(Connection con, Logger log) throws Exception {
+	private void registerEngine(Connection con, Logger log) throws MaxReachedException, SQLException, SQLQueryObjectException {
+		try {
+			boolean find = registerExistsId(con);
+			
+			if(find) {
+				
+				// Update
+				registerUpdate(con, log);
+				
+			}
+			else {
+				
+				// Cerco idNumerico disponibile
+				/**if(this.op2Properties.isClusterIdNumericoDinamico()) { FIX: va sempre calcolato per l'unique del db*/
+				this.identificativoNumerico = this.getNextIdNumerico(con);
+				
+				// Insert
+				registerInsert(con, log);
+			}
+			
+			con.commit();
+		}
+		catch(Exception e) {
+			try{
+				con.rollback();
+			} catch(Exception er) {
+				// ignore
+			}
+			throw e;
+		}
+	}
+	private boolean registerExistsId(Connection con) throws SQLException, SQLQueryObjectException {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
 			sqlQueryObject.addFromTable(CostantiDB.CONFIG_NODI_RUNTIME);
-			sqlQueryObject.addSelectField("id_numerico");
+			sqlQueryObject.addSelectField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_ID_NUMERICO);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addWhereCondition("hostname=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME+"=?");
 			String query = sqlQueryObject.createSQLQuery();
 			pstmt = con.prepareStatement(query);
 			int index = 1;
@@ -197,124 +246,110 @@ public class DynamicClusterManager {
 			rs = pstmt.executeQuery();
 			boolean find = rs.next();
 			if(find) {
-				this.identificativoNumerico = rs.getInt("id_numerico");
+				this.identificativoNumerico = rs.getInt(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_ID_NUMERICO);
 			}
-			rs.close(); rs = null;
-			pstmt.close(); pstmt = null;
-			
-			if(find) {
-				// Update
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
-				sqlQueryObject.addUpdateTable(CostantiDB.CONFIG_NODI_RUNTIME);
-				sqlQueryObject.addUpdateField("gruppo", "?");
-				sqlQueryObject.addUpdateField("data_registrazione", "?");
-				sqlQueryObject.addUpdateField("data_refresh", "?");
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addWhereCondition("hostname=?");
-				String update = sqlQueryObject.createSQLUpdate();
-				pstmt = con.prepareStatement(update);
-				index = 1;
-				pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
-				Timestamp now = DateManager.getTimestamp();
-				pstmt.setTimestamp(index++, now);
-				pstmt.setTimestamp(index++, now);
-				pstmt.setString(index++, this.op2Properties.getClusterHostname());
-				int row = pstmt.executeUpdate();
-				pstmt.close(); pstmt = null;
-				
-				log.debug("Registrato con aggiormanento hostname '"+this.op2Properties.getClusterHostname()+"' nella tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")");
-			}
-			else {
-				
-				// Cerco idNumerico disponibile
-				//if(this.op2Properties.isClusterIdNumericoDinamico()) { FIX: va sempre calcolato per l'unique del db
-				this.identificativoNumerico = this._getNextIdNumerico(con);
-				//}
-				
-				// Insert
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
-				sqlQueryObject.addInsertTable(CostantiDB.CONFIG_NODI_RUNTIME);
-				sqlQueryObject.addInsertField("hostname", "?");
-				sqlQueryObject.addInsertField("gruppo", "?");
-				sqlQueryObject.addInsertField("data_registrazione", "?");
-				sqlQueryObject.addInsertField("data_refresh", "?");
-				sqlQueryObject.addInsertField("id_numerico", "?");
-				String insert = sqlQueryObject.createSQLInsert();
-				pstmt = con.prepareStatement(insert);
-				index = 1;
-				pstmt.setString(index++, this.op2Properties.getClusterHostname());
-				pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
-				Timestamp now = DateManager.getTimestamp();
-				pstmt.setTimestamp(index++, now);
-				pstmt.setTimestamp(index++, now);
-				pstmt.setInt(index++, this.identificativoNumerico);
-				int row = pstmt.executeUpdate();
-				pstmt.close(); pstmt = null;
-				
-				log.debug("Registrato hostname '"+this.op2Properties.getClusterHostname()+"' nella tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")");
-			}
-			
-			con.commit();
-		}
-		catch(Exception e) {
-			try {
-				if(rs!=null) {
-					rs.close(); rs = null;
-				}
-			}catch(Throwable eClose) {
-				// close
-			}
-			try {
-				if(pstmt!=null) {
-					pstmt.close(); pstmt = null;
-				}
-			}catch(Throwable eClose) {
-				// close
-			}
-			try{
-				con.rollback();
-			} catch(Throwable er) {
-				// ignore
-			}
-			throw e;
+			return find;
 		}
 		finally {
 			try {
 				if(rs!=null) {
 					rs.close();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 			try {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 		}
 	}
-	private int _getNextIdNumerico(Connection con) throws Exception {
+	private void registerInsert(Connection con, Logger log) throws SQLException, SQLQueryObjectException {
+		PreparedStatement pstmt = null;
+		try {
+			// Insert
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
+			sqlQueryObject.addInsertTable(CostantiDB.CONFIG_NODI_RUNTIME);
+			sqlQueryObject.addInsertField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME, "?");
+			sqlQueryObject.addInsertField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_GRUPPO, "?");
+			sqlQueryObject.addInsertField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REGISTRAZIONE, "?");
+			sqlQueryObject.addInsertField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH, "?");
+			sqlQueryObject.addInsertField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_ID_NUMERICO, "?");
+			String insert = sqlQueryObject.createSQLInsert();
+			pstmt = con.prepareStatement(insert);
+			int index = 1;
+			pstmt.setString(index++, this.op2Properties.getClusterHostname());
+			pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
+			Timestamp now = DateManager.getTimestamp();
+			pstmt.setTimestamp(index++, now);
+			pstmt.setTimestamp(index++, now);
+			pstmt.setInt(index++, this.identificativoNumerico);
+			int row = pstmt.executeUpdate();
+			
+			String msg = "Registrato hostname '"+this.op2Properties.getClusterHostname()+"'"+getSuffixMessageUpdate(row);
+			log.debug(msg);
+		}
+		finally {
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+		}
+	}
+	private void registerUpdate(Connection con, Logger log) throws SQLException, SQLQueryObjectException {
+		PreparedStatement pstmt = null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
+			sqlQueryObject.addUpdateTable(CostantiDB.CONFIG_NODI_RUNTIME);
+			sqlQueryObject.addUpdateField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_GRUPPO, "?");
+			sqlQueryObject.addUpdateField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REGISTRAZIONE, "?");
+			sqlQueryObject.addUpdateField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH, "?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME+"=?");
+			String update = sqlQueryObject.createSQLUpdate();
+			pstmt = con.prepareStatement(update);
+			int index = 1;
+			pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
+			Timestamp now = DateManager.getTimestamp();
+			pstmt.setTimestamp(index++, now);
+			pstmt.setTimestamp(index++, now);
+			pstmt.setString(index++, this.op2Properties.getClusterHostname());
+			int row = pstmt.executeUpdate();
+			
+			String msg = "Registrato con aggiormanento hostname '"+this.op2Properties.getClusterHostname()+"'"+getSuffixMessageUpdate(row);
+			log.debug(msg);
+		}
+		finally {
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+		}
+	}
+	private int getNextIdNumerico(Connection con) throws MaxReachedException, SQLException, SQLQueryObjectException {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
 			// Cerco idNumerico disponibile
 			int idNumerico = -1;
-			int cifre = this.op2Properties.getClusterDinamicoIdNumericoCifre(this.rateLimitingGestioneCluster);
-			StringBuilder sbCifre = new StringBuilder();
-			for (int i = 0; i < cifre; i++) {
-				sbCifre.append("9");
-			}
-			int max = Integer.valueOf(sbCifre.toString());
+			int max = getMax();
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
 			sqlQueryObject.addFromTable(CostantiDB.CONFIG_NODI_RUNTIME);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addSelectCountField("id_numerico", "countid");
-			sqlQueryObject.addSelectMaxField("id_numerico", "maxid");
+			sqlQueryObject.addSelectCountField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_ID_NUMERICO, "countid");
+			sqlQueryObject.addSelectMaxField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_ID_NUMERICO, "maxid");
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addWhereCondition("gruppo=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_GRUPPO+"=?");
 			String query = sqlQueryObject.createSQLQuery();
 			pstmt = con.prepareStatement(query);
 			int index = 1;
@@ -337,31 +372,7 @@ public class DynamicClusterManager {
 			pstmt.close(); pstmt = null;
 			
 			if(idNumerico<0) {
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
-				sqlQueryObject.addFromTable(CostantiDB.CONFIG_NODI_RUNTIME);
-				sqlQueryObject.addSelectField("id_numerico");
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addWhereCondition("gruppo=?");
-				sqlQueryObject.addOrderBy("id_numerico", true);
-				query = sqlQueryObject.createSQLQuery();
-				pstmt = con.prepareStatement(query);
-				index = 1;
-				pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
-				rs = pstmt.executeQuery();
-				int search = 0;
-				while(rs.next()) {
-					int idNumericoExists = rs.getInt("id_numerico");
-					if(search!=idNumericoExists) {
-						idNumerico = search;
-						break;
-					}
-					search++;
-					if(search>max) {
-						throw new MaxReachedException("Numero massimo di nodi registrabili ("+(max+1)+") raggiunto");
-					}
-				}
-				rs.close(); rs = null;
-				pstmt.close(); pstmt = null;
+				idNumerico = getIdNumerico(con, max);
 			}
 
 			return idNumerico;
@@ -371,17 +382,73 @@ public class DynamicClusterManager {
 				if(rs!=null) {
 					rs.close();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 			try {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 		}
+	}
+	private int getMax() {
+		int cifre = this.op2Properties.getClusterDinamicoIdNumericoCifre(this.rateLimitingGestioneCluster);
+		StringBuilder sbCifre = new StringBuilder();
+		for (int i = 0; i < cifre; i++) {
+			sbCifre.append("9");
+		}
+		// int max
+		return Integer.parseInt(sbCifre.toString());
+	}
+	private int getIdNumerico(Connection con, int max) throws MaxReachedException, SQLException, SQLQueryObjectException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int idNumerico = -1;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_NODI_RUNTIME);
+			sqlQueryObject.addSelectField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_ID_NUMERICO);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_GRUPPO+"=?");
+			sqlQueryObject.addOrderBy(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_ID_NUMERICO, true);
+			String query = sqlQueryObject.createSQLQuery();
+			pstmt = con.prepareStatement(query);
+			int index = 1;
+			pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
+			rs = pstmt.executeQuery();
+			int search = 0;
+			while(rs.next()) {
+				int idNumericoExists = rs.getInt(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_ID_NUMERICO);
+				if(search!=idNumericoExists) {
+					idNumerico = search;
+					break;
+				}
+				search++;
+				if(search>max) {
+					throw new MaxReachedException("Numero massimo di nodi registrabili ("+(max+1)+") raggiunto");
+				}
+			}
+		}
+		finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+		}
+		return idNumerico;
 	}
 	
 	public void unregister(Logger log) throws CoreException {
@@ -393,14 +460,16 @@ public class DynamicClusterManager {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
 			sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_NODI_RUNTIME);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addWhereCondition("hostname=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME+"=?");
 			String query = sqlQueryObject.createSQLDelete();
 			pstmt = con.prepareStatement(query);
 			int index = 1;
 			pstmt.setString(index++, this.op2Properties.getClusterHostname());
 			int row = pstmt.executeUpdate();
 			pstmt.close(); pstmt = null;
-			log.debug("Eliminato hostname '"+this.op2Properties.getClusterHostname()+"' dalla tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")");
+			
+			String msg = "Eliminato hostname '"+this.op2Properties.getClusterHostname()+"' dalla tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")";
+			log.debug(msg);
 			
 			if(!con.getAutoCommit()) {
 				con.commit();
@@ -412,7 +481,7 @@ public class DynamicClusterManager {
 				if(con!=null && !con.getAutoCommit()) {
 					con.rollback();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 			
@@ -423,14 +492,14 @@ public class DynamicClusterManager {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 			try {
 				if(con!=null) {
 					this.driverConfigurazioneDB.releaseConnection(con);
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 		}
@@ -444,9 +513,9 @@ public class DynamicClusterManager {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
 			sqlQueryObject.addUpdateTable(CostantiDB.CONFIG_NODI_RUNTIME);
-			sqlQueryObject.addUpdateField("data_refresh", "?");
+			sqlQueryObject.addUpdateField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH, "?");
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addWhereCondition("hostname=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME+"=?");
 			String update = sqlQueryObject.createSQLUpdate();
 			pstmt = con.prepareStatement(update);
 			int index = 1;
@@ -460,7 +529,8 @@ public class DynamicClusterManager {
 				con.commit();
 			}
 			
-			log.debug("Aggiornato hostname '"+this.op2Properties.getClusterHostname()+"' nella tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")");
+			String msg = "Aggiornato hostname '"+this.op2Properties.getClusterHostname()+"'"+getSuffixMessageUpdate(row);
+			log.debug(msg);
 		}
 		catch(Exception e) {
 			
@@ -468,7 +538,7 @@ public class DynamicClusterManager {
 				if(con!=null && !con.getAutoCommit()) {
 					con.rollback();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 			
@@ -479,14 +549,14 @@ public class DynamicClusterManager {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 			try {
 				if(con!=null) {
 					this.driverConfigurazioneDB.releaseConnection(con);
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 		}
@@ -498,7 +568,7 @@ public class DynamicClusterManager {
 		String oldData = null;
 		try {
 			gruppo = this.op2Properties.getGroupId(this.rateLimitingGestioneCluster);
-			Timestamp oldest = _getTimestampRefresh(this.op2Properties.getClusterDinamicoRefreshSecondsInterval());
+			Timestamp oldest = getTimestampRefresh(this.op2Properties.getClusterDinamicoRefreshSecondsInterval());
 			oldData = DateUtils.getSimpleDateFormatMs().format(oldest);
 			con = this.driverConfigurazioneDB.getConnection("DynamicClusterManager.refresh");
 			
@@ -506,12 +576,15 @@ public class DynamicClusterManager {
 					gruppo, 
 					oldest 
 					);
-			if(l==null || l.isEmpty()) {
-				throw new Exception("nodes not found");
+			if(l.isEmpty()) {
+				throw new CoreException("nodes not found");
 			}
 			return l;
 		}
 		catch(Exception e) {
+			if(log!=null) {
+				// per adesso rilancio l'eccezione
+			}
 			throw new CoreException("[DynamicClusterManager.getHostnames] (groupId:"+gruppo+" oldestDate:"+oldData+") failed: "+e.getMessage(), e);
 		}
 		finally {
@@ -519,20 +592,20 @@ public class DynamicClusterManager {
 				if(con!=null) {
 					this.driverConfigurazioneDB.releaseConnection(con);
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 		}
 	}
 	
-	private static Timestamp _getTimestampRefresh(int refreshSecondsInterval) {
+	private static Timestamp getTimestampRefresh(int refreshSecondsInterval) {
 		int oldSeconds = refreshSecondsInterval*2; // raddoppio il tempo di refresh
-		Timestamp oldest = new Timestamp(System.currentTimeMillis()-(oldSeconds*1000));
-		return oldest;
+		// Timestamp oldest
+		return new Timestamp(System.currentTimeMillis()-(oldSeconds*1000));
 	}
 	
 	public static List<String> getHostnames(Connection con, String tipoDB, String gruppo, int refreshSecondsInterval) throws CoreException {
-		Timestamp oldest = _getTimestampRefresh(refreshSecondsInterval);
+		Timestamp oldest = getTimestampRefresh(refreshSecondsInterval);
 		return getHostnames(con, tipoDB, gruppo, oldest);
 	}
 	public static List<String> getHostnames(Connection con, String tipoDB, String gruppo, Timestamp oldest) throws CoreException {
@@ -542,11 +615,11 @@ public class DynamicClusterManager {
 			List<String> list = new ArrayList<>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIG_NODI_RUNTIME);
-			sqlQueryObject.addSelectField("hostname");
+			sqlQueryObject.addSelectField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addWhereCondition("gruppo=?");
-			sqlQueryObject.addWhereCondition("data_refresh>?");
-			sqlQueryObject.addOrderBy("data_refresh", true); // parto dal piu' vecchio
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_GRUPPO+"=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH+">?");
+			sqlQueryObject.addOrderBy(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH, true); // parto dal piu' vecchio
 			String update = sqlQueryObject.createSQLQuery();
 			pstmt = con.prepareStatement(update);
 			int index = 1;
@@ -554,7 +627,7 @@ public class DynamicClusterManager {
 			pstmt.setTimestamp(index++, oldest);
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				String hostname = rs.getString("hostname");
+				String hostname = rs.getString(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME);
 				list.add(hostname);
 			}
 			rs.close(); rs = null;
@@ -569,14 +642,14 @@ public class DynamicClusterManager {
 				if(rs!=null) {
 					rs.close();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 			try {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {
+			}catch(Exception eClose) {
 				// close
 			}
 		}
@@ -584,5 +657,228 @@ public class DynamicClusterManager {
 	
 	public static String hashClusterId(String id) {
 		return DigestUtils.sha256Hex(id);
+	}
+	
+	
+	
+	
+	
+	
+	
+	public void registerOperation(Logger log, String descrizione, String operazione) throws CoreException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			if(descrizione==null) {
+				throw new CoreException("Param 'descrizione' undefined");
+			}
+			if(operazione==null) {
+				throw new CoreException("Param 'operazione' undefined");
+			}
+			
+			con = this.driverConfigurazioneDB.getConnection("DynamicClusterManager.registerOperation");
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
+			sqlQueryObject.addInsertTable(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS);
+			sqlQueryObject.addInsertField(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DESCRIZIONE, "?");
+			sqlQueryObject.addInsertField(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_OPERAZIONE, "?");
+			sqlQueryObject.addInsertField(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DATA_REGISTRAZIONE, "?");
+			String insert = sqlQueryObject.createSQLInsert();
+			pstmt = con.prepareStatement(insert);
+			int index = 1;
+			pstmt.setString(index++, descrizione);
+			pstmt.setString(index++, operazione);
+			Timestamp now = DateManager.getTimestamp();
+			pstmt.setTimestamp(index++, now);
+			int row = pstmt.executeUpdate();
+			
+			String msg = "Registrata operazione '"+descrizione+"'"+getSuffixMessageUpdate(row);
+			log.debug(msg);
+			
+			if(!con.getAutoCommit()) {
+				con.commit();
+			}
+		}
+		catch(Exception e) {
+			
+			try {
+				if(con!=null && !con.getAutoCommit()) {
+					con.rollback();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+			
+			throw new CoreException("[DynamicClusterManager.registerOperation] failed: "+e.getMessage(), e);
+		}
+		finally {
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+			try {
+				if(con!=null) {
+					this.driverConfigurazioneDB.releaseConnection(con);
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+		}
+	}
+	
+	
+	public List<ProxyOperation> findRemoteOperations(Date dataRegistrazione, Date now, int offset, int limit) throws CoreException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			checkDate(dataRegistrazione, now);
+			
+			con = this.driverConfigurazioneDB.getConnection("DynamicClusterManager.findRemoteOperations");
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS);
+			sqlQueryObject.addSelectField(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DESCRIZIONE);
+			sqlQueryObject.addSelectField(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_OPERAZIONE);
+			sqlQueryObject.addSelectField(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DATA_REGISTRAZIONE);
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DATA_REGISTRAZIONE+">=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DATA_REGISTRAZIONE+"<?");
+			boolean asc = true;
+			sqlQueryObject.addOrderBy(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DATA_REGISTRAZIONE, asc);
+			sqlQueryObject.setANDLogicOperator(true);
+			if(offset>=0) {
+				sqlQueryObject.setOffset(offset);
+			}
+			if(limit>0) {
+				sqlQueryObject.setLimit(limit);
+			}
+			
+			String query = sqlQueryObject.createSQLQuery();
+			
+			List<ProxyOperation> list = new ArrayList<>();
+			
+			pstmt = con.prepareStatement(query);
+			int index = 1;
+			pstmt.setTimestamp(index++, new Timestamp(dataRegistrazione.getTime()));
+			pstmt.setTimestamp(index++, new Timestamp(now.getTime()));
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				list.add(readProxyOperation(rs));
+			}
+			
+			return list;
+		}
+		catch(Exception e) {
+			
+			try {
+				if(con!=null && !con.getAutoCommit()) {
+					con.rollback();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+			
+			throw new CoreException("[DynamicClusterManager.findRemoteOperations] failed: "+e.getMessage(), e);
+		}
+		finally {
+			try {
+				if(rs!=null) {
+					rs.close();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+			try {
+				if(con!=null) {
+					this.driverConfigurazioneDB.releaseConnection(con);
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+		}
+	}
+	private void checkDate(Date dataRegistrazione, Date now) throws CoreException {
+		if(dataRegistrazione==null) {
+			throw new CoreException("Param 'dataRegistrazione' undefined");
+		}
+		if(now==null) {
+			throw new CoreException("Param 'now' undefined");
+		}
+	}
+	private ProxyOperation readProxyOperation(ResultSet rs) throws SQLException, CoreException {
+		if(rs==null) {
+			throw new CoreException("Param 'rs' undefined");
+		}
+		
+		String descrizione = rs.getString(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DESCRIZIONE);
+		String operazione = rs.getString(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_OPERAZIONE);
+		Date dataRegistrazioneReaded = rs.getTimestamp(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DATA_REGISTRAZIONE);
+		ProxyOperation po = new ProxyOperation();
+		po.setCommand(operazione);
+		po.setDescription(descrizione);
+		po.setRegistrationTime(dataRegistrazioneReaded);
+		return po;
+	}
+	
+	public int deleteRemoteOperations(Date dataRegistrazione) throws CoreException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			if(dataRegistrazione==null) {
+				throw new CoreException("Param 'dataRegistrazione' undefined");
+			}
+			
+			con = this.driverConfigurazioneDB.getConnection("DynamicClusterManager.deleteRemoteOperations");
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
+			sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS);
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_OPERATIONS_COLUMN_DATA_REGISTRAZIONE+"<?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			String query = sqlQueryObject.createSQLDelete();
+			
+			pstmt = con.prepareStatement(query);
+			int index = 1;
+			pstmt.setTimestamp(index++, new Timestamp(dataRegistrazione.getTime()));
+			return pstmt.executeUpdate();
+		}
+		catch(Exception e) {
+			
+			try {
+				if(con!=null && !con.getAutoCommit()) {
+					con.rollback();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+			
+			throw new CoreException("[DynamicClusterManager.deleteRemoteOperations] failed: "+e.getMessage(), e);
+		}
+		finally {
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+			try {
+				if(con!=null) {
+					this.driverConfigurazioneDB.releaseConnection(con);
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+		}
 	}
 }

@@ -673,18 +673,67 @@ org.openspcoop2.pdd.cluster_id.numeric.dinamico.cifre=CIFREIDMESSAGGIO]]></repla
 org.openspcoop2.pdd.proxyJMXResources.enabled=true
 org.openspcoop2.pdd.proxyJMXResources.username=PROXYUSERNAME
 org.openspcoop2.pdd.proxyJMXResources.password=PROXYPASSWORD
+# Configurazione modalità asincrona del servizio 'proxy'
+org.openspcoop2.pdd.proxyJMXResources.asyncUpdate=PROXYASYNCUPDATESTATO
+org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.schema=PROXYASYNCUPDATESCHEMA
+org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.hostname=PROXYASYNCUPDATEHOSTNAME
+org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.port=PROXYASYNCUPDATEPORT
+org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.checkInterval=PROXYASYNCUPDATEINTERVAL
+#org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.serviceClass=PROXYASYNCUPDATESERVICECLASS
 # Configurazione Servizio 'check']]></replacevalue>
 				</replace>
 				<antcall target="replace_token">
-				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+				 	<param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
 					<param name="token" value="PROXYUSERNAME"/>
 					<param name="value" value="${antinstaller_gestione_nodi_proxy_username}"/>
 				</antcall>
 				<antcall target="replace_token">
-				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+				    	<param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
 					<param name="token" value="PROXYPASSWORD"/>
 					<param name="value" value="${antinstaller_gestione_nodi_proxy_password_final}"/>
 				</antcall>
+				<antcall target="replace_token">
+				    	<param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="PROXYASYNCUPDATESTATO"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_asyncUpdate}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    	<param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="PROXYASYNCUPDATESCHEMA"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_schema}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    	<param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="PROXYASYNCUPDATEHOSTNAME"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_hostname}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    	<param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="PROXYASYNCUPDATEPORT"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_port}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    	<param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="PROXYASYNCUPDATEINTERVAL"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_checkInterval}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    	<param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="PROXYASYNCUPDATESERVICECLASS"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_classname}"/>
+				</antcall>
+				<if>
+					<not>
+						<equals arg1="${antinstaller_gestione_nodi_proxy_asyncUpdate_classname}" arg2=""/>
+					</not>
+					<then>
+						<antcall target="replace_token">
+						    	<param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+							<param name="token" value="#org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.serviceClass"/>
+							<param name="value" value="org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.serviceClass"/>
+						</antcall>
+					</then>
+				</if>
 			</then>
 		</if>
 
@@ -781,6 +830,42 @@ IDENTIFICATIVOGRUPPO.risorseJmxPdd.remoteAccess.password=PASSWORDSERVIZIOPROXY]]
 				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
 					<param name="token" value="IDGW1"/>
 					<param name="value" value="${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+
+			</then>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+				<equals arg1="${antinstaller_gestione_nodi_proxy_asyncUpdate}" arg2="true"/>
+			</and>
+			<then>
+				<replaceregexp file="${dist}/cfg/${console_local_properties_name}"
+					       match="\s# Integrazione con IdM esterno\s"
+					       replace="CLUSTERDINAMICO"
+					       byline="false"/>
+				<replace file="${dist}/cfg/${console_local_properties_name}">
+					<replacetoken>CLUSTERDINAMICO</replacetoken>
+					<replacevalue><![CDATA[
+# Configurazione Cluster Dinamico
+cluster.asyncUpdate=PROXYASYNCUPDATESTATO
+# Frequenza di aggiornamento delle operazioni sui nodi run in secondi
+cluster.asyncUpdate.checkInterval=PROXYASYNCUPDATEINTERVAL
+# ================================================
+
+# ================================================
+# Integrazione con IdM esterno]]></replacevalue>
+				</replace>
+
+				<antcall target="replace_token">
+				    	<param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="PROXYASYNCUPDATESTATO"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_asyncUpdate}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    	<param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="PROXYASYNCUPDATEINTERVAL"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_asyncUpdate_checkInterval}"/>
 				</antcall>
 
 			</then>
