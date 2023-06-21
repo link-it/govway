@@ -211,8 +211,12 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			}
 		}
 		
-		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
-		sb.append("(").append(getTipoFiltroDatiMittente()).append(")").append(CostantiGrafici.WHITE_SPACE);
+		/**sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
+		sb.append("(").append(getTipoFiltroDatiMittente()).append(")").append(CostantiGrafici.WHITE_SPACE);*/
+		
+		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_SUFFIX_AND_KEY)).append(CostantiGrafici.WHITE_SPACE);
+		sb.append(getTipoFiltroDatiMittente()).append(CostantiGrafici.WHITE_SPACE);
+		
 		return sb.toString();
 	}
 

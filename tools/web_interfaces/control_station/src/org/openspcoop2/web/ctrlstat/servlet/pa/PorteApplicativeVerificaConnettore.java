@@ -329,11 +329,13 @@ public class PorteApplicativeVerificaConnettore extends Action {
 							else{
 								rilevatoErrore = true;
 								bfExternal.append(CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_FALLITA);
-								if(stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
-									bfExternal.append(stato.substring(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA.length()));
-								}
-								else {
-									bfExternal.append(stato);
+								if(stato!=null) {
+									if(stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
+										bfExternal.append(stato.substring(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA.length()));
+									}
+									else {
+										bfExternal.append(stato);
+									}
 								}
 							}
 						}catch(Exception e){

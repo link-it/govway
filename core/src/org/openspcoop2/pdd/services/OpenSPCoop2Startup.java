@@ -3586,7 +3586,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/* ------------ Avvia il thread per la gestione delle operazioni remote in un cluster dinamico ------------ */
 			
-			if(propertiesReader.isProxyReadJMXResourcesAsyncProcessByTimer()) {
+			if(propertiesReader.isProxyReadJMXResourcesEnabled() && propertiesReader.isProxyReadJMXResourcesAsyncProcessByTimer()) {
 				
 				OpenSPCoop2Startup.this.threadGestoreOperazioniRemoteEnabled = true;
 				

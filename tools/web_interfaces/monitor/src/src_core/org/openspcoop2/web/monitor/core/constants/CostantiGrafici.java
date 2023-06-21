@@ -28,8 +28,11 @@ package org.openspcoop2.web.monitor.core.constants;
  *
  */
 public class CostantiGrafici {
+	
+	private CostantiGrafici() {}
 
-	public static final String DAL_AL_PATTERN = " (dal {0} al {1} )";
+	public static final String DAL_PREFIX = " ( dal ";
+	public static final String DAL_AL_PATTERN = DAL_PREFIX+"{0} al {1} )";
 	
 	public static final String PATTERN_DD_MMMMM_YYYY = "dd MMMMM yyyy";
 	public static final String PATTERN_HH_MM = "HH:mm";

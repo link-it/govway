@@ -1,3 +1,12 @@
+2023-06-21  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Risolto Bug OP-1600
+	Sono state risolte le seguenti vulnerabilità relativa al jar di terza parte:
+	- CVE-2017-9096, CVE-2022-24196 e CVE-2022-24197: sostituita libreria 'com.lowagie:itext' versione 2.1.7.js7 con le librerie 'org.apache.pdfbox:*' versione 2.0.27 e 'com.github.dhorions:boxable' versione 1.7.0
+	Registrata come falso positivo la vulnerabilità:
+	- CVE-2023-35116: libreria 'com.fasterxml.jackson.core:jackson-databind', versione 2.14.2
+
 2023-06-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

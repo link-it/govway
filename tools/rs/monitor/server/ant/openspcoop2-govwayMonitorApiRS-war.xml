@@ -141,6 +141,7 @@
 				<include name="commons-io-2.11.0.jar"/>
 				<include name="commons-codec-1.15.jar"/>
 				<include name="commons-math3-3.6.1.jar" />
+				<include name="commons-csv-1.9.0.jar" />
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
@@ -171,7 +172,6 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/reports">
 				<include name="dynamicreports-core-6.12.1.jar"/>
-				<include name="itext-2.1.7.js7.jar"/>
 				<include name="jcommon-1.0.24.jar"/>
 				<include name="jasperreports-6.20.0.jar"/>
 				<include name="jasperreports-metadata-6.20.0.jar"/>
@@ -180,6 +180,11 @@
 				<include name="net.tascalate.javaflow.api-2.7.3.jar"/>
 				<include name="jfreechart-1.5.3.jar"/>
 				<include name="${ecj_jar}"/>
+			</lib>
+			<lib dir="${required_lib}/pdf">
+				<include name="pdfbox-2.0.27.jar"/>
+				<include name="fontbox-2.0.27.jar"/>	
+				<include name="boxable-1.7.0.jar"/>
 			</lib>
 			<classes dir="${build_govwayMonitorApiRS}/properties">
 				<include name="rs-api-monitor.datasource.properties"/>

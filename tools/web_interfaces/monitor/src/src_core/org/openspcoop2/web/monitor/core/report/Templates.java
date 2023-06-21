@@ -19,27 +19,30 @@
  */
 package org.openspcoop2.web.monitor.core.report;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
-import static net.sf.dynamicreports.report.builder.DynamicReports.hyperLink;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
-import static net.sf.dynamicreports.report.builder.DynamicReports.tableOfContentsCustomizer;
-import static net.sf.dynamicreports.report.builder.DynamicReports.template;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
+import org.apache.commons.lang.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.openspcoop2.web.monitor.core.constants.CostantiGrafici;
 
-import net.sf.dynamicreports.report.base.expression.AbstractValueFormatter;
-import net.sf.dynamicreports.report.builder.HyperLinkBuilder;
-import net.sf.dynamicreports.report.builder.ReportTemplateBuilder;
-import net.sf.dynamicreports.report.builder.component.ComponentBuilder;
-import net.sf.dynamicreports.report.builder.datatype.BigDecimalType;
+import be.quodlibet.boxable.BaseTable;
+import be.quodlibet.boxable.datatable.DataTable;
+import be.quodlibet.boxable.line.LineStyle;
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.style.FontBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
-import net.sf.dynamicreports.report.builder.tableofcontents.TableOfContentsCustomizerBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
 import net.sf.dynamicreports.report.constant.VerticalTextAlignment;
-import net.sf.dynamicreports.report.definition.ReportParameters;
+import net.sf.dynamicreports.report.datasource.DRDataSource;
+import net.sf.jasperreports.engine.JRException;
 
 /**
  * Templates
@@ -50,166 +53,204 @@ import net.sf.dynamicreports.report.definition.ReportParameters;
  *
  */
 public class Templates {
-	private static final String TITOLO_REPORT = "Fruizione Servizi in Cooperazione Applicativa";
+	
+	private Templates(){}
+	
+	// Costanti per i report in formato xls e csv
 	public static final StyleBuilder rootStyle;
-	public static final StyleBuilder boldStyle;
-	public static final StyleBuilder italicStyle;
-	public static final StyleBuilder boldCenteredStyle;
-	public static final StyleBuilder bold12CenteredStyle;
-	public static final StyleBuilder bold18CenteredStyle;
-	public static final StyleBuilder bold22CenteredStyle;
-	public static final StyleBuilder boldLeftStyle;
-	public static final StyleBuilder bold12LeftStyle;
-	public static final StyleBuilder bold18LeftStyle;
-	public static final StyleBuilder bold22LeftStyle;
 	public static final StyleBuilder columnStyle;
 	public static final StyleBuilder columnTitleStyle;
-	public static final StyleBuilder groupStyle;
-	public static final StyleBuilder subtotalStyle;
-	
-	public static final FontBuilder categoryAxisFont;
 	public static final FontBuilder rootFont;
-
-	public static final ReportTemplateBuilder reportTemplate;
-	public static final CurrencyType currencyType;
-	public static final ComponentBuilder<?, ?> dynamicReportsComponent;
-	public static final ComponentBuilder<?, ?> footerComponent;
-
+	
 	static {
 		rootFont = stl.font().setFontSize(8);
 		rootStyle           = stl.style().setPadding(2).setFont(rootFont); 
-		boldStyle           = stl.style(rootStyle).bold();
-		italicStyle         = stl.style(rootStyle).italic();
-		boldCenteredStyle   = stl.style(boldStyle)
-				.setTextAlignment(HorizontalTextAlignment.CENTER, VerticalTextAlignment.MIDDLE);
-		bold12CenteredStyle = stl.style(boldCenteredStyle)
-				.setFontSize(10);
-		bold18CenteredStyle = stl.style(boldCenteredStyle)
-				.setFontSize(16);
-		bold22CenteredStyle = stl.style(boldCenteredStyle)
-				.setFontSize(20);
-		boldLeftStyle   = stl.style(boldStyle)
-				.setTextAlignment(HorizontalTextAlignment.CENTER, VerticalTextAlignment.MIDDLE);
-		bold12LeftStyle = stl.style(boldLeftStyle)
-				.setFontSize(10);
-		bold18LeftStyle = stl.style(boldLeftStyle)
-				.setFontSize(16);
-		bold22LeftStyle = stl.style(boldLeftStyle)
-				.setFontSize(20);
 		columnStyle         = stl.style(rootStyle).setVerticalTextAlignment(VerticalTextAlignment.MIDDLE);
 		columnTitleStyle    = stl.style(columnStyle)
 				.setBorder(stl.pen1Point())
 				.setHorizontalTextAlignment(HorizontalTextAlignment.CENTER)
 				.setBackgroundColor(Color.LIGHT_GRAY)
 				.bold();
-		groupStyle          = stl.style(boldStyle)
-				.setHorizontalTextAlignment(HorizontalTextAlignment.LEFT);
-		subtotalStyle       = stl.style(boldStyle)
-				.setTopBorder(stl.pen1Point());
+	}
+	
+	// Costanti per i report in formato pdf
+    public static final float MARGIN = 10;
+    public static final float PDF_SPACE_TEXT_FONT_SIZE = 6;
+    public static final float PDF_TEXT_FONT_SIZE = 8;
+    public static final float PDF_TABLE_FONT_SIZE = 8;
+    public static final float PDF_TITLE_FONT_SIZE = 18;
+    public static final float PDF_SUBTITLE_FONT_SIZE = 14;
+    public static final String PDF_LINKIT_URL = "https://govway.org";
+    
+    public static final Color TABLE_HEADER_BACKGROUND_COLOR = new Color(192, 192, 192);
+    public static final Color TABLE_EVEN_ROWS_BACKGROUND_COLOR = new Color(255, 255, 255);
+    public static final Color TABLE_ODD_ROWS_BACKGROUND_COLOR = new Color(240, 240, 240);
+    public static final Color BORDER_COLOR_BLACK = new Color(0, 0, 0);
+    public static final LineStyle SOLID_BORDER_BLACK_1F = new LineStyle(BORDER_COLOR_BLACK,1f);
 
-		StyleBuilder crosstabGroupStyle      = stl.style(columnTitleStyle);
-		StyleBuilder crosstabGroupTotalStyle = stl.style(columnTitleStyle)
-				.setBackgroundColor(new Color(170, 170, 170));
-		StyleBuilder crosstabGrandTotalStyle = stl.style(columnTitleStyle)
-				.setBackgroundColor(new Color(140, 140, 140));
-		StyleBuilder crosstabCellStyle       = stl.style(columnStyle)
-				.setBorder(stl.pen1Point());
-
-		TableOfContentsCustomizerBuilder tableOfContentsCustomizer = tableOfContentsCustomizer()
-				.setHeadingStyle(0, stl.style(rootStyle).bold());
-
-		reportTemplate = template()
-				.setLocale(ApplicationBean.getInstance().getLocale())
-				.setColumnStyle(columnStyle)
-				.setColumnTitleStyle(columnTitleStyle)
-				.setGroupStyle(groupStyle)
-				.setGroupTitleStyle(groupStyle)
-				.setSubtotalStyle(subtotalStyle)
-				.highlightDetailEvenRows()
-				.crosstabHighlightEvenRows()
-				.setCrosstabGroupStyle(crosstabGroupStyle)
-				.setCrosstabGroupTotalStyle(crosstabGroupTotalStyle)
-				.setCrosstabGrandTotalStyle(crosstabGrandTotalStyle)
-				.setCrosstabCellStyle(crosstabCellStyle)
-				.setTableOfContentsCustomizer(tableOfContentsCustomizer);
-
-		currencyType = new CurrencyType();
-
-		HyperLinkBuilder link = hyperLink("https://link.it");
-		dynamicReportsComponent =
-				cmp.horizontalList(
-						//  	cmp.image(Templates.class.getResource("images/dynamicreports.png")).setFixedDimension(60, 60),
-						cmp.verticalList(
-								cmp.text(TITOLO_REPORT).setStyle(bold22CenteredStyle).setHorizontalTextAlignment(HorizontalTextAlignment.LEFT),
-								cmp.text("https://link.it").setStyle(italicStyle).setHyperLink(link))).setFixedWidth(300);
-
-		footerComponent = cmp.pageXofY()
-				.setStyle(
-						stl.style(boldCenteredStyle)
-						.setTopBorder(stl.pen1Point()));
+	/**
+	 * Creates custom component which is possible to add to any report band component
+	 * @throws IOException 
+	 */
+	public static void createTitleComponent(String titoloReport, String periodoOsservazione, PDDocument document) throws IOException {
 		
-		categoryAxisFont = stl.font().setFontSize(10);
-	}
-
-	/**
-	 * Creates custom component which is possible to add to any report band component
-	 */
-	public static ComponentBuilder<?, ?> createTitleComponent(String titoloReport, String periodoOsservazione) {
-		HyperLinkBuilder link = hyperLink("https://link.it");
-		return cmp.horizontalList()
-				.add(	
-//						cmp.horizontalList(
-								//  	cmp.image(Templates.class.getResource("images/dynamicreports.png")).setFixedDimension(60, 60),
-						cmp.verticalList(
-								cmp.text(titoloReport).setStyle(bold22CenteredStyle).setHorizontalTextAlignment(HorizontalTextAlignment.LEFT),
-								cmp.text(periodoOsservazione).setStyle(bold18CenteredStyle).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT),
-								cmp.text("https://link.it").setStyle(italicStyle).setHyperLink(link))
-							)
-//				).setFixedWidth(300),
-//						)
-				.newRow()
-				.add(cmp.line())
-				.newRow()
-				.add(cmp.verticalGap(10));
-	}
-
-	/**
-	 * Creates custom component which is possible to add to any report band component
-	 */
-	public static ComponentBuilder<?, ?> creaTitoloSezioneCasisticaErrori(String label) {
-		return cmp.horizontalList()
-				.add(cmp.text(label).setStyle(bold12LeftStyle).setHorizontalTextAlignment(HorizontalTextAlignment.LEFT))
-				.newRow()
-				.add(cmp.line())
-				.newRow()
-				.add(cmp.verticalGap(10));
-	}
-
-	public static CurrencyValueFormatter createCurrencyValueFormatter(String label) {
-		return new CurrencyValueFormatter(label);
-	}
-
-	public static class CurrencyType extends BigDecimalType {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public String getPattern() {
-			return "$ #,###.00";
+		// Fix: correggo periodo Osservazione
+		if( (periodoOsservazione==null || StringUtils.isEmpty(periodoOsservazione)) &&
+				titoloReport.contains(CostantiGrafici.DAL_PREFIX)){
+			int indexOf = titoloReport.indexOf(CostantiGrafici.DAL_PREFIX);
+			periodoOsservazione = titoloReport.substring(indexOf);
+			titoloReport = titoloReport.substring(0,indexOf);
 		}
+		
+		titoloReport = titoloReport.trim();
+		if(periodoOsservazione!=null) {
+			periodoOsservazione = periodoOsservazione.trim();
+		}
+		
+		PDPage page = document.getPage(0);
+		
+		float width = page.getMediaBox().getWidth();
+        float height = page.getMediaBox().getHeight();
+		
+        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+        
+		// Titolo Report BOLD 20
+		contentStream.beginText();
+		contentStream.setFont(PDType1Font.HELVETICA_BOLD, PDF_TITLE_FONT_SIZE);
+		contentStream.newLineAtOffset(MARGIN, height - 40);
+		contentStream.showText(titoloReport);
+		contentStream.endText();
+				
+		// Periodo osservazione BOLD 16
+		contentStream.beginText();
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD, PDF_SUBTITLE_FONT_SIZE);
+        contentStream.newLineAtOffset(MARGIN, height - 60);
+        contentStream.showText(periodoOsservazione);
+        contentStream.endText();
+		
+		// link
+        contentStream.beginText();
+        contentStream.setFont(PDType1Font.HELVETICA_OBLIQUE, PDF_TEXT_FONT_SIZE);
+        contentStream.newLineAtOffset(MARGIN, height - 110);
+        contentStream.showText(PDF_LINKIT_URL);
+        contentStream.endText();
+        
+        // linea
+        float yLine = 110 + PDF_SPACE_TEXT_FONT_SIZE;
+        contentStream.setLineWidth(1.5f);
+        contentStream.moveTo(MARGIN, height - yLine); // Posizione iniziale della linea, considerando i margini
+        contentStream.lineTo(width - MARGIN, height - yLine); // Posizione finale della linea, considerando i margini
+        contentStream.stroke();
+        contentStream.close(); 
+		
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private static List<List> convert(List<List<String>> src, List<Colonna> colonne){
+		List<List> lReturnNull = null;
+		if(src==null || src.isEmpty()) {
+			return lReturnNull;
+		}
+		if(colonne==null || colonne.isEmpty()) {
+			return lReturnNull;
+		}
+		List<List> data = new ArrayList<>();
+		
+		List<String> headers = new ArrayList<>();
+		for (Colonna colonna : colonne) {
+			headers.add(colonna.getLabel());
+		}
+		data.add(headers);
+		
+		for (List<String> srcList : src) {
+			data.add(srcList);
+		}
+		
+		return data;
 	}
 
-	private static class CurrencyValueFormatter extends AbstractValueFormatter<String, Number> {
-		private static final long serialVersionUID = 1L;
-
-		private String label;
-
-		public CurrencyValueFormatter(String label) {
-			this.label = label;
+	public static void createTableComponent(List<Colonna> colonne, List<List<String>> dati, PDDocument document) throws IOException {
+		
+		if(colonne==null || colonne.isEmpty()) {
+			throw new IOException("Colonne non fornite");
 		}
-
-		@Override
-		public String format(Number value, ReportParameters reportParameters) {
-			return this.label + currencyType.valueToString(value, reportParameters.getLocale());
+		if(dati==null || dati.isEmpty()) {
+			throw new IOException("Dati non forniti");
 		}
+		if(document==null) {
+			throw new IOException("Document non fornito");
+		}
+		
+		PDPage page = document.getPage(0);
+		
+		float height = page.getMediaBox().getHeight();
+		
+		float yStart =  height - 130;
+		float startNewPageY = height -20;
+		float bottomMargin = MARGIN;
+
+		float tableWidth = (page.getMediaBox().getWidth() - (2 * MARGIN));
+		
+		BaseTable dataTable = new BaseTable(yStart, startNewPageY, bottomMargin, tableWidth, MARGIN, document, page, true, true);
+		
+		DataTable t = new DataTable(dataTable, page);
+		t.addListToTable(convert(dati, colonne), DataTable.HASHEADER);
+		
+		int numeroColonne = colonne.size();
+		float preferredColumWidth =  tableWidth / numeroColonne;
+		
+		for (int jColonna = 0; jColonna < dataTable.getHeader().getCells().size(); jColonna++) {
+			
+			Colonna colonna = colonne.get(jColonna);
+			
+			dataTable.getHeader().getCells().get(jColonna).setFillColor(TABLE_HEADER_BACKGROUND_COLOR);
+			dataTable.getHeader().getCells().get(jColonna).setAlign(colonna.getAlignment());
+			dataTable.getHeader().getCells().get(jColonna).setFontSize(PDF_TABLE_FONT_SIZE);
+			dataTable.getHeader().getCells().get(jColonna).setWidth(preferredColumWidth);
+			dataTable.getHeader().getCells().get(jColonna).setFont(PDType1Font.HELVETICA_BOLD);
+		}
+		
+		for (int iRiga = 1; iRiga < dataTable.getRows().size(); iRiga++) {
+						
+			for (int jColonna = 0; jColonna < dataTable.getRows().get(iRiga).getCells().size(); jColonna++) {
+				
+				Colonna colonna = colonne.get(jColonna);
+				
+				if(iRiga % 2 == 0) { // righe pari
+					dataTable.getRows().get(iRiga).getCells().get(jColonna).setFillColor(TABLE_EVEN_ROWS_BACKGROUND_COLOR);
+					dataTable.getRows().get(iRiga).getCells().get(jColonna).setBorderStyle(new LineStyle(TABLE_EVEN_ROWS_BACKGROUND_COLOR, 0));
+				}
+				else {
+					dataTable.getRows().get(iRiga).getCells().get(jColonna).setFillColor(TABLE_ODD_ROWS_BACKGROUND_COLOR);
+					dataTable.getRows().get(iRiga).getCells().get(jColonna).setBorderStyle(new LineStyle(TABLE_ODD_ROWS_BACKGROUND_COLOR, 0));
+				}
+				dataTable.getRows().get(iRiga).getCells().get(jColonna).setAlign(colonna.getAlignment());
+				dataTable.getRows().get(iRiga).getCells().get(jColonna).setFontSize(PDF_TABLE_FONT_SIZE);
+				dataTable.getRows().get(iRiga).getCells().get(jColonna).setWidth(preferredColumWidth);
+				dataTable.getRows().get(iRiga).getCells().get(jColonna).setFont(PDType1Font.HELVETICA);
+			
+			}
+			
+		}
+		dataTable.draw();
+		
+	}
+	
+	public static List<List<String>> estraiDatiPerTabellaPdfDaDataSource(JasperReportBuilder report, List<Colonna> colonne) throws JRException {
+		DRDataSource dataSource = (DRDataSource) report.getDataSource();
+		
+		
+		List<List<String>> dati = new ArrayList<>();
+		while (dataSource.next()) {
+			List<String> riga = new ArrayList<>();
+			for (Colonna colonna : colonne) {
+				String name = colonna.getName();
+				CustomJRField field = new CustomJRField(name);
+				String fieldValue = (String) dataSource.getFieldValue(field);
+				riga.add(fieldValue);
+			}
+			dati.add(riga);
+		}
+		return dati;
 	}
 }

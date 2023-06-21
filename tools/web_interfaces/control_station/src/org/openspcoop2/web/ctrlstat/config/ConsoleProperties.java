@@ -92,9 +92,7 @@ public class ConsoleProperties {
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
-		java.io.InputStream properties = null;
-		try{  
-			properties = ConsoleProperties.class.getResourceAsStream("/console.properties");
+		try (java.io.InputStream properties = ConsoleProperties.class.getResourceAsStream("/console.properties");){  
 			if(properties==null){
 				throw new UtilsException("File '/console.properties' not found");
 			}
@@ -103,13 +101,6 @@ public class ConsoleProperties {
 			String msg = "Riscontrato errore durante la lettura del file 'console.properties': \n\n"+e.getMessage();
 			this.log.error(msg);
 		    throw new UtilsException("ConsoleProperties initialize error: "+e.getMessage());
-		}finally{
-		    try{
-				if(properties!=null)
-				    properties.close();
-		    }catch(Exception er){
-		    	// close
-		    }
 		}
 
 		this.reader = new ConsoleInstanceProperties(propertiesReader, this.log, confDir, confPropertyName, confLocalPathPrefix);
