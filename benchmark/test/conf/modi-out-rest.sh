@@ -1,10 +1,14 @@
-elencoTestModiOutRest="out-rest_modi_db-trace_integrity_agid-auth_request-only out-rest_modi_db-trace_integrity_oauth2-auth_request-only
-			out-rest_modi_db-trace_integrity_agid-auth_request-digest-in-response out-rest_modi_db-trace_integrity_oauth2-auth_request-digest-in-response"
+elencoTestModiOutRest="out-rest_modi_db-trace_integrity_agid-auth_request-only 
+                        out-rest_modi_db-trace_integrity_oauth2-auth_request-only out-rest_modi_db-trace_integrity02_oauth2-auth_request-only
+			out-rest_modi_db-trace_integrity_agid-auth_request-digest-in-response 
+                        out-rest_modi_db-trace_integrity_oauth2-auth_request-digest-in-response out-rest_modi_db-trace_integrity02_oauth2-auth_request-digest-in-response"
 
 tests["out-rest_modi_db-trace_integrity_agid-auth_request-only"]=out_rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest
 tests["out-rest_modi_db-trace_integrity_agid-auth_request-digest-in-response"]=out_rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse
 tests["out-rest_modi_db-trace_integrity_oauth2-auth_request-only"]=out_rest_modi_DBTrace_Integrity_OAuth2Auth_OnlyRequest
+tests["out-rest_modi_db-trace_integrity02_oauth2-auth_request-only"]=out_rest_modi_DBTrace_Integrity02_OAuth2Auth_OnlyRequest
 tests["out-rest_modi_db-trace_integrity_oauth2-auth_request-digest-in-response"]=out_rest_modi_DBTrace_Integrity_OAuth2Auth_RequestDigestInResponse
+tests["out-rest_modi_db-trace_integrity02_oauth2-auth_request-digest-in-response"]=out_rest_modi_DBTrace_Integrity02_OAuth2Auth_RequestDigestInResponse
 
 
 function out_rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest() {
@@ -45,7 +49,20 @@ function out_rest_modi_DBTrace_Integrity_OAuth2Auth_OnlyRequest() {
 	azione=test4
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="LineeGuida con header Agid e header OAuth nella sola richiesta"
+	description="LineeGuida con header Agid con pattern Integrity_REST_01 e header OAuth nella sola richiesta"
+}
+
+function out_rest_modi_DBTrace_Integrity02_OAuth2Auth_OnlyRequest() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=rest
+	bound=out/ENTE
+	tipiTest=ProxyFruitore
+	azione=test7
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta"
 }
 
 
@@ -59,6 +76,19 @@ function out_rest_modi_DBTrace_Integrity_OAuth2Auth_RequestDigestInResponse() {
 	azione=test5
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta"
+	description="LineeGuida con header Agid con pattern Integrity_REST_01 e header OAuth anche nella risposta + digestRichiesta"
+}
+
+function out_rest_modi_DBTrace_Integrity02_OAuth2Auth_RequestDigestInResponse() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=rest
+	bound=out/ENTE
+	tipiTest=ProxyFruitore
+	azione=test8
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth anche nella risposta + digestRichiesta"
 }
 

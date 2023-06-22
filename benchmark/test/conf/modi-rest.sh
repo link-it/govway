@@ -1,12 +1,17 @@
-elencoTestModiRest="rest_modi_db-trace_integrity_agid-auth_request-only rest_modi_db-trace_integrity_oauth2-auth_request-only
-			rest_modi_db-trace_integrity_agid-auth_request-digest-in-response rest_modi_db-trace_integrity_oauth2-auth_request-digest-in-response
-			rest_modi_db-trace_integrity_agid-auth_request-only_no-duplicates rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates"
+elencoTestModiRest="rest_modi_db-trace_integrity_agid-auth_request-only 
+			rest_modi_db-trace_integrity_oauth2-auth_request-only rest_modi_db-trace_integrity02_oauth2-auth_request-only
+			rest_modi_db-trace_integrity_agid-auth_request-digest-in-response 
+			rest_modi_db-trace_integrity_oauth2-auth_request-digest-in-response rest_modi_db-trace_integrity02_oauth2-auth_request-digest-in-response
+			rest_modi_db-trace_integrity_agid-auth_request-only_no-duplicates 
+			rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates"
 
 tests["rest_modi_db-trace_integrity_agid-auth_request-only"]=rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest
 tests["rest_modi_db-trace_integrity_agid-auth_request-digest-in-response"]=rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse
 tests["rest_modi_db-trace_integrity_agid-auth_request-only_no-duplicates"]=rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest_NoDuplicates
 tests["rest_modi_db-trace_integrity_oauth2-auth_request-only"]=rest_modi_DBTrace_Integrity_OAuth2Auth_OnlyRequest
+tests["rest_modi_db-trace_integrity02_oauth2-auth_request-only"]=rest_modi_DBTrace_Integrity02_OAuth2Auth_OnlyRequest
 tests["rest_modi_db-trace_integrity_oauth2-auth_request-digest-in-response"]=rest_modi_DBTrace_Integrity_OAuth2Auth_RequestDigestInResponse
+tests["rest_modi_db-trace_integrity02_oauth2-auth_request-digest-in-response"]=rest_modi_DBTrace_Integrity02_OAuth2Auth_RequestDigestInResponse
 tests["rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates"]=rest_modi_DBTrace_Integrity_OAuth2Auth_OnlyRequest_NoDuplicates
 
 
@@ -58,7 +63,19 @@ function rest_modi_DBTrace_Integrity_OAuth2Auth_OnlyRequest() {
 	azione=test4
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="LineeGuida con header Agid e header OAuth nella sola richiesta"
+	description="LineeGuida con header Agid con pattern Integrity_REST_01 e header OAuth nella sola richiesta"
+}
+
+function rest_modi_DBTrace_Integrity02_OAuth2Auth_OnlyRequest() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=digestKid
+	profiloMessaggi=none
+	protocollo=rest
+	tipiTest=Proxy
+	azione=test7
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth nella sola richiesta"
 }
 
 
@@ -71,7 +88,19 @@ function rest_modi_DBTrace_Integrity_OAuth2Auth_RequestDigestInResponse() {
 	azione=test5
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta"
+	description="LineeGuida con header Agid con pattern Integrity_REST_01 e header OAuth anche nella risposta + digestRichiesta"
+}
+
+function rest_modi_DBTrace_Integrity02_OAuth2Auth_RequestDigestInResponse() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=digestKid
+	profiloMessaggi=none
+	protocollo=rest
+	tipiTest=Proxy
+	azione=test8
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="LineeGuida con header Agid con pattern Integrity_REST_02 e header OAuth anche nella risposta + digestRichiesta"
 }
 
 function rest_modi_DBTrace_Integrity_OAuth2Auth_OnlyRequest_NoDuplicates() {
@@ -83,5 +112,5 @@ function rest_modi_DBTrace_Integrity_OAuth2Auth_OnlyRequest_NoDuplicates() {
 	azione=test6
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati"
+	description="LineeGuida con header Agid con pattern Integrity_REST_01 e header OAuth nella sola richiesta + filtroDuplicati"
 }
