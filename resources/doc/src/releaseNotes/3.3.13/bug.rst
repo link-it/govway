@@ -11,7 +11,9 @@ Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
 
 - CVE-2023-33264: aggiornata libreria 'com.hazelcast:hazelcast' alla versione 5.3.0;
 
-- CVE-2023-20862: aggiornata libreria 'org.springframework.security:spring-security-\*' alla versione 5.8.
+- CVE-2023-20862: aggiornata libreria 'org.springframework.security:spring-security-\*' alla versione 5.8;
+
+- CVE-2017-9096, CVE-2022-24196 e CVE-2022-24197: sostituita libreria 'com.lowagie:itext' versione 2.1.7.js7 con le librerie 'org.apache.pdfbox:\*' versione 2.0.27 e 'com.github.dhorions:boxable' versione 1.7.0.
 
 
 Sono stati risolti i seguenti bug:
