@@ -40,7 +40,7 @@ import org.openspcoop2.utils.certificate.KeystoreType;
  */
 public class GestoreCredenzialiConfigurazione {
 
-	private static Map<String, GestoreCredenzialiConfigurazione> configurazione = new HashMap<String, GestoreCredenzialiConfigurazione>();
+	private static Map<String, GestoreCredenzialiConfigurazione> configurazione = new HashMap<>();
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("GestoreCredenzialiConfigurazione");
 	
 	private static void initConfigurazione(boolean fruizione, IDSoggetto idSoggetto) throws GestoreCredenzialiException {
@@ -54,7 +54,6 @@ public class GestoreCredenzialiConfigurazione {
 			try {
 				GestoreCredenzialiConfigurazione instance = new GestoreCredenzialiConfigurazione(fruizione, idSoggetto);
 				configurazione.put(key, instance);
-				//System.out.println("Registrata configurazione per ["+key+"]");
 			}finally {
 				semaphore.release("initConfig");
 			}
@@ -108,7 +107,9 @@ public class GestoreCredenzialiConfigurazione {
 	private String headerSslCertificate;
 	private boolean headerSslCertificateUrlDecode;
 	private boolean headerSslCertificateBase64Decode;
+	private boolean headerSslCertificateHexDecode;
 	private boolean headerSslCertificateUrlDecodeOrBase64Decode;
+	private boolean headerSslCertificateUrlDecodeOrBase64DecodeOrHexDecode;
 	private boolean headerSslCertificateEnrichBeginEnd;
 	private boolean headerSslCertificateReplaceCharacters;
 	private String headerSslCertificateReplaceCharactersSource;
@@ -124,7 +125,12 @@ public class GestoreCredenzialiConfigurazione {
 
 	private String headerPrincipal;
 	
-	
+	private String getProprietaPrefix(String prefix) {
+		return "Proprietà '"+prefix;
+	}
+	private String getMessaggioModalitaNonConfigurataCompletamente() {
+		return "modalita non configurata completamente; la modalità '"+this.modalitaAutenticazioneCanale+"' ";
+	}
 
 	public GestoreCredenzialiConfigurazione(boolean fruizione, IDSoggetto idSoggetto) throws GestoreCredenzialiException {
 		
@@ -165,7 +171,7 @@ public class GestoreCredenzialiConfigurazione {
 		
 		this.nome = getProperty(p, "nome", protocollo, idSoggetto);
 		if(this.nome==null) {
-			throw new GestoreCredenzialiException("Proprietà '"+prefix+"nome non impostata");
+			throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+"nome non impostata");
 		}	
 		
 		this.realm = getProperty(p, "wwwAuthenticate.realm", protocollo, idSoggetto);
@@ -176,11 +182,11 @@ public class GestoreCredenzialiConfigurazione {
 		
 		String authCanaleS = getProperty(p, "autenticazioneCanale", protocollo, idSoggetto);
 		if(authCanaleS==null) {
-			throw new GestoreCredenzialiException("Proprietà '"+prefix+"autenticazioneCanale non impostata");
+			throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+"autenticazioneCanale non impostata");
 		}	
 		this.tipoAutenticazioneCanale = TipoAutenticazioneGestoreCredenziali.toEnumConstant(authCanaleS);
 		if(this.tipoAutenticazioneCanale==null) {
-			throw new GestoreCredenzialiException("Proprietà '"+prefix+"autenticazioneCanale impostata non correttamente, valore indicato ("+authCanaleS+") non gestito");
+			throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+"autenticazioneCanale impostata non correttamente, valore indicato ("+authCanaleS+") non gestito");
 		}
 		
 		switch (this.tipoAutenticazioneCanale) {
@@ -189,24 +195,24 @@ public class GestoreCredenzialiConfigurazione {
 		case BASIC:
 			this.autenticazioneCanaleBasicUsername = getProperty(p, "autenticazioneCanale.basic.username", protocollo, idSoggetto);
 			if(this.autenticazioneCanaleBasicUsername==null) {
-				throw new GestoreCredenzialiException("Proprietà '"+prefix+"autenticazioneCanale.basic.username non impostata");
+				throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+"autenticazioneCanale.basic.username non impostata");
 			}	
 			
 			this.autenticazioneCanaleBasicPassword = getProperty(p, "autenticazioneCanale.basic.password", protocollo, idSoggetto);
 			if(this.autenticazioneCanaleBasicPassword==null) {
-				throw new GestoreCredenzialiException("Proprietà '"+prefix+"autenticazioneCanale.basic.password non impostata");
+				throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+"autenticazioneCanale.basic.password non impostata");
 			}	
 			break;
 		case SSL:
 			this.autenticazioneCanaleSslSubject = getProperty(p, "autenticazioneCanale.ssl.subject", protocollo, idSoggetto);
 			if(this.autenticazioneCanaleSslSubject==null) {
-				throw new GestoreCredenzialiException("Proprietà '"+prefix+"autenticazioneCanale.ssl.subject non impostata");
+				throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+"autenticazioneCanale.ssl.subject non impostata");
 			}
 			break;
 		case PRINCIPAL:
 			this.autenticazioneCanalePrincipal = getProperty(p, "autenticazioneCanale.principal", protocollo, idSoggetto);
 			if(this.autenticazioneCanalePrincipal==null) {
-				throw new GestoreCredenzialiException("Proprietà '"+prefix+"autenticazioneCanale.principal non impostata");
+				throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+"autenticazioneCanale.principal non impostata");
 			}
 			break;
 		}
@@ -237,12 +243,28 @@ public class GestoreCredenzialiConfigurazione {
 				this.headerSslCertificateBase64Decode = true;// default a true
 			}
 			
+			pValue = getProperty(p, "header.ssl.certificate.hex_decode", protocollo, idSoggetto);
+			if(pValue!=null){
+				pValue = pValue.trim();
+				this.headerSslCertificateHexDecode = Boolean.parseBoolean(pValue);
+			}else{
+				this.headerSslCertificateHexDecode = false;// default a false
+			}
+			
 			pValue = getProperty(p, "header.ssl.certificate.url_decode_or_base64_decode", protocollo, idSoggetto);
 			if(pValue!=null){
 				pValue = pValue.trim();
 				this.headerSslCertificateUrlDecodeOrBase64Decode = Boolean.parseBoolean(pValue);
 			}else{
-				this.headerSslCertificateUrlDecodeOrBase64Decode = true;// default a true
+				this.headerSslCertificateUrlDecodeOrBase64Decode = false;// default a false (e' abilitata la proprieta' successiva)
+			}
+			
+			pValue = getProperty(p, "header.ssl.certificate.url_decode_or_base64_decode_or_hex_decode", protocollo, idSoggetto);
+			if(pValue!=null){
+				pValue = pValue.trim();
+				this.headerSslCertificateUrlDecodeOrBase64DecodeOrHexDecode = Boolean.parseBoolean(pValue);
+			}else{
+				this.headerSslCertificateUrlDecodeOrBase64DecodeOrHexDecode = true;// default a true
 			}
 			
 			pValue = getProperty(p, "header.ssl.certificate.enrich_BEGIN_END", protocollo, idSoggetto);
@@ -323,7 +345,7 @@ public class GestoreCredenzialiConfigurazione {
 				if(v!=null && StringUtils.isNotEmpty(v)) {
 					try {
 						this.headerSslCertificateTrustStoreCheckValid = Boolean.valueOf(v);
-					}catch(Throwable e) {
+					}catch(Exception e) {
 						throw new GestoreCredenzialiException("Errore durante la lettura della proprietà 'header.ssl.certificate.truststore.validityCheck' (valore: "+v+"): "+e.getMessage(),e);
 					}
 				}
@@ -352,20 +374,19 @@ public class GestoreCredenzialiConfigurazione {
 		if(this.headerBasicUsername==null && this.headerSslSubject==null && this.headerSslCertificate==null && this.headerPrincipal==null) {
 			throw new GestoreCredenzialiException("L'abilitazione del gestore delle credenziali ("+prefix+"*) richiede almeno la definizione di un header su cui vengono fornite le credenziali");
 		}
-		if(this.headerBasicUsername!=null) {
-			if(this.headerBasicPassword==null) {
-				throw new GestoreCredenzialiException("L'abilitazione del gestore delle credenziali ("+prefix+"*) richiede la definizione di un header su cui viene indicata la password, se viene definito un header per l'username");
-			}
+		if(this.headerBasicUsername!=null &&
+			this.headerBasicPassword==null) {
+			throw new GestoreCredenzialiException("L'abilitazione del gestore delle credenziali ("+prefix+"*) richiede la definizione di un header su cui viene indicata la password, se viene definito un header per l'username");
 		}
 		
 		
 		String modalitaCanaleS = getProperty(p, "modalita", protocollo, idSoggetto);
 		if(modalitaCanaleS==null) {
-			throw new GestoreCredenzialiException("Proprietà '"+prefix+"modalita non impostata");
+			throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+"modalita non impostata");
 		}	
 		this.modalitaAutenticazioneCanale = ModalitaAutenticazioneGestoreCredenziali.toEnumConstant(modalitaCanaleS);
 		if(this.modalitaAutenticazioneCanale==null) {
-			throw new GestoreCredenzialiException("Proprietà '"+prefix+"modalita impostata non correttamente, valore indicato ("+modalitaCanaleS+") non gestito");
+			throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+"modalita impostata non correttamente, valore indicato ("+modalitaCanaleS+") non gestito");
 		}
 		switch (this.modalitaAutenticazioneCanale) {
 		case NONE:
@@ -376,17 +397,17 @@ public class GestoreCredenzialiConfigurazione {
 			break;
 		case BASIC:
 			if(this.headerBasicUsername==null || this.headerBasicPassword==null) {
-				throw new GestoreCredenzialiException("Proprietà '"+prefix+"modalita non configurata completamente; la modalità '"+this.modalitaAutenticazioneCanale+"' richiede la definizione degli header http dove far veicolare le credenziali basic");
+				throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+getMessaggioModalitaNonConfigurataCompletamente()+"richiede la definizione degli header http dove far veicolare le credenziali basic");
 			}
 			break;
 		case SSL:
 			if(this.headerSslSubject==null && this.headerSslCertificate==null) {
-				throw new GestoreCredenzialiException("Proprietà '"+prefix+"modalita non configurata completamente; la modalità '"+this.modalitaAutenticazioneCanale+"' richiede la definizione di almeno un header http dove far veicolare le credenziali ssl");
+				throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+getMessaggioModalitaNonConfigurataCompletamente()+"richiede la definizione di almeno un header http dove far veicolare le credenziali ssl");
 			}
 			break;
 		case PRINCIPAL:
 			if(this.headerPrincipal==null) {
-				throw new GestoreCredenzialiException("Proprietà '"+prefix+"modalita non configurata completamente; la modalità '"+this.modalitaAutenticazioneCanale+"' richiede la definizione dell'header http dove far veicolare le credenziali principal");
+				throw new GestoreCredenzialiException(getProprietaPrefix(prefix)+getMessaggioModalitaNonConfigurataCompletamente()+"richiede la definizione dell'header http dove far veicolare le credenziali principal");
 			}
 			break;
 		default:
@@ -546,8 +567,14 @@ public class GestoreCredenzialiConfigurazione {
 	public boolean isHeaderSslCertificateBase64Decode() {
 		return this.headerSslCertificateBase64Decode;
 	}
+	public boolean isHeaderSslCertificateHexDecode() {
+		return this.headerSslCertificateHexDecode;
+	}
 	public boolean isHeaderSslCertificateUrlDecodeOrBase64Decode() {
 		return this.headerSslCertificateUrlDecodeOrBase64Decode;
+	}
+	public boolean isHeaderSslCertificateUrlDecodeOrBase64DecodeOrHexDecode() {
+		return this.headerSslCertificateUrlDecodeOrBase64DecodeOrHexDecode;
 	}
 	public boolean isHeaderSslCertificateEnrichBeginEnd() {
 		return this.headerSslCertificateEnrichBeginEnd;

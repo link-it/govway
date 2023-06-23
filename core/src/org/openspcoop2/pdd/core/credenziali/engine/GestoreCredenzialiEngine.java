@@ -64,7 +64,7 @@ import org.openspcoop2.utils.transport.http.IOCSPValidator;
  */
 public class GestoreCredenzialiEngine {
 
-	private static String KEYWORD_GATEWAY_CREDENZIALI = "@@GatewayCredenziali@@";
+	private static final String KEYWORD_GATEWAY_CREDENZIALI = "@@GatewayCredenziali@@";
 	public static String getDBValuePrefixGatewayCredenziali(String identitaGateway, String credenzialiFornite) {
 		return KEYWORD_GATEWAY_CREDENZIALI+identitaGateway+"@@"+credenzialiFornite;
 	}
@@ -110,12 +110,46 @@ public class GestoreCredenzialiEngine {
 		}
 	}
 
+	private String getPrefixMessaggioAutenticazioneFallita(String auth) {
+		return "Autenticazione "+auth+" del Gestore delle Credenziali '"+this.identita+ "' fallita, ";
+	}
+	private static final String NESSUN_TIPO_CREDENZIALI_TRASPORTO = "nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto";
+	private static final String CREDENZIALI_PRESENTI_TRASPORTO = "credenziali presenti nel trasporto ";
+	
+	private String getConfigurazioneNonValidaPrefix(ModalitaAutenticazioneGestoreCredenziali modalita) {
+		return "Configurazione del Gestore delle Credenziali non valida, con la modalità '"+modalita.getValore()+"' ";
+	}
+	private String getConfigurazioneNonValidaHeaderNonDefiniti(ModalitaAutenticazioneGestoreCredenziali modalita, String auth) {
+		return getConfigurazioneNonValidaPrefix(modalita)+"devono essere definiti gli header http su cui veicolare le credenziali "+auth;
+	}
+	private String getConfigurazioneNonValidaHeaderNonDefinito(ModalitaAutenticazioneGestoreCredenziali modalita, String auth) {
+		return getConfigurazioneNonValidaPrefix(modalita)+"deve essere definito un header http su cui veicolare le credenziali "+auth;
+	}
+	private String getConfigurazioneNonValidaAlmenoHeaderDefinito(ModalitaAutenticazioneGestoreCredenziali modalita, String auth) {
+		return getConfigurazioneNonValidaPrefix(modalita)+"deve essere definito almeno un header http su cui veicolare le credenziali "+auth;
+	}    
+	
+	private String getMessaggioHeaderHttpNonPresente(String headerName) {
+		return "Header HTTP '"+headerName+"' non presente";
+	}
+	
+	private String getSuffixNonValido(Exception e) {
+		return " non valido: "+e.getMessage();
+	}
+	
+	private String getMessaggioCertificatoPresenteHeaderNonValido(String headerName, Exception t) {
+		return "Certificato presente nell'header '"+headerName+"' non valido: "+t.getMessage();
+	}
 	
 	public Credenziali elaborazioneCredenziali(
 			IDSoggetto idSoggetto,
 			InfoConnettoreIngresso infoConnettoreIngresso, OpenSPCoop2Message messaggio)
 			throws GestoreCredenzialiException,
 			GestoreCredenzialiConfigurationException {
+		
+		if(messaggio!=null) {
+			// non usato
+		}
 		
 		Map<String, List<String>> headerTrasporto = infoConnettoreIngresso.getUrlProtocolContext().getHeaders();
 		
@@ -156,18 +190,18 @@ public class GestoreCredenzialiEngine {
 			if(credenzialiTrasporto.getUsername()==null || credenzialiTrasporto.getPassword()==null){
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
 						buildWWWProxyAuthBasic(authType, realm, true),
-						"Autenticazione basic del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali basic riscontrata nel trasporto");
+						getPrefixMessaggioAutenticazioneFallita(autenticazioneGateway.getValore())+"nessun tipo di credenziali basic riscontrata nel trasporto");
 			}
 			if( ! ( usernameGateway.equals(credenzialiTrasporto.getUsername()) && passwordGateway.equals(credenzialiTrasporto.getPassword()) ) ){
 				String credenzialiPresenti = credenzialiTrasporto.toString();
 				if(credenzialiPresenti==null || credenzialiPresenti.equals("")){
 					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, 
 							buildWWWProxyAuthBasic(authType, realm, false),
-							"Autenticazione basic del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
+							getPrefixMessaggioAutenticazioneFallita(autenticazioneGateway.getValore())+NESSUN_TIPO_CREDENZIALI_TRASPORTO);
 				}else{
 					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, 
 							buildWWWProxyAuthBasic(authType, realm, false),
-							"Autenticazione basic del Gestore delle Credenziali '"+this.identita+ "' fallita, credenziali presenti nel trasporto "+credenzialiPresenti);
+							getPrefixMessaggioAutenticazioneFallita(autenticazioneGateway.getValore())+CREDENZIALI_PRESENTI_TRASPORTO+credenzialiPresenti);
 				}
 			}
 		}
@@ -184,7 +218,7 @@ public class GestoreCredenzialiEngine {
 			if(credenzialiTrasporto.getSubject()==null){
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
 						buildWWWProxyAuthSSL(authType, realm, true),
-						"Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali ssl riscontrata nel trasporto");
+						getPrefixMessaggioAutenticazioneFallita(autenticazioneGateway.getValore())+"nessun tipo di credenziali ssl riscontrata nel trasporto");
 			}
 			try{
 				if( ! org.openspcoop2.utils.certificate.CertificateUtils.sslVerify(subjectGateway, credenzialiTrasporto.getSubject(), PrincipalType.SUBJECT, OpenSPCoop2Logger.getLoggerOpenSPCoopCore()) ){
@@ -192,11 +226,11 @@ public class GestoreCredenzialiEngine {
 					if(credenzialiPresenti==null || credenzialiPresenti.equals("")){
 						throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, 
 								buildWWWProxyAuthSSL(authType, realm, false),
-								"Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
+								getPrefixMessaggioAutenticazioneFallita(autenticazioneGateway.getValore())+NESSUN_TIPO_CREDENZIALI_TRASPORTO);
 					}else{
 						throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, 
 								buildWWWProxyAuthSSL(authType, realm, false),
-								"Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, credenziali presenti nel trasporto "+credenzialiPresenti);
+								getPrefixMessaggioAutenticazioneFallita(autenticazioneGateway.getValore())+CREDENZIALI_PRESENTI_TRASPORTO+credenzialiPresenti);
 					}
 				}
 			}
@@ -215,18 +249,18 @@ public class GestoreCredenzialiEngine {
 			if(credenzialiTrasporto.getPrincipal()==null){
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
 						buildWWWProxyAuthPrincipal(authType, realm, true),
-						"Autenticazione principal del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziale principal riscontrata nel trasporto");
+						getPrefixMessaggioAutenticazioneFallita(autenticazioneGateway.getValore())+"nessun tipo di credenziale principal riscontrata nel trasporto");
 			}
 			if( ! ( principalGateway.equals(credenzialiTrasporto.getPrincipal()) ) ){
 				String credenzialiPresenti = credenzialiTrasporto.toString();
 				if(credenzialiPresenti==null || credenzialiPresenti.equals("")){
 					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, 
 							buildWWWProxyAuthPrincipal(authType, realm, false),
-							"Autenticazione principal del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
+							getPrefixMessaggioAutenticazioneFallita(autenticazioneGateway.getValore())+NESSUN_TIPO_CREDENZIALI_TRASPORTO);
 				}else{
 					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, 
 							buildWWWProxyAuthPrincipal(authType, realm, false),
-							"Autenticazione principal del Gestore delle Credenziali '"+this.identita+ "' fallita, credenziali presenti nel trasporto "+credenzialiPresenti);
+							getPrefixMessaggioAutenticazioneFallita(autenticazioneGateway.getValore())+CREDENZIALI_PRESENTI_TRASPORTO+credenzialiPresenti);
 				}
 			}
 		}
@@ -235,9 +269,9 @@ public class GestoreCredenzialiEngine {
 		// Modalità di gestione
 		
 		ModalitaAutenticazioneGestoreCredenziali modalita = configurazione.getModalitaAutenticazioneCanale();
-		String modalitaAtLeastOne_errorDescription = null;
+		String modalitaAtLeastOneErrorDescription = null;
 		if(ModalitaAutenticazioneGestoreCredenziali.AT_LEAST_ONE.equals(modalita)) {
-			modalitaAtLeastOne_errorDescription = configurazione.getModalitaAutenticazioneCanaleAtLeastOneErrorDescription();
+			modalitaAtLeastOneErrorDescription = configurazione.getModalitaAutenticazioneCanaleAtLeastOneErrorDescription();
 		}
 		
 		
@@ -262,8 +296,8 @@ public class GestoreCredenzialiEngine {
 				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gateway gestore delle credenziali; errore durante la lettura del truststore indicato ("+configurazione.getHeaderSslCertificateTrustStorePath()+"): "+e.getMessage());
 			}
 		}
-		boolean trustStoreCertificatiX509_checkValid = configurazione.isHeaderSslCertificateTrustStoreCheckValid();
-		CertStore trustStoreCertificatiX509_crls = null;
+		boolean trustStoreCertificatiX509CheckValid = configurazione.isHeaderSslCertificateTrustStoreCheckValid();
+		CertStore trustStoreCertificatiX509Crls = null;
 		
 		IOCSPValidator ocspValidator = null;
 		if(trustStoreCertificatiX509!=null) {
@@ -291,29 +325,33 @@ public class GestoreCredenzialiEngine {
 			}
 			if(configurazione.getHeaderSslCertificateCrlX509()!=null && !crlByOcsp) {
 				try {
-					trustStoreCertificatiX509_crls = GestoreKeystoreCaching.getCRLCertstore(this.requestInfo, configurazione.getHeaderSslCertificateCrlX509()).getCertStore();
+					trustStoreCertificatiX509Crls = GestoreKeystoreCaching.getCRLCertstore(this.requestInfo, configurazione.getHeaderSslCertificateCrlX509()).getCertStore();
 				}catch(Exception e){
 					throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gateway gestore delle credenziali; errore durante la lettura delle CRLs ("+configurazione.getHeaderSslCertificateCrlX509()+"): "+e.getMessage());
 				}
 			}
 		}
-		boolean sslCertificate_urlDecode = false;
-		boolean sslCertificate_base64Decode = false;
-		boolean sslCertificate_urlDecode_or_base64Decode = false;
-		boolean sslCertificate_enrich_BEGIN_END = false;
-		boolean sslCertificate_replace = false;
-		String sslCertificate_replaceSource = null;
-		String sslCertificate_replaceDest = null;
+		boolean sslCertificateUrlDecode = false;
+		boolean sslCertificateBase64Decode = false;
+		boolean sslCertificateHexDecode = false;
+		boolean sslCertificateUrlDecodeOrBase64Decode = false;
+		boolean sslCertificateUrlDecodeOrBase64DecodeOrHexDecode = false;
+		boolean sslCertificateEnrichBeginEnd = false;
+		boolean sslCertificateReplace = false;
+		String sslCertificateReplaceSource = null;
+		String sslCertificateReplaceDest = null;
 		String sslCertificateNoneOption = null;
 		if(headerNameSSLCertificate!=null) {
-			sslCertificate_urlDecode = configurazione.isHeaderSslCertificateUrlDecode();
-			sslCertificate_base64Decode = configurazione.isHeaderSslCertificateBase64Decode();
-			sslCertificate_urlDecode_or_base64Decode = configurazione.isHeaderSslCertificateUrlDecodeOrBase64Decode();
-			sslCertificate_enrich_BEGIN_END = configurazione.isHeaderSslCertificateEnrichBeginEnd();
-			sslCertificate_replace = configurazione.isHeaderSslCertificateReplaceCharacters();
-			if(sslCertificate_replace) {
-				sslCertificate_replaceSource = configurazione.getHeaderSslCertificateReplaceCharactersSource();
-				sslCertificate_replaceDest = configurazione.getHeaderSslCertificateReplaceCharactersDest();
+			sslCertificateUrlDecode = configurazione.isHeaderSslCertificateUrlDecode();
+			sslCertificateBase64Decode = configurazione.isHeaderSslCertificateBase64Decode();
+			sslCertificateHexDecode = configurazione.isHeaderSslCertificateHexDecode();
+			sslCertificateUrlDecodeOrBase64Decode = configurazione.isHeaderSslCertificateUrlDecodeOrBase64Decode();
+			sslCertificateUrlDecodeOrBase64DecodeOrHexDecode = configurazione.isHeaderSslCertificateUrlDecodeOrBase64DecodeOrHexDecode();
+			sslCertificateEnrichBeginEnd = configurazione.isHeaderSslCertificateEnrichBeginEnd();
+			sslCertificateReplace = configurazione.isHeaderSslCertificateReplaceCharacters();
+			if(sslCertificateReplace) {
+				sslCertificateReplaceSource = configurazione.getHeaderSslCertificateReplaceCharactersSource();
+				sslCertificateReplaceDest = configurazione.getHeaderSslCertificateReplaceCharactersDest();
 			}
 			sslCertificateNoneOption = configurazione.getHeaderSslCertificateNoneOption();
 		}
@@ -326,23 +364,23 @@ public class GestoreCredenzialiEngine {
 			return credenzialiTrasporto; // credenziali originali
 		}
 		
-		boolean existsHeader_basicUsername = false;
-		boolean existsHeader_basicPassword = false;
+		boolean existsHeaderBasicUsername = false;
+		boolean existsHeaderBasicPassword = false;
 		if(verificaIdentitaBasic){
-			existsHeader_basicUsername = existsHeader(headerTrasporto, headerNameBasicUsername);
-			existsHeader_basicPassword = existsHeader(headerTrasporto, headerNameBasicPassword);
+			existsHeaderBasicUsername = existsHeader(headerTrasporto, headerNameBasicUsername);
+			existsHeaderBasicPassword = existsHeader(headerTrasporto, headerNameBasicPassword);
 		}
-		boolean existsHeader_sslSubject = false;
-		boolean existsHeader_sslIssuer = false;
-		boolean existsHeader_sslCertificate = false;
+		boolean existsHeaderSslSubject = false;
+		boolean existsHeaderSslIssuer = false;
+		boolean existsHeaderSslCertificate = false;
 		if(verificaIdentitaSSL){
-			existsHeader_sslSubject = existsHeader(headerTrasporto, headerNameSSLSubject);
-			existsHeader_sslIssuer = existsHeader(headerTrasporto, headerNameSSLIssuer);
-			existsHeader_sslCertificate = existsHeader(headerTrasporto, headerNameSSLCertificate);
+			existsHeaderSslSubject = existsHeader(headerTrasporto, headerNameSSLSubject);
+			existsHeaderSslIssuer = existsHeader(headerTrasporto, headerNameSSLIssuer);
+			existsHeaderSslCertificate = existsHeader(headerTrasporto, headerNameSSLCertificate);
 		}
-		boolean existsHeader_principal = false;
+		boolean existsHeaderPrincipal = false;
 		if(verificaIdentitaPrincipal){
-			existsHeader_principal = existsHeader(headerTrasporto, headerNamePrincipal);
+			existsHeaderPrincipal = existsHeader(headerTrasporto, headerNamePrincipal);
 		}
 		
 		
@@ -354,12 +392,12 @@ public class GestoreCredenzialiEngine {
 		// delegando poi alla singola erogazione o fruizione il controllo che le credenziali siano effetivamente presenti
 		switch (modalita) {
 		case NONE:
-			if( (!existsHeader_basicUsername || !existsHeader_basicPassword) && !existsHeader_sslSubject && !existsHeader_sslCertificate && !existsHeader_principal ){
+			if( (!existsHeaderBasicUsername || !existsHeaderBasicPassword) && !existsHeaderSslSubject && !existsHeaderSslCertificate && !existsHeaderPrincipal ){
 				return credenzialiTrasporto; // credenziali originali poiche' non sono presenti header che indicano nuove credenziali.	
 			}
 			break;
 		case AT_LEAST_ONE:
-			if( (!existsHeader_basicUsername || !existsHeader_basicPassword) && !existsHeader_sslSubject && !existsHeader_sslCertificate && !existsHeader_principal ){
+			if( (!existsHeaderBasicUsername || !existsHeaderBasicPassword) && !existsHeaderSslSubject && !existsHeaderSslCertificate && !existsHeaderPrincipal ){
 				StringBuilder sb = new StringBuilder();
 				if(headerNameBasicUsername!=null) {
 					sb.append(headerNameBasicUsername);
@@ -384,61 +422,61 @@ public class GestoreCredenzialiEngine {
 				}
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 						buildWWWProxyAuthAtleastOne(authType, realm,
-								modalitaAtLeastOne_errorDescription),
+								modalitaAtLeastOneErrorDescription),
 						"Non sono presenti Header HTTP che veicolano credenziali (header non rilevati: "+sb.toString()+")");
 			}
 			break;
 		case BASIC:
 			if(!verificaIdentitaBasic){
-				throw new GestoreCredenzialiException("Configurazione del Gestore delle Credenziali non valida, con la modalità '"+modalita.getValore()+"' devono essere definiti gli header http su cui veicolare le credenziali basic");
+				throw new GestoreCredenzialiException(getConfigurazioneNonValidaHeaderNonDefiniti(modalita, modalita.getValore()));
 			}
-			if( !existsHeader_basicUsername ) {
+			if( !existsHeaderBasicUsername ) {
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 						buildWWWAuthBasic(),
-						"Header HTTP '"+headerNameBasicUsername+"' non presente");
+						getMessaggioHeaderHttpNonPresente(headerNameBasicUsername));
 			}
-			if( !existsHeader_basicPassword ) {
+			if( !existsHeaderBasicPassword ) {
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 						buildWWWAuthBasic(),
-						"Header HTTP '"+headerNameBasicPassword+"' non presente");
+						getMessaggioHeaderHttpNonPresente(headerNameBasicPassword));
 			}
 			// il controllo che il valore presente negli header non sia vuoto viene fatto dopo.
 			break;
 		case SSL:
 			if(!verificaIdentitaSSL){
-				throw new GestoreCredenzialiException("Configurazione del Gestore delle Credenziali non valida, con la modalità '"+modalita.getValore()+"' deve essere definito almeno un header http su cui veicolare le credenziali ssl");
+				throw new GestoreCredenzialiException(getConfigurazioneNonValidaAlmenoHeaderDefinito(modalita, modalita.getValore()));
 			}
 			if(headerNameSSLSubject!=null && headerNameSSLCertificate!=null) {
-				if(!existsHeader_sslSubject && !existsHeader_sslCertificate) {
+				if(!existsHeaderSslSubject && !existsHeaderSslCertificate) {
 					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 							buildWWWAuthSSL(),
 							"Header HTTP '"+headerNameSSLSubject+"' o '"+headerNameSSLCertificate+"' non presente");
 				}
 			}
 			else if( headerNameSSLSubject!=null) {
-				if(!existsHeader_sslSubject) {
+				if(!existsHeaderSslSubject) {
 					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 							buildWWWAuthSSL(),
-							"Header HTTP '"+headerNameSSLSubject+"' non presente");
+							getMessaggioHeaderHttpNonPresente(headerNameSSLSubject));
 				}
 			}
-			else { // per forza questo caso if( headerNameSSLCertificate!=null
-				if( !existsHeader_sslCertificate) {
+			else { /** per forza questo caso if( headerNameSSLCertificate!=null */
+				if( !existsHeaderSslCertificate) {
 					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 							buildWWWAuthSSL(),
-							"Header HTTP '"+headerNameSSLCertificate+"' non presente");
+							getMessaggioHeaderHttpNonPresente(headerNameSSLCertificate));
 				}
 			}
 			// il controllo che il valore presente negli header non sia vuoto e/o corretto viene fatto dopo.
 			break;
 		case PRINCIPAL:
 			if(!verificaIdentitaPrincipal){
-				throw new GestoreCredenzialiException("Configurazione del Gestore delle Credenziali non valida, con la modalità '"+modalita.getValore()+"' deve essere definito un header http su cui veicolare le credenziali principal");
+				throw new GestoreCredenzialiException(getConfigurazioneNonValidaHeaderNonDefinito(modalita, modalita.getValore()));
 			}
-			if( !existsHeader_principal) {
+			if( !existsHeaderPrincipal) {
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 						buildWWWAuthPrincipal(),
-						"Header HTTP '"+headerNamePrincipal+"' non presente");
+						getMessaggioHeaderHttpNonPresente(headerNamePrincipal));
 			}
 			// il controllo che il valore presente negli header non sia vuoto viene fatto dopo.
 			break;
@@ -450,8 +488,8 @@ public class GestoreCredenzialiEngine {
 				
 		// Lettura credenziali Basic
 		if(verificaIdentitaBasic &&
-				existsHeader_basicUsername &&
-				existsHeader_basicPassword ){
+				existsHeaderBasicUsername &&
+				existsHeaderBasicPassword ){
 			
 			String username = getProperty(headerTrasporto, 	headerNameBasicUsername );
 			String password = getProperty(headerTrasporto, 	headerNameBasicPassword );
@@ -471,7 +509,7 @@ public class GestoreCredenzialiEngine {
 		
 		// Lettura credenziali ssl
 		if(verificaIdentitaSSL) {
-			if(existsHeader_sslSubject ){
+			if(existsHeaderSslSubject ){
 				
 				String subject = getProperty(headerTrasporto, 	headerNameSSLSubject );
 				if(subject==null || "".equals(subject)){
@@ -481,15 +519,15 @@ public class GestoreCredenzialiEngine {
 				}
 				try{
 					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT);
-					// Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
-					// Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
-					//org.openspcoop.utils.Utilities.validaSubject(subject);
+					/** Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
+					Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
+					org.openspcoop.utils.Utilities.validaSubject(subject);*/
 				}catch(Exception e){
-					throw new GestoreCredenzialiException("Subject value fornito nell'header del trasporto "+headerNameSSLSubject+" non valido: "+e.getMessage(),e);
+					throw new GestoreCredenzialiException("Subject value fornito nell'header del trasporto "+headerNameSSLSubject+getSuffixNonValido(e),e);
 				}
 				c.setSubject(subject);
 			}
-			if(existsHeader_sslIssuer ){
+			if(existsHeaderSslIssuer ){
 				
 				String issuer = getProperty(headerTrasporto, 	headerNameSSLIssuer );
 				if(issuer==null || "".equals(issuer)){
@@ -499,15 +537,15 @@ public class GestoreCredenzialiEngine {
 				}
 				try{
 					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(issuer, PrincipalType.ISSUER);
-					// Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
-					// Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
-					//org.openspcoop.utils.Utilities.validaSubject(subject);
+					/**Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
+					Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
+					org.openspcoop.utils.Utilities.validaSubject(subject);*/
 				}catch(Exception e){
-					throw new GestoreCredenzialiException("Issuer value fornito nell'header del trasporto "+headerNameSSLIssuer+" non valido: "+e.getMessage(),e);
+					throw new GestoreCredenzialiException("Issuer value fornito nell'header del trasporto "+headerNameSSLIssuer+getSuffixNonValido(e),e);
 				}
 				c.setIssuer(issuer);
 			}
-			if(existsHeader_sslCertificate ){
+			if(existsHeaderSslCertificate ){
 				
 				String certificate = getProperty(headerTrasporto, 	headerNameSSLCertificate );
 				
@@ -530,17 +568,19 @@ public class GestoreCredenzialiEngine {
 					
 									
 					CertificateDecodeConfig config = new CertificateDecodeConfig();
-					config.setUrlDecode(sslCertificate_urlDecode);
-					config.setBase64Decode(sslCertificate_base64Decode);
-					config.setUrlDecodeOrBase64Decode(sslCertificate_urlDecode_or_base64Decode);
-					config.setEnrichPEMBeginEnd(sslCertificate_enrich_BEGIN_END);
-					config.setReplace(sslCertificate_replace);
-					if(sslCertificate_replace) {
-						if(sslCertificate_replaceSource!=null && !StringUtils.isEmpty(sslCertificate_replaceSource)) {
-							config.setReplaceSource(sslCertificate_replaceSource);
+					config.setUrlDecode(sslCertificateUrlDecode);
+					config.setBase64Decode(sslCertificateBase64Decode);
+					config.setHexDecode(sslCertificateHexDecode);
+					config.setUrlDecodeOrBase64Decode(sslCertificateUrlDecodeOrBase64Decode);
+					config.setUrlDecodeOrBase64DecodeOrHexDecode(sslCertificateUrlDecodeOrBase64DecodeOrHexDecode);
+					config.setEnrichPEMBeginEnd(sslCertificateEnrichBeginEnd);
+					config.setReplace(sslCertificateReplace);
+					if(sslCertificateReplace) {
+						if(sslCertificateReplaceSource!=null && !StringUtils.isEmpty(sslCertificateReplaceSource)) {
+							config.setReplaceSource(sslCertificateReplaceSource);
 						}
-						if(sslCertificate_replaceDest!=null && !StringUtils.isEmpty(sslCertificate_replaceDest)) {
-							config.setReplaceDest(sslCertificate_replaceDest);
+						if(sslCertificateReplaceDest!=null && !StringUtils.isEmpty(sslCertificateReplaceDest)) {
+							config.setReplaceDest(sslCertificateReplaceDest);
 						}
 					}
 	
@@ -557,40 +597,40 @@ public class GestoreCredenzialiEngine {
 					}catch(Exception e){
 						throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 								buildWWWAuthSSL(),
-								"Certificate fornito nell'header del trasporto "+headerNameSSLCertificate+" non valido: "+e.getMessage(), e);
+								"Certificate fornito nell'header del trasporto "+headerNameSSLCertificate+getSuffixNonValido(e), e);
 					}
 					
 					if(cer!=null && trustStoreCertificatiX509!=null) {
-						if(cer.getCertificate().isVerified(trustStoreCertificatiX509, true)==false) {
+						if(!cer.getCertificate().isVerified(trustStoreCertificatiX509, true)) {
 							throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 									buildWWWAuthSSL(),
 									"Certificato presente nell'header '"+headerNameSSLCertificate+"' non è verificabile rispetto alle CA conosciute");
 						}
-						if(trustStoreCertificatiX509_crls!=null) {
+						if(trustStoreCertificatiX509Crls!=null) {
 							try {
-								cer.getCertificate().checkValid(trustStoreCertificatiX509_crls, trustStoreCertificatiX509);
-							}catch(Throwable t) {
+								cer.getCertificate().checkValid(trustStoreCertificatiX509Crls, trustStoreCertificatiX509);
+							}catch(Exception t) {
 								throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 										buildWWWAuthSSL(),
-										"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+										getMessaggioCertificatoPresenteHeaderNonValido(headerNameSSLCertificate,t));
 							}
 						}
-						else if(trustStoreCertificatiX509_checkValid){
+						else if(trustStoreCertificatiX509CheckValid){
 							try {
 								cer.getCertificate().checkValid();
-							}catch(Throwable t) {
+							}catch(Exception t) {
 								throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 										buildWWWAuthSSL(),
-										"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+										getMessaggioCertificatoPresenteHeaderNonValido(headerNameSSLCertificate,t));
 							}
 						}
 						if(ocspValidator!=null) {
 							try {
 								ocspValidator.valid(cer.getCertificate().getCertificate());
-							}catch(Throwable t) {
+							}catch(Exception t) {
 								throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 										buildWWWAuthSSL(),
-										"Certificato presente nell'header '"+headerNameSSLCertificate+"' non valido: "+t.getMessage());
+										getMessaggioCertificatoPresenteHeaderNonValido(headerNameSSLCertificate,t));
 							}
 						}
 					}
@@ -612,7 +652,7 @@ public class GestoreCredenzialiEngine {
 		
 		// Lettura credenziali principal
 		if(verificaIdentitaPrincipal &&
-				existsHeader_principal ){
+				existsHeaderPrincipal ){
 			
 			String principal = getProperty(headerTrasporto, 	headerNamePrincipal );
 			if(principal==null || "".equals(principal)){
@@ -678,13 +718,13 @@ public class GestoreCredenzialiEngine {
 		proxy.setAuthType(authType);
 		return missing ? proxy.buildWWWAuthenticateHeaderValue_notFound() : proxy.buildWWWAuthenticateHeaderValue_invalid();
 	}
-	public static String buildWWWProxyAuthAtleastOne(String authType, String realm, String error_description) {
+	public static String buildWWWProxyAuthAtleastOne(String authType, String realm, String errorDescription) {
 		if(realm==null || "".equals(realm) || authType==null || "".equals(authType)) {
 			return null;
 		}
-		if(error_description!=null && !"".equals(error_description)) {
+		if(errorDescription!=null && !"".equals(errorDescription)) {
 			return WWWAuthenticateGenerator.buildCustomHeaderValue(authType, realm, WWWAuthenticateErrorCode.invalid_request, 
-					error_description);
+					errorDescription);
 		}
 		else {
 			WWWAuthenticateErrorCode errorCode = null;

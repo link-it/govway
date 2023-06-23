@@ -194,7 +194,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	@Test
 	public void erogazione_autenticazioneHttps_certs() throws Exception {
 		Map<String, String> headers = new HashMap<>();
-		headers.put("X-Erogazione-SSL-Cert",Utilities.getCertificate(false));
+		headers.put("X-Erogazione-SSL-Cert",Utilities.getCertificatePEM());
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
 				"https",
@@ -209,7 +209,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	@Test
 	public void erogazione_autenticazioneHttps_certs_non_inserito_truststore() throws Exception {
 		Map<String, String> headers = new HashMap<>();
-		headers.put("X-Erogazione-SSL-Cert",Utilities.getCertificate2(false));
+		headers.put("X-Erogazione-SSL-Cert",Utilities.getCertificate2PEM());
 		Utilities._test(TipoServizio.EROGAZIONE,
 				"SoggettoInternoTest",
 				"https",
@@ -310,9 +310,24 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				);
 	}
 	@Test
-	public void fruizione_autenticazioneHttps_certs() throws Exception {
+	public void fruizione_autenticazioneHttps_certs_base64() throws Exception {
 		Map<String, String> headers = new HashMap<>();
-		headers.put("X-Fruizione-SSL-Cert", Utilities.getCertificate(true));
+		headers.put("X-Fruizione-SSL-Cert", Utilities.getCertificateDER(true));
+		Utilities._test(TipoServizio.FRUIZIONE,
+				"SoggettoInternoTestFruitore",
+				"https",
+				headers,
+				"SoggettoInternoTestFruitore",
+				"ApplicativoTestGestoreCredenzialiCertificato",
+				"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali'\nSSL-ClientCert-SerialNumber '313156636180879269931219199270197192051648745965'",
+				null,
+				null,
+				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali' ) fornite da WebServerFruizioniDefault");
+	}
+	@Test
+	public void fruizione_autenticazioneHttps_certs_hex() throws Exception {
+		Map<String, String> headers = new HashMap<>();
+		headers.put("X-Fruizione-SSL-Cert", Utilities.getCertificateDER(false));
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
 				"https",
@@ -326,9 +341,24 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 	}
 	
 	@Test
-	public void fruizione_autenticazioneHttps_certs2_non_in_truststore_ma_truststore_non_attivato() throws Exception {
+	public void fruizione_autenticazioneHttps_certs2_non_in_truststore_ma_truststore_non_attivato_base64() throws Exception {
 		Map<String, String> headers = new HashMap<>();
-		headers.put("X-Fruizione-SSL-Cert", Utilities.getCertificate2(true));
+		headers.put("X-Fruizione-SSL-Cert", Utilities.getCertificate2DER(true));
+		Utilities._test(TipoServizio.FRUIZIONE,
+				"SoggettoInternoTestFruitore",
+				"https",
+				headers,
+				"SoggettoInternoTestFruitore",
+				"ApplicativoTestGestoreCredenzialiCertificato2",
+				"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-ClientCert-SerialNumber '464440956505565963808339808380319088904980969620'",
+				null,
+				null,
+				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2' ) fornite da WebServerFruizioniDefault");
+	}
+	@Test
+	public void fruizione_autenticazioneHttps_certs2_non_in_truststore_ma_truststore_non_attivato_hex() throws Exception {
+		Map<String, String> headers = new HashMap<>();
+		headers.put("X-Fruizione-SSL-Cert", Utilities.getCertificate2DER(false));
 		Utilities._test(TipoServizio.FRUIZIONE,
 				"SoggettoInternoTestFruitore",
 				"https",

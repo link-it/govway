@@ -34,6 +34,7 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -306,13 +307,21 @@ public class Utilities extends ConfigLoader {
 		}
 	}
 	
-	public static String getCertificate(boolean der) throws Exception {
-		return getCertificate(der, "applicativoCertExample.pem");
+	public static String getCertificateDER(boolean base64) throws Exception {
+		return getCertificate(true, base64, "applicativoCertExample.pem");
 	}
-	public static String getCertificate2(boolean der) throws Exception {
-		return getCertificate(der, "applicativoCertExample2.pem");
+	public static String getCertificatePEM() throws Exception {
+		return getCertificate(false, false, "applicativoCertExample.pem");
 	}
-	public static String getCertificate(boolean der, String fileName) throws Exception {
+	
+	public static String getCertificate2DER(boolean base64) throws Exception {
+		return getCertificate(true, base64, "applicativoCertExample2.pem");
+	}
+	public static String getCertificate2PEM() throws Exception {
+		return getCertificate(false, false, "applicativoCertExample2.pem");
+	}
+	
+	private static String getCertificate(boolean der, boolean base64, String fileName) throws Exception {
 		
 		// Certificato generato con il comando: 'openssl req -x509 -newkey rsa:4096 -keyout applicativoCertExample.key -out applicativoCertExample.pem -sha256 -days 36500 -subj '/CN=example.gestoreCredenziali/O=test/C=IT/'
 		// password: 123456
@@ -322,7 +331,12 @@ public class Utilities extends ConfigLoader {
 		
 		if(der) {
 			
-			return Base64Utilities.encodeAsString(ArchiveLoader.load(certBytes).getCertificate().getCertificate().getEncoded());
+			if(base64) {
+				return Base64Utilities.encodeAsString(ArchiveLoader.load(certBytes).getCertificate().getCertificate().getEncoded());
+			}
+			else {
+				return HexBinaryUtilities.encodeAsString(ArchiveLoader.load(certBytes).getCertificate().getCertificate().getEncoded());
+			}
 			
 		}
 		else {

@@ -33,7 +33,11 @@ public class CertificateDecodeConfig {
 	
 	private boolean base64Decode = false;
 	
+	private boolean hexDecode = false;
+	
 	private boolean urlDecodeOrBase64Decode = false;
+	
+	private boolean urlDecodeOrBase64DecodeOrHexDecode = false;
 	
 	private boolean enrichPEMBeginEnd = false;
 	
@@ -53,11 +57,23 @@ public class CertificateDecodeConfig {
 	public void setBase64Decode(boolean base64Decode) {
 		this.base64Decode = base64Decode;
 	}
+	public boolean isHexDecode() {
+		return this.hexDecode;
+	}
+	public void setHexDecode(boolean hexDecode) {
+		this.hexDecode = hexDecode;
+	}
 	public boolean isUrlDecodeOrBase64Decode() {
 		return this.urlDecodeOrBase64Decode;
 	}
 	public void setUrlDecodeOrBase64Decode(boolean urlDecodeOrBase64Decode) {
 		this.urlDecodeOrBase64Decode = urlDecodeOrBase64Decode;
+	}
+	public boolean isUrlDecodeOrBase64DecodeOrHexDecode() {
+		return this.urlDecodeOrBase64DecodeOrHexDecode;
+	}
+	public void setUrlDecodeOrBase64DecodeOrHexDecode(boolean urlDecodeOrBase64DecodeOrHexDecode) {
+		this.urlDecodeOrBase64DecodeOrHexDecode = urlDecodeOrBase64DecodeOrHexDecode;
 	}
 	public boolean isEnrichPEMBeginEnd() {
 		return this.enrichPEMBeginEnd;

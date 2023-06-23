@@ -12,6 +12,7 @@ si può invece far riferimento al file ChangeLog di questa versione.
 
 	modipa
 	chiavi
+	autenticazione
 	dumpBinario
         installer
 	nomenclatura

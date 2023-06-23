@@ -25,6 +25,7 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateDecodeConfig;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
 
 /**
  * CertificateTest
@@ -136,6 +137,17 @@ public class CertificateReaderTest {
 			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
 		}
 		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64DecodeOrHexDecode(true);
+		System.out.println("PEM + URL Encoded (config UrlDecode_or_base64Decode_or_hexDecode) ...");
+		certDecoded = CertificateUtils.readCertificate(config , cert);
+		System.out.println("PEM + URL Encoded (config UrlDecode_or_base64Decode_or_hexDecode): "+certDecoded.getCertificate().toString());
+		if(!"Soggetto1".equals(certDecoded.getCertificate().getSubject().getCN())) {
+			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
+		}
+		
 		// Esempio PEM codificato in base64 ma corrotto
 		cert = cert.replaceFirst("%20", "%%%");
 		//System.out.println("BASE64: "+cert);
@@ -143,6 +155,28 @@ public class CertificateReaderTest {
 		config.setBase64Decode(false);
 		config.setUrlDecode(false);
 		config.setUrlDecodeOrBase64Decode(true);
+		System.out.println("PEM + URL Encoded (corrupted) ...");
+		try {
+			certDecoded = CertificateUtils.readCertificate(config , cert);
+		}catch(Exception multi) {
+			if(Utilities.existsInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class)) {
+				System.out.println("PEM + URL Encoded (corrupted): eccezione attesa");
+				org.openspcoop2.utils.UtilsMultiException e = (org.openspcoop2.utils.UtilsMultiException) Utilities.getInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class);
+				int index = 0;
+				for (Throwable t : e.getExceptions()) {
+					System.out.println("Eccezione["+index+"]="+t.getMessage());
+					index++;
+				}
+			}
+			else {
+				throw multi;
+			}
+		}
+		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64DecodeOrHexDecode(true);
 		System.out.println("PEM + URL Encoded (corrupted) ...");
 		try {
 			certDecoded = CertificateUtils.readCertificate(config , cert);
@@ -198,6 +232,17 @@ public class CertificateReaderTest {
 			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
 		}
 		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64DecodeOrHexDecode(true);
+		System.out.println("DER + BASE64 (config UrlDecode_or_base64Decode_or_hexDecode) ...");
+		certDecoded = CertificateUtils.readCertificate(config , cert);
+		System.out.println("DER + BASE64 (config UrlDecode_or_base64Decode_or_hexDecode): "+certDecoded.getCertificate().toString());
+		if(!"Soggetto1".equals(certDecoded.getCertificate().getSubject().getCN())) {
+			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
+		}
+		
 		
 		// Esempio PEM codificato in base64
 		cert = "-----BEGIN CERTIFICATE-----\n"+
@@ -239,6 +284,17 @@ public class CertificateReaderTest {
 			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
 		}
 		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64DecodeOrHexDecode(true);
+		System.out.println("PEM + BASE64 (config UrlDecode_or_base64Decode_or_hexDecode) ...");
+		certDecoded = CertificateUtils.readCertificate(config , cert);
+		System.out.println("PEM + BASE64 (config UrlDecode_or_base64Decode_or_hexDecode): "+certDecoded.getCertificate().toString());
+		if(!"Soggetto1".equals(certDecoded.getCertificate().getSubject().getCN())) {
+			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
+		}
+		
 		// Esempio PEM codificato in base64 ma corrotto
 		cert = "ALTRICARATTERICORROMPERE" + cert;
 		//System.out.println("BASE64: "+cert);
@@ -263,6 +319,195 @@ public class CertificateReaderTest {
 				throw multi;
 			}
 		} 
+		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64DecodeOrHexDecode(true);
+		System.out.println("PEM + BASE64 (corrupted) ...");
+		try {
+			certDecoded = CertificateUtils.readCertificate(config , cert);
+		}catch(Exception multi) {
+			if(Utilities.existsInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class)) {
+				System.out.println("PEM + BASE64 (corrupted): eccezione attesa");
+				org.openspcoop2.utils.UtilsMultiException e = (org.openspcoop2.utils.UtilsMultiException) Utilities.getInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class);
+				int index = 0;
+				for (Throwable t : e.getExceptions()) {
+					System.out.println("Eccezione["+index+"]="+t.getMessage());
+					index++;
+				}
+			}
+			else {
+				throw multi;
+			}
+		} 
+		
+		
+		
+		
+		
+		// Esempio DER codificato in hex
+		cert = HexBinaryUtilities.encodeAsString(DER);
+		
+		System.out.println("HEX cert: "+cert);
+		
+		config = new CertificateDecodeConfig();
+		config.setHexDecode(true);
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		System.out.println("DER + HEX ...");
+		certDecoded = CertificateUtils.readCertificate(config , cert);
+		System.out.println("DER + HEX: "+certDecoded.getCertificate().toString());
+		if(!"Soggetto1".equals(certDecoded.getCertificate().getSubject().getCN())) {
+			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
+		}
+		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64Decode(true);
+		System.out.println("DER + HEX (config UrlDecode_or_base64Decode) ...");
+		try {
+			certDecoded = CertificateUtils.readCertificate(config , cert);
+		}catch(Exception multi) {
+			if(Utilities.existsInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class)) {
+				System.out.println("DER + HEX (config UrlDecode_or_base64Decode): eccezione attesa");
+				org.openspcoop2.utils.UtilsMultiException e = (org.openspcoop2.utils.UtilsMultiException) Utilities.getInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class);
+				int index = 0;
+				for (Throwable t : e.getExceptions()) {
+					System.out.println("Eccezione["+index+"]="+t.getMessage());
+					index++;
+				}
+			}
+			else {
+				throw multi;
+			}
+		} 
+		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64DecodeOrHexDecode(true);
+		System.out.println("DER + HEX (config UrlDecode_or_base64Decode_or_hexDecode) ...");
+		certDecoded = CertificateUtils.readCertificate(config , cert);
+		System.out.println("DER + HEX (config UrlDecode_or_base64Decode_or_hexDecode): "+certDecoded.getCertificate().toString());
+		if(!"Soggetto1".equals(certDecoded.getCertificate().getSubject().getCN())) {
+			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
+		}
+		
+		
+		// Esempio PEM codificato in hex
+		cert = "-----BEGIN CERTIFICATE-----\n"+
+		"MIICgDCCAekCBE6Vnp0wDQYJKoZIhvcNAQEFBQAwgYYxHDAaBgkqhkiG9w0BCQEW\n"+
+		"DWFwb2xpQGxpbmsuaXQxCzAJBgNVBAYTAklUMQ4wDAYDVQQIDAVJdGFseTENMAsG\n"+
+		"A1UEBwwEUGlzYTEXMBUGA1UECgwOb3BlbnNwY29vcC5vcmcxDTALBgNVBAsMBHRl\n"+
+		"c3QxEjAQBgNVBAMMCVNvZ2dldHRvMTAeFw0xMTEwMTIxNDA1MTdaFw0yMTEwMDkx\n"+
+		"NDA1MTdaMIGGMRwwGgYJKoZIhvcNAQkBFg1hcG9saUBsaW5rLml0MQswCQYDVQQG\n"+
+		"EwJJVDEOMAwGA1UECAwFSXRhbHkxDTALBgNVBAcMBFBpc2ExFzAVBgNVBAoMDm9w\n"+
+		"ZW5zcGNvb3Aub3JnMQ0wCwYDVQQLDAR0ZXN0MRIwEAYDVQQDDAlTb2dnZXR0bzEw\n"+
+		"gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAI7Zy01BmPwitnoX+rOc+zUHpOSt\n"+
+		"8JXndItBQVOfNGZ8i+qFV564eLYPHOS5pyNlG0xpivNYokO12CAANrnv4lkqG7W3\n"+
+		"lv2hX0qLlq0h+IdhV7jqTxOOVfwMiYMaI9IRiRs26Af/1RMMH3Q3KhiM4blW6q/J\n"+
+		"KkQeVPeBYqyffIZlAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEATeUM8Flh3BmhArqZ\n"+
+		"GVntBS3tEaGzHimyMUjMDncpKxR9aSIMib4t0Fq8jBCNsnQRPoUWObrdbMm7Yknm\n"+
+		"zK86buXUG6n/nJruzAM1Wp8Tqc4dN9XX7F/MAszxOLxr4Acr4jbHExsTSPD1yEo9\n"+
+		"9yRr/onMnZurvTMTwzcJgpRjheE=\n"+
+		"-----END CERTIFICATE-----";
+		cert = HexBinaryUtilities.encodeAsString(cert.getBytes());
+		
+		System.out.println("HEX: "+cert);
+		config = new CertificateDecodeConfig();
+		config.setHexDecode(true);
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		System.out.println("PEM + HEX ...");
+		certDecoded = CertificateUtils.readCertificate(config , cert);
+		System.out.println("PEM + HEX: "+certDecoded.getCertificate().toString());
+		if(!"Soggetto1".equals(certDecoded.getCertificate().getSubject().getCN())) {
+			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
+		}
+		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64Decode(true);
+		System.out.println("PEM + HEX (config UrlDecode_or_base64Decode) ...");
+		try {
+			certDecoded = CertificateUtils.readCertificate(config , cert);
+		}catch(Exception multi) {
+			if(Utilities.existsInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class)) {
+				System.out.println("PEM + HEX (config UrlDecode_or_base64Decode): eccezione attesa");
+				org.openspcoop2.utils.UtilsMultiException e = (org.openspcoop2.utils.UtilsMultiException) Utilities.getInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class);
+				int index = 0;
+				for (Throwable t : e.getExceptions()) {
+					System.out.println("Eccezione["+index+"]="+t.getMessage());
+					index++;
+				}
+			}
+			else {
+				throw multi;
+			}
+		} 
+		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64DecodeOrHexDecode(true);
+		System.out.println("PEM + HEX (config UrlDecode_or_base64Decode_or_hexDecode) ...");
+		certDecoded = CertificateUtils.readCertificate(config , cert);
+		System.out.println("PEM + HEX (config UrlDecode_or_base64Decode_or_hexDecode): "+certDecoded.getCertificate().toString());
+		if(!"Soggetto1".equals(certDecoded.getCertificate().getSubject().getCN())) {
+			throw new Exception("CN '"+certDecoded.getCertificate().getSubject().getCN()+"' differente da quello atteso");
+		}
+		
+		
+		// Esempio PEM codificato in base64 ma corrotto
+		cert = "ALTRICARATTERICORROMPERE" + cert;
+		//System.out.println("BASE64: "+cert);
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64Decode(true);
+		System.out.println("PEM + HEX (corrupted) ...");
+		try {
+			certDecoded = CertificateUtils.readCertificate(config , cert);
+		}catch(Exception multi) {
+			if(Utilities.existsInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class)) {
+				System.out.println("PEM + BASE64 (corrupted): eccezione attesa");
+				org.openspcoop2.utils.UtilsMultiException e = (org.openspcoop2.utils.UtilsMultiException) Utilities.getInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class);
+				int index = 0;
+				for (Throwable t : e.getExceptions()) {
+					System.out.println("Eccezione["+index+"]="+t.getMessage());
+					index++;
+				}
+			}
+			else {
+				throw multi;
+			}
+		} 
+		
+		config = new CertificateDecodeConfig();
+		config.setBase64Decode(false);
+		config.setUrlDecode(false);
+		config.setUrlDecodeOrBase64DecodeOrHexDecode(true);
+		System.out.println("PEM + HEX (corrupted) ...");
+		try {
+			certDecoded = CertificateUtils.readCertificate(config , cert);
+		}catch(Exception multi) {
+			if(Utilities.existsInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class)) {
+				System.out.println("PEM + BASE64 (corrupted): eccezione attesa");
+				org.openspcoop2.utils.UtilsMultiException e = (org.openspcoop2.utils.UtilsMultiException) Utilities.getInnerException(multi, org.openspcoop2.utils.UtilsMultiException.class);
+				int index = 0;
+				for (Throwable t : e.getExceptions()) {
+					System.out.println("Eccezione["+index+"]="+t.getMessage());
+					index++;
+				}
+			}
+			else {
+				throw multi;
+			}
+		} 
+		
 	}
 
 }

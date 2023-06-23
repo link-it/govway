@@ -34,6 +34,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.slf4j.Logger;
 import org.springframework.web.util.UriUtils;
@@ -687,13 +688,14 @@ public class CertificateUtils {
 	}
 	
 	private static Certificate readCertificateEngine(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
-		if(config.isUrlDecodeOrBase64Decode()) {
+		if(config.isUrlDecodeOrBase64Decode() || config.isUrlDecodeOrBase64DecodeOrHexDecode()) {
 			
 			Throwable tUrlDecode = null;
 			try {
 				config.setUrlDecode(true);
 				config.setBase64Decode(false);
-				return readCertificateEngineEngine(config, certificateParam, charset);
+				config.setHexDecode(false);
+				return readCertificateEngineByConfig(config, certificateParam, charset);
 			}catch(Exception t) {
 				tUrlDecode = t;
 			}
@@ -702,19 +704,35 @@ public class CertificateUtils {
 			try {
 				config.setUrlDecode(false);
 				config.setBase64Decode(true);
-				return readCertificateEngineEngine(config, certificateParam, charset);
+				config.setHexDecode(false);
+				return readCertificateEngineByConfig(config, certificateParam, charset);
 			}catch(Exception t) {
 				tBase64Decode = t;
 			}
 			
-			UtilsMultiException uMulti = new UtilsMultiException("Decodifica non riuscita", tUrlDecode, tBase64Decode);
+			Throwable tHexDecode = null;
+			if(config.isUrlDecodeOrBase64DecodeOrHexDecode()) {
+				try {
+					config.setUrlDecode(false);
+					config.setBase64Decode(false);
+					config.setHexDecode(true);
+					return readCertificateEngineByConfig(config, certificateParam, charset);
+				}catch(Exception t) {
+					tHexDecode = t;
+				}
+			}
+			
+			UtilsMultiException uMulti = config.isUrlDecodeOrBase64DecodeOrHexDecode() ?
+				new UtilsMultiException("Decodifica non riuscita", tUrlDecode, tBase64Decode, tHexDecode)	
+					:
+				new UtilsMultiException("Decodifica non riuscita", tUrlDecode, tBase64Decode);
 			throw new UtilsException(uMulti.getMessage(),uMulti);
 		}
 		else {
-			return readCertificateEngineEngine(config, certificateParam, charset);
+			return readCertificateEngineByConfig(config, certificateParam, charset);
 		}
 	}
-	private static Certificate readCertificateEngineEngine(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
+	private static Certificate readCertificateEngineByConfig(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
 		
 		if(certificateParam==null || "".equals(certificateParam)){
 			throw new UtilsException("Certificate non fornito");
@@ -750,6 +768,9 @@ public class CertificateUtils {
 			byte [] certBytes = null;
 			if(config.isBase64Decode()) {
 				certBytes = Base64Utilities.decode(certificate);
+			}
+			else if(config.isHexDecode()) {
+				certBytes = HexBinaryUtilities.decode(certificate);
 			}
 			else {
 				certBytes = certificate.getBytes(charset);
