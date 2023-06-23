@@ -204,7 +204,7 @@
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="TokenFirmati" enabled="true">
           <stringProp name="filename">${dirFile}/rest/sicurezza/${profiloSicurezza}/${dimensioneRichiesta}B.json.hdr</stringProp>
           <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">hdrAuthTokenName,hdrAuthTokenValue,hdrAgidTokenName,hdrAgidTokenValue,digestValue</stringProp>
+          <stringProp name="variableNames">hdrAuthTokenName,hdrAuthTokenValue,hdrAgidTokenName,hdrAgidTokenValue,digestValue,hdrAgidAuditTokenName,hdrAgidAuditTokenValue</stringProp>
           <boolProp name="ignoreFirstLine">false</boolProp>
           <stringProp name="delimiter">,</stringProp>
           <boolProp name="quotedData">false</boolProp>
@@ -260,6 +260,10 @@
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">${hdrAgidTokenName}</stringProp>
                 <stringProp name="Header.value">${hdrAgidTokenValue}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">${hdrAgidAuditTokenName}</stringProp>
+                <stringProp name="Header.value">${hdrAgidAuditTokenValue}</stringProp>
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">GovWay-StressTest-SleepMin</stringProp>
