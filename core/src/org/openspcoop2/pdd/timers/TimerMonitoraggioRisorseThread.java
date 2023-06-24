@@ -65,22 +65,35 @@ import org.slf4j.Logger;
  */
 public class TimerMonitoraggioRisorseThread extends BaseThread{
 
-	private static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	private static TimerState state = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
 	
 	public static TimerState getSTATE() {
-		return STATE;
+		return state;
 	}
 	public static void setSTATE(TimerState sTATE) {
-		STATE = sTATE;
+		state = sTATE;
 	}
 
 	/** Indicazione di risorse correttamente disponibili */
-	public static boolean risorseDisponibili = true;
-	
+	private static boolean risorseDisponibili = true;
+	private static void setRisorseDisponibili(boolean risorseDisponibili) {
+		TimerMonitoraggioRisorseThread.risorseDisponibili = risorseDisponibili;
+	}
+	public static boolean isRisorseDisponibili() {
+		return risorseDisponibili;
+	}
+
 	/** Motivo dell'errore */
-	public static Exception risorsaNonDisponibile = null;
-	
-	 /** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
+	private static Exception risorsaNonDisponibileEccezione = null;
+	public static Exception getRisorsaNonDisponibile() {
+		return risorsaNonDisponibileEccezione;
+	}
+	private static void setRisorsaNonDisponibile(Exception risorsaNonDisponibile) {
+		TimerMonitoraggioRisorseThread.risorsaNonDisponibileEccezione = risorsaNonDisponibile;
+		TimerMonitoraggioRisorseThread.risorseDisponibili =  false;
+	}
+
+	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
     public static final String ID_MODULO = "MonitoraggioRisorse";
 	 
     
@@ -94,6 +107,16 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 	
 	/** Logger per debug */
 	private Logger logger = null;
+	private void logDebug(String msg) {
+		if(this.logger!=null) {
+			this.logger.debug(msg);
+		}
+	}
+	private void logWarn(String msg) {
+		if(this.logger!=null) {
+			this.logger.warn(msg);
+		}
+	}
 	
 	/** Risorsa: DB di OpenSPCoop */
 	private DBManager dbManager=null;
@@ -139,7 +162,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 		if(this.propertiesReader.isAbilitatoControlloRisorseTracciamentiPersonalizzati()){
 			this.tracciamentiPersonalizzati = OpenSPCoop2Logger.getLoggerTracciamentoOpenSPCoopAppender();
 			this.tipiTracciamentiPersonalizzati = OpenSPCoop2Logger.getTipoTracciamentoOpenSPCoopAppender();
-			if(this.propertiesReader.isTransazioniUsePddRuntimeDatasource()==false) {
+			if(!this.propertiesReader.isTransazioniUsePddRuntimeDatasource()) {
 				this.dbTransazioniManager = DBTransazioniManager.getInstance();
 			}
 		}
@@ -169,7 +192,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 			this.msgDiag.logPersonalizzato("avvioEffettuato");
 			
 			String risorsaNonDisponibile = null;
-			while(this.isStop() == false){
+			while(!this.isStop()){
 				boolean checkRisorseDisponibili = true;
 				
 				// Controllo che il sistema non sia andando in shutdown
@@ -178,7 +201,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					return;
 				}
 				
-				if(TimerState.ENABLED.equals(STATE)) {
+				if(TimerState.ENABLED.equals(state)) {
 				
 					String descrizione = null;
 					
@@ -189,17 +212,17 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 						try{
 							for(int i=0; i< this.tipiMsgDiagnosticiPersonalizzati.size(); i++){
 								tipoMsgDiagnostico = this.tipiMsgDiagnosticiPersonalizzati.get(i);
-								this.logger.debug("Controllo MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati()+")");
+								this.logDebug("Controllo MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati()+")");
 								Throwable t = null;
 								for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati(); j++) {
 									try {
-										this.logger.debug("MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] check '"+j+"' ...");
+										this.logDebug("MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] check '"+j+"' ...");
 										this.msgDiagnosticiPersonalizzati.get(i).isAlive();
-										this.logger.debug("MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] check '"+j+"' ok");
+										this.logDebug("MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] check '"+j+"' ok");
 										t=null;
 										break;
-									}catch(Throwable tAlive) {
-										this.logger.debug("MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] check '"+j+"' failed: "+tAlive.getMessage());
+									}catch(Throwable tAlive) { // Volutamente Throwable
+										this.logDebug("MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] check '"+j+"' failed: "+tAlive.getMessage());
 										t = tAlive;
 										// faccio un altro tentativo
 										Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati());
@@ -209,9 +232,9 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 									throw t;
 								}
 							}
-						}catch(Throwable e){
+						}catch(Throwable e){ // Volutamente Throwable
 							risorsaNonDisponibile = "[MessaggioDiagnosticoAppender "+tipoMsgDiagnostico+"]";
-							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							TimerMonitoraggioRisorseThread.setRisorsaNonDisponibile(new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e));
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 							descrizione = risorsaNonDisponibile+" "+e.getMessage();
 							checkRisorseDisponibili = false;
@@ -220,17 +243,17 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					// Database
 					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseDB()){
 						try{
-							this.logger.debug("Controllo Database (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseDB()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseDB()+")");
+							this.logDebug("Controllo Database (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseDB()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseDB()+")");
 							Throwable t = null;
 							for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseDB(); j++) {
 								try {
-									this.logger.debug("Database check '"+j+"' ...");
+									this.logDebug("Database check '"+j+"' ...");
 									this.dbManager.isAlive();
-									this.logger.debug("Database check '"+j+"' ok");
+									this.logDebug("Database check '"+j+"' ok");
 									t=null;
 									break;
-								}catch(Throwable tAlive) {
-									this.logger.debug("Database check '"+j+"' failed: "+tAlive.getMessage());
+								}catch(Throwable tAlive) { // Volutamente Throwable
+									this.logDebug("Database check '"+j+"' failed: "+tAlive.getMessage());
 									t = tAlive;
 									// faccio un altro tentativo
 									Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseDB());
@@ -239,9 +262,9 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 							if(t!=null) {
 								throw t;
 							}	
-						}catch(Throwable e){
+						}catch(Throwable e){ // Volutamente Throwable
 							risorsaNonDisponibile = "[Database]";
-							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							TimerMonitoraggioRisorseThread.setRisorsaNonDisponibile(new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e));
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 							descrizione = risorsaNonDisponibile+" "+e.getMessage();
 							checkRisorseDisponibili = false;
@@ -251,17 +274,17 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					if(this.propertiesReader.isServerJ2EE()){
 						if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseJMS()){
 							try{
-								this.logger.debug("Controllo BrokerJMS (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseJMS()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseJMS()+")");
+								this.logDebug("Controllo BrokerJMS (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseJMS()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseJMS()+")");
 								Throwable t = null;
 								for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseJMS(); j++) {
 									try {
-										this.logger.debug("BrokerJMS check '"+j+"' ...");
+										this.logDebug("BrokerJMS check '"+j+"' ...");
 										this.queueManager.isAlive();
-										this.logger.debug("BrokerJMS check '"+j+"' ok");
+										this.logDebug("BrokerJMS check '"+j+"' ok");
 										t=null;
 										break;
 									}catch(Throwable tAlive) {
-										this.logger.debug("BrokerJMS check '"+j+"' failed: "+tAlive.getMessage());
+										this.logDebug("BrokerJMS check '"+j+"' failed: "+tAlive.getMessage());
 										t = tAlive;
 										// faccio un altro tentativo
 										Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseJMS());
@@ -270,9 +293,9 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 								if(t!=null) {
 									throw t;
 								}	
-							}catch(Throwable e){
+							}catch(Throwable e){ // Volutamente Throwable
 								risorsaNonDisponibile = "[Broker JMS]";
-								TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+								TimerMonitoraggioRisorseThread.setRisorsaNonDisponibile(new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e));
 								this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 								descrizione = risorsaNonDisponibile+" "+e.getMessage();
 								checkRisorseDisponibili = false;
@@ -282,17 +305,17 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					// Configurazione
 					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseConfigurazione()){
 						try{
-							this.logger.debug("Controllo Configurazione (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseConfigurazione()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione()+")");
+							this.logDebug("Controllo Configurazione (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseConfigurazione()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione()+")");
 							Throwable t = null;
 							for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseConfigurazione(); j++) {
 								try {
-									this.logger.debug("Configurazione check '"+j+"' ...");
+									this.logDebug("Configurazione check '"+j+"' ...");
 									this.configPdDReader.isAlive();
-									this.logger.debug("Configurazione check '"+j+"' ok");
+									this.logDebug("Configurazione check '"+j+"' ok");
 									t=null;
 									break;
 								}catch(Throwable tAlive) {
-									this.logger.debug("Configurazione check '"+j+"' failed: "+tAlive.getMessage());
+									this.logDebug("Configurazione check '"+j+"' failed: "+tAlive.getMessage());
 									t = tAlive;
 									// faccio un altro tentativo
 									Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione());
@@ -301,9 +324,9 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 							if(t!=null) {
 								throw t;
 							}	
-						}catch(Throwable e){
+						}catch(Throwable e){ // Volutamente Throwable
 							risorsaNonDisponibile = "[Configurazione]";
-							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							TimerMonitoraggioRisorseThread.setRisorsaNonDisponibile(new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e));
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 							descrizione = risorsaNonDisponibile+" "+e.getMessage();
 							checkRisorseDisponibili = false;
@@ -312,7 +335,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					// Configurazione, validazione semantica
 					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloValidazioneSemanticaConfigurazione()){
 						try{
-							this.logger.debug("Controllo Validazione semantica della Configurazione");
+							this.logDebug("Controllo Validazione semantica della Configurazione");
 							ClassNameProperties classNameReader = ClassNameProperties.getInstance();
 							this.configPdDReader.validazioneSemantica(classNameReader.getConnettore(), 
 									classNameReader.getMsgDiagnosticoOpenSPCoopAppender(),
@@ -326,9 +349,9 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 									true,
 									true,
 									true, null);
-						}catch(Throwable e){
+						}catch(Throwable e){ // Volutamente Throwable
 							risorsaNonDisponibile = "[Validazione semantica della Configurazione]";
-							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							TimerMonitoraggioRisorseThread.setRisorsaNonDisponibile(new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e));
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 							descrizione = risorsaNonDisponibile+" "+e.getMessage();
 							checkRisorseDisponibili = false;
@@ -337,17 +360,17 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					// Registro dei Servizi
 					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseRegistriServizi()){
 						try{
-							this.logger.debug("Controllo Registri dei Servizi (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseRegistriServizi()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi()+")");
+							this.logDebug("Controllo Registri dei Servizi (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseRegistriServizi()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi()+")");
 							Throwable t = null;
 							for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseRegistriServizi(); j++) {
 								try {
-									this.logger.debug("Registri dei Servizi check '"+j+"' ...");
+									this.logDebug("Registri dei Servizi check '"+j+"' ...");
 									this.registriPdDReader.isAlive(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale());
-									this.logger.debug("Registri dei Servizi check '"+j+"' ok");
+									this.logDebug("Registri dei Servizi check '"+j+"' ok");
 									t=null;
 									break;
-								}catch(Throwable tAlive) {
-									this.logger.debug("Registri dei Servizi check '"+j+"' failed: "+tAlive.getMessage());
+								}catch(Throwable tAlive) { // Volutamente Throwable
+									this.logDebug("Registri dei Servizi check '"+j+"' failed: "+tAlive.getMessage());
 									t = tAlive;
 									// faccio un altro tentativo
 									Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi());
@@ -356,9 +379,9 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 							if(t!=null) {
 								throw t;
 							}	
-						}catch(Throwable e){
+						}catch(Throwable e){ // Volutamente Throwable
 							risorsaNonDisponibile = "[Registri dei Servizi]";
-							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							TimerMonitoraggioRisorseThread.setRisorsaNonDisponibile(new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e));
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 							descrizione = risorsaNonDisponibile+" "+e.getMessage();
 							checkRisorseDisponibili = false;
@@ -368,7 +391,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloValidazioneSemanticaRegistriServizi()){
 						try{
 							ProtocolFactoryManager pFactoryManager = ProtocolFactoryManager.getInstance();
-							this.logger.debug("Controllo Validazione semantica del Registri dei Servizi");
+							this.logDebug("Controllo Validazione semantica del Registri dei Servizi");
 							this.registriPdDReader.validazioneSemantica(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(), 
 									this.propertiesReader.isValidazioneSemanticaRegistroServiziCheckURI(), 
 									pFactoryManager.getOrganizationTypesAsArray(),
@@ -378,9 +401,9 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 									true,
 									true,
 									null);
-						}catch(Throwable e){
+						}catch(Throwable e){ // Volutamente Throwable
 							risorsaNonDisponibile = "[Validazione semantica del Registri dei Servizi]";
-							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							TimerMonitoraggioRisorseThread.setRisorsaNonDisponibile(new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e));
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 							descrizione = risorsaNonDisponibile+" "+e.getMessage();
 							checkRisorseDisponibili = false;
@@ -392,17 +415,17 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 						try{
 							for(int i=0; i< this.tipiTracciamentiPersonalizzati.size(); i++){
 								tipoTracciamento = this.tipiTracciamentiPersonalizzati.get(i);
-								this.logger.debug("Controllo TracciamentoPersonalizzato ["+tipoTracciamento+"] (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati()+")");
+								this.logDebug("Controllo TracciamentoPersonalizzato ["+tipoTracciamento+"] (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati()+")");
 								Throwable t = null;
 								for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati(); j++) {
 									try {
-										this.logger.debug("TracciamentoPersonalizzato ["+tipoTracciamento+"] check '"+j+"' ...");
+										this.logDebug("TracciamentoPersonalizzato ["+tipoTracciamento+"] check '"+j+"' ...");
 										this.tracciamentiPersonalizzati.get(i).isAlive();
-										this.logger.debug("TracciamentoPersonalizzato ["+tipoTracciamento+"] check '"+j+"' ok");
+										this.logDebug("TracciamentoPersonalizzato ["+tipoTracciamento+"] check '"+j+"' ok");
 										t=null;
 										break;
-									}catch(Throwable tAlive) {
-										this.logger.debug("TracciamentoPersonalizzato ["+tipoTracciamento+"] check '"+j+"' failed: "+tAlive.getMessage());
+									}catch(Throwable tAlive) { // Volutamente Throwable
+										this.logDebug("TracciamentoPersonalizzato ["+tipoTracciamento+"] check '"+j+"' failed: "+tAlive.getMessage());
 										t = tAlive;
 										// faccio un altro tentativo
 										Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati());
@@ -412,9 +435,9 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 									throw t;
 								}
 							}
-						}catch(Throwable e){
+						}catch(Throwable e){ // Volutamente Throwable
 							risorsaNonDisponibile = "[TracciamentoAppender "+tipoTracciamento+"]";
-							TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+							TimerMonitoraggioRisorseThread.setRisorsaNonDisponibile(new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e));
 							this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 							descrizione = risorsaNonDisponibile+" "+e.getMessage();
 							checkRisorseDisponibili = false;
@@ -423,17 +446,17 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 						// nel tracciamento considero anche le transazioni
 						if(checkRisorseDisponibili && this.propertiesReader.isTransazioniUsePddRuntimeDatasource()==false) {
 							try{
-								this.logger.debug("Controllo Database Transazioni (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati()+")");
+								this.logDebug("Controllo Database Transazioni (iterazioni:"+this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati()+" checkInterval:"+this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati()+")");
 								Throwable t = null;
 								for (int j = 0; j < this.propertiesReader.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati(); j++) {
 									try {
-										this.logger.debug("Database Transazioni check '"+j+"' ...");
+										this.logDebug("Database Transazioni check '"+j+"' ...");
 										this.dbTransazioniManager.isAlive();
-										this.logger.debug("Database Transazioni check '"+j+"' ok");
+										this.logDebug("Database Transazioni check '"+j+"' ok");
 										t=null;
 										break;
-									}catch(Throwable tAlive) {
-										this.logger.debug("Database Transazioni check '"+j+"' failed: "+tAlive.getMessage());
+									}catch(Throwable tAlive) { // Volutamente Throwable
+										this.logDebug("Database Transazioni check '"+j+"' failed: "+tAlive.getMessage());
 										t = tAlive;
 										// faccio un altro tentativo
 										Utilities.sleep(this.propertiesReader.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati());
@@ -442,9 +465,9 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 								if(t!=null) {
 									throw t;
 								}
-							}catch(Throwable e){
+							}catch(Throwable e){ // Volutamente Throwable
 								risorsaNonDisponibile = "[DatabaseTransazioni]";
-								TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+								TimerMonitoraggioRisorseThread.setRisorsaNonDisponibile(new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e));
 								this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 								descrizione = risorsaNonDisponibile+" "+e.getMessage();
 								checkRisorseDisponibili = false;
@@ -456,7 +479,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 					// avvisi
 					if(risorsaNonDisponibile!=null)
 						this.msgDiag.addKeyword(CostantiPdD.KEY_RISORSA_NON_DISPONIBILE, risorsaNonDisponibile);
-					if(checkRisorseDisponibili==false && this.lastCheck==true){
+					if(!checkRisorseDisponibili && this.lastCheck){
 						if(risorsaNonDisponibile!=null && (risorsaNonDisponibile.startsWith("[MessaggioDiagnosticoAppender")==false) ){
 							if(risorsaNonDisponibile.startsWith("[Validazione semantica")){
 								this.msgDiag.logPersonalizzato("validazioneSemanticaFallita");
@@ -465,18 +488,18 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 							}
 						}
 						else
-							this.logger.warn("Il Monitoraggio delle risorse ha rilevato che la risorsa "+risorsaNonDisponibile+" non e' raggiungibile, tutti i servizi/moduli della porta di dominio sono momentanemanete sospesi.");
+							this.logWarn("Il Monitoraggio delle risorse ha rilevato che la risorsa "+risorsaNonDisponibile+" non e' raggiungibile, tutti i servizi/moduli della porta di dominio sono momentanemanete sospesi.");
 						
 						registraEvento(false, descrizione);
 						
-					}else if(checkRisorseDisponibili==true && this.lastCheck==false){
+					}else if(checkRisorseDisponibili && !this.lastCheck){
 						this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
 						risorsaNonDisponibile = null;
 						
 						registraEvento(true, this.msgDiag.getMessaggio_replaceKeywords("risorsaRitornataDisponibile"));
 					}
 					this.lastCheck = checkRisorseDisponibili;
-					TimerMonitoraggioRisorseThread.risorseDisponibili = checkRisorseDisponibili;
+					TimerMonitoraggioRisorseThread.setRisorseDisponibili(checkRisorseDisponibili);
 					
 				}
 				else {
@@ -498,18 +521,17 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources();
 		Evento evento = null;
 		try{
-			if(this.gestoreEventi!=null){
-				if(this.propertiesReader.isControlloRisorseRegistrazioneEvento()){
-					evento = new Evento();
-					evento.setTipo(TipoEvento.STATO_GATEWAY.getValue());
-					evento.setCodice(risorseDisponibili ? CodiceEventoStatoGateway.RISORSE_SISTEMA_DISPONIBILI.getValue() : CodiceEventoStatoGateway.RISORSE_SISTEMA_NON_DISPONIBILI.getValue());
-					evento.setSeverita(risorseDisponibili ? SeveritaConverter.toIntValue(TipoSeverita.INFO) : SeveritaConverter.toIntValue(TipoSeverita.ERROR));
-					evento.setClusterId(clusterID);
-					evento.setDescrizione(descrizione);
-					this.gestoreEventi.log(evento,true);
-				}
+			if(this.gestoreEventi!=null &&
+				this.propertiesReader.isControlloRisorseRegistrazioneEvento()){
+				evento = new Evento();
+				evento.setTipo(TipoEvento.STATO_GATEWAY.getValue());
+				evento.setCodice(risorseDisponibili ? CodiceEventoStatoGateway.RISORSE_SISTEMA_DISPONIBILI.getValue() : CodiceEventoStatoGateway.RISORSE_SISTEMA_NON_DISPONIBILI.getValue());
+				evento.setSeverita(risorseDisponibili ? SeveritaConverter.toIntValue(TipoSeverita.INFO) : SeveritaConverter.toIntValue(TipoSeverita.ERROR));
+				evento.setClusterId(clusterID);
+				evento.setDescrizione(descrizione);
+				this.gestoreEventi.log(evento,true);
 			}
-		}catch(Exception e){
+		}catch(Throwable e){ // Volutamente Throwable
 			// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
 			log.debug("Errore durante la registrazione dell'evento (risorse disponibili:"+descrizione+" '"+descrizione+"'): "+e.getMessage(),e);
 			if(evento!=null){

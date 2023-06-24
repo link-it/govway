@@ -47,7 +47,7 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
       # Certificato tramite l'header:
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate=#CLIENT-CERT_HEADER-NAME#
 
-   Il certificato inserito nell'header http dal frontend può essere stato codificato in base64 e/o tramite url encoding. È possibile effettuare la decodifica abilitando uno o più delle seguenti proprietà: 
+   Il certificato inserito nell'header http dal frontend può essere stato codificato in base64/hex e/o tramite url encoding. È possibile effettuare la decodifica abilitando uno o più delle seguenti proprietà: 
 
    ::
 
@@ -55,16 +55,18 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode=false
       # Indicazione se l'header valorizzato con il certificato è base64 encoded:
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode=false
-      # Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded (verranno provate entrambe le decodifiche):
-      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode=false
+      # Indicazione se l'header valorizzato con il certificato è hex encoded:
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.hex_decode=false
+      # Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded o hex encoded (verranno provate tutte le decodifiche):
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode_or_hex_decode=false
                                       
    .. note::
 
-      La proprietà 'url_decode_or_base64_decode' è abilitata per default: deve essere definita con il valore 'false' per poterla disabilitare.
+      La proprietà 'url_decode_or_base64_decode_or_hex_decode' è abilitata per default: deve essere definita con il valore 'false' per poterla disabilitare.
 
    .. note::
 
-      Se viene abilitata la proprietà 'url_decode_or_base64_decode', viene provata la decodificata del certificato ricevuto prima tramite urlDecode e successivamente, solamente se la decodifica non va a buon fine, viene provata la modalità base64. Le due modalità vengono quindi utilizzate in alternativa. Se si desidera effettuare entrambe le decodifiche sul certificato (prima urlDecode e a seguire base64Decode), deve essere disabilita la proprietà 'url_decode_or_base64_decode' e devono essere abilitate le due modalità singole 'url_decode' e 'base64_decode'.
+      Se viene abilitata la proprietà 'url_decode_or_base64_decode_or_hex_decode', viene provata la decodificata del certificato ricevuto prima tramite urlDecode e successivamente, solamente se la decodifica non va a buon fine, viene provata la modalità base64 e infine la modalità hex. Le tre modalità vengono quindi utilizzate in alternativa. Se si desidera effettuare entrambe le decodifiche sul certificato (prima urlDecode e a seguire base64Decode o hexDecode), deve essere disabilita la proprietà 'url_decode_or_base64_decode_or_hex_decode' e devono essere abilitate le due modalità singole 'url_decode' e 'base64_decode' o 'hex_decode'.
                                 
    La modalità di ricezione di un certificato x.509 in un header HTTP consente anche di definire un truststore per verificare nuovamente i certificati ricevuti dal FrontEnd tramite la seguente configurazione:
 

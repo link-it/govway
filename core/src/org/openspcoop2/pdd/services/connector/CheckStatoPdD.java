@@ -242,26 +242,32 @@ public class CheckStatoPdD extends HttpServlet {
 						
 		if( !OpenSPCoop2Startup.initialize){
 			serializeNotInitializedResponse(res, log);
+			return;
 		}
-		else if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
-			String msg = "Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage();
-			sendError(res, log, msg, 500, TimerMonitoraggioRisorseThread.risorsaNonDisponibile); 
+		else if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+			String msg = "Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage();
+			sendError(res, log, msg, 500, TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile()); 
+			return;
 		}
 		else if( !TimerThresholdThread.freeSpace){
 			String msg = "Non sono disponibili abbastanza risorse per la gestione della richiesta";
 			sendError(res, log, msg, 500); 
+			return;
 		}
 		else if( !Tracciamento.tracciamentoDisponibile){
 			String msg = "Tracciatura non disponibile: "+Tracciamento.motivoMalfunzionamentoTracciamento.getMessage();
-			sendError(res, log, msg, 500, Tracciamento.motivoMalfunzionamentoTracciamento); 	
+			sendError(res, log, msg, 500, Tracciamento.motivoMalfunzionamentoTracciamento); 
+			return;
 		}
 		else if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
 			String msg = "Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage();
-			sendError(res, log, msg, 500, MsgDiagnostico.motivoMalfunzionamentoDiagnostici); 		
+			sendError(res, log, msg, 500, MsgDiagnostico.motivoMalfunzionamentoDiagnostici); 	
+			return;
 		}
 		else if( !Dump.isSistemaDumpDisponibile()){
 			String msg = "Sistema di dump dei contenuti applicativi non disponibile: "+Dump.getMotivoMalfunzionamentoDump().getMessage();
 			sendError(res, log, msg, 500, Dump.getMotivoMalfunzionamentoDump()); 
+			return;
 		}
 		
 		if(properties.isCheckHealthCheckApiRestEnabled()) {

@@ -1,0 +1,48 @@
+diff --git ant/setup/deploy/resources/core/govway_local.properties ant/setup/deploy/resources/core/govway_local.properties
+index c6e8b32503..129f9314f6 100644
+--- ant/setup/deploy/resources/core/govway_local.properties
++++ ant/setup/deploy/resources/core/govway_local.properties
+@@ -115,8 +115,10 @@ org.openspcoop2.pdd.services.pd.gestoreCredenziali.modalita=atLeastOne
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.url_decode=true/false
+ # Indicazione se l'header valorizzato con il certificato è base64 encoded:
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.base64_decode=true/false
+-# Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded (verranno provate entrambe le decodifiche):
+-#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode=true/false
++# Indicazione se l'header valorizzato con il certificato è hex encoded:
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.hex_decode=true/false
++# Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded (verranno provate tutte le decodifiche):
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode_or_hex_decode=true/false
+ # TrustStore per verificare i certificati ricevuti
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.path=PATH
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.type=jks
+@@ -127,6 +129,8 @@ org.openspcoop2.pdd.services.pd.gestoreCredenziali.modalita=atLeastOne
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.crls=PATH1.crl,PATH2.crl...
+ # Policy OCSP utilizzata per verificare i certificati ricevuti
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.ocspPolicy=INDICARE_TIPO_POLICY
++# Se la proprietà seguente viene valorizzata, il valore indicato specifica una keyword utilizzata dal web server di frontend per indicare che non è presente alcun certificato client
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.none=
+ #
+ # L'identità del chiamante può essere fornita dal WebServer anche come informazione 'principal' tramite il seguente header:
+ #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.principal=X-Principal
+@@ -164,8 +168,10 @@ org.openspcoop2.pdd.services.pa.gestoreCredenziali.modalita=atLeastOne
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode=true/false
+ # Indicazione se l'header valorizzato con il certificato è base64 encoded:
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode=true/false
+-# Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded (verranno provate entrambe le decodifiche):
+-#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode=true/false
++# Indicazione se l'header valorizzato con il certificato è hex encoded:
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.hex_decode=true/false
++# Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded o hex encoded (verranno provate tutte le decodifiche):
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode_or_hex_decode=true/false
+ # TrustStore per verificare i certificati ricevuti
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.path=PATH
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.type=jks
+@@ -176,6 +182,8 @@ org.openspcoop2.pdd.services.pa.gestoreCredenziali.modalita=atLeastOne
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.crls=PATH1.crl,PATH2.crl...
+ # Policy OCSP utilizzata per verificare i certificati ricevuti
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.ocspPolicy=INDICARE_TIPO_POLICY
++# Se la proprietà seguente viene valorizzata, il valore indicato specifica una keyword utilizzata dal web server di frontend per indicare che non è presente alcun certificato client
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.none=
+ #
+ # L'identità del chiamante può essere fornita dal WebServer anche come informazione 'principal' tramite il seguente header:
+ #org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.principal=X-Principal

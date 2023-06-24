@@ -143,8 +143,8 @@ public class TimerGestoreOperazioniRemoteLib {
 		}
 
 		// Controllo risorse di sistema disponibili
-		if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
-			this.logTimerError("["+TimerGestoreOperazioniRemote.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+		if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+			this.logTimerError("["+TimerGestoreOperazioniRemote.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 			return;
 		}
 		if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){

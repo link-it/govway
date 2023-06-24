@@ -395,7 +395,8 @@ public class DBManager implements IMonitoraggioRisorsa {
 		idSoggettAlive.setNome("DBManager");
 		try {
 			try{
-				resource = this.getResource(idSoggettAlive, "CheckIsAlive", null);
+				resource = this.getResource(idSoggettAlive, "CheckIsAlive", null,
+						false); // verra' loggato nel servizio di check, altrimenti ad ogni test viene registrato l'errore
 			}catch(Exception e){
 				throw e;
 			}

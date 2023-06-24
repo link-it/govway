@@ -182,7 +182,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 		}
 		
 		// Controllo che l'inizializzazione corretta delle risorse sia effettuata
-		if(OpenSPCoop2Startup.initialize==false){
+		if(!OpenSPCoop2Startup.initialize){
 			this.msgDiag.logFatalError("inizializzazione di OpenSPCoop non effettuata", "Check Inizializzazione");
 			String msgErrore = "Riscontrato errore: inizializzazione del Timer o di OpenSPCoop non effettuata";
 			this.logTimer.error(msgErrore);
@@ -190,11 +190,11 @@ public class TimerGestoreBusteNonRiscontrateLib {
 		}
 
 		// Controllo risorse di sistema disponibili
-		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
-			this.logTimer.error("["+TimerGestoreBusteNonRiscontrate.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+		if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+			this.logTimer.error("["+TimerGestoreBusteNonRiscontrate.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 			return;
 		}
-		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
+		if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
 			this.logTimer.error("["+TimerGestoreBusteNonRiscontrate.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 			return;
 		}
@@ -254,14 +254,13 @@ public class TimerGestoreBusteNonRiscontrateLib {
 							this.propertiesReader.getTimerGestoreRiscontriRicevute_getLockCheckInterval());
 					
 					busteOneWayToSend = rBuste.getBustePerUlterioreInoltro(this.timeout,this.limit,offsetRiscontri,this.logQuery);
-					if(this.logQuery){
-						if( (busteOneWayToSend != null) && (busteOneWayToSend.size()<=0)){
-							this.logTimer.info("Non sono state trovate buste con profilo oneway non riscontrate da rispedire");
-						}
+					if(this.logQuery &&
+						 (busteOneWayToSend != null) && (busteOneWayToSend.isEmpty())){
+						this.logTimer.info("Non sono state trovate buste con profilo oneway non riscontrate da rispedire");
 					}
 		
 					// Gestione buste da re-spedire
-					while ( (busteOneWayToSend != null) && (busteOneWayToSend.size()>0) ) {
+					while ( (busteOneWayToSend != null) && (!busteOneWayToSend.isEmpty()) ) {
 		
 						if(this.logQuery)
 							this.logTimer.info("Trovate "+busteOneWayToSend.size()+" buste con profilo oneway non riscontrate da rispedire ...");

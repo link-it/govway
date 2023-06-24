@@ -146,8 +146,8 @@ public class ConsegnaContenutiApplicativiMDB implements MessageDrivenBean, Messa
 			}
 			
 			/* ----------- Controllo risorse disponibili --------------- */
-			if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
-				log.error("["+ConsegnaContenutiApplicativi.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+			if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+				log.error("["+ConsegnaContenutiApplicativi.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}

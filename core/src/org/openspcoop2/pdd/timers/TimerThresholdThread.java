@@ -120,7 +120,7 @@ public class TimerThresholdThread extends BaseThread{
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.propertiesReader.getRepositoryThresholdCheckInterval()+" "+sec);
 			this.msgDiag.logPersonalizzato("avvioEffettuato");
 			
-			while(this.isStop() == false){
+			while(!this.isStop()){
 				
 				// Controllo che il sistema non sia andando in shutdown
 				if(OpenSPCoop2Startup.contextDestroyed){
@@ -129,8 +129,8 @@ public class TimerThresholdThread extends BaseThread{
 				}
 				
 				// Controllo risorse di sistema disponibili
-				if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
-					this.log.error("["+TimerThresholdThread.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+				if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+					this.log.error("["+TimerThresholdThread.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 					this.sleepForNextCheck((int) this.propertiesReader.getRepositoryThresholdCheckInterval(), 1000);
 					continue;
 				}

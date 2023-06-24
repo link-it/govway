@@ -143,9 +143,9 @@ public class InoltroBusteMDB implements MessageDrivenBean, MessageListener {
 			Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			
 			/* ----------- Controllo risorse disponibili --------------- */
-			if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
+			if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
 				if(log!=null) {
-					log.error("["+InoltroBuste.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+					log.error("["+InoltroBuste.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 				}
 				this.ctxMDB.setRollbackOnly();
 				return;

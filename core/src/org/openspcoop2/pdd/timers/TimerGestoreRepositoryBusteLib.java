@@ -119,7 +119,7 @@ public class TimerGestoreRepositoryBusteLib {
 		}
 
 		// Controllo che l'inizializzazione corretta delle risorse sia effettuata
-		if(OpenSPCoop2Startup.initialize==false){
+		if(!OpenSPCoop2Startup.initialize){
 			this.msgDiag.logFatalError("inizializzazione di OpenSPCoop non effettuata", "Check Inizializzazione");
 			String msgErrore = "Riscontrato errore: inizializzazione del Timer o di OpenSPCoop non effettuata";
 			this.logTimer.error(msgErrore);
@@ -127,11 +127,11 @@ public class TimerGestoreRepositoryBusteLib {
 		}
 
 		// Controllo risorse di sistema disponibili
-		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
-			this.logTimer.error("["+TimerGestoreRepositoryBuste.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+		if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+			this.logTimer.error("["+TimerGestoreRepositoryBuste.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 			return;
 		}
-		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
+		if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
 			this.logTimer.error("["+TimerGestoreRepositoryBuste.ID_MODULO+"] Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
 			return;
 		}

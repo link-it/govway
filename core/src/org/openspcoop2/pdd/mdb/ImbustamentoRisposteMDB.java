@@ -137,8 +137,8 @@ public class ImbustamentoRisposteMDB implements MessageDrivenBean, MessageListen
 			
 			
 			/* ----------- Controllo risorse disponibili --------------- */
-			if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
-				log.error("["+ImbustamentoRisposte.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+			if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+				log.error("["+ImbustamentoRisposte.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}

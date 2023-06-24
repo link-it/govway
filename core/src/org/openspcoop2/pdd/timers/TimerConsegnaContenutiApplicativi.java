@@ -221,14 +221,16 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 	@Override
 	public List<Runnable> nextRunnable(int limit) throws UtilsException{
 			
+		List<Runnable> returnNull = null;
+		
 		// Controllo che il sistema non sia andando in shutdown
 		if(OpenSPCoop2Startup.contextDestroyed){
 			this.logError("Rilevato sistema in shutdown");
-			return null;
+			return returnNull;
 		}
 
 		// Controllo che l'inizializzazione corretta delle risorse sia effettuata
-		if(OpenSPCoop2Startup.initialize==false){
+		if(!OpenSPCoop2Startup.initialize){
 			this.msgDiag.logFatalError("inizializzazione di OpenSPCoop non effettuata", "Check Inizializzazione");
 			String msgErrore = "Riscontrato errore: inizializzazione del Timer o di OpenSPCoop non effettuata";
 			this.logError(msgErrore);
@@ -236,20 +238,20 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		}
 
 		// Controllo risorse di sistema disponibili
-		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
-			this.logError("Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
-			return null;
+		if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+			this.logError("Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
+			return returnNull;
 		}
-		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
+		if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){
 			this.logError("Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
-			return null;
+			return returnNull;
 		}
 		
 		// Controllo che il timer non sia stato momentaneamente disabilitato
 		if(!TimerState.ENABLED.equals(STATE)) {
 			this.msgDiag.logPersonalizzato("disabilitato");
 			this.log.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
-			return null;
+			return returnNull;
 		}
 		
 		OpenSPCoopStateful openspcoopstateGestore = new OpenSPCoopStateful();
@@ -266,14 +268,12 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 			if(this.lastCheckMessaggiDaRispedire==null) {
 				this.lastCheckMessaggiDaRispedire=DateManager.getDate();
 				verificaPresenzaMessaggiDaRispedire = true;
-				//System.out.println("VERIFICO PRIMA VOLTA!!!!");
 			}
 			else {
 				Date expired = new Date(DateManager.getTimeMillis()-(1000*this.configurazioneCoda.getNextMessages_consegnaFallita_intervalloControllo()));
 				if(this.lastCheckMessaggiDaRispedire.before(expired)) {
 					verificaPresenzaMessaggiDaRispedire = true;
 					this.lastCheckMessaggiDaRispedire=DateManager.getDate();
-					//System.out.println("VERIFICO POICHE SCADUTO!!!!");
 				}
 			}
 			if(verificaPresenzaMessaggiDaRispedire) {
@@ -285,7 +285,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 			GestoreMessaggi gestoreMsgSearch = new GestoreMessaggi(openspcoopstateGestore, true,this.logSql.getLog(),this.msgDiag, null);
 			
 			Date now = DateManager.getDate();
-			List<MessaggioServizioApplicativo> msgDaRiconsegnareINBOX = new ArrayList<MessaggioServizioApplicativo>();
+			List<MessaggioServizioApplicativo> msgDaRiconsegnareINBOX = new ArrayList<>();
 			
 			// APPLICATIVI PRIORITARI
 			List<String> serviziApplicativiPrioritari = this.configurazionePdDReader.getServiziApplicativiConsegnaNotifichePrioritarie(this.configurazioneCoda.getName());
@@ -359,7 +359,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 						this.lock(connectionDB, causale);
 						
 						this.logDebug(prefix+"Lock acquisito, ricerca nuovi threads da attivare (limit: "+limitPriorita+") ...");
-						List<MessaggioServizioApplicativo> msgDaRiconsegnareINBOX_priorita = 
+						List<MessaggioServizioApplicativo> msgDaRiconsegnareINBOXpriorita = 
 								gestoreMsgSearch.readMessaggiDaRiconsegnareIntoBoxByPriorita(limitPriorita,
 										verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire, secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 										now,
@@ -368,14 +368,14 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 										this.configurazioneCoda.getName(),
 										configurazionePriorita.isNessunaPriorita() ? null : configurazionePriorita.getName());
 						
-						if(msgDaRiconsegnareINBOX_priorita!=null && !msgDaRiconsegnareINBOX_priorita.isEmpty()) {
+						if(msgDaRiconsegnareINBOXpriorita!=null && !msgDaRiconsegnareINBOXpriorita.isEmpty()) {
 							this.logDebug(prefix+"Ricerca nuovi threads da attivare terminata (limit: "+limitPriorita+"); prendo in carico "+
-									msgDaRiconsegnareINBOX_priorita.size()+" messaggi ...");
+									msgDaRiconsegnareINBOXpriorita.size()+" messaggi ...");
 							
 							// La finestra non deve essere ricalcolata
-							//finestraAncoraDisponibileDopoApplicativiPrioritari = finestraAncoraDisponibileDopoApplicativiPrioritari - msgDaRiconsegnareINBOX_priorita.size();
+							/**finestraAncoraDisponibileDopoApplicativiPrioritari = finestraAncoraDisponibileDopoApplicativiPrioritari - msgDaRiconsegnareINBOX_priorita.size();*/
 							
-							for (MessaggioServizioApplicativo messaggioServizioApplicativo : msgDaRiconsegnareINBOX_priorita) {
+							for (MessaggioServizioApplicativo messaggioServizioApplicativo : msgDaRiconsegnareINBOXpriorita) {
 								GestoreMessaggi messaggioDaInviare = new GestoreMessaggi(openspcoopstateGestore,true,messaggioServizioApplicativo.getIdMessaggio(),Costanti.INBOX,
 										this.log.getLog(),this.msgDiag,null);
 								messaggioDaInviare.updateMessaggioPresaInCosegna(messaggioServizioApplicativo.getServizioApplicativo(), 
@@ -384,7 +384,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 								msgDaRiconsegnareINBOX.add(messaggioServizioApplicativo);
 							}
 							
-							this.logDebug(prefix+"Presa in carico "+msgDaRiconsegnareINBOX_priorita.size()+" messaggi terminata, rilascio lock...");
+							this.logDebug(prefix+"Presa in carico "+msgDaRiconsegnareINBOXpriorita.size()+" messaggi terminata, rilascio lock...");
 						}
 						else {
 							this.logDebug(prefix+"Ricerca nuovi threads da attivare terminata (limit: "+limitPriorita+"); non sono presenti messaggi, rilascio lock...");
@@ -400,8 +400,8 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 			
 			this.logDebug("Creazione Runnable ...");
 			List<Runnable> listRunnable = null;
-			if(msgDaRiconsegnareINBOX!=null && msgDaRiconsegnareINBOX.size()>0) {
-				listRunnable = new ArrayList<Runnable>();
+			if(msgDaRiconsegnareINBOX!=null && !msgDaRiconsegnareINBOX.isEmpty()) {
+				listRunnable = new ArrayList<>();
 				for (MessaggioServizioApplicativo messaggioServizioApplicativo : msgDaRiconsegnareINBOX) {
 					TimerConsegnaContenutiApplicativiSender sender = 
 							new TimerConsegnaContenutiApplicativiSender(messaggioServizioApplicativo, 
@@ -426,7 +426,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 				openspcoopstateGestore.releaseResource();
 		}
 		
-		return null;
+		return returnNull;
 	}
 
 	private void lock(Connection connectionDB, String causale) throws UtilsException, TimerLockNotAvailableException {

@@ -192,8 +192,8 @@ public class TimerGestoreChiaviPDNDLib {
 		}
 
 		// Controllo risorse di sistema disponibili
-		if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
-			this.logTimerError("["+TimerGestoreChiaviPDND.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+		if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+			this.logTimerError("["+TimerGestoreChiaviPDND.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 			return;
 		}
 		if( !MsgDiagnostico.gestoreDiagnosticaDisponibile){

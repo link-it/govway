@@ -795,9 +795,9 @@ public class RicezioneContenutiApplicativi {
 			}
 			return false;
 		}
-		if (!TimerMonitoraggioRisorseThread.risorseDisponibili) {
-			String msgErrore = "Risorse di sistema non disponibili: "+ TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage();
-			logError(logCore, "["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  "+msgErrore,TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+		if (!TimerMonitoraggioRisorseThread.isRisorseDisponibili()) {
+			String msgErrore = "Risorse di sistema non disponibili: "+ TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage();
+			logError(logCore, "["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  "+msgErrore,TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){

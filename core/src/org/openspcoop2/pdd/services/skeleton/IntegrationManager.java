@@ -460,8 +460,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
 					IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, this.getErroriProperties(logCore));
 		}
-		if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
-			logError(logCore, "["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+		if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+			logError(logCore, "["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI),
 					IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, this.getErroriProperties(logCore));

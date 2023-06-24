@@ -629,8 +629,8 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	public void refreshDatiMonitoraggioPdD(){
 
 		StringBuilder bf = new StringBuilder();
-		if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
-			bf.append("Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage());
+		if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+			bf.append("Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage());
 		}
 		if( !TimerThresholdThread.freeSpace){
 			if(bf.length()>0){

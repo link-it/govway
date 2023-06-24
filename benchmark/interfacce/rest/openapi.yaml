@@ -189,7 +189,85 @@ paths:
         '404':
           description: error
         '405':
-          description: error           
+          description: error 
+  /test8:
+    put:
+      summary: test8
+      description: test8
+      operationId: test8
+      parameters: []
+      requestBody:
+        description: test8
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error          
+  /test9:
+    put:
+      summary: test9
+      description: test9
+      operationId: test9
+      parameters: []
+      requestBody:
+        description: test9
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error
+  /test10:
+    put:
+      summary: test10
+      description: test10
+      operationId: test10
+      parameters: []
+      requestBody:
+        description: test10
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error 
 components:
   schemas:
     Category:

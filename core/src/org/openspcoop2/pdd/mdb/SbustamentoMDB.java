@@ -151,8 +151,8 @@ public class SbustamentoMDB implements MessageDrivenBean, MessageListener {
 			}
 			
 			/* ----------- Controllo risorse disponibili --------------- */
-			if( !TimerMonitoraggioRisorseThread.risorseDisponibili){
-				log.error("["+Sbustamento.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
+			if( !TimerMonitoraggioRisorseThread.isRisorseDisponibili()){
+				log.error("["+Sbustamento.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile().getMessage(),TimerMonitoraggioRisorseThread.getRisorsaNonDisponibile());
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}
