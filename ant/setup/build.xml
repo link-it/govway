@@ -1113,6 +1113,12 @@
 				<antcall target="_initSQL_${antinstaller_tipo_database}">
 					<param name="sqlFileOutput" value="${tmp_sql}/${configSqlScriptName}"/>
 				</antcall>
+				<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
+	       				<header filtering="no" trimleading="yes">
+</header>
+				  <filelist dir="${deploy_sql}"
+				           files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+				</concat>
 			</then>
 		</if>
 		<var name="monitoraggioSqlInternalName" value=""/>
@@ -1487,6 +1493,32 @@
 				<antcall target="sql_upgrade_ddl">
 				    <param name="nomeSqlUpgrade" value="${configSqlScriptName}"/>
 				</antcall>
+				<if>
+					<or>
+						<matches string="${antinstaller_versione_precedente}" pattern="^3\.[0-2]\..+$"/> <!-- versione 3.0.* 3.1.* e 3.2.* -->
+						<matches string="${antinstaller_versione_precedente}" pattern="^3\.3\.[0-9]$"/> <!-- versione da 3.3.0 a 3.3.9 -->
+						<equals arg1="${antinstaller_versione_precedente}" arg2="3.3.10" />
+						<equals arg1="${antinstaller_versione_precedente}" arg2="3.3.11" />
+						<equals arg1="${antinstaller_versione_precedente}" arg2="3.3.12" />
+					</or>
+					<then>
+						<var name="configSqlScriptNameGenerato" value="GovWayConfigurazione_upgrade_${antinstaller_versione_attuale}.sql"/>
+						<move file="${tmp_sql}/${configSqlScriptNameGenerato}" tofile="${tmp_sql}/${configSqlScriptNameGenerato}.moved"/>
+						<concat destfile="${tmp_sql}/${configSqlScriptNameGenerato}" append="yes" >
+	       					<header filtering="no" trimleading="yes">
+</header>
+				  			<filelist dir="${deploy_sql}"
+				           			files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+</concat>
+						<concat destfile="${tmp_sql}/${configSqlScriptNameGenerato}" append="yes" >
+	       					<header filtering="no" trimleading="yes">
+</header>
+				  			<filelist dir="${tmp_sql}"
+				           			files="${configSqlScriptNameGenerato}.moved"/>
+</concat>
+						<delete file="${tmp_sql}/${configSqlScriptNameGenerato}.moved"/>
+					</then>
+				</if>
 			</then>
 		</if>
 
