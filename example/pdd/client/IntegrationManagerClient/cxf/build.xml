@@ -35,7 +35,7 @@
 	<target name="run" depends=""
         description="Esegue il Client" >
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.example.pdd.client.im.IntegrationManagerClient_cxf" fork="false">
+		<java classname="org.openspcoop2.example.pdd.client.im.IntegrationManagerClient_cxf" fork="true">
 			<arg value="${parameter}" />
 			<classpath>
 				<path refid="classpath_run" />
