@@ -1,3 +1,11 @@
+2023-07-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1606
+	L'informazione di contesto sul nome della porta invocata non era presente nel messaggio trasformato in una consegna asincrona. 
+	La mancata informazione causava il seguente errore: 
+	"Errore avvenuto durante la consegna HTTP: Errore durante la raccolta delle informazioni necessarie alla funzione di proxy pass reverse: [getPortaApplicativa]: Parametro non definito (idPA.getNome() is null)"
+
 2023-06-27  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.13

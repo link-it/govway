@@ -91,6 +91,31 @@ public class GestoreTrasformazioni {
 
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
+	private void logDebug(String msg) {
+		if(this.log!=null) {
+			this.log.debug(msg);
+		}
+	}
+	private void logDebug(String msg, Throwable t) {
+		if(this.log!=null) {
+			this.log.debug(msg,t);
+		}
+	}
+	private void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
+		}
+	}
+	private void logError(String msg, Throwable t) {
+		if(this.log!=null) {
+			this.log.error(msg,t);
+		}
+	}
+	
+	private static final String TRANSPORT_RESPONSE_CONTEXT_UNAVAILABLE = "Transport Response Context non disponibile";
+	private static String getSuffixMessageApplicabilitaContentBasedPattern(String pattern) {
+		return " check applicabilità content-based pattern("+pattern+")";
+	}
 
 	private IDServizio idServizio;
 	private IDSoggetto soggettoFruitore;
@@ -224,7 +249,7 @@ public class GestoreTrasformazioni {
 			this.transaction.getTempiElaborazione().startTrasformazioneRichiesta();
 		}
 		try {
-			return this._trasformazioneRichiesta(message, busta, messageTypeForNotifier, responseMessageForNotifier, transactionContextForNotifier);
+			return this.trasformazioneRichiestaEngine(message, busta, messageTypeForNotifier, responseMessageForNotifier, transactionContextForNotifier);
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -237,7 +262,7 @@ public class GestoreTrasformazioni {
 			this.transaction.getTempiElaborazione().startTrasformazioneRichiesta();
 		}
 		try {
-			return this._trasformazioneRichiesta(message, busta, null, null, null);
+			return this.trasformazioneRichiestaEngine(message, busta, null, null, null);
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -250,7 +275,7 @@ public class GestoreTrasformazioni {
 			this.transaction.getTempiElaborazione().startTrasformazioneRisposta();
 		}
 		try {
-			return this._trasformazioneRisposta(message, busta);
+			return this.trasformazioneRispostaEngine(message, busta);
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -277,12 +302,12 @@ public class GestoreTrasformazioni {
 		return this.trasformazioneContenutoRichiestaEffettuata;
 	}
 	
-	private OpenSPCoop2Message _trasformazioneRichiesta(OpenSPCoop2Message messageP, Busta busta,
+	private OpenSPCoop2Message trasformazioneRichiestaEngine(OpenSPCoop2Message messageP, Busta busta,
 			MessaggioDaNotificare messageTypeForNotifier, OpenSPCoop2Message responseMessageForNotifier, Context transactionContextForNotifier) throws GestoreTrasformazioniException{
 
 		if(this.trasformazioni==null || this.trasformazioni.sizeRegolaList()<=0) {
 			this.msgDiag.logPersonalizzato(messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaDisabilitato" : "trasformazione.processamentoRichiestaDisabilitato");
-			this.log.debug("Non esistono regole di trasformazione");
+			this.logDebug("Non esistono regole di trasformazione");
 			return messageP;
 		}
 		boolean existsRuleEnabled = false;
@@ -297,7 +322,7 @@ public class GestoreTrasformazioni {
 		}
 		if(!existsRuleEnabled) {
 			this.msgDiag.logPersonalizzato(messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaDisabilitato" : "trasformazione.processamentoRichiestaDisabilitato");
-			this.log.debug("Non esistono regole di trasformazione abilitate");
+			this.logDebug("Non esistono regole di trasformazione abilitate");
 			return messageP;
 		}
 				
@@ -311,8 +336,17 @@ public class GestoreTrasformazioni {
 		Map<String, List<String>> parametriUrl = null;
 		Map<String, List<String>> parametriForm = null;
 		String urlInvocazione = null;
+		String nomePortaInvocata = null;
+		String interfaceName = null;
 		
 		try{
+			if(messageP!=null) {
+				Object nomePortaInvocataObject = messageP.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+				if(nomePortaInvocataObject instanceof String) {
+					nomePortaInvocata = (String) nomePortaInvocataObject;
+				}
+			}
+			
 			boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			if(ServiceBinding.SOAP.equals(messageP.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = messageP.castAsSoap();
@@ -339,6 +373,8 @@ public class GestoreTrasformazioni {
 			
 			if(messageP.getTransportRequestContext()!=null) {
 				
+				interfaceName = messageP.getTransportRequestContext().getInterfaceName();
+				
 				if(messageP.getTransportRequestContext().getHeaders()!=null &&
 					!messageP.getTransportRequestContext().getHeaders().isEmpty()) {
 					parametriTrasporto = messageP.getTransportRequestContext().getHeaders();
@@ -360,7 +396,7 @@ public class GestoreTrasformazioni {
 				if(messageP.getTransportRequestContext() instanceof HttpServletTransportRequestContext) {
 					HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) messageP.getTransportRequestContext();
 					HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
-					if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+					if(httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
 						FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
 						if(formServlet.getFormUrlEncodedParametersValues()!=null &&
 								!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
@@ -372,15 +408,15 @@ public class GestoreTrasformazioni {
 				urlInvocazione = messageP.getTransportRequestContext().getUrlInvocazione_formBased();
 			}
 			else {
-				throw new Exception("Transport Request Context non disponibile");
+				throw new GestoreTrasformazioniException("Transport Request Context non disponibile");
 			}
 			
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, "N.D.");
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Lettura contenuto della richiesta non riuscita: "+e.getMessage();
-			this.log.error(msgErrore, e);
+			this.logError(msgErrore, e);
 			throw new GestoreTrasformazioniException(msgErrore,e);
 		}
 		
@@ -427,7 +463,7 @@ public class GestoreTrasformazioni {
 					}
 				}
 				else {
-					throw new Exception("Transport Response Context non disponibile");
+					throw new GestoreTrasformazioniException(TRANSPORT_RESPONSE_CONTEXT_UNAVAILABLE);
 				}
 				
 			}
@@ -444,15 +480,15 @@ public class GestoreTrasformazioni {
 					}
 				}
 				else {
-					throw new Exception("Transport Response Context non disponibile");
+					throw new GestoreTrasformazioniException(TRANSPORT_RESPONSE_CONTEXT_UNAVAILABLE);
 				}
 			}
-		}catch(Throwable e){
+		}catch(Exception e){
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, "N.D.");
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Lettura contenuto della risposta (notifica) non riuscita: "+e.getMessage();
-			this.log.error(msgErrore, e);
+			this.logError(msgErrore, e);
 			throw new GestoreTrasformazioniException(msgErrore,e);
 		}
 		
@@ -463,13 +499,13 @@ public class GestoreTrasformazioni {
 		
 		try {
 			
-			this.log.debug("Identificazione regola di trasformazione tra le "+this.trasformazioni.sizeRegolaList()+" disponibili ...");
+			this.logDebug("Identificazione regola di trasformazione tra le "+this.trasformazioni.sizeRegolaList()+" disponibili ...");
 			
 			for (int i = 0; i < this.trasformazioni.sizeRegolaList(); i++) {
 				
 				String suffix = "[Regola-"+i+"] ";
 				
-				this.log.debug(suffix+"Verifica applicabilità della regola ...");
+				this.logDebug(suffix+"Verifica applicabilità della regola ...");
 				
 				TrasformazioneRegola check = this.trasformazioni.getRegola(i);
 				
@@ -483,7 +519,7 @@ public class GestoreTrasformazioni {
 				if(check.getApplicabilita()!=null) {
 				
 					// controllo azione
-					this.log.debug(suffix+" check applicabilità tra le '"+check.getApplicabilita().sizeAzioneList()+"' azioni ");
+					this.logDebug(suffix+" check applicabilità tra le '"+check.getApplicabilita().sizeAzioneList()+"' azioni ");
 					if(check.getApplicabilita().sizeAzioneList()>0) {
 						boolean found = false;
 						for (String checkAzione : check.getApplicabilita().getAzioneList()) {
@@ -498,20 +534,19 @@ public class GestoreTrasformazioni {
 					}
 					
 					// controllo contentType
-					this.log.debug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeContentTypeList()+" content types ");
-					if(check.getApplicabilita().sizeContentTypeList()>0) {
-						if(ContentTypeUtilities.isMatch(messageP.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
-							continue;
-						}
+					this.logDebug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeContentTypeList()+" content types ");
+					if(check.getApplicabilita().sizeContentTypeList()>0 &&
+						!ContentTypeUtilities.isMatch(messageP.getContentType(), check.getApplicabilita().getContentTypeList())) {
+						continue;
 					}
 		
 					// Controllo Pattern
 					if(check.getApplicabilita().getPattern()!=null && !"".equals(check.getApplicabilita().getPattern())) {
 						
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") ...");
+						this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+" ...");
 						
 						if(contenutoNonNavigabile) {
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio non conforme al match: "+messageP.getMessageType());
+							this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+", messaggio non conforme al match: "+messageP.getMessageType());
 							continue; // no match
 						}
 						
@@ -524,7 +559,7 @@ public class GestoreTrasformazioni {
 							element = messageContent.getElement();
 						}
 						if(element==null && elementJson==null){
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+messageP.getMessageType()+") senza contenuto");
+							this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+", messaggio ("+messageP.getMessageType()+") senza contenuto");
 							continue; // no match
 						}
 						String valore = null;
@@ -537,16 +572,16 @@ public class GestoreTrasformazioni {
 								valore = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
 							}
 						}catch(Exception e){
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") fallita: "+e.getMessage(),e);
+							this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+" fallita: "+e.getMessage(),e);
 						}
 						if(valore==null) {
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), match fallito ("+messageP.getMessageType()+")");
+							this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+", match fallito ("+messageP.getMessageType()+")");
 							continue;
 						}
 					}
 					
 					// controllo connettore
-					this.log.debug(suffix+" check applicabilità tra le '"+check.getApplicabilita().sizeConnettoreList()+"' connettori ");
+					this.logDebug(suffix+" check applicabilità tra le '"+check.getApplicabilita().sizeConnettoreList()+"' connettori ");
 					if(check.getApplicabilita().sizeConnettoreList()>0) {
 						boolean found = false;
 						for (String checkConnettore : check.getApplicabilita().getConnettoreList()) {
@@ -561,7 +596,7 @@ public class GestoreTrasformazioni {
 					}
 					
 					// controllo applicativi e soggetti
-					this.log.debug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeServizioApplicativoList()+" servizi applicativi e i "+check.getApplicabilita().sizeSoggettoList()+" soggetti");
+					this.logDebug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeServizioApplicativoList()+" servizi applicativi e i "+check.getApplicabilita().sizeSoggettoList()+" soggetti");
 					if(check.getApplicabilita().sizeServizioApplicativoList()>0 && check.getApplicabilita().sizeSoggettoList()>0) {
 						boolean applicativi = false;
 						boolean soggetti = false;
@@ -608,18 +643,18 @@ public class GestoreTrasformazioni {
 				
 				}
 				
-				this.log.debug(suffix+" check applicabilità, regola applicabile alla richiesta in corso");
+				this.logDebug(suffix+" check applicabilità, regola applicabile alla richiesta in corso");
 				this.regolaTrasformazione = check;
 				break; // trovata!
 				
 			}
 
-		} catch(Throwable er) {
+		} catch(Exception er) {
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, "N.D.");
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Identificazione regola di trasformazione non riuscita: "+er.getMessage();
-			this.log.error(msgErrore, er);
+			this.logError(msgErrore, er);
 			throw new GestoreTrasformazioniException(msgErrore,er);
 		}
 			
@@ -627,7 +662,7 @@ public class GestoreTrasformazioni {
 		if(this.regolaTrasformazione==null) {
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, "N.D.");
 			this.msgDiag.logPersonalizzato( messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaNessunMatch" : "trasformazione.processamentoRichiestaNessunMatch");
-			this.log.debug("Nessuna regola di trasformazione trovata");
+			this.logDebug("Nessuna regola di trasformazione trovata");
 			return messageP;
 		}
 		
@@ -652,7 +687,7 @@ public class GestoreTrasformazioni {
 		
 		// *** Costruzione Dynamic Map ****
 		
-		this.log.debug("Costruzione dynamic map ...");
+		this.logDebug("Costruzione dynamic map ...");
 		Map<String, Object> dynamicMap = new HashMap<>();
 		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
@@ -693,7 +728,7 @@ public class GestoreTrasformazioni {
 			}
 			dynamicMap = dynamicMapWithResponse;
 		}
-		this.log.debug("Costruzione dynamic map completata");
+		this.logDebug("Costruzione dynamic map completata");
 		
 		
 		
@@ -711,7 +746,7 @@ public class GestoreTrasformazioni {
 			}
 			
 			if(!trasformazioneContenuto) {
-				this.log.debug("Trasformazione contenuto della richiesta disabilitato");
+				this.logDebug("Trasformazione contenuto della richiesta disabilitato");
 			}
 			else {
 				Template template = (this.idPA!=null) ? 
@@ -725,25 +760,25 @@ public class GestoreTrasformazioni {
 								this.op2Properties.isTrasformazioni_readCharsetFromContentType());
 				if (risultato != null && risultato.getTipoTrasformazione() != null && risultato.getTipoTrasformazione().isContextInjection()) {
 					trasformazioneContenuto = false;
-					this.log.debug("Trasformazione contenuto della richiesta disabilitato (Context Injection)");
+					this.logDebug("Trasformazione contenuto della richiesta disabilitato (Context Injection)");
 				}
 			}
 			
-		} catch(Throwable er) {
+		} catch(Exception er) {
 			// fix: la condizione serve nel caso vengano utilizate istruzioni come <#stop che lanciano una freemarker.core.StopException
 			//      ma comunque prima di lanciarla e' stato impostato correttamente l'error handler
 			if(!errorHandler.isError()) {
 				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 				String msgErrore = "Trasformazione richiesta fallita: "+er.getMessage();
-				this.log.error(msgErrore, er);
+				this.logError(msgErrore, er);
 				throw new GestoreTrasformazioniException(msgErrore,er);
 			}
 		}
 		
 		if(errorHandler.isError()) {
 			String msgErrore = "Trasformazione richiesta terminata con errore: "+errorHandler.getDetail();
-			this.log.error(msgErrore);
+			this.logError(msgErrore);
 			if(errorHandler.getMessage()!=null) {
 				throw new GestoreTrasformazioniException(msgErrore,errorHandler.getMessage());
 			}
@@ -771,15 +806,14 @@ public class GestoreTrasformazioni {
 			if(!trasformazioneContenuto) {
 				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, forceAddUrl, null, messageP);
 				
-				if(ServiceBinding.REST.equals(messageP.getServiceBinding())) {
-					if(richiesta.getTrasformazioneRest()!=null) {
-						if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo()) || StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) {
-							GestoreTrasformazioniUtilities.injectNewRestParameter(messageP, 
-									richiesta.getTrasformazioneRest().getMetodo(), 
-									richiesta.getTrasformazioneRest().getPath(), 
-									dynamicMap, this.pddContext);
-						}
-					}
+				if(ServiceBinding.REST.equals(messageP.getServiceBinding()) &&
+					richiesta.getTrasformazioneRest()!=null &&
+					(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo()) || StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) 
+					){
+					GestoreTrasformazioniUtilities.injectNewRestParameter(messageP, 
+							richiesta.getTrasformazioneRest().getMetodo(), 
+							richiesta.getTrasformazioneRest().getPath(), 
+							dynamicMap, this.pddContext);
 				}
 
 				this.msgDiag.logPersonalizzato(messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaEffettuato" : "trasformazione.processamentoRichiestaEffettuato");
@@ -789,30 +823,30 @@ public class GestoreTrasformazioni {
 			
 			// trasformazione contenuto
 			boolean trasformazioneRest = false;
-			String trasformazioneRest_method = null;
-			String trasformazioneRest_path = null;
+			String trasformazioneRestMethod = null;
+			String trasformazioneRestPath = null;
 			if(richiesta.getTrasformazioneRest()!=null) {
 				trasformazioneRest = true;
-				trasformazioneRest_method = richiesta.getTrasformazioneRest().getMetodo();
-				trasformazioneRest_path = richiesta.getTrasformazioneRest().getPath();
+				trasformazioneRestMethod = richiesta.getTrasformazioneRest().getMetodo();
+				trasformazioneRestPath = richiesta.getTrasformazioneRest().getPath();
 			}
 			
 			boolean trasformazioneSoap = false;
-			VersioneSOAP trasformazioneSoap_versione = null;
-			String trasformazioneSoap_soapAction = null;
-			boolean trasformazioneSoap_envelope = false;
-			boolean trasformazioneSoap_envelopeAsAttachment = false;
-			String trasformazioneSoap_tipoConversione = null;
-			Template trasformazioneSoap_templateConversione = null;
+			VersioneSOAP trasformazioneSoapVersione = null;
+			String trasformazioneSoapSOAPAction = null;
+			boolean trasformazioneSoapEnvelope = false;
+			boolean trasformazioneSoapEnvelopeAsAttachment = false;
+			String trasformazioneSoapTipoConversione = null;
+			Template trasformazioneSoapTemplateConversione = null;
 			if(richiesta.getTrasformazioneSoap()!=null) {
 				trasformazioneSoap = true;
-				trasformazioneSoap_versione = richiesta.getTrasformazioneSoap().getVersione();
-				trasformazioneSoap_soapAction = richiesta.getTrasformazioneSoap().getSoapAction();
-				trasformazioneSoap_envelope = richiesta.getTrasformazioneSoap().isEnvelope();
-				trasformazioneSoap_envelopeAsAttachment = richiesta.getTrasformazioneSoap().isEnvelopeAsAttachment();
-				trasformazioneSoap_tipoConversione = richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo();
+				trasformazioneSoapVersione = richiesta.getTrasformazioneSoap().getVersione();
+				trasformazioneSoapSOAPAction = richiesta.getTrasformazioneSoap().getSoapAction();
+				trasformazioneSoapEnvelope = richiesta.getTrasformazioneSoap().isEnvelope();
+				trasformazioneSoapEnvelopeAsAttachment = richiesta.getTrasformazioneSoap().isEnvelopeAsAttachment();
+				trasformazioneSoapTipoConversione = richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo();
 				
-				trasformazioneSoap_templateConversione = (this.idPA!=null) ? 
+				trasformazioneSoapTemplateConversione = (this.idPA!=null) ? 
 						this.configurazionePdDManager.getTemplateTrasformazioneSoapRichiesta(this.idPA, this.regolaTrasformazione.getNome(), richiesta, this.requestInfo) 
 						:
 						this.configurazionePdDManager.getTemplateTrasformazioneSoapRichiesta(this.idPD, this.regolaTrasformazione.getNome(), richiesta, this.requestInfo);
@@ -826,15 +860,27 @@ public class GestoreTrasformazioni {
 					forceContentTypeRichiesta, null, 
 					risultato, 
 					trasformazioneRest, 
-					trasformazioneRest_method, trasformazioneRest_path,
+					trasformazioneRestMethod, trasformazioneRestPath,
 					trasformazioneSoap, 
-					trasformazioneSoap_versione, trasformazioneSoap_soapAction, 
-					trasformazioneSoap_envelope, trasformazioneSoap_envelopeAsAttachment, 
-					trasformazioneSoap_tipoConversione, trasformazioneSoap_templateConversione);
+					trasformazioneSoapVersione, trasformazioneSoapSOAPAction, 
+					trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeAsAttachment, 
+					trasformazioneSoapTipoConversione, trasformazioneSoapTemplateConversione);
 
 			this.trasformazioneContenutoRichiestaEffettuata = true;
 			
 			this.msgDiag.logPersonalizzato(messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaEffettuato" : "trasformazione.processamentoRichiestaEffettuato");
+			
+			if(msg!=null) {
+				if(nomePortaInvocata!=null) {
+					Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+					if(nomePortaInvocataObject == null) {
+						msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+					}
+				}
+				if(interfaceName!=null && msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()==null) {
+					msg.getTransportRequestContext().setInterfaceName(interfaceName);
+				}
+			}
 			
 			return msg;
 						
@@ -842,7 +888,7 @@ public class GestoreTrasformazioni {
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Trasformazione richiesta fallita: "+er.getMessage();
-			this.log.error(msgErrore, er);
+			this.logError(msgErrore, er);
 			throw new GestoreTrasformazioniException(msgErrore,er);
 		}
 		
@@ -852,11 +898,11 @@ public class GestoreTrasformazioni {
 	}
 	
 	
-	private OpenSPCoop2Message _trasformazioneRisposta(OpenSPCoop2Message message, Busta busta) throws GestoreTrasformazioniException{
+	private OpenSPCoop2Message trasformazioneRispostaEngine(OpenSPCoop2Message message, Busta busta) throws GestoreTrasformazioniException{
 
 		if(this.regolaTrasformazione==null || this.regolaTrasformazione.sizeRispostaList()<=0) {
 			this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaDisabilitato");
-			this.log.debug("Non esistono regole di trasformazione della risposta");
+			this.logDebug("Non esistono regole di trasformazione della risposta");
 			return message;
 		}
 	
@@ -868,23 +914,23 @@ public class GestoreTrasformazioni {
 		Map<String, List<String>> parametriTrasporto = null;
 		int httpStatus = -1;
 		try{
-			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
-				messageContent = new MessageContent(soapMessage, bufferMessage_readOnly, this.pddContext);
+				messageContent = new MessageContent(soapMessage, bufferMessageReadOnly, this.pddContext);
 			}
 			else{
 				if(MessageType.XML.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
-					messageContent = new MessageContent(xml, bufferMessage_readOnly, this.pddContext);
+					messageContent = new MessageContent(xml, bufferMessageReadOnly, this.pddContext);
 				}
 				else if(MessageType.JSON.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
-					messageContent = new MessageContent(json, bufferMessage_readOnly, this.pddContext);
+					messageContent = new MessageContent(json, bufferMessageReadOnly, this.pddContext);
 				}
 				else if(MessageType.MIME_MULTIPART.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestMimeMultipartMessage mime = message.castAsRestMimeMultipart();
-					messageContent = new MessageContent(mime, bufferMessage_readOnly, this.pddContext);
+					messageContent = new MessageContent(mime, bufferMessageReadOnly, this.pddContext);
 				}
 				else {
 					contenutoNonNavigabile = true;
@@ -902,10 +948,12 @@ public class GestoreTrasformazioni {
 				}
 				try {
 					httpStatus = Integer.parseInt(message.getTransportResponseContext().getCodiceTrasporto());
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 			}
 			else {
-				throw new Exception("Transport Response Context non disponibile");
+				throw new GestoreTrasformazioniException(TRANSPORT_RESPONSE_CONTEXT_UNAVAILABLE);
 			}
 			
 		}catch(Throwable e){
@@ -913,7 +961,7 @@ public class GestoreTrasformazioni {
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Lettura contenuto della risposta non riuscita: "+e.getMessage();
-			this.log.error(msgErrore, e);
+			this.logError(msgErrore, e);
 			throw new GestoreTrasformazioniException(msgErrore,e);
 		}
 				
@@ -924,13 +972,13 @@ public class GestoreTrasformazioni {
 		TrasformazioneRegolaRisposta trasformazioneRisposta = null;
 		try {
 			
-			this.log.debug("Identificazione regola di trasformazione della risposta tra le "+this.regolaTrasformazione.sizeRispostaList()+" disponibili ...");
+			this.logDebug("Identificazione regola di trasformazione della risposta tra le "+this.regolaTrasformazione.sizeRispostaList()+" disponibili ...");
 			
 			for (int i = 0; i < this.regolaTrasformazione.sizeRispostaList(); i++) {
 				
 				String suffix = "[Regola-"+i+"] ";
 				
-				this.log.debug(suffix+"Verifica applicabilità della regola ...");
+				this.logDebug(suffix+"Verifica applicabilità della regola ...");
 				
 				TrasformazioneRegolaRisposta check = this.regolaTrasformazione.getRisposta(i);
 				
@@ -948,31 +996,29 @@ public class GestoreTrasformazioni {
 						if(check.getApplicabilita().getReturnCodeMax()!=null) {
 							max = check.getApplicabilita().getReturnCodeMax().intValue()+"";
 						} 
-						this.log.debug(suffix+" check applicabilità return code ["+min+"-"+max+"]");
-						if(check.getApplicabilita().getReturnCodeMin()!=null) {
-							if(httpStatus< check.getApplicabilita().getReturnCodeMin().intValue()) {
-								continue;
-							}
+						this.logDebug(suffix+" check applicabilità return code ["+min+"-"+max+"]");
+						if(check.getApplicabilita().getReturnCodeMin()!=null &&
+							httpStatus< check.getApplicabilita().getReturnCodeMin().intValue()) {
+							continue;
 						}
-						if(check.getApplicabilita().getReturnCodeMax()!=null) {
-							if(httpStatus> check.getApplicabilita().getReturnCodeMax().intValue()) {
-								continue;
-							}
+						if(check.getApplicabilita().getReturnCodeMax()!=null &&
+							httpStatus> check.getApplicabilita().getReturnCodeMax().intValue()) {
+							continue;
 						}
 					}
 					
 					// controllo contentType
-					if(ContentTypeUtilities.isMatch(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
+					if(!ContentTypeUtilities.isMatch(message.getContentType(), check.getApplicabilita().getContentTypeList())) {
 						continue;
 					}
 		
 					// Controllo Pattern
 					if(check.getApplicabilita().getPattern()!=null && !"".equals(check.getApplicabilita().getPattern())) {
 						
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") ...");
+						this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+" ...");
 						
 						if(contenutoNonNavigabile) {
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio non conforme al match: "+message.getMessageType());
+							this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+", messaggio non conforme al match: "+message.getMessageType());
 							continue; // no match
 						}
 						
@@ -985,7 +1031,7 @@ public class GestoreTrasformazioni {
 							element = messageContent.getElement();
 						}
 						if(element==null && elementJson==null){
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+message.getMessageType()+") senza contenuto");
+							this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+", messaggio ("+message.getMessageType()+") senza contenuto");
 							continue; // no match
 						}
 						String valore = null;
@@ -998,17 +1044,17 @@ public class GestoreTrasformazioni {
 								valore = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
 							}
 						}catch(Exception e){
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") fallita: "+e.getMessage(),e);
+							this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+" fallita: "+e.getMessage(),e);
 						}
 						if(valore==null) {
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), match fallito ("+message.getMessageType()+")");
+							this.logDebug(suffix+getSuffixMessageApplicabilitaContentBasedPattern(check.getApplicabilita().getPattern())+", match fallito ("+message.getMessageType()+")");
 							continue;
 						}
 					}
 					
 				}
 				
-				this.log.debug(suffix+" check applicabilità, regola applicabile alla risposta in corso");
+				this.logDebug(suffix+" check applicabilità, regola applicabile alla risposta in corso");
 				trasformazioneRisposta = check;
 				break; // trovata!
 				
@@ -1019,7 +1065,7 @@ public class GestoreTrasformazioni {
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Identificazione regola di trasformazione della risposta non riuscita: "+er.getMessage();
-			this.log.error(msgErrore, er);
+			this.logError(msgErrore, er);
 			throw new GestoreTrasformazioniException(msgErrore,er);
 		}
 			
@@ -1027,7 +1073,7 @@ public class GestoreTrasformazioni {
 		if(trasformazioneRisposta==null) {
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, "N.D.");
 			this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaNessunMatch");
-			this.log.debug("Nessuna regola di trasformazione della risposta trovata");
+			this.logDebug("Nessuna regola di trasformazione della risposta trovata");
 			return message;
 		}
 	
@@ -1049,14 +1095,14 @@ public class GestoreTrasformazioni {
 		
 		// *** Costruzione Dynamic Map ****
 		
-		this.log.debug("Costruzione dynamic map ...");
+		this.logDebug("Costruzione dynamic map ...");
 		Map<String, Object> dynamicMap = new HashMap<>();
 		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, 
 				message,
 				messageContent, busta, parametriTrasporto,
 				errorHandler);
-		this.log.debug("Costruzione dynamic map completata");
+		this.logDebug("Costruzione dynamic map completata");
 		
 		
 		
@@ -1074,7 +1120,7 @@ public class GestoreTrasformazioni {
 			}
 			
 			if(!trasformazioneContenuto) {
-				this.log.debug("Trasformazione contenuto della richiesta disabilitato");
+				this.logDebug("Trasformazione contenuto della richiesta disabilitato");
 			}
 			else {
 				Template template = (this.idPA!=null) ? 
@@ -1088,7 +1134,7 @@ public class GestoreTrasformazioni {
 								this.op2Properties.isTrasformazioni_readCharsetFromContentType());
 				if (risultato != null && risultato.getTipoTrasformazione() != null && risultato.getTipoTrasformazione().isContextInjection()) {
 					trasformazioneContenuto = false;
-					this.log.debug("Trasformazione contenuto della risposta disabilitato (Context Injection)");
+					this.logDebug("Trasformazione contenuto della risposta disabilitato (Context Injection)");
 				}
 			}
 			
@@ -1099,14 +1145,14 @@ public class GestoreTrasformazioni {
 				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 				String msgErrore = "Trasformazione risposta fallita: "+er.getMessage();
-				this.log.error(msgErrore, er);
+				this.logError(msgErrore, er);
 				throw new GestoreTrasformazioniException(msgErrore,er);
 			}
 		}
 		
 		if(errorHandler.isError()) {
 			String msgErrore = "Trasformazione risposta terminata con errore: "+errorHandler.getDetail();
-			this.log.error(msgErrore);
+			this.logError(msgErrore);
 			if(errorHandler.getMessage()!=null) {
 				throw new GestoreTrasformazioniException(msgErrore,errorHandler.getMessage());
 			}
@@ -1158,37 +1204,37 @@ public class GestoreTrasformazioni {
 			}
 			
 			boolean trasformazioneSoap = false;
-			VersioneSOAP trasformazioneSoap_versione = null;
-			String trasformazioneSoap_soapAction = null;
-			boolean trasformazioneSoap_envelope = false;
-			boolean trasformazioneSoap_envelopeAsAttachment = false;
-			String trasformazioneSoap_tipoConversione = null;
-			Template trasformazioneSoap_templateConversione = null;
+			VersioneSOAP trasformazioneSoapVersione = null;
+			String trasformazioneSoapSOAPAction = null;
+			boolean trasformazioneSoapEnvelope = false;
+			boolean trasformazioneSoapEnvelopeAsAttachment = false;
+			String trasformazioneSoapTipoConversione = null;
+			Template trasformazioneSoapTemplateConversione = null;
 			if(this.regolaTrasformazione.getRichiesta().getTrasformazioneRest()!=null) {
 				// devo tornare soap
 				trasformazioneSoap = true;
 				if(this.messageRequest!=null) {
 					if(MessageType.SOAP_11.equals(this.messageRequest.getMessageType())) {
-						trasformazioneSoap_versione = VersioneSOAP._1_1;
+						trasformazioneSoapVersione = VersioneSOAP._1_1;
 					}
 					else if(MessageType.SOAP_12.equals(this.messageRequest.getMessageType())) {
-						trasformazioneSoap_versione = VersioneSOAP._1_2;
+						trasformazioneSoapVersione = VersioneSOAP._1_2;
 					}
 					else {
-						throw new Exception("Atteso messaggio di richiesta di tipo SOAP, in presenza di una trasformazione REST attiva");
+						throw new GestoreTrasformazioniException("Atteso messaggio di richiesta di tipo SOAP, in presenza di una trasformazione REST attiva");
 					}
-					trasformazioneSoap_soapAction = this.messageRequest.castAsSoap().getSoapAction();
+					trasformazioneSoapSOAPAction = this.messageRequest.castAsSoap().getSoapAction();
 				}
 				else {
 					// non dovrebbe mai succedere
-					trasformazioneSoap_versione = VersioneSOAP._1_1;
+					trasformazioneSoapVersione = VersioneSOAP._1_1;
 				}
 				if(trasformazioneRisposta.getTrasformazioneSoap()!=null) {
-					trasformazioneSoap_envelope = trasformazioneRisposta.getTrasformazioneSoap().isEnvelope();
-					trasformazioneSoap_envelopeAsAttachment = trasformazioneRisposta.getTrasformazioneSoap().isEnvelopeAsAttachment();
-					trasformazioneSoap_tipoConversione = trasformazioneRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo();
+					trasformazioneSoapEnvelope = trasformazioneRisposta.getTrasformazioneSoap().isEnvelope();
+					trasformazioneSoapEnvelopeAsAttachment = trasformazioneRisposta.getTrasformazioneSoap().isEnvelopeAsAttachment();
+					trasformazioneSoapTipoConversione = trasformazioneRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo();
 					
-					trasformazioneSoap_templateConversione = (this.idPA!=null) ? 
+					trasformazioneSoapTemplateConversione = (this.idPA!=null) ? 
 							this.configurazionePdDManager.getTemplateTrasformazioneSoapRisposta(this.idPA, this.regolaTrasformazione.getNome(), trasformazioneRisposta, this.requestInfo) 
 							:
 							this.configurazionePdDManager.getTemplateTrasformazioneSoapRisposta(this.idPD, this.regolaTrasformazione.getNome(), trasformazioneRisposta, this.requestInfo);
@@ -1206,9 +1252,9 @@ public class GestoreTrasformazioni {
 					trasformazioneRest, 
 					null, null,
 					trasformazioneSoap, 
-					trasformazioneSoap_versione, trasformazioneSoap_soapAction, 
-					trasformazioneSoap_envelope, trasformazioneSoap_envelopeAsAttachment, 
-					trasformazioneSoap_tipoConversione, trasformazioneSoap_templateConversione);
+					trasformazioneSoapVersione, trasformazioneSoapSOAPAction, 
+					trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeAsAttachment, 
+					trasformazioneSoapTipoConversione, trasformazioneSoapTemplateConversione);
 
 			this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaEffettuato");
 			
@@ -1218,7 +1264,7 @@ public class GestoreTrasformazioni {
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Trasformazione risposta fallita: "+er.getMessage();
-			this.log.error(msgErrore, er);
+			this.logError(msgErrore, er);
 			throw new GestoreTrasformazioniException(msgErrore,er);
 		}
 	}

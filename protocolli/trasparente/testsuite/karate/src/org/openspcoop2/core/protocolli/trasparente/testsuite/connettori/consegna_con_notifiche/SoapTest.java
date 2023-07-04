@@ -52,6 +52,7 @@ import java.net.MalformedURLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -1479,5 +1480,85 @@ public class SoapTest extends ConfigLoader {
 	}
 			
 
+
+	
+	
+	@Test
+	public void consegnaConNotificheTrasformateOk() throws IOException {
+		/**
+		 * Si controlla lo stato sul db prima e dopo la consegna delle notifiche.
+		 */
 		
+		final String erogazione = "TestConsegnaConNotificheSoapTrasformazioneRest";
+		HttpRequest requestOk = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaTemplate",   "ConnettoreTrasformatoRestOk", HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		
+		var responsesOk = Common.makeParallelRequests(requestOk, 5);
+		
+		List<String> connettoriAbilitatiOk = Arrays
+				.asList("ConnettoreTrasformatoRestOk");
+		Set<String> setConnettoriAbilitatiOk = new HashSet<>(connettoriAbilitatiOk);
+		
+		
+		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
+		for (var r : responsesOk) {
+			assertEquals(200, r.getResultHTTPOperation());
+			
+			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, setConnettoriAbilitatiOk.size()));
+			checkSchedulingConnettoreIniziato(r, setConnettoriAbilitatiOk);	
+		}
+	
+		// Attendo la consegna
+		List<HttpResponse> responsesCheck = new ArrayList<>();
+		responsesCheck.addAll(responsesOk);
+		List<String> connettoriCheck = new ArrayList<>();
+		connettoriCheck.addAll(setConnettoriAbilitatiOk);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
+
+		// Connettore OK
+		for (var response : responsesOk) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(response);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  setConnettoriAbilitatiOk, ESITO_OK, 200, "", "");
+		}
+
+	}
+	
+	@Test
+	public void consegnaConNotificheTrasformateKo() throws IOException {
+		/**
+		 * Si controlla lo stato sul db prima e dopo la consegna delle notifiche.
+		 */
+		
+		final String erogazione = "TestConsegnaConNotificheSoapTrasformazioneRest";
+		HttpRequest requestKo = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaTemplate",   "ConnettoreTrasformatoRestKo", HttpConstants.CONTENT_TYPE_SOAP_1_2);
+
+		var responses2Ko = Common.makeParallelRequests(requestKo, 5);
+
+		List<String> connettoriAbilitatiKo = Arrays
+				.asList("ConnettoreTrasformatoRestKo");
+		Set<String> setConnettoriAbilitatiKo = new HashSet<>(connettoriAbilitatiKo);
+		
+		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
+		for (var r : responses2Ko) {
+			assertEquals(200, r.getResultHTTPOperation());
+			
+			checkPresaInConsegna(r, setConnettoriAbilitatiKo.size());
+			checkSchedulingConnettoreIniziato(r, setConnettoriAbilitatiKo);	
+		}
+	
+		// Attendo la consegna
+		List<HttpResponse> responsesCheck = new ArrayList<>();
+		responsesCheck.addAll(responses2Ko);
+		List<String> connettoriCheck = new ArrayList<>();
+		connettoriCheck.addAll(setConnettoriAbilitatiKo);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
+
+		// Connettore OK
+		String fault = "";
+		String formatoFault = "";
+		for (var response : responses2Ko) {
+			CommonConsegnaMultipla.withBackoff( () -> checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1));
+			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(response, setConnettoriAbilitatiKo.iterator().next(), CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE, 404, fault, formatoFault);
+		}
+
+	}
 }
