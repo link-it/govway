@@ -1,3 +1,9 @@
+2023-07-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-34462: aggiornata libreria 'io.netty:*' alla versione 4.1.94.Final
+
 2023-07-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -348,30 +348,35 @@ public class GestoreTrasformazioni {
 			}
 			
 			boolean bufferMessageReadOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
-			if(ServiceBinding.SOAP.equals(messageP.getServiceBinding())){
-				OpenSPCoop2SoapMessage soapMessage = messageP.castAsSoap();
-				messageContent = new MessageContent(soapMessage, bufferMessageReadOnly, this.pddContext);
+			if(messageP!=null) {
+				if(ServiceBinding.SOAP.equals(messageP.getServiceBinding())){
+					OpenSPCoop2SoapMessage soapMessage = messageP.castAsSoap();
+					messageContent = new MessageContent(soapMessage, bufferMessageReadOnly, this.pddContext);
+				}
+				else{
+					if(MessageType.XML.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
+						OpenSPCoop2RestXmlMessage xml = messageP.castAsRestXml();
+						messageContent = new MessageContent(xml, bufferMessageReadOnly, this.pddContext);
+					}
+					else if(MessageType.JSON.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
+						OpenSPCoop2RestJsonMessage json = messageP.castAsRestJson();
+						messageContent = new MessageContent(json, bufferMessageReadOnly, this.pddContext);
+					}
+					else if(MessageType.MIME_MULTIPART.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
+						OpenSPCoop2RestMimeMultipartMessage mime = messageP.castAsRestMimeMultipart();
+						messageContent = new MessageContent(mime, bufferMessageReadOnly, this.pddContext);
+					}
+					else {
+						contenutoNonNavigabile = true;
+					}
+				}
 			}
-			else{
-				if(MessageType.XML.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
-					OpenSPCoop2RestXmlMessage xml = messageP.castAsRestXml();
-					messageContent = new MessageContent(xml, bufferMessageReadOnly, this.pddContext);
-				}
-				else if(MessageType.JSON.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
-					OpenSPCoop2RestJsonMessage json = messageP.castAsRestJson();
-					messageContent = new MessageContent(json, bufferMessageReadOnly, this.pddContext);
-				}
-				else if(MessageType.MIME_MULTIPART.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
-					OpenSPCoop2RestMimeMultipartMessage mime = messageP.castAsRestMimeMultipart();
-					messageContent = new MessageContent(mime, bufferMessageReadOnly, this.pddContext);
-				}
-				else {
-					contenutoNonNavigabile = true;
-				}
+			else {
+				contenutoNonNavigabile = true;
 			}
 			
 			
-			if(messageP.getTransportRequestContext()!=null) {
+			if(messageP!=null && messageP.getTransportRequestContext()!=null) {
 				
 				interfaceName = messageP.getTransportRequestContext().getInterfaceName();
 				
@@ -469,7 +474,7 @@ public class GestoreTrasformazioni {
 			}
 			else if(messageTypeForNotifier!=null && MessaggioDaNotificare.RISPOSTA.equals(messageTypeForNotifier)){
 				// Si usa sempre messageP in questo caso
-				if(messageP.getTransportResponseContext()!=null) {
+				if(messageP!=null && messageP.getTransportResponseContext()!=null) {
 					if(messageP.getTransportResponseContext().getHeaders()!=null &&
 						!messageP.getTransportResponseContext().getHeaders().isEmpty()) {
 						parametriTrasportoRisposta = messageP.getTransportResponseContext().getHeaders();

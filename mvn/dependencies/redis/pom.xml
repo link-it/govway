@@ -17,9 +17,12 @@
 
 		<jar.group.name>redis</jar.group.name>
 		
-		<redisson.version>3.17.7</redisson.version>
-		<netty.version>4.1.86.Final</netty.version>
+		<redisson.version>3.22.1</redisson.version>
+		<netty.version>4.1.94.Final</netty.version>
 		<jboss-marshalling.version>2.1.1.Final</jboss-marshalling.version>
+		<objenesis.version>3.3</objenesis.version>
+		<esotericsoftware.kryo.version>5.5.0</esotericsoftware.kryo.version>
+
 	</properties>
 
 	<dependencies>
@@ -129,6 +132,30 @@
 			<groupId>org.jboss.marshalling</groupId>
 			<artifactId>jboss-marshalling-river</artifactId>
 			<version>${jboss-marshalling.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<version>${objenesis.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.esotericsoftware</groupId>
+			<artifactId>kryo</artifactId>
+			<version>${esotericsoftware.kryo.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
