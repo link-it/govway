@@ -41,7 +41,7 @@
 		<antcall target="build_axis14">
 			<param name="stubBuild.srcDir" value="${build}/srcStubMessageBoxAxis14"/>
 			<param name="stubBuild.cleanSrcDir" value="false"/>
-			<param name="stubBuild.urlWSDL" value="${tmp_appServer_url}openspcoop2/IntegrationManager/MessageBox?wsdl"/>
+			<param name="stubBuild.urlWSDL" value="${tmp_appServer_url}govway/IntegrationManager/MessageBox?wsdl"/>
 			<param name="stubBuild.buildDir" value="${build}/buildStubMessageBoxAxis14"/>
 			<param name="debug" value="${debug}"/>
 			<param name="stubBuild.buildJar" value="true"/>
@@ -58,7 +58,7 @@
 		<antcall target="build_axis14">
 			<param name="stubBuild.srcDir" value="${build}/srcStubPDAxis14"/>
 			<param name="stubBuild.cleanSrcDir" value="false"/>
-			<param name="stubBuild.urlWSDL" value="${tmp_appServer_url}openspcoop2/IntegrationManager/PD?wsdl"/>
+			<param name="stubBuild.urlWSDL" value="${tmp_appServer_url}govway/IntegrationManager/PD?wsdl"/>
 			<param name="stubBuild.buildDir" value="${build}/buildStubPDAxis14"/>
 			<param name="debug" value="${debug}"/>
 			<param name="stubBuild.buildJar" value="true"/>
@@ -102,11 +102,11 @@
 		<echo message="${build}"/>
 		<mkdir dir="${build}/srcStubMessageBoxCXF" />
 		<mkdir dir="${build}/buildStubMessageBoxCXF" />
-		<get src="${tmp_appServer_url}openspcoop2/IntegrationManager/MessageBox?wsdl" dest="${build}/buildStubMessageBoxCXF/IntegrationManagerMessageBox.wsdl"/>
+		<get src="${tmp_appServer_url}govway/IntegrationManager/MessageBox?wsdl" dest="${build}/buildStubMessageBoxCXF/IntegrationManagerMessageBox.wsdl"/>
 		<antcall target="build_cxf">
 			<param name="stubBuild.srcDir" value="${build}/srcStubMessageBoxCXF"/>
 			<param name="stubBuild.cleanSrcDir" value="false"/>
-			<param name="stubBuild.urlWSDL" value="${tmp_appServer_url}openspcoop2/IntegrationManager/MessageBox?wsdl"/>
+			<param name="stubBuild.urlWSDL" value="${tmp_appServer_url}govway/IntegrationManager/MessageBox?wsdl"/>
 			<param name="stubBuild.buildDir" value="${build}/buildStubMessageBoxCXF"/>
 			<param name="debug" value="${debug}"/>
 			<param name="stubBuild.buildJar" value="true"/>
@@ -123,11 +123,11 @@
 		<!-- generazione Stub IntegrationManager.PD -->
 		<mkdir dir="${build}/srcStubPDCXF" />
 		<mkdir dir="${build}/buildStubPDCXF" />
-		<get src="${tmp_appServer_url}openspcoop2/IntegrationManager/PD?wsdl" dest="${build}/buildStubPDCXF/IntegrationManagerPD.wsdl"/>
+		<get src="${tmp_appServer_url}govway/IntegrationManager/PD?wsdl" dest="${build}/buildStubPDCXF/IntegrationManagerPD.wsdl"/>
 		<antcall target="build_cxf">
 			<param name="stubBuild.srcDir" value="${build}/srcStubPDCXF"/>
 			<param name="stubBuild.cleanSrcDir" value="false"/>
-			<param name="stubBuild.urlWSDL" value="${tmp_appServer_url}openspcoop2/IntegrationManager/PD?wsdl"/>
+			<param name="stubBuild.urlWSDL" value="${tmp_appServer_url}govway/IntegrationManager/PD?wsdl"/>
 			<param name="stubBuild.buildDir" value="${build}/buildStubPDCXF"/>
 			<param name="debug" value="${debug}"/>
 			<param name="stubBuild.buildJar" value="true"/>

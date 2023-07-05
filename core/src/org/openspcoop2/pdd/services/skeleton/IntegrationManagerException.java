@@ -389,7 +389,6 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 		this.codiceEccezione = codice;
 	}
 
-	@XmlElement(required = true, nillable = true)
 	public String getCodiceEccezione(){
 		return this.codiceEccezione;
 	}
