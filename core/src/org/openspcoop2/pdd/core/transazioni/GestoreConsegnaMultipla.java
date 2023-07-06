@@ -353,6 +353,11 @@ public class GestoreConsegnaMultipla {
 		try {
 			if(requestInfo!=null && requestInfo.getProtocolFactory()!=null) {
 				esitiProperties = EsitiProperties.getInstance(this.log, requestInfo.getProtocolFactory());
+				if(esitiProperties==null &&
+					// per i casi di restart nodi in cui vengono modificati gli id delle chiavi, mentre serializzato nel messaggio e' rimasto il precedente
+					requestInfo.getProtocolFactory().getProtocol()!=null) {
+					esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log, requestInfo.getProtocolFactory().getProtocol());
+				}
 			}
 			else {
 				esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log, protocol);
@@ -380,7 +385,7 @@ public class GestoreConsegnaMultipla {
 			int code = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
 			String codeAsString = code+"";
 			if(esitiDaRegistrare!=null && !esitiDaRegistrare.isEmpty() && esitiDaRegistrare.contains(codeAsString)==false){
-				this.log.debug("Non devo registrare l'informazione, poichè la transazione capostipite non è stata salvata");
+				this.log.debug("Non devo registrare l'informazione, esito '"+codeAsString+"' disabilitato nel tracciamento");
 				return;
 			}
 			

@@ -1,3 +1,11 @@
+2023-07-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1608
+	Nella funzionalità di consegna asincrona, i messaggi serializzati su database contenevano informazioni "inconsistenti" se utilizzate dopo un upgrade di versione di GovWay.
+	In particolar modo l'identificativo di protocollo (trasparente, modi, spcoop...) non veniva risolto correttamente causando una mancata registrazione della diagnostica, dei messaggi 
+	e dei dati relativi alla consegna asincrona (nella transazione) per le nuove consegne effettuate con la versione del software aggiornata.
+
 2023-07-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

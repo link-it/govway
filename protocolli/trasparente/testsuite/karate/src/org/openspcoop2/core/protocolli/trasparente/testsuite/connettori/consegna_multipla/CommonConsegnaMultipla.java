@@ -430,8 +430,22 @@ public class CommonConsegnaMultipla {
 				ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
 				String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
 				List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
-				for (var v : letto) {
-					ConfigLoader.getLoggerCore().error(v.toString());
+				int row = 0;
+				for (Map<String, Object> map : letto) {
+					if(map!=null && !map.isEmpty()) {
+						for (Map.Entry<String,Object> entry : map.entrySet()) {
+							if(entry!=null) {
+								ConfigLoader.getLoggerCore().error("Entry["+row+"] key["+entry.getKey()+"]=["+entry.getValue()+"]");
+							}
+							else {
+								ConfigLoader.getLoggerCore().error("Entry["+row+"] null");
+							}
+						}
+					}
+					else {
+						ConfigLoader.getLoggerCore().error("Entry["+row+"] empty");
+					}
+					row++;
 				}
 				
 				index++;
