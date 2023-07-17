@@ -79,6 +79,13 @@ public class TimerClusterDinamicoThread extends BaseThread{
 				this.log.error("Errore durante l'aggiornamento del cluster id dinamico: "+e.getMessage(),e);
 			}
 	    	
+	    	try{
+	    		this.manager.deleteOldHostnames(this.log);
+			}catch(Exception e){
+				this.log.error("Errore durante lo svecchiamento dei nodi cluster dinamici: "+e.getMessage(),e);
+			}
+	    	
+	    	
 	    	try {
 	    		if(this.manager.isRateLimitingGestioneCluster()) {
 	    			PolicyVerifier.setListClusterNodes(this.manager.getHostnames(this.log));

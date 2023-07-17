@@ -135,7 +135,7 @@
 		Dispiegamento Dinamico
 			antinstaller_gestione_nodi_group_id=
 			antinstaller_gestione_nodi_numeric_id_mode=static/dynamic/db
-			antinstaller_gestione_nodi_numeric_id_cifre=1
+			antinstaller_gestione_nodi_numeric_id_cifre=2
 			antinstaller_gestione_nodi_check_url=
 			antinstaller_gestione_nodi_check_username=
 			antinstaller_gestione_nodi_check_password=

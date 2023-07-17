@@ -1,3 +1,10 @@
+2023-07-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1610
+	Aggiunto uno svecchiamento dei nodi della tabella 'nodi_runtime' nelle installazioni con cluster dinamico.
+	Rivisto utilizzo dell'identificativo numerico del nodo, per profilo SPCoop, in modo da utilizzare il "padding" corretto in presenza di 2 cifre.
+
 2023-07-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

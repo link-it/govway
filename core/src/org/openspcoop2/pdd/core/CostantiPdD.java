@@ -352,7 +352,7 @@ public class CostantiPdD {
     public static final int CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE = 10000;
     
     /** Configurazione default per refresh cluster dinamico */
-    public static final int CLUSTER_DINAMICO_REFRESH_SECONDS = 60;
+    public static final int CLUSTER_DINAMICO_REFRESH_SECONDS = 30;
     
     
     /** Dominio utilizzato per le risorse JMX */

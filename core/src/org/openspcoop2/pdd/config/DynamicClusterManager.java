@@ -213,7 +213,7 @@ public class DynamicClusterManager {
 				
 				// Cerco idNumerico disponibile
 				/**if(this.op2Properties.isClusterIdNumericoDinamico()) { FIX: va sempre calcolato per l'unique del db*/
-				this.identificativoNumerico = this.getNextIdNumerico(con);
+				this.identificativoNumerico = this.getNextIdNumerico(con, log);
 				
 				// Insert
 				registerInsert(con, log);
@@ -335,7 +335,7 @@ public class DynamicClusterManager {
 			}
 		}
 	}
-	private int getNextIdNumerico(Connection con) throws MaxReachedException, SQLException, SQLQueryObjectException {
+	private int getNextIdNumerico(Connection con, Logger log) throws MaxReachedException, SQLException, SQLQueryObjectException {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -372,7 +372,19 @@ public class DynamicClusterManager {
 			pstmt.close(); pstmt = null;
 			
 			if(idNumerico<0) {
-				idNumerico = getIdNumerico(con, max);
+				try {
+					idNumerico = getIdNumerico(con, max);
+				}catch(MaxReachedException maxReached) {
+					// provo a forzare svecchiamento
+					try {
+						deleteOldHostnames(con, log);
+					}catch(Exception e) {
+						// ignore e rilancio eccezione originale
+						throw maxReached;
+					}
+					// riprovo a calcolarlo
+					idNumerico = getIdNumerico(con, max);
+				}
 			}
 
 			return idNumerico;
@@ -452,28 +464,19 @@ public class DynamicClusterManager {
 	}
 	
 	public void unregister(Logger log) throws CoreException {
+		unregister(log, this.op2Properties.getClusterHostname());
+	}
+	private void unregister(Logger log, String hostname) throws CoreException {
 		Connection con = null;
-		PreparedStatement pstmt = null;
 		try {
 			con = this.driverConfigurazioneDB.getConnection("DynamicClusterManager.unregister");
 			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
-			sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_NODI_RUNTIME);
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME+"=?");
-			String query = sqlQueryObject.createSQLDelete();
-			pstmt = con.prepareStatement(query);
-			int index = 1;
-			pstmt.setString(index++, this.op2Properties.getClusterHostname());
-			int row = pstmt.executeUpdate();
-			pstmt.close(); pstmt = null;
-			
-			String msg = "Eliminato hostname '"+this.op2Properties.getClusterHostname()+"' dalla tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")";
-			log.debug(msg);
+			unregister(con, log, hostname);
 			
 			if(!con.getAutoCommit()) {
 				con.commit();
 			}
+
 		}
 		catch(Exception e) {
 			
@@ -489,15 +492,38 @@ public class DynamicClusterManager {
 		}
 		finally {
 			try {
-				if(pstmt!=null) {
-					pstmt.close();
+				if(con!=null) {
+					this.driverConfigurazioneDB.releaseConnection(con);
 				}
 			}catch(Exception eClose) {
 				// close
 			}
+		}
+	}
+	private void unregister(Connection con, Logger log, String hostname) throws CoreException {
+		PreparedStatement pstmt = null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driverConfigurazioneDB.getTipoDB());
+			sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_NODI_RUNTIME);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME+"=?");
+			String query = sqlQueryObject.createSQLDelete();
+			pstmt = con.prepareStatement(query);
+			int index = 1;
+			pstmt.setString(index++, hostname);
+			int row = pstmt.executeUpdate();
+			pstmt.close(); pstmt = null;
+			
+			String msg = "Eliminato hostname '"+this.op2Properties.getClusterHostname()+"' dalla tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")";
+			log.debug(msg);
+		}
+		catch(Exception e) {
+			throw new CoreException("[DynamicClusterManager.unregister] failed: "+e.getMessage(), e);
+		}
+		finally {
 			try {
-				if(con!=null) {
-					this.driverConfigurazioneDB.releaseConnection(con);
+				if(pstmt!=null) {
+					pstmt.close();
 				}
 			}catch(Exception eClose) {
 				// close
@@ -562,6 +588,76 @@ public class DynamicClusterManager {
 		}
 	}
 	
+	
+	
+	public void deleteOldHostnames(Logger log) throws CoreException {
+		
+		Connection con = null;
+		try {
+			con = this.driverConfigurazioneDB.getConnection("DynamicClusterManager.deleteOldHostnames");
+						
+			deleteOldHostnames(con, log);
+			
+			if(!con.getAutoCommit()) {
+				con.commit();
+			}
+		}
+		catch(Exception e) {
+			
+			try {
+				if(con!=null && !con.getAutoCommit()) {
+					con.rollback();
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+			
+			if(e instanceof CoreException) {
+				throw (CoreException) e;
+			}
+			else {
+				throw new CoreException("[DynamicClusterManager.deleteOldHostnames] failed: "+e.getMessage(), e);
+			}
+		}
+		finally {
+			try {
+				if(con!=null) {
+					this.driverConfigurazioneDB.releaseConnection(con);
+				}
+			}catch(Exception eClose) {
+				// close
+			}
+		}
+		
+	}
+	private void deleteOldHostnames(Connection con, Logger log) throws CoreException {
+		
+		String gruppo = null;
+		String oldData = null;
+		try {
+			gruppo = this.op2Properties.getGroupId(this.rateLimitingGestioneCluster);
+			Timestamp oldest = getTimestampRefresh(this.op2Properties.getClusterDinamicoRefreshSecondsInterval());
+			oldData = DateUtils.getSimpleDateFormatMs().format(oldest);
+			
+			List<String> listOldHostnames = getHostnames(con, this.driverConfigurazioneDB.getTipoDB(),
+					gruppo, 
+					oldest,
+					true
+					);
+			if(!listOldHostnames.isEmpty()) {
+				for (String hostname : listOldHostnames) {
+					unregister(con, log, hostname);
+				}
+			}
+			
+		}
+		catch(Exception e) {
+			throw new CoreException("[DynamicClusterManager.deleteOldHostnames] (groupId:"+gruppo+" oldestDate:"+oldData+") failed: "+e.getMessage(), e);
+		}
+		
+	}
+	
+	
 	public List<String> getHostnames(Logger log) throws CoreException {
 		Connection con = null;
 		String gruppo = null;
@@ -574,7 +670,8 @@ public class DynamicClusterManager {
 			
 			List<String> l = getHostnames(con, this.driverConfigurazioneDB.getTipoDB(),
 					gruppo, 
-					oldest 
+					oldest,
+					false
 					);
 			if(l.isEmpty()) {
 				throw new CoreException("nodes not found");
@@ -600,15 +697,17 @@ public class DynamicClusterManager {
 	
 	private static Timestamp getTimestampRefresh(int refreshSecondsInterval) {
 		int oldSeconds = refreshSecondsInterval*2; // raddoppio il tempo di refresh
+		// aggiungo ancora la metà
+		oldSeconds = oldSeconds + (refreshSecondsInterval/2);
 		// Timestamp oldest
 		return new Timestamp(System.currentTimeMillis()-(oldSeconds*1000));
 	}
 	
 	public static List<String> getHostnames(Connection con, String tipoDB, String gruppo, int refreshSecondsInterval) throws CoreException {
 		Timestamp oldest = getTimestampRefresh(refreshSecondsInterval);
-		return getHostnames(con, tipoDB, gruppo, oldest);
+		return getHostnames(con, tipoDB, gruppo, oldest, false);
 	}
-	public static List<String> getHostnames(Connection con, String tipoDB, String gruppo, Timestamp oldest) throws CoreException {
+	public static List<String> getHostnames(Connection con, String tipoDB, String gruppo, Timestamp oldest, boolean returnOldHostname) throws CoreException {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -618,7 +717,12 @@ public class DynamicClusterManager {
 			sqlQueryObject.addSelectField(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_HOSTNAME);
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_GRUPPO+"=?");
-			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH+">?");
+			if(returnOldHostname) {
+				sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH+"<?");
+			}
+			else {
+				sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH+">?");
+			}
 			sqlQueryObject.addOrderBy(CostantiDB.CONFIG_NODI_RUNTIME_COLUMN_DATA_REFRESH, true); // parto dal piu' vecchio
 			String update = sqlQueryObject.createSQLQuery();
 			pstmt = con.prepareStatement(update);

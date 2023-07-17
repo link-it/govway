@@ -523,7 +523,7 @@
 	<hidden property="antinstaller_gestione_nodi_group_id" value="GovWay"/>
 
 	<hidden property="antinstaller_gestione_nodi_numeric_id_mode" value="dynamic"/>
-	<hidden property="antinstaller_gestione_nodi_numeric_id_cifre" value="1"/>
+	<hidden property="antinstaller_gestione_nodi_numeric_id_cifre" value="2"/>
 
 	<comment displayText="Servizio 'Check'" bold="true" />
 	<validated defaultValue="https://INDICARE_HOSTNAME/govway/check" property="antinstaller_gestione_nodi_check_url" displayText="URL" regex="http(s?):\/\/(.+)\/(.*)"/>

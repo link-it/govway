@@ -134,18 +134,19 @@ public class SPCoopImbustamento {
 	private static int prefixLenght = 0;
 
 	// Usato in qualsiasi tipo di identificativo
-	private void initSerialCounter(int prefixSeriale){
+	private void initSerialCounter(int prefixSeriale, int cifre){
 		if(SPCoopImbustamento.maxSeriale==0){
-			_initSerialCounter(prefixSeriale);
+			_initSerialCounter(prefixSeriale, cifre);
 		}
 	}
-	private static synchronized void _initSerialCounter(int prefixSeriale){
+	private static synchronized void _initSerialCounter(int prefixSeriale, int cifre){
 		// Imposto il MAX_SERIAL_VALUE
 		if(SPCoopImbustamento.maxSeriale==0){
 			if(prefixSeriale==-1){
 				SPCoopImbustamento.maxSeriale = SPCoopCostanti.MAX_VALUE_ID_EGOV_COUNTER;
 				SPCoopImbustamento.prefixLenght = 0;
-			}else if(prefixSeriale<10){
+			}else if(prefixSeriale<10 && 
+					cifre<2){ // altrimenti devo sempre aggiungere uno 0 davanti
 				SPCoopImbustamento.maxSeriale = SPCoopCostanti.MAX_VALUE_ID_EGOV_COUNTER_PREFIX_1;
 				SPCoopImbustamento.prefixLenght = 1;
 			}else{
@@ -187,10 +188,12 @@ public class SPCoopImbustamento {
 		}
 		
 		Integer prefix = null;
+		DynamicClusterManager dynamicClusterManager = null;
 		OpenSPCoop2Properties openSPCoop2Properties = OpenSPCoop2Properties.getInstance();
 		if(openSPCoop2Properties.isClusterDinamico()) {
 			try {
-				prefix = DynamicClusterManager.getInstance().getIdentificativoNumerico();
+				dynamicClusterManager = DynamicClusterManager.getInstance();
+				prefix = dynamicClusterManager.getIdentificativoNumerico();
 			}catch(Exception e) {
 				throw new ProtocolException("Creazione ID eGov non riuscita; identificativo numerico del cluster dinamico non ottenibile: "+e.getMessage(), e);
 			}
@@ -201,7 +204,30 @@ public class SPCoopImbustamento {
 				prefix = Integer.valueOf(prefixS);
 			}
 		}
-		initSerialCounter(prefix==null ? -1 : prefix);
+		
+		int cifre = -1; 
+		if(prefix!=null) {
+			if(openSPCoop2Properties.isClusterDinamico()) {
+				try {
+					cifre = openSPCoop2Properties.getClusterDinamicoIdNumericoCifre(dynamicClusterManager.isRateLimitingGestioneCluster());
+				}catch(Exception e) {
+					String msg = "Comprensione numero cifre per id non riuscita (DynamicClusterManager-RL:"+dynamicClusterManager.isRateLimitingGestioneCluster()+"): "+e.getMessage();
+					this.log.debug(msg);
+					cifre = (prefix.intValue()+"").length();
+				}
+			}
+			else {
+				try {
+					cifre = openSPCoop2Properties.getClusterDinamicoIdNumericoCifre(false);
+				}catch(Exception e) {
+					String msg = "Comprensione numero cifre per id non riuscita: "+e.getMessage();
+					this.log.debug(msg);
+					cifre = (prefix.intValue()+"").length();
+				}
+			}
+		}
+		
+		initSerialCounter(prefix==null ? -1 : prefix, cifre);
 
 		IDSerialGenerator serialGenerator = null;
 		IDSerialGeneratorParameter serialGeneratorParameter = null;
@@ -264,6 +290,10 @@ public class SPCoopImbustamento {
 			}
 	
 			if(prefix!=null){
+				int paddingPrefix = SPCoopImbustamento.prefixLenght - (prefix.intValue()+"").length();
+				int iP=0;
+				for(;iP<paddingPrefix;iP++)
+					bf.append('0');
 				bf.append(prefix.intValue());
 			}
 			
