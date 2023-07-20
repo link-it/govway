@@ -1,3 +1,9 @@
+2023-07-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-34034: aggiornata libreria 'org.springframework.security:*' alla versione 5.8.5
+
 2023-07-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
