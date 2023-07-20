@@ -59,6 +59,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.AccordoServizioUtils;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
@@ -258,6 +259,13 @@ public class DocumentoExporter extends HttpServlet {
 
 						AccordoServizioParteComune asConAllegati = asCore.getAccordoServizioFull(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), true);
 						try{
+							// Nel caso di API REST devo eliminare la parte concettuale/logica poichè non è un wsdl/xsd
+							if( ServiceBinding.REST.equals(asConAllegati.getServiceBinding()) ){
+								asConAllegati.setByteWsdlConcettuale(null);
+								asConAllegati.setByteWsdlLogicoErogatore(null);
+								asConAllegati.setByteWsdlLogicoFruitore(null);
+							}
+							
 							AccordoServizioUtils asUtils = new AccordoServizioUtils(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), ControlStationCore.getLog());
 							XSDSchemaCollection schemaCollection = asUtils.buildSchemaCollection(asConAllegati, true);
 							fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION;

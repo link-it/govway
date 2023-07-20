@@ -1,5 +1,13 @@
 2023-07-20  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug OP-1612
+	Se su una API REST venivano caricati schemi XSD, il download della 'XSD Schema Collection' produceva l'errore: "Content is not allowed in prolog.".
+	Nell'intervento è stata corretta un'anomalia presente nella maschera di resoconto dei dati di una trasformazione della richiesta, dopo aver effettuato una operazione di salvataggio.
+	I link sugli header http e/o sui parametri della url non riportavano il numero corretto di header/parametri precedentemente configurati; veniva sempre indicato '0'.
+
+2023-07-20  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
 	- CVE-2023-34034: aggiornata libreria 'org.springframework.security:*' alla versione 5.8.5

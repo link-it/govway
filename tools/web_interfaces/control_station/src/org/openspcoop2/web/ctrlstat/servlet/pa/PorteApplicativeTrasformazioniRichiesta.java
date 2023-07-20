@@ -512,8 +512,9 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, trasformazioneAggiornata.getId() + "");
 			
 			// parametri visualizzazione link
-			numeroTrasformazioniRichiestaHeaders= trasformazioneAggiornata.getRichiesta() != null ? trasformazioneAggiornata.getRichiesta().sizeHeaderList() : 0;
-			numeroTrasformazioniRichiestaParametri = trasformazioneAggiornata.getRichiesta() != null ? trasformazioneAggiornata.getRichiesta().sizeParametroUrlList() : 0;
+			// FIX: non devo aggiornarli, tanto non modifichero' direttamente le due liste e il metodo 'getTrasformazione' da cui si ottiene trasformazioneAggiornata non ritorna le due liste
+			//numeroTrasformazioniRichiestaHeaders= trasformazioneAggiornata.getRichiesta() != null ? trasformazioneAggiornata.getRichiesta().sizeHeaderList() : 0;
+			//numeroTrasformazioniRichiestaParametri = trasformazioneAggiornata.getRichiesta() != null ? trasformazioneAggiornata.getRichiesta().sizeParametroUrlList() : 0;
 			
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<>();
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
