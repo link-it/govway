@@ -26,8 +26,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;

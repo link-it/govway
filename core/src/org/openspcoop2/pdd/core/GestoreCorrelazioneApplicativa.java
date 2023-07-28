@@ -32,8 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.SOAPEnvelope;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.soap.SOAPEnvelope;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;

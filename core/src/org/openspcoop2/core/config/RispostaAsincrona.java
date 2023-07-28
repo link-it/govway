@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
@@ -229,37 +229,37 @@ public class RispostaAsincrona extends org.openspcoop2.utils.beans.BaseBeanWithI
   @XmlElement(name="gestione-errore",required=false,nillable=false)
   protected GestioneErrore gestioneErrore;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String sbustamentoSoapRawEnumValue;
 
   @XmlAttribute(name="sbustamento-soap",required=false)
   protected StatoFunzionalita sbustamentoSoap = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String sbustamentoInformazioniProtocolloRawEnumValue;
 
   @XmlAttribute(name="sbustamento-informazioni-protocollo",required=false)
   protected StatoFunzionalita sbustamentoInformazioniProtocollo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String getMessageRawEnumValue;
 
   @XmlAttribute(name="get-message",required=false)
   protected StatoFunzionalita getMessage = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String autenticazioneRawEnumValue;
 
   @XmlAttribute(name="autenticazione",required=false)
   protected InvocazioneServizioTipoAutenticazione autenticazione = (InvocazioneServizioTipoAutenticazione) InvocazioneServizioTipoAutenticazione.toEnumConstantFromString("none");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String invioPerRiferimentoRawEnumValue;
 
   @XmlAttribute(name="invio-per-riferimento",required=false)
   protected StatoFunzionalita invioPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String rispostaPerRiferimentoRawEnumValue;
 
   @XmlAttribute(name="risposta-per-riferimento",required=false)

@@ -21,7 +21,7 @@ package org.openspcoop2.utils.jaxb;
 
 import java.util.ArrayList;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * ListLong2ArrayLong

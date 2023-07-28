@@ -165,23 +165,7 @@ public class RegistroServiziRemotoProperties {
 	public String getRegistroServiziXML_Location() throws UtilsException{
 		return this.readProperty(CostantiConfigurazione.REGISTRO_XML.equals(this.getTipoRegistroServiziRemoto()), "registroServizi.xml.location");
 	}
-	
-	
-	
-	/* ----- RegistroServiziWS -------- */
-	
-	public String getRegistroServiziWS_Location() throws UtilsException{
-		return this.readProperty(CostantiConfigurazione.REGISTRO_WS.equals(this.getTipoRegistroServiziRemoto()), "registroServizi.ws.location");
-	}
-	
-	public String getRegistroServiziWS_Username() throws UtilsException{
-		return this.readProperty(false, "registroServizi.ws.username");
-	}
-	
-	public String getRegistroServiziWS_Password() throws UtilsException{
-		return this.readProperty(false, "registroServizi.ws.password");
-	}
-	
+
 	
 	
 	/* ----- RegistroServiziDB -------- */
@@ -196,28 +180,6 @@ public class RegistroServiziRemotoProperties {
 	
 	public String getRegistroServiziDB_TipoDatabase() throws UtilsException{
 		return this.readProperty(CostantiConfigurazione.REGISTRO_DB.equals(this.getTipoRegistroServiziRemoto()), "registroServizi.db.tipo");
-	}
-	
-	
-	/* ----- RegistroServiziUDDI -------- */
-	
-	public String getRegistroServiziUDDI_InquiryURL() throws UtilsException{
-		return this.readProperty(CostantiConfigurazione.REGISTRO_UDDI.equals(this.getTipoRegistroServiziRemoto()), "registroServizi.uddi.inquiryUrl");
-	}
-	
-	public String getRegistroServiziUDDI_Username() throws UtilsException{
-		return this.readProperty(false, "registroServizi.uddi.username");
-	}
-	
-	public String getRegistroServiziUDDI_Password() throws UtilsException{
-		return this.readProperty(false, "registroServizi.uddi.password");
-	}
-	
-	
-	/* ----- RegistroServiziWEB -------- */
-	
-	public String getRegistroServiziWEB_URLPrefix() throws UtilsException{
-		return this.readProperty(CostantiConfigurazione.REGISTRO_UDDI.equals(this.getTipoRegistroServiziRemoto()), "registroServizi.web.urlPrefix");
 	}
 
 }

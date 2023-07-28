@@ -368,11 +368,6 @@ public class ValidatoreMessaggiApplicativiRest {
 		OpenAPILibrary openApiLibrary = null; 
 		Api api = this.accordoServizioWrapper.getApi();
 		switch (this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()) {
-		case WADL:
-			interfaceType = "Interfaccia WADL";
-			format=ApiFormats.WADL;
-			validatorConfig = new ApiValidatorConfig();
-			break;
 		case SWAGGER_2:
 			interfaceType = "Interfaccia Swagger 2";
 			format=ApiFormats.SWAGGER_2;

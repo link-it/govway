@@ -24,8 +24,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Calendar;
 
-import javax.ws.rs.ext.ParamConverter;
-import javax.ws.rs.ext.ParamConverterProvider;
+import jakarta.ws.rs.ext.ParamConverter;
+import jakarta.ws.rs.ext.ParamConverterProvider;
 
 import org.joda.time.DateTimeZone;
 import org.openspcoop2.utils.date.DateManager;

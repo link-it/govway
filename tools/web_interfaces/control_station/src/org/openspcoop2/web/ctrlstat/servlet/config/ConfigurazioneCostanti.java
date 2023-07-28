@@ -2050,11 +2050,8 @@ public class ConfigurazioneCostanti {
 	
 	/* DEFAULT VALUE PARAMETRI */
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_XML = "xml";
-	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_UDDI = "uddi";
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE_DEFAULT = "default";
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DB = "db";
-	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_WEB = "web";
-	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_WS = "ws";
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_TRACCIAMENTO = "protocol";
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DIAGNOSTICA = "protocol";
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_REGISTRO = "registro";

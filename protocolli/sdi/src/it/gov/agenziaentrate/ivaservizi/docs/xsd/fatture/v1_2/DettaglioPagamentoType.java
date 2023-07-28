@@ -20,11 +20,11 @@
 package it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2;
 
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.ModalitaPagamentoType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -302,112 +302,112 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
 
 
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="Beneficiario",required=false,nillable=false)
   protected java.lang.String beneficiario;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String modalitaPagamentoRawEnumValue;
 
   @XmlElement(name="ModalitaPagamento",required=true,nillable=false)
   protected ModalitaPagamentoType modalitaPagamento;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="date")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="date")
   @XmlElement(name="DataRiferimentoTerminiPagamento",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataRiferimentoTerminiPagamento;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="GiorniTerminiPagamento",required=false,nillable=false)
   protected java.math.BigInteger giorniTerminiPagamento;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="date")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="date")
   @XmlElement(name="DataScadenzaPagamento",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataScadenzaPagamento;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="decimal")
   @XmlElement(name="ImportoPagamento",required=true,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_importoPagamento = null;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.math.BigDecimal importoPagamento;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="CodUfficioPostale",required=false,nillable=false)
   protected java.lang.String codUfficioPostale;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="CognomeQuietanzante",required=false,nillable=false)
   protected java.lang.String cognomeQuietanzante;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="NomeQuietanzante",required=false,nillable=false)
   protected java.lang.String nomeQuietanzante;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="CFQuietanzante",required=false,nillable=false)
   protected java.lang.String cfQuietanzante;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="TitoloQuietanzante",required=false,nillable=false)
   protected java.lang.String titoloQuietanzante;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="IstitutoFinanziario",required=false,nillable=false)
   protected java.lang.String istitutoFinanziario;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="IBAN",required=false,nillable=false)
   protected java.lang.String iban;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="ABI",required=false,nillable=false)
   protected java.lang.String abi;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="CAB",required=false,nillable=false)
   protected java.lang.String cab;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="BIC",required=false,nillable=false)
   protected java.lang.String bic;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="decimal")
   @XmlElement(name="ScontoPagamentoAnticipato",required=false,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_scontoPagamentoAnticipato = null;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.math.BigDecimal scontoPagamentoAnticipato;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="date")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="date")
   @XmlElement(name="DataLimitePagamentoAnticipato",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataLimitePagamentoAnticipato;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="decimal")
   @XmlElement(name="PenalitaPagamentiRitardati",required=false,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_penalitaPagamentiRitardati = null;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.math.BigDecimal penalitaPagamentiRitardati;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="date")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="date")
   @XmlElement(name="DataDecorrenzaPenale",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataDecorrenzaPenale;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="CodicePagamento",required=false,nillable=false)
   protected java.lang.String codicePagamento;
 

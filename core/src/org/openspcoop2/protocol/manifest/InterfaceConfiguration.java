@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.protocol.manifest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import java.io.Serializable;
 
@@ -117,21 +117,21 @@ public class InterfaceConfiguration extends org.openspcoop2.utils.beans.BaseBean
 
 
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String typeRawEnumValue;
 
   @XmlAttribute(name="type",required=true)
   protected InterfaceType type;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="schema",required=false)
   protected boolean schema = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="conversations",required=false)
   protected boolean conversations = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="implementation",required=false)
   protected boolean implementation = false;
 

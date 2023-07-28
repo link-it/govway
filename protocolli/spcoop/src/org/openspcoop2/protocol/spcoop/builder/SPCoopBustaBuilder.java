@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.spcoop.builder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;

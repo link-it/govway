@@ -20,11 +20,11 @@
 package it.gov.spcoop.sica.wsbl;
 
 import it.gov.spcoop.sica.wsbl.constants.MessageOrientationType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -105,21 +105,21 @@ public class Message extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String typeRawEnumValue;
 
   @XmlAttribute(name="type",required=true)
   protected MessageOrientationType type;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="source",required=true)
   protected java.lang.String source;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="target",required=true)
   protected java.lang.String target;
 

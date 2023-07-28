@@ -50,6 +50,8 @@
 		</if>
 		<!-- per vedere i parametri disponibili: java -jar lib/swagger-codegen/swagger-codegen-cli-3.0.18.jar generate -h -->
 		<java jar="${required_lib}/swagger-codegen/${swaggerCodeGenCliJarName}" fork="true">
+			<!-- Fix: Unable to make public boolean java.util.Collections$EmptyMap.isEmpty() accessible: module java.base does not "opens java.util" to unnamed module -->
+			<jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED" /> 
 			<arg value="generate" />
 			<arg value="--input-spec" />
 			<arg value="${swaggerCodeGen.inputSpec}" />
@@ -140,6 +142,9 @@
 				</antcall>	
 			</then>
 		</if>
+
+		<!-- Impostazione package jakarta.validation -->
+		<replace dir="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/model" token="javax.validation." value="jakarta.validation."/>
 
 		<!-- Aggiunta GPL ai nuovi sorgenti generati -->	
 		<if>
@@ -257,6 +262,8 @@ paths:
 			</then>
 		</if>
 		<java jar="${required_lib}/swagger-codegen/${swaggerCodeGenCliJarName}" fork="true">
+			<!-- Fix: Unable to make public boolean java.util.Collections$EmptyMap.isEmpty() accessible: module java.base does not "opens java.util" to unnamed module -->
+			<jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED" /> 
 			<arg value="generate" />
 			<arg value="--input-spec" />
 			<arg value="${swagger}" />
@@ -323,6 +330,9 @@ paths:
 				</antcall>	
 			</then>
 		</if>
+
+		<!-- Impostazione package jakarta.validation -->
+		<replace dir="${swaggerCodeGen.outputDir}" token="javax.validation." value="jakarta.validation."/>
 
 		<!-- Aggiunta GPL ai nuovi sorgenti generati -->
 		<if>

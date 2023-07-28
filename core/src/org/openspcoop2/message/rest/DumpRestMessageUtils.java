@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.BodyPart;
+import jakarta.mail.BodyPart;
 
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
@@ -179,8 +179,8 @@ public class DumpRestMessageUtils {
 							    			}
 						    			}
 						    		}
-						    		else if(keyO instanceof javax.mail.Header) {
-						    			javax.mail.Header hdr = (javax.mail.Header) keyO;
+						    		else if(keyO instanceof jakarta.mail.Header) {
+						    			jakarta.mail.Header hdr = (jakarta.mail.Header) keyO;
 						    			if(hdr!=null && hdr.getName()!=null) {
 						    				if(multipartInfoBody!=null) {
 						    					List<String> lValues = null;
@@ -514,7 +514,7 @@ public class DumpRestMessageUtils {
 				}
 				else{
 					// Provo con codiceOriginale ma in jboss non funziona sempre
-					javax.activation.DataHandler dh= bodyPart.getDataHandler();  
+					jakarta.activation.DataHandler dh= bodyPart.getDataHandler();  
 			    	java.io.InputStream inputDH = dh.getInputStream();
 					bout = new java.io.ByteArrayOutputStream();
 			    	byte [] readB = new byte[8192];
@@ -528,7 +528,7 @@ public class DumpRestMessageUtils {
 			}
 			else{
 				// Provo con codiceOriginale ma in jboss non funziona sempre
-				javax.activation.DataHandler dh= bodyPart.getDataHandler();  
+				jakarta.activation.DataHandler dh= bodyPart.getDataHandler();  
 		    	java.io.InputStream inputDH = dh.getInputStream();
 				bout = new java.io.ByteArrayOutputStream();
 		    	byte [] readB = new byte[8192];
@@ -547,7 +547,7 @@ public class DumpRestMessageUtils {
 					processContentTypeTextPlain(s, bodyPart, bout);
 				}
 				else{
-					//bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
+					//bodyPart.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
 					// Nel caso sia xml si ottiene il seguente errore:
 					//Invalid Object type = class [B. XmlDCH can only convert DataSource or Source to XML.
 					// Si potrebbe vederlo di gestire come e' stato fatto per il rebuild dell'attachment su SOAP.
@@ -573,15 +573,15 @@ public class DumpRestMessageUtils {
 		// Se uso il codice sotto, poi si perde il content-type, non viene serializzato
 		/*
 		if(s!=null){
-			bodyPart.setDataHandler(new javax.activation.DataHandler(s,bodyPart.getContentType()));
+			bodyPart.setDataHandler(new jakarta.activation.DataHandler(s,bodyPart.getContentType()));
 			//bodyPart.setContent(s,bodyPart.getContentType());
 			//bodyPart.setText(s);
 		}
 		else{
-			//bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
+			//bodyPart.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
 			// devo comunque impostare una stringa nel caso di text/plain, senno ottengo un errore:
 			// "text/plain" DataContentHandler requires String object, was given object of type class [B
-			bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toString(),bodyPart.getContentType()));
+			bodyPart.setDataHandler(new jakarta.activation.DataHandler(bout.toString(),bodyPart.getContentType()));
 			//bodyPart.setContent(bout.toString(),bodyPart.getContentType());
 			//bodyPart.setText(bout.toString());
 		}*/

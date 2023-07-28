@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "DescriptionItemType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "DescriptionItemType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum DescriptionItemType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("title")
+	@jakarta.xml.bind.annotation.XmlEnumValue("title")
 	TITLE ("title"),
-	@javax.xml.bind.annotation.XmlEnumValue("subtitle")
+	@jakarta.xml.bind.annotation.XmlEnumValue("subtitle")
 	SUBTITLE ("subtitle"),
-	@javax.xml.bind.annotation.XmlEnumValue("note")
+	@jakarta.xml.bind.annotation.XmlEnumValue("note")
 	NOTE ("note"),
-	@javax.xml.bind.annotation.XmlEnumValue("text")
+	@jakarta.xml.bind.annotation.XmlEnumValue("text")
 	TEXT ("text");
 	
 	

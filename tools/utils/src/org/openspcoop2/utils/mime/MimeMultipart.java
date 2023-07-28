@@ -24,10 +24,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 
-import javax.mail.BodyPart;
-import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.mail.BodyPart;
+import jakarta.mail.internet.InternetHeaders;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import org.openspcoop2.utils.UtilsException;
 
@@ -41,12 +41,12 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class MimeMultipart {
 	
-	private javax.mail.internet.MimeMultipart mimeMultipartObject = null;
+	private jakarta.mail.internet.MimeMultipart mimeMultipartObject = null;
 	
 	
 	public MimeMultipart() throws UtilsException{
 		try{
-			this.mimeMultipartObject = new javax.mail.internet.MimeMultipart();
+			this.mimeMultipartObject = new jakarta.mail.internet.MimeMultipart();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -55,7 +55,7 @@ public class MimeMultipart {
 	public MimeMultipart(String subType) throws UtilsException{
 		try{
 			// multipart/<subType>
-			this.mimeMultipartObject = new javax.mail.internet.MimeMultipart(subType);
+			this.mimeMultipartObject = new jakarta.mail.internet.MimeMultipart(subType);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -63,8 +63,8 @@ public class MimeMultipart {
 	
 	public MimeMultipart(InputStream is, String contentType) throws UtilsException{
 		try{
-			javax.activation.DataSource ds = new ByteArrayDataSource(is, contentType);
-			this.mimeMultipartObject = new javax.mail.internet.MimeMultipart(ds);
+			jakarta.activation.DataSource ds = new ByteArrayDataSource(is, contentType);
+			this.mimeMultipartObject = new jakarta.mail.internet.MimeMultipart(ds);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -190,15 +190,15 @@ public class MimeMultipart {
 			while (enHdr.hasMoreElements()) {
 				Object o = enHdr.nextElement();
 				String header = null;
-				javax.mail.Header mh = null;
+				jakarta.mail.Header mh = null;
 				if(o instanceof String){
 					header = (String) o;
 					if(match(headerName, header)){
 						return bodyPart.getHeader(header)[0];
 					}
 				}
-				else if(o instanceof  javax.mail.Header){
-					mh = ( javax.mail.Header) o;
+				else if(o instanceof  jakarta.mail.Header){
+					mh = ( jakarta.mail.Header) o;
 					header = mh.getName();
 					if(match(headerName, header)){
 						return mh.getValue();

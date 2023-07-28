@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.web.lib.audit.log;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.web.lib.audit.log.constants.Stato;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import java.io.Serializable;
@@ -237,7 +237,7 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   }
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="object_details",required=false,nillable=false)
   protected java.lang.String objectDetails;
 
@@ -268,53 +268,53 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   	return this.sizeBinaryList();
   }
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipologiaRawEnumValue;
 
   @XmlAttribute(name="tipologia",required=true)
   protected Tipologia tipologia;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo-oggetto",required=false)
   protected java.lang.String tipoOggetto;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="object-id",required=false)
   protected java.lang.String objectId;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="object-old-id",required=false)
   protected java.lang.String objectOldId;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="utente",required=true)
   protected java.lang.String utente;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=true)
   protected Stato stato;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="object_class",required=false)
   protected java.lang.String objectClass;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="error",required=false)
   protected java.lang.String error;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlAttribute(name="time-request",required=true)
   protected java.util.Date timeRequest;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlAttribute(name="time-execute",required=true)
   protected java.util.Date timeExecute;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="interface-msg",required=false)
   protected java.lang.String interfaceMsg;
 

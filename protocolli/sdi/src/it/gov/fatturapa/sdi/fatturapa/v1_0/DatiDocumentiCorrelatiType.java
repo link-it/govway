@@ -19,11 +19,11 @@
  */
 package it.gov.fatturapa.sdi.fatturapa.v1_0;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -149,7 +149,7 @@ public class DatiDocumentiCorrelatiType extends org.openspcoop2.utils.beans.Base
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="RiferimentoNumeroLinea",required=true,nillable=false)
   private List<java.math.BigInteger> riferimentoNumeroLinea = new ArrayList<>();
 
@@ -177,33 +177,33 @@ public class DatiDocumentiCorrelatiType extends org.openspcoop2.utils.beans.Base
   	return this.sizeRiferimentoNumeroLineaList();
   }
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="IdDocumento",required=true,nillable=false)
   protected java.lang.String idDocumento;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="date")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="date")
   @XmlElement(name="Data",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date data;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="NumItem",required=false,nillable=false)
   protected java.lang.String numItem;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="CodiceCommessaConvenzione",required=false,nillable=false)
   protected java.lang.String codiceCommessaConvenzione;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="CodiceCUP",required=false,nillable=false)
   protected java.lang.String codiceCUP;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="CodiceCIG",required=false,nillable=false)
   protected java.lang.String codiceCIG;
 

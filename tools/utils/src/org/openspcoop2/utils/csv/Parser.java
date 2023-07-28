@@ -284,7 +284,11 @@ public class Parser {
 		BOMInputStream bomInputStream = null;
 		try{
 			if(enableBomInputStream){
-				bomInputStream = new BOMInputStream(is);
+				bomInputStream =
+						BOMInputStream.builder()
+						  .setInputStream(is)
+                          .setCharset(charset)
+                          .get();
 				reader = new InputStreamReader(bomInputStream,charset);
 			}
 			else{

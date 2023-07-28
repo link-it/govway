@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//import javax.mail.internet.ContentType;
+//import jakarta.mail.internet.ContentType;
 import com.sun.xml.messaging.saaj.packaging.mime.internet.ContentType;
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeaders;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeaders;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;

@@ -32,45 +32,45 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "RegimeFiscaleType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "RegimeFiscaleType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum RegimeFiscaleType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("RF01")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF01")
 	RF01 ("RF01"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF02")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF02")
 	RF02 ("RF02"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF03")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF03")
 	RF03 ("RF03"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF04")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF04")
 	RF04 ("RF04"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF05")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF05")
 	RF05 ("RF05"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF06")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF06")
 	RF06 ("RF06"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF07")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF07")
 	RF07 ("RF07"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF08")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF08")
 	RF08 ("RF08"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF09")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF09")
 	RF09 ("RF09"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF10")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF10")
 	RF10 ("RF10"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF11")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF11")
 	RF11 ("RF11"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF12")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF12")
 	RF12 ("RF12"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF13")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF13")
 	RF13 ("RF13"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF14")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF14")
 	RF14 ("RF14"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF15")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF15")
 	RF15 ("RF15"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF16")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF16")
 	RF16 ("RF16"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF17")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF17")
 	RF17 ("RF17"),
-	@javax.xml.bind.annotation.XmlEnumValue("RF18")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RF18")
 	RF18 ("RF18");
 	
 	

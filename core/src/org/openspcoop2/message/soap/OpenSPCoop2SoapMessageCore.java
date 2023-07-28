@@ -20,8 +20,8 @@
 
 package org.openspcoop2.message.soap;
 
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;

@@ -41,5 +41,5 @@
  */
 
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://services.pdd.openspcoop2.org", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://services.pdd.openspcoop2.org", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.openspcoop2.pdd.services.skeleton;

@@ -22,7 +22,7 @@ package org.openspcoop2.web.ctrlstat.plugins;
 
 import java.sql.Connection;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 

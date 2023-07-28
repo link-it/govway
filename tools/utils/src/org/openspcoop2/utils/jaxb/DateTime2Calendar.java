@@ -20,7 +20,7 @@
 package org.openspcoop2.utils.jaxb;
 
 import java.util.Calendar;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * DateTime2Calendar
@@ -39,7 +39,7 @@ public class DateTime2Calendar extends XmlAdapter<String, Calendar> {
 			return null;
 		}
 		String value = valueParam.trim();
-        return (javax.xml.bind.DatatypeConverter.parseDate(value));
+        return (jakarta.xml.bind.DatatypeConverter.parseDate(value));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DateTime2Calendar extends XmlAdapter<String, Calendar> {
         if (value == null) {
             return null;
         }
-        return (javax.xml.bind.DatatypeConverter.printDate(value));
+        return (jakarta.xml.bind.DatatypeConverter.printDate(value));
     }
 
 }

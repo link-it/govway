@@ -229,10 +229,6 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 						
 						ApiFormats format = null;
 						switch (accordoServizioParteComune.getFormatoSpecifica()) {
-						case WADL:
-							objectInEsame = "[Interfaccia WADL] ";
-							format=ApiFormats.WADL;
-							break;
 						case SWAGGER_2:
 							objectInEsame = "[Interfaccia Swagger 2] ";
 							format=ApiFormats.SWAGGER_2;

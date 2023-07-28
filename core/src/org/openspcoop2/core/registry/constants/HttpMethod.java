@@ -32,29 +32,29 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "HttpMethod")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "HttpMethod")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum HttpMethod implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("GET")
+	@jakarta.xml.bind.annotation.XmlEnumValue("GET")
 	GET ("GET"),
-	@javax.xml.bind.annotation.XmlEnumValue("POST")
+	@jakarta.xml.bind.annotation.XmlEnumValue("POST")
 	POST ("POST"),
-	@javax.xml.bind.annotation.XmlEnumValue("PUT")
+	@jakarta.xml.bind.annotation.XmlEnumValue("PUT")
 	PUT ("PUT"),
-	@javax.xml.bind.annotation.XmlEnumValue("DELETE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("DELETE")
 	DELETE ("DELETE"),
-	@javax.xml.bind.annotation.XmlEnumValue("OPTIONS")
+	@jakarta.xml.bind.annotation.XmlEnumValue("OPTIONS")
 	OPTIONS ("OPTIONS"),
-	@javax.xml.bind.annotation.XmlEnumValue("HEAD")
+	@jakarta.xml.bind.annotation.XmlEnumValue("HEAD")
 	HEAD ("HEAD"),
-	@javax.xml.bind.annotation.XmlEnumValue("TRACE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TRACE")
 	TRACE ("TRACE"),
-	@javax.xml.bind.annotation.XmlEnumValue("PATCH")
+	@jakarta.xml.bind.annotation.XmlEnumValue("PATCH")
 	PATCH ("PATCH"),
-	@javax.xml.bind.annotation.XmlEnumValue("LINK")
+	@jakarta.xml.bind.annotation.XmlEnumValue("LINK")
 	LINK ("LINK"),
-	@javax.xml.bind.annotation.XmlEnumValue("UNLINK")
+	@jakarta.xml.bind.annotation.XmlEnumValue("UNLINK")
 	UNLINK ("UNLINK");
 	
 	

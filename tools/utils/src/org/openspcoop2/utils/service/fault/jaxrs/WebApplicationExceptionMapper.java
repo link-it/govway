@@ -20,10 +20,10 @@
 
 package org.openspcoop2.utils.service.fault.jaxrs;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.ext.ExceptionMapper;
 
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.rs.WebApplicationException> {
+public class WebApplicationExceptionMapper implements ExceptionMapper<jakarta.ws.rs.WebApplicationException> {
 
 	private Logger log = org.openspcoop2.utils.LoggerWrapperFactory.getLogger(WebApplicationExceptionMapper.class);
 	
@@ -69,7 +69,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 	}
 	
 	@Override
-	public Response toResponse(javax.ws.rs.WebApplicationException e) {
+	public Response toResponse(jakarta.ws.rs.WebApplicationException e) {
 		if(e.getResponse()==null || e.getResponse().getEntity()==null || !(e.getResponse().getEntity() instanceof ProblemRFC7807)) {
 			
 			this.log.error(e.getMessage(),e);
@@ -138,7 +138,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 		}
 	}
 	
-	private ProblemRFC7807 _getProblem(javax.ws.rs.WebApplicationException e) {
+	private ProblemRFC7807 _getProblem(jakarta.ws.rs.WebApplicationException e) {
 		if(e==null || e.getResponse()==null || e.getResponse().getEntity()==null) {
 			return null;
 		}
@@ -148,7 +148,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 		ProblemRFC7807 problem = (ProblemRFC7807) e.getResponse().getEntity();
 		return problem;
 	}
-	private void _setType(ProblemRFC7807 problem, javax.ws.rs.WebApplicationException e) {
+	private void _setType(ProblemRFC7807 problem, jakarta.ws.rs.WebApplicationException e) {
 		if(this.typeGenerator==null) {
 			return;
 		}
@@ -156,7 +156,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 	}
 	
 	
-	public void updateProblem(ProblemRFC7807 problem, javax.ws.rs.WebApplicationException e) {
+	public void updateProblem(ProblemRFC7807 problem, jakarta.ws.rs.WebApplicationException e) {
 		
 	}
 

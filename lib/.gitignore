@@ -2,7 +2,6 @@
 ant
 antinstaller
 applicationServer
-axiom
 axis14
 bean-validation
 commons
@@ -13,7 +12,7 @@ faces
 git
 httpcore
 jackson
-javax
+jakarta
 jax
 jetty
 jminix
@@ -28,14 +27,12 @@ reports
 saaj
 security
 shared
-soapbox
 spring
 spring-security
 staticAnalysis
 swagger
 swagger-codegen
 testsuite
-wadl
 wss4j
 # Except this file
 !.gitignore

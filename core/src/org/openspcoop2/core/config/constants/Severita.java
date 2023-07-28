@@ -32,29 +32,29 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "Severita")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "Severita")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum Severita implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("off")
+	@jakarta.xml.bind.annotation.XmlEnumValue("off")
 	OFF ("off"),
-	@javax.xml.bind.annotation.XmlEnumValue("fatal")
+	@jakarta.xml.bind.annotation.XmlEnumValue("fatal")
 	FATAL ("fatal"),
-	@javax.xml.bind.annotation.XmlEnumValue("errorProtocol")
+	@jakarta.xml.bind.annotation.XmlEnumValue("errorProtocol")
 	ERROR_PROTOCOL ("errorProtocol"),
-	@javax.xml.bind.annotation.XmlEnumValue("errorIntegration")
+	@jakarta.xml.bind.annotation.XmlEnumValue("errorIntegration")
 	ERROR_INTEGRATION ("errorIntegration"),
-	@javax.xml.bind.annotation.XmlEnumValue("infoProtocol")
+	@jakarta.xml.bind.annotation.XmlEnumValue("infoProtocol")
 	INFO_PROTOCOL ("infoProtocol"),
-	@javax.xml.bind.annotation.XmlEnumValue("infoIntegration")
+	@jakarta.xml.bind.annotation.XmlEnumValue("infoIntegration")
 	INFO_INTEGRATION ("infoIntegration"),
-	@javax.xml.bind.annotation.XmlEnumValue("debugLow")
+	@jakarta.xml.bind.annotation.XmlEnumValue("debugLow")
 	DEBUG_LOW ("debugLow"),
-	@javax.xml.bind.annotation.XmlEnumValue("debugMedium")
+	@jakarta.xml.bind.annotation.XmlEnumValue("debugMedium")
 	DEBUG_MEDIUM ("debugMedium"),
-	@javax.xml.bind.annotation.XmlEnumValue("debugHigh")
+	@jakarta.xml.bind.annotation.XmlEnumValue("debugHigh")
 	DEBUG_HIGH ("debugHigh"),
-	@javax.xml.bind.annotation.XmlEnumValue("all")
+	@jakarta.xml.bind.annotation.XmlEnumValue("all")
 	ALL ("all");
 	
 	

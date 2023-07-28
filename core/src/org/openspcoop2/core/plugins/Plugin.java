@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.plugins;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -199,30 +199,30 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBeanWithId implement
   }
 
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected IdPlugin oldIdPlugin;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-plugin",required=true,nillable=false)
   protected java.lang.String tipoPlugin;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="class-name",required=true,nillable=false)
   protected java.lang.String className;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo",required=true,nillable=false)
   protected java.lang.String tipo;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="descrizione",required=false,nillable=false)
   protected java.lang.String descrizione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="label",required=true,nillable=false)
   protected java.lang.String label;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="stato",required=false,nillable=false,defaultValue="true")
   protected boolean stato = true;
 

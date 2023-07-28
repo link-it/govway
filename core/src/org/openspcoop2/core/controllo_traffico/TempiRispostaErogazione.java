@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.controllo_traffico;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -91,15 +91,15 @@ public class TempiRispostaErogazione extends org.openspcoop2.utils.beans.BaseBea
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlElement(name="connection-timeout",required=false,nillable=false)
   protected java.lang.Integer connectionTimeout;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlElement(name="read-timeout",required=false,nillable=false)
   protected java.lang.Integer readTimeout;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlElement(name="tempo-medio-risposta",required=false,nillable=false)
   protected java.lang.Integer tempoMedioRisposta;
 

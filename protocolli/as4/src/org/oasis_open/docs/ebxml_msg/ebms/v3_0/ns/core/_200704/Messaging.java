@@ -19,12 +19,12 @@
  */
 package org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -191,9 +191,9 @@ public class Messaging extends org.openspcoop2.utils.beans.BaseBean implements S
   	return this.sizeUserMessageList();
   }
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlID
-  @javax.xml.bind.annotation.XmlSchemaType(name="ID")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlID
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="ID")
   @XmlAttribute(name="id",required=false)
   protected java.lang.String id;
 

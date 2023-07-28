@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.spcoop;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.protocol.basic.BasicFactory;
 import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;

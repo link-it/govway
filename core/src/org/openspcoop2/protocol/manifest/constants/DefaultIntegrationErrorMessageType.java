@@ -32,19 +32,19 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "DefaultIntegrationErrorMessageType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "DefaultIntegrationErrorMessageType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum DefaultIntegrationErrorMessageType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("soap11")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soap11")
 	SOAP_11 ("soap11"),
-	@javax.xml.bind.annotation.XmlEnumValue("soap12")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soap12")
 	SOAP_12 ("soap12"),
-	@javax.xml.bind.annotation.XmlEnumValue("xml")
+	@jakarta.xml.bind.annotation.XmlEnumValue("xml")
 	XML ("xml"),
-	@javax.xml.bind.annotation.XmlEnumValue("json")
+	@jakarta.xml.bind.annotation.XmlEnumValue("json")
 	JSON ("json"),
-	@javax.xml.bind.annotation.XmlEnumValue("none")
+	@jakarta.xml.bind.annotation.XmlEnumValue("none")
 	NONE ("none");
 	
 	

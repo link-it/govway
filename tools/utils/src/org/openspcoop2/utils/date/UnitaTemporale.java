@@ -34,21 +34,21 @@ import org.openspcoop2.utils.UtilsException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-periodo")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-periodo")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum UnitaTemporale implements Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("secondi")
+	@jakarta.xml.bind.annotation.XmlEnumValue("secondi")
 	SECONDI ("secondi"),
-	@javax.xml.bind.annotation.XmlEnumValue("minuti")
+	@jakarta.xml.bind.annotation.XmlEnumValue("minuti")
 	MINUTI ("minuti"),
-	@javax.xml.bind.annotation.XmlEnumValue("orario")
+	@jakarta.xml.bind.annotation.XmlEnumValue("orario")
 	ORARIO ("orario"),
-	@javax.xml.bind.annotation.XmlEnumValue("giornaliero")
+	@jakarta.xml.bind.annotation.XmlEnumValue("giornaliero")
 	GIORNALIERO ("giornaliero"),
-	@javax.xml.bind.annotation.XmlEnumValue("settimanale")
+	@jakarta.xml.bind.annotation.XmlEnumValue("settimanale")
 	SETTIMANALE ("settimanale"),
-	@javax.xml.bind.annotation.XmlEnumValue("mensile")
+	@jakarta.xml.bind.annotation.XmlEnumValue("mensile")
 	MENSILE ("mensile");
 	
 	

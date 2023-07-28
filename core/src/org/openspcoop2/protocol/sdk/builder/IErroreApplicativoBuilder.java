@@ -21,7 +21,7 @@
 package org.openspcoop2.protocol.sdk.builder;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;

@@ -22,19 +22,18 @@
 
 package org.openspcoop2.message;
 
-import java.awt.datatransfer.DataFlavor;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.activation.ActivationDataFlavor;
-import javax.activation.DataContentHandler;
-import javax.activation.DataSource;
-
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+
+import jakarta.activation.ActivationDataFlavor;
+import jakarta.activation.DataContentHandler;
+import jakarta.activation.DataSource;
 
 
 /**
@@ -50,7 +49,9 @@ public class OpenSPCoop2DataContentHandler implements DataContentHandler{
 
 	public static final String OPENSPCOOP2_SIGNATURE = "===SIGNATURE=OPENSPCOOP2===";
 	
-	public OpenSPCoop2DataContentHandler(){}
+	public OpenSPCoop2DataContentHandler(){
+		// init
+	}
 
 	public static Object getContent(java.io.InputStream inputstream) throws IOException {
 		try{
@@ -100,17 +101,14 @@ public class OpenSPCoop2DataContentHandler implements DataContentHandler{
 	}
 
 	@Override
-	public Object getTransferData(DataFlavor dataflavor, DataSource datasource)
-	throws IOException
-	{
+	public Object getTransferData(ActivationDataFlavor arg0, DataSource arg1) throws IOException {
 		//logger.info("@@@ BinDataContentHandler.getTransferData: non implementato");
 		return null;
 	}
 
 	@Override
-	public DataFlavor[] getTransferDataFlavors()
-	{
-		DataFlavor adataflavor[] = new DataFlavor[1];
+	public ActivationDataFlavor[] getTransferDataFlavors() {
+		ActivationDataFlavor adataflavor[] = new ActivationDataFlavor[1];
 		try
 		{
 			adataflavor[0] = new ActivationDataFlavor(Loader.getInstance().forName("org.openspcoop2.message.OpenSPCoop2DataContentHandler"), 
@@ -164,5 +162,6 @@ public class OpenSPCoop2DataContentHandler implements DataContentHandler{
 			throw new IOException("@@@ OpenSPCoop2DataContentHandler.writeTo: Unable to run the Binary decoding on a stream " + exception.getMessage());
 		}
 	}
+
 }
 

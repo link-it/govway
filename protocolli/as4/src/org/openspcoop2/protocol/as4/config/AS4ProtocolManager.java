@@ -26,7 +26,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;

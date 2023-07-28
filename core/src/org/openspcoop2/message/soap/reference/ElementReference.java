@@ -20,7 +20,7 @@
 
 package org.openspcoop2.message.soap.reference;
 
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 /**
  * ElementReference

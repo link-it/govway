@@ -20,8 +20,8 @@
 
 package org.openspcoop2.utils.jaxrs;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.ext.ParamConverter;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.ext.ParamConverter;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;

@@ -14,7 +14,7 @@
 		<location>/public/error.jsf</location>
 	</error-page>
 	<error-page>
- 	   <exception-type>javax.servlet.ServletException</exception-type>
+ 	   <exception-type>jakarta.servlet.ServletException</exception-type>
  	   <location>/public/error.jsf</location>
 	</error-page>
 	<error-page>

@@ -31,11 +31,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.6.1-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.6.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.6.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.3.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.3.0.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.7.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.7.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jakarta.ws.rs-api-3.1.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.1-gov4j-2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.4.6.jar"/>
@@ -71,7 +67,6 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.3.27.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.3.27.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.8.5.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.0.jar"/>	
@@ -88,7 +83,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.4.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.5.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.12.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-32.0.0-jre.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-32.1.1-jre.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />
 		<!-- <echo message="3PARTI: ${manifest.classpath.3parti}"/> -->
 		
@@ -489,15 +484,15 @@
 				<matches string="${as}" pattern="wildfly26"/>
 			</or>
 			<then>
-				<unzip src="${required_lib}/shared/mailapi-1.6.7.jar" dest="${build}/tmp/mailapi"/>
+				<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.2.jar" dest="${build}/tmp/mailapi"/>
 				<concat destfile="${build}/tmp/mailapi/META-INF/mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
 				           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build}/tmp/mailapi-1.6.7.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
+				<jar jarfile="${build}/tmp/jakarta.mail-api-2.1.2.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build}/tmp/mailapi"/>
 				</jar>
-				<var name="mailapi_jar" value="mailapi-1.6.7.gw.jar" />
+				<var name="mailapi_jar" value="jakarta.mail-api-2.1.2.gw.jar" />
 			</then>
 		</if>
 		
@@ -541,17 +536,7 @@
 				<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
 			</then>
 		</if>
-		<!-- jaxb_xjc -->
-		<var name="jaxb_xjc_jar" value=""/>
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss6"/>
-			</or>
-			<then>
-				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.3.7.jar"/>
-			</then>
-		</if>
-		<!-- jaxp_ri -->
+		<!-- jaxp_ri 
 		<var name="jaxp_ri_jar" value=""/>
 		<if>
 			<or>
@@ -561,7 +546,7 @@
 			<then>
 				<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
 			</then>
-		</if>
+		</if>-->
 		<!-- concurrent -->
 		<var name="concurrent_jar" value=""/>
 		<if>
@@ -836,7 +821,6 @@
 			<zipfileset prefix="lib" dir="${required_lib}/shared">
 				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
-				<include name="uddi4j-2.0.5.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
@@ -847,7 +831,7 @@
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
 				<include name="xom-1.2.11.jar" /> <!--jmx mini console -->
 				<include name="joda-time-2.12.0.jar" />
-				<include name="guava-32.0.0-jre.jar"/>
+				<include name="guava-32.1.1-jre.jar"/>
 				<include name="java-uuid-generator-4.0.1.jar"/>
 				<include name="freemarker-2.3.31.jar"/>
 				<include name="snakeyaml-1.33-gov4j-1.jar"/>
@@ -878,20 +862,14 @@
 			<zipfileset prefix="lib" dir="${required_lib}/saaj">
 				<include name="*.jar"/>
 			</zipfileset>
-			<zipfileset prefix="lib" dir="${required_lib}/jax">
-				<include name="jaxb*.jar"/>
-				<include name="jaxws-api-2.3.1.jar"/>
-				<include name="jaxws-jsr181-api-2.3.1.jar"/>
-				<exclude name="${jaxb_xjc_jar}"/>
+			<zipfileset prefix="lib" dir="${required_lib}/jakarta">
+				<include name="jakarta.xml.ws-api-3.0.1.jar"/>
 				<include name="${jaxp_ri_jar}"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/spring">
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/spring-security">
-				<include name="*.jar"/>
-			</zipfileset>
-			<zipfileset prefix="lib" dir="${required_lib}/soapbox">
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/httpcore">
@@ -902,9 +880,6 @@
 				<!-- <include name="json-lib-2.4-jdk15.jar" /> --> <!--jmx mini console -->
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jackson">
-				<include name="*.jar"/>
-			</zipfileset>
-			<zipfileset prefix="lib" dir="${required_lib}/wadl">
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/swagger">

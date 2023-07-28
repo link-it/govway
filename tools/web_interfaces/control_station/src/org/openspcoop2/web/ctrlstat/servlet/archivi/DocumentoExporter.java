@@ -31,11 +31,11 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Credenziali;
@@ -225,9 +225,6 @@ public class DocumentoExporter extends HttpServlet {
 								else {
 									fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0_JSON;
 								}
-								break;
-							case WADL:
-								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WADL;
 								break;
 							}
 						}

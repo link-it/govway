@@ -497,9 +497,6 @@ public class ConfigLocalProperties extends InstanceProperties {
 							tipo = tipo.trim();
 						}
 						if(!CostantiConfigurazione.REGISTRO_DB.equals(tipo) && 
-								!CostantiConfigurazione.REGISTRO_UDDI.equals(tipo) && 
-								!CostantiConfigurazione.REGISTRO_WEB.equals(tipo) && 
-								!CostantiConfigurazione.REGISTRO_WS.equals(tipo) && 
 								!CostantiConfigurazione.REGISTRO_XML.equals(tipo)){
 							throw new Exception("Tipo del registro "+registri[i]+" non corretto");
 						}

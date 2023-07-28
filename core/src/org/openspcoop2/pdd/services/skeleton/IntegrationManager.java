@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -207,7 +207,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	}
 	
 	
-	public static InfoConnettoreIngresso buildInfoConnettoreIngresso(javax.servlet.http.HttpServletRequest req,Credenziali credenziali,URLProtocolContext urlProtocolContext){
+	public static InfoConnettoreIngresso buildInfoConnettoreIngresso(jakarta.servlet.http.HttpServletRequest req,Credenziali credenziali,URLProtocolContext urlProtocolContext){
 		// Informazioni connettore ingresso
 		InfoConnettoreIngresso connettoreIngresso = new InfoConnettoreIngresso();
 		connettoreIngresso.setCredenziali(credenziali);
@@ -224,7 +224,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		
 		// Raccolta oggetti da contesto
 		Credenziali credenziali = null;
-		javax.servlet.http.HttpServletRequest req = getHttpServletRequest();
+		jakarta.servlet.http.HttpServletRequest req = getHttpServletRequest();
 		URLProtocolContext urlProtocolContext = new URLProtocolContextImpl(req,logCore,true,true,this.propertiesReader.getCustomContexts());
 		try {
 			credenziali = new Credenziali(urlProtocolContext.getCredential());

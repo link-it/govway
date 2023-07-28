@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.protocol.manifest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -231,27 +231,27 @@ public class SoapConfiguration extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="soapHeaderBypassMustUnderstand",required=false,nillable=false)
   protected SoapHeaderBypassMustUnderstand soapHeaderBypassMustUnderstand;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="soap11",required=true)
   protected boolean soap11;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="soap11_withAttachments",required=false)
   protected boolean soap11WithAttachments = true;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="soap11_mtom",required=false)
   protected boolean soap11Mtom = true;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="soap12",required=true)
   protected boolean soap12;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="soap12_withAttachments",required=false)
   protected boolean soap12WithAttachments = true;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="soap12_mtom",required=false)
   protected boolean soap12Mtom = true;
 

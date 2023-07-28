@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.protocol.information_missing;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.information_missing.constants.ProprietaRequisitoInputType;
 import java.io.Serializable;
 
@@ -194,37 +194,37 @@ public class ProprietaRequisitoInput extends org.openspcoop2.utils.beans.BaseBea
   @XmlElement(name="footer",required=false,nillable=false)
   protected Description footer;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=true)
   protected ProprietaRequisitoInputType tipo;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="label",required=false)
   protected java.lang.String label;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="default",required=false)
   protected java.lang.String _default;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="use-in-delete",required=false)
   protected boolean useInDelete = true;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="step-increment-condition",required=false)
   protected java.lang.String stepIncrementCondition;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlAttribute(name="step-increment",required=false)
   protected int stepIncrement = 1;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="reload-on-change",required=false)
   protected boolean reloadOnChange = false;
 

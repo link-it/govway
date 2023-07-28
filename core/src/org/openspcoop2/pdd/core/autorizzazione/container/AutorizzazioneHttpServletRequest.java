@@ -21,7 +21,7 @@ package org.openspcoop2.pdd.core.autorizzazione.container;
 
 import java.security.Principal;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.WrappedHttpServletRequest;

@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.diagnostica;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -173,39 +173,39 @@ public class MessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBeanWi
   }
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-transazione",required=false,nillable=false)
   protected java.lang.String idTransazione;
 
   @XmlElement(name="dominio",required=true,nillable=false)
   protected DominioDiagnostico dominio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="identificativo-richiesta",required=false,nillable=false)
   protected java.lang.String identificativoRichiesta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="identificativo-risposta",required=false,nillable=false)
   protected java.lang.String identificativoRisposta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="applicativo",required=false,nillable=false)
   protected java.lang.String applicativo;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="ora-registrazione",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date oraRegistrazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="codice",required=true,nillable=false)
   protected java.lang.String codice;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="messaggio",required=true,nillable=false)
   protected java.lang.String messaggio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="positiveInteger")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="positiveInteger")
   @XmlElement(name="severita",required=true,nillable=false)
   protected java.lang.Integer severita;
 

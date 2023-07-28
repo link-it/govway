@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.protocol.manifest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.FunctionType;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import java.io.Serializable;
@@ -213,17 +213,17 @@ public class WebEmptyContext extends org.openspcoop2.utils.beans.BaseBean implem
   @XmlElement(name="restMediaTypeCollection",required=false,nillable=false)
   protected RestMediaTypeCollection restMediaTypeCollection;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="enabled",required=true)
   protected boolean enabled;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String emptyFunctionRawEnumValue;
 
   @XmlAttribute(name="emptyFunction",required=false)
   protected FunctionType emptyFunction;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String bindingRawEnumValue;
 
   @XmlAttribute(name="binding",required=false)

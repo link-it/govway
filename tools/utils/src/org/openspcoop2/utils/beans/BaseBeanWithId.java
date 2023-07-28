@@ -21,7 +21,7 @@ package org.openspcoop2.utils.beans;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * BaseBeanWithId

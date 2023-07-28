@@ -32,25 +32,25 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-filtro-applicativo")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-filtro-applicativo")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoFiltroApplicativo implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("HeaderBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("HeaderBased")
 	HEADER_BASED ("HeaderBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("URLBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("URLBased")
 	URLBASED ("URLBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("FormBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("FormBased")
 	FORM_BASED ("FormBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("SOAPActionBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SOAPActionBased")
 	SOAPACTION_BASED ("SOAPActionBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("ContentBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ContentBased")
 	CONTENT_BASED ("ContentBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("IndirizzoIP")
+	@jakarta.xml.bind.annotation.XmlEnumValue("IndirizzoIP")
 	INDIRIZZO_IP ("IndirizzoIP"),
-	@javax.xml.bind.annotation.XmlEnumValue("IndirizzoIP_Forwarded")
+	@jakarta.xml.bind.annotation.XmlEnumValue("IndirizzoIP_Forwarded")
 	INDIRIZZO_IP_FORWARDED ("IndirizzoIP_Forwarded"),
-	@javax.xml.bind.annotation.XmlEnumValue("PluginBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("PluginBased")
 	PLUGIN_BASED ("PluginBased");
 	
 	

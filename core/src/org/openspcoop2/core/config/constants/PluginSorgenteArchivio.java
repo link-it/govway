@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "PluginSorgenteArchivio")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "PluginSorgenteArchivio")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum PluginSorgenteArchivio implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("jar")
+	@jakarta.xml.bind.annotation.XmlEnumValue("jar")
 	JAR ("jar"),
-	@javax.xml.bind.annotation.XmlEnumValue("url")
+	@jakarta.xml.bind.annotation.XmlEnumValue("url")
 	URL ("url"),
-	@javax.xml.bind.annotation.XmlEnumValue("dir")
+	@jakarta.xml.bind.annotation.XmlEnumValue("dir")
 	DIR ("dir");
 	
 	

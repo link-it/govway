@@ -40,11 +40,10 @@
 			<include name="saaj/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="jax/jaxws*"/>
-			<include name="javax/*"/>
+			<include name="jakarta/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="shared/*"/>
-			<include name="soapbox/*"/>
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/cxf/*"/>

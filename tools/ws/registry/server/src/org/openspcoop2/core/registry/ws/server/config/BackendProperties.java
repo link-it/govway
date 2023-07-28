@@ -177,45 +177,5 @@ public class BackendProperties {
 	public String getDbTipoDatabase() throws UtilsException{
 		return this.readProperty(true, "db.tipoDatabase");
 	}
-	
 
-	
-	
-	/* ----- UDDI -------- */
-	
-	public String getUddiInquiryURL() throws UtilsException{
-		return this.readProperty(true, "uddi.inquiryURL");
-	}
-	
-	public String getUddiPublishURL() throws UtilsException{
-		return this.readProperty(true, "uddi.publishURL");
-	}
-	
-	public String getUddiUser() throws UtilsException{
-		return this.readProperty(true, "uddi.user");
-	}
-	
-	public String getUddiPassword() throws UtilsException{
-		return this.readProperty(true, "uddi.password");
-	}
-	
-	public String getUddiWebUrlPrefix() throws UtilsException{
-		return this.readProperty(true, "uddi.web.urlPrefix");
-	}
-	
-	public String getUddiWebPathPrefix() throws UtilsException{
-		return this.readProperty(true, "uddi.web.pathPrefix");
-	}
-	
-	
-	
-	/* ----- WEB -------- */
-		
-	public String getWebUrlPrefix() throws UtilsException{
-		return this.readProperty(true, "web.urlPrefix");
-	}
-	
-	public String getWebPathPrefix() throws UtilsException{
-		return this.readProperty(true, "web.pathPrefix");
-	}
 }

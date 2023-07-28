@@ -518,7 +518,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 	
 	/**
 	 * Metodo che si occupa di validare l'elemento 'Servizio' e 'Azione', controllando 
-	 * che siano riconosciuti all'interno del registro dei servizi di riferimento (es. registro UDDI)
+	 * che siano riconosciuti all'interno del registro dei servizi di riferimento
 	 *
 	 * @param tipoBusta tipo di Busta da validare
 	 * 
@@ -724,7 +724,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 
 	/**
 	 * Metodo che si occupa di validare l'elemento 'Servizio' e 'Azione', controllando 
-	 * che siano riconosciuti all'interno del registro dei servizi di riferimento (es. registro UDDI)
+	 * che siano riconosciuti all'interno del registro dei servizi di riferimento
 	 *
 	 * @param tipoBusta tipo di Busta da validare
 	 * 

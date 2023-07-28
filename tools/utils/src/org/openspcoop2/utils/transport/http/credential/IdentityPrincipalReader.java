@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.utils.transport.http.credential;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.slf4j.Logger;

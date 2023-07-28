@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.core.mvc.properties;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

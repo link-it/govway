@@ -32,21 +32,21 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "MessageType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "MessageType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum MessageType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("soap11")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soap11")
 	SOAP_11 ("soap11"),
-	@javax.xml.bind.annotation.XmlEnumValue("soap12")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soap12")
 	SOAP_12 ("soap12"),
-	@javax.xml.bind.annotation.XmlEnumValue("xml")
+	@jakarta.xml.bind.annotation.XmlEnumValue("xml")
 	XML ("xml"),
-	@javax.xml.bind.annotation.XmlEnumValue("json")
+	@jakarta.xml.bind.annotation.XmlEnumValue("json")
 	JSON ("json"),
-	@javax.xml.bind.annotation.XmlEnumValue("binary")
+	@jakarta.xml.bind.annotation.XmlEnumValue("binary")
 	BINARY ("binary"),
-	@javax.xml.bind.annotation.XmlEnumValue("mimeMultipart")
+	@jakarta.xml.bind.annotation.XmlEnumValue("mimeMultipart")
 	MIME_MULTIPART ("mimeMultipart");
 	
 	

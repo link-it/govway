@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ValidazioneContenutiApplicativiTipo")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ValidazioneContenutiApplicativiTipo")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ValidazioneContenutiApplicativiTipo implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("interface")
+	@jakarta.xml.bind.annotation.XmlEnumValue("interface")
 	INTERFACE ("interface"),
-	@javax.xml.bind.annotation.XmlEnumValue("openspcoop")
+	@jakarta.xml.bind.annotation.XmlEnumValue("openspcoop")
 	OPENSPCOOP ("openspcoop"),
-	@javax.xml.bind.annotation.XmlEnumValue("xsd")
+	@jakarta.xml.bind.annotation.XmlEnumValue("xsd")
 	XSD ("xsd");
 	
 	

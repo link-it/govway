@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "SocioUnicoType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "SocioUnicoType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum SocioUnicoType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("SU")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SU")
 	SU ("SU"),
-	@javax.xml.bind.annotation.XmlEnumValue("SM")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SM")
 	SM ("SM");
 	
 	

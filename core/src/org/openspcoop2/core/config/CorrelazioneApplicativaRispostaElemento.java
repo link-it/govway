@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRispostaIdentificazione;
 import java.io.Serializable;
@@ -118,21 +118,21 @@ public class CorrelazioneApplicativaRispostaElemento extends org.openspcoop2.uti
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=false)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String identificazioneRawEnumValue;
 
   @XmlAttribute(name="identificazione",required=false)
   protected CorrelazioneApplicativaRispostaIdentificazione identificazione = (CorrelazioneApplicativaRispostaIdentificazione) CorrelazioneApplicativaRispostaIdentificazione.toEnumConstantFromString("contentBased");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="pattern",required=false)
   protected java.lang.String pattern;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String identificazioneFallitaRawEnumValue;
 
   @XmlAttribute(name="identificazione-fallita",required=false)

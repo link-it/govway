@@ -22,7 +22,7 @@
 
 package org.openspcoop2.protocol.spcoop.validator;
 
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPFault;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;

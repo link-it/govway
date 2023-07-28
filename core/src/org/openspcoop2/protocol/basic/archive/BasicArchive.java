@@ -195,9 +195,6 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 				byte[] wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
 				if(wsdlConcettuale!=null){
 					switch (accordoServizioParteComune.getFormatoSpecifica()) {
-					case WADL:
-						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.WADL, log);
-						break;
 					case SWAGGER_2:
 						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.SWAGGER_2, log);
 						break;

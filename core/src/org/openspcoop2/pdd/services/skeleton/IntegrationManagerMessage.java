@@ -63,8 +63,8 @@ import org.openspcoop2.message.OpenSPCoop2Message;
  * @version $Rev$, $Date$
  */
 
-@javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
-@javax.xml.bind.annotation.XmlType(name = "IntegrationManagerMessage", propOrder = {
+@jakarta.xml.bind.annotation.XmlAccessorType(jakarta.xml.bind.annotation.XmlAccessType.FIELD)
+@jakarta.xml.bind.annotation.XmlType(name = "IntegrationManagerMessage", propOrder = {
     "idApplicativo",
     "imbustamento",
     "message",
@@ -73,15 +73,15 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 })
 public class IntegrationManagerMessage implements java.io.Serializable{
 
-    @javax.xml.bind.annotation.XmlElement(name = "IDApplicativo", required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(name = "IDApplicativo", required = true, nillable = true)
     protected String idApplicativo;
     
     protected boolean imbustamento;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected byte[] message;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String servizioApplicativo;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected ProtocolHeaderInfo protocolHeaderInfo;
 
 	/**

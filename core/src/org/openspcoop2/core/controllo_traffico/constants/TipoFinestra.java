@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-finestra")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-finestra")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoFinestra implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("corrente")
+	@jakarta.xml.bind.annotation.XmlEnumValue("corrente")
 	CORRENTE ("corrente"),
-	@javax.xml.bind.annotation.XmlEnumValue("precedente")
+	@jakarta.xml.bind.annotation.XmlEnumValue("precedente")
 	PRECEDENTE ("precedente"),
-	@javax.xml.bind.annotation.XmlEnumValue("scorrevole")
+	@jakarta.xml.bind.annotation.XmlEnumValue("scorrevole")
 	SCORREVOLE ("scorrevole");
 	
 	

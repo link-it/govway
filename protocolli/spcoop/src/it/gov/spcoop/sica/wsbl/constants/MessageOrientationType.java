@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "messageOrientationType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "messageOrientationType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum MessageOrientationType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("RECEIVE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RECEIVE")
 	RECEIVE ("RECEIVE"),
-	@javax.xml.bind.annotation.XmlEnumValue("SEND")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SEND")
 	SEND ("SEND");
 	
 	

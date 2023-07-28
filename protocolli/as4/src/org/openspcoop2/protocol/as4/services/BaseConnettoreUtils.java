@@ -24,9 +24,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Enumeration;
 
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.TextMessage;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Message;
+import jakarta.jms.TextMessage;
 
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.threads.RunnableLogger;

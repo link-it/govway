@@ -35,7 +35,7 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JacksonJsonProviderCustomized extends com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider {
+public class JacksonJsonProviderCustomized extends com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider {
 
 	private static boolean failOnMissingExternalTypeIdProperty = false;
 	public static boolean isFailOnMissingExternalTypeIdProperty() {

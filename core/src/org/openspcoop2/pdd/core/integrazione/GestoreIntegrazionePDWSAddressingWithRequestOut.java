@@ -20,7 +20,7 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;

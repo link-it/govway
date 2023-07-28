@@ -20,12 +20,12 @@
 package it.gov.spcoop.sica.manifest;
 
 import it.gov.spcoop.sica.manifest.constants.TipoAdesione;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -133,7 +133,7 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="anyURI")
   @XmlElement(name="riferimentoParteComune",required=true,nillable=false)
   protected java.net.URI riferimentoParteComune;
 
@@ -146,13 +146,13 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   @XmlElement(name="specificaLivelliServizio",required=false,nillable=false)
   protected SpecificaLivelliServizio specificaLivelliServizio;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String adesioneRawEnumValue;
 
   @XmlAttribute(name="adesione",required=true)
   protected TipoAdesione adesione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="anyURI")
   @XmlAttribute(name="erogatore",required=false)
   protected java.net.URI erogatore;
 

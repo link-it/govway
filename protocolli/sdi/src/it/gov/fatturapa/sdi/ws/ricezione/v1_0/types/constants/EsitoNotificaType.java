@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "esitoNotifica_Type")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "esitoNotifica_Type")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum EsitoNotificaType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("ES00")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ES00")
 	ES00 ("ES00"),
-	@javax.xml.bind.annotation.XmlEnumValue("ES01")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ES01")
 	ES01 ("ES01"),
-	@javax.xml.bind.annotation.XmlEnumValue("ES02")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ES02")
 	ES02 ("ES02");
 	
 	

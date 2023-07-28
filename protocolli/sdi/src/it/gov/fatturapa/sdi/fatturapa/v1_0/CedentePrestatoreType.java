@@ -19,11 +19,11 @@
  */
 package it.gov.fatturapa.sdi.fatturapa.v1_0;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -136,8 +136,8 @@ public class CedentePrestatoreType extends org.openspcoop2.utils.beans.BaseBean 
   @XmlElement(name="Contatti",required=false,nillable=false)
   protected ContattiType contatti;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="RiferimentoAmministrazione",required=false,nillable=false)
   protected java.lang.String riferimentoAmministrazione;
 

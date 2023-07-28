@@ -32,19 +32,19 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ParameterType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ParameterType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ParameterType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("header")
+	@jakarta.xml.bind.annotation.XmlEnumValue("header")
 	HEADER ("header"),
-	@javax.xml.bind.annotation.XmlEnumValue("query")
+	@jakarta.xml.bind.annotation.XmlEnumValue("query")
 	QUERY ("query"),
-	@javax.xml.bind.annotation.XmlEnumValue("dynamicPath")
+	@jakarta.xml.bind.annotation.XmlEnumValue("dynamicPath")
 	DYNAMIC_PATH ("dynamicPath"),
-	@javax.xml.bind.annotation.XmlEnumValue("form")
+	@jakarta.xml.bind.annotation.XmlEnumValue("form")
 	FORM ("form"),
-	@javax.xml.bind.annotation.XmlEnumValue("cookie")
+	@jakarta.xml.bind.annotation.XmlEnumValue("cookie")
 	COOKIE ("cookie");
 	
 	

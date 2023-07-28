@@ -20,12 +20,13 @@
 
 package org.openspcoop2.security.message.saml;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.joda.time.DateTime;
 import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 
@@ -39,17 +40,17 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
  */
 public class SAMLUtilities {
 
-	public static DateTime minutesOperator(DateTime dateTime,Integer intValue){
-		DateTime dateTimeRes = dateTime;
+	public static Instant minutesOperator(Instant dateTime,Integer intValue){
+		Instant dateTimeRes = dateTime;
 		if(intValue!=null){
 			if(intValue.intValue() == 0){
 				dateTimeRes = dateTime;
 			}
 			else if(intValue.intValue() > 0){
-				dateTimeRes = dateTime.plusMinutes(intValue.intValue());
+				dateTimeRes = dateTime.plus(intValue.intValue(),ChronoUnit.MINUTES);
 			}
 			else if(intValue.intValue() < 0){
-				dateTimeRes = dateTime.minusMinutes(intValue.intValue()*-1);
+				dateTimeRes = dateTime.minus((intValue.intValue()*-1),ChronoUnit.MINUTES);
 			}
 		}
 		return dateTimeRes;

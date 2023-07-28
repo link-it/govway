@@ -23,8 +23,8 @@ package org.openspcoop2.web.ctrlstat.core;
 
 import java.util.Properties;
 
-import javax.jms.Queue;
-import javax.jms.QueueConnectionFactory;
+import jakarta.jms.Queue;
+import jakarta.jms.QueueConnectionFactory;
 import javax.naming.NamingException;
 
 import org.openspcoop2.utils.resources.GestoreJNDI;

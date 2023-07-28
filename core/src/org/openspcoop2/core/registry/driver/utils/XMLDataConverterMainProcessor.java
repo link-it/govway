@@ -199,42 +199,6 @@ public class XMLDataConverterMainProcessor {
 						password = password.trim();
 					}
 				}		
-			}else if("uddi".equals(args_tipoRegistroCRUD)){
-				// UDDI
-				String inquiryUrl = reader.getProperty("openspcoop2.registroServizi.uddi.inquiryUrl");
-				if(inquiryUrl!=null)
-					inquiryUrl = inquiryUrl.trim();
-				String publishUrl = reader.getProperty("openspcoop2.registroServizi.uddi.publishUrl");
-				if(publishUrl!=null)
-					publishUrl = publishUrl.trim();
-				String usernameUDDI = reader.getProperty("openspcoop2.registroServizi.uddi.username");
-				if(usernameUDDI!=null)
-					usernameUDDI = usernameUDDI.trim();
-				String passwordUDDI = reader.getProperty("openspcoop2.registroServizi.uddi.password");
-				if(passwordUDDI!=null)
-					passwordUDDI = passwordUDDI.trim();
-				String urlPrefix = reader.getProperty("openspcoop2.registroServizi.uddi.urlPrefix");
-				if(urlPrefix!=null)
-					urlPrefix = urlPrefix.trim();
-				String pathPrefix = reader.getProperty("openspcoop2.registroServizi.uddi.pathPrefix");
-				if(pathPrefix!=null)
-					pathPrefix = pathPrefix.trim();
-				acCRUD.setLocation(inquiryUrl);
-				acCRUD.setUser(usernameUDDI);
-				acCRUD.setPassword(passwordUDDI);
-				acCRUD.putGenericProperties("publishUrl", publishUrl);
-				acCRUD.putGenericProperties("urlPrefix", urlPrefix);
-				acCRUD.putGenericProperties("pathPrefix", pathPrefix);
-			}else if("web".equals(args_tipoRegistroCRUD)){
-				// WEB
-				String urlPrefix = reader.getProperty("openspcoop2.registroServizi.web.urlPrefix");
-				if(urlPrefix!=null)
-					urlPrefix = urlPrefix.trim();
-				String pathPrefix = reader.getProperty("openspcoop2.registroServizi.web.pathPrefix");
-				if(pathPrefix!=null)
-					pathPrefix = pathPrefix.trim();
-				acCRUD.setLocation(urlPrefix);
-				acCRUD.putGenericProperties("pathPrefix", pathPrefix);
 			}
 
 		}catch(Exception e) {
@@ -340,9 +304,6 @@ public class XMLDataConverterMainProcessor {
 			boolean gestioneSoggetti,boolean reset, boolean mantieniFruitori, boolean deleteMappingErogazioneFruizione) throws Exception{
 		
 		Logger logDriver = null;
-		if( org.openspcoop2.core.config.constants.RegistroTipo.UDDI.equals(acCRUD.getTipo()) || org.openspcoop2.core.config.constants.RegistroTipo.WEB.equals(acCRUD.getTipo()) ){
-			logDriver = log;
-		}
 		
 		// XMLDataConverter
 		XMLDataConverter dataConverter = null;

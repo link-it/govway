@@ -22,7 +22,7 @@ package org.openspcoop2.message.soap;
 
 import java.util.List;
 
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;

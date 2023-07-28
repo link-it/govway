@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.protocol.manifest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import java.io.Serializable;
 
@@ -91,13 +91,13 @@ public class IntegrationConfigurationResourceIdentificationMode extends org.open
 
 
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String nameRawEnumValue;
 
   @XmlAttribute(name="name",required=true)
   protected ResourceIdentificationType name;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="onlyAdvancedMode",required=false)
   protected boolean onlyAdvancedMode = false;
 

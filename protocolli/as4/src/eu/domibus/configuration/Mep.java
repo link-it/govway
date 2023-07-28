@@ -19,11 +19,11 @@
  */
 package eu.domibus.configuration;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -83,15 +83,15 @@ public class Mep extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="anyURI")
   @XmlAttribute(name="value",required=true)
   protected java.net.URI value;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="legs",required=false)
   protected java.math.BigInteger legs = new java.math.BigInteger("1");
 

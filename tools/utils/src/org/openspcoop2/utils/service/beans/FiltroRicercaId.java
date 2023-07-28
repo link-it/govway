@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.utils.service.beans;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 public class FiltroRicercaId  {
   

@@ -22,8 +22,8 @@
 package org.openspcoop2.pdd.services.skeleton;
 
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -83,7 +83,7 @@ import org.openspcoop2.utils.date.DateUtils;
  */
 
 
-@javax.xml.bind.annotation.XmlType(name = "IntegrationManagerException", namespace="http://services.pdd.openspcoop2.org", propOrder = {
+@jakarta.xml.bind.annotation.XmlType(name = "IntegrationManagerException", namespace="http://services.pdd.openspcoop2.org", propOrder = {
     "codiceEccezione",
     "descrizioneEccezione",
     "identificativoFunzione",
@@ -91,7 +91,7 @@ import org.openspcoop2.utils.date.DateUtils;
     "oraRegistrazione",
     "tipoEccezione"
 })
-@javax.xml.ws.WebFault(name = "IntegrationManagerException", targetNamespace = "http://services.pdd.openspcoop2.org")
+@jakarta.xml.ws.WebFault(name = "IntegrationManagerException", targetNamespace = "http://services.pdd.openspcoop2.org")
 
 public class IntegrationManagerException extends Exception implements java.io.Serializable {
 

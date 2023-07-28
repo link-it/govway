@@ -17,8 +17,8 @@
 
 		<jar.group.name>opensaml</jar.group.name>
 		
-		<java-support.version>7.5.2</java-support.version>
-		<opensaml.version>3.4.6</opensaml.version>
+		<java-support.version>8.4.0</java-support.version>
+		<opensaml.version>4.3.0</opensaml.version>
 
 	</properties>
 
@@ -318,4 +318,12 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>shibboleth</id>
+			<url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
+		</repository>
+	</repositories>
+
 </project>

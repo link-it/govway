@@ -22,10 +22,10 @@
 
 package org.openspcoop2.pdd.core;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
+import jakarta.jms.JMSException;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -143,7 +143,7 @@ public class JMSSender {
 			// Sender
 			try{
 				sender = jmsObject.getSession().createProducer(queue);
-			}catch(javax.jms.JMSException e){
+			}catch(jakarta.jms.JMSException e){
 				this.qmanager.releaseResource(this.codicePorta,this.idModulo,resource);
 				this.log.error("Riscontrato errore durante la creazione del sender ["+destinatario+"] :"+e.getMessage(),e);
 				this.errore = "Riscontrato errore durante la creazione del sender ["+destinatario+"] :"+e.getMessage();

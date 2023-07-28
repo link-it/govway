@@ -22,8 +22,8 @@ package org.openspcoop2.protocol.basic.builder;
 
 import java.util.List;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.eccezione.errore_applicativo.Eccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.ErroreApplicativo;

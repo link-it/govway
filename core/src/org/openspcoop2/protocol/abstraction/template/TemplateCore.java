@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.activation.FileDataSource;
+import jakarta.activation.FileDataSource;
 
 import org.openspcoop2.protocol.abstraction.constants.CostantiAbstraction;
 import org.openspcoop2.protocol.sdk.ProtocolException;

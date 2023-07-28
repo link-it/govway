@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-controllo-periodo")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-controllo-periodo")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoControlloPeriodo implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("realtime")
+	@jakarta.xml.bind.annotation.XmlEnumValue("realtime")
 	REALTIME ("realtime"),
-	@javax.xml.bind.annotation.XmlEnumValue("statistic")
+	@jakarta.xml.bind.annotation.XmlEnumValue("statistic")
 	STATISTIC ("statistic");
 	
 	

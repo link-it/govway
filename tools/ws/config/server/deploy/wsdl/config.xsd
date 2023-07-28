@@ -1681,10 +1681,7 @@
 	<xsd:simpleType name="RegistroTipo">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="xml"/>
-			<xsd:enumeration value="uddi"/>
-			<xsd:enumeration value="web"/>
 			<xsd:enumeration value="db"/>
-			<xsd:enumeration value="ws"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:complexType name="Property">

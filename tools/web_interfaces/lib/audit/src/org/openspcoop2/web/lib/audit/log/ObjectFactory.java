@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.lib.audit.log;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

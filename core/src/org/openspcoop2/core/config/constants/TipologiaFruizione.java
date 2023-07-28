@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "TipologiaFruizione")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "TipologiaFruizione")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipologiaFruizione implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("disabilitato")
+	@jakarta.xml.bind.annotation.XmlEnumValue("disabilitato")
 	DISABILITATO ("disabilitato"),
-	@javax.xml.bind.annotation.XmlEnumValue("normale")
+	@jakarta.xml.bind.annotation.XmlEnumValue("normale")
 	NORMALE ("normale"),
-	@javax.xml.bind.annotation.XmlEnumValue("asincrona_simmetrica")
+	@jakarta.xml.bind.annotation.XmlEnumValue("asincrona_simmetrica")
 	ASINCRONA_SIMMETRICA ("asincrona_simmetrica");
 	
 	

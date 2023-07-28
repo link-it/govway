@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "PortaDelegataSoggettiErogatori")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "PortaDelegataSoggettiErogatori")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum PortaDelegataSoggettiErogatori implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("soggettiEsterni")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soggettiEsterni")
 	SOGGETTI_ESTERNI ("soggettiEsterni"),
-	@javax.xml.bind.annotation.XmlEnumValue("escludiSoggettoFruitore")
+	@jakarta.xml.bind.annotation.XmlEnumValue("escludiSoggettoFruitore")
 	ESCLUDI_SOGGETTO_FRUITORE ("escludiSoggettoFruitore"),
-	@javax.xml.bind.annotation.XmlEnumValue("tutti")
+	@jakarta.xml.bind.annotation.XmlEnumValue("tutti")
 	TUTTI ("tutti");
 	
 	

@@ -24,11 +24,9 @@
 	<property name="buildSchemi" value="true" />
 	<property name="buildMessage" value="true" />
 	<property name="buildCore" value="true" />
-	<property name="buildCore.registryWS" value="true" />
 	<property name="buildProtocolAPI" value="true" />
 	<property name="buildMonitorAPI" value="true" />
 	<property name="buildSecurity" value="true" />
-	<property name="buildSecurity_soapbox" value="true"/>
 	<property name="buildProtocolEngine" value="true" />
 	<property name="buildMonitorEngine" value="true" />
 	<property name="buildPdd" value="true" />

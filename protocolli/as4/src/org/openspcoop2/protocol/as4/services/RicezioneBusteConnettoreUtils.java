@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.as4.services;
 import java.util.Enumeration;
 import java.util.HashMap;
 
-import javax.jms.MapMessage;
+import jakarta.jms.MapMessage;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;

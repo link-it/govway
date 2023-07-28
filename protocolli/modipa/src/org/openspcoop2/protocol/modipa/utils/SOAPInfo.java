@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.protocol.modipa.utils;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPPart;
 
 import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;

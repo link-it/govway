@@ -53,7 +53,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.openspcoop2.utils.Utilities;

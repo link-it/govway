@@ -27,12 +27,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -1230,7 +1230,7 @@ public class SPCoopImbustamento {
 			// Aggiungo attributi presenti nel vecchio nel nuovo
 			java.util.Iterator<?> attributes = eGovHeaderOLD.getAllAttributes();
 			while(attributes.hasNext()){
-				javax.xml.soap.Name mAttribute = (javax.xml.soap.Name) attributes.next();
+				jakarta.xml.soap.Name mAttribute = (jakarta.xml.soap.Name) attributes.next();
 				eGovHeaderNEW.addAttribute(mAttribute, eGovHeaderOLD.getAttributeValue(mAttribute));
 			}
 			// Aggiungo figli presenti nel vecchio, nel nuovo

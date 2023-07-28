@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import java.io.Serializable;
@@ -251,43 +251,43 @@ public class CorsConfigurazione extends org.openspcoop2.utils.beans.BaseBeanWith
   @XmlElement(name="access-control-expose-headers",required=false,nillable=false)
   protected CorsConfigurazioneHeaders accessControlExposeHeaders;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=false)
   protected TipoGestioneCORS tipo = (TipoGestioneCORS) TipoGestioneCORS.toEnumConstantFromString("gateway");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String accessControlAllAllowOriginsRawEnumValue;
 
   @XmlAttribute(name="access-control-all-allow-origins",required=false)
   protected StatoFunzionalita accessControlAllAllowOrigins = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String accessControlAllAllowMethodsRawEnumValue;
 
   @XmlAttribute(name="access-control-all-allow-methods",required=false)
   protected StatoFunzionalita accessControlAllAllowMethods = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String accessControlAllAllowHeadersRawEnumValue;
 
   @XmlAttribute(name="access-control-all-allow-headers",required=false)
   protected StatoFunzionalita accessControlAllAllowHeaders = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String accessControlAllowCredentialsRawEnumValue;
 
   @XmlAttribute(name="access-control-allow-credentials",required=false)
   protected StatoFunzionalita accessControlAllowCredentials = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="access-control-max-age",required=false)
   protected java.lang.Integer accessControlMaxAge;
 

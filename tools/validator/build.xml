@@ -36,7 +36,6 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/log" includes="*.jar"/>
-		<pathelement path="${openspcoop2_lib}/shared/uddi4j-2.0.5.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.6.7.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/jakarta.activation-1.2.2.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/xercesImpl-2.12.2.jar"/>
@@ -69,7 +68,7 @@
 		<if>
 			<equals arg1="${validazioneRegistroServizi}" arg2="true" />
 			<then>
-				<!-- db/uddi/web -->
+				<!-- db -->
 				<copy file="${openspcoop2}/core/src/schemi/registroServizi.xsd" todir="${build}"/>
 				<copy file="deploy/properties/validator.log4j2.properties" todir="${build}"/>
 				<java classname="org.openspcoop2.core.registry.driver.utils.ValidazioneSemanticaMainProcessor" fork="true">

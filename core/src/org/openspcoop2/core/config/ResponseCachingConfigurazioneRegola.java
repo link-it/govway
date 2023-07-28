@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -96,19 +96,19 @@ public class ResponseCachingConfigurazioneRegola extends org.openspcoop2.utils.b
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="return-code-min",required=false)
   protected java.lang.Integer returnCodeMin;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="return-code-max",required=false)
   protected java.lang.Integer returnCodeMax;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="fault",required=false)
   protected boolean fault = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="cache-timeout-seconds",required=false)
   protected java.lang.Integer cacheTimeoutSeconds;
 

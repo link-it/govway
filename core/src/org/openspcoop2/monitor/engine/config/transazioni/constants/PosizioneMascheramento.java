@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "posizione-mascheramento")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "posizione-mascheramento")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum PosizioneMascheramento implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("Primi")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Primi")
 	PRIMI ("Primi"),
-	@javax.xml.bind.annotation.XmlEnumValue("Ultimi")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Ultimi")
 	ULTIMI ("Ultimi");
 	
 	

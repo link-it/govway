@@ -24,7 +24,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.domibus.eu/configuration",
-	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED,
- 	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.domibus.eu/configuration",
+	elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED,
+ 	attributeFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package eu.domibus.configuration;

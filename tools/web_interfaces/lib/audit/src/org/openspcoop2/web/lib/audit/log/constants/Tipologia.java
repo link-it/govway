@@ -32,19 +32,19 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipologia")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipologia")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum Tipologia implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("LOGIN")
+	@jakarta.xml.bind.annotation.XmlEnumValue("LOGIN")
 	LOGIN ("LOGIN"),
-	@javax.xml.bind.annotation.XmlEnumValue("LOGOUT")
+	@jakarta.xml.bind.annotation.XmlEnumValue("LOGOUT")
 	LOGOUT ("LOGOUT"),
-	@javax.xml.bind.annotation.XmlEnumValue("ADD")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ADD")
 	ADD ("ADD"),
-	@javax.xml.bind.annotation.XmlEnumValue("CHANGE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("CHANGE")
 	CHANGE ("CHANGE"),
-	@javax.xml.bind.annotation.XmlEnumValue("DEL")
+	@jakarta.xml.bind.annotation.XmlEnumValue("DEL")
 	DEL ("DEL");
 	
 	

@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.core.registry;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import java.io.Serializable;
@@ -290,58 +290,58 @@ public class Azione extends org.openspcoop2.utils.beans.BaseBeanWithId implement
   	return this.sizeProtocolPropertyList();
   }
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="prof-azione",required=false)
   protected java.lang.String profAzione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.Long idAccordo;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String profiloCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="profilo-collaborazione",required=false)
   protected ProfiloCollaborazione profiloCollaborazione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String filtroDuplicatiRawEnumValue;
 
   @XmlAttribute(name="filtro-duplicati",required=false)
   protected StatoFunzionalita filtroDuplicati;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String confermaRicezioneRawEnumValue;
 
   @XmlAttribute(name="conferma-ricezione",required=false)
   protected StatoFunzionalita confermaRicezione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String idCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="id-collaborazione",required=false)
   protected StatoFunzionalita idCollaborazione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String idRiferimentoRichiestaRawEnumValue;
 
   @XmlAttribute(name="id-riferimento-richiesta",required=false)
   protected StatoFunzionalita idRiferimentoRichiesta;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String consegnaInOrdineRawEnumValue;
 
   @XmlAttribute(name="consegna-in-ordine",required=false)
   protected StatoFunzionalita consegnaInOrdine;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="scadenza",required=false)
   protected java.lang.String scadenza;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="correlata",required=false)
   protected java.lang.String correlata;
 

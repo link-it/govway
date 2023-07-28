@@ -32,11 +32,11 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "FormatoTrasmissioneType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "FormatoTrasmissioneType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum FormatoTrasmissioneType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("FSM10")
+	@jakarta.xml.bind.annotation.XmlEnumValue("FSM10")
 	FSM10 ("FSM10");
 	
 	

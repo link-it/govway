@@ -22,7 +22,7 @@ package org.openspcoop2.utils.transport.http;
 
 import java.util.List;
 
-import javax.mail.internet.MimeUtility;
+import jakarta.mail.internet.MimeUtility;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;

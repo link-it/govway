@@ -20,12 +20,12 @@
 package it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2;
 
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -173,14 +173,14 @@ public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean
   	return this.sizeFatturaElettronicaBodyList();
   }
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String versioneRawEnumValue;
 
   @XmlAttribute(name="versione",required=true)
   protected FormatoTrasmissioneType versione;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlAttribute(name="SistemaEmittente",required=false)
   protected java.lang.String sistemaEmittente;
 

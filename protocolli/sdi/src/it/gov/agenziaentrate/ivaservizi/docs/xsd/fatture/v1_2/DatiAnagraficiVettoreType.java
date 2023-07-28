@@ -19,11 +19,11 @@
  */
 package it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -104,15 +104,15 @@ public class DatiAnagraficiVettoreType extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="IdFiscaleIVA",required=true,nillable=false)
   protected IdFiscaleType idFiscaleIVA;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="CodiceFiscale",required=false,nillable=false)
   protected java.lang.String codiceFiscale;
 
   @XmlElement(name="Anagrafica",required=true,nillable=false)
   protected AnagraficaType anagrafica;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="NumeroLicenzaGuida",required=false,nillable=false)
   protected java.lang.String numeroLicenzaGuida;
 

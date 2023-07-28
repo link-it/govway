@@ -32,27 +32,27 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-risorsa")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-risorsa")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoRisorsa implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("NumeroRichieste")
+	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroRichieste")
 	NUMERO_RICHIESTE ("NumeroRichieste"),
-	@javax.xml.bind.annotation.XmlEnumValue("OccupazioneBanda")
+	@jakarta.xml.bind.annotation.XmlEnumValue("OccupazioneBanda")
 	OCCUPAZIONE_BANDA ("OccupazioneBanda"),
-	@javax.xml.bind.annotation.XmlEnumValue("DimensioneMassimaMessaggio")
+	@jakarta.xml.bind.annotation.XmlEnumValue("DimensioneMassimaMessaggio")
 	DIMENSIONE_MASSIMA_MESSAGGIO ("DimensioneMassimaMessaggio"),
-	@javax.xml.bind.annotation.XmlEnumValue("TempoComplessivoRisposta")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TempoComplessivoRisposta")
 	TEMPO_COMPLESSIVO_RISPOSTA ("TempoComplessivoRisposta"),
-	@javax.xml.bind.annotation.XmlEnumValue("TempoMedioRisposta")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TempoMedioRisposta")
 	TEMPO_MEDIO_RISPOSTA ("TempoMedioRisposta"),
-	@javax.xml.bind.annotation.XmlEnumValue("NumeroRichiesteFallite")
+	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroRichiesteFallite")
 	NUMERO_RICHIESTE_FALLITE ("NumeroRichiesteFallite"),
-	@javax.xml.bind.annotation.XmlEnumValue("NumeroRichiesteCompletateConSuccesso")
+	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroRichiesteCompletateConSuccesso")
 	NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO ("NumeroRichiesteCompletateConSuccesso"),
-	@javax.xml.bind.annotation.XmlEnumValue("NumeroFaultApplicativi")
+	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroFaultApplicativi")
 	NUMERO_FAULT_APPLICATIVI ("NumeroFaultApplicativi"),
-	@javax.xml.bind.annotation.XmlEnumValue("NumeroRichiesteFalliteOFaultApplicativi")
+	@jakarta.xml.bind.annotation.XmlEnumValue("NumeroRichiesteFalliteOFaultApplicativi")
 	NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI ("NumeroRichiesteFalliteOFaultApplicativi");
 	
 	

@@ -20,9 +20,9 @@
 
 package org.openspcoop2.utils.service.authentication.filter;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;

@@ -86,15 +86,7 @@ public class CertificateUtils {
 		bf.append("\t"+prefix+"toString()="+cert.toString()+"\n");
 		bf.append("\t"+prefix+"getType()="+cert.getType()+"\n");
 		bf.append("\t"+prefix+"getVersion()="+cert.getVersion()+"\n");
-		
-		if(cert.getIssuerDN()!=null){
-			bf.append("\t"+prefix+"cert.getIssuerDN().toString()="+cert.getIssuerDN().toString()+"\n");
-			bf.append("\t"+prefix+"cert.getIssuerDN().getName()="+cert.getIssuerDN().getName()+"\n");
-		}
-		else{
-			bf.append("\t"+prefix+"cert.getIssuerDN() is null"+"\n");
-		}
-		
+				
 		if(cert.getIssuerX500Principal()!=null){
 			bf.append("\t"+prefix+"getIssuerX500Principal().toString()="+cert.getIssuerX500Principal().toString()+"\n");
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName()="+cert.getIssuerX500Principal().getName()+"\n");
@@ -116,15 +108,7 @@ public class CertificateUtils {
 		else{
 			bf.append("\t"+prefix+"cert.getIssuerX500Principal() is null"+"\n");
 		}
-		
-		if(cert.getSubjectDN()!=null){
-			bf.append("\t"+prefix+"getSubjectDN().toString()="+cert.getSubjectDN().toString()+"\n");
-			bf.append("\t"+prefix+"getSubjectDN().getName()="+cert.getSubjectDN().getName()+"\n");
-		}
-		else{
-			bf.append("\t"+prefix+"cert.getSubjectDN() is null"+"\n");
-		}
-		
+				
 		bf.append("\t"+prefix+"getSerialNumber()="+cert.getSerialNumber()+"\n");
 		bf.append("\t"+prefix+"getNotAfter()="+cert.getNotAfter()+"\n");
 		bf.append("\t"+prefix+"getNotBefore()="+cert.getNotBefore()+"\n");

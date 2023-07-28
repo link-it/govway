@@ -32,10 +32,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.internet.ContentType;
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.mail.internet.ContentType;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;

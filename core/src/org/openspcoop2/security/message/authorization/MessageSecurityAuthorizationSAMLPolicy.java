@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
 
 import org.apache.wss4j.common.saml.builder.SAML2Constants;
 import org.herasaf.xacml.core.context.impl.DecisionType;

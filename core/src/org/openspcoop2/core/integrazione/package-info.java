@@ -24,7 +24,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://govway.org/integration",
-	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
- 	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://govway.org/integration",
+	elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
+ 	attributeFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package org.openspcoop2.core.integrazione;

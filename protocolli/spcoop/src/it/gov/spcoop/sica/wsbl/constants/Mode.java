@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "mode")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "mode")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum Mode implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("EFFECTLESS")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EFFECTLESS")
 	EFFECTLESS ("EFFECTLESS"),
-	@javax.xml.bind.annotation.XmlEnumValue("DEFINITIVE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("DEFINITIVE")
 	DEFINITIVE ("DEFINITIVE"),
-	@javax.xml.bind.annotation.XmlEnumValue("COMPENSATABLE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("COMPENSATABLE")
 	COMPENSATABLE ("COMPENSATABLE");
 	
 	

@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.mail.BodyPart;
-import javax.mail.internet.InternetHeaders;
-import javax.xml.soap.AttachmentPart;
+import jakarta.mail.BodyPart;
+import jakarta.mail.internet.InternetHeaders;
+import jakarta.xml.soap.AttachmentPart;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;

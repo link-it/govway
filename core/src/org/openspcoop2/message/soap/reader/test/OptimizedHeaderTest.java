@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeader;
 
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2MessageDynamicContent;
 import org.openspcoop2.message.OpenSPCoop2Message;

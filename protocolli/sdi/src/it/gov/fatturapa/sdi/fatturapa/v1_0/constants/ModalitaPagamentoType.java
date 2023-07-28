@@ -32,43 +32,43 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ModalitaPagamentoType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ModalitaPagamentoType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ModalitaPagamentoType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("MP01")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP01")
 	MP01 ("MP01"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP02")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP02")
 	MP02 ("MP02"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP03")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP03")
 	MP03 ("MP03"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP04")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP04")
 	MP04 ("MP04"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP05")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP05")
 	MP05 ("MP05"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP06")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP06")
 	MP06 ("MP06"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP07")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP07")
 	MP07 ("MP07"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP08")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP08")
 	MP08 ("MP08"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP09")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP09")
 	MP09 ("MP09"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP10")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP10")
 	MP10 ("MP10"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP11")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP11")
 	MP11 ("MP11"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP12")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP12")
 	MP12 ("MP12"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP13")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP13")
 	MP13 ("MP13"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP14")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP14")
 	MP14 ("MP14"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP15")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP15")
 	MP15 ("MP15"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP16")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP16")
 	MP16 ("MP16"),
-	@javax.xml.bind.annotation.XmlEnumValue("MP17")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MP17")
 	MP17 ("MP17");
 	
 	

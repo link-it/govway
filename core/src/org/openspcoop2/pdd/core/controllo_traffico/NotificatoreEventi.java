@@ -34,7 +34,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import javax.activation.FileDataSource;
+import jakarta.activation.FileDataSource;
 
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.eventi.Evento;

@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.openspcoop2.utils.Costanti;
@@ -120,7 +120,7 @@ public abstract class AbstractBasicAuthenticationEntryPoint extends BasicAuthent
 	
 	protected abstract Response getPayload(AuthenticationException authException, HttpServletResponse httpResponse);
 
-	protected abstract void addCustomHeaders(javax.servlet.http.HttpServletResponse httpResponse);
+	protected abstract void addCustomHeaders(jakarta.servlet.http.HttpServletResponse httpResponse);
 	
 	@Override
 	public void commence(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException authException)  {

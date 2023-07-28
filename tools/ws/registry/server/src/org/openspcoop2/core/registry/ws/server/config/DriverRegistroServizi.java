@@ -24,8 +24,6 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
-import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.utils.UtilsException;
 
 /**     
@@ -90,35 +88,6 @@ public class DriverRegistroServizi {
 	
 				this.driver = new DriverRegistroServiziDB(jndiName, jndiProp, logDAO, tipoDatabase);
 				if(((DriverRegistroServiziDB)this.driver).create == false){
-					throw new Exception("Driver ["+this.tipo+"] non inizializzato correttamente (Per ulteriori dettagli vedi log '*_sql')");
-				}
-			}
-			
-			// REGISTRO TYPE UDDI
-			
-			else if(this.tipo.equalsIgnoreCase("uddi")){
-				String inquiryURL = backendProperties.getUddiInquiryURL();
-				String publishURL = backendProperties.getUddiPublishURL();
-				String user = backendProperties.getUddiUser();
-				String password = backendProperties.getUddiPassword();
-				String urlPrefix = backendProperties.getUddiWebUrlPrefix();
-				String pathPrefix = backendProperties.getUddiWebPathPrefix();
-								
-				this.driver = new DriverRegistroServiziUDDI(inquiryURL, publishURL, user, password, urlPrefix, pathPrefix, null);
-				if(((DriverRegistroServiziUDDI)this.driver).create == false){
-					throw new Exception("Driver ["+this.tipo+"] non inizializzato correttamente (Per ulteriori dettagli vedi log '*_sql')");
-				}
-			}
-			
-			// REGISTRO TYPE WEB
-					
-			else if(this.tipo.equalsIgnoreCase("web")){
-			
-			    String urlPrefix = backendProperties.getWebUrlPrefix();
-			    String pathPrefix = backendProperties.getWebPathPrefix();
-			    
-				this.driver = new DriverRegistroServiziWEB(urlPrefix, pathPrefix, null);
-				if(((DriverRegistroServiziWEB)this.driver).create == false){
 					throw new Exception("Driver ["+this.tipo+"] non inizializzato correttamente (Per ulteriori dettagli vedi log '*_sql')");
 				}
 			}

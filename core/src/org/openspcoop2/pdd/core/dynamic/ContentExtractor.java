@@ -22,9 +22,9 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.util.List;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeader;
 
 import org.openspcoop2.core.commons.CoreRuntimeException;
 import org.openspcoop2.message.OpenSPCoop2Message;

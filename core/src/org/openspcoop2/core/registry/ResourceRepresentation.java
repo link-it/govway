@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.core.registry;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.RepresentationType;
 import java.io.Serializable;
@@ -159,25 +159,25 @@ public class ResourceRepresentation extends org.openspcoop2.utils.beans.BaseBean
   @XmlElement(name="json",required=false,nillable=false)
   protected ResourceRepresentationJson json;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="media-type",required=true)
   protected java.lang.String mediaType;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=false)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="message-type",required=false)
   protected MessageType messageType;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String representationTypeRawEnumValue;
 
   @XmlAttribute(name="representation-type",required=false)

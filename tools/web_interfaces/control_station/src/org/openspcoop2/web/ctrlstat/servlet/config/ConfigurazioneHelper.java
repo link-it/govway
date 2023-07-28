@@ -36,8 +36,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -1944,11 +1944,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
 			}
-			if (tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_UDDI) &&
-					((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1) || (confpw.indexOf(" ") != -1))) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
-				return false;
-			}
 
 			// length
 			if(this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME)==false) {
@@ -1970,17 +1965,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_XML) &&
-					!tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DB) &&
-					!tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_UDDI) &&
-					!tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_WEB) &&
-					!tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_WS)) {
-				this.pd.setMessage("Tipo dev'essere xml, db, uddi, web o ws");
-				return false;
-			}
-
-			// Controllo che le password corrispondano
-			if (tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_UDDI) && !password.equals(confpw)) {
-				this.pd.setMessage("Le password non corrispondono");
+					!tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DB)) {
+				this.pd.setMessage("Tipo dev'essere xml, db");
 				return false;
 			}
 
@@ -3476,12 +3462,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setRequired(true);
 		dati.add(de);
 
-		//String[] tipoReg = { "xml", "db", "uddi", "web", "ws" };
 		String[] tipoReg = { 
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_XML,
-				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DB,
-				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_WEB,
-				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_WS
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DB
 		};
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -3492,7 +3475,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setPostBack(true);
 		dati.add(de);
 
-		if (tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_UDDI)) {
+		/**if (tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_RICHIEDE_USERNAME_PASSWORD)) {
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTENTE);
 			de.setValue(utente);
@@ -3516,7 +3499,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONFERMA_PW);
 			de.setSize( getSize());
 			dati.add(de);
-		}
+		}*/
 
 
 		return dati;

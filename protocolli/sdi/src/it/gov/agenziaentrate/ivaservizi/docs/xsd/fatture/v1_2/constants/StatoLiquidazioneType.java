@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "StatoLiquidazioneType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "StatoLiquidazioneType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum StatoLiquidazioneType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("LS")
+	@jakarta.xml.bind.annotation.XmlEnumValue("LS")
 	LS ("LS"),
-	@javax.xml.bind.annotation.XmlEnumValue("LN")
+	@jakarta.xml.bind.annotation.XmlEnumValue("LN")
 	LN ("LN");
 	
 	

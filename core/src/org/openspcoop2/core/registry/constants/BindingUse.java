@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "BindingUse")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "BindingUse")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum BindingUse implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("literal")
+	@jakarta.xml.bind.annotation.XmlEnumValue("literal")
 	LITERAL ("literal"),
-	@javax.xml.bind.annotation.XmlEnumValue("encoded")
+	@jakarta.xml.bind.annotation.XmlEnumValue("encoded")
 	ENCODED ("encoded");
 	
 	

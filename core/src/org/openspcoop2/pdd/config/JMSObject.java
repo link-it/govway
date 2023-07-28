@@ -22,8 +22,8 @@
 
 package org.openspcoop2.pdd.config;
 
-import javax.jms.Connection;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
 
 /**
  * Classe utilizzata per raccogliere le risorse ottenute da un broker JMS.

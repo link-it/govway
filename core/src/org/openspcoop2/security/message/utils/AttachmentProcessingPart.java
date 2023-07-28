@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.soap.AttachmentPart;
+import jakarta.xml.soap.AttachmentPart;
 
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.security.message.constants.SecurityConstants;

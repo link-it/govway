@@ -60,7 +60,7 @@ public class MailcapActivationReader {
 	    		  String key = (String) en.nextElement();
 	    		  int index = key.indexOf(";;");
 	    		  if(index==-1){
-	    			  throw new Exception("Entry "+key+(String) prop.get(key)+ " definita con un formato scorretto [;;] (vedi javax/activation/MailcapCommandMap api)");
+	    			  throw new Exception("Entry "+key+(String) prop.get(key)+ " definita con un formato scorretto [;;] (vedi jakarta.activation.MailcapCommandMap api)");
 	    		  }
 	    		  String keyMime = key.substring(0,index);
 	    		  keyMime = keyMime.trim();
@@ -68,7 +68,7 @@ public class MailcapActivationReader {
 	    		  String value = (String) prop.get(key);
 	    		  index = value.indexOf("=");
 	    		  if(index==-1){
-	    			  throw new Exception("Entry "+key+(String) prop.get(key)+ " definita con un formato scorretto [=] (vedi javax/activation/MailcapCommandMap api)");
+	    			  throw new Exception("Entry "+key+(String) prop.get(key)+ " definita con un formato scorretto [=] (vedi jakarta.activation.MailcapCommandMap api)");
 	    		  }
 	    		  value=value.substring(index+1,value.length());
 	    		  value=value.trim();

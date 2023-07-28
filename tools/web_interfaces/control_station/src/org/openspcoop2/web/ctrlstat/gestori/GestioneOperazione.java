@@ -27,7 +27,7 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.jms.QueueSession;
+import jakarta.jms.QueueSession;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.Utilities;

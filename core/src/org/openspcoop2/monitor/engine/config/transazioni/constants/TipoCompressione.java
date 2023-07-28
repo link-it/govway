@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-compressione")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-compressione")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoCompressione implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("Deflater")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Deflater")
 	DEFLATER ("Deflater"),
-	@javax.xml.bind.annotation.XmlEnumValue("Gzip")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Gzip")
 	GZIP ("Gzip"),
-	@javax.xml.bind.annotation.XmlEnumValue("Zip")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Zip")
 	ZIP ("Zip");
 	
 	

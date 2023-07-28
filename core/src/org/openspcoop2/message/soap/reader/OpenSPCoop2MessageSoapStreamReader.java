@@ -28,9 +28,9 @@ import java.io.SequenceInputStream;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPHeader;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;

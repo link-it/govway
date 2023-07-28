@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.as4;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 import org.openspcoop2.protocol.as4.archive.AS4Archive;
 import org.openspcoop2.protocol.as4.builder.AS4BustaBuilder;

@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.sdi.builder;
 
 import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
 
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;

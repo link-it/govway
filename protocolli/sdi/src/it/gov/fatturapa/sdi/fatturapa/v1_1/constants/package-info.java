@@ -24,7 +24,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.fatturapa.gov.it/sdi/fatturapa/v1.1",
-	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED,
- 	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.fatturapa.gov.it/sdi/fatturapa/v1.1",
+	elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED,
+ 	attributeFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package it.gov.fatturapa.sdi.fatturapa.v1_1.constants;

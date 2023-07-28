@@ -20,11 +20,11 @@
 package it.cnipa.collprofiles;
 
 import it.cnipa.collprofiles.constants.ProfiloDiCollaborazioneType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -114,25 +114,25 @@ public class OperationType extends org.openspcoop2.utils.beans.BaseBean implemen
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="QName")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="QName")
   @XmlAttribute(name="servizio",required=true)
   protected java.lang.String servizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="QName")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="QName")
   @XmlAttribute(name="operazione",required=true)
   protected java.lang.String operazione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String profiloDiCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="profiloDiCollaborazione",required=true)
   protected ProfiloDiCollaborazioneType profiloDiCollaborazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="QName")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="QName")
   @XmlAttribute(name="servizioCorrelato",required=false)
   protected java.lang.String servizioCorrelato;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="QName")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="QName")
   @XmlAttribute(name="operazioneCorrelata",required=false)
   protected java.lang.String operazioneCorrelata;
 

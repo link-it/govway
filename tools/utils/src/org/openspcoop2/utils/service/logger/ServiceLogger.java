@@ -103,8 +103,8 @@ public class ServiceLogger {
 	private void _error_except404(String message, Throwable t, Object [] params) {
 		
 		boolean error = true;
-		if(t!=null && t instanceof javax.ws.rs.WebApplicationException) {
-			javax.ws.rs.WebApplicationException we = (javax.ws.rs.WebApplicationException) t;
+		if(t!=null && t instanceof jakarta.ws.rs.WebApplicationException) {
+			jakarta.ws.rs.WebApplicationException we = (jakarta.ws.rs.WebApplicationException) t;
 			if(we.getResponse()!=null && we.getResponse().getStatus()==404) {
 				error = false;
 			}

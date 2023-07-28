@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.SequenceInputStream;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeader;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.Costanti;

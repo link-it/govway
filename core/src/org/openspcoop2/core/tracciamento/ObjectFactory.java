@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.core.tracciamento;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

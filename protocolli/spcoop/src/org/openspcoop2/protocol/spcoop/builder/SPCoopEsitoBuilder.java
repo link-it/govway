@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.spcoop.builder;
 
-import javax.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPBody;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.basic.Costanti;

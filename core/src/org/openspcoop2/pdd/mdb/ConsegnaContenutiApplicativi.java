@@ -31,8 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPFault;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;

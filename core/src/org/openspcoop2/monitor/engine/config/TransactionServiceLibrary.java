@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPEnvelope;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.transazioni.DumpContenuto;

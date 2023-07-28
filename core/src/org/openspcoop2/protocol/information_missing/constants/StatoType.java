@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "statoType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "statoType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum StatoType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("finale")
+	@jakarta.xml.bind.annotation.XmlEnumValue("finale")
 	FINALE ("finale"),
-	@javax.xml.bind.annotation.XmlEnumValue("operativo")
+	@jakarta.xml.bind.annotation.XmlEnumValue("operativo")
 	OPERATIVO ("operativo"),
-	@javax.xml.bind.annotation.XmlEnumValue("bozza")
+	@jakarta.xml.bind.annotation.XmlEnumValue("bozza")
 	BOZZA ("bozza");
 	
 	

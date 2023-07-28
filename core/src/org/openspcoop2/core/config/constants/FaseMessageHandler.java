@@ -32,19 +32,19 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "FaseMessageHandler")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "FaseMessageHandler")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum FaseMessageHandler implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("preIn")
+	@jakarta.xml.bind.annotation.XmlEnumValue("preIn")
 	PRE_IN ("preIn"),
-	@javax.xml.bind.annotation.XmlEnumValue("in")
+	@jakarta.xml.bind.annotation.XmlEnumValue("in")
 	IN ("in"),
-	@javax.xml.bind.annotation.XmlEnumValue("inProtocolInfo")
+	@jakarta.xml.bind.annotation.XmlEnumValue("inProtocolInfo")
 	IN_PROTOCOL_INFO ("inProtocolInfo"),
-	@javax.xml.bind.annotation.XmlEnumValue("out")
+	@jakarta.xml.bind.annotation.XmlEnumValue("out")
 	OUT ("out"),
-	@javax.xml.bind.annotation.XmlEnumValue("postOut")
+	@jakarta.xml.bind.annotation.XmlEnumValue("postOut")
 	POST_OUT ("postOut");
 	
 	

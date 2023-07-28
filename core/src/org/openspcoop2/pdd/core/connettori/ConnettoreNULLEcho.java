@@ -391,7 +391,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 				// Poiche' la risposta e' esattamente uguale (nel body e negli allegati) alla richiesta, 
 				// venendo costruita dai bytes della richiesta 
 //				if(this.responseMsg.countAttachments()>0){
-//					javax.xml.soap.SOAPBody soapBody = this.responseMsg.getSOAPBody();
+//					jakarta.xml.soap.SOAPBody soapBody = this.responseMsg.getSOAPBody();
 //					if(soapBody!=null){
 //						Node childNode = org.openspcoop2.message.SoapUtils.getFirstNotEmptyChildNode(soapBody);
 //						System.out.println("LocalName["+childNode.getLocalName()+"] ["+childNode.getNamespaceURI()+"]");

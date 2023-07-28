@@ -29,14 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.jms.BytesMessage;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.Topic;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -71,7 +71,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 	private static Map<String,Destination> locations = new ConcurrentHashMap<String,Destination>();
 
 	/** acknowledgeModeSessione */
-	private int acknowledgeModeSessione = javax.jms.Session.AUTO_ACKNOWLEDGE;
+	private int acknowledgeModeSessione = jakarta.jms.Session.AUTO_ACKNOWLEDGE;
 
 
 
@@ -142,11 +142,11 @@ public class ConnettoreJMS extends ConnettoreBase {
 		// acknowledgeModeSessione
 		if(this.properties.get(CostantiConnettori.CONNETTORE_JMS_ACKNOWLEDGE_MODE)!=null){
 			if(CostantiConfigurazione.AUTO_ACKNOWLEDGE.equals(this.properties.get(CostantiConnettori.CONNETTORE_JMS_ACKNOWLEDGE_MODE)))
-				this.acknowledgeModeSessione = javax.jms.Session.AUTO_ACKNOWLEDGE;
+				this.acknowledgeModeSessione = jakarta.jms.Session.AUTO_ACKNOWLEDGE;
 			else if(CostantiConfigurazione.CLIENT_ACKNOWLEDGE.equals(this.properties.get(CostantiConnettori.CONNETTORE_JMS_ACKNOWLEDGE_MODE)))
-				this.acknowledgeModeSessione = javax.jms.Session.CLIENT_ACKNOWLEDGE;
+				this.acknowledgeModeSessione = jakarta.jms.Session.CLIENT_ACKNOWLEDGE;
 			else if(CostantiConfigurazione.DUPS_OK_ACKNOWLEDGE.equals(this.properties.get(CostantiConnettori.CONNETTORE_JMS_ACKNOWLEDGE_MODE)))
-				this.acknowledgeModeSessione = javax.jms.Session.DUPS_OK_ACKNOWLEDGE;
+				this.acknowledgeModeSessione = jakarta.jms.Session.DUPS_OK_ACKNOWLEDGE;
 			else
 				this.logger.error("Tipo di acknowledgeModeSessione non conosciuto (viene utilizzato il default:AUTO_ACKNOWLEDGE)");
 		}
@@ -463,7 +463,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 
 			/* ---------- Creazione messaggio ----------- */
-			javax.jms.Message messageJMS = null;
+			jakarta.jms.Message messageJMS = null;
 			if( CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE.equalsIgnoreCase( this.properties.get(CostantiConnettori.CONNETTORE_JMS_SEND_AS)  ) ){
 				if(this.debug)
 					this.logger.info("Create BytesMessage...",false);

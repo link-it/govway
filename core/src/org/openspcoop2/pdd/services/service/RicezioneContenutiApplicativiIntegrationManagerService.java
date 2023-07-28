@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.soap.SOAPFault;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -114,7 +114,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 
 	public IntegrationManagerMessage process(String tipoOperazione, String portaDelegata, IntegrationManagerMessage msg,
 			String idInvocazionePerRiferimento,
-			Logger logCore, javax.servlet.http.HttpServletRequest req, HttpServletResponse res,
+			Logger logCore, jakarta.servlet.http.HttpServletRequest req, HttpServletResponse res,
 			IProtocolFactory<?> protocolFactory, Date dataAccettazioneRichiesta, Date dataIngressoRichiesta) throws IntegrationManagerException {
 
 		String idModulo = RicezioneContenutiApplicativi.ID_MODULO+IntegrationManager.ID_MODULO;

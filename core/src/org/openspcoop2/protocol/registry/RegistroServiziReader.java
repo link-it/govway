@@ -828,9 +828,7 @@ public class RegistroServiziReader {
 	 * query al registro dei servizi.
 	 * L'engine inizializzato sara' diverso a seconda del <var>tipo</var> di registro :
 	 * <ul>
-	 * <li> {@link org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI}, interroga un registro dei servizi UDDI.
 	 * <li> {@link org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML}, interroga un registro dei servizi realizzato tramite un file xml.
-	 * <li> {@link org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB}, interroga un registro dei servizi realizzato come un WEB Server.
 	 * <li> {@link org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB}, interroga un registro dei servizi realizzato come un Database relazionale.
 	 * </ul>
 	 *

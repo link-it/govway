@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.protocol.manifest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -74,11 +74,11 @@ public class IntegrationErrorCode extends org.openspcoop2.utils.beans.BaseBean i
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlAttribute(name="http",required=true)
   protected int http;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlAttribute(name="govway",required=true)
   protected int govway;
 

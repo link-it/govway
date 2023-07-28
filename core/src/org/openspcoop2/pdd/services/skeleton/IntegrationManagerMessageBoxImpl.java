@@ -20,8 +20,8 @@
 
 package org.openspcoop2.pdd.services.skeleton;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * IntegrationManager service
@@ -33,30 +33,30 @@ import javax.servlet.http.HttpServletResponse;
  * @version $Rev$, $Date$
  */
 
-@javax.jws.WebService(name = "IntegrationManager",
+@jakarta.jws.WebService(name = "IntegrationManager",
 		serviceName = "MessageBoxService",
 		portName = "MessageBox",
 		targetNamespace = "http://services.pdd.openspcoop2.org",
 		endpointInterface = "org.openspcoop2.pdd.services.skeleton.IntegrationManagerMessageBoxInterface")
 public class IntegrationManagerMessageBoxImpl extends IntegrationManager{
 
-	@javax.annotation.Resource
-	javax.xml.ws.WebServiceContext wsc;
+	@jakarta.annotation.Resource
+	jakarta.xml.ws.WebServiceContext wsc;
 	
 	@Override
-	@javax.jws.WebMethod
+	@jakarta.jws.WebMethod
 	protected HttpServletRequest getHttpServletRequest() throws IntegrationManagerException{
 		
-		javax.servlet.http.HttpServletRequest req =  null;
+		jakarta.servlet.http.HttpServletRequest req =  null;
 		
-		javax.xml.ws.handler.MessageContext msgContext = this.wsc.getMessageContext();
+		jakarta.xml.ws.handler.MessageContext msgContext = this.wsc.getMessageContext();
 
 		req = 
-			(javax.servlet.http.HttpServletRequest) msgContext.get(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST);
+			(jakarta.servlet.http.HttpServletRequest) msgContext.get(jakarta.xml.ws.handler.MessageContext.SERVLET_REQUEST);
 		
 		
 		// Il path info e' nella forma /govway/protocol/IntegrationManager
-		String pathinfo = (String) msgContext.get(javax.xml.ws.handler.MessageContext.PATH_INFO);
+		String pathinfo = (String) msgContext.get(jakarta.xml.ws.handler.MessageContext.PATH_INFO);
 		
 		IntegrationManagerUtility.readAndSetProtocol(req, pathinfo);
 		
@@ -67,12 +67,12 @@ public class IntegrationManagerMessageBoxImpl extends IntegrationManager{
 	protected HttpServletResponse getHttpServletResponse()
 			throws IntegrationManagerException {
 		
-		javax.servlet.http.HttpServletResponse res =  null;
+		jakarta.servlet.http.HttpServletResponse res =  null;
 		
-		javax.xml.ws.handler.MessageContext msgContext = this.wsc.getMessageContext();
+		jakarta.xml.ws.handler.MessageContext msgContext = this.wsc.getMessageContext();
 
 		res = 
-			(javax.servlet.http.HttpServletResponse) msgContext.get(javax.xml.ws.handler.MessageContext.SERVLET_RESPONSE);
+			(jakarta.servlet.http.HttpServletResponse) msgContext.get(jakarta.xml.ws.handler.MessageContext.SERVLET_RESPONSE);
 		
 		return res;
 	}

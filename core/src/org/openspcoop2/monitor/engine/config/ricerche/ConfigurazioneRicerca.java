@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.monitor.engine.config.ricerche;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -127,21 +127,21 @@ public class ConfigurazioneRicerca extends org.openspcoop2.utils.beans.BaseBeanW
   }
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-configurazione-ricerca",required=true,nillable=false)
   protected java.lang.String idConfigurazioneRicerca;
 
   @XmlElement(name="id-configurazione-servizio-azione",required=true,nillable=false)
   protected IdConfigurazioneServizioAzione idConfigurazioneServizioAzione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="enabled",required=true,nillable=false)
   protected boolean enabled;
 
   @XmlElement(name="plugin",required=true,nillable=false)
   protected InfoPlugin plugin;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="label",required=true,nillable=false)
   protected java.lang.String label;
 

@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.eccezione.errore_applicativo;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -82,11 +82,11 @@ public class DominioSoggetto extends org.openspcoop2.utils.beans.BaseBean implem
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @javax.xml.bind.annotation.XmlValue()
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlValue()
   public String base;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="type",required=true)
   protected java.lang.String type;
 

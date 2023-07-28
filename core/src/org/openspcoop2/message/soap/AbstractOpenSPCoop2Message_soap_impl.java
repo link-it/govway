@@ -27,18 +27,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2MessageDynamicContent;
 import org.openspcoop2.message.ForwardConfig;
@@ -480,36 +480,6 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 		}
 		else {
 			AbstractOpenSPCoop2Message_saaj_impl._setFaultString(fault, message, locale);
-		}
-	}
-	
-	/* Ws Security (SoapBox) */
-	
-	@Override
-	public String getEncryptedDataHeaderBlockClass() {
-		if(this.isContentBuilded()) {
-			return this.content.getEncryptedDataHeaderBlockClass();
-		}
-		else {
-			return AbstractOpenSPCoop2Message_saaj_impl._getEncryptedDataHeaderBlockClass();
-		}
-	}
-	@Override
-	public String getProcessPartialEncryptedMessageClass() {
-		if(this.isContentBuilded()) {
-			return this.content.getProcessPartialEncryptedMessageClass();
-		}
-		else {
-			return AbstractOpenSPCoop2Message_saaj_impl._getProcessPartialEncryptedMessageClass();
-		}
-	}
-	@Override
-	public String getSignPartialMessageProcessorClass() {
-		if(this.isContentBuilded()) {
-			return this.content.getSignPartialMessageProcessorClass();
-		}
-		else {
-			return AbstractOpenSPCoop2Message_saaj_impl._getSignPartialMessageProcessorClass();
 		}
 	}
 	

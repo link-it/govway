@@ -17,21 +17,93 @@
 
 		<jar.group.name>httpcore</jar.group.name>
 		
-		<httpcore.version>4.4.15</httpcore.version>
+		<httpcore5.version>5.2.2</httpcore5.version>
+
+		<httpclient5.version>5.2.1</httpclient5.version>
+
+		<!-- <httpcore.version>4.4.15</httpcore.version>
 
 		<httpcore.gov4j.version>4.4.15-gov4j-1</httpcore.gov4j.version>
 		<apache-mime4j.version>0.8.6</apache-mime4j.version>
 
 		<httpclient.version>4.5.13</httpclient.version>
 
-		<httpasyncclient.version>4.1.5</httpasyncclient.version>
+		<httpasyncclient.version>4.1.5</httpasyncclient.version>-->
 		
 	</properties>
 
 	<dependencies>
 
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
+			<groupId>org.apache.httpcomponents.core5</groupId>
+			<artifactId>httpcore5</artifactId>
+			<version>${httpcore5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.core5</groupId>
+			<artifactId>httpcore5-h2</artifactId>
+			<version>${httpcore5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5-fluent</artifactId>
+			<version>${httpclient5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>${httpclient5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5-cache</artifactId>
+			<version>${httpclient5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5-win</artifactId>
+			<version>${httpclient5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!--<dependency>
+			 <groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
 			<version>${httpcore.version}</version>
 			<exclusions>
@@ -164,7 +236,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
 
 	</dependencies>
 

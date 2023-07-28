@@ -33,6 +33,7 @@
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/applicationServer/**/*.jar"/>
 			<exclude name="**/swagger-codegen/*"/>
+			<exclude name="**/faces/*"/>
 			<exclude name="**/*README"/>
 			<exclude name="*.userlibraries"/>
 		</fileset>

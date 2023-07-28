@@ -23,9 +23,9 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 import org.openspcoop2.core.commons.dao.DAOFactoryInstanceProperties;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;

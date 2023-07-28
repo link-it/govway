@@ -25,11 +25,11 @@ import java.security.SecureRandom;
 import java.util.Date;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.TipoPdD;

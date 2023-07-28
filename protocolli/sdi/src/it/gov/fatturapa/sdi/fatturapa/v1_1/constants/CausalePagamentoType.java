@@ -32,63 +32,63 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "CausalePagamentoType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "CausalePagamentoType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum CausalePagamentoType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("A")
+	@jakarta.xml.bind.annotation.XmlEnumValue("A")
 	A ("A"),
-	@javax.xml.bind.annotation.XmlEnumValue("B")
+	@jakarta.xml.bind.annotation.XmlEnumValue("B")
 	B ("B"),
-	@javax.xml.bind.annotation.XmlEnumValue("C")
+	@jakarta.xml.bind.annotation.XmlEnumValue("C")
 	C ("C"),
-	@javax.xml.bind.annotation.XmlEnumValue("D")
+	@jakarta.xml.bind.annotation.XmlEnumValue("D")
 	D ("D"),
-	@javax.xml.bind.annotation.XmlEnumValue("E")
+	@jakarta.xml.bind.annotation.XmlEnumValue("E")
 	E ("E"),
-	@javax.xml.bind.annotation.XmlEnumValue("G")
+	@jakarta.xml.bind.annotation.XmlEnumValue("G")
 	G ("G"),
-	@javax.xml.bind.annotation.XmlEnumValue("H")
+	@jakarta.xml.bind.annotation.XmlEnumValue("H")
 	H ("H"),
-	@javax.xml.bind.annotation.XmlEnumValue("I")
+	@jakarta.xml.bind.annotation.XmlEnumValue("I")
 	I ("I"),
-	@javax.xml.bind.annotation.XmlEnumValue("L")
+	@jakarta.xml.bind.annotation.XmlEnumValue("L")
 	L ("L"),
-	@javax.xml.bind.annotation.XmlEnumValue("M")
+	@jakarta.xml.bind.annotation.XmlEnumValue("M")
 	M ("M"),
-	@javax.xml.bind.annotation.XmlEnumValue("N")
+	@jakarta.xml.bind.annotation.XmlEnumValue("N")
 	N ("N"),
-	@javax.xml.bind.annotation.XmlEnumValue("O")
+	@jakarta.xml.bind.annotation.XmlEnumValue("O")
 	O ("O"),
-	@javax.xml.bind.annotation.XmlEnumValue("P")
+	@jakarta.xml.bind.annotation.XmlEnumValue("P")
 	P ("P"),
-	@javax.xml.bind.annotation.XmlEnumValue("Q")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Q")
 	Q ("Q"),
-	@javax.xml.bind.annotation.XmlEnumValue("R")
+	@jakarta.xml.bind.annotation.XmlEnumValue("R")
 	R ("R"),
-	@javax.xml.bind.annotation.XmlEnumValue("S")
+	@jakarta.xml.bind.annotation.XmlEnumValue("S")
 	S ("S"),
-	@javax.xml.bind.annotation.XmlEnumValue("T")
+	@jakarta.xml.bind.annotation.XmlEnumValue("T")
 	T ("T"),
-	@javax.xml.bind.annotation.XmlEnumValue("U")
+	@jakarta.xml.bind.annotation.XmlEnumValue("U")
 	U ("U"),
-	@javax.xml.bind.annotation.XmlEnumValue("V")
+	@jakarta.xml.bind.annotation.XmlEnumValue("V")
 	V ("V"),
-	@javax.xml.bind.annotation.XmlEnumValue("W")
+	@jakarta.xml.bind.annotation.XmlEnumValue("W")
 	W ("W"),
-	@javax.xml.bind.annotation.XmlEnumValue("X")
+	@jakarta.xml.bind.annotation.XmlEnumValue("X")
 	X ("X"),
-	@javax.xml.bind.annotation.XmlEnumValue("Y")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Y")
 	Y ("Y"),
-	@javax.xml.bind.annotation.XmlEnumValue("Z")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Z")
 	Z ("Z"),
-	@javax.xml.bind.annotation.XmlEnumValue("L1")
+	@jakarta.xml.bind.annotation.XmlEnumValue("L1")
 	L1 ("L1"),
-	@javax.xml.bind.annotation.XmlEnumValue("M1")
+	@jakarta.xml.bind.annotation.XmlEnumValue("M1")
 	M1 ("M1"),
-	@javax.xml.bind.annotation.XmlEnumValue("O1")
+	@jakarta.xml.bind.annotation.XmlEnumValue("O1")
 	O1 ("O1"),
-	@javax.xml.bind.annotation.XmlEnumValue("V1")
+	@jakarta.xml.bind.annotation.XmlEnumValue("V1")
 	V1 ("V1");
 	
 	

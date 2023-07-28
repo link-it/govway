@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.modipa;
 
-import javax.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPEnvelope;
 
 import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.ProtocolException;

@@ -79,7 +79,7 @@ import java.io.OutputStream;
 import java.io.File;
 import java.lang.reflect.Method;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 /**     
  * XML Serializer of beans

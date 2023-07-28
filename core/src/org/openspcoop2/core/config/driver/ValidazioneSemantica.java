@@ -2162,16 +2162,12 @@ public class ValidazioneSemantica {
 							this.errori.add("Non può esistere più di un registro dei servizi con nome "+nomeArr);
 					}
 
-					// XSD: tipo: xml, uddi, web, db, ws
+					// XSD: tipo: xml, db
 					RegistroTipo tipo = arr.getTipo();
 					if ((tipo != null) && !tipo.equals(CostantiConfigurazione.REGISTRO_XML) && 
-							!tipo.equals(CostantiConfigurazione.REGISTRO_UDDI) && 
-							!tipo.equals(CostantiConfigurazione.REGISTRO_WEB) && 
-							!tipo.equals(CostantiConfigurazione.REGISTRO_DB) && 
-							!tipo.equals(CostantiConfigurazione.REGISTRO_WS))
+							!tipo.equals(CostantiConfigurazione.REGISTRO_DB) )
 						this.errori.add("Il tipo del registro "+nomeArr+" non è valido; deve assumere uno dei seguenti tipi: "+CostantiConfigurazione.REGISTRO_XML.toString()+","+
-								CostantiConfigurazione.REGISTRO_UDDI.toString()+","+CostantiConfigurazione.REGISTRO_WEB.toString()+","+CostantiConfigurazione.REGISTRO_DB.toString()+","+
-								CostantiConfigurazione.REGISTRO_WS.toString());
+								CostantiConfigurazione.REGISTRO_DB.toString());
 					
 					// required
 					if(arr.getLocation()==null){

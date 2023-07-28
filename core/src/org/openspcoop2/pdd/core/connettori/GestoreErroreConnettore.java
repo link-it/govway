@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPFault;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -254,7 +254,7 @@ public class GestoreErroreConnettore {
 	 * @return true se la consegna e' stata effettuata con successo, false altrimenti.
 	 */
 	public boolean verificaConsegna(GestioneErrore gestioneErrore,String msgErroreConnettore,Exception eccezioneErroreConnettore,
-			IConnettore connectorSender) throws GestoreMessaggiException,javax.xml.soap.SOAPException,UtilsException{	
+			IConnettore connectorSender) throws GestoreMessaggiException,jakarta.xml.soap.SOAPException,UtilsException{	
 
 		long codiceTrasporto = connectorSender.getCodiceTrasporto();
 		OpenSPCoop2Message messageResponse = connectorSender.getResponse();

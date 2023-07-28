@@ -42,7 +42,7 @@ import org.w3c.dom.Node;
  */
 public class IntegrationManagerUtility {
 
-	public static void readAndSetProtocol(javax.servlet.http.HttpServletRequest req,String pathinfo) throws IntegrationManagerException{
+	public static void readAndSetProtocol(jakarta.servlet.http.HttpServletRequest req,String pathinfo) throws IntegrationManagerException{
 		
 		//System.out.println("PATH INFO["+pathinfo+"]");
 		String protocol = (String) req.getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue());

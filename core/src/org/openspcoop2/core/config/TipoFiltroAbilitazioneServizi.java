@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -146,43 +146,43 @@ public class TipoFiltroAbilitazioneServizi extends org.openspcoop2.utils.beans.B
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo-soggetto-fruitore",required=false)
   protected java.lang.String tipoSoggettoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="soggetto-fruitore",required=false)
   protected java.lang.String soggettoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="identificativo-porta-fruitore",required=false)
   protected java.lang.String identificativoPortaFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo-soggetto-erogatore",required=false)
   protected java.lang.String tipoSoggettoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="soggetto-erogatore",required=false)
   protected java.lang.String soggettoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="identificativo-porta-erogatore",required=false)
   protected java.lang.String identificativoPortaErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo-servizio",required=false)
   protected java.lang.String tipoServizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="servizio",required=false)
   protected java.lang.String servizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione-servizio",required=false)
   protected java.lang.Integer versioneServizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="azione",required=false)
   protected java.lang.String azione;
 

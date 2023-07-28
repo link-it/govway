@@ -23,12 +23,12 @@ package org.openspcoop2.protocol.basic.builder;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.eccezione.router_details.Dettaglio;
 import org.openspcoop2.core.eccezione.router_details.DettaglioRouting;

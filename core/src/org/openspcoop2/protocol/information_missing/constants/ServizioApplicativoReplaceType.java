@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ServizioApplicativoReplaceType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ServizioApplicativoReplaceType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ServizioApplicativoReplaceType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("RIFERIMENTO")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RIFERIMENTO")
 	RIFERIMENTO ("RIFERIMENTO"),
-	@javax.xml.bind.annotation.XmlEnumValue("CONNETTORE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("CONNETTORE")
 	CONNETTORE ("CONNETTORE"),
-	@javax.xml.bind.annotation.XmlEnumValue("CREDENZIALI_ACCESSO_PDD")
+	@jakarta.xml.bind.annotation.XmlEnumValue("CREDENZIALI_ACCESSO_PDD")
 	CREDENZIALI_ACCESSO_PDD ("CREDENZIALI_ACCESSO_PDD"),
-	@javax.xml.bind.annotation.XmlEnumValue("ALLINEA_CREDENZIALI_PD")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ALLINEA_CREDENZIALI_PD")
 	ALLINEA_CREDENZIALI_PD ("ALLINEA_CREDENZIALI_PD");
 	
 	

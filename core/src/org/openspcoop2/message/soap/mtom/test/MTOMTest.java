@@ -115,7 +115,7 @@ public class MTOMTest {
 		
 		// usare addAttachInMsgOriginale PER TEST CON ATTACH PER VERIFICARE CHE VENGA LASCIATO INALTERATO L'ATTACHMENT ORIGINALE
 		if(addAttachInMsgOriginale){
-			javax.xml.soap.AttachmentPart ap = msg.createAttachmentPart();
+			jakarta.xml.soap.AttachmentPart ap = msg.createAttachmentPart();
 			String contentType = HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM;
 			ap.setContentId(msg.createContentID("www.openspcoop2.org/example"));
 			ap.setBase64Content(new java.io.ByteArrayInputStream(Base64Utilities.encode("PROVA".getBytes())), contentType);

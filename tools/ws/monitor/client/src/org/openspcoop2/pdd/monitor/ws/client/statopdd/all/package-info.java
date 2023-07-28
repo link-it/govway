@@ -17,5 +17,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/pdd/monitor/management", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/pdd/monitor/management", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.openspcoop2.pdd.monitor.ws.client.statopdd.all;

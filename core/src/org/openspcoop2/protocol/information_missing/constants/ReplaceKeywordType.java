@@ -32,21 +32,21 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ReplaceKeywordType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ReplaceKeywordType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ReplaceKeywordType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("EQUALS")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EQUALS")
 	EQUALS ("EQUALS"),
-	@javax.xml.bind.annotation.XmlEnumValue("EMPTY")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EMPTY")
 	EMPTY ("EMPTY"),
-	@javax.xml.bind.annotation.XmlEnumValue("CONTAINS")
+	@jakarta.xml.bind.annotation.XmlEnumValue("CONTAINS")
 	CONTAINS ("CONTAINS"),
-	@javax.xml.bind.annotation.XmlEnumValue("STARTS_WITH")
+	@jakarta.xml.bind.annotation.XmlEnumValue("STARTS_WITH")
 	STARTS_WITH ("STARTS_WITH"),
-	@javax.xml.bind.annotation.XmlEnumValue("ENDS_WITH")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ENDS_WITH")
 	ENDS_WITH ("ENDS_WITH"),
-	@javax.xml.bind.annotation.XmlEnumValue("ALL")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ALL")
 	ALL ("ALL");
 	
 	

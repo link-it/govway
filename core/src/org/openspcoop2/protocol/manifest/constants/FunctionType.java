@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "FunctionType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "FunctionType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum FunctionType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("PD")
+	@jakarta.xml.bind.annotation.XmlEnumValue("PD")
 	PD ("PD"),
-	@javax.xml.bind.annotation.XmlEnumValue("PA")
+	@jakarta.xml.bind.annotation.XmlEnumValue("PA")
 	PA ("PA"),
-	@javax.xml.bind.annotation.XmlEnumValue("PDtoSOAP")
+	@jakarta.xml.bind.annotation.XmlEnumValue("PDtoSOAP")
 	PDTO_SOAP ("PDtoSOAP");
 	
 	

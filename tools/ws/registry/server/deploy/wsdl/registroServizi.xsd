@@ -870,7 +870,6 @@
 			<xsd:enumeration value="wsdl11"/>
 			<xsd:enumeration value="swagger2"/>
 			<xsd:enumeration value="openApi3"/>
-			<xsd:enumeration value="wadl"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="RepresentationType">

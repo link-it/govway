@@ -63,8 +63,8 @@ package org.openspcoop2.pdd.services.skeleton;
  * @version $Rev$, $Date$
  */
 
-@javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
-@javax.xml.bind.annotation.XmlType(name = "ProtocolHeaderInfo", propOrder = {
+@jakarta.xml.bind.annotation.XmlAccessorType(jakarta.xml.bind.annotation.XmlAccessType.FIELD)
+@jakarta.xml.bind.annotation.XmlType(name = "ProtocolHeaderInfo", propOrder = {
     "id",
     "azione",
     "destinatario",
@@ -84,25 +84,25 @@ public class ProtocolHeaderInfo implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = -8286823907010830471L;
 	
-    @javax.xml.bind.annotation.XmlElement(name = "ID", required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(name = "ID", required = true, nillable = true)
     protected String id;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String azione;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String destinatario;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String idCollaborazione;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String mittente;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String riferimentoMessaggio;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String servizio;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String tipoDestinatario;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String tipoMittente;
-    @javax.xml.bind.annotation.XmlElement(required = true, nillable = true)
+    @jakarta.xml.bind.annotation.XmlElement(required = true, nillable = true)
     protected String tipoServizio;
 
     /**

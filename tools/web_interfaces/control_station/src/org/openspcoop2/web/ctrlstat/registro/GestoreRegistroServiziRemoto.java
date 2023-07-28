@@ -27,9 +27,6 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
-import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
-import org.openspcoop2.core.registry.driver.ws.DriverRegistroServiziWS;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.web.ctrlstat.config.RegistroServiziRemotoProperties;
 
@@ -91,30 +88,6 @@ public class GestoreRegistroServiziRemoto {
 			}
 		}
 		
-		/* REGISTRO WS */
-		else if(CostantiConfigurazione.REGISTRO_WS.equals(this.tipoRegistro)){
-			
-			String location = registroServiziRemotoProperties.getRegistroServiziWS_Location();
-			
-			String username = registroServiziRemotoProperties.getRegistroServiziWS_Username();
-			if(username!=null){
-				username = username.trim();
-			}
-			String password = registroServiziRemotoProperties.getRegistroServiziWS_Password();
-			if(password!=null){
-				password = password.trim();
-			}
-			
-			if(username!=null && password!=null){
-				this.driverRegistroServizi = new DriverRegistroServiziWS(location,username,password, log);
-			}else{
-				this.driverRegistroServizi = new DriverRegistroServiziWS(location, log);
-			}
-			if(((DriverRegistroServiziWS)this.driverRegistroServizi).create==false){
-				throw new Exception("[RegistroServiziRemoto] DriverRegistroServiziWS non correttamente inizializzato");
-			}
-		}
-		
 		/* REGISTRO DB */
 		else if(CostantiConfigurazione.REGISTRO_DB.equals(this.tipoRegistro)){
 			
@@ -130,45 +103,7 @@ public class GestoreRegistroServiziRemoto {
 			}
 			
 		}
-		
-		/* REGISTRO UDDI */
-		else if(CostantiConfigurazione.REGISTRO_UDDI.equals(this.tipoRegistro)){
-			
-			String location = registroServiziRemotoProperties.getRegistroServiziUDDI_InquiryURL();
-			
-			String username = registroServiziRemotoProperties.getRegistroServiziUDDI_Username();
-			if(username!=null){
-				username = username.trim();
-			}
-			String password = registroServiziRemotoProperties.getRegistroServiziUDDI_Password();
-			if(password!=null){
-				password = password.trim();
-			}
-			
-			if(username!=null && password!=null){
-				this.driverRegistroServizi = new DriverRegistroServiziUDDI(location,username,password, log);
-			}else{
-				this.driverRegistroServizi = new DriverRegistroServiziUDDI(location, log);
-			}
-			if(((DriverRegistroServiziUDDI)this.driverRegistroServizi).create==false){
-				throw new Exception("[RegistroServiziRemoto] DriverRegistroServiziUDDI non correttamente inizializzato");
-			}
-	
-		} 
-		
-		/* REGISTRO WEB */
-		else if(CostantiConfigurazione.REGISTRO_WEB.equals(this.tipoRegistro)){
-			
-			String location = registroServiziRemotoProperties.getRegistroServiziWEB_URLPrefix();
-			
-			this.driverRegistroServizi = new DriverRegistroServiziWEB(location, log);
-			if(((DriverRegistroServiziWEB)this.driverRegistroServizi).create==false){
-				throw new Exception("[RegistroServiziRemoto] DriverRegistroServiziWEB non correttamente inizializzato");
-			}
-			
-			
-		} 
-		
+				
 		else{
 			throw new Exception("Tipo di registro non gestito: "+this.tipoRegistro);
 		}

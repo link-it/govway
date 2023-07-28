@@ -17,9 +17,9 @@
 
 		<jar.group.name>jackson</jar.group.name>
 		
-		<jackson.version>2.14.2</jackson.version>
-		<jackson-databind.version>2.14.2</jackson-databind.version>
-		<jackson-coreutils.version>1.8</jackson-coreutils.version>
+		<jackson.version>2.15.2</jackson.version>
+		<jackson-databind.version>2.15.2</jackson-databind.version>
+		<!-- <jackson-coreutils.version>1.8</jackson-coreutils.version> -->
 
 	</properties>
 
@@ -81,8 +81,8 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-base</artifactId>
+			<groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+			<artifactId>jackson-jakarta-rs-base</artifactId>
 			<version>${jackson.version}</version>
 			<exclusions>
 				<exclusion>
@@ -92,8 +92,8 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+			<artifactId>jackson-jakarta-rs-json-provider</artifactId>
 			<version>${jackson.version}</version>
 			<exclusions>
 				<exclusion>
@@ -103,8 +103,8 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-xml-provider</artifactId>
+			<groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+			<artifactId>jackson-jakarta-rs-xml-provider</artifactId>
 			<version>${jackson.version}</version>
 			<exclusions>
 				<exclusion>
@@ -114,8 +114,8 @@
 			</exclusions>
 		</dependency>          
 		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-yaml-provider</artifactId>
+			<groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+			<artifactId>jackson-jakarta-rs-yaml-provider</artifactId>
 			<version>${jackson.version}</version>
 			<exclusions>
 				<exclusion>
@@ -169,7 +169,7 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.github.fge</groupId>
 			<artifactId>jackson-coreutils</artifactId>
 			<version>${jackson-coreutils.version}</version>
@@ -179,7 +179,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency> -->
 
 	</dependencies>
 

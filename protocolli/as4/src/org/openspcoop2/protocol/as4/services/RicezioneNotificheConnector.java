@@ -22,8 +22,8 @@
 
 package org.openspcoop2.protocol.as4.services;
 
-import javax.jms.Message;
-import javax.jms.TextMessage;
+import jakarta.jms.Message;
+import jakarta.jms.TextMessage;
 
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.utils.threads.RunnableLogger;

@@ -24,14 +24,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import javax.activation.DataHandler;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPPart;
+import jakarta.activation.DataHandler;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPPart;
 
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_saaj_impl;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
@@ -43,14 +43,14 @@ import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DynamicSOAPMessage<T extends AbstractOpenSPCoop2Message_saaj_impl> extends javax.xml.soap.SOAPMessage {
+public class DynamicSOAPMessage<T extends AbstractOpenSPCoop2Message_saaj_impl> extends jakarta.xml.soap.SOAPMessage {
 
 	private AbstractOpenSPCoop2Message_soap_impl<T> wrapped;
 	public DynamicSOAPMessage(AbstractOpenSPCoop2Message_soap_impl<T> wrapped) {
 		this.wrapped = wrapped;
 	}
 
-	private javax.xml.soap.SOAPMessage _getSOAPMessage(){
+	private jakarta.xml.soap.SOAPMessage _getSOAPMessage(){
 		try {
 			return this.wrapped.getContent().getSOAPMessage();
 		}catch(Exception e) {

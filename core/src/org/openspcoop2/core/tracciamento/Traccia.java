@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.core.tracciamento;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.tracciamento.constants.TipoTraccia;
 import java.io.Serializable;
 
@@ -220,50 +220,50 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
   }
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-transazione",required=true,nillable=false)
   protected java.lang.String idTransazione;
 
   @XmlElement(name="dominio",required=true,nillable=false)
   protected Dominio dominio;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="ora-registrazione",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date oraRegistrazione;
 
   @XmlElement(name="esito-elaborazione",required=true,nillable=false)
   protected TracciaEsitoElaborazione esitoElaborazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="identificativo-correlazione-richiesta",required=false,nillable=false)
   protected java.lang.String identificativoCorrelazioneRichiesta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="identificativo-correlazione-risposta",required=false,nillable=false)
   protected java.lang.String identificativoCorrelazioneRisposta;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected boolean correlazioneApplicativaAndMatch = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="location",required=true,nillable=false)
   protected java.lang.String location;
 
   @XmlElement(name="busta",required=true,nillable=false)
   protected Busta busta;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected boolean ricercaSoloBusteErrore = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="busta-raw",required=false,nillable=false)
   protected java.lang.String bustaRaw;
 
   @XmlElement(name="allegati",required=false,nillable=false)
   protected Allegati allegati;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoRawEnumValue;
 
   @XmlAttribute(name="tipo",required=false)

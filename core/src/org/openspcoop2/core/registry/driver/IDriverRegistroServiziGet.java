@@ -57,10 +57,7 @@ import org.openspcoop2.utils.crypt.CryptConfig;
  * registro dei servizi. I driver che implementano l'interfaccia 
  * sono attualmente:
  * <ul>
- * <li> {@link org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI}, interroga un registro dei servizi UDDI.
  * <li> {@link org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB}, interroga un registro dei servizi Relazionale.
- * <li> {@link org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB}, interroga un registro dei servizi Web.
- * <li> {@link org.openspcoop2.core.registry.driver.ws.DriverRegistroServiziWS}, interroga un registro dei servizi WS.
  * <li> {@link org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML}, interroga un registro dei servizi XML.
   * </ul>
  *

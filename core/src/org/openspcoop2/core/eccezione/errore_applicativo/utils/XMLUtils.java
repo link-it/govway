@@ -31,9 +31,9 @@ import java.io.OutputStream;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.eccezione.errore_applicativo.DatiCooperazione;
 import org.openspcoop2.core.eccezione.errore_applicativo.Dominio;

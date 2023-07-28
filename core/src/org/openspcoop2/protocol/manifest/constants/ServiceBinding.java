@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ServiceBinding")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ServiceBinding")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ServiceBinding implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("soap")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soap")
 	SOAP ("soap"),
-	@javax.xml.bind.annotation.XmlEnumValue("rest")
+	@jakarta.xml.bind.annotation.XmlEnumValue("rest")
 	REST ("rest");
 	
 	

@@ -32,41 +32,41 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "messageStatus")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "messageStatus")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum MessageStatus implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("READY_TO_SEND")
+	@jakarta.xml.bind.annotation.XmlEnumValue("READY_TO_SEND")
 	READY_TO_SEND ("READY_TO_SEND"),
-	@javax.xml.bind.annotation.XmlEnumValue("READY_TO_PULL")
+	@jakarta.xml.bind.annotation.XmlEnumValue("READY_TO_PULL")
 	READY_TO_PULL ("READY_TO_PULL"),
-	@javax.xml.bind.annotation.XmlEnumValue("BEING_PULLED")
+	@jakarta.xml.bind.annotation.XmlEnumValue("BEING_PULLED")
 	BEING_PULLED ("BEING_PULLED"),
-	@javax.xml.bind.annotation.XmlEnumValue("SEND_ENQUEUED")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SEND_ENQUEUED")
 	SEND_ENQUEUED ("SEND_ENQUEUED"),
-	@javax.xml.bind.annotation.XmlEnumValue("SEND_IN_PROGRESS")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SEND_IN_PROGRESS")
 	SEND_IN_PROGRESS ("SEND_IN_PROGRESS"),
-	@javax.xml.bind.annotation.XmlEnumValue("WAITING_FOR_RECEIPT")
+	@jakarta.xml.bind.annotation.XmlEnumValue("WAITING_FOR_RECEIPT")
 	WAITING_FOR_RECEIPT ("WAITING_FOR_RECEIPT"),
-	@javax.xml.bind.annotation.XmlEnumValue("ACKNOWLEDGED")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ACKNOWLEDGED")
 	ACKNOWLEDGED ("ACKNOWLEDGED"),
-	@javax.xml.bind.annotation.XmlEnumValue("ACKNOWLEDGED_WITH_WARNING")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ACKNOWLEDGED_WITH_WARNING")
 	ACKNOWLEDGED_WITH_WARNING ("ACKNOWLEDGED_WITH_WARNING"),
-	@javax.xml.bind.annotation.XmlEnumValue("SEND_ATTEMPT_FAILED")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SEND_ATTEMPT_FAILED")
 	SEND_ATTEMPT_FAILED ("SEND_ATTEMPT_FAILED"),
-	@javax.xml.bind.annotation.XmlEnumValue("SEND_FAILURE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SEND_FAILURE")
 	SEND_FAILURE ("SEND_FAILURE"),
-	@javax.xml.bind.annotation.XmlEnumValue("NOT_FOUND")
+	@jakarta.xml.bind.annotation.XmlEnumValue("NOT_FOUND")
 	NOT_FOUND ("NOT_FOUND"),
-	@javax.xml.bind.annotation.XmlEnumValue("WAITING_FOR_RETRY")
+	@jakarta.xml.bind.annotation.XmlEnumValue("WAITING_FOR_RETRY")
 	WAITING_FOR_RETRY ("WAITING_FOR_RETRY"),
-	@javax.xml.bind.annotation.XmlEnumValue("RECEIVED")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RECEIVED")
 	RECEIVED ("RECEIVED"),
-	@javax.xml.bind.annotation.XmlEnumValue("RECEIVED_WITH_WARNINGS")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RECEIVED_WITH_WARNINGS")
 	RECEIVED_WITH_WARNINGS ("RECEIVED_WITH_WARNINGS"),
-	@javax.xml.bind.annotation.XmlEnumValue("DELETED")
+	@jakarta.xml.bind.annotation.XmlEnumValue("DELETED")
 	DELETED ("DELETED"),
-	@javax.xml.bind.annotation.XmlEnumValue("DOWNLOADED")
+	@jakarta.xml.bind.annotation.XmlEnumValue("DOWNLOADED")
 	DOWNLOADED ("DOWNLOADED");
 	
 	

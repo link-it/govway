@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.message.Attachment;

@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;

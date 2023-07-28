@@ -24,9 +24,9 @@ package org.openspcoop2.pdd.core.integrazione;
 
 import java.util.Iterator;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;

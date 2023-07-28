@@ -21,7 +21,7 @@
 
 package org.openspcoop2.utils.transport.jms;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 /**
  * Gestisce eventuali errori del broker JMS per rinegoziare la connessione
@@ -34,7 +34,7 @@ import javax.jms.JMSException;
  * @version $Rev$, $Date$
  * 
  */
-public class ExceptionListenerJMS implements javax.jms.ExceptionListener {
+public class ExceptionListenerJMS implements jakarta.jms.ExceptionListener {
 
 	private Exception exception = null;
 	private boolean connessioneCorrotta = false;

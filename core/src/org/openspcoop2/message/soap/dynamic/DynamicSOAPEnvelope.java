@@ -23,12 +23,12 @@ package org.openspcoop2.message.soap.dynamic;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Name;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeader;
 
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_saaj_impl;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
@@ -47,14 +47,14 @@ import org.w3c.dom.UserDataHandler;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DynamicSOAPEnvelope<T extends AbstractOpenSPCoop2Message_saaj_impl> implements javax.xml.soap.SOAPEnvelope {
+public class DynamicSOAPEnvelope<T extends AbstractOpenSPCoop2Message_saaj_impl> implements jakarta.xml.soap.SOAPEnvelope {
 
 	private AbstractOpenSPCoop2Message_soap_impl<T> wrapped;
 	public DynamicSOAPEnvelope(AbstractOpenSPCoop2Message_soap_impl<T> wrapped) {
 		this.wrapped = wrapped;
 	}
 
-	private javax.xml.soap.SOAPEnvelope _getSOAPEnvelope(){
+	private jakarta.xml.soap.SOAPEnvelope _getSOAPEnvelope(){
 		try {
 			return this.wrapped.getContent().getSOAPPart().getEnvelope();
 		}catch(Exception e) {
@@ -577,6 +577,11 @@ public class DynamicSOAPEnvelope<T extends AbstractOpenSPCoop2Message_saaj_impl>
 	@Override
 	public Name createName(String arg0) throws SOAPException {
 		return _getSOAPEnvelope().createName(arg0);
+	}
+	
+	@Override
+	public Name createName(String arg0, String arg1) throws SOAPException {
+		return _getSOAPEnvelope().createName(arg0, arg1);
 	}
 
 	@Override

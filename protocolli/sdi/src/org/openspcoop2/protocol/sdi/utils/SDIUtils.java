@@ -22,8 +22,8 @@ package org.openspcoop2.protocol.sdi.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;

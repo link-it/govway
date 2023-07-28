@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.controllo_traffico;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,11 +113,11 @@ public class ConfigurazioneRateLimiting extends org.openspcoop2.utils.beans.Base
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-errore",required=true,nillable=false,defaultValue="fault")
   protected java.lang.String tipoErrore = "fault";
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="tipo-errore-includi-descrizione",required=true,nillable=false,defaultValue="true")
   protected boolean tipoErroreIncludiDescrizione = true;
 

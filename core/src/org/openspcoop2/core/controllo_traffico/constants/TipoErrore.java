@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-errore")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-errore")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoErrore implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("fault")
+	@jakarta.xml.bind.annotation.XmlEnumValue("fault")
 	FAULT ("fault"),
-	@javax.xml.bind.annotation.XmlEnumValue("http429")
+	@jakarta.xml.bind.annotation.XmlEnumValue("http429")
 	HTTP_429 ("http429"),
-	@javax.xml.bind.annotation.XmlEnumValue("http503")
+	@jakarta.xml.bind.annotation.XmlEnumValue("http503")
 	HTTP_503 ("http503"),
-	@javax.xml.bind.annotation.XmlEnumValue("http500")
+	@jakarta.xml.bind.annotation.XmlEnumValue("http500")
 	HTTP_500 ("http500");
 	
 	

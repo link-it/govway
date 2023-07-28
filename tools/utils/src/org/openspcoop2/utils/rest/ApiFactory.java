@@ -42,8 +42,6 @@ public class ApiFactory {
 		Loader loader = new Loader();
 		try{
 			switch (format) {
-			case WADL:
-				return (IApiReader) loader.newInstance("org.openspcoop2.utils.wadl.WADLApiReader");
 			case SWAGGER_2:
 				return (IApiReader) loader.newInstance("org.openspcoop2.utils.openapi.SwaggerApiReader");
 			case OPEN_API_3:
@@ -63,8 +61,6 @@ public class ApiFactory {
 		Loader loader = new Loader();
 		try{
 			switch (format) {
-			case WADL:
-				return (IApiValidator) loader.newInstance("org.openspcoop2.utils.wadl.validator.Validator");
 			case SWAGGER_2:
 				return (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.Validator");
 			case OPEN_API_3:

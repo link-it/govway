@@ -25,9 +25,9 @@ package org.openspcoop2.protocol.as4.services;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.servlet.ServletException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Message;
+import jakarta.servlet.ServletException;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;

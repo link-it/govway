@@ -22,10 +22,10 @@ package org.openspcoop2.utils.openapi.validator;
 
 import java.util.List;
 
-import javax.activation.DataHandler;
-import javax.mail.BodyPart;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.mail.BodyPart;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.transport.http.HttpConstants;

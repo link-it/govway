@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "profiloDiCollaborazioneType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "profiloDiCollaborazioneType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ProfiloDiCollaborazioneType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("EGOV_IT_MessaggioSingoloOneWay")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EGOV_IT_MessaggioSingoloOneWay")
 	EGOV_IT_MESSAGGIO_SINGOLO_ONE_WAY ("EGOV_IT_MessaggioSingoloOneWay"),
-	@javax.xml.bind.annotation.XmlEnumValue("EGOV_IT_ServizioSincrono")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EGOV_IT_ServizioSincrono")
 	EGOV_IT_SERVIZIO_SINCRONO ("EGOV_IT_ServizioSincrono"),
-	@javax.xml.bind.annotation.XmlEnumValue("EGOV_IT_ServizioAsincronoSimmetrico")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EGOV_IT_ServizioAsincronoSimmetrico")
 	EGOV_IT_SERVIZIO_ASINCRONO_SIMMETRICO ("EGOV_IT_ServizioAsincronoSimmetrico"),
-	@javax.xml.bind.annotation.XmlEnumValue("EGOV_IT_ServizioAsincronoAsimmetrico")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EGOV_IT_ServizioAsincronoAsimmetrico")
 	EGOV_IT_SERVIZIO_ASINCRONO_ASIMMETRICO ("EGOV_IT_ServizioAsincronoAsimmetrico");
 	
 	

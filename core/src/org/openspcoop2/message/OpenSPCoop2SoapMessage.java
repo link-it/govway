@@ -25,17 +25,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -126,14 +126,6 @@ public interface OpenSPCoop2SoapMessage extends OpenSPCoop2Message {
 	
 	public boolean isThrowExceptionIfFoundMoreSecurityHeader();
 	public void setThrowExceptionIfFoundMoreSecurityHeader(boolean throwExceptionIfFoundMoreSecurityHeader);
-
-	
-	
-	/* Ws Security (SoapBox) */
-	
-	public abstract String getEncryptedDataHeaderBlockClass();
-	public abstract String getProcessPartialEncryptedMessageClass();
-	public abstract String getSignPartialMessageProcessorClass();
 	
 	
 	/* MTOM */

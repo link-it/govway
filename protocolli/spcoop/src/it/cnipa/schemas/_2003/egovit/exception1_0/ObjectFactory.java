@@ -19,7 +19,7 @@
  */
 package it.cnipa.schemas._2003.egovit.exception1_0;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

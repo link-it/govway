@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "profiloDiCollaborazioneType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "profiloDiCollaborazioneType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ProfiloDiCollaborazioneType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("OneWay")
+	@jakarta.xml.bind.annotation.XmlEnumValue("OneWay")
 	ONE_WAY ("OneWay"),
-	@javax.xml.bind.annotation.XmlEnumValue("Sincrono")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Sincrono")
 	SINCRONO ("Sincrono"),
-	@javax.xml.bind.annotation.XmlEnumValue("AsincronoSimmetrico")
+	@jakarta.xml.bind.annotation.XmlEnumValue("AsincronoSimmetrico")
 	ASINCRONO_SIMMETRICO ("AsincronoSimmetrico"),
-	@javax.xml.bind.annotation.XmlEnumValue("AsincronoAsimmetrico")
+	@jakarta.xml.bind.annotation.XmlEnumValue("AsincronoAsimmetrico")
 	ASINCRONO_ASIMMETRICO ("AsincronoAsimmetrico");
 	
 	

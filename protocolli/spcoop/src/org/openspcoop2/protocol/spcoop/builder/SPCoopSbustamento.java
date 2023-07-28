@@ -28,12 +28,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -254,7 +254,7 @@ public class SPCoopSbustamento {
 		java.io.InputStream inputDH = null;
 		try {
 			// Provo con codiceOriginale ma in jboss non funziona sempre
-			javax.activation.DataHandler dh = ap.getDataHandler();
+			jakarta.activation.DataHandler dh = ap.getDataHandler();
 			inputDH = dh.getInputStream();
 		}catch(Exception e) {
 			try {

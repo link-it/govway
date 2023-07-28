@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ScopeTipoMatch")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ScopeTipoMatch")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ScopeTipoMatch implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("all")
+	@jakarta.xml.bind.annotation.XmlEnumValue("all")
 	ALL ("all"),
-	@javax.xml.bind.annotation.XmlEnumValue("any")
+	@jakarta.xml.bind.annotation.XmlEnumValue("any")
 	ANY ("any");
 	
 	

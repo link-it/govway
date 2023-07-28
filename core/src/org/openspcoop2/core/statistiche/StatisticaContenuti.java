@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.statistiche;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -361,124 +361,124 @@ public class StatisticaContenuti extends org.openspcoop2.utils.beans.BaseBeanWit
 
 
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date data;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="risorsa-nome",required=true,nillable=false)
   protected java.lang.String risorsaNome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="risorsa-valore",required=true,nillable=false)
   protected java.lang.String risorsaValore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-1",required=false,nillable=false)
   protected java.lang.String filtroNome1;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-1",required=false,nillable=false)
   protected java.lang.String filtroValore1;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-2",required=false,nillable=false)
   protected java.lang.String filtroNome2;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-2",required=false,nillable=false)
   protected java.lang.String filtroValore2;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-3",required=false,nillable=false)
   protected java.lang.String filtroNome3;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-3",required=false,nillable=false)
   protected java.lang.String filtroValore3;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-4",required=false,nillable=false)
   protected java.lang.String filtroNome4;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-4",required=false,nillable=false)
   protected java.lang.String filtroValore4;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-5",required=false,nillable=false)
   protected java.lang.String filtroNome5;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-5",required=false,nillable=false)
   protected java.lang.String filtroValore5;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-6",required=false,nillable=false)
   protected java.lang.String filtroNome6;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-6",required=false,nillable=false)
   protected java.lang.String filtroValore6;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-7",required=false,nillable=false)
   protected java.lang.String filtroNome7;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-7",required=false,nillable=false)
   protected java.lang.String filtroValore7;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-8",required=false,nillable=false)
   protected java.lang.String filtroNome8;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-8",required=false,nillable=false)
   protected java.lang.String filtroValore8;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-9",required=false,nillable=false)
   protected java.lang.String filtroNome9;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-9",required=false,nillable=false)
   protected java.lang.String filtroValore9;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-nome-10",required=false,nillable=false)
   protected java.lang.String filtroNome10;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="filtro-valore-10",required=false,nillable=false)
   protected java.lang.String filtroValore10;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="numero-transazioni",required=true,nillable=false)
   protected java.lang.Integer numeroTransazioni;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="dimensioni-bytes-banda-complessiva",required=false,nillable=false)
   protected java.lang.Long dimensioniBytesBandaComplessiva;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="dimensioni-bytes-banda-interna",required=false,nillable=false)
   protected java.lang.Long dimensioniBytesBandaInterna;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="dimensioni-bytes-banda-esterna",required=false,nillable=false)
   protected java.lang.Long dimensioniBytesBandaEsterna;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="latenza-totale",required=false,nillable=false)
   protected java.lang.Long latenzaTotale;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="latenza-porta",required=false,nillable=false)
   protected java.lang.Long latenzaPorta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="latenza-servizio",required=false,nillable=false)
   protected java.lang.Long latenzaServizio;
 

@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import java.io.Serializable;
@@ -200,41 +200,41 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBeanWithId im
   @XmlElement(name="autenticazione",required=false,nillable=false)
   protected GestioneTokenAutenticazione autenticazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="policy",required=true)
   protected java.lang.String policy;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tokenOpzionaleRawEnumValue;
 
   @XmlAttribute(name="token-opzionale",required=false)
   protected StatoFunzionalita tokenOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String validazioneRawEnumValue;
 
   @XmlAttribute(name="validazione",required=false)
   protected StatoFunzionalitaConWarning validazione = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String introspectionRawEnumValue;
 
   @XmlAttribute(name="introspection",required=false)
   protected StatoFunzionalitaConWarning introspection = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String userInfoRawEnumValue;
 
   @XmlAttribute(name="userInfo",required=false)
   protected StatoFunzionalitaConWarning userInfo = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String forwardRawEnumValue;
 
   @XmlAttribute(name="forward",required=false)
   protected StatoFunzionalita forward = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="options",required=false)
   protected java.lang.String options;
 

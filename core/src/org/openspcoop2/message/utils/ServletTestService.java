@@ -38,15 +38,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPFault;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPFault;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
@@ -1175,7 +1175,7 @@ public class ServletTestService extends HttpServlet {
 					//int read;
 					OutputStream outStr = null;
 					if(oneway || this.thresholdRequestDump<=0 || this.repositoryRequestDump==null) {
-						outStr = NullOutputStream.NULL_OUTPUT_STREAM;
+						outStr = NullOutputStream.INSTANCE;
 					}
 					else {						
 						outStr = new DumpByteArrayOutputStream(this.thresholdRequestDump, this.repositoryRequestDump, null, "RichiestaTestService");
@@ -1855,7 +1855,7 @@ public class ServletTestService extends HttpServlet {
 		return bout.toByteArray();
 	}
 	private void consumeThrottling(InputStream is, int throttlingBytes, int throttlingMs) throws Exception {
-		NullOutputStream bout = NullOutputStream.NULL_OUTPUT_STREAM;
+		NullOutputStream bout = NullOutputStream.INSTANCE;
 		byte [] buffer = new byte[throttlingBytes];
 		int letti = 0;
 		while((letti = is.read(buffer))!=-1) {

@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.pdd.monitor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -198,32 +198,32 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBeanWithId implement
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="correlazione-applicativa",required=false,nillable=false)
   protected java.lang.String correlazioneApplicativa;
 
   @XmlElement(name="busta",required=false,nillable=false)
   protected Busta busta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-messaggio",required=false,nillable=false)
   protected java.lang.String idMessaggio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="message-pattern",required=false,nillable=false)
   protected java.lang.String messagePattern;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="long")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="soglia",required=false,nillable=false)
   protected long soglia = -1; // default utilizzato dal driver
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;
 
   @XmlElement(name="stato",required=false,nillable=false)
   protected StatoMessaggio stato;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo",required=false,nillable=false)
   protected java.lang.String tipo;
 

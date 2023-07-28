@@ -87,9 +87,6 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
-import org.openspcoop2.core.registry.driver.utils.DriverRegistroServiziWSInitUtilities;
-import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
@@ -316,9 +313,7 @@ public class RegistroServizi  {
 	 * query al registro dei servizi.
 	 * L'engine inizializzato sara' diverso a seconda del <var>tipo</var> di registro :
 	 * <ul>
-	 * <li> {@link DriverRegistroServiziUDDI}, interroga un registro dei servizi UDDI.
 	 * <li> {@link DriverRegistroServiziXML}, interroga un registro dei servizi realizzato tramite un file xml.
-	 * <li> {@link DriverRegistroServiziWEB}, interroga un registro dei servizi realizzato come un WEB Server.
 	 * <li> {@link DriverRegistroServiziDB}, interroga un registro dei servizi realizzato come un Database relazionale.
 	 * </ul>
 	 *
@@ -396,39 +391,6 @@ public class RegistroServizi  {
 					}
 				} 
 
-				// inizializzazione UDDI
-				else if(CostantiConfigurazione.REGISTRO_UDDI.equals(registro.getTipo())){
-					if( (registro.getUser()!=null) && (registro.getPassword()!=null))
-						driver = new DriverRegistroServiziUDDI(path,
-								registro.getUser(),
-								registro.getPassword(),this.log);
-					else
-						driver = new DriverRegistroServiziUDDI(registro.getLocation(),this.log);
-					if( ((DriverRegistroServiziUDDI)driver).create ){
-						this.driverRegistroServizi.put(nomeRegistro,driver);
-					}else{
-						msg = "Riscontrato errore durante l'inizializzazione del registro di tipo "+
-						registro.getTipo()+" con location: "+registro.getLocation();
-						this.log.error(msg);
-						if(alogConsole!=null)
-							alogConsole.info(msg);
-					}
-				}
-
-				// inizializzazione WEB
-				else if(CostantiConfigurazione.REGISTRO_WEB.equals(registro.getTipo())){
-					driver = new DriverRegistroServiziWEB(path,this.log);
-					if( ((DriverRegistroServiziWEB)driver).create ){
-						this.driverRegistroServizi.put(nomeRegistro,driver);
-					}else{
-						msg ="Riscontrato errore durante l'inizializzazione del registro di tipo "+
-						registro.getTipo()+" con location: "+registro.getLocation();
-						this.log.error(msg);
-						if(alogConsole!=null)
-							alogConsole.info(msg);
-					}
-				}
-
 				// inizializzazione DB
 				else if(CostantiConfigurazione.REGISTRO_DB.equals(registro.getTipo())){
 					driver = new DriverRegistroServiziDB(path,null,this.log,registro.getTipoDatabase(),
@@ -440,22 +402,6 @@ public class RegistroServizi  {
 					}else{
 						msg ="Riscontrato errore durante l'inizializzazione del registro di tipo "+
 						registro.getTipo()+" con location: "+registro.getLocation();
-						this.log.error(msg);
-						if(alogConsole!=null)
-							alogConsole.info(msg);
-					}
-				}
-
-				// inizializzazione WS
-				else if(CostantiConfigurazione.REGISTRO_WS.equals(registro.getTipo())){
-					try{
-						driver = DriverRegistroServiziWSInitUtilities.newInstance(registro.getLocation(), 
-								registro.getUser(),
-								registro.getPassword(), this.log);
-						this.driverRegistroServizi.put(nomeRegistro,driver);
-					}catch(Throwable e){
-						msg ="Riscontrato errore durante l'inizializzazione del registro di tipo "+
-								registro.getTipo()+" con location: "+registro.getLocation();
 						this.log.error(msg);
 						if(alogConsole!=null)
 							alogConsole.info(msg);
@@ -3295,7 +3241,7 @@ public class RegistroServizi  {
 		if(buildSchemaXSD){
 			try{
 				boolean buildFromBytes = registroServiziDB;
-				// buildFromBytes=false: Costruzione attraverso Location (versione XML,WEB,UDDI)
+				// buildFromBytes=false: Costruzione attraverso Location (versione XML)
 				// buildFromBytes=true:  Costruzione attraverso bytes registrati sul DB
 				wsdlWrapperUtilities.buildSchema(buildFromBytes);
 				

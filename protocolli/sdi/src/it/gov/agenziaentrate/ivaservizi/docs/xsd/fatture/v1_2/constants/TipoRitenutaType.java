@@ -32,21 +32,21 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "TipoRitenutaType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "TipoRitenutaType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoRitenutaType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("RT01")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RT01")
 	RT01 ("RT01"),
-	@javax.xml.bind.annotation.XmlEnumValue("RT02")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RT02")
 	RT02 ("RT02"),
-	@javax.xml.bind.annotation.XmlEnumValue("RT03")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RT03")
 	RT03 ("RT03"),
-	@javax.xml.bind.annotation.XmlEnumValue("RT04")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RT04")
 	RT04 ("RT04"),
-	@javax.xml.bind.annotation.XmlEnumValue("RT05")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RT05")
 	RT05 ("RT05"),
-	@javax.xml.bind.annotation.XmlEnumValue("RT06")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RT06")
 	RT06 ("RT06");
 	
 	

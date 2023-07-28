@@ -33,11 +33,11 @@ import java.util.Properties;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPPart;
 
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
@@ -519,9 +519,6 @@ public abstract class MessageSecurityContext{
     			if(SecurityConstants.SECURITY_ENGINE_WSS4J.equals(engineProperty)){
     				// DEFAULT: this.securityEngine = SecurityConstants.SECURITY_ENGINE_WSS4J;
     			}
-    			else if(SecurityConstants.SECURITY_ENGINE_SOAPBOX.equals(engineProperty)){
-    				this.securityEngine = SecurityConstants.SECURITY_ENGINE_SOAPBOX;
-    			}
     			else if(SecurityConstants.SECURITY_ENGINE_JOSE.equals(engineProperty)){
     				this.securityEngine = SecurityConstants.SECURITY_ENGINE_JOSE;
     			}
@@ -537,11 +534,6 @@ public abstract class MessageSecurityContext{
     			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.wss4j.MessageSecuritySender_wss4j");
     			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.wss4j.MessageSecurityReceiver_wss4j");
     			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.wss4j.MessageSecurityDigest_wss4j");
-    		}else if(SecurityConstants.SECURITY_ENGINE_SOAPBOX.equals(this.securityEngine)){
-    			this.messageSecurityContext = (IMessageSecurityContext) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecurityContext_soapbox");
-    			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecuritySender_soapbox");
-    			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecurityReceiver_soapbox");
-    			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecurityDigest_soapbox");
     		}else if(SecurityConstants.SECURITY_ENGINE_JOSE.equals(this.securityEngine)){
     			this.messageSecurityContext = (IMessageSecurityContext) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.jose.MessageSecurityContext_jose");
     			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.jose.MessageSecuritySender_jose");

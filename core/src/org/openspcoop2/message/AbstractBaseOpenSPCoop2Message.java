@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPBody;
 
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
@@ -1032,8 +1032,8 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			if(this.normalizeNamespaceXSIType) {
 				DynamicNamespaceContext dnc = null;
 				MessageDynamicNamespaceContextFactory dncFactory = MessageDynamicNamespaceContextFactory.getInstance(this.messageFactory);
-				if(root instanceof javax.xml.soap.SOAPEnvelope) {
-					javax.xml.soap.SOAPEnvelope soapEnvelope = (javax.xml.soap.SOAPEnvelope) root;
+				if(root instanceof jakarta.xml.soap.SOAPEnvelope) {
+					jakarta.xml.soap.SOAPEnvelope soapEnvelope = (jakarta.xml.soap.SOAPEnvelope) root;
 					if(Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(soapEnvelope.getNamespaceURI())) {
 						dnc = dncFactory.getNamespaceContextFromSoapEnvelope12(soapEnvelope);
 					}

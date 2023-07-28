@@ -23,11 +23,11 @@ package org.openspcoop2.message.soap.dynamic;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Name;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.Node;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_saaj_impl;
@@ -48,20 +48,20 @@ import org.w3c.dom.UserDataHandler;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DynamicSOAPHeader<T extends AbstractOpenSPCoop2Message_saaj_impl> implements javax.xml.soap.SOAPHeader {
+public class DynamicSOAPHeader<T extends AbstractOpenSPCoop2Message_saaj_impl> implements jakarta.xml.soap.SOAPHeader {
 
 	private AbstractOpenSPCoop2Message_soap_impl<T> wrapped;
 	public DynamicSOAPHeader(AbstractOpenSPCoop2Message_soap_impl<T> wrapped) {
 		this.wrapped = wrapped;
 	}
 
-	private javax.xml.soap.SOAPHeader _getSOAPHeader(boolean modifica){
+	private jakarta.xml.soap.SOAPHeader _getSOAPHeader(boolean modifica){
 		try {
 			if(this.wrapped.isSoapHeaderOptimizable()) {
 				OpenSPCoop2MessageSoapStreamReader soapReader = this.wrapped.getSoapReader();
 				// se arrivo a chiamare questo metodo significa che sono "dentro" un header.
 				// Quindi se non esiste lo devo creare
-				javax.xml.soap.SOAPHeader hdr = null;
+				jakarta.xml.soap.SOAPHeader hdr = null;
 				if(modifica) {
 					hdr = soapReader.getModifiableHeader();
 				}

@@ -19,12 +19,12 @@
  */
 package org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -139,38 +139,38 @@ public class Error extends org.openspcoop2.utils.beans.BaseBean implements Seria
   @XmlElement(name="Description",required=false,nillable=false)
   protected Description description;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="token")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="token")
   @XmlElement(name="ErrorDetail",required=false,nillable=false)
   protected java.lang.String errorDetail;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="token")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="token")
   @XmlAttribute(name="category",required=false)
   protected java.lang.String category;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="token")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="token")
   @XmlAttribute(name="refToMessageInError",required=false)
   protected java.lang.String refToMessageInError;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="token")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="token")
   @XmlAttribute(name="errorCode",required=true)
   protected java.lang.String errorCode;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="token")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="token")
   @XmlAttribute(name="origin",required=false)
   protected java.lang.String origin;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="token")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="token")
   @XmlAttribute(name="severity",required=true)
   protected java.lang.String severity;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="token")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="token")
   @XmlAttribute(name="shortDescription",required=false)
   protected java.lang.String shortDescription;
 

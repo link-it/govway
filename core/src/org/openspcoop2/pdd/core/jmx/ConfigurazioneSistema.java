@@ -903,12 +903,20 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				
 	}
 	
+	@SuppressWarnings("removal")
+	private String getSecurityManagerClassName() {
+		if(System.getSecurityManager()!=null) {
+			return System.getSecurityManager().getClass().getName();
+		}
+		return null;
+	}
+	
 	public String getInformazioniProprietaJava(boolean allNetwork, boolean includeNetwork, boolean includeNotNetwork, boolean includePassword){
 		try{
 			StringBuilder bf = new StringBuilder();
 			
-			if(System.getSecurityManager()!=null) {
-				bf.append("SecurityManager=").append(System.getSecurityManager().getClass().getName());
+			if(getSecurityManagerClassName()!=null) {
+				bf.append("SecurityManager=").append(getSecurityManagerClassName());
 			}
 			else {
 				bf.append("SecurityManager non attivo");
@@ -972,8 +980,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try{
 			StringBuilder bf = new StringBuilder();
 			
-			if(System.getSecurityManager()!=null) {
-				bf.append("SecurityManager=").append(System.getSecurityManager().getClass().getName());
+			if(getSecurityManagerClassName()!=null) {
+				bf.append("SecurityManager=").append(getSecurityManagerClassName());
 			}
 			else {
 				bf.append("SecurityManager non attivo");

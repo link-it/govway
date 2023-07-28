@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.allarmi;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import java.io.Serializable;
 
@@ -238,69 +238,69 @@ public class AllarmeFiltro extends org.openspcoop2.utils.beans.BaseBeanWithId im
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="enabled",required=true,nillable=false,defaultValue="false")
   protected boolean enabled = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="protocollo",required=false,nillable=false)
   protected java.lang.String protocollo;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String ruoloPortaRawEnumValue;
 
   @XmlElement(name="ruolo-porta",required=false,nillable=false)
   protected RuoloPorta ruoloPorta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-porta",required=false,nillable=false)
   protected java.lang.String nomePorta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-fruitore",required=false,nillable=false)
   protected java.lang.String tipoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-fruitore",required=false,nillable=false)
   protected java.lang.String nomeFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="ruolo-fruitore",required=false,nillable=false)
   protected java.lang.String ruoloFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="servizio-applicativo-fruitore",required=false,nillable=false)
   protected java.lang.String servizioApplicativoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-erogatore",required=false,nillable=false)
   protected java.lang.String tipoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-erogatore",required=false,nillable=false)
   protected java.lang.String nomeErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="ruolo-erogatore",required=false,nillable=false)
   protected java.lang.String ruoloErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tag",required=false,nillable=false)
   protected java.lang.String tag;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-servizio",required=false,nillable=false)
   protected java.lang.String tipoServizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-servizio",required=false,nillable=false)
   protected java.lang.String nomeServizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="versione-servizio",required=false,nillable=false)
   protected java.lang.Integer versioneServizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione",required=false,nillable=false)
   protected java.lang.String azione;
 

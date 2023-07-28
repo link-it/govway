@@ -34,7 +34,7 @@ import java.rmi.RemoteException;
  * @version $Rev$, $Date$
  */
 
-public interface TimerGestoreMessaggi extends javax.ejb.EJBObject {
+public interface TimerGestoreMessaggi extends jakarta.ejb.EJBObject {
 
     /* ********  F I E L D S  P R I V A T I   S T A T I C I  ******** */
     

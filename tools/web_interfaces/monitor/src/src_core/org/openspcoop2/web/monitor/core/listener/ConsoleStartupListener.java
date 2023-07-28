@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
 
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;

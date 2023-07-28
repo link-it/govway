@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "MTOMProcessorType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "MTOMProcessorType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum MTOMProcessorType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("disable")
+	@jakarta.xml.bind.annotation.XmlEnumValue("disable")
 	DISABLE ("disable"),
-	@javax.xml.bind.annotation.XmlEnumValue("packaging")
+	@jakarta.xml.bind.annotation.XmlEnumValue("packaging")
 	PACKAGING ("packaging"),
-	@javax.xml.bind.annotation.XmlEnumValue("unpackaging")
+	@jakarta.xml.bind.annotation.XmlEnumValue("unpackaging")
 	UNPACKAGING ("unpackaging"),
-	@javax.xml.bind.annotation.XmlEnumValue("verify")
+	@jakarta.xml.bind.annotation.XmlEnumValue("verify")
 	VERIFY ("verify");
 	
 	

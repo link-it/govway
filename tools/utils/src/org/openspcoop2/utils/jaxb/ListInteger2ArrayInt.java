@@ -22,7 +22,7 @@ package org.openspcoop2.utils.jaxb;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * ListInteger2ArrayInt

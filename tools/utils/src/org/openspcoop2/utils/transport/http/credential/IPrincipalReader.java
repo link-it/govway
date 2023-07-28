@@ -21,7 +21,7 @@ package org.openspcoop2.utils.transport.http.credential;
 
 import java.io.Serializable;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Interfaccia che definisce le funzionalita del PrincipalReader.

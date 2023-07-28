@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.AttachmentPart;
+import jakarta.xml.soap.AttachmentPart;
 
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;

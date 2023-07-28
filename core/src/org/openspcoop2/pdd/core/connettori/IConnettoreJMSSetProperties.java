@@ -34,6 +34,6 @@ import org.openspcoop2.message.OpenSPCoop2Message;
  */
 public interface IConnettoreJMSSetProperties {
 
-	public void setProperties(OpenSPCoop2Message message,javax.jms.Message messageJMS);
+	public void setProperties(OpenSPCoop2Message message,jakarta.jms.Message messageJMS);
 	
 }

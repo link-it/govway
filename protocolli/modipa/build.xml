@@ -38,12 +38,11 @@
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>
 			<include name="jax/jaxb*"/>
-			<include name="javax/*"/>
+			<include name="jakarta/*"/>
 			<include name="jackson/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="shared/*"/>
-			<include name="soapbox/*"/>
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>

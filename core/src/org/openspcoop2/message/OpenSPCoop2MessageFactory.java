@@ -26,13 +26,13 @@ import java.io.SequenceInputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 
-import javax.mail.internet.ContentType;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPMessage;
+import jakarta.mail.internet.ContentType;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPConnectionFactory;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.openspcoop2.message.config.FaultBuilderConfig;
 import org.openspcoop2.message.constants.Costanti;

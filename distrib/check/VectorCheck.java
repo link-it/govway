@@ -87,9 +87,6 @@ public class VectorCheck {
 				if( f.getAbsolutePath().contains("distrib/check/VectorCheck.java") )
 					jumpCheck = true;
 
-				else if( f.getAbsolutePath().contains("core/src/org/openspcoop2/core/registry/driver/uddi/UDDILib.java") )
-					jumpCheck = true;
-
 				else if( f.getAbsolutePath().contains("tools/utils/src/org/openspcoop2/utils/beans/BaseBean.java") )
 					jumpCheck = true;
 

@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.monitor.core.utils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * SessionUtils

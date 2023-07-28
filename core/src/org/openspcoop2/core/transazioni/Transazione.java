@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.transazioni;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -1166,417 +1166,417 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
   }
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-transazione",required=true,nillable=false)
   protected java.lang.String idTransazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="stato",required=false,nillable=false)
   protected java.lang.String stato;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="ruolo-transazione",required=true,nillable=false)
   protected int ruoloTransazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="esito",required=false,nillable=false)
   protected int esito;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="esito-sincrono",required=false,nillable=false)
   protected int esitoSincrono;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="consegne-multiple-in-corso",required=false,nillable=false)
   protected int consegneMultipleInCorso;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="esito-contesto",required=false,nillable=false)
   protected java.lang.String esitoContesto;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="protocollo",required=true,nillable=false)
   protected java.lang.String protocollo;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-richiesta",required=false,nillable=false)
   protected java.lang.String tipoRichiesta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="codice-risposta-ingresso",required=false,nillable=false)
   protected java.lang.String codiceRispostaIngresso;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="codice-risposta-uscita",required=false,nillable=false)
   protected java.lang.String codiceRispostaUscita;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-accettazione-richiesta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataAccettazioneRichiesta;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-ingresso-richiesta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataIngressoRichiesta;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-ingresso-richiesta-stream",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataIngressoRichiestaStream;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-uscita-richiesta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataUscitaRichiesta;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-uscita-richiesta-stream",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataUscitaRichiestaStream;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-accettazione-risposta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataAccettazioneRisposta;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-ingresso-risposta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataIngressoRisposta;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-ingresso-risposta-stream",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataIngressoRispostaStream;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-uscita-risposta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataUscitaRisposta;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-uscita-risposta-stream",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataUscitaRispostaStream;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="richiesta-ingresso-bytes",required=false,nillable=false)
   protected java.lang.Long richiestaIngressoBytes;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="richiesta-uscita-bytes",required=false,nillable=false)
   protected java.lang.Long richiestaUscitaBytes;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="risposta-ingresso-bytes",required=false,nillable=false)
   protected java.lang.Long rispostaIngressoBytes;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="risposta-uscita-bytes",required=false,nillable=false)
   protected java.lang.Long rispostaUscitaBytes;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pdd-codice",required=false,nillable=false)
   protected java.lang.String pddCodice;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pdd-tipo-soggetto",required=false,nillable=false)
   protected java.lang.String pddTipoSoggetto;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pdd-nome-soggetto",required=false,nillable=false)
   protected java.lang.String pddNomeSoggetto;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String pddRuoloRawEnumValue;
 
   @XmlElement(name="pdd-ruolo",required=false,nillable=false)
   protected PddRuolo pddRuolo;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="fault-integrazione",required=false,nillable=false)
   protected java.lang.String faultIntegrazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="formato-fault-integrazione",required=false,nillable=false)
   protected java.lang.String formatoFaultIntegrazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="fault-cooperazione",required=false,nillable=false)
   protected java.lang.String faultCooperazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="formato-fault-cooperazione",required=false,nillable=false)
   protected java.lang.String formatoFaultCooperazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-soggetto-fruitore",required=false,nillable=false)
   protected java.lang.String tipoSoggettoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-soggetto-fruitore",required=false,nillable=false)
   protected java.lang.String nomeSoggettoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="idporta-soggetto-fruitore",required=false,nillable=false)
   protected java.lang.String idportaSoggettoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="indirizzo-soggetto-fruitore",required=false,nillable=false)
   protected java.lang.String indirizzoSoggettoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-soggetto-erogatore",required=false,nillable=false)
   protected java.lang.String tipoSoggettoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-soggetto-erogatore",required=false,nillable=false)
   protected java.lang.String nomeSoggettoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="idporta-soggetto-erogatore",required=false,nillable=false)
   protected java.lang.String idportaSoggettoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="indirizzo-soggetto-erogatore",required=false,nillable=false)
   protected java.lang.String indirizzoSoggettoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-messaggio-richiesta",required=false,nillable=false)
   protected java.lang.String idMessaggioRichiesta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-messaggio-risposta",required=false,nillable=false)
   protected java.lang.String idMessaggioRisposta;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-id-msg-richiesta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataIdMsgRichiesta;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-id-msg-risposta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataIdMsgRisposta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="profilo-collaborazione-op2",required=false,nillable=false)
   protected java.lang.String profiloCollaborazioneOp2;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="profilo-collaborazione-prot",required=false,nillable=false)
   protected java.lang.String profiloCollaborazioneProt;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-collaborazione",required=false,nillable=false)
   protected java.lang.String idCollaborazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="uri-accordo-servizio",required=false,nillable=false)
   protected java.lang.String uriAccordoServizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-servizio",required=false,nillable=false)
   protected java.lang.String tipoServizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-servizio",required=false,nillable=false)
   protected java.lang.String nomeServizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="versione-servizio",required=false,nillable=false)
   protected int versioneServizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione",required=false,nillable=false)
   protected java.lang.String azione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-asincrono",required=false,nillable=false)
   protected java.lang.String idAsincrono;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-servizio-correlato",required=false,nillable=false)
   protected java.lang.String tipoServizioCorrelato;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-servizio-correlato",required=false,nillable=false)
   protected java.lang.String nomeServizioCorrelato;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="header-protocollo-richiesta",required=false,nillable=false)
   protected java.lang.String headerProtocolloRichiesta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="digest-richiesta",required=false,nillable=false)
   protected java.lang.String digestRichiesta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="protocollo-ext-info-richiesta",required=false,nillable=false)
   protected java.lang.String protocolloExtInfoRichiesta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="header-protocollo-risposta",required=false,nillable=false)
   protected java.lang.String headerProtocolloRisposta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="digest-risposta",required=false,nillable=false)
   protected java.lang.String digestRisposta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="protocollo-ext-info-risposta",required=false,nillable=false)
   protected java.lang.String protocolloExtInfoRisposta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="traccia-richiesta",required=false,nillable=false)
   protected java.lang.String tracciaRichiesta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="traccia-risposta",required=false,nillable=false)
   protected java.lang.String tracciaRisposta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="diagnostici",required=false,nillable=false)
   protected java.lang.String diagnostici;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="diagnostici-list1",required=false,nillable=false)
   protected java.lang.String diagnosticiList1;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="diagnostici-list2",required=false,nillable=false)
   protected java.lang.String diagnosticiList2;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="diagnostici-list-ext",required=false,nillable=false)
   protected java.lang.String diagnosticiListExt;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="diagnostici-ext",required=false,nillable=false)
   protected java.lang.String diagnosticiExt;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="error-log",required=false,nillable=false)
   protected java.lang.String errorLog;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="warning-log",required=false,nillable=false)
   protected java.lang.String warningLog;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-correlazione-applicativa",required=false,nillable=false)
   protected java.lang.String idCorrelazioneApplicativa;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-correlazione-applicativa-risposta",required=false,nillable=false)
   protected java.lang.String idCorrelazioneApplicativaRisposta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="servizio-applicativo-fruitore",required=false,nillable=false)
   protected java.lang.String servizioApplicativoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="servizio-applicativo-erogatore",required=false,nillable=false)
   protected java.lang.String servizioApplicativoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="operazione-im",required=false,nillable=false)
   protected java.lang.String operazioneIm;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="location-richiesta",required=false,nillable=false)
   protected java.lang.String locationRichiesta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="location-risposta",required=false,nillable=false)
   protected java.lang.String locationRisposta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-porta",required=false,nillable=false)
   protected java.lang.String nomePorta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="credenziali",required=false,nillable=false)
   protected java.lang.String credenziali;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="location-connettore",required=false,nillable=false)
   protected java.lang.String locationConnettore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="url-invocazione",required=false,nillable=false)
   protected java.lang.String urlInvocazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="trasporto-mittente",required=false,nillable=false)
   protected java.lang.String trasportoMittente;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="token-issuer",required=false,nillable=false)
   protected java.lang.String tokenIssuer;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="token-client-id",required=false,nillable=false)
   protected java.lang.String tokenClientId;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="token-subject",required=false,nillable=false)
   protected java.lang.String tokenSubject;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="token-username",required=false,nillable=false)
   protected java.lang.String tokenUsername;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="token-mail",required=false,nillable=false)
   protected java.lang.String tokenMail;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="token-info",required=false,nillable=false)
   protected java.lang.String tokenInfo;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tempi-elaborazione",required=false,nillable=false)
   protected java.lang.String tempiElaborazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="duplicati-richiesta",required=false,nillable=false,defaultValue="0")
   protected int duplicatiRichiesta = 0;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="duplicati-risposta",required=false,nillable=false,defaultValue="0")
   protected int duplicatiRisposta = 0;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="cluster-id",required=false,nillable=false)
   protected java.lang.String clusterId;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="socket-client-address",required=false,nillable=false)
   protected java.lang.String socketClientAddress;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="transport-client-address",required=false,nillable=false)
   protected java.lang.String transportClientAddress;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="client-address",required=false,nillable=false)
   protected java.lang.String clientAddress;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="eventi-gestione",required=false,nillable=false)
   protected java.lang.String eventiGestione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="tipo-api",required=false,nillable=false)
   protected int tipoApi;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="uri-api",required=false,nillable=false)
   protected java.lang.String uriApi;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="gruppi",required=false,nillable=false)
   protected java.lang.String gruppi;
 

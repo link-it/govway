@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
 
@@ -162,31 +162,31 @@ public class DumpConfigurazioneRegola extends org.openspcoop2.utils.beans.BaseBe
 
 
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String payloadRawEnumValue;
 
   @XmlAttribute(name="payload",required=false)
   protected StatoFunzionalita payload = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String payloadParsingRawEnumValue;
 
   @XmlAttribute(name="payload-parsing",required=false)
   protected StatoFunzionalita payloadParsing = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String bodyRawEnumValue;
 
   @XmlAttribute(name="body",required=false)
   protected StatoFunzionalita body = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String attachmentsRawEnumValue;
 
   @XmlAttribute(name="attachments",required=false)
   protected StatoFunzionalita attachments = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String headersRawEnumValue;
 
   @XmlAttribute(name="headers",required=false)

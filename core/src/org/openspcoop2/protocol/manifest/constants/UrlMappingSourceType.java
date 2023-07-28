@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "urlMappingSourceType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "urlMappingSourceType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum UrlMappingSourceType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("PROPERTIES")
+	@jakarta.xml.bind.annotation.XmlEnumValue("PROPERTIES")
 	PROPERTIES ("PROPERTIES"),
-	@javax.xml.bind.annotation.XmlEnumValue("XML")
+	@jakarta.xml.bind.annotation.XmlEnumValue("XML")
 	XML ("XML");
 	
 	

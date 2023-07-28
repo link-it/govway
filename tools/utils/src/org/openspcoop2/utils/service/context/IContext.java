@@ -20,9 +20,9 @@
 
 package org.openspcoop2.utils.service.context;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.UriInfo;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.logger.ILogger;

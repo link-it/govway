@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-periodo-statistico")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-periodo-statistico")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoPeriodoStatistico implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("mensile")
+	@jakarta.xml.bind.annotation.XmlEnumValue("mensile")
 	MENSILE ("mensile"),
-	@javax.xml.bind.annotation.XmlEnumValue("settimanale")
+	@jakarta.xml.bind.annotation.XmlEnumValue("settimanale")
 	SETTIMANALE ("settimanale"),
-	@javax.xml.bind.annotation.XmlEnumValue("giornaliero")
+	@jakarta.xml.bind.annotation.XmlEnumValue("giornaliero")
 	GIORNALIERO ("giornaliero"),
-	@javax.xml.bind.annotation.XmlEnumValue("orario")
+	@jakarta.xml.bind.annotation.XmlEnumValue("orario")
 	ORARIO ("orario");
 	
 	

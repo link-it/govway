@@ -20,11 +20,11 @@
 package it.gov.fatturapa.sdi.ws.ricezione.v1_0.types;
 
 import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.constants.EsitoRicezioneType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -96,7 +96,7 @@ public class RispostaRiceviFattureType extends org.openspcoop2.utils.beans.BaseB
   }
 
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String esitoRawEnumValue;
 
   @XmlElement(name="Esito",required=true,nillable=false)

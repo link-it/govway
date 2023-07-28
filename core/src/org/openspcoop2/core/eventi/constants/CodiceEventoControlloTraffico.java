@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "CodiceEventoControlloTraffico")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "CodiceEventoControlloTraffico")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum CodiceEventoControlloTraffico implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("Violazione")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Violazione")
 	VIOLAZIONE ("Violazione"),
-	@javax.xml.bind.annotation.XmlEnumValue("ViolazioneRisolta")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ViolazioneRisolta")
 	VIOLAZIONE_RISOLTA ("ViolazioneRisolta"),
-	@javax.xml.bind.annotation.XmlEnumValue("Violazione_WarningOnly")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Violazione_WarningOnly")
 	VIOLAZIONE_WARNING_ONLY ("Violazione_WarningOnly"),
-	@javax.xml.bind.annotation.XmlEnumValue("ViolazioneRisolta_WarningOnly")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ViolazioneRisolta_WarningOnly")
 	VIOLAZIONE_RISOLTA_WARNING_ONLY ("ViolazioneRisolta_WarningOnly");
 	
 	

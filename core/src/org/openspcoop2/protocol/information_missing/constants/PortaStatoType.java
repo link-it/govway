@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "portaStatoType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "portaStatoType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum PortaStatoType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("abilitato")
+	@jakarta.xml.bind.annotation.XmlEnumValue("abilitato")
 	ABILITATO ("abilitato"),
-	@javax.xml.bind.annotation.XmlEnumValue("disabilitato")
+	@jakarta.xml.bind.annotation.XmlEnumValue("disabilitato")
 	DISABILITATO ("disabilitato");
 	
 	

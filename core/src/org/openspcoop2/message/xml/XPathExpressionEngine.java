@@ -20,7 +20,7 @@
 
 package org.openspcoop2.message.xml;
 
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;

@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.pdd.monitor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -145,7 +145,7 @@ public class Busta extends org.openspcoop2.utils.beans.BaseBeanWithId implements
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="attesa-riscontro",required=false,nillable=false,defaultValue="false")
   protected boolean attesaRiscontro = false;
 
@@ -158,19 +158,19 @@ public class Busta extends org.openspcoop2.utils.beans.BaseBeanWithId implements
   @XmlElement(name="servizio",required=false,nillable=false)
   protected BustaServizio servizio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione",required=false,nillable=false)
   protected java.lang.String azione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="profilo-collaborazione",required=false,nillable=false)
   protected java.lang.String profiloCollaborazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="collaborazione",required=false,nillable=false)
   protected java.lang.String collaborazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="riferimento-messaggio",required=false,nillable=false)
   protected java.lang.String riferimentoMessaggio;
 

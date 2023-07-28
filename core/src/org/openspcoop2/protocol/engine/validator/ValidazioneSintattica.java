@@ -22,7 +22,7 @@
 
 package org.openspcoop2.protocol.engine.validator;
 
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeader;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;

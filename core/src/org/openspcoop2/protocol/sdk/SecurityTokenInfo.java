@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.protocol.sdk;
 
-import javax.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPEnvelope;
 
 import org.openspcoop2.utils.certificate.CertificateInfo;
 

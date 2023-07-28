@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "Scarto_Type")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "Scarto_Type")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ScartoType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("EN00")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EN00")
 	EN00 ("EN00"),
-	@javax.xml.bind.annotation.XmlEnumValue("EN01")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EN01")
 	EN01 ("EN01");
 	
 	

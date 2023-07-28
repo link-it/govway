@@ -32,33 +32,33 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ProprietaProtocolloValore")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ProprietaProtocolloValore")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ProprietaProtocolloValore implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("tipoMittente")
+	@jakarta.xml.bind.annotation.XmlEnumValue("tipoMittente")
 	TIPO_MITTENTE ("tipoMittente"),
-	@javax.xml.bind.annotation.XmlEnumValue("mittente")
+	@jakarta.xml.bind.annotation.XmlEnumValue("mittente")
 	MITTENTE ("mittente"),
-	@javax.xml.bind.annotation.XmlEnumValue("identificativoPortaMittente")
+	@jakarta.xml.bind.annotation.XmlEnumValue("identificativoPortaMittente")
 	IDENTIFICATIVO_PORTA_MITTENTE ("identificativoPortaMittente"),
-	@javax.xml.bind.annotation.XmlEnumValue("tipoDestinatario")
+	@jakarta.xml.bind.annotation.XmlEnumValue("tipoDestinatario")
 	TIPO_DESTINATARIO ("tipoDestinatario"),
-	@javax.xml.bind.annotation.XmlEnumValue("destinatario")
+	@jakarta.xml.bind.annotation.XmlEnumValue("destinatario")
 	DESTINATARIO ("destinatario"),
-	@javax.xml.bind.annotation.XmlEnumValue("identificativoPortaDestinatario")
+	@jakarta.xml.bind.annotation.XmlEnumValue("identificativoPortaDestinatario")
 	IDENTIFICATIVO_PORTA_DESTINATARIO ("identificativoPortaDestinatario"),
-	@javax.xml.bind.annotation.XmlEnumValue("tipoServizio")
+	@jakarta.xml.bind.annotation.XmlEnumValue("tipoServizio")
 	TIPO_SERVIZIO ("tipoServizio"),
-	@javax.xml.bind.annotation.XmlEnumValue("servizio")
+	@jakarta.xml.bind.annotation.XmlEnumValue("servizio")
 	SERVIZIO ("servizio"),
-	@javax.xml.bind.annotation.XmlEnumValue("versioneServizio")
+	@jakarta.xml.bind.annotation.XmlEnumValue("versioneServizio")
 	VERSIONE_SERVIZIO ("versioneServizio"),
-	@javax.xml.bind.annotation.XmlEnumValue("azione")
+	@jakarta.xml.bind.annotation.XmlEnumValue("azione")
 	AZIONE ("azione"),
-	@javax.xml.bind.annotation.XmlEnumValue("identificativo")
+	@jakarta.xml.bind.annotation.XmlEnumValue("identificativo")
 	IDENTIFICATIVO ("identificativo"),
-	@javax.xml.bind.annotation.XmlEnumValue("identificativoCorrelazioneApplicativa")
+	@jakarta.xml.bind.annotation.XmlEnumValue("identificativoCorrelazioneApplicativa")
 	IDENTIFICATIVO_CORRELAZIONE_APPLICATIVA ("identificativoCorrelazioneApplicativa");
 	
 	

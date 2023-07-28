@@ -19,11 +19,11 @@
  */
 package org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -107,13 +107,13 @@ public class CollaborationInfo extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="Service",required=true,nillable=false)
   protected Service service;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="token")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="token")
   @XmlElement(name="Action",required=true,nillable=false)
   protected java.lang.String action;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="token")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="token")
   @XmlElement(name="ConversationId",required=true,nillable=false)
   protected java.lang.String conversationId;
 

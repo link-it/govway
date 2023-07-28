@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import java.io.Serializable;
@@ -202,7 +202,7 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="header",required=true,nillable=false)
   private List<java.lang.String> header = new ArrayList<>();
 
@@ -230,7 +230,7 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
   	return this.sizeHeaderList();
   }
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="query-parameter",required=true,nillable=false)
   private List<java.lang.String> queryParameter = new ArrayList<>();
 
@@ -258,25 +258,25 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
   	return this.sizeQueryParameterList();
   }
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String requestUriRawEnumValue;
 
   @XmlAttribute(name="request-uri",required=false)
   protected StatoFunzionalita requestUri = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String queryParametersRawEnumValue;
 
   @XmlAttribute(name="query-parameters",required=false)
   protected StatoFunzionalitaCacheDigestQueryParameter queryParameters = (StatoFunzionalitaCacheDigestQueryParameter) StatoFunzionalitaCacheDigestQueryParameter.toEnumConstantFromString("abilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String headersRawEnumValue;
 
   @XmlAttribute(name="headers",required=false)
   protected StatoFunzionalita headers = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String payloadRawEnumValue;
 
   @XmlAttribute(name="payload",required=false)

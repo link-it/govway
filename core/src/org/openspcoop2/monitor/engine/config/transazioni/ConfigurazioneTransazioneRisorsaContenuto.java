@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.monitor.engine.config.transazioni;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.monitor.engine.config.transazioni.constants.PosizioneMascheramento;
 import org.openspcoop2.monitor.engine.config.transazioni.constants.TipoCompressione;
 import org.openspcoop2.monitor.engine.config.transazioni.constants.TipoMascheramento;
@@ -257,26 +257,26 @@ public class ConfigurazioneTransazioneRisorsaContenuto extends org.openspcoop2.u
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="abilita-anonimizzazione",required=true,nillable=false,defaultValue="0")
   protected java.lang.Integer abilitaAnonimizzazione = java.lang.Integer.valueOf("0");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="abilita-compressione",required=true,nillable=false,defaultValue="0")
   protected java.lang.Integer abilitaCompressione = java.lang.Integer.valueOf("0");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoCompressioneRawEnumValue;
 
   @XmlElement(name="tipo-compressione",required=false,nillable=false)
   protected TipoCompressione tipoCompressione;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Char2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Char2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="carattere-maschera",required=false,nillable=false)
   protected java.lang.Character _carattereMaschera_Value;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected char carattereMaschera;
 
   public java.lang.Character get_carattereMaschera_Value() {
@@ -286,41 +286,41 @@ public class ConfigurazioneTransazioneRisorsaContenuto extends org.openspcoop2.u
   	this._carattereMaschera_Value = carattereMascheraValue;
   }
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="numero-caratteri-maschera",required=false,nillable=false)
   protected java.lang.Integer numeroCaratteriMaschera;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String posizionamentoMascheraRawEnumValue;
 
   @XmlElement(name="posizionamento-maschera",required=false,nillable=false)
   protected PosizioneMascheramento posizionamentoMaschera;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoMascheramentoRawEnumValue;
 
   @XmlElement(name="tipo-mascheramento",required=false,nillable=false)
   protected TipoMascheramento tipoMascheramento;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="enabled",required=true,nillable=false)
   protected boolean enabled;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=true,nillable=false)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoMessaggioRawEnumValue;
 
   @XmlElement(name="tipo-messaggio",required=true,nillable=false)
   protected TipoMessaggio tipoMessaggio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="xpath",required=true,nillable=false)
   protected java.lang.String xpath;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="stat-enabled",required=true,nillable=false,defaultValue="false")
   protected boolean statEnabled = false;
 

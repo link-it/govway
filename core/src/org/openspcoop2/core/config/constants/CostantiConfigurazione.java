@@ -253,11 +253,8 @@ public class CostantiConfigurazione {
     public static final String ONEWAY_STATEFUL_1_1 = "1.1";
 	
 	 /** Tipi di registro. */
-    public static final RegistroTipo REGISTRO_UDDI = RegistroTipo.UDDI;
     public static final RegistroTipo REGISTRO_XML = RegistroTipo.XML;
-    public static final RegistroTipo REGISTRO_WEB = RegistroTipo.WEB;
     public static final RegistroTipo REGISTRO_DB = RegistroTipo.DB;
-    public static final RegistroTipo REGISTRO_WS = RegistroTipo.WS;
     
     /** Algoritmo utilizzato nella cache del registro dei servizi e della configurazione */
     public static final AlgoritmoCache CACHE_LRU = AlgoritmoCache.LRU;

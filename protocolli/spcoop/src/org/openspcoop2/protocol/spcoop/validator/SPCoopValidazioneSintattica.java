@@ -29,13 +29,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.Detail;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -1941,23 +1941,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE_TIPO_SERVIZIO_CORRELATO.toString());
 				this.erroriValidazione.add(ecc);
 			}
-			
-			/* OLD CODICE 			
-			if(!tipo.equals(Costanti.SERVIZIO_CORRELATO_SPC) &&
-					!tipo.equals(Costanti.SERVIZIO_CORRELATO_TEST) &&
-					!tipo.equals(Costanti.SERVIZIO_CORRELATO_URL) &&
-					!tipo.equals(Costanti.SERVIZIO_CORRELATO_WSDL) &&
-					!tipo.equals(Costanti.SERVIZIO_CORRELATO_LDAP) &&
-					!tipo.equals(Costanti.SERVIZIO_CORRELATO_UDDI) &&
-					!tipo.equals(Costanti.SERVIZIO_CORRELATO_XML_REGISTRY) ){
-				Eccezione ecc = new Eccezione();
-				ecc.setContestoCodifica(Costanti.CONTESTO_CODIFICA_ECCEZIONE_VALIDAZIONE);
-				ecc.setCodiceEccezione(Costanti.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO );
-				ecc.setRilevanza(LivelloRilevanza.GRAVE);
-				ecc.setDescrizione(Costanti.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE_TIPO_SERVIZIO_CORRELATO);
-				this.erroriValidazione.add(ecc);
-			}	
-			*/
+
 		}
 
 

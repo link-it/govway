@@ -22,8 +22,8 @@ package org.openspcoop2.utils.service.fault.jaxrs;
 
 import java.util.Map;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
 
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -129,21 +129,21 @@ public class FaultCode {
 		return this.toFaultResponseBuilder(e).build();
 	}
 
-	public javax.ws.rs.WebApplicationException toException(ResponseBuilder responseBuilder){
-		return new javax.ws.rs.WebApplicationException(responseBuilder.build());
+	public jakarta.ws.rs.WebApplicationException toException(ResponseBuilder responseBuilder){
+		return new jakarta.ws.rs.WebApplicationException(responseBuilder.build());
 	}
-	public javax.ws.rs.WebApplicationException toException(ResponseBuilder responseBuilder, Map<String, String> headers){
+	public jakarta.ws.rs.WebApplicationException toException(ResponseBuilder responseBuilder, Map<String, String> headers){
 		if(headers!=null && !headers.isEmpty()) {
 			headers.keySet().stream().forEach(k -> {
 				responseBuilder.header(k, headers.get(k));
 			});
 		}
-		return new javax.ws.rs.WebApplicationException(responseBuilder.build());
+		return new jakarta.ws.rs.WebApplicationException(responseBuilder.build());
 	}
-	public javax.ws.rs.WebApplicationException toException(Response response){
+	public jakarta.ws.rs.WebApplicationException toException(Response response){
 		return toException(response, null);
 	}
-	public javax.ws.rs.WebApplicationException toException(Response response, Throwable e){
+	public jakarta.ws.rs.WebApplicationException toException(Response response, Throwable e){
 		// Aggiunta eccezione nel costruttore, in modo che cxf chiami la classe WebApplicationExceptionMapper
 		Exception exception = null;
 		String msgException = response.getEntity().toString();
@@ -153,40 +153,40 @@ public class FaultCode {
 		else {
 			exception = new Exception(msgException);
 		}
-		return new javax.ws.rs.WebApplicationException(exception,response);
+		return new jakarta.ws.rs.WebApplicationException(exception,response);
 	}
-	public javax.ws.rs.WebApplicationException toException(){
+	public jakarta.ws.rs.WebApplicationException toException(){
 		return this.toException(true);
 	}
-	public javax.ws.rs.WebApplicationException toException(boolean addFault){
+	public jakarta.ws.rs.WebApplicationException toException(boolean addFault){
 		Response r = this.toFaultResponse(addFault);
 		return this.toException(r);
 	}
-	public javax.ws.rs.WebApplicationException toException(String dettaglio){
+	public jakarta.ws.rs.WebApplicationException toException(String dettaglio){
 		Response r = this.toFaultResponse(dettaglio);
 		return this.toException(r);
 	}
-	public javax.ws.rs.WebApplicationException toException(Throwable e){
+	public jakarta.ws.rs.WebApplicationException toException(Throwable e){
 		Response r = this.toFaultResponse(e);
 		return this.toException(r,e);
 	}
 
-	public void throwException(ResponseBuilder responseBuilder) throws javax.ws.rs.WebApplicationException{
+	public void throwException(ResponseBuilder responseBuilder) throws jakarta.ws.rs.WebApplicationException{
 		throw this.toException(responseBuilder);
 	}
-	public void throwException(Response response) throws javax.ws.rs.WebApplicationException{
+	public void throwException(Response response) throws jakarta.ws.rs.WebApplicationException{
 		throw this.toException(response);
 	}
-	public void throwException() throws javax.ws.rs.WebApplicationException{
+	public void throwException() throws jakarta.ws.rs.WebApplicationException{
 		throw this.toException();
 	}
-	public void throwException(boolean addFault) throws javax.ws.rs.WebApplicationException{
+	public void throwException(boolean addFault) throws jakarta.ws.rs.WebApplicationException{
 		throw toException(addFault);
 	}
-	public void throwException(String dettaglio) throws javax.ws.rs.WebApplicationException{
+	public void throwException(String dettaglio) throws jakarta.ws.rs.WebApplicationException{
 		throw toException(dettaglio);
 	}
-	public void throwException(Throwable e) throws javax.ws.rs.WebApplicationException{
+	public void throwException(Throwable e) throws jakarta.ws.rs.WebApplicationException{
 		throw toException(e);
 	}
 	

@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "SoggettoReplaceType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "SoggettoReplaceType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum SoggettoReplaceType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("RIFERIMENTO")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RIFERIMENTO")
 	RIFERIMENTO ("RIFERIMENTO"),
-	@javax.xml.bind.annotation.XmlEnumValue("CONNETTORE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("CONNETTORE")
 	CONNETTORE ("CONNETTORE");
 	
 	

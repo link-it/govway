@@ -31,9 +31,9 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import javax.mail.Multipart;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.Multipart;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMultipart;
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.io.output.WriterOutputStream;
@@ -235,7 +235,11 @@ public class CommonsNetSender extends Sender {
 					writer.write(mail.getBody().getMessage());
 				}
 				else{
-					WriterOutputStream ww = new WriterOutputStream(writer,Charset.forName("UTF-8"));
+					WriterOutputStream ww = 
+							WriterOutputStream.builder()
+							  .setWriter(writer)
+	                          .setCharset(org.openspcoop2.utils.resources.Charset.UTF_8.getValue())
+	                          .get();
 					multipart.writeTo(ww);
 					ww.flush();
 					ww.close();

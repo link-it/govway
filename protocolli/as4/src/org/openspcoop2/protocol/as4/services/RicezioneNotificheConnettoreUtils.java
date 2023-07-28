@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.jms.TextMessage;
+import jakarta.jms.TextMessage;
 import javax.sql.DataSource;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;

@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.FaultIntegrazioneTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
@@ -118,23 +118,23 @@ public class InvocazionePortaGestioneErrore extends org.openspcoop2.utils.beans.
 
 
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String faultRawEnumValue;
 
   @XmlAttribute(name="fault",required=false)
   protected FaultIntegrazioneTipo fault = (FaultIntegrazioneTipo) FaultIntegrazioneTipo.toEnumConstantFromString("soap");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="fault-actor",required=false)
   protected java.lang.String faultActor;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String genericFaultCodeRawEnumValue;
 
   @XmlAttribute(name="generic-fault-code",required=false)
   protected StatoFunzionalita genericFaultCode;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="prefix-fault-code",required=false)
   protected java.lang.String prefixFaultCode;
 

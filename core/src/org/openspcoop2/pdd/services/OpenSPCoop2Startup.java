@@ -41,13 +41,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
@@ -1051,9 +1051,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						if(propertiesReader.isPrintInfoMessageSecurity()){
 							OpenSPCoop2Startup.logStartupInfo("MessageSecurity Context: "+MessageSecurityFactory.messageSecurityContextImplClass);
 							OpenSPCoop2Startup.logStartupInfo("MessageSecurity DigestReader: "+MessageSecurityFactory.messageSecurityDigestReaderImplClass);
-							OpenSPCoop2Startup.logStartupInfo("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getEncryptedDataHeaderBlockClass());
-							OpenSPCoop2Startup.logStartupInfo("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getProcessPartialEncryptedMessageClass());
-							OpenSPCoop2Startup.logStartupInfo("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getSignPartialMessageProcessorClass());
 						}
 												
 						// Inizializzo Operazioni "Costose"

@@ -50,11 +50,10 @@
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>
 			<include name="jax/jaxb*"/>
-			<include name="javax/*"/>
+			<include name="jakarta/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="shared/*"/>
-			<include name="soapbox/*"/>
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>
@@ -72,7 +71,6 @@
 		<fileset dir="${openspcoop2.lib}/log" >
 			<include name="*.jar"/>
 		</fileset>
-		<pathelement path="${openspcoop2.lib}/shared/uddi4j-2.0.5.jar"/>
 		<pathelement path="${openspcoop2.lib}/shared/mailapi-1.6.7.jar"/>
 		<pathelement path="${openspcoop2.lib}/shared/jakarta.activation-1.2.2.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-logging-1.2.jar"/>

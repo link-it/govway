@@ -28,12 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPHeader;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.openspcoop2.core.config.CorsConfigurazione;

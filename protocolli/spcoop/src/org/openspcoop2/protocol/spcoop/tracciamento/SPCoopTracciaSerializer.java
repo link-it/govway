@@ -24,9 +24,9 @@ package org.openspcoop2.protocol.spcoop.tracciamento;
 
 import java.io.ByteArrayOutputStream;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;

@@ -32,27 +32,27 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-messaggio")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-messaggio")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoMessaggio implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("RichiestaIngresso")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RichiestaIngresso")
 	RICHIESTA_INGRESSO ("RichiestaIngresso"),
-	@javax.xml.bind.annotation.XmlEnumValue("RichiestaUscita")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RichiestaUscita")
 	RICHIESTA_USCITA ("RichiestaUscita"),
-	@javax.xml.bind.annotation.XmlEnumValue("RispostaIngresso")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RispostaIngresso")
 	RISPOSTA_INGRESSO ("RispostaIngresso"),
-	@javax.xml.bind.annotation.XmlEnumValue("RispostaUscita")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RispostaUscita")
 	RISPOSTA_USCITA ("RispostaUscita"),
-	@javax.xml.bind.annotation.XmlEnumValue("RichiestaIngressoDumpBinario")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RichiestaIngressoDumpBinario")
 	RICHIESTA_INGRESSO_DUMP_BINARIO ("RichiestaIngressoDumpBinario"),
-	@javax.xml.bind.annotation.XmlEnumValue("RichiestaUscitaDumpBinario")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RichiestaUscitaDumpBinario")
 	RICHIESTA_USCITA_DUMP_BINARIO ("RichiestaUscitaDumpBinario"),
-	@javax.xml.bind.annotation.XmlEnumValue("RispostaIngressoDumpBinario")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RispostaIngressoDumpBinario")
 	RISPOSTA_INGRESSO_DUMP_BINARIO ("RispostaIngressoDumpBinario"),
-	@javax.xml.bind.annotation.XmlEnumValue("RispostaUscitaDumpBinario")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RispostaUscitaDumpBinario")
 	RISPOSTA_USCITA_DUMP_BINARIO ("RispostaUscitaDumpBinario"),
-	@javax.xml.bind.annotation.XmlEnumValue("IntegrationManager")
+	@jakarta.xml.bind.annotation.XmlEnumValue("IntegrationManager")
 	INTEGRATION_MANAGER ("IntegrationManager");
 	
 	

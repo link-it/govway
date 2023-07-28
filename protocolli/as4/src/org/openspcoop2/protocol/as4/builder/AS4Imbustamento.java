@@ -25,11 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.mail.BodyPart;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeader;
+import jakarta.activation.DataHandler;
+import jakarta.mail.BodyPart;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeader;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;

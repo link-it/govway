@@ -22,7 +22,7 @@
 
 package org.openspcoop2.pdd.core.credenziali;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.Credential;

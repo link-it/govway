@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "TrasformazioneRegolaParametroTipoAzione")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "TrasformazioneRegolaParametroTipoAzione")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TrasformazioneRegolaParametroTipoAzione implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("add")
+	@jakarta.xml.bind.annotation.XmlEnumValue("add")
 	ADD ("add"),
-	@javax.xml.bind.annotation.XmlEnumValue("update")
+	@jakarta.xml.bind.annotation.XmlEnumValue("update")
 	UPDATE ("update"),
-	@javax.xml.bind.annotation.XmlEnumValue("updateOrAdd")
+	@jakarta.xml.bind.annotation.XmlEnumValue("updateOrAdd")
 	UPDATE_OR_ADD ("updateOrAdd"),
-	@javax.xml.bind.annotation.XmlEnumValue("delete")
+	@jakarta.xml.bind.annotation.XmlEnumValue("delete")
 	DELETE ("delete");
 	
 	

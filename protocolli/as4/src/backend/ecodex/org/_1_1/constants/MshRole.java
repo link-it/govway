@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "mshRole")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "mshRole")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum MshRole implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("SENDING")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SENDING")
 	SENDING ("SENDING"),
-	@javax.xml.bind.annotation.XmlEnumValue("RECEIVING")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RECEIVING")
 	RECEIVING ("RECEIVING");
 	
 	

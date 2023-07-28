@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "IntegrationErrorMessageDetailType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "IntegrationErrorMessageDetailType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum IntegrationErrorMessageDetailType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("generic")
+	@jakarta.xml.bind.annotation.XmlEnumValue("generic")
 	GENERIC ("generic"),
-	@javax.xml.bind.annotation.XmlEnumValue("specific")
+	@jakarta.xml.bind.annotation.XmlEnumValue("specific")
 	SPECIFIC ("specific");
 	
 	

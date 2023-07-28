@@ -67,7 +67,7 @@
 			<include name="jackson/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="jax/jaxws*"/>
-			<include name="javax/*"/>
+			<include name="jakarta/*"/>
 			<include name="jminix/*"/>
 			<include name="json/*"/>
 			<include name="log/*"/>
@@ -77,14 +77,12 @@
 			<include name="wss4j/*"/>
 			<include name="redis/*"/>
 			<include name="shared/*"/>
-			<include name="soapbox/*"/>
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>
 			<include name="swagger/*"/>
 			<include name="openapi4j/*"/>
 			<include name="httpcore/*"/>
-			<include name="wadl/*"/>
 			<include name="testsuite/*"/>
 			<include name="stub/cxf/openspcoop2_registrySearchStub_cxf.jar"/>
 			<!-- <include name="rt.jar"/> -->

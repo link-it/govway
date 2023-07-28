@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "cache-algorithm")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "cache-algorithm")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum CacheAlgorithm implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("LRU")
+	@jakarta.xml.bind.annotation.XmlEnumValue("LRU")
 	LRU ("LRU"),
-	@javax.xml.bind.annotation.XmlEnumValue("MRU")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MRU")
 	MRU ("MRU");
 	
 	

@@ -47,11 +47,11 @@
 	<property name="tipoConversioneRegistroServizi" value="insertUpdate"/>
 	<!-- Sorgente xml -->
 	<property name="sorgenteRegistroServizi" value="deploy/example/registroServizi.xml" />
-	<!-- Tipo del registroServizi, valori possibili: xml/db/uddi/web -->
+	<!-- Tipo del registroServizi, valori possibili: xml/db -->
 	<property name="tipoRegistroServizi" value="db" />
 	<!-- RegistroServizi.properties -->
 	<property name="proprietaRegistroServizi" location="deploy/properties/registroServizi.properties" />
-	<!-- Reset del registro dei servizi (in caso di registro db/uddi/web) -->
+	<!-- Reset del registro dei servizi (in caso di registro db) -->
 	<property name="resetRegistroServizi" value="false" />
 	<!-- Gestione dei soggetti SPCoop -->
 	<property name="gestioneSoggettiRegistroServizi" value="false" />

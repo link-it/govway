@@ -4752,21 +4752,21 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					if(CostantiConfigurazione.AUTO_ACKNOWLEDGE.equals(name))
-						this.acknowledgeModeSessioneConnectionFactory = javax.jms.Session.AUTO_ACKNOWLEDGE;
+						this.acknowledgeModeSessioneConnectionFactory = jakarta.jms.Session.AUTO_ACKNOWLEDGE;
 					else if(CostantiConfigurazione.CLIENT_ACKNOWLEDGE.equals(name))
-						this.acknowledgeModeSessioneConnectionFactory = javax.jms.Session.CLIENT_ACKNOWLEDGE;
+						this.acknowledgeModeSessioneConnectionFactory = jakarta.jms.Session.CLIENT_ACKNOWLEDGE;
 					else if(CostantiConfigurazione.DUPS_OK_ACKNOWLEDGE.equals(name))
-						this.acknowledgeModeSessioneConnectionFactory = javax.jms.Session.DUPS_OK_ACKNOWLEDGE;
+						this.acknowledgeModeSessioneConnectionFactory = jakarta.jms.Session.DUPS_OK_ACKNOWLEDGE;
 					else
 						throw new CoreException("Tipo di acknowledgeModeSessione non conosciuto (viene utilizzato il default:AUTO_ACKNOWLEDGE)");
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.queueConnectionFactory.session.AcknowledgeMode' non impostata, viene utilizzato il default=AUTO_ACKNOWLEDGE");
-					this.acknowledgeModeSessioneConnectionFactory = javax.jms.Session.AUTO_ACKNOWLEDGE; // Default
+					this.acknowledgeModeSessioneConnectionFactory = jakarta.jms.Session.AUTO_ACKNOWLEDGE; // Default
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.queueConnectionFactory.session.AcknowledgeMode' non impostata, viene utilizzato il default=AUTO_ACKNOWLEDGE, errore:"+e.getMessage(),e);
-				this.acknowledgeModeSessioneConnectionFactory = javax.jms.Session.AUTO_ACKNOWLEDGE; // Default
+				this.acknowledgeModeSessioneConnectionFactory = jakarta.jms.Session.AUTO_ACKNOWLEDGE; // Default
 			}    
 		}
 

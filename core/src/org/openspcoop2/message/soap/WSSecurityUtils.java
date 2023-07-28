@@ -22,9 +22,9 @@ package org.openspcoop2.message.soap;
 
 import java.util.List;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPPart;
 
 import org.apache.wss4j.common.WSS4JConstants;
 import org.openspcoop2.message.constants.MessageType;

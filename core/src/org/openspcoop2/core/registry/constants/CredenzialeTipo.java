@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "CredenzialeTipo")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "CredenzialeTipo")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum CredenzialeTipo implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("basic")
+	@jakarta.xml.bind.annotation.XmlEnumValue("basic")
 	BASIC ("basic"),
-	@javax.xml.bind.annotation.XmlEnumValue("ssl")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ssl")
 	SSL ("ssl"),
-	@javax.xml.bind.annotation.XmlEnumValue("principal")
+	@jakarta.xml.bind.annotation.XmlEnumValue("principal")
 	PRINCIPAL ("principal"),
-	@javax.xml.bind.annotation.XmlEnumValue("apikey")
+	@jakarta.xml.bind.annotation.XmlEnumValue("apikey")
 	APIKEY ("apikey");
 	
 	

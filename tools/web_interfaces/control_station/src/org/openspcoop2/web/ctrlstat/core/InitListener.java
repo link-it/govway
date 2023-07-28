@@ -29,9 +29,9 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;

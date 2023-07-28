@@ -302,10 +302,7 @@
 							<include name="**/org/openspcoop2/core/statistiche/utils/serializer/**/*.class"/>  
 							<include name="**/org/openspcoop2/core/plugins/utils/serializer/**/*.class"/>    
 							<include name="**/org/openspcoop2/core/registry/utils/serializer/**/*.class"/>    
-							<include name="**/org/openspcoop2/core/registry/model/**/*.class"/>  
-							<include name="**/org/openspcoop2/core/registry/driver/ws/**/*.class"/>   
-							<include name="**/org/openspcoop2/core/registry/driver/web/**/*.class"/> 
-							<include name="**/org/openspcoop2/core/registry/driver/uddi/**/*.class"/>    
+							<include name="**/org/openspcoop2/core/registry/model/**/*.class"/>    
 							<include name="**/org/openspcoop2/core/integrazione/**/*.class"/>  
 							<include name="**/org/openspcoop2/core/eccezione/router_details/**/*.class"/>
 							<include name="**/org/openspcoop2/core/eccezione/errore_applicativo/utils/serializer/**/*.class"/>    
@@ -570,10 +567,6 @@
 					<param name="analyzeJar" value="openspcoop2_security*.jar"/>
 				</antcall>
 
-				<!-- Classi di test -->
-				<delete dir="${jacoco.build}">
-					<include name="**/org/openspcoop2/security/message/soapbox/test/*.class"/>
-				</delete>
 			</then>
 			<else>
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />

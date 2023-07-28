@@ -36,5 +36,5 @@
  * @version $Rev$, $Date$
  */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/utils/jaxb", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/utils/jaxb", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.openspcoop2.utils.jaxb;

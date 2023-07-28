@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.controllo_traffico;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -147,31 +147,31 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="controllo-max-threads-enabled",required=true,nillable=false,defaultValue="true")
   protected boolean controlloMaxThreadsEnabled = true;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="controllo-max-threads-warning-only",required=true,nillable=false,defaultValue="false")
   protected boolean controlloMaxThreadsWarningOnly = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="controllo-max-threads-soglia",required=true,nillable=false)
   protected java.lang.Long controlloMaxThreadsSoglia;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="controllo-max-threads-tipo-errore",required=true,nillable=false,defaultValue="fault")
   protected java.lang.String controlloMaxThreadsTipoErrore = "fault";
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="controllo-max-threads-tipo-errore-includi-descrizione",required=true,nillable=false,defaultValue="true")
   protected boolean controlloMaxThreadsTipoErroreIncludiDescrizione = true;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="controllo-congestione-enabled",required=true,nillable=false,defaultValue="false")
   protected boolean controlloCongestioneEnabled = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlElement(name="controllo-congestione-threshold",required=false,nillable=false)
   protected java.lang.Integer controlloCongestioneThreshold;
 

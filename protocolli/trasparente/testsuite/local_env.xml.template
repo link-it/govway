@@ -69,11 +69,11 @@
       <!-- Gestione parte di Configurazione/AccessoRegistro/RoutingTable -->
       <property name="gestioneSezioneConfigurazione" value="false" />
 
-      <!-- Tipo del registroServizi, valori possibili: none/xml/db/uddi/web -->
+      <!-- Tipo del registroServizi, valori possibili: none/xml/db -->
       <property name="tipoRegistroServizi" value="xml" />
       <!-- RegistroServizi.properties -->
       <property name="proprietaRegistroServizi" location="deploy/properties_xml2Backend/registroServizi.properties" />
-      <!-- Reset del registro dei servizi (in caso di registro db/uddi/web) -->
+      <!-- Reset del registro dei servizi (in caso di registro db) -->
       <property name="resetRegistroServizi" value="false" />
 
       <!-- Build-Options -->

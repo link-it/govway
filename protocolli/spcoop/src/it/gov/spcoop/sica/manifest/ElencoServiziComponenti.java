@@ -19,11 +19,11 @@
  */
 package it.gov.spcoop.sica.manifest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +89,7 @@ public class ElencoServiziComponenti extends org.openspcoop2.utils.beans.BaseBea
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="anyURI")
   @XmlElement(name="servizioComponente",required=true,nillable=false)
   private List<java.net.URI> servizioComponente = new ArrayList<>();
 

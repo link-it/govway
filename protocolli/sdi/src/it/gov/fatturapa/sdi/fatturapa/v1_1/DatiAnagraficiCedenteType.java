@@ -20,11 +20,11 @@
 package it.gov.fatturapa.sdi.fatturapa.v1_1;
 
 import it.gov.fatturapa.sdi.fatturapa.v1_1.constants.RegimeFiscaleType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -157,33 +157,33 @@ public class DatiAnagraficiCedenteType extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="IdFiscaleIVA",required=true,nillable=false)
   protected IdFiscaleType idFiscaleIVA;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="CodiceFiscale",required=false,nillable=false)
   protected java.lang.String codiceFiscale;
 
   @XmlElement(name="Anagrafica",required=true,nillable=false)
   protected AnagraficaType anagrafica;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="AlboProfessionale",required=false,nillable=false)
   protected java.lang.String alboProfessionale;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="ProvinciaAlbo",required=false,nillable=false)
   protected java.lang.String provinciaAlbo;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="NumeroIscrizioneAlbo",required=false,nillable=false)
   protected java.lang.String numeroIscrizioneAlbo;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="date")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="date")
   @XmlElement(name="DataIscrizioneAlbo",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataIscrizioneAlbo;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String regimeFiscaleRawEnumValue;
 
   @XmlElement(name="RegimeFiscale",required=true,nillable=false)

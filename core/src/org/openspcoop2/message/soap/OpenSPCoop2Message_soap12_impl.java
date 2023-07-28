@@ -24,9 +24,9 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPHeader;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;

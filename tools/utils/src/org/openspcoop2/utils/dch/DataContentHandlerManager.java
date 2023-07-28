@@ -31,9 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.CommandInfo;
-import javax.activation.CommandMap;
-import javax.activation.MailcapCommandMap;
+import jakarta.activation.CommandInfo;
+import jakarta.activation.CommandMap;
+import jakarta.activation.MailcapCommandMap;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.Utilities;

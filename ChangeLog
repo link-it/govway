@@ -1,3 +1,19 @@
+2023-07-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-2976: aggiornata libreria 'com.google.guava:guava' alla versione 32.1.1-jre
+
+2023-07-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1614
+	Dopo l'aggiornamento di una installazione di GovWay esistente all'ultima versione 3.3.13 si ottiene il seguente errore:
+	"[GOVWAY-6] - EccezioneProcessamento: per abilitare la proprietà è richiesto che sia abilitata la gestione delle chiavi PDND"
+	L'errore avviene se i file di proprietà esterni non vengono aggiornati rispetto alle differenze introdotte con l'ultima versione.
+	Nel caso specifico se nel file govway_local.properties non viene riportata la parte sulla PDND.
+	La problematica è stata risolta in modo che l'errore non avvenga anche se non vengono aggiornati i file locali.
+
 2023-07-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

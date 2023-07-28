@@ -24,7 +24,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://org.ecodex.backend/1_1/",
-	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED,
- 	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://org.ecodex.backend/1_1/",
+	elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED,
+ 	attributeFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package backend.ecodex.org._1_1.constants;

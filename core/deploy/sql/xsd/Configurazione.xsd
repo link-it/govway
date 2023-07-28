@@ -112,9 +112,6 @@
                                 <linkit:sql-column-mapping name="location"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[A seconda del tipo di registro (indicato nella colonna 'tipo') l'informazione presente assume un significato differente:
 - tipo='db': nome jndi del datasource
-- tipo='ws': endpoint del web service che permette la consultazione del registro
-- tipo='web': endpoint del web server che permette la consultazione del registro
-- tipo='uddi': endpoint di accesso al registro UDDI
 - tipo='xml': path assoluto su filesystem che individua un file xml che definisce il registro dei servizi]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -128,9 +125,6 @@
                                 <linkit:sql-column-mapping name="tipo"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Tipo di Registro dei Servizi:
 - 'db': database relazionale
-- 'ws': web service che permette la consultazione del registro
-- 'web': web server che permette la consultazione del registro
-- 'uddi': registro UDDI
 - 'xml': file xml]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

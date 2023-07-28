@@ -24,7 +24,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/protocol/manifest",
-	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
- 	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/protocol/manifest",
+	elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
+ 	attributeFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package org.openspcoop2.protocol.manifest;

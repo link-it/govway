@@ -25,8 +25,8 @@ package org.openspcoop2.message.soap.wsaddressing;
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;

@@ -22,10 +22,10 @@ package org.openspcoop2.message.soap.dynamic;
 
 import java.util.Iterator;
 
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.MimeHeader;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
 import javax.xml.transform.Source;
 
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_saaj_impl;
@@ -55,14 +55,14 @@ import org.w3c.dom.UserDataHandler;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DynamicSOAPPart<T extends AbstractOpenSPCoop2Message_saaj_impl> extends javax.xml.soap.SOAPPart {
+public class DynamicSOAPPart<T extends AbstractOpenSPCoop2Message_saaj_impl> extends jakarta.xml.soap.SOAPPart {
 
 	private AbstractOpenSPCoop2Message_soap_impl<T> wrapped;
 	public DynamicSOAPPart(AbstractOpenSPCoop2Message_soap_impl<T> wrapped) {
 		this.wrapped = wrapped;
 	}
 
-	private javax.xml.soap.SOAPPart _getSOAPPart(){
+	private jakarta.xml.soap.SOAPPart _getSOAPPart(){
 		try {
 			return this.wrapped.getContent().getSOAPPart();
 		}catch(Exception e) {

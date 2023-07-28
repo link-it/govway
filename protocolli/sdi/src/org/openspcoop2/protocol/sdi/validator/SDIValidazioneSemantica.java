@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.sdi.validator;
 
 import java.util.ArrayList;
 
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;

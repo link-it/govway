@@ -21,7 +21,7 @@ package org.openspcoop2.protocol.sdk;
 
 import java.io.Serializable;
 
-import javax.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPEnvelope;
 
 /**     
  * SoapMessageSecurityToken

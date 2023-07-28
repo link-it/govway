@@ -32,27 +32,27 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ActorType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ActorType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ActorType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("subscriberType")
+	@jakarta.xml.bind.annotation.XmlEnumValue("subscriberType")
 	SUBSCRIBER_TYPE ("subscriberType"),
-	@javax.xml.bind.annotation.XmlEnumValue("subscriberName")
+	@jakarta.xml.bind.annotation.XmlEnumValue("subscriberName")
 	SUBSCRIBER_NAME ("subscriberName"),
-	@javax.xml.bind.annotation.XmlEnumValue("providerType")
+	@jakarta.xml.bind.annotation.XmlEnumValue("providerType")
 	PROVIDER_TYPE ("providerType"),
-	@javax.xml.bind.annotation.XmlEnumValue("providerName")
+	@jakarta.xml.bind.annotation.XmlEnumValue("providerName")
 	PROVIDER_NAME ("providerName"),
-	@javax.xml.bind.annotation.XmlEnumValue("serviceType")
+	@jakarta.xml.bind.annotation.XmlEnumValue("serviceType")
 	SERVICE_TYPE ("serviceType"),
-	@javax.xml.bind.annotation.XmlEnumValue("serviceName")
+	@jakarta.xml.bind.annotation.XmlEnumValue("serviceName")
 	SERVICE_NAME ("serviceName"),
-	@javax.xml.bind.annotation.XmlEnumValue("serviceVersion")
+	@jakarta.xml.bind.annotation.XmlEnumValue("serviceVersion")
 	SERVICE_VERSION ("serviceVersion"),
-	@javax.xml.bind.annotation.XmlEnumValue("name")
+	@jakarta.xml.bind.annotation.XmlEnumValue("name")
 	NAME ("name"),
-	@javax.xml.bind.annotation.XmlEnumValue("ruleName")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ruleName")
 	RULE_NAME ("ruleName");
 	
 	

@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "EsigibilitaIVAType")
-@javax.xml.bind.annotation.XmlEnum(java.lang.String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "EsigibilitaIVAType")
+@jakarta.xml.bind.annotation.XmlEnum(java.lang.String.class)
 public enum EsigibilitaIVAType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("D")
+	@jakarta.xml.bind.annotation.XmlEnumValue("D")
 	D ('D'),
-	@javax.xml.bind.annotation.XmlEnumValue("I")
+	@jakarta.xml.bind.annotation.XmlEnumValue("I")
 	I ('I'),
-	@javax.xml.bind.annotation.XmlEnumValue("S")
+	@jakarta.xml.bind.annotation.XmlEnumValue("S")
 	S ('S');
 	
 	

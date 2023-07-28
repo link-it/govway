@@ -32,21 +32,21 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "itemType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "itemType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ItemType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("hidden")
+	@jakarta.xml.bind.annotation.XmlEnumValue("hidden")
 	HIDDEN ("hidden"),
-	@javax.xml.bind.annotation.XmlEnumValue("text")
+	@jakarta.xml.bind.annotation.XmlEnumValue("text")
 	TEXT ("text"),
-	@javax.xml.bind.annotation.XmlEnumValue("textarea")
+	@jakarta.xml.bind.annotation.XmlEnumValue("textarea")
 	TEXTAREA ("textarea"),
-	@javax.xml.bind.annotation.XmlEnumValue("select")
+	@jakarta.xml.bind.annotation.XmlEnumValue("select")
 	SELECT ("select"),
-	@javax.xml.bind.annotation.XmlEnumValue("checkbox")
+	@jakarta.xml.bind.annotation.XmlEnumValue("checkbox")
 	CHECKBOX ("checkbox"),
-	@javax.xml.bind.annotation.XmlEnumValue("number")
+	@jakarta.xml.bind.annotation.XmlEnumValue("number")
 	NUMBER ("number");
 	
 	

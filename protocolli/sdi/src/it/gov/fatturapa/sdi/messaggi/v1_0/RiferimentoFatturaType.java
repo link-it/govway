@@ -19,11 +19,11 @@
  */
 package it.gov.fatturapa.sdi.messaggi.v1_0;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -91,16 +91,16 @@ public class RiferimentoFatturaType extends org.openspcoop2.utils.beans.BaseBean
 
 
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="normalizedString")
   @XmlElement(name="NumeroFattura",required=true,nillable=false)
   protected java.lang.String numeroFattura;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="nonNegativeInteger")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="nonNegativeInteger")
   @XmlElement(name="AnnoFattura",required=true,nillable=false)
   protected java.math.BigInteger annoFattura;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="positiveInteger")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="positiveInteger")
   @XmlElement(name="PosizioneFattura",required=false,nillable=false)
   protected java.math.BigInteger posizioneFattura;
 

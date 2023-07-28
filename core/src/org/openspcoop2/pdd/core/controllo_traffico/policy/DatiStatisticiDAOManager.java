@@ -25,8 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.NotFoundException;
-
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -68,6 +66,7 @@ import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;

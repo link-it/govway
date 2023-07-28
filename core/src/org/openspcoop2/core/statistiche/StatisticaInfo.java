@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.statistiche;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import java.io.Serializable;
 
@@ -106,14 +106,14 @@ public class StatisticaInfo extends org.openspcoop2.utils.beans.BaseBeanWithId i
   }
 
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoStatisticaRawEnumValue;
 
   @XmlElement(name="tipo-statistica",required=true,nillable=false)
   protected TipoIntervalloStatistico tipoStatistica;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-ultima-generazione",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataUltimaGenerazione;
 

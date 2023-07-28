@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "pddType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "pddType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum PddType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("operativo")
+	@jakarta.xml.bind.annotation.XmlEnumValue("operativo")
 	OPERATIVO ("operativo"),
-	@javax.xml.bind.annotation.XmlEnumValue("esterno")
+	@jakarta.xml.bind.annotation.XmlEnumValue("esterno")
 	ESTERNO ("esterno");
 	
 	

@@ -27,11 +27,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.apache.logging.log4j.Level;
-import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
-import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -213,82 +210,6 @@ public class ValidazioneSemanticaMainProcessor {
 				}
 			}	
 			
-		}
-		else if("web".equals(tipoRegistro)){
-			
-			// RegistroServizi WEB
-			String urlPrefix = reader.getProperty("openspcoop2.registroServizi.web.urlPrefix");
-			if(urlPrefix==null){
-				throw new Exception("Non e' stato definito la url dove localizzare il registro servizi web");
-			}else{
-				urlPrefix = urlPrefix.trim();
-			}
-			String pathPrefix = reader.getProperty("openspcoop2.registroServizi.web.pathPrefix");
-			if(pathPrefix==null){
-				throw new Exception("Non e' stato definito il path dove localizzare il registro servizi web");
-			}else{
-				pathPrefix = pathPrefix.trim();
-			}
-			
-			DriverRegistroServiziWEB driver = new DriverRegistroServiziWEB(urlPrefix,pathPrefix,log);
-			if(driver.create)
-				log.info("Inizializzato Registro dei Servizi WEB");
-			else
-				throw new Exception("RegistroServizi WEB non inizializzato");
-			
-			registro = driver.getImmagineCompletaRegistroServizi();
-			
-		}
-		else if("uddi".equals(tipoRegistro)){
-			
-			// RegistroServizi UDDI
-			
-			String inquiryUrl = reader.getProperty("openspcoop2.registroServizi.uddi.inquiryUrl");
-			if(inquiryUrl==null){
-				throw new Exception("Non e' stato definito la url dove localizzare il registro servizi uddi");
-			}else{
-				inquiryUrl = inquiryUrl.trim();
-			}
-			String urlPrefix = reader.getProperty("openspcoop2.registroServizi.uddi.urlPrefix");
-			if(urlPrefix==null){
-				throw new Exception("Non e' stato definito la url prefix dove localizzare il registro servizi uddi (repository http)");
-			}else{
-				urlPrefix = urlPrefix.trim();
-			}
-			String usernameUDDI = reader.getProperty("openspcoop2.registroServizi.uddi.username");
-			if(usernameUDDI!=null)
-				usernameUDDI = usernameUDDI.trim();
-			String passwordUDDI = reader.getProperty("openspcoop2.registroServizi.uddi.password");
-			if(passwordUDDI!=null)
-				passwordUDDI = passwordUDDI.trim();
-						
-			DriverRegistroServiziUDDI driver = new DriverRegistroServiziUDDI(inquiryUrl,null,usernameUDDI,passwordUDDI,urlPrefix,null,log);
-			if(driver.create)
-				log.info("Inizializzato Registro dei Servizi UDDI");
-			else
-				throw new Exception("RegistroServizi UDDI non inizializzato");
-			
-			registro = driver.getImmagineCompletaRegistroServizi();
-		}
-		else if("ws".equals(tipoRegistro)){
-			
-			// RegistroServizi WS
-			String url = reader.getProperty("openspcoop2.registroServizi.ws.url");
-			if(url==null){
-				throw new Exception("Non e' stato definito la url dove localizzare il registro servizi ws");
-			}else{
-				url = url.trim();
-			}
-			String username = reader.getProperty("openspcoop2.registroServizi.ws.username");
-			if(username!=null)
-				username = username.trim();
-			String password = reader.getProperty("openspcoop2.registroServizi.ws.password");
-			if(password!=null)
-				password = password.trim();
-			
-			BeanUtilities driver = DriverRegistroServiziWSInitUtilities.newInstance(url, username, password, log);
-			
-			registro = driver.getImmagineCompletaRegistroServizi();
 		}
 		else{
 			throw new Exception("Tipo di registro servizi ["+tipoRegistro+"] non gestito");

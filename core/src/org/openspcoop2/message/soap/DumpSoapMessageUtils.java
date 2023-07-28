@@ -28,9 +28,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPPart;
+import jakarta.activation.DataHandler;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.SOAPPart;
 
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.exception.MessageException;
@@ -106,8 +106,8 @@ public class DumpSoapMessageUtils {
 			    	if(itM!=null) {
 				    	while(itM.hasNext()) {
 				    		Object keyO = itM.next();
-				    		if(keyO instanceof javax.xml.soap.MimeHeader) {
-				    			javax.xml.soap.MimeHeader mh = (javax.xml.soap.MimeHeader) keyO;
+				    		if(keyO instanceof jakarta.xml.soap.MimeHeader) {
+				    			jakarta.xml.soap.MimeHeader mh = (jakarta.xml.soap.MimeHeader) keyO;
 				    			String key = mh.getName();
 				    			
 				    			if(!HttpConstants.CONTENT_ID.equalsIgnoreCase(key) &&
@@ -181,8 +181,8 @@ public class DumpSoapMessageUtils {
 				    	if(itM!=null) {
 					    	while(itM.hasNext()) {
 					    		Object keyO = itM.next();
-					    		if(keyO instanceof javax.xml.soap.MimeHeader) {
-					    			javax.xml.soap.MimeHeader mh = (javax.xml.soap.MimeHeader) keyO;
+					    		if(keyO instanceof jakarta.xml.soap.MimeHeader) {
+					    			jakarta.xml.soap.MimeHeader mh = (jakarta.xml.soap.MimeHeader) keyO;
 					    			String key = mh.getName();
 					    			
 					    			List<String> l = new ArrayList<>();
@@ -537,7 +537,7 @@ public class DumpSoapMessageUtils {
 				else{
 					// Provo con codiceOriginale ma in jboss non funziona sempre
 					try {
-						javax.activation.DataHandler dh= ap.getDataHandler();  
+						jakarta.activation.DataHandler dh= ap.getDataHandler();  
 				    	java.io.InputStream inputDH = dh.getInputStream();
 						bout = new java.io.ByteArrayOutputStream();
 				    	byte [] readB = new byte[8192];
@@ -568,7 +568,7 @@ public class DumpSoapMessageUtils {
 			}
 			else{
 				// Provo con codiceOriginale ma in jboss non funziona sempre
-				javax.activation.DataHandler dh= ap.getDataHandler();  
+				jakarta.activation.DataHandler dh= ap.getDataHandler();  
 		    	java.io.InputStream inputDH = dh.getInputStream();
 				bout = new java.io.ByteArrayOutputStream();
 		    	byte [] readB = new byte[8192];
@@ -589,7 +589,7 @@ public class DumpSoapMessageUtils {
 				 DumpSoapMessageUtils.rebuildDataHandlerAttachment(msg, ap, bout);
 			}
 			else if(MailcapActivationReader.existsDataContentHandler(ap.getContentType())){
-				//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+				//ap.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
 				// In axiom l'update del data handler non funziona
 				if(ap.getContentType()!=null && ap.getContentType().startsWith(HttpConstants.CONTENT_TYPE_PLAIN)){
 					if(s!=null){
@@ -619,7 +619,7 @@ public class DumpSoapMessageUtils {
 		
 	private static void rebuildAttachmentAsByteArray(OpenSPCoop2SoapMessage msg,AttachmentPart ap) throws MessageException{
 		try{
-			javax.activation.DataHandler dh= ap.getDataHandler();  
+			jakarta.activation.DataHandler dh= ap.getDataHandler();  
 	    	java.io.InputStream inputDH = dh.getInputStream();
 			java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
 	    	byte [] readB = new byte[8192];
@@ -629,7 +629,7 @@ public class DumpSoapMessageUtils {
 			inputDH.close();
 			bout.flush();
 			bout.close();
-			//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+			//ap.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
 			// In axiom l'update del data handler non funziona
 			msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
 		}catch(Exception e){
@@ -639,7 +639,7 @@ public class DumpSoapMessageUtils {
 	
 	private static void rebuildDataHandlerAttachment(OpenSPCoop2SoapMessage msg,AttachmentPart ap, ByteArrayOutputStream boutAlreadyRead) throws MessageException{
 		try{
-			//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+			//ap.setDataHandler(new jakarta.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
 			// In axiom l'update del data handler non funziona
 			msg.updateAttachmentPart(ap, new DataHandler(boutAlreadyRead.toByteArray(),ap.getContentType()));
 		}catch(Exception e){

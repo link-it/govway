@@ -31,12 +31,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.Session;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.Queue;
+import jakarta.jms.QueueConnection;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.Session;
 import javax.naming.InitialContext;
 
 import org.openspcoop2.core.commons.Filtri;
@@ -168,7 +168,7 @@ public class ClassQueue {
 				ctx = new InitialContext(this.jndiContext);
 				QueueConnectionFactory qcf = (QueueConnectionFactory) ctx.lookup(this.connectionFactoryName);
 				qc = qcf.createQueueConnection();
-				s = qc.createQueueSession(false,javax.jms.Session.AUTO_ACKNOWLEDGE);
+				s = qc.createQueueSession(false,jakarta.jms.Session.AUTO_ACKNOWLEDGE);
 				sessionJMSforSend = s;
 			}
 			else {

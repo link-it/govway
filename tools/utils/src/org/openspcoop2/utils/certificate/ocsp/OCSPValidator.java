@@ -164,10 +164,10 @@ public class OCSPValidator {
 			throw new UtilsException("OCSP config not provided");
 		}
 
-		String prefixCert = "OCSP [certificate: "+params.getCertificate().getSubjectDN()+"] ";
+		String prefixCert = "OCSP [certificate: "+params.getCertificate().getSubjectX500Principal()+"] ";
 
 		CertificateInfo certificateInfo = new CertificateInfo(params.getCertificate(), "certificate");
-		log.debug(prefixCert+"issuer: "+params.getCertificate().getIssuerDN());
+		log.debug(prefixCert+"issuer: "+params.getCertificate().getIssuerX500Principal());
 		try {
 			log.debug(prefixCert+"CAissuer: "+(certificateInfo.getAuthorityInformationAccess()!=null ? certificateInfo.getAuthorityInformationAccess().getCAIssuers() : null));
 		}catch(Throwable t) {
@@ -716,7 +716,7 @@ public class OCSPValidator {
 			// Essendo un certificato fornito manualmente non servono altri controlli
 			// NOTA: essendo fornito puntualmente, è compito di chi lo configura assicurarsi che abbia l'extension key usage corretto o ne accetta il fatto che non le abbia
 
-			log.debug(prefix+"[Case 3] OCSP response is signed by an authorized responder certificate manually configured: "+signingCert.getSubjectDN());
+			log.debug(prefix+"[Case 3] OCSP response is signed by an authorized responder certificate manually configured: "+signingCert.getSubjectX500Principal());
 			
 		} else {
 
@@ -733,7 +733,7 @@ public class OCSPValidator {
 			if (!signingCert.getIssuerX500Principal().equals(params.getIssuerCertificate().getSubjectX500Principal())) {
 				// Case 3: La risposta viene firmata usando un altro certificato che non è in relazione con il certificato che si sta controllando.
 				
-				log.debug(prefix+"[Case 3] OCSP response is signed by an responder certificate readed in ocsp response (different CA '"+signingCert.getIssuerDN()+"'): "+signingCert.getSubjectDN());
+				log.debug(prefix+"[Case 3] OCSP response is signed by an responder certificate readed in ocsp response (different CA '"+signingCert.getIssuerX500Principal()+"'): "+signingCert.getSubjectX500Principal());
 				
 				if(params.getSignerTrustStore()!=null) {
 					X509Certificate tmp = (X509Certificate) params.getSignerTrustStore().getCertificateBySubject(signingCert.getSubjectX500Principal());
@@ -748,11 +748,11 @@ public class OCSPValidator {
 				}
 				
 				if(!responderCertificateManuallyAuthorized && differentIssuerResponderCertificateCA==null) {
-					throw new UtilsException("Signing certificate is not authorized to sign OCSP responses: unauthorized different issuer certificate '"+signingCert.getIssuerDN()+"'");
+					throw new UtilsException("Signing certificate is not authorized to sign OCSP responses: unauthorized different issuer certificate '"+signingCert.getIssuerX500Principal()+"'");
 				}
 			}
 			else {
-				log.debug(prefix+"[Case 2] OCSP response is signed by an responder certificate readed in ocsp response (same CA): "+signingCert.getSubjectDN());
+				log.debug(prefix+"[Case 2] OCSP response is signed by an responder certificate readed in ocsp response (same CA): "+signingCert.getSubjectX500Principal());
 			}
 			
 			// Controllo Extended Key Usage
@@ -817,7 +817,7 @@ public class OCSPValidator {
 			CRLParams crlParams = null;
 			if(!ocsp_nocheck) {
 				if(params.getConfig().isCrlSigningCertCheck()) {
-					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectDN()+") Build CRL params...");
+					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") Build CRL params...");
 					KeyStore trustStore_config = differentIssuerResponderCertificateTrustStore!=null ? differentIssuerResponderCertificateTrustStore : params.getIssuerTrustStore();
 					try {
 						crlParams = CRLParams.build(log, signingCert, null, trustStore_config, params.getConfig(), params.getReader());
@@ -830,7 +830,7 @@ public class OCSPValidator {
 			if(crlParams==null || crlParams.getCrlCertstore()==null) { // altrimenti la validita' viene verificata insieme alle CRL)
 				// Controllo che non sia scaduto
 				try {
-					log.debug(prefix+" (SigningCert:"+signingCert.getSubjectDN()+") Check valid...");
+					log.debug(prefix+" (SigningCert:"+signingCert.getSubjectX500Principal()+") Check valid...");
 					certificateInfo.checkValid(date);
 				}catch(CertificateNotYetValidException t) {
 					throw new UtilsException("Signing certificate not yet valid: "+t.getMessage(),t);
@@ -847,17 +847,17 @@ public class OCSPValidator {
 					// non devo verificarlo, è stato inserito nel truststore dedicato il certificato del responder puntualmente
 				}
 				else if(differentIssuerResponderCertificateCA!=null) {
-					if(differentIssuerResponderCertificateCA.getSubjectDN()!=null) {
-						CA = differentIssuerResponderCertificateCA.getSubjectDN().toString();
+					if(differentIssuerResponderCertificateCA.getSubjectX500Principal()!=null) {
+						CA = differentIssuerResponderCertificateCA.getSubjectX500Principal().toString();
 					}
-					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectDN()+") verify against ca '"+CA+"'...");
+					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") verify against ca '"+CA+"'...");
 					certificateInfo.verify(differentIssuerResponderCertificateCA);
 				}
 				else {
-					if(params.getIssuerCertificate().getSubjectDN()!=null) {
-						CA = params.getIssuerCertificate().getSubjectDN().toString();
+					if(params.getIssuerCertificate().getSubjectX500Principal()!=null) {
+						CA = params.getIssuerCertificate().getSubjectX500Principal().toString();
 					}
-					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectDN()+") verify against ca '"+CA+"'...");
+					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") verify against ca '"+CA+"'...");
 					certificateInfo.verify(params.getIssuerCertificate());
 				}
 			} catch (Throwable t) {
@@ -866,7 +866,7 @@ public class OCSPValidator {
 			
 			if(crlParams!=null && crlParams.getCrlCertstore()!=null) {
 				try {
-					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectDN()+") CRL check...");
+					log.debug(prefix+"(SigningCert:"+signingCert.getSubjectX500Principal()+") CRL check...");
 					certificateInfo.checkValid(crlParams.getCrlCertstore(), crlParams.getCrlTrustStore(), date);
 				}catch(Throwable t) {
 					throw new UtilsException("Signing certificate not valid (CRL): "+t.getMessage(),t);
@@ -960,8 +960,8 @@ public class OCSPValidator {
 			
 			String CA = "n.d.";
 			try {
-				if(params.getIssuerCertificate().getSubjectDN()!=null) {
-					CA = params.getIssuerCertificate().getSubjectDN().toString();
+				if(params.getIssuerCertificate().getSubjectX500Principal()!=null) {
+					CA = params.getIssuerCertificate().getSubjectX500Principal().toString();
 				}
 				certificateInfo.verify(params.getIssuerCertificate());
 			} catch (Throwable t) {

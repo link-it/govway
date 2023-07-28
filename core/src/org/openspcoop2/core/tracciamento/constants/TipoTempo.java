@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "TipoTempo")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "TipoTempo")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoTempo implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("Locale")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Locale")
 	LOCALE ("Locale"),
-	@javax.xml.bind.annotation.XmlEnumValue("Sincronizzato")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Sincronizzato")
 	SINCRONIZZATO ("Sincronizzato"),
-	@javax.xml.bind.annotation.XmlEnumValue("Sconosciuto")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Sconosciuto")
 	SCONOSCIUTO ("Sconosciuto");
 	
 	

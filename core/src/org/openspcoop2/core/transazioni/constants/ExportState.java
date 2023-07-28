@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "export-state")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "export-state")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ExportState implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("executing")
+	@jakarta.xml.bind.annotation.XmlEnumValue("executing")
 	EXECUTING ("executing"),
-	@javax.xml.bind.annotation.XmlEnumValue("completed")
+	@jakarta.xml.bind.annotation.XmlEnumValue("completed")
 	COMPLETED ("completed"),
-	@javax.xml.bind.annotation.XmlEnumValue("error")
+	@jakarta.xml.bind.annotation.XmlEnumValue("error")
 	ERROR ("error");
 	
 	

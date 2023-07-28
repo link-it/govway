@@ -23,7 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.monitor;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.openspcoop2.pdd.monitor.Messaggio;
 import org.openspcoop2.pdd.monitor.StatoPdd;

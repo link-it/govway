@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
@@ -161,7 +161,7 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBeanWit
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione-delegata",required=true,nillable=false)
   private List<java.lang.String> azioneDelegata = new ArrayList<>();
 
@@ -189,25 +189,25 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBeanWit
   	return this.sizeAzioneDelegataList();
   }
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String identificazioneRawEnumValue;
 
   @XmlAttribute(name="identificazione",required=false)
   protected PortaDelegataAzioneIdentificazione identificazione = (PortaDelegataAzioneIdentificazione) PortaDelegataAzioneIdentificazione.toEnumConstantFromString("static");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="pattern",required=false)
   protected java.lang.String pattern;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=false)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome-porta-delegante",required=false)
   protected java.lang.String nomePortaDelegante;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String forceInterfaceBasedRawEnumValue;
 
   @XmlAttribute(name="force-interface-based",required=false)

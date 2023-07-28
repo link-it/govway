@@ -22,10 +22,10 @@ package org.openspcoop2.message;
 
 import java.io.InputStream;
 
-import javax.mail.BodyPart;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.mail.BodyPart;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;

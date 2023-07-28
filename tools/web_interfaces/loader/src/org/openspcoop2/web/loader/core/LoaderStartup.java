@@ -24,8 +24,8 @@ package org.openspcoop2.web.loader.core;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;

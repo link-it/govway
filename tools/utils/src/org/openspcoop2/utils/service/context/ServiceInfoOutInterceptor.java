@@ -98,9 +98,9 @@ public class ServiceInfoOutInterceptor extends AbstractPhaseInterceptor<Message>
 //					Integer responseCode = (Integer) message.get(Message.RESPONSE_CODE);
 //				    if (null == responseCode) {
 //				    	Object o = message.get(org.apache.cxf.transport.http.AbstractHTTPDestination.HTTP_RESPONSE);
-//				    	if(o!=null && o instanceof javax.servlet.http.HttpServletResponseWrapper) {
-//					        javax.servlet.http.HttpServletResponseWrapper responseWrapper = 
-//					           (javax.servlet.http.HttpServletResponseWrapper) o;
+//				    	if(o!=null && o instanceof jakarta.servlet.http.HttpServletResponseWrapper) {
+//					        jakarta.servlet.http.HttpServletResponseWrapper responseWrapper = 
+//					           (jakarta.servlet.http.HttpServletResponseWrapper) o;
 //					        responseCode = responseWrapper.getStatus();
 //				    	}
 //				    }

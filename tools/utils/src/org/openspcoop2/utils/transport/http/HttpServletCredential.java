@@ -24,7 +24,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -47,7 +47,7 @@ public class HttpServletCredential extends Credential implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static final String SERVLET_REQUEST_X509CERTIFICATE = "javax.servlet.request.X509Certificate";
+	public static final String SERVLET_REQUEST_X509CERTIFICATE = "jakarta.servlet.request.X509Certificate";
 	
 	// Servlet Request
 	private transient HttpServletRequest httpServletRequest;

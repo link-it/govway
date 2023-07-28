@@ -331,7 +331,10 @@ public abstract class AbstractXMLDiff {
 				}
 				else if(o instanceof Reader){
 					Reader r = (Reader) o;
-					ris = new ReaderInputStream(r,Charset.forName("UTF-8"));
+					ris = ReaderInputStream.builder()
+							.setReader(r)
+                            .setCharset(org.openspcoop2.utils.resources.Charset.UTF_8.getValue())
+                            .get();
 					return db.parse( ris );
 				}
 				else{

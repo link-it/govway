@@ -32,17 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "InterfaceType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "InterfaceType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum InterfaceType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("wsdl11")
+	@jakarta.xml.bind.annotation.XmlEnumValue("wsdl11")
 	WSDL_11 ("wsdl11"),
-	@javax.xml.bind.annotation.XmlEnumValue("wadl")
-	WADL ("wadl"),
-	@javax.xml.bind.annotation.XmlEnumValue("swagger2")
+	@jakarta.xml.bind.annotation.XmlEnumValue("swagger2")
 	SWAGGER_2 ("swagger2"),
-	@javax.xml.bind.annotation.XmlEnumValue("openApi3")
+	@jakarta.xml.bind.annotation.XmlEnumValue("openApi3")
 	OPEN_API_3 ("openApi3");
 	
 	

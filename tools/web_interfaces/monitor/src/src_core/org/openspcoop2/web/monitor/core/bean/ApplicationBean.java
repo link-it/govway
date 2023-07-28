@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;

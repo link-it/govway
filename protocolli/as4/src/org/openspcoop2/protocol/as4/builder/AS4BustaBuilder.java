@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.as4.builder;
 
 import java.util.Date;
 
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;

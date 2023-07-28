@@ -18,9 +18,8 @@
 		<jar.group.name>cxf</jar.group.name>
 		
 		<asm.version>9.5</asm.version>
-		<cxf.version>3.6.1</cxf.version>
-		<cxf.gov4j.version>3.6.1-gov4j-1</cxf.gov4j.version>
-		<javax.ws.rs.api.cxf.version>2.1.6</javax.ws.rs.api.cxf.version>
+		<cxf.version>4.0.2</cxf.version>
+		<cxf.gov4j.version>4.0.2-gov4j-1</cxf.gov4j.version>
 		<stax2.api.version>4.2.1</stax2.api.version>
 		<woodstock.core.version>6.5.1</woodstock.core.version>
 		<xml.resolver.version>1.2</xml.resolver.version>
@@ -318,17 +317,6 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>jakarta.ws.rs</groupId>
-    			<artifactId>jakarta.ws.rs-api</artifactId>
-			<version>${javax.ws.rs.api.cxf.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>	
 
 		<dependency>
 			<groupId>org.codehaus.woodstox</groupId>

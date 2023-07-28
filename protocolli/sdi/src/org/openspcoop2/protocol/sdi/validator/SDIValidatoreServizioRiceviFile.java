@@ -24,7 +24,7 @@ import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.ProjectInfo;
 
 import java.util.List;
 
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.soap.SoapUtils;

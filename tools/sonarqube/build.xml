@@ -347,9 +347,6 @@
 					</else>
 				</if>
 
-				<!-- Classi di test -->
-				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/security/message/soapbox/test/*.java"/>
-
 				<antcall target="-prepare">
 					<param name="analyzeType" value="runtime-security"/>
 					<param name="analyzeBaseDir" value="${openspcoop2}/core"/>

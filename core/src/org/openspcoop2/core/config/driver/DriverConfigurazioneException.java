@@ -25,7 +25,7 @@ package org.openspcoop2.core.config.driver;
 
 import java.io.Serializable;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * Contiene la definizione di una eccezione lanciata dalle classi del driver che gestisce la configurazione di OpenSPCoop

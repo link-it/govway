@@ -448,8 +448,8 @@
 				<include name="slf4j-api-2.0.3-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
-			<lib dir="${required_lib}/javax">
-				<include name="${javax.jms-api-2.0.1.jar}"/>
+			<lib dir="${required_lib}/jakarta">
+				<include name="${jakarta.jms-api-3.1.0.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
 				<include name="xmlsec-2.3.0.jar"/>
@@ -468,9 +468,6 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jackson">
-				<include name="*.jar"/>
-			</lib>
-			<lib dir="${required_lib}/wadl">
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/spring">

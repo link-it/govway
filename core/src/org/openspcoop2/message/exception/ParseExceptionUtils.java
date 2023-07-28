@@ -124,22 +124,6 @@ public class ParseExceptionUtils {
 		boolean found = false;
 		
 		Throwable tmp = null;		
-				
-		if(tmp==null){
-			if(Utilities.isExceptionInstanceOf("org.apache.axiom.om.OMException", e)){
-				tmp = e;
-			}
-			else if(Utilities.existsInnerException(e, "org.apache.axiom.om.OMException")){
-				tmp = Utilities.getInnerException(e, "org.apache.axiom.om.OMException");
-			}
-			if(tmp!=null){
-				if( ! (tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage())) ){
-					// cerco prossima eccezione, in questa c'è null come message
-					tmp = null;
-					found = true;
-				}
-			}
-		}
 		
 		if(tmp==null){
 			if(e instanceof WstxException){

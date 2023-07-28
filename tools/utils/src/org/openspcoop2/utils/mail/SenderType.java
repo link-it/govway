@@ -31,6 +31,6 @@ import java.io.Serializable;
  */
 public enum SenderType implements Serializable {
 
-	COMMONS_NET, COMMONS_MAIL;
+	COMMONS_NET
 	
 }

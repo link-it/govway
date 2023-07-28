@@ -29,8 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.DumpConfigurazione;

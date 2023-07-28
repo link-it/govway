@@ -26,20 +26,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPHeader;
+import jakarta.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPPart;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
@@ -233,7 +233,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 					// Se è non registrato un content handler per text/xml
 					// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
 					// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
-					// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
+					// jakarta.xml.soap.SOAPException: no object DCH for MIME type text/xml
 					//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
 					//System.out.println("XML (DOMSource)");
 					streamSource = new DOMSource(MessageXMLUtils.getInstance(this.messageFactory).newElement(content));
@@ -328,12 +328,12 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 					
 					if(pulizia) {
 						try {
-							javax.mail.internet.ContentType ctObj = new javax.mail.internet.ContentType(contentType);
+							jakarta.mail.internet.ContentType ctObj = new jakarta.mail.internet.ContentType(contentType);
 							
 							// Bug Fix: OP-909
 							// Rimane il tipo 'Multipart-Type' come Content-Type in caso di messaggio 'MTOM' senza allegati.
 							String contentTypeInternal = ContentTypeUtilities.getInternalMultipartContentType(contentType);
-							javax.mail.internet.ContentType ctObjInternal = new javax.mail.internet.ContentType(contentTypeInternal);
+							jakarta.mail.internet.ContentType ctObjInternal = new jakarta.mail.internet.ContentType(contentTypeInternal);
 							ctObj.setPrimaryType(ctObjInternal.getPrimaryType());
 							ctObj.setSubType(ctObjInternal.getSubType());
 							
@@ -852,33 +852,6 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
-	}
-
-	
-	/* Ws Security (SoapBox) */
-	
-	@Override
-	public String getEncryptedDataHeaderBlockClass() {
-		return _getEncryptedDataHeaderBlockClass();
-	}
-	protected static String _getEncryptedDataHeaderBlockClass() {
-		return "com.sun.xml.wss.core.EncryptedDataHeaderBlock"; // usare la stringa per GPL clean
-	}
-
-	@Override
-	public String getProcessPartialEncryptedMessageClass() {
-		return _getProcessPartialEncryptedMessageClass();
-	}
-	protected static String _getProcessPartialEncryptedMessageClass() {
-		return "org.openspcoop2.security.message.soapbox.ProcessPartialEncryptedMessage";
-	}
-
-	@Override
-	public String getSignPartialMessageProcessorClass() {
-		return _getSignPartialMessageProcessorClass();
-	}
-	protected static String _getSignPartialMessageProcessorClass() {
-		return "org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor";
 	}
 	
 	

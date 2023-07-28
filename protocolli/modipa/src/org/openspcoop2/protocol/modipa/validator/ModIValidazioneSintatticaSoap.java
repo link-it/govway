@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wss4j.dom.WSDataRef;

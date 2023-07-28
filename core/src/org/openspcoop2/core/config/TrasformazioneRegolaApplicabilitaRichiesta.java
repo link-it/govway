@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -203,7 +203,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione",required=true,nillable=false)
   private List<java.lang.String> azione = new ArrayList<>();
 
@@ -231,7 +231,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
   	return this.sizeAzioneList();
   }
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="content-type",required=true,nillable=false)
   private List<java.lang.String> contentType = new ArrayList<>();
 
@@ -259,11 +259,11 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
   	return this.sizeContentTypeList();
   }
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pattern",required=false,nillable=false)
   protected java.lang.String pattern;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="connettore",required=true,nillable=false)
   private List<java.lang.String> connettore = new ArrayList<>();
 

@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.sdk.state;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.IDService;

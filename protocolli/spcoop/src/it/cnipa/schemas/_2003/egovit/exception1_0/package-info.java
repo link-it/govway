@@ -24,7 +24,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/",
-	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
- 	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/",
+	elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
+ 	attributeFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package it.cnipa.schemas._2003.egovit.exception1_0;

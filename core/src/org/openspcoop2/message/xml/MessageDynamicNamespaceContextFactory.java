@@ -23,9 +23,9 @@ package org.openspcoop2.message.xml;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPException;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;
@@ -97,7 +97,7 @@ public class MessageDynamicNamespaceContextFactory extends org.openspcoop2.utils
 		return this.getNamespaceContextFromSoapEnvelope(MessageType.SOAP_12, soapenvelope);
 	}
 
-	private DynamicNamespaceContext getNamespaceContextFromSoapEnvelope(MessageType messageType, javax.xml.soap.SOAPEnvelope soapenvelope) throws SAXException, SOAPException
+	private DynamicNamespaceContext getNamespaceContextFromSoapEnvelope(MessageType messageType, jakarta.xml.soap.SOAPEnvelope soapenvelope) throws SAXException, SOAPException
 	{		
 		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
 		SOAPBody body = soapenvelope.getBody();

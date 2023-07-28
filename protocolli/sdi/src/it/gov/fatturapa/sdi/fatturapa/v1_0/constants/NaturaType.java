@@ -32,19 +32,19 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "NaturaType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "NaturaType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("N1")
+	@jakarta.xml.bind.annotation.XmlEnumValue("N1")
 	N1 ("N1"),
-	@javax.xml.bind.annotation.XmlEnumValue("N2")
+	@jakarta.xml.bind.annotation.XmlEnumValue("N2")
 	N2 ("N2"),
-	@javax.xml.bind.annotation.XmlEnumValue("N3")
+	@jakarta.xml.bind.annotation.XmlEnumValue("N3")
 	N3 ("N3"),
-	@javax.xml.bind.annotation.XmlEnumValue("N4")
+	@jakarta.xml.bind.annotation.XmlEnumValue("N4")
 	N4 ("N4"),
-	@javax.xml.bind.annotation.XmlEnumValue("N5")
+	@jakarta.xml.bind.annotation.XmlEnumValue("N5")
 	N5 ("N5");
 	
 	

@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
@@ -7950,9 +7950,6 @@ public class ControlStationCore {
 			return InterfaceType.SWAGGER_2;
 		case OPEN_API_3:
 			return InterfaceType.OPEN_API_3;
-		case WADL:
-			return InterfaceType.WADL;
-
 			
 		case WSDL_11:
 		default:
@@ -7969,8 +7966,6 @@ public class ControlStationCore {
 			return org.openspcoop2.core.registry.constants.FormatoSpecifica.SWAGGER_2;
 		case OPEN_API_3:
 			return org.openspcoop2.core.registry.constants.FormatoSpecifica.OPEN_API_3;
-		case WADL:
-			return org.openspcoop2.core.registry.constants.FormatoSpecifica.WADL;
 			
 		case WSDL_11:
 		default:

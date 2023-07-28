@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "RuoloMessageHandler")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "RuoloMessageHandler")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum RuoloMessageHandler implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("richiesta")
+	@jakarta.xml.bind.annotation.XmlEnumValue("richiesta")
 	RICHIESTA ("richiesta"),
-	@javax.xml.bind.annotation.XmlEnumValue("risposta")
+	@jakarta.xml.bind.annotation.XmlEnumValue("risposta")
 	RISPOSTA ("risposta");
 	
 	

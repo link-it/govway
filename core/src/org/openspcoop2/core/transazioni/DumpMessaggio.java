@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.transazioni;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -402,50 +402,50 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
   }
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-transazione",required=true,nillable=false)
   protected java.lang.String idTransazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="protocollo",required=true,nillable=false)
   protected java.lang.String protocollo;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="servizio-applicativo-erogatore",required=false,nillable=false)
   protected java.lang.String servizioApplicativoErogatore;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-consegna-erogatore",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataConsegnaErogatore;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoMessaggioRawEnumValue;
 
   @XmlElement(name="tipo-messaggio",required=true,nillable=false)
   protected TipoMessaggio tipoMessaggio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="formato-messaggio",required=false,nillable=false)
   protected java.lang.String formatoMessaggio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="content-type",required=false,nillable=false)
   protected java.lang.String contentType;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="content-length",required=false,nillable=false)
   protected java.lang.Long contentLength;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="multipart-content-type",required=false,nillable=false)
   protected java.lang.String multipartContentType;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="multipart-content-id",required=false,nillable=false)
   protected java.lang.String multipartContentId;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="multipart-content-location",required=false,nillable=false)
   protected java.lang.String multipartContentLocation;
 
@@ -476,8 +476,8 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
   	return this.sizeMultipartHeaderList();
   }
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.HexBinaryAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="hexBinary")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.HexBinaryAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="hexBinary")
   @XmlElement(type=String.class, name="body",required=false,nillable=false)
   protected byte[] body;
 
@@ -562,42 +562,42 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
   	return this.sizeContenutoList();
   }
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="dump-timestamp",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date dumpTimestamp;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="post-process-header",required=false,nillable=false)
   protected java.lang.String postProcessHeader;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="post-process-filename",required=false,nillable=false)
   protected java.lang.String postProcessFilename;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.HexBinaryAdapter.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="hexBinary")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(jakarta.xml.bind.annotation.adapters.HexBinaryAdapter.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="hexBinary")
   @XmlElement(type=String.class, name="post-process-content",required=false,nillable=false)
   protected byte[] postProcessContent;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="post-process-config-id",required=false,nillable=false)
   protected java.lang.String postProcessConfigId;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="post-process-timestamp",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date postProcessTimestamp;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="post-processed",required=false,nillable=false,defaultValue="1")
   protected int postProcessed = 1;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="multipart-header-ext",required=false,nillable=false)
   protected java.lang.String multipartHeaderExt;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="header-ext",required=false,nillable=false)
   protected java.lang.String headerExt;
 

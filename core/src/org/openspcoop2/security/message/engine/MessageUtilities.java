@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
+import jakarta.xml.soap.AttachmentPart;
 
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.SoapUtils;

@@ -23,9 +23,9 @@ package org.openspcoop2.message.soap;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;

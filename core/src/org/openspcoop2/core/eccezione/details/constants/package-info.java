@@ -24,7 +24,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://govway.org/integration/fault/details",
-	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
- 	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://govway.org/integration/fault/details",
+	elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
+ 	attributeFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package org.openspcoop2.core.eccezione.details.constants;

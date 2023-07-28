@@ -812,7 +812,6 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 			switch (formato) {
 			case OPEN_API_3:
 			case SWAGGER_2:
-			case WADL:
 				if(as.getByteWsdlConcettuale()!=null) {
 					IApiReader apiReader = null;
 					if(FormatoSpecifica.OPEN_API_3.equals(formato)) {
@@ -820,9 +819,6 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 					}
 					else if(FormatoSpecifica.SWAGGER_2.equals(formato)) {
 						apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER_2);
-					}
-					else {
-						apiReader = ApiFactory.newApiReader(ApiFormats.WADL);
 					}
 					ApiReaderConfig config = new ApiReaderConfig();
 					config.setProcessInclude(false);

@@ -32,25 +32,25 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "PortaDelegataAzioneIdentificazione")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "PortaDelegataAzioneIdentificazione")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum PortaDelegataAzioneIdentificazione implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("static")
+	@jakarta.xml.bind.annotation.XmlEnumValue("static")
 	STATIC ("static"),
-	@javax.xml.bind.annotation.XmlEnumValue("headerBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("headerBased")
 	HEADER_BASED ("headerBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("urlBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("urlBased")
 	URL_BASED ("urlBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("contentBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("contentBased")
 	CONTENT_BASED ("contentBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("inputBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("inputBased")
 	INPUT_BASED ("inputBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("soapActionBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soapActionBased")
 	SOAP_ACTION_BASED ("soapActionBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("interfaceBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("interfaceBased")
 	INTERFACE_BASED ("interfaceBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("delegatedBy")
+	@jakarta.xml.bind.annotation.XmlEnumValue("delegatedBy")
 	DELEGATED_BY ("delegatedBy");
 	
 	

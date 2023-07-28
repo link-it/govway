@@ -11,7 +11,7 @@ L'applicazione permette di trasformare configurazioni e registri in formato xml,
 
 Per abilitare la conversione di un registro xml deve essere impostato a 'true' la voce 'conversioneRegistroServizi' nel file tools/xml2backend/local_env.xml.
 La sorgente deve essere un registro dei servizi in formato xml che segue l'xsd in src/schemi/registroServizi.xsd, e deve essere indicato il path del file nella voce 'sorgenteRegistroServizi' del file tools/xml2backend/local_env.xml. Un esempio lo si puo' trovare in tools/xml2backend/deploy/example/registroServizi.xml.
-Il tipo di destinazione (uddi/web/db) deve essere indicato nella voce 'tipoRegistroServizi'. Deve anche essere indicato il file di properties che contiene la configurazione per accedere al backend scelto, attraverso la voce 'proprietaRegistroServizi'. Un esempio lo si puo' trovare in tools/xml2backend/deploy/properties/registroServizi.properties.
+Il tipo di destinazione (db) deve essere indicato nella voce 'tipoRegistroServizi'. Deve anche essere indicato il file di properties che contiene la configurazione per accedere al backend scelto, attraverso la voce 'proprietaRegistroServizi'. Un esempio lo si puo' trovare in tools/xml2backend/deploy/properties/registroServizi.properties.
 
 
 

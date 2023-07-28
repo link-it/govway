@@ -26,7 +26,7 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.generic_project.exception.NotFoundException;

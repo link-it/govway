@@ -32,27 +32,27 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "TipiMessaggi")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "TipiMessaggi")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipiMessaggi implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("RC")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RC")
 	RC ("RC"),
-	@javax.xml.bind.annotation.XmlEnumValue("NS")
+	@jakarta.xml.bind.annotation.XmlEnumValue("NS")
 	NS ("NS"),
-	@javax.xml.bind.annotation.XmlEnumValue("MC")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MC")
 	MC ("MC"),
-	@javax.xml.bind.annotation.XmlEnumValue("NE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("NE")
 	NE ("NE"),
-	@javax.xml.bind.annotation.XmlEnumValue("MT")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MT")
 	MT ("MT"),
-	@javax.xml.bind.annotation.XmlEnumValue("EC")
+	@jakarta.xml.bind.annotation.XmlEnumValue("EC")
 	EC ("EC"),
-	@javax.xml.bind.annotation.XmlEnumValue("SE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SE")
 	SE ("SE"),
-	@javax.xml.bind.annotation.XmlEnumValue("DT")
+	@jakarta.xml.bind.annotation.XmlEnumValue("DT")
 	DT ("DT"),
-	@javax.xml.bind.annotation.XmlEnumValue("AT")
+	@jakarta.xml.bind.annotation.XmlEnumValue("AT")
 	AT ("AT");
 	
 	

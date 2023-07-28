@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.core.registry;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.MessageType;
@@ -685,7 +685,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   }
 
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected IDAccordo oldIDAccordoForUpdate;
 
   @XmlElement(name="soggetto-referente",required=false,nillable=false)
@@ -859,153 +859,153 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @XmlElement(name="gruppi",required=false,nillable=false)
   protected GruppiAccordo gruppi;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="stato-package",required=false)
   protected java.lang.String statoPackage;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="privato",required=false)
   protected Boolean privato = Boolean.valueOf("false");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="base64Binary")
   @XmlAttribute(name="byte-wsdl-definitorio",required=false)
   protected byte[] byteWsdlDefinitorio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="base64Binary")
   @XmlAttribute(name="byte-wsdl-concettuale",required=false)
   protected byte[] byteWsdlConcettuale;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="base64Binary")
   @XmlAttribute(name="byte-wsdl-logico-erogatore",required=false)
   protected byte[] byteWsdlLogicoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="base64Binary")
   @XmlAttribute(name="byte-wsdl-logico-fruitore",required=false)
   protected byte[] byteWsdlLogicoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="base64Binary")
   @XmlAttribute(name="byte-specifica-conversazione-concettuale",required=false)
   protected byte[] byteSpecificaConversazioneConcettuale;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="base64Binary")
   @XmlAttribute(name="byte-specifica-conversazione-erogatore",required=false)
   protected byte[] byteSpecificaConversazioneErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="base64Binary")
   @XmlAttribute(name="byte-specifica-conversazione-fruitore",required=false)
   protected byte[] byteSpecificaConversazioneFruitore;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String serviceBindingRawEnumValue;
 
   @XmlAttribute(name="service-binding",required=true)
   protected ServiceBinding serviceBinding;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="message-type",required=false)
   protected MessageType messageType;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String profiloCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="profilo-collaborazione",required=true)
   protected ProfiloCollaborazione profiloCollaborazione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String formatoSpecificaRawEnumValue;
 
   @XmlAttribute(name="formato-specifica",required=false)
   protected FormatoSpecifica formatoSpecifica;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="wsdl-definitorio",required=false)
   protected java.lang.String wsdlDefinitorio;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="wsdl-concettuale",required=false)
   protected java.lang.String wsdlConcettuale;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="wsdl-logico-erogatore",required=false)
   protected java.lang.String wsdlLogicoErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="wsdl-logico-fruitore",required=false)
   protected java.lang.String wsdlLogicoFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="specifica-conversazione-concettuale",required=false)
   protected java.lang.String specificaConversazioneConcettuale;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="specifica-conversazione-erogatore",required=false)
   protected java.lang.String specificaConversazioneErogatore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="specifica-conversazione-fruitore",required=false)
   protected java.lang.String specificaConversazioneFruitore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="utilizzo-senza-azione",required=false)
   protected boolean utilizzoSenzaAzione = false;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String filtroDuplicatiRawEnumValue;
 
   @XmlAttribute(name="filtro-duplicati",required=false)
   protected StatoFunzionalita filtroDuplicati = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String confermaRicezioneRawEnumValue;
 
   @XmlAttribute(name="conferma-ricezione",required=false)
   protected StatoFunzionalita confermaRicezione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String idCollaborazioneRawEnumValue;
 
   @XmlAttribute(name="id-collaborazione",required=false)
   protected StatoFunzionalita idCollaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String idRiferimentoRichiestaRawEnumValue;
 
   @XmlAttribute(name="id-riferimento-richiesta",required=false)
   protected StatoFunzionalita idRiferimentoRichiesta = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String consegnaInOrdineRawEnumValue;
 
   @XmlAttribute(name="consegna-in-ordine",required=false)
   protected StatoFunzionalita consegnaInOrdine = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="scadenza",required=false)
   protected java.lang.String scadenza;
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlAttribute(name="ora-registrazione",required=false)
   protected java.util.Date oraRegistrazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
   protected java.lang.Integer versione = java.lang.Integer.valueOf("1");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="canale",required=false)
   protected java.lang.String canale;
 

@@ -29,14 +29,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.mail.util.ByteArrayDataSource;
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPFault;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
@@ -510,7 +510,7 @@ public class TunnelSoapUtils {
 	private static void saveAttachmentOpenSPCoop(AttachmentPart ap) throws MessageException{
 		try{
 			// FIX: se non c'e' il dump abilitato serve il codice seguente per forzare il salvataggio, in caso si passi da DataHandler.
-			javax.activation.DataHandler dh= ap.getDataHandler();  
+			jakarta.activation.DataHandler dh= ap.getDataHandler();  
 	    	java.io.InputStream inputDH = dh.getInputStream();
 			java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
 	    	byte [] readB = new byte[8192];

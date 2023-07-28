@@ -25,10 +25,10 @@ package org.openspcoop2.pdd.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
-import javax.jms.MessageConsumer;
-import javax.jms.Queue;
+import jakarta.jms.JMSException;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.Queue;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -166,7 +166,7 @@ public class JMSReceiver {
 			//	Start connection
 			try{
 				jmsObject.getConnection().start();
-			}catch(javax.jms.JMSException e){
+			}catch(jakarta.jms.JMSException e){
 				this.qmanager.releaseResource(this.codicePorta,this.idModulo,resource);
 				this.errore = "Riscontrato errore durante lo start della connessione ["+destinatario+"] :"+e.getMessage();
 				return false;
@@ -178,7 +178,7 @@ public class JMSReceiver {
 					receiver = jmsObject.getSession().createConsumer(queue,msgSelector);
 				else
 					receiver = jmsObject.getSession().createConsumer(queue);
-			}catch(javax.jms.JMSException e){
+			}catch(jakarta.jms.JMSException e){
 				this.qmanager.releaseResource(this.codicePorta,this.idModulo,resource);
 				this.log.error("Riscontrato errore durante la creazione del receiver ["+destinatario+"] :"+e.getMessage(),e);
 				this.errore = "Riscontrato errore durante la creazione del receiver ["+destinatario+"] :"+e.getMessage();
@@ -223,7 +223,7 @@ public class JMSReceiver {
 						//	Start connection
 						try{
 							jmsObject.getConnection().start();
-						}catch(javax.jms.JMSException e){
+						}catch(jakarta.jms.JMSException e){
 							this.qmanager.releaseResource(this.codicePorta,this.idModulo,resource);
 							this.log.error("Riscontrato errore durante lo start della connessione ["+destinatario+"] :"+e.getMessage(),e);
 							this.errore = "Riscontrato errore durante lo start della connessione ["+destinatario+"] :"+e.getMessage();
@@ -237,7 +237,7 @@ public class JMSReceiver {
 							}else{
 								receiver = jmsObject.getSession().createConsumer(queue);
 							}
-						}catch(javax.jms.JMSException e){
+						}catch(jakarta.jms.JMSException e){
 							this.qmanager.releaseResource(this.codicePorta,this.idModulo,resource);
 							this.log.error("Riscontrato errore durante la creazione del receiver ["+destinatario+"] :"+e.getMessage(),e);
 							this.errore = "Riscontrato errore durante la creazione del receiver ["+destinatario+"] :"+e.getMessage();
@@ -266,12 +266,12 @@ public class JMSReceiver {
 				// IDMessaggio
 				String idMessaggio = receivedMsg.getStringProperty("ID");
 				this.propertiesReceived.put("ID",idMessaggio);
-			}	catch(javax.jms.JMSException e){}
+			}	catch(jakarta.jms.JMSException e){}
 			try{
 				// ContenutoRispostaPresente
 				boolean contenutoRisposta = receivedMsg.getBooleanProperty("ContenutoRispostaPresente");
 				this.propertiesReceived.put("ContenutoRispostaPresente",Boolean.valueOf(contenutoRisposta));
-			}	catch(javax.jms.JMSException e){}
+			}	catch(jakarta.jms.JMSException e){}
 			// ......
 			
 			// Rilascio producer

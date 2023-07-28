@@ -94,7 +94,6 @@ public class SecurityConstants {
 	
 	public static final String SECURITY_ENGINE = "securityEngine";
 	public static final String SECURITY_ENGINE_WSS4J = "wss4j";
-	public static final String SECURITY_ENGINE_SOAPBOX = "soapbox";
 	public static final String SECURITY_ENGINE_DSS = "dss";
 	public static final String SECURITY_ENGINE_JOSE = "jose";
 	public static final String SECURITY_ENGINE_XML = "xml";
@@ -329,9 +328,6 @@ public class SecurityConstants {
 	public static final String TIMESTAMP_STRICT = ConfigurationConstants.TIMESTAMP_STRICT;
 	public static final String TIMESTAMP_PRECISION = ConfigurationConstants.TIMESTAMP_PRECISION;
     public static final String TIMESTAMP_FUTURE_TTL = ConfigurationConstants.TTL_FUTURE_TIMESTAMP;
-    
-    public static final String TIMESTAMP_SOAPBOX_TTL_DEFAULT = "300";
-	public static final String TIMESTAMP_SOAPBOX_FUTURE_TTL_DEFAULT =  "60";
 
 	public static final String USERNAME_TOKEN_PASSWORD = "usernameTokenPassword";
 	public static final String USERNAME_TOKEN_PASSWORD_TYPE = ConfigurationConstants.PASSWORD_TYPE;

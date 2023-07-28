@@ -22,7 +22,7 @@ package org.openspcoop2.security.message.signature;
 
 import java.util.Iterator;
 
-import javax.xml.soap.AttachmentPart;
+import jakarta.xml.soap.AttachmentPart;
 
 import org.apache.xml.security.signature.XMLSignatureInput;
 import org.apache.xml.security.utils.resolver.ResourceResolverContext;

@@ -20,7 +20,7 @@
 package org.openspcoop2.pdd.core.behaviour.test;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;

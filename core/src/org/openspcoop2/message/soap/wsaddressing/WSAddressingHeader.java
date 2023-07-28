@@ -22,8 +22,8 @@ package org.openspcoop2.message.soap.wsaddressing;
 
 import java.util.Iterator;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPHeaderElement;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPHeaderElement;
 
 /**
  * WSAddressingHeader

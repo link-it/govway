@@ -32,11 +32,11 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "RitenutaType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "RitenutaType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum RitenutaType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("SI")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SI")
 	SI ("SI");
 	
 	

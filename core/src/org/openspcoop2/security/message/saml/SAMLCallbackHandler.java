@@ -22,6 +22,7 @@ package org.openspcoop2.security.message.saml;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,7 +78,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
 			if (callbacks[i] instanceof SAMLCallback) {
 				SAMLCallback callback = (SAMLCallback) callbacks[i];
 				
-				DateTime now = new DateTime();
+				Instant now = Instant.now();
 				
 				
 				// *** SamlVersion ***
@@ -132,8 +133,8 @@ public class SAMLCallbackHandler implements CallbackHandler {
 					subjectBean.setSubjectConfirmationMethod(this.samlBuilderConfig.getSubjectConfirmationMethod());
 					
 					SubjectConfirmationDataBean subjectConfirmationData = new SubjectConfirmationDataBean();
-					DateTime subjectConfirmationMethod_notBefore = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getSubjectConfirmationDataNotBefore());
-					DateTime subjectConfirmationMethod_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getSubjectConfirmationDataNotOnOrAfter());
+					Instant subjectConfirmationMethod_notBefore = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getSubjectConfirmationDataNotBefore());
+					Instant subjectConfirmationMethod_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getSubjectConfirmationDataNotOnOrAfter());
 					subjectConfirmationData.setNotBefore(subjectConfirmationMethod_notBefore);
 					subjectConfirmationData.setNotAfter(subjectConfirmationMethod_notOnOrAfter);
 					subjectConfirmationData.setAddress(this.samlBuilderConfig.getSubjectConfirmationDataAddress());
@@ -162,8 +163,8 @@ public class SAMLCallbackHandler implements CallbackHandler {
 					
 					ConditionsBean conditions = new ConditionsBean();
 					
-					DateTime conditions_notBefore = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getConditionsDataNotBefore());
-					DateTime conditions_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getConditionsDataNotOnOrAfter());
+					Instant conditions_notBefore = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getConditionsDataNotBefore());
+					Instant conditions_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getConditionsDataNotOnOrAfter());
 					conditions.setNotBefore(conditions_notBefore);
 					conditions.setNotAfter(conditions_notOnOrAfter);
 					
@@ -194,16 +195,16 @@ public class SAMLCallbackHandler implements CallbackHandler {
 					authBean = new AuthenticationStatementBean();
 					authBean.setSubject(subjectBean); // necessario per saml 1.1
 					
-					DateTime authnStatement_instant = null;
+					Instant authnStatement_instant = null;
 					if(this.samlBuilderConfig.getAuthnStatementDataInstantDate()!=null) {
-						authnStatement_instant = new DateTime(this.samlBuilderConfig.getAuthnStatementDataInstantDate());
+						authnStatement_instant = this.samlBuilderConfig.getAuthnStatementDataInstantDate().toInstant();
 					}
 					else {
 						authnStatement_instant = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataInstant());
 					}
-					DateTime authnStatement_notOnOrAfter = null;
+					Instant authnStatement_notOnOrAfter = null;
 					if(this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfterDate()!=null) {
-						authnStatement_notOnOrAfter = new DateTime(this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfterDate());
+						authnStatement_notOnOrAfter = this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfterDate().toInstant();
 					}
 					else {
 						authnStatement_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfter());

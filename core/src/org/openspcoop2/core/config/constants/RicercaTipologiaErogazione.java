@@ -32,19 +32,19 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "RicercaTipologiaErogazione")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "RicercaTipologiaErogazione")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum RicercaTipologiaErogazione implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("all")
+	@jakarta.xml.bind.annotation.XmlEnumValue("all")
 	ALL ("all"),
-	@javax.xml.bind.annotation.XmlEnumValue("disabilitato")
+	@jakarta.xml.bind.annotation.XmlEnumValue("disabilitato")
 	DISABILITATO ("disabilitato"),
-	@javax.xml.bind.annotation.XmlEnumValue("trasparente")
+	@jakarta.xml.bind.annotation.XmlEnumValue("trasparente")
 	TRASPARENTE ("trasparente"),
-	@javax.xml.bind.annotation.XmlEnumValue("asincrona_asimmetrica")
+	@jakarta.xml.bind.annotation.XmlEnumValue("asincrona_asimmetrica")
 	ASINCRONA_ASIMMETRICA ("asincrona_asimmetrica"),
-	@javax.xml.bind.annotation.XmlEnumValue("message_box")
+	@jakarta.xml.bind.annotation.XmlEnumValue("message_box")
 	MESSAGE_BOX ("message_box");
 	
 	

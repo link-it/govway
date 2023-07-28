@@ -32,53 +32,53 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "TipoCassaType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "TipoCassaType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoCassaType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("TC01")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC01")
 	TC01 ("TC01"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC02")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC02")
 	TC02 ("TC02"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC03")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC03")
 	TC03 ("TC03"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC04")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC04")
 	TC04 ("TC04"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC05")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC05")
 	TC05 ("TC05"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC06")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC06")
 	TC06 ("TC06"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC07")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC07")
 	TC07 ("TC07"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC08")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC08")
 	TC08 ("TC08"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC09")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC09")
 	TC09 ("TC09"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC10")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC10")
 	TC10 ("TC10"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC11")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC11")
 	TC11 ("TC11"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC12")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC12")
 	TC12 ("TC12"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC13")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC13")
 	TC13 ("TC13"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC14")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC14")
 	TC14 ("TC14"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC15")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC15")
 	TC15 ("TC15"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC16")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC16")
 	TC16 ("TC16"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC17")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC17")
 	TC17 ("TC17"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC18")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC18")
 	TC18 ("TC18"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC19")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC19")
 	TC19 ("TC19"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC20")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC20")
 	TC20 ("TC20"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC21")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC21")
 	TC21 ("TC21"),
-	@javax.xml.bind.annotation.XmlEnumValue("TC22")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TC22")
 	TC22 ("TC22");
 	
 	

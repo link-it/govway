@@ -152,14 +152,8 @@ public class DriverConfigurazioneDB_configDriver {
 				// TIPO
 				RegistroTipo tipoReg = CostantiConfigurazione.REGISTRO_XML;
 				String tmpTipo = rs.getString("tipo");
-				if (tmpTipo.equals("uddi"))
-					tipoReg = CostantiConfigurazione.REGISTRO_UDDI;
-				else if (tmpTipo.equals("web"))
-					tipoReg = CostantiConfigurazione.REGISTRO_WEB;
-				else if (tmpTipo.equals("db"))
+				if (tmpTipo.equals("db"))
 					tipoReg = CostantiConfigurazione.REGISTRO_DB;
-				else if (tmpTipo.equals("ws"))
-					tipoReg = CostantiConfigurazione.REGISTRO_WS;
 
 				itemcar.setTipo(tipoReg);
 

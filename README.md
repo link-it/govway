@@ -60,7 +60,7 @@ Conformità delle API (sia in fruzione che in erogazione) alle nuove Linee Guida
 Supporto del "building block" eDelivery del progetto europeo CEF (Connecting European Facilities). 
 Retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA.
 ## Registro delle API
-La registrazione delle API può avvenire manualmente o tramite caricamento dei descrittori delle interfacce (OpenAPI 3.0, Swagger e WADL per i servizi REST, WSDL per i servizi SOAP, Accordi di Servizio per i servizi SPCoop).
+La registrazione delle API può avvenire manualmente o tramite caricamento dei descrittori delle interfacce (OpenAPI 3.0 o Swagger 2 per i servizi REST, WSDL per i servizi SOAP, Accordi di Servizio per i servizi SPCoop).
 ## Gestione Govlet
 GovWay introduce il concetto di Govlet, un formato di archivio caricabile direttamente dalle Console del prodotto, per una rapida configurazione dei servizi della Pubblica Amministrazione. Ad oggi la libreria di GovLet disponibili per GovWay include i servizi di Fatturazione Elettronica (attiva e passiva), PagoPA e SIOPE+ ed è in rapida espansione.
 ## Gestione token

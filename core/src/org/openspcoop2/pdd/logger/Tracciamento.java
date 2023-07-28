@@ -29,9 +29,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.BodyPart;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPBody;
+import jakarta.mail.BodyPart;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.SOAPBody;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;

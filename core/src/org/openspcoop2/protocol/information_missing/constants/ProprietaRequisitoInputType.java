@@ -32,15 +32,15 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ProprietaRequisitoInputType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ProprietaRequisitoInputType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ProprietaRequisitoInputType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("hidden")
+	@jakarta.xml.bind.annotation.XmlEnumValue("hidden")
 	HIDDEN ("hidden"),
-	@javax.xml.bind.annotation.XmlEnumValue("checkbox")
+	@jakarta.xml.bind.annotation.XmlEnumValue("checkbox")
 	CHECKBOX ("checkbox"),
-	@javax.xml.bind.annotation.XmlEnumValue("textedit")
+	@jakarta.xml.bind.annotation.XmlEnumValue("textedit")
 	TEXTEDIT ("textedit");
 	
 	

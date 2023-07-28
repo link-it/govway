@@ -113,13 +113,6 @@ public class AccordoServizioWrapperUtilities {
 			formato = FormatoSpecifica.OPEN_API_3;
 		}
 		switch (formato) {
-		case WADL:
-			try {
-				apiReader = ApiFactory.newApiReader(ApiFormats.WADL);
-			}catch(Exception e) {
-				throw new DriverRegistroServiziException("Inizializzazione Reader Specifica ["+this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()+"] fallito: "+e.getMessage(),e);
-			}
-			break;
 		case SWAGGER_2:
 			try {
 				apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER_2);

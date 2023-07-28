@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.protocol.manifest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.SoapMessageType;
 import java.io.Serializable;
 
@@ -108,17 +108,17 @@ public class SoapMediaTypeMapping extends org.openspcoop2.utils.beans.BaseBean i
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @javax.xml.bind.annotation.XmlValue()
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlValue()
   public String base;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String messageTypeRawEnumValue;
 
   @XmlAttribute(name="messageType",required=true)
   protected SoapMessageType messageType;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="regExpr",required=false)
   protected boolean regExpr = false;
 

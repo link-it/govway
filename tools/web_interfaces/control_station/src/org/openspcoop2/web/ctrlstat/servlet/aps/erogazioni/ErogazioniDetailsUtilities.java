@@ -1792,9 +1792,6 @@ public class ErogazioniDetailsUtilities {
 					case SWAGGER_2:
 						value=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
 						break;
-					case WADL:
-						value=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
-						break;
 					case WSDL_11:
 						value=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11;
 						break;

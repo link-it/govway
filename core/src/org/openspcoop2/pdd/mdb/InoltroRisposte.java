@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.DumpConfigurazione;

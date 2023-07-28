@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.tracciamento;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -117,14 +117,14 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBeanWithId implem
   @XmlElement(name="contesto-codifica",required=false,nillable=false)
   protected ContestoCodificaEccezione contestoCodifica;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="descrizione",required=false,nillable=false)
   protected java.lang.String descrizione;
 
   @XmlElement(name="rilevanza",required=false,nillable=false)
   protected RilevanzaEccezione rilevanza;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="modulo",required=false,nillable=false)
   protected java.lang.String modulo;
 

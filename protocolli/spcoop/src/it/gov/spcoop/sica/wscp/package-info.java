@@ -24,7 +24,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://spcoop.gov.it/sica/wscp",
-	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
- 	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://spcoop.gov.it/sica/wscp",
+	elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
+ 	attributeFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package it.gov.spcoop.sica.wscp;

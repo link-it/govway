@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "FaseServiceHandler")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "FaseServiceHandler")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum FaseServiceHandler implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("init")
+	@jakarta.xml.bind.annotation.XmlEnumValue("init")
 	INIT ("init"),
-	@javax.xml.bind.annotation.XmlEnumValue("exit")
+	@jakarta.xml.bind.annotation.XmlEnumValue("exit")
 	EXIT ("exit"),
-	@javax.xml.bind.annotation.XmlEnumValue("integrationManagerRequest")
+	@jakarta.xml.bind.annotation.XmlEnumValue("integrationManagerRequest")
 	INTEGRATION_MANAGER_REQUEST ("integrationManagerRequest"),
-	@javax.xml.bind.annotation.XmlEnumValue("integrationManagerResponse")
+	@jakarta.xml.bind.annotation.XmlEnumValue("integrationManagerResponse")
 	INTEGRATION_MANAGER_RESPONSE ("integrationManagerResponse");
 	
 	

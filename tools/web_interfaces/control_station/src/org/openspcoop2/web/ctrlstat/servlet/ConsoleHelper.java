@@ -44,9 +44,9 @@ import java.util.Scanner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.mail.BodyPart;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.mail.BodyPart;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -10091,9 +10091,6 @@ public class ConsoleHelper implements IConsoleHelper {
 				case SWAGGER_2:
 					label=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
 					break;
-				case WADL:
-					label=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
-					break;
 				case WSDL_11:
 					label=CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11;
 					break;
@@ -11616,10 +11613,6 @@ public class ConsoleHelper implements IConsoleHelper {
 						case SWAGGER_2:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
 							values[i] = CostantiControlStation.VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
-							break;
-						case WADL:
-							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
-							values[i] = CostantiControlStation.VALUE_PARAMETRO_INTERFACE_TYPE_WADL;
 							break;
 						case WSDL_11:
 						default:
@@ -14567,9 +14560,6 @@ public class ConsoleHelper implements IConsoleHelper {
 				break;
 			case SWAGGER_2:
 				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2);
-				break;
-			case WADL:
-				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL);
 				break;
 			case WSDL_11:
 				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11);

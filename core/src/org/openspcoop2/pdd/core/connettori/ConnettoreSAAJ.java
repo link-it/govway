@@ -32,10 +32,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MimeHeader;
+import jakarta.xml.soap.SOAPConnection;
+import jakarta.xml.soap.SOAPConnectionFactory;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -387,7 +387,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				
 				this.dataAccettazioneRisposta = DateManager.getDate();
 				
-			}catch(javax.xml.soap.SOAPException sendError){
+			}catch(jakarta.xml.soap.SOAPException sendError){
 				this.eccezioneProcessamento = sendError;
 				String errorMsg = this.readExceptionMessageFromException(sendError);
 				this.connection.close();

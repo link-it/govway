@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "CodiceEventoStatoGateway")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "CodiceEventoStatoGateway")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum CodiceEventoStatoGateway implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("Start")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Start")
 	START ("Start"),
-	@javax.xml.bind.annotation.XmlEnumValue("Stop")
+	@jakarta.xml.bind.annotation.XmlEnumValue("Stop")
 	STOP ("Stop"),
-	@javax.xml.bind.annotation.XmlEnumValue("RisorseSistemaNonDisponibili")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RisorseSistemaNonDisponibili")
 	RISORSE_SISTEMA_NON_DISPONIBILI ("RisorseSistemaNonDisponibili"),
-	@javax.xml.bind.annotation.XmlEnumValue("RisorseSistemaDisponibili")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RisorseSistemaDisponibili")
 	RISORSE_SISTEMA_DISPONIBILI ("RisorseSistemaDisponibili");
 	
 	

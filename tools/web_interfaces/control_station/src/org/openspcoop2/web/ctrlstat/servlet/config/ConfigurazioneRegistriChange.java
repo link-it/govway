@@ -24,9 +24,9 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -185,10 +185,6 @@ public final class ConfigurazioneRegistriChange extends Action {
 			newArr.setNome(nome);
 			newArr.setLocation(location);
 			newArr.setTipo(RegistroTipo.toEnumConstant(tipo));
-			if (tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_UDDI)) {
-				newArr.setUser(utente);
-				newArr.setPassword(password);
-			}
 			ar.addRegistro(newArr);
 
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), ar);

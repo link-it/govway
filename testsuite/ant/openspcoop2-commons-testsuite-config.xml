@@ -267,7 +267,7 @@
 						<copy file="${config_file}/registroServizi.xml" 
                               todir="${openspcoop_configuration_dir}" overwrite="true"/>
 					</then>
-					<!-- db/uddi/web -->
+					<!-- db -->
 					<else>
 						<!-- Se presenti configurazioni speciali che funzionano solo su xml -->
 						<replace file="${build_testunits}/config.xml" token="Start Configurazione valida solo per xml -->" value="Start Configurazione valida solo per xml"/>

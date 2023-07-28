@@ -24,13 +24,13 @@ package org.openspcoop2.pdd.timers;
 
 import java.util.Date;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
-import javax.ejb.TimerService;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.TimedObject;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerService;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;

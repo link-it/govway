@@ -85,8 +85,6 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
-import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
@@ -254,49 +252,7 @@ public class XMLDataConverter {
 				else
 					throw new Exception("RegistroServizi DB non inizializzato");
 			}
-			else if(CostantiConfigurazione.REGISTRO_UDDI.equals(destinazione.getTipo())){
-				if(destinazione.getLocation()==null)
-					throw new Exception("Location (InquiryURL) non definita");
-				if(destinazione.getGenericPropertiesMap()==null)
-					throw new Exception("PublishURL/UrlPrefix/PathPrefix non definita in GenericProperties");
-				if(destinazione.getGenericPropertiesMap().size()!=3)
-					throw new Exception("PublishURL/UrlPrefix/PathPrefix non definita in GenericProperties (size:"+destinazione.getGenericPropertiesMap().size()+")");
-				if((destinazione.getGenericPropertiesMap().get("publishUrl") instanceof String) == false)
-					throw new Exception("PublishURL definita in GenericProperties non e' un oggetto String");
-				if((destinazione.getGenericPropertiesMap().get("urlPrefix") instanceof String) == false)
-					throw new Exception("UrlPrefix definita in GenericProperties non e' un oggetto String");
-				if((destinazione.getGenericPropertiesMap().get("pathPrefix") instanceof String) == false)
-					throw new Exception("PathPrefix definita in GenericProperties non e' un oggetto String");
-				this.gestoreCRUD = new DriverRegistroServiziUDDI(destinazione.getLocation(),
-						destinazione.getGenericPropertiesMap().get("publishUrl"),
-						destinazione.getUser(),destinazione.getPassword(),
-						destinazione.getGenericPropertiesMap().get("urlPrefix"),
-						destinazione.getGenericPropertiesMap().get("pathPrefix"),
-						this.logDriver);
-				if(((DriverRegistroServiziUDDI)this.gestoreCRUD).create)
-					this.log.info("Inizializzato Registro dei Servizi UDDI");
-				else
-					throw new Exception("RegistroServizi UDDI non inizializzato");
-			}
-			else if(CostantiConfigurazione.REGISTRO_WEB.equals(destinazione.getTipo())){
-				if(destinazione.getLocation()==null)
-					throw new Exception("Location (UrlPrefix) non definita");
-				if(destinazione.getGenericPropertiesMap()==null)
-					throw new Exception("PathPrefix non definita in GenericProperties");
-				if(destinazione.getGenericPropertiesMap().size()!=1)
-					throw new Exception("PathPrefix non definita in GenericProperties (size:"+destinazione.getGenericPropertiesMap().size()+")");
-				if((destinazione.getGenericPropertiesMap().get("pathPrefix") instanceof String) == false)
-					throw new Exception("PathPrefix definita in GenericProperties non e' un oggetto String");
-				this.gestoreCRUD = new DriverRegistroServiziWEB(destinazione.getLocation(),
-						destinazione.getGenericPropertiesMap().get("pathPrefix"),
-						this.logDriver);
-				this.log.info("Inizializzato Registro dei Servizi WEB");
-				if(((DriverRegistroServiziWEB)this.gestoreCRUD).create)
-					this.log.info("Inizializzato Registro dei Servizi WEB");
-				else
-					throw new Exception("RegistroServizi WEB non inizializzato");
-		
-			}else{
+			else{
 				throw new Exception("Tipo di registro CRUD non gestito: "+destinazione.getTipo());
 			}
 		}catch(Exception e){

@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.utils.jaxb;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Char2String

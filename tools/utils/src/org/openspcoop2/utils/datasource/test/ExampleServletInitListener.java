@@ -24,8 +24,8 @@ package org.openspcoop2.utils.datasource.test;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;

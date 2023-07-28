@@ -286,7 +286,6 @@ public class CostantiControlStation {
 	public static final String LABEL_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART = "MIME-Multipart";
 	public static final String LABEL_PARAMETRO_INTERFACE_TYPE = "Formato Specifica";
 	public static final String LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11 = "Wsdl 1.1";
-	public static final String LABEL_PARAMETRO_INTERFACE_TYPE_WADL = "Wadl";
 	public static final String LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = "Swagger 2";
 	public static final String LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = "Open API 3";
 	public static final String LABEL_PARAMETRO_SCHEMI_XSD = "Schemi XSD";
@@ -1356,7 +1355,6 @@ public class CostantiControlStation {
 	public static final String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART = "MIME_MULTIPART";
 	
 	public static final String VALUE_PARAMETRO_INTERFACE_TYPE_WSDL_11 = FormatoSpecifica.WSDL_11.getValue();
-	public static final String VALUE_PARAMETRO_INTERFACE_TYPE_WADL = FormatoSpecifica.WADL.getValue();
 	public static final String VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = FormatoSpecifica.SWAGGER_2.getValue();
 	public static final String VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = FormatoSpecifica.OPEN_API_3.getValue();
 	public static final String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_REST = CostantiRegistroServizi.DEFAULT_VALUE_INTERFACE_TYPE_REST.getValue();

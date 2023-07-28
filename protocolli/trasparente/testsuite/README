@@ -92,8 +92,8 @@ CONFIGURAZIONE
   - <property name="proprietaConfigurazione" location="deploy/properties/configurazione.properties" /> contiene i parametri di accesso alla configurazione (per db)
   - <property name="gestioneSezioneConfigurazione" value="false" /> Indicazione se deve essere gestita la configurazione della Porta di Dominio (lasciare a false per db)
 REGISTRO
-  - <property name="tipoRegistroServizi" value="xml" /> indica il tipo di registro da creare, xml, web, uddi, db o none.
-  - <property name="proprietaRegistroServizi" location="deploy/properties/registroServizi.properties" /> contiene i parametri di accesso al registro (per uddi,web o db)
+  - <property name="tipoRegistroServizi" value="xml" /> indica il tipo di registro da creare, xml, db o none.
+  - <property name="proprietaRegistroServizi" location="deploy/properties/registroServizi.properties" /> contiene i parametri di accesso al registro (per db)
 
 Per lanciare i test e' possibile utilizzare in testsuite/test il comando:
   ant run_testsuite -Dgroup=FUNZIONALITADATESTARE

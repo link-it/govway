@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.engine;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;

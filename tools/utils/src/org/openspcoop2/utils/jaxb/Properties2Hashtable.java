@@ -23,7 +23,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 
 /**

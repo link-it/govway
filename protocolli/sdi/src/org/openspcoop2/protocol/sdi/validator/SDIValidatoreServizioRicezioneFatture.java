@@ -24,8 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;

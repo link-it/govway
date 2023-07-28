@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;

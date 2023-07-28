@@ -32,23 +32,23 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "ResourceIdentificationType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "ResourceIdentificationType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum ResourceIdentificationType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("protocol")
+	@jakarta.xml.bind.annotation.XmlEnumValue("protocol")
 	PROTOCOL ("protocol"),
-	@javax.xml.bind.annotation.XmlEnumValue("interface")
+	@jakarta.xml.bind.annotation.XmlEnumValue("interface")
 	INTERFACE ("interface"),
-	@javax.xml.bind.annotation.XmlEnumValue("header")
+	@jakarta.xml.bind.annotation.XmlEnumValue("header")
 	HEADER ("header"),
-	@javax.xml.bind.annotation.XmlEnumValue("url")
+	@jakarta.xml.bind.annotation.XmlEnumValue("url")
 	URL ("url"),
-	@javax.xml.bind.annotation.XmlEnumValue("content")
+	@jakarta.xml.bind.annotation.XmlEnumValue("content")
 	CONTENT ("content"),
-	@javax.xml.bind.annotation.XmlEnumValue("input")
+	@jakarta.xml.bind.annotation.XmlEnumValue("input")
 	INPUT ("input"),
-	@javax.xml.bind.annotation.XmlEnumValue("soapAction")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soapAction")
 	SOAP_ACTION ("soapAction");
 	
 	

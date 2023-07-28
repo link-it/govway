@@ -20,7 +20,7 @@
 
 package org.openspcoop2.utils.xml;
 
-import javax.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPElement;
 
 import org.w3c.dom.Element;
 

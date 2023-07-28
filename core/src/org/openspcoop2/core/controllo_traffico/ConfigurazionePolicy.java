@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.controllo_traffico;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.controllo_traffico.constants.TipoApplicabilita;
 import org.openspcoop2.core.controllo_traffico.constants.TipoBanda;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
@@ -526,138 +526,138 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
   }
 
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected IdPolicy oldIdPolicy;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-policy",required=true,nillable=false)
   protected java.lang.String idPolicy;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="built-in",required=true,nillable=false,defaultValue="false")
   protected boolean builtIn = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="descrizione",required=true,nillable=false)
   protected java.lang.String descrizione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="risorsa",required=true,nillable=false)
   protected java.lang.String risorsa;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="simultanee",required=true,nillable=false,defaultValue="false")
   protected boolean simultanee = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="valore",required=false,nillable=false)
   protected java.lang.Long valore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="valore2",required=false,nillable=false)
   protected java.lang.Long valore2;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String valoreTipoBandaRawEnumValue;
 
   @XmlElement(name="valore-tipo-banda",required=false,nillable=false)
   protected TipoBanda valoreTipoBanda;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String valoreTipoLatenzaRawEnumValue;
 
   @XmlElement(name="valore-tipo-latenza",required=false,nillable=false)
   protected TipoLatenza valoreTipoLatenza;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String modalitaControlloRawEnumValue;
 
   @XmlElement(name="modalita-controllo",required=false,nillable=false)
   protected TipoControlloPeriodo modalitaControllo;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoIntervalloOsservazioneRealtimeRawEnumValue;
 
   @XmlElement(name="tipo-intervallo-osservazione-realtime",required=false,nillable=false)
   protected TipoPeriodoRealtime tipoIntervalloOsservazioneRealtime;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoIntervalloOsservazioneStatisticoRawEnumValue;
 
   @XmlElement(name="tipo-intervallo-osservazione-statistico",required=false,nillable=false)
   protected TipoPeriodoStatistico tipoIntervalloOsservazioneStatistico;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlElement(name="intervallo-osservazione",required=false,nillable=false)
   protected java.lang.Integer intervalloOsservazione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String finestraOsservazioneRawEnumValue;
 
   @XmlElement(name="finestra-osservazione",required=false,nillable=false)
   protected TipoFinestra finestraOsservazione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String tipoApplicabilitaRawEnumValue;
 
   @XmlElement(name="tipo-applicabilita",required=true,nillable=false,defaultValue="sempre")
   protected TipoApplicabilita tipoApplicabilita = (TipoApplicabilita) TipoApplicabilita.toEnumConstantFromString("sempre");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="applicabilita-con-congestione",required=true,nillable=false,defaultValue="false")
   protected boolean applicabilitaConCongestione = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="applicabilita-degrado-prestazionale",required=true,nillable=false,defaultValue="false")
   protected boolean applicabilitaDegradoPrestazionale = false;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String degradoAvgTimeModalitaControlloRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-modalita-controllo",required=false,nillable=false)
   protected TipoControlloPeriodo degradoAvgTimeModalitaControllo;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String degradoAvgTimeTipoIntervalloOsservazioneRealtimeRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-tipo-intervallo-osservazione-realtime",required=false,nillable=false)
   protected TipoPeriodoRealtime degradoAvgTimeTipoIntervalloOsservazioneRealtime;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String degradoAvgTimeTipoIntervalloOsservazioneStatisticoRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-tipo-intervallo-osservazione-statistico",required=false,nillable=false)
   protected TipoPeriodoStatistico degradoAvgTimeTipoIntervalloOsservazioneStatistico;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlElement(name="degrado-avg-time-intervallo-osservazione",required=false,nillable=false)
   protected java.lang.Integer degradoAvgTimeIntervalloOsservazione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String degradoAvgTimeFinestraOsservazioneRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-finestra-osservazione",required=false,nillable=false)
   protected TipoFinestra degradoAvgTimeFinestraOsservazione;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String degradoAvgTimeTipoLatenzaRawEnumValue;
 
   @XmlElement(name="degrado-avg-time-tipo-latenza",required=false,nillable=false)
   protected TipoLatenza degradoAvgTimeTipoLatenza;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="applicabilita-stato-allarme",required=true,nillable=false,defaultValue="false")
   protected boolean applicabilitaStatoAllarme = false;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="allarme-nome",required=false,nillable=false)
   protected java.lang.String allarmeNome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlElement(name="allarme-stato",required=false,nillable=false)
   protected java.lang.Integer allarmeStato;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="allarme-not-stato",required=true,nillable=false,defaultValue="false")
   protected boolean allarmeNotStato = false;
 

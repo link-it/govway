@@ -17,30 +17,18 @@
 
 		<jar.group.name>saaj</jar.group.name>
 		
-		<mimepull.version>1.9.14</mimepull.version>
-		<saaj-api.version>1.4.0</saaj-api.version>
-		<saaj-impl.gov4j.version>1.5.3-gov4j-1</saaj-impl.gov4j.version>
-		<stax-ex.version>1.8.3</stax-ex.version>
+		<saaj-api.version>3.0.0</saaj-api.version>
+		<saaj-impl.gov4j.version>3.0.2-gov4j-1</saaj-impl.gov4j.version>
+		<mimepull.version>1.10.0</mimepull.version>
+		<stax-ex.version>2.1.0</stax-ex.version>
 
 	</properties>
 
 	<dependencies>
 
 		<dependency>
-			<groupId>org.jvnet.mimepull</groupId>
-			<artifactId>mimepull</artifactId>
-			<version>${mimepull.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.xml.soap</groupId>
-			<artifactId>javax.xml.soap-api</artifactId>
+			<groupId>jakarta.xml.soap</groupId>
+			<artifactId>jakarta.xml.soap-api</artifactId>
 			<version>${saaj-api.version}</version>
 			<exclusions>
 				<exclusion>
@@ -54,6 +42,18 @@
 			<groupId>com.sun.xml.messaging.saaj</groupId>
 			<artifactId>saaj-impl</artifactId>
 			<version>${saaj-impl.gov4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jvnet.mimepull</groupId>
+			<artifactId>mimepull</artifactId>
+			<version>${mimepull.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

@@ -17,16 +17,16 @@
 
 		<jar.group.name>security</jar.group.name>
 		
-		<bcpkix-jdk18on.version>1.74</bcpkix-jdk18on.version>
-		<bcprov-ext-jdk18on.version>1.74</bcprov-ext-jdk18on.version>
-		<bcutil-jdk18on.version>1.74</bcutil-jdk18on.version>
+		<bcpkix-jdk18on.version>1.75</bcpkix-jdk18on.version>
+		<bcprov-ext-jdk18on.version>1.75</bcprov-ext-jdk18on.version>
+		<bcutil-jdk18on.version>1.75</bcutil-jdk18on.version>
 		<cryptacular.version>1.2.5</cryptacular.version>
-		<herasaf-xacml-core.version>2.0.4</herasaf-xacml-core.version>
+		<herasaf-xacml-core.version>3.0.2</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>
 		<neethi.version>3.2.0</neethi.version>
-		<xmlsec.version>2.3.0</xmlsec.version>
+		<xmlsec.version>3.0.2</xmlsec.version>
 		<xml-security-impl.version>1.0</xml-security-impl.version>
-		<nimbus-jose.version>9.25.6</nimbus-jose.version>
+		<nimbus-jose.version>9.31</nimbus-jose.version>
 
 	</properties>
 

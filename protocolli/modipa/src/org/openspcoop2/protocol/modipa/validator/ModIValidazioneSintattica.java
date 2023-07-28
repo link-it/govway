@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPEnvelope;
+import jakarta.xml.soap.SOAPEnvelope;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;

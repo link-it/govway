@@ -21,22 +21,21 @@
 		<owasp.output.dir>../../dependency-check-result</owasp.output.dir>
 
 		<!-- Versioni condivise dai moduli -->
-		<module.spring.version>5.3.27</module.spring.version>
+		<module.spring.version>6.0.11</module.spring.version>
 	</properties>
 
 	<modules>
 		<module>ant</module>
 		<module>antinstaller</module>
-		<module>axiom</module> 
 		<module>bean-validation</module>
 		<module>cxf</module>
 		<module>commons</module>
+		<module>console</module>
 		<module>faces</module>
 		<module>git</module>
 		<module>httpcore</module>
 		<module>jackson</module>
-		<module>javax</module>
-		<module>jax</module>
+		<module>jakarta</module>
 		<module>jetty</module>
 		<module>jminix</module>
 		<module>json</module>
@@ -50,12 +49,10 @@
 		<module>saaj</module>
 		<module>security</module>
 		<module>shared</module>
-		<module>soapbox</module>
 		<module>spring</module>
 		<module>spring-security</module>
 		<module>swagger</module>
 		<module>swagger-codegen</module>
-		<module>wadl</module>
 		<module>wss4j</module>
 		<module>testsuite</module>
 	</modules>
@@ -104,7 +101,6 @@
 								<suppressionFile>${owasp.falsePositives.dir}/spring-web.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/spring-security-crypto.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/CVE-2021-37533.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-45688.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-40705.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-42920.xml</suppressionFile>

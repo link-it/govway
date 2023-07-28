@@ -32,41 +32,41 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "tipo-plugin")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "tipo-plugin")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoPlugin implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("TRANSAZIONE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TRANSAZIONE")
 	TRANSAZIONE ("TRANSAZIONE"),
-	@javax.xml.bind.annotation.XmlEnumValue("RICERCA")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RICERCA")
 	RICERCA ("RICERCA"),
-	@javax.xml.bind.annotation.XmlEnumValue("STATISTICA")
+	@jakarta.xml.bind.annotation.XmlEnumValue("STATISTICA")
 	STATISTICA ("STATISTICA"),
-	@javax.xml.bind.annotation.XmlEnumValue("ALLARME")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ALLARME")
 	ALLARME ("ALLARME"),
-	@javax.xml.bind.annotation.XmlEnumValue("CONNETTORE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("CONNETTORE")
 	CONNETTORE ("CONNETTORE"),
-	@javax.xml.bind.annotation.XmlEnumValue("AUTENTICAZIONE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("AUTENTICAZIONE")
 	AUTENTICAZIONE ("AUTENTICAZIONE"),
-	@javax.xml.bind.annotation.XmlEnumValue("AUTORIZZAZIONE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("AUTORIZZAZIONE")
 	AUTORIZZAZIONE ("AUTORIZZAZIONE"),
-	@javax.xml.bind.annotation.XmlEnumValue("AUTORIZZAZIONE_CONTENUTI")
+	@jakarta.xml.bind.annotation.XmlEnumValue("AUTORIZZAZIONE_CONTENUTI")
 	AUTORIZZAZIONE_CONTENUTI ("AUTORIZZAZIONE_CONTENUTI"),
-	@javax.xml.bind.annotation.XmlEnumValue("INTEGRAZIONE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("INTEGRAZIONE")
 	INTEGRAZIONE ("INTEGRAZIONE"),
-	@javax.xml.bind.annotation.XmlEnumValue("MESSAGE_HANDLER")
+	@jakarta.xml.bind.annotation.XmlEnumValue("MESSAGE_HANDLER")
 	MESSAGE_HANDLER ("MESSAGE_HANDLER"),
-	@javax.xml.bind.annotation.XmlEnumValue("SERVICE_HANDLER")
+	@jakarta.xml.bind.annotation.XmlEnumValue("SERVICE_HANDLER")
 	SERVICE_HANDLER ("SERVICE_HANDLER"),
-	@javax.xml.bind.annotation.XmlEnumValue("BEHAVIOUR")
+	@jakarta.xml.bind.annotation.XmlEnumValue("BEHAVIOUR")
 	BEHAVIOUR ("BEHAVIOUR"),
-	@javax.xml.bind.annotation.XmlEnumValue("RATE_LIMITING")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RATE_LIMITING")
 	RATE_LIMITING ("RATE_LIMITING"),
-	@javax.xml.bind.annotation.XmlEnumValue("TOKEN_VALIDAZIONE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TOKEN_VALIDAZIONE")
 	TOKEN_VALIDAZIONE ("TOKEN_VALIDAZIONE"),
-	@javax.xml.bind.annotation.XmlEnumValue("TOKEN_NEGOZIAZIONE")
+	@jakarta.xml.bind.annotation.XmlEnumValue("TOKEN_NEGOZIAZIONE")
 	TOKEN_NEGOZIAZIONE ("TOKEN_NEGOZIAZIONE"),
-	@javax.xml.bind.annotation.XmlEnumValue("ATTRIBUTE_AUTHORITY")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ATTRIBUTE_AUTHORITY")
 	ATTRIBUTE_AUTHORITY ("ATTRIBUTE_AUTHORITY");
 	
 	

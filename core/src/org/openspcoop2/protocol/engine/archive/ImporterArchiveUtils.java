@@ -2845,9 +2845,6 @@ public class ImporterArchiveUtils {
 			return InterfaceType.SWAGGER_2;
 		case OPEN_API_3:
 			return InterfaceType.OPEN_API_3;
-		case WADL:
-			return InterfaceType.WADL;
-
 			
 		case WSDL_11:
 		default:

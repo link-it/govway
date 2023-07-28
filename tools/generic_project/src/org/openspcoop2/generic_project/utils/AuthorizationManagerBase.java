@@ -22,7 +22,7 @@ package org.openspcoop2.generic_project.utils;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;

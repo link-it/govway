@@ -22,12 +22,12 @@
 
 package org.openspcoop2.pdd.mdb;
 
-import javax.ejb.EJBException;
-import javax.ejb.MessageDrivenBean;
-import javax.ejb.MessageDrivenContext;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.ObjectMessage;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.MessageDrivenBean;
+import jakarta.ejb.MessageDrivenContext;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.ObjectMessage;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -196,7 +196,7 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 			SbustamentoRisposteMessage sbustamentoRisposteMsg = null;
 			try{
 				sbustamentoRisposteMsg = (SbustamentoRisposteMessage)received.getObject();
-			}	catch(javax.jms.JMSException e){ 
+			}	catch(jakarta.jms.JMSException e){ 
 				msgDiag.logErroreGenerico(e,"received.getObject(SbustamentoRisposteMessage)");
 				return; 
 			}	
@@ -214,7 +214,7 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 			String idMessageRequest = null; //(serve anche per una validazione sincrona)
 			try{
 				idMessageRequest = received.getStringProperty("ID");
-			}	catch(javax.jms.JMSException e){ 
+			}	catch(jakarta.jms.JMSException e){ 
 				msgDiag.logErroreGenerico(e,"received.getStringProperty(ID)");
 				return;
 			}

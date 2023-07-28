@@ -32,19 +32,19 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "TipoEvento")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "TipoEvento")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoEvento implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("StatoGateway")
+	@jakarta.xml.bind.annotation.XmlEnumValue("StatoGateway")
 	STATO_GATEWAY ("StatoGateway"),
-	@javax.xml.bind.annotation.XmlEnumValue("ControlloTraffico_NumeroMassimoRichiesteSimultanee")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ControlloTraffico_NumeroMassimoRichiesteSimultanee")
 	CONTROLLO_TRAFFICO_NUMERO_MASSIMO_RICHIESTE_SIMULTANEE ("ControlloTraffico_NumeroMassimoRichiesteSimultanee"),
-	@javax.xml.bind.annotation.XmlEnumValue("ControlloTraffico_SogliaCongestione")
+	@jakarta.xml.bind.annotation.XmlEnumValue("ControlloTraffico_SogliaCongestione")
 	CONTROLLO_TRAFFICO_SOGLIA_CONGESTIONE ("ControlloTraffico_SogliaCongestione"),
-	@javax.xml.bind.annotation.XmlEnumValue("RateLimiting_PolicyGlobale")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RateLimiting_PolicyGlobale")
 	RATE_LIMITING_POLICY_GLOBALE ("RateLimiting_PolicyGlobale"),
-	@javax.xml.bind.annotation.XmlEnumValue("RateLimiting_PolicyAPI")
+	@jakarta.xml.bind.annotation.XmlEnumValue("RateLimiting_PolicyAPI")
 	RATE_LIMITING_POLICY_API ("RateLimiting_PolicyAPI");
 	
 	

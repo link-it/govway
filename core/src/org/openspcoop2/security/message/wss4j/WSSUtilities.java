@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.activation.DataHandler;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeaders;
+import jakarta.activation.DataHandler;
+import jakarta.xml.soap.AttachmentPart;
+import jakarta.xml.soap.MimeHeaders;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
@@ -132,7 +132,7 @@ public class WSSUtilities {
 			try{
 				InputStreamDataSource isds = new InputStreamDataSource(ap.getContentId(), dh.getContentType(), dh.getInputStream());
 				dhNEW = new DataHandler(isds);
-			}catch(javax.activation.UnsupportedDataTypeException edtx){
+			}catch(jakarta.activation.UnsupportedDataTypeException edtx){
 				// eccezione che può essere lanciata da dh.getInputStream() se il datahandler non è stato creato con un datasource
 
 				// provo a prendere getContent
@@ -255,7 +255,7 @@ public class WSSUtilities {
 						InputStreamDataSource isds = new InputStreamDataSource(attachmentPart.getId(), dh.getContentType(), dh.getInputStream());
 						DataHandler dhNEW = new DataHandler(isds);
 						message.updateAttachmentPart(ap, dhNEW);
-					}catch(javax.activation.UnsupportedDataTypeException edtx){
+					}catch(jakarta.activation.UnsupportedDataTypeException edtx){
 						// eccezione che può essere lanciata da dh.getInputStream() se il datahandler non è stato creato con un datasource
 
 						// provo a prendere getContent

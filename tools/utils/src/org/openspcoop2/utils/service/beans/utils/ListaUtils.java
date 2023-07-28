@@ -23,8 +23,8 @@ package org.openspcoop2.utils.service.beans.utils;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.service.beans.Lista;

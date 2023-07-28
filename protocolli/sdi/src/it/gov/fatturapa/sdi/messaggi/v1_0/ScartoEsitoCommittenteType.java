@@ -20,12 +20,12 @@
 package it.gov.fatturapa.sdi.messaggi.v1_0;
 
 import it.gov.fatturapa.sdi.messaggi.v1_0.constants.ScartoType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
@@ -166,36 +166,36 @@ public class ScartoEsitoCommittenteType extends org.openspcoop2.utils.beans.Base
   }
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="IdentificativoSdI",required=true,nillable=false)
   protected java.lang.String identificativoSdI;
 
   @XmlElement(name="RiferimentoFattura",required=false,nillable=false)
   protected RiferimentoFatturaType riferimentoFattura;
 
-  @javax.xml.bind.annotation.XmlTransient
+  @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String scartoRawEnumValue;
 
   @XmlElement(name="Scarto",required=true,nillable=false)
   protected ScartoType scarto;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="MessageId",required=true,nillable=false)
   protected java.lang.String messageId;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="MessageIdCommittente",required=false,nillable=false)
   protected java.lang.String messageIdCommittente;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="PecMessageId",required=false,nillable=false)
   protected java.lang.String pecMessageId;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="Note",required=false,nillable=false)
   protected java.lang.String note;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="versione",required=true)
   protected java.lang.String versione;
 

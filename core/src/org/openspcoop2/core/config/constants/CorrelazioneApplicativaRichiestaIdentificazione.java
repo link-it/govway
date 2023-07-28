@@ -32,25 +32,25 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "CorrelazioneApplicativaRichiestaIdentificazione")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "CorrelazioneApplicativaRichiestaIdentificazione")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum CorrelazioneApplicativaRichiestaIdentificazione implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("urlBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("urlBased")
 	URL_BASED ("urlBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("headerBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("headerBased")
 	HEADER_BASED ("headerBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("contentBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("contentBased")
 	CONTENT_BASED ("contentBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("inputBased")
+	@jakarta.xml.bind.annotation.XmlEnumValue("inputBased")
 	INPUT_BASED ("inputBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("template")
+	@jakarta.xml.bind.annotation.XmlEnumValue("template")
 	TEMPLATE ("template"),
-	@javax.xml.bind.annotation.XmlEnumValue("freemarkerTemplate")
+	@jakarta.xml.bind.annotation.XmlEnumValue("freemarkerTemplate")
 	FREEMARKER_TEMPLATE ("freemarkerTemplate"),
-	@javax.xml.bind.annotation.XmlEnumValue("velocityTemplate")
+	@jakarta.xml.bind.annotation.XmlEnumValue("velocityTemplate")
 	VELOCITY_TEMPLATE ("velocityTemplate"),
-	@javax.xml.bind.annotation.XmlEnumValue("disabilitato")
+	@jakarta.xml.bind.annotation.XmlEnumValue("disabilitato")
 	DISABILITATO ("disabilitato");
 	
 	

@@ -32,13 +32,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "SoapMessageType")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "SoapMessageType")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum SoapMessageType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("soap11")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soap11")
 	SOAP_11 ("soap11"),
-	@javax.xml.bind.annotation.XmlEnumValue("soap12")
+	@jakarta.xml.bind.annotation.XmlEnumValue("soap12")
 	SOAP_12 ("soap12");
 	
 	

@@ -32,17 +32,17 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "TipoPdD")
-@javax.xml.bind.annotation.XmlEnum(String.class)
+@jakarta.xml.bind.annotation.XmlType(name = "TipoPdD")
+@jakarta.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoPdD implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("outboundProxy")
+	@jakarta.xml.bind.annotation.XmlEnumValue("outboundProxy")
 	OUTBOUND_PROXY ("outboundProxy"),
-	@javax.xml.bind.annotation.XmlEnumValue("inboundProxy")
+	@jakarta.xml.bind.annotation.XmlEnumValue("inboundProxy")
 	INBOUND_PROXY ("inboundProxy"),
-	@javax.xml.bind.annotation.XmlEnumValue("integrationManager")
+	@jakarta.xml.bind.annotation.XmlEnumValue("integrationManager")
 	INTEGRATION_MANAGER ("integrationManager"),
-	@javax.xml.bind.annotation.XmlEnumValue("router")
+	@jakarta.xml.bind.annotation.XmlEnumValue("router")
 	ROUTER ("router");
 	
 	

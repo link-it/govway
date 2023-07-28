@@ -22,7 +22,7 @@
       
 	<!-- Registro dei Servizi -->
 	<property name="validazioneRegistroServizi" value="true"/>
-	<!-- Tipo del registroServizi, valori possibili: xml/db/uddi/web/ws -->
+	<!-- Tipo del registroServizi, valori possibili: xml/db -->
 	<property name="tipoRegistroServizi" value="xml" />	
 	<!-- RegistroServizi.properties -->
 	<property name="proprietaRegistroServizi" location="deploy/properties/registroServizi.properties" />

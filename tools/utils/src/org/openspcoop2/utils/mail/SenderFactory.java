@@ -33,8 +33,6 @@ public class SenderFactory  {
 
 	public static Sender newSender(SenderType type, Logger log){
 		switch (type) {
-		case COMMONS_MAIL:
-			return new CommonsMailSender(log);
 		case COMMONS_NET:
 			return new CommonsNetSender(log);
 		}

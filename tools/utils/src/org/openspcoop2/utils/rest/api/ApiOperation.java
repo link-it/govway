@@ -70,7 +70,7 @@ public class ApiOperation extends BaseBean implements Serializable {
 				path = "/"+path;
 			}
 			while(path.contains("${")){
-				// in wadl viene usato ${xx}
+				// in vecchie interfacce (es. wadl) viene usato ${xx}
 				// in swagger {xx}
 				path = path.replace("${", "{");
 			}

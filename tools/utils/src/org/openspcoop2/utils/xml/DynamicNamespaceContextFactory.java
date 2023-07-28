@@ -22,7 +22,7 @@ package org.openspcoop2.utils.xml;
 
 import java.io.IOException;
 
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -64,9 +64,9 @@ public abstract class DynamicNamespaceContextFactory {
 	public abstract DynamicNamespaceContext getNamespaceContextFromSoapEnvelope12(byte[] soapenvelope) throws SAXException, SOAPException, IOException, Exception;
 	
 	
-	public abstract DynamicNamespaceContext getNamespaceContextFromSoapEnvelope11(javax.xml.soap.SOAPEnvelope soapenvelope) throws SAXException, SOAPException;
+	public abstract DynamicNamespaceContext getNamespaceContextFromSoapEnvelope11(jakarta.xml.soap.SOAPEnvelope soapenvelope) throws SAXException, SOAPException;
 	
-	public abstract DynamicNamespaceContext getNamespaceContextFromSoapEnvelope12(javax.xml.soap.SOAPEnvelope soapenvelope) throws SAXException, SOAPException;
+	public abstract DynamicNamespaceContext getNamespaceContextFromSoapEnvelope12(jakarta.xml.soap.SOAPEnvelope soapenvelope) throws SAXException, SOAPException;
 	
 	
 	

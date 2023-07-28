@@ -74,12 +74,12 @@ public class NodeReceiverJMS extends AbstractCore implements INodeReceiver{
 				msgDiag.highDebug("Ricezione messaggio selector["+strMessageSelector+"]....");
 				if(receiverJMS.receive(idModulo,strMessageSelector,
 						timeout,checkInterval) == false){
-					throw new javax.jms.JMSException(receiverJMS.getErrore());
+					throw new jakarta.jms.JMSException(receiverJMS.getErrore());
 				}
 				msgDiag.highDebug("Ricezione effettuata");
 				objReturn = receiverJMS.getObjectReceived();	
 				if(objReturn == null)
-					throw new javax.jms.JMSException("Oggetto ricevuto dalla coda jms is null");
+					throw new jakarta.jms.JMSException("Oggetto ricevuto dalla coda jms is null");
 				
 				String idRisposta = null;
 				String tipoMessaggio = null;

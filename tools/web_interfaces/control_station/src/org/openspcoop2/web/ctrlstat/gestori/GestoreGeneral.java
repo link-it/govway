@@ -24,10 +24,10 @@ package org.openspcoop2.web.ctrlstat.gestori;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jms.ObjectMessage;
-import javax.jms.Queue;
-import javax.jms.QueueReceiver;
-import javax.jms.QueueSession;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.Queue;
+import jakarta.jms.QueueReceiver;
+import jakarta.jms.QueueSession;
 
 import org.slf4j.Logger;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;

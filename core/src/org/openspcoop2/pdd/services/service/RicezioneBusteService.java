@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPBody;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
