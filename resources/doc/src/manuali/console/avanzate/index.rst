@@ -22,6 +22,7 @@ Funzionalità Avanzate
 	govway_proxy
         autenticazione
         generazione_claims
+	dynamic_config
 	contentBased
 	validazione
 	password
