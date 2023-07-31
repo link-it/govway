@@ -25,7 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.openspcoop2.example.pdd.server.esitoidentificazione.EsitoIdentificazione;
 import org.openspcoop2.example.pdd.server.esitoidentificazione.EsitoIdentificazioneService;

@@ -22,7 +22,7 @@ package org.openspcoop2.example.pdd.server.stampadocumento;
 
 import java.io.FileInputStream;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 /**
  * StampaDocumento_StampaDocumentoInterfaceEndpoint_Server

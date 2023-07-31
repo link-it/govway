@@ -27,11 +27,16 @@
 			<include name="**/security/*"/>
 			<include name="**/httpcore/*"/>
 			<include name="**/commons/*"/>
-			<include name="**/shared/*"/>
-			<include name="**/jax/jaxws*"/>
-			<include name="**/jax/jaxb*"/>
-			<include name="**/javax/javax.annotation-api-1.3.2.jar"/>
-			<include name="**/javax/javax.servlet-api-4.0.1.jar"/>
+			<include name="shared/wsdl4j-1.6.3.jar"/>
+			<include name="jakarta/jakarta.annotation-api-2.1.1.jar"/>
+			<include name="jakarta/jakarta.servlet-api-5.0.0.jar"/>
+			<include name="jakarta/jakarta.xml.ws-api-3.0.1.jar"/>
+			<include name="jakarta/jakarta.jws-api-3.0.0.jar"/>
+			<include name="jakarta/jakarta.mail-api-2.1.2.jar"/>
+			<include name="jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
+			<include name="jaxb/*"/>
+			<include name="jakarta/jakarta.activation-api-2.1.2.jar"/>
+			<include name="angus/*"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >

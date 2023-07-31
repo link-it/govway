@@ -26,7 +26,7 @@ package org.openspcoop2.example.pdd.server.esitoidentificazione;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.jws.WebService(
+@jakarta.jws.WebService(
                       serviceName = "EsitoIdentificazioneService",
                       portName = "EsitoIdentificazioneInterfaceEndpoint",
                       targetNamespace = "http://openspcoop2.org/example/pdd/server/IdentificaSoggetto",

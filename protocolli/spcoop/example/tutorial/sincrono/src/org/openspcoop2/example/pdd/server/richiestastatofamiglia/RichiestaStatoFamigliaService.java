@@ -22,10 +22,10 @@ package org.openspcoop2.example.pdd.server.richiestastatofamiglia;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.WebEndpoint;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.Service;
 
 /**
  * RichiestaStatoFamigliaService
@@ -79,7 +79,7 @@ public class RichiestaStatoFamigliaService extends Service {
     /**
      * 
      * @param features
-     *     A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
+     *     A list of {@link jakarta.xml.ws.WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
      * @return
      *     returns RichiestaStatoFamiglia
      */

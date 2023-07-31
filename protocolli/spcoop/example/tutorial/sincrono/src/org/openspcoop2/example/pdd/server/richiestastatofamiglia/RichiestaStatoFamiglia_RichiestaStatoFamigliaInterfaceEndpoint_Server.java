@@ -22,7 +22,7 @@ package org.openspcoop2.example.pdd.server.richiestastatofamiglia;
 
 import java.io.FileInputStream;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 /**
  * RichiestaStatoFamiglia_RichiestaStatoFamigliaInterfaceEndpoint_Server

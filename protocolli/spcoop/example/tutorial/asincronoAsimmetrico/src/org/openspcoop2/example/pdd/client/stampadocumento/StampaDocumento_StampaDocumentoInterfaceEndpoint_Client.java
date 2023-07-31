@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;

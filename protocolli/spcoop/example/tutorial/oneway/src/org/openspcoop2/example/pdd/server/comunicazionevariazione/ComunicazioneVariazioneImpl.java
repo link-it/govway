@@ -26,7 +26,7 @@ package org.openspcoop2.example.pdd.server.comunicazionevariazione;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.jws.WebService(
+@jakarta.jws.WebService(
                       serviceName = "ComunicazioneVariazioneService",
                       portName = "ComunicazioneVariazioneInterfaceEndpoint",
                       targetNamespace = "http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione",

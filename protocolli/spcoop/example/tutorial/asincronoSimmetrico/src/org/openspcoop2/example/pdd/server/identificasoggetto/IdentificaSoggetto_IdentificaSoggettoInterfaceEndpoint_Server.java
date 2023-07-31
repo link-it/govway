@@ -21,7 +21,7 @@ package org.openspcoop2.example.pdd.server.identificasoggetto;
 
 import java.io.FileInputStream;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 /**
  * IdentificaSoggetto_IdentificaSoggettoInterfaceEndpoint_Server

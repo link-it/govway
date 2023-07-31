@@ -20,7 +20,7 @@
 
 package org.openspcoop2.example.pdd.server.identificasoggetto;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 /**
  * This object contains factory methods for each 

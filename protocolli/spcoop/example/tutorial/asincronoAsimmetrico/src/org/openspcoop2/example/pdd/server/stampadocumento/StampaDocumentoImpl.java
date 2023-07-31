@@ -32,7 +32,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.jws.WebService(
+@jakarta.jws.WebService(
                       serviceName = "StampaDocumentoService",
                       portName = "StampaDocumentoInterfaceEndpoint",
                       targetNamespace = "http://openspcoop2.org/example/pdd/server/StampaDocumento",

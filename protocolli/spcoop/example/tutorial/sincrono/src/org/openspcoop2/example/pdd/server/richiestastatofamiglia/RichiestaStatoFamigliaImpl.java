@@ -26,7 +26,7 @@ package org.openspcoop2.example.pdd.server.richiestastatofamiglia;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.jws.WebService(serviceName = "RichiestaStatoFamigliaService",
+@jakarta.jws.WebService(serviceName = "RichiestaStatoFamigliaService",
                       portName = "RichiestaStatoFamigliaInterfaceEndpoint",
                       targetNamespace = "http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia",
                       wsdlLocation = "file:configurazionePdD/wsdl/implementativoErogatore.wsdl",

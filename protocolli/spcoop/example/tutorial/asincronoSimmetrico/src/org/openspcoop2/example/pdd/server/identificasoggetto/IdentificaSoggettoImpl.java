@@ -21,10 +21,10 @@ package org.openspcoop2.example.pdd.server.identificasoggetto;
 
 import java.io.FileInputStream;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
 
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.openspcoop2.example.pdd.client.esitoidentificazione.EsitoIdentificazione_EsitoIdentificazioneInterfaceEndpoint_Client;
@@ -36,7 +36,7 @@ import org.openspcoop2.example.pdd.client.esitoidentificazione.EsitoIdentificazi
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.jws.WebService(
+@jakarta.jws.WebService(
                       serviceName = "IdentificaSoggettoService",
                       portName = "IdentificaSoggettoInterfaceEndpoint",
                       targetNamespace = "http://openspcoop2.org/example/pdd/server/IdentificaSoggetto",
