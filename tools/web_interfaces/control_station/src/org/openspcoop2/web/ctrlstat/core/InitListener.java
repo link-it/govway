@@ -59,12 +59,9 @@ import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.config.RegistroServiziRemotoProperties;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB_LIB;
-import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
-import org.openspcoop2.web.ctrlstat.gestori.GestoriStartupThread;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRegistroPluginsReader;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementParameter;
-import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.slf4j.Logger;
 
 /**
@@ -94,7 +91,6 @@ public class InitListener implements ServletContextListener {
 		return InitListener.initialized;
 	}
 
-	private GestoriStartupThread gestoriStartupThread;
 	private GestoreConsistenzaDati gestoreConsistenzaDati;
 	
 	@Override
@@ -104,9 +100,6 @@ public class InitListener implements ServletContextListener {
 		InitListener.initialized = false;
 		
         // Fermo i Gestori
-		if(this.gestoriStartupThread!=null){
-			this.gestoriStartupThread.stopGestori();
-		}
 		if(this.gestoreConsistenzaDati!=null){
 			this.gestoreConsistenzaDati.setStop(true);
 			int limite = 60;
@@ -211,11 +204,6 @@ public class InitListener implements ServletContextListener {
 					}
 				}
 				
-				if(!consoleProperties.isSinglePdD()){
-					if(!QueueProperties.initialize(confDir,InitListener.log)){
-						throw new Exception("QueueProperties not initialized");
-					}
-				}
 							
 			}catch(Exception e){
 				throw new RuntimeException(e.getMessage(),e);
@@ -265,20 +253,7 @@ public class InitListener implements ServletContextListener {
 				throw new RuntimeException(e.getMessage(),e);
 			}
 			InitListener.log.info("Inizializzazione XMLDiff effettuata con successo");
-	
-			try{
-				if(consoleProperties.isSinglePdD()==false){
-					InitListener.log.info("Inizializzazione Gestori, della govwayConsole Centralizzata, in corso...");
 				
-	                this.gestoriStartupThread = new GestoriStartupThread();
-	                new Thread(this.gestoriStartupThread).start();
-					
-					InitListener.log.info("Inizializzazione Gestori, della govwayConsole Centralizzata, effettuata con successo.");
-				}
-			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
-			}
-			
 			try{
 				// Notes on Apache Commons FileUpload 1.3.3
 				// Regarding potential security problems with the class called DiskFileItem, it is true, that this class exists, 

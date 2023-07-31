@@ -6,23 +6,10 @@ CREATE TABLE pdd
 (
 	nome VARCHAR2(255) NOT NULL,
 	descrizione VARCHAR2(255),
-	-- ip pubblico
-	ip VARCHAR2(255),
-	-- porta pubblico
-	porta NUMBER,
-	-- protocollo pubblico
-	protocollo VARCHAR2(255),
-	-- ip gestione
-	ip_gestione VARCHAR2(255),
-	-- porta gestione
-	porta_gestione NUMBER,
-	-- protocollo gestione
-	protocollo_gestione VARCHAR2(255),
 	-- Tipo della Porta
 	tipo VARCHAR2(255),
 	implementazione VARCHAR2(255),
 	subject VARCHAR2(255),
-	password VARCHAR2(255),
 	-- client auth: disabilitato/abilitato
 	client_auth VARCHAR2(255),
 	ora_registrazione TIMESTAMP,

@@ -152,31 +152,6 @@
     
     	 <!-- Porte di Dominio  -->
     
-    	<action path="/pddAdd" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddAdd" 
-            scope="request" validate="true">
-            <forward name="pddAddForm" path="/jsplib/addElement.jsp"/>
-            <forward name="pddAddOk" path="/jsplib/listElement.jsp"/>
-            <forward name="pddAddCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="pddError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/pddList" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddList"
-            scope="request" validate="true">
-            <forward name="pddList" path="/jsplib/listElement.jsp"/>
-            <forward name="pddError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/pddChange" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddChange"
-            scope="request" validate="true">
-            <forward name="pddChangeForm" path="/jsplib/addElement.jsp"/>
-            <forward name="pddChangeOk" path="/jsplib/listElement.jsp"/>
-            <forward name="pddChangeCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="pddError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/pddDel" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddDel" 
-            scope="request" validate="true">
-            <forward name="pddDel" path="/jsplib/listElement.jsp"/>
-            <forward name="pddError" path="/jsplib/info.jsp"/>
-        </action>
-
         <action path="/pddSoggettiList" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddSoggettiList"
             scope="request" validate="true">
             <forward name="pddSoggettiList" path="/jsplib/listElement.jsp"/>

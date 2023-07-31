@@ -35,7 +35,6 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
@@ -84,7 +83,6 @@ public class GestoreAutorizzazioni {
 	}
 	
 	// Raccolta servlet in funzionalita
-	List<String> servletPdD = null;
 	List<String> servletPdDSinglePdD = null;
 	List<String> servletSoggetti = null;
 	List<String> servletAccordiServizio = null;
@@ -105,13 +103,11 @@ public class GestoreAutorizzazioni {
 	List<String> servletMonitoraggioApplicativo = null;
 	List<String> servletLibraryVersion = null;
 	List<String> servletChangePwdModalita = null;
-	List<String> servletOperazioni = null;
 	List<String> servletProtocolProperties = null;
 	List<String> servletGruppi = null;
 	List<String> servletRegistro = null;
 	
 	// Associazione diritti alle funzionalita'
-	PermessiUtente permessiPdD = null;
 	PermessiUtente permessiPdDSinglePdD = null;
 	PermessiUtente permessiSoggetti = null;
 	PermessiUtente permessiAccordiServizio = null;
@@ -133,7 +129,6 @@ public class GestoreAutorizzazioni {
 	PermessiUtente permessiMonitoraggioApplicativoSinglePdD = null;
 	PermessiUtente permessiLibraryVersion = null;
 	PermessiUtente permessiChangePwdModalita = null;
-	PermessiUtente permessiOperazioni = null;
 	PermessiUtente permessiProtocolProperties = null;
 	PermessiUtente permessiGruppi = null;
 	PermessiUtente permessiRegistro = null;
@@ -142,17 +137,7 @@ public class GestoreAutorizzazioni {
 	private boolean singlePdD = false;
 	public GestoreAutorizzazioni(boolean singlePdD){
 		this.singlePdD = singlePdD;
-	
-		/** Gruppo di servlet che gestiscono le porte di dominio */
-		this.servletPdD = new ArrayList<>();
-		if(!this.singlePdD){
-			this.servletPdD.addAll(PddCostanti.getServletPdd());
-			this.servletPdD.addAll(PddCostanti.getServletPddSoggetti());
-		}
-		/** Permessi associati alla gestione delle porte di dominio */
-		this.permessiPdD = new PermessiUtente();
-		this.permessiPdD.setServizi(true);
-		
+			
 		/** Gruppo di servlet che gestiscono le porte di dominio */
 		this.servletPdDSinglePdD = new ArrayList<>();
 		if(this.singlePdD){
@@ -450,14 +435,7 @@ public class GestoreAutorizzazioni {
 		this.permessiChangePwdModalita.setAccordiCooperazione(true);
 		// permettere anche agli utenti che gestiscono altri utenti di modificare la propria password
 		this.permessiChangePwdModalita.setUtenti(true);
-		
-		/** Gruppo di servlet che gestiscono la ricerca delle operazioni */
-		this.servletOperazioni = new ArrayList<>();
-		this.servletOperazioni.addAll(OperazioniCostanti.getServletOperazioni());
-		/** Permessi associati alla ricerca delle operazioni */
-		this.permessiOperazioni = new PermessiUtente();
-		this.permessiOperazioni.setSistema(true);
-		
+				
 		/** Gruppo di servlet che gestiscono le protocolproperties */
 		this.servletProtocolProperties = new ArrayList<>();
 		this.servletProtocolProperties.addAll(ProtocolPropertiesCostanti.getServletPp());
@@ -505,13 +483,7 @@ public class GestoreAutorizzazioni {
 		// Tanto se li possiedo posso in teoria modificare anche i miei fornendomi tutti quelli necessari 
 		
 		// Check appartenenza
-		if(!this.singlePdD && this.servletPdD.contains(nomeServlet)){
-			boolean p = this.permessiPdD.or(user.getPermessi());
-			if(!p && bfError!=null) {
-				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione !singlePdD");
-			}
-			return p;
-		}else if(this.singlePdD && this.servletPdDSinglePdD.contains(nomeServlet)){
+		if(this.singlePdD && this.servletPdDSinglePdD.contains(nomeServlet)){
 			boolean p = this.permessiPdDSinglePdD.or(user.getPermessi());
 			if(!p && bfError!=null) {
 				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione singlePdD");
@@ -658,12 +630,6 @@ public class GestoreAutorizzazioni {
 			boolean p = this.permessiChangePwdModalita.or(user.getPermessi());
 			if(!p && bfError!=null) {
 				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per il cambio password");
-			}
-			return p;
-		}else if(this.servletOperazioni.contains(nomeServlet)){
-			boolean p = this.permessiOperazioni.or(user.getPermessi());
-			if(!p && bfError!=null) {
-				bfError.append("servlet richiesta non autorizzata; censita nella lista di autorizzazione per la coda operazioni remote");
 			}
 			return p;
 		}else if(this.servletProtocolProperties.contains(nomeServlet)){

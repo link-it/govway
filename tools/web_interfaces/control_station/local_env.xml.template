@@ -26,9 +26,6 @@
       <!-- Dipendenze di compilazione -->
       <property name="mvc" location="../lib/mvc"/>
       <property name="src_mvc" location="${mvc}/src"/>
-      <property name="queue" location="../lib/queue"/>
-      <property name="src_queue" location="${queue}/src"/>
-      <property name="sql_queue" location="${queue}/deploy/sql"/>
       <property name="audit" location="../lib/audit"/>
       <property name="src_audit" location="${audit}/src"/>
       <property name="sql_audit" location="${audit}/deploy/sql"/>

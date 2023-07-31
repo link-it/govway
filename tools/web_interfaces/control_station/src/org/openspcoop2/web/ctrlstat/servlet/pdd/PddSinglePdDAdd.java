@@ -101,7 +101,7 @@ public final class PddSinglePdDAdd extends Action {
 					implementazione = PddCostanti.DEFAULT_PDD_IMPLEMENTAZIONE;
 				
 				dati = pddHelper.addPddToDati(dati, nome, null, "", subject, "", "", PddTipologia.ESTERNO, TipoOperazione.ADD, 
-						null, "", "",  0, descr, "", 0, implementazione, clientAuth, true);
+						null, "", "",  0, descr, "", 0, implementazione, clientAuth);
 	
 				pd.setDati(dati);
 	
@@ -111,7 +111,7 @@ public final class PddSinglePdDAdd extends Action {
 			}
 	
 			// Controlli sui campi immessi
-			boolean isOk = pddHelper.pddCheckData(TipoOperazione.ADD, true);
+			boolean isOk = pddHelper.pddCheckData(TipoOperazione.ADD);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST);
@@ -122,7 +122,7 @@ public final class PddSinglePdDAdd extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				dati = pddHelper.addPddToDati(dati, nome, null, "", subject, "", "", PddTipologia.ESTERNO, TipoOperazione.ADD, 
-						null, "", "", 0, descr, "", 0, implementazione, clientAuth, true);
+						null, "", "", 0, descr, "", 0, implementazione, clientAuth);
 	
 				pd.setDati(dati);
 	

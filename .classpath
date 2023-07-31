@@ -28,7 +28,6 @@
 	<classpathentry kind="src" path="protocolli/modipa/example/rest/nonBlocking/pull/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/audit/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/mvc/src"/>
-	<classpathentry kind="src" path="tools/web_interfaces/lib/queue/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/users/src"/>
 	<classpathentry excluding="*/jboss*.xml|*/web.xml" kind="src" path="tools/web_interfaces/control_station/src"/>
 	<classpathentry excluding="*/jboss*.xml|*/jboss*.xml.jboss7|*/jboss*.xml.wildfly|*/jboss*.xml.wildfly*|*/struts-config.xml|*/web.xml" kind="src" path="tools/web_interfaces/loader/src"/>
@@ -38,18 +37,6 @@
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore|*/.faces-config.xml.jsfdia" kind="src" path="tools/web_interfaces/monitor/src/src_eventi"/>
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore|*/.faces-config.xml.jsfdia" kind="src" path="tools/web_interfaces/monitor/src/src_allarmi"/>
 	<classpathentry kind="src" path="tools/web_interfaces/monitor/deploy/pages"/>
-	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/registry/server/src"/>
-	<classpathentry kind="src" path="tools/ws/registry/client/src"/>
-	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/config/server/src"/>
-	<classpathentry kind="src" path="tools/ws/config/client/src"/>
-	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/monitor/server/src"/>
-	<classpathentry kind="src" path="tools/ws/monitor/client/src"/>
-	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/diagnostica/server/src"/>
-	<classpathentry kind="src" path="tools/ws/diagnostica/client/src"/>
-	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/tracciamento/server/src"/>
-	<classpathentry kind="src" path="tools/ws/tracciamento/client/src"/>
-	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/transazioni/server/src"/>
-	<classpathentry kind="src" path="tools/ws/transazioni/client/src"/>
 	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/monitor/server/src"/>
 	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/config/server/src"/>
 	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/traccia/server/src"/>

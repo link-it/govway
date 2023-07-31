@@ -29,43 +29,6 @@
 		<!-- Properties -->
 		<copy file="${cfg}/console.datasource.properties" todir="${build_govwayConsole}/tmp" />
 		<copy file="${cfg}/console.properties" todir="${build_govwayConsole}/tmp" />
-		<copy file="${queue}/deploy/properties/queue.properties" todir="${build_govwayConsole}/tmp" />
-		
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
-				<matches string="${as}" pattern="wildfly.*"/>
-			</or>
-			<then>
-				<if>
-					<or>
-						<equals arg1="${as}" arg2="jboss7"/>
-						<equals arg1="${as}" arg2="wildfly8"/>
-						<equals arg1="${as}" arg2="wildfly9"/>
-					</or>
-					<then>
-						<concat destfile="${build_govwayConsole}/tmp/queue.properties" append="yes" >
-
-# ----- Personalizzazione BrokerJMS HornetQ -------------
-						</concat>
-					</then>
-					<else>
-						<concat destfile="${build_govwayConsole}/tmp/queue.properties" append="yes" >
-# ----- Personalizzazione BrokerJMS ActiveMQArtemis -------------
-						</concat>
-					</else>
-				</if>
-				<antcall target="set_property">
-				    <param name="file" value="${build_govwayConsole}/tmp/queue.properties"/>
-					<param name="token" value="ConnectionFactory"/>
-					<param name="value" value="org.govway.jms.console"/>
-				</antcall>
-				<antcall target="dos2unix">
-					<param name="dir" value="${build_govwayConsole}/tmp"/>
-				    <param name="file" value="queue.properties"/>
-				</antcall>
-			</then>
-		</if>
 		
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
@@ -260,33 +223,7 @@
 				<var name="stub_registry" value="openspcoop2_registrySearchStub_cxf.jar" />
 			</then>
 		</if>
-		
-		<var name="govwayConsoleRemota_security_neethi" value="" />
-		<var name="govwayConsoleRemota_httpcore" value="" />
-		<var name="govwayConsoleRemota_cxf_xmlschema-core" value="" />
-		<var name="govwayConsoleRemota_cxf_woodstox-core-asl" value="" />
-		<var name="govwayConsoleRemota_cxf_stax2-api" value="" />
-		<var name="govwayConsoleRemota_cxf_geronimo_ws_metadata_spec" value="" />
-		<if>
-			<or>
-				<isfalse value="${singlePdD}" />
-				<isfalse value="${singlePdD.registroServizi.locale}" />
-			</or>
-			<then>
-				<var name="govwayConsoleRemota_security_neethi" value="neethi-3.2.0.jar" />
-				<var name="govwayConsoleRemota_httpcore" value="*.jar" />
-				<var name="govwayConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.3.0.jar" />
-				<var name="govwayConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-6.5.1.jar" />
-				<var name="govwayConsoleRemota_cxf_stax2-api" value="stax2-api-4.2.1.jar" />
-				<if>
-					<matches string="${as}" pattern="wildfly.*"/>
-					<then>
-						<var name="govwayConsoleRemota_cxf_geronimo_ws_metadata_spec" value="DADEFINIREMEGLIOgeronimo-ws-metadata_2.0_spec-1.1.3.jar" />
-					</then>
-				</if>
-			</then>
-		</if>
-		
+				
 		
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
 		<if>
@@ -390,7 +327,6 @@
 			<classes dir="${build_govwayConsole}/tmp">
 				<include name="console.datasource.properties" />
 				<include name="console.properties" />
-				<include name="queue.properties" />
 			</classes>
 			<lib dir="${required_lib_govwayConsole}/commons">
 				<include name="commons-beanutils-1.9.4.jar" />
@@ -431,18 +367,9 @@
 				<include name="cxf-rt-*.jar" />
 				<include name="jakarta.ws.rs-api-2.1.6.jar" />
 				<include name="${geronimo_jaxws_spec_jar}" />
-				<include name="${govwayConsoleRemota_cxf_xmlschema-core}" />
-				<include name="${govwayConsoleRemota_cxf_woodstox-core-asl}" />
-				<include name="${govwayConsoleRemota_cxf_stax2-api}" />
-				<include name="${govwayConsoleRemota_cxf_geronimo_ws_metadata_spec}" />
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/saaj">
 				<include name="*.jar" />
-			</lib>
-			<lib dir="${required_lib_govwayConsole}/jax">
-				<include name="jaxws-*.jar" />
-				<include name="${jaxp_ri_jar}" />
-				<include name="jaxb-*.jar" />
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-2.0.3-gov4j-1.jar"/>
@@ -454,15 +381,11 @@
 			<lib dir="${required_lib}/security">
 				<include name="xmlsec-2.3.0.jar"/>
 				<include name="${neethi_jar}" />
-				<include name="${govwayConsoleRemota_security_neethi}"/>
 				<include name="herasaf-xacml-core-2.0.4.jar"/>
 				<include name="bcpkix-jdk18on-1.74.jar"/>
 				<include name="bcprov-ext-jdk18on-1.74.jar"/>
 				<include name="bcutil-jdk18on-1.74.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
-			</lib>
-			<lib dir="${required_lib}/httpcore">
-				<include name="${govwayConsoleRemota_httpcore}"/>
 			</lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>

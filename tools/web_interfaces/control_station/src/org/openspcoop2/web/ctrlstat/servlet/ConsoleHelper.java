@@ -291,8 +291,6 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniCore;
-import org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -474,7 +472,6 @@ public class ConsoleHelper implements IConsoleHelper {
 	protected AccordiCooperazioneCore acCore = null;
 	protected ConfigurazioneCore confCore = null;
 	protected ConnettoriCore connettoriCore = null;
-	protected OperazioniCore operazioniCore = null;
 	protected ProtocolPropertiesCore protocolPropertiesCore = null;
 	protected RuoliCore ruoliCore = null;
 	protected ScopeCore scopeCore = null;
@@ -646,7 +643,6 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.acCore = new AccordiCooperazioneCore(this.core);
 			this.confCore = new ConfigurazioneCore(this.core);
 			this.connettoriCore = new ConnettoriCore(this.core);
-			this.operazioniCore = new OperazioniCore(this.core);
 			this.protocolPropertiesCore = new ProtocolPropertiesCore(this.core);
 			this.ruoliCore = new RuoliCore(this.core);
 			this.scopeCore = new ScopeCore(this.core);
@@ -1816,11 +1812,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						if(this.core.isGestionePddAbilitata(this)) {
 							pddVisualizzate = true;
 							entries[index][0] = PddCostanti.LABEL_PDD_MENU_VISUALE_AGGREGATA;
-							if (singlePdD == false) {
-								entries[index][1] = PddCostanti.SERVLET_NAME_PDD_LIST;
-							}else {
-								entries[index][1] = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST;
-							}
+							entries[index][1] = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST;
 							index++;
 						}
 					}
@@ -1981,181 +1973,274 @@ public class ConsoleHelper implements IConsoleHelper {
 
 
 
-			if (singlePdD) {
+			List<ExtendedMenuItem> listStrumenti = null;
+			if(extendedMenu!=null){
+				for (IExtendedMenu extMenu : extendedMenu) {
+					listStrumenti = 
+							extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
+									this.core.isRegistroServiziLocale(), singlePdD, pu);
+				}
+			}
+			
+			List<String> aliases = this.confCore.getJmxPdDAliases();
+			
+			boolean showCodaMessaggi = pu.isCodeMessaggi() && this.core.showCodaMessage();
+			
+			if ( showCodaMessaggi || pu.isAuditing() || 
+					(pu.isSistema() && aliases!=null && aliases.size()>0) ||
+					(listStrumenti!=null && listStrumenti.size()>0) ) {
+				// Se l'utente non ha i permessi "diagnostica", devo
+				// gestire la reportistica
+				MenuEntry me = new MenuEntry();
+				me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
 
-				List<ExtendedMenuItem> listStrumenti = null;
+				int totEntries = 0;
+				if(pu.isSistema() && aliases!=null && aliases.size()>0){
+					totEntries++; // runtime
+				}
+				if(this.isModalitaAvanzata() && showCodaMessaggi) {
+					totEntries++;
+				}
+				if(pu.isAuditing()) {
+					totEntries++;
+				}
+
+				// Extended Menu
 				if(extendedMenu!=null){
 					for (IExtendedMenu extMenu : extendedMenu) {
-						listStrumenti = 
+						List<ExtendedMenuItem> list = 
 								extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
 										this.core.isRegistroServiziLocale(), singlePdD, pu);
+						if(list!=null && list.size()>0){
+							totEntries +=list.size();
+						}
 					}
 				}
-				
-				List<String> aliases = this.confCore.getJmxPdDAliases();
-				
-				boolean showCodaMessaggi = pu.isCodeMessaggi() && this.core.showCodaMessage();
-				
-				if ( showCodaMessaggi || pu.isAuditing() || 
-						(pu.isSistema() && aliases!=null && aliases.size()>0) ||
-						(listStrumenti!=null && listStrumenti.size()>0) ) {
-					// Se l'utente non ha i permessi "diagnostica", devo
-					// gestire la reportistica
-					MenuEntry me = new MenuEntry();
-					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
 
-					int totEntries = 0;
-					if(pu.isSistema() && aliases!=null && aliases.size()>0){
-						totEntries++; // runtime
-					}
-					if(this.isModalitaAvanzata() && showCodaMessaggi) {
-						totEntries++;
-					}
-					if(pu.isAuditing()) {
-						totEntries++;
-					}
+				String[][] entries = new String[totEntries][2];
 
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null && list.size()>0){
-								totEntries +=list.size();
+				int i = 0;
+
+				if(pu.isSistema() && aliases!=null && aliases.size()>0){
+					entries[i][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME;
+					entries[i][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD;
+					i++;
+				}
+				
+				if (pu.isAuditing()) {
+					entries[i][0] = AuditCostanti.LABEL_AUDIT;
+					entries[i][1] = AuditCostanti.SERVLET_NAME_AUDITING;
+					i++;
+				}
+				if (this.isModalitaAvanzata() && showCodaMessaggi) {
+					entries[i][0] = MonitorCostanti.LABEL_MONITOR;
+					entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
+					i++;
+				}
+				
+				// Extended Menu
+				if(extendedMenu!=null){
+					for (IExtendedMenu extMenu : extendedMenu) {
+						List<ExtendedMenuItem> list = 
+								extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
+										this.core.isRegistroServiziLocale(), singlePdD, pu);
+						if(list!=null){
+							for (ExtendedMenuItem extendedMenuItem : list) {
+								entries[i][0] = extendedMenuItem.getLabel();
+								entries[i][1] = extendedMenuItem.getUrl();
+								i++;
 							}
 						}
 					}
+				}
 
-					String[][] entries = new String[totEntries][2];
+				me.setEntries(entries);
+				menu.add(me);
+			}
+			
+			
 
-					int i = 0;
+			// Label Configurazione
+			if(pu.isSistema()){
 
-					if(pu.isSistema() && aliases!=null && aliases.size()>0){
-						entries[i][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME;
-						entries[i][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD;
-						i++;
+				MenuEntry me = new MenuEntry();
+				me.setTitle(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE);
+				// Se l'utente ha anche i permessi "utenti", la
+				// configurazione utente la gestisco dopo
+				String[][] entries = null;
+				String[][] entriesUtenti = null;
+				int dimensioneEntries = 0;
+
+
+				dimensioneEntries = 6; // configurazione, tracciamento, controllo del traffico, policy, aa e audit
+				
+				if(this.core.isConfigurazioneAllarmiEnabled())
+					dimensioneEntries++; // configurazione allarmi
+				
+				dimensioneEntries++; // gruppi
+
+				if(!isModalitaStandard()) {
+					dimensioneEntries++; // caches
+				}
+				
+				if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
+					dimensioneEntries++; // importa
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
+						dimensioneEntries++; // esporta
+						if(isModalitaAvanzata){
+							dimensioneEntries++; // elimina
+						}
 					}
-					
-					if (pu.isAuditing()) {
-						entries[i][0] = AuditCostanti.LABEL_AUDIT;
-						entries[i][1] = AuditCostanti.SERVLET_NAME_AUDITING;
-						i++;
+				}
+				if (!pu.isUtenti()){
+					//dimensioneEntries++; // change password
+				}else {
+					entriesUtenti = getVoceMenuUtenti();
+					dimensioneEntries += entriesUtenti.length;
+				}
+
+				// Extended Menu
+				if(extendedMenu!=null){
+					for (IExtendedMenu extMenu : extendedMenu) {
+						List<ExtendedMenuItem> list = 
+								extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+										this.core.isRegistroServiziLocale(), singlePdD, pu);
+						if(list!=null && list.size()>0){
+							dimensioneEntries +=list.size();
+						}
 					}
-					if (this.isModalitaAvanzata() && showCodaMessaggi) {
-						entries[i][0] = MonitorCostanti.LABEL_MONITOR;
-						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
-						i++;
+				}
+
+				entries = new String[dimensioneEntries][2];
+
+				int index = 0;
+				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MENU;
+				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
+				index++;
+				if(!isModalitaStandard()) {
+					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHES;
+					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE+"?"+
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CACHES+"="+Costanti.CHECK_BOX_ENABLED;
+					index++;
+				}
+				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU;
+				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI;
+				index++;
+				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
+				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
+				index++;
+				if(this.core.isConfigurazioneAllarmiEnabled()) { // configurazione allarmi
+					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI;
+					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST;
+					index++;	
+				}
+				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN;
+				index++;
+				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
+				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY;
+				index++;
+				
+				entries[index][0] = GruppiCostanti.LABEL_GRUPPI;
+				entries[index][1] = GruppiCostanti.SERVLET_NAME_GRUPPI_LIST;
+				index++;
+				// link utenti sotto quello di configurazione  generale
+				if (pu.isUtenti()) {
+					for (int j = 0; j < entriesUtenti.length; j++) {
+						entries[index][0] = entriesUtenti[j][0];
+						entries[index][1] = entriesUtenti[j][1];
+						index++;		
 					}
-					
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null){
-								for (ExtendedMenuItem extendedMenuItem : list) {
-									entries[i][0] = extendedMenuItem.getLabel();
-									entries[i][1] = extendedMenuItem.getUrl();
-									i++;
-								}
+				}
+				if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
+					entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
+					entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+							ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
+					index++;
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
+						entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
+						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
+						index++;
+
+						if(isModalitaAvanzata){
+							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
+							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA;
+							index++;
+						}
+					}
+				}
+				entries[index][0] = AuditCostanti.LABEL_AUDIT;
+				entries[index][1] = AuditCostanti.SERVLET_NAME_AUDIT;
+				index++;
+
+				//link cambio password
+				if (!pu.isUtenti()) {
+//						entries[index][0] = UtentiCostanti.LABEL_UTENTE;
+//						entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
+//						index++;
+				}
+
+				// Extended Menu
+				if(extendedMenu!=null){
+					for (IExtendedMenu extMenu : extendedMenu) {
+						List<ExtendedMenuItem> list = 
+								extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+										this.core.isRegistroServiziLocale(), singlePdD, pu);
+						if(list!=null){	
+							for (ExtendedMenuItem extendedMenuItem : list) {
+								entries[index][0] = extendedMenuItem.getLabel();
+								entries[index][1] = extendedMenuItem.getUrl();
+								index++;
 							}
 						}
 					}
-
-					me.setEntries(entries);
-					menu.add(me);
 				}
-				
-				
 
-				// Label Configurazione
-				if(pu.isSistema()){
+				me.setEntries(entries);
+				menu.add(me);
 
+			}else {
+
+				// se non esiste la configurazione, devo cmq gestire il caso se non ho i diritti utente e se posso comunque importare servizi
+				int dimensioneEntries = 0; 
+				String[][] entriesUtenti = null;
+				if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
+					dimensioneEntries++; // importa
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
+						dimensioneEntries++; // esporta
+						if(isModalitaAvanzata){
+							dimensioneEntries++; // elimina
+						}
+					}
+				}
+				if(!pu.isUtenti()){
+					//dimensioneEntries++;  // change password
+				}else {
+					entriesUtenti = getVoceMenuUtenti();
+					dimensioneEntries += entriesUtenti.length;
+				}
+
+				// Extended Menu
+				if(extendedMenu!=null){
+					for (IExtendedMenu extMenu : extendedMenu) {
+						List<ExtendedMenuItem> list = 
+								extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+										this.core.isRegistroServiziLocale(), singlePdD, pu);
+						if(list!=null && list.size()>0){
+							dimensioneEntries +=list.size();
+						}
+					}
+				}
+
+				if(dimensioneEntries>0){
+					// Comunque devo permettere di cambiare la password ad ogni utente, se l'utente stesso non puo' gestire gli utenti
 					MenuEntry me = new MenuEntry();
 					me.setTitle(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE);
-					// Se l'utente ha anche i permessi "utenti", la
-					// configurazione utente la gestisco dopo
-					String[][] entries = null;
-					String[][] entriesUtenti = null;
-					int dimensioneEntries = 0;
-
-
-					dimensioneEntries = 6; // configurazione, tracciamento, controllo del traffico, policy, aa e audit
-					
-					if(this.core.isConfigurazioneAllarmiEnabled())
-						dimensioneEntries++; // configurazione allarmi
-					
-					dimensioneEntries++; // gruppi
-
-					if(!isModalitaStandard()) {
-						dimensioneEntries++; // caches
-					}
-					
-					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
-						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
-							dimensioneEntries++; // esporta
-							if(isModalitaAvanzata){
-								dimensioneEntries++; // elimina
-							}
-						}
-					}
-					if (!pu.isUtenti()){
-						//dimensioneEntries++; // change password
-					}else {
-						entriesUtenti = getVoceMenuUtenti();
-						dimensioneEntries += entriesUtenti.length;
-					}
-
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null && list.size()>0){
-								dimensioneEntries +=list.size();
-							}
-						}
-					}
-
-					entries = new String[dimensioneEntries][2];
-
+					String[][] entries = new String[dimensioneEntries][2];
 					int index = 0;
-					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MENU;
-					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
-					index++;
-					if(!isModalitaStandard()) {
-						entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHES;
-						entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE+"?"+
-								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CACHES+"="+Costanti.CHECK_BOX_ENABLED;
-						index++;
-					}
-					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU;
-					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI;
-					index++;
-					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
-					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
-					index++;
-					if(this.core.isConfigurazioneAllarmiEnabled()) { // configurazione allarmi
-						entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI;
-						entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST;
-						index++;	
-					}
-					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
-					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
-							ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN;
-					index++;
-					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
-					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
-							ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY;
-					index++;
-					
-					entries[index][0] = GruppiCostanti.LABEL_GRUPPI;
-					entries[index][1] = GruppiCostanti.SERVLET_NAME_GRUPPI_LIST;
-					index++;
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {
 						for (int j = 0; j < entriesUtenti.length; j++) {
@@ -2178,212 +2263,14 @@ public class ConsoleHelper implements IConsoleHelper {
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 										ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA;
-								index++;
-							}
-						}
-					}
-					entries[index][0] = AuditCostanti.LABEL_AUDIT;
-					entries[index][1] = AuditCostanti.SERVLET_NAME_AUDIT;
-					index++;
-
-					//link cambio password
-					if (!pu.isUtenti()) {
-//						entries[index][0] = UtentiCostanti.LABEL_UTENTE;
-//						entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
-//						index++;
-					}
-
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null){	
-								for (ExtendedMenuItem extendedMenuItem : list) {
-									entries[index][0] = extendedMenuItem.getLabel();
-									entries[index][1] = extendedMenuItem.getUrl();
-									index++;
-								}
-							}
-						}
-					}
-
-					me.setEntries(entries);
-					menu.add(me);
-
-				}else {
-
-					// se non esiste la configurazione, devo cmq gestire il caso se non ho i diritti utente e se posso comunque importare servizi
-					int dimensioneEntries = 0; 
-					String[][] entriesUtenti = null;
-					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
-						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
-							dimensioneEntries++; // esporta
-							if(isModalitaAvanzata){
-								dimensioneEntries++; // elimina
-							}
-						}
-					}
-					if(!pu.isUtenti()){
-						//dimensioneEntries++;  // change password
-					}else {
-						entriesUtenti = getVoceMenuUtenti();
-						dimensioneEntries += entriesUtenti.length;
-					}
-
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null && list.size()>0){
-								dimensioneEntries +=list.size();
-							}
-						}
-					}
-
-					if(dimensioneEntries>0){
-						// Comunque devo permettere di cambiare la password ad ogni utente, se l'utente stesso non puo' gestire gli utenti
-						MenuEntry me = new MenuEntry();
-						me.setTitle(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE);
-						String[][] entries = new String[dimensioneEntries][2];
-						int index = 0;
-						// link utenti sotto quello di configurazione  generale
-						if (pu.isUtenti()) {
-							for (int j = 0; j < entriesUtenti.length; j++) {
-								entries[index][0] = entriesUtenti[j][0];
-								entries[index][1] = entriesUtenti[j][1];
 								index++;		
 							}
 						}
-						if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
-							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
-							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
-									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
-							index++;
-							if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
-								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
-								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
-								index++;
-
-								if(isModalitaAvanzata){
-									entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
-									entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
-											ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA;
-									index++;		
-								}
-							}
-						}
-						if (!pu.isUtenti()) {
+					}
+					if (!pu.isUtenti()) {
 //							entries[index][0] = UtentiCostanti.LABEL_UTENTE;
 //							entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
 //							index++;
-						}
-
-						// Extended Menu
-						if(extendedMenu!=null){
-							for (IExtendedMenu extMenu : extendedMenu) {
-								List<ExtendedMenuItem> list = 
-										extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
-												this.core.isRegistroServiziLocale(), singlePdD, pu);
-								if(list!=null){
-									for (ExtendedMenuItem extendedMenuItem : list) {
-										entries[index][0] = extendedMenuItem.getLabel();
-										entries[index][1] = extendedMenuItem.getUrl();
-										index++;
-									}
-								}
-							}
-						}
-
-						me.setEntries(entries);
-						menu.add(me);
-					}
-				}
-
-				
-			} else {
-
-				// SinglePdD=false
-				if(pu.isSistema()){
-
-					MenuEntry me = new MenuEntry();
-					me.setTitle(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE);
-
-					// Se l'utente ha anche i permessi "utenti", la
-					// configurazione utente la gestisco dopo
-					String[][] entries = null;
-					String[][] entriesUtenti = null;
-					int dimensioneEntries = 1; //  audit
-					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
-						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
-							dimensioneEntries++; // esporta
-							if(isModalitaAvanzata){
-								dimensioneEntries++; // elimina
-							}
-						}
-					}
-					if (!pu.isUtenti()){
-						dimensioneEntries++; // change password
-					}else {
-						entriesUtenti = getVoceMenuUtenti();
-						dimensioneEntries += entriesUtenti.length;
-					}
-
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null && list.size()>0){
-								dimensioneEntries +=list.size();
-							}
-						}
-					}
-
-					entries = new String[dimensioneEntries][2];
-
-					int index = 0;
-					// link utenti sotto quello di configurazione  generale
-					if (pu.isUtenti()) {
-						if(entriesUtenti!=null) {
-							for (int j = 0; j < entriesUtenti.length; j++) {
-								entries[index][0] = entriesUtenti[j][0];
-								entries[index][1] = entriesUtenti[j][1];
-								index++;		
-							}
-						}
-					}
-					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
-						entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
-						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
-								ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
-						index++;
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
-							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
-							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
-							index++;
-
-							if(isModalitaAvanzata){
-								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
-								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
-										ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA;
-								index++;
-							}
-						}
-					}
-					entries[index][0] = AuditCostanti.LABEL_AUDIT;
-					entries[index][1] = AuditCostanti.SERVLET_NAME_AUDIT;
-					index++;
-					if (!pu.isUtenti()) {
-						entries[index][0] = UtentiCostanti.LABEL_UTENTE;
-						entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
-						index++;
 					}
 
 					// Extended Menu
@@ -2397,170 +2284,6 @@ public class ConsoleHelper implements IConsoleHelper {
 									entries[index][0] = extendedMenuItem.getLabel();
 									entries[index][1] = extendedMenuItem.getUrl();
 									index++;
-								}
-							}
-						}
-					}
-
-					me.setEntries(entries);
-					menu.add(me);
-
-				}else {
-
-					// se non esiste la configurazione, devo cmq gestire il caso se non ho i diritti utente e se posso comunque importare servizi
-					int dimensioneEntries = 0; 
-					String[][] entriesUtenti = null;
-					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
-						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
-							dimensioneEntries++; // esporta
-							if(isModalitaAvanzata){
-								dimensioneEntries++; // elimina
-							}
-						}
-					}
-					if(!pu.isUtenti()){
-						dimensioneEntries++;  // change password
-					}else {
-						entriesUtenti = getVoceMenuUtenti();
-						dimensioneEntries += entriesUtenti.length;
-					}
-
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null && list.size()>0){
-								dimensioneEntries +=list.size();
-							}
-						}
-					}
-
-					if(dimensioneEntries>0){
-						// Comunque devo permettere di cambiare la password ad ogni utente, se l'utente stesso non puo' gestire gli utenti
-						MenuEntry me = new MenuEntry();
-						me.setTitle(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE);
-						String[][] entries = new String[dimensioneEntries][2];
-						int index = 0;
-						// link utenti sotto quello di configurazione  generale
-						if (pu.isUtenti()) {
-							if(entriesUtenti!=null) {
-								for (int j = 0; j < entriesUtenti.length; j++) {
-									entries[index][0] = entriesUtenti[j][0];
-									entries[index][1] = entriesUtenti[j][1];
-									index++;		
-								}
-							}
-						}
-						if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
-							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
-							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
-									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
-							index++;
-							if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
-								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
-								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
-								index++;
-
-								if(isModalitaAvanzata){
-									entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
-									entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
-											ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA;
-									index++;		
-								}
-							}
-						}
-						if (!pu.isUtenti()) {
-							entries[index][0] = UtentiCostanti.LABEL_UTENTE;
-							entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
-							index++;
-						}
-
-						// Extended Menu
-						if(extendedMenu!=null){
-							for (IExtendedMenu extMenu : extendedMenu) {
-								List<ExtendedMenuItem> list = 
-										extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
-												this.core.isRegistroServiziLocale(), singlePdD, pu);
-								if(list!=null){
-									for (ExtendedMenuItem extendedMenuItem : list) {
-										entries[index][0] = extendedMenuItem.getLabel();
-										entries[index][1] = extendedMenuItem.getUrl();
-										index++;
-									}
-								}
-							}
-						}
-
-						me.setEntries(entries);
-						menu.add(me);
-					}
-
-				}
-
-				boolean showCodaMessaggi = pu.isCodeMessaggi() && this.core.showCodaMessage();
-				
-				if (pu.isAuditing() || pu.isSistema() || showCodaMessaggi) {
-					MenuEntry me = new MenuEntry();
-					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
-
-					String[][] entries = null;
-					int size = 0;
-					if (pu.isAuditing()) {
-						size++;
-					}
-					if (pu.isSistema()) {
-						size++;
-					}
-					if (pu.isAuditing()) {
-						size++;
-					}
-
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null && list.size()>0){
-								size +=list.size();
-							}
-						}
-					}
-
-					entries = new String[size][2];
-
-					int i = 0;
-
-					if (pu.isAuditing()) {
-						entries[i][0] = AuditCostanti.LABEL_AUDIT;
-						entries[i][1] = AuditCostanti.SERVLET_NAME_AUDITING;
-						i++;
-					}
-					if (pu.isSistema()) {
-						entries[i][0] = OperazioniCostanti.LABEL_OPERAZIONI;
-						entries[i][1] = OperazioniCostanti.SERVLET_NAME_OPERAZIONI;
-						i++;
-					}
-					if (this.isModalitaAvanzata() && showCodaMessaggi) {
-						entries[i][0] = MonitorCostanti.LABEL_MONITOR;
-						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
-						i++;
-					}
-
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null){
-								for (ExtendedMenuItem extendedMenuItem : list) {
-									entries[i][0] = extendedMenuItem.getLabel();
-									entries[i][1] = extendedMenuItem.getUrl();
-									i++;
 								}
 							}
 						}
@@ -2570,6 +2293,9 @@ public class ConsoleHelper implements IConsoleHelper {
 					menu.add(me);
 				}
 			}
+
+				
+			
 
 			for (MenuEntry menuEntry : menu) {
 				String [][] entries = menuEntry.getEntries();

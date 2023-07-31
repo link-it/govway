@@ -281,9 +281,6 @@
     </library>
     <library name="openspcoop2_3.4_lib_stub" systemlibrary="false">
         <archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_integrationManagerStub_cxf.jar"/>
-	<archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_configStub_cxf.jar"/>
-	<archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_registryStub_cxf.jar"/>
-	<archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_monitorStub_cxf.jar"/>
 	<archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 	<archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_protocol-modipa-soap-blocking-stub-cxf.jar"/>
 	<archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_protocol-modipa-soap-nonBlocking-push-server-stub-cxf.jar"/>

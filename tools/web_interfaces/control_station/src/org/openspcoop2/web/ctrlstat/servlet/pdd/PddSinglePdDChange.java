@@ -126,7 +126,7 @@ public final class PddSinglePdDChange extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = pddHelper.addPddToDati(dati, nome, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
-						null, "", "", 0, descr, "", 0, implementazione, clientAuth, true);
+						null, "", "", 0, descr, "", 0, implementazione, clientAuth);
 
 				pd.setDati(dati);
 
@@ -136,7 +136,7 @@ public final class PddSinglePdDChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = pddHelper.pddCheckData(TipoOperazione.CHANGE, true);
+			boolean isOk = pddHelper.pddCheckData(TipoOperazione.CHANGE);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -149,7 +149,7 @@ public final class PddSinglePdDChange extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = pddHelper.addPddToDati(dati, nome, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
-						null, "", "", 0, descr, "", 0, implementazione, clientAuth, true);
+						null, "", "", 0, descr, "", 0, implementazione, clientAuth);
 
 				pd.setDati(dati);
 

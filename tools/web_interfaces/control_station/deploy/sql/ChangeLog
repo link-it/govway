@@ -1,3 +1,7 @@
+2023-07-31  Andrea Poli <apoli@link.it>
+
+	Eliminate colonne ip e porta sulla tabella 'pdd'
+
 2021-04-15  Andrea Poli <apoli@link.it>
 
 	Aggiunte tabelle che consentono di definire proprietà generiche ai servizi applicativi e ai soggetti:	

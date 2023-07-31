@@ -87,7 +87,6 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
@@ -170,21 +169,17 @@ import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.MapReader;
-import org.openspcoop2.utils.resources.ScriptInvoker;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiFruizioni;
-import org.openspcoop2.web.ctrlstat.costanti.OperationsParameter;
-import org.openspcoop2.web.ctrlstat.costanti.TipoOggettoDaSmistare;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
-import org.openspcoop2.web.ctrlstat.gestori.GestorePdDInitThread;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedCoreServlet;
@@ -214,8 +209,6 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.ValidationException;
 import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
-import org.openspcoop2.web.lib.queue.config.QueueProperties;
-import org.openspcoop2.web.lib.queue.costanti.Operazione;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
 
@@ -411,11 +404,6 @@ public class ControlStationCore {
 	public String getTipoDatabase() {
 		return this.tipoDB;
 	}
-
-	/** Accesso alle code JMS: Smistatore */
-	private String smistatoreQueue = "";
-	private String cfName = "";
-	private Properties cfProp = null;
 
 	/** IDFactory */
 	private IDAccordoFactory idAccordoFactory = null;
@@ -1200,24 +1188,6 @@ public class ControlStationCore {
 	public int getClusterAsyncUpdateCheckInterval() {
 		return this.clusterAsyncUpdateCheckInterval;
 	}
-
-	/** Parametri pdd */
-	private int portaPubblica = 80;
-	private int portaGestione = 80;
-	private String indirizzoPubblico;
-	private String indirizzoGestione;
-	public int getPortaPubblica() {
-		return this.portaPubblica;
-	}
-	public int getPortaGestione() {
-		return this.portaGestione;
-	}
-	public String getIndirizzoPubblico() {
-		return this.indirizzoPubblico;
-	}
-	public String getIndirizzoGestione() {
-		return this.indirizzoGestione;
-	}
 	
 	/** Opzioni di visualizzazione */
 	private boolean showCorrelazioneAsincronaInAccordi = false;
@@ -1395,43 +1365,6 @@ public class ControlStationCore {
 		return this.elenchiVisualizzaComandoResetCacheSingoloElemento;
 	}
 
-	/** Motori di Sincronizzazione */
-	private boolean sincronizzazionePddEngineEnabled;
-	private String sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd;
-	private String sincronizzazionePddEngineEnabled_scriptShell_Path;
-	private String sincronizzazionePddEngineEnabled_scriptShell_Args;
-	private boolean sincronizzazioneRegistroEngineEnabled;
-	private boolean sincronizzazioneGEEngineEnabled;
-	private String sincronizzazioneGE_TipoSoggetto;
-	private String sincronizzazioneGE_NomeSoggetto;
-	private String sincronizzazioneGE_NomeServizioApplicativo;
-	public boolean isSincronizzazionePddEngineEnabled() {
-		return this.sincronizzazionePddEngineEnabled;
-	}
-	public String getSincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd() {
-		return this.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd;
-	}
-	public String getSincronizzazionePddEngineEnabled_scriptShell_Path() {
-		return this.sincronizzazionePddEngineEnabled_scriptShell_Path;
-	}
-	public String getSincronizzazionePddEngineEnabled_scriptShell_Args() {
-		return this.sincronizzazionePddEngineEnabled_scriptShell_Args;
-	}
-	public boolean isSincronizzazioneRegistroEngineEnabled() {
-		return this.sincronizzazioneRegistroEngineEnabled;
-	}
-	public boolean isSincronizzazioneGEEngineEnabled() {
-		return this.sincronizzazioneGEEngineEnabled;
-	}
-	public String getSincronizzazioneGE_TipoSoggetto() {
-		return this.sincronizzazioneGE_TipoSoggetto;
-	}
-	public String getSincronizzazioneGE_NomeSoggetto() {
-		return this.sincronizzazioneGE_NomeSoggetto;
-	}
-	public String getSincronizzazioneGE_NomeServizioApplicativo() {
-		return this.sincronizzazioneGE_NomeServizioApplicativo;
-	}
 
 	/** Opzioni di importazione Archivi */
 	private String importArchivi_tipoPdD;
@@ -1462,7 +1395,6 @@ public class ControlStationCore {
 	}
 	
 	/** Altro */
-	private String suffissoConnettoreAutomatico;
 	private boolean enabledToken_generazioneAutomaticaPorteDelegate;
 	private boolean enabledAutenticazione_generazioneAutomaticaPorteDelegate;
 	private String autenticazione_generazioneAutomaticaPorteDelegate;
@@ -1475,9 +1407,6 @@ public class ControlStationCore {
 	private String autorizzazione_generazioneAutomaticaPorteApplicative;
 	private boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
 	private boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
-	public String getSuffissoConnettoreAutomatico() {
-		return this.suffissoConnettoreAutomatico;
-	}
 	public boolean isEnabledToken_generazioneAutomaticaPorteDelegate() {
 		return this.enabledToken_generazioneAutomaticaPorteDelegate;
 	}
@@ -2394,11 +2323,6 @@ public class ControlStationCore {
 		/** Tipo del Database */
 		this.tipoDB = core.tipoDB;
 
-		/** Accesso alle code JMS: Smistatore */
-		this.smistatoreQueue = core.smistatoreQueue;
-		this.cfName = core.cfName;
-		this.cfProp = core.cfProp;
-
 		/** IDFactory */
 		this.idAccordoFactory = core.idAccordoFactory;
 		this.idAccordoCooperazioneFactory = core.idAccordoCooperazioneFactory;
@@ -2608,12 +2532,6 @@ public class ControlStationCore {
 		this.isClusterAsyncUpdate = core.isClusterAsyncUpdate;
 		this.clusterAsyncUpdateCheckInterval = core.clusterAsyncUpdateCheckInterval;
 		
-		/** Parametri pdd */
-		this.portaPubblica = core.portaPubblica;
-		this.portaGestione = core.portaGestione;
-		this.indirizzoPubblico = core.indirizzoPubblico;
-		this.indirizzoGestione = core.indirizzoGestione;
-		
 		/** Opzioni di visualizzazione */
 		this.showCorrelazioneAsincronaInAccordi = core.showCorrelazioneAsincronaInAccordi;
 		this.showFlagPrivato = core.showFlagPrivato;
@@ -2658,17 +2576,6 @@ public class ControlStationCore {
 		this.validitaTokenCsrf = core.validitaTokenCsrf;
 		this.cspHeaderValue = core.cspHeaderValue;
 
-		/** Motori di Sincronizzazione */
-		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
-		this.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd = core.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd;
-		this.sincronizzazionePddEngineEnabled_scriptShell_Path = core.sincronizzazionePddEngineEnabled_scriptShell_Path;
-		this.sincronizzazionePddEngineEnabled_scriptShell_Args = core.sincronizzazionePddEngineEnabled_scriptShell_Args;
-		this.sincronizzazioneRegistroEngineEnabled = core.sincronizzazioneRegistroEngineEnabled;
-		this.sincronizzazioneGEEngineEnabled = core.sincronizzazioneGEEngineEnabled;
-		this.sincronizzazioneGE_TipoSoggetto = core.sincronizzazioneGE_TipoSoggetto;
-		this.sincronizzazioneGE_NomeSoggetto = core.sincronizzazioneGE_NomeSoggetto;
-		this.sincronizzazioneGE_NomeServizioApplicativo = core.sincronizzazioneGE_NomeServizioApplicativo;
-
 		/** Opzioni di importazione/esportazione Archivi */
 		this.importArchivi_tipoPdD = core.importArchivi_tipoPdD;
 		this.exportArchive_configurazione_soloDumpCompleto = core.exportArchive_configurazione_soloDumpCompleto;
@@ -2680,7 +2587,6 @@ public class ControlStationCore {
 		this.multitenantSoggettiFruizioni = core.multitenantSoggettiFruizioni;
 		
 		/** Altro */
-		this.suffissoConnettoreAutomatico = core.suffissoConnettoreAutomatico;
 		this.enabledToken_generazioneAutomaticaPorteDelegate = core.enabledToken_generazioneAutomaticaPorteDelegate;
 		this.enabledAutenticazione_generazioneAutomaticaPorteDelegate = core.enabledAutenticazione_generazioneAutomaticaPorteDelegate;
 		this.autenticazione_generazioneAutomaticaPorteDelegate = core.autenticazione_generazioneAutomaticaPorteDelegate;
@@ -2932,10 +2838,6 @@ public class ControlStationCore {
 	private void initCore() throws ControlStationCoreException {
 		this.tipoDB = "";
 
-		this.smistatoreQueue = "";
-		this.cfName = "";
-		this.cfProp = new Properties();
-
 			
 		// Leggo le informazioni da console.properties
 		ConsoleProperties consoleProperties = null;
@@ -3113,29 +3015,6 @@ public class ControlStationCore {
 			this.validitaTokenCsrf = consoleProperties.getValiditaTokenCsrf();
 			this.cspHeaderValue = consoleProperties.getCSPHeaderValue();
 			
-			// Gestione govwayConsole centralizzata
-			if(!this.singlePdD){
-				this.sincronizzazionePddEngineEnabled = consoleProperties.isGestioneCentralizzataSincronizzazionePdd();
-				this.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd = consoleProperties.getGestioneCentralizzataPrefissoNomeCodaConfigurazionePdd();
-				this.sincronizzazionePddEngineEnabled_scriptShell_Path = consoleProperties.getGestioneCentralizzataGestorePddScriptShellPath();
-				this.sincronizzazionePddEngineEnabled_scriptShell_Args = consoleProperties.getGestioneCentralizzataGestorePddScriptShellArgs();
-				this.sincronizzazioneRegistroEngineEnabled = consoleProperties.isGestioneCentralizzataSincronizzazioneRegistro();
-				this.sincronizzazioneGEEngineEnabled = consoleProperties.isGestioneCentralizzataSincronizzazioneGestoreEventi();
-				
-				this.smistatoreQueue = consoleProperties.getGestioneCentralizzataNomeCodaSmistatore();
-				
-				this.sincronizzazioneGE_TipoSoggetto = consoleProperties.getGestioneCentralizzataGestoreEventiTipoSoggetto();
-				this.sincronizzazioneGE_NomeSoggetto = consoleProperties.getGestioneCentralizzataGestoreEventiNomeSoggetto();
-				this.sincronizzazioneGE_NomeServizioApplicativo = consoleProperties.getGestioneCentralizzataGestoreEventiNomeServizioApplicativo();
-				
-				this.suffissoConnettoreAutomatico = consoleProperties.getGestioneCentralizzataURLContextCreazioneAutomaticaSoggetto();
-				
-				this.indirizzoPubblico = consoleProperties.getGestioneCentralizzataPddIndirizzoIpPubblico();
-				this.portaPubblica = consoleProperties.getGestioneCentralizzataPddPortaPubblica();
-				this.indirizzoGestione = consoleProperties.getGestioneCentralizzataPddIndirizzoIpGestione();
-				this.portaGestione = consoleProperties.getGestioneCentralizzataPddPortaGestione();
-			}
-			
 			// Gestione govwayConsole locale
 			if(this.singlePdD){
 				this.gestionePddAbilitata = consoleProperties.isSinglePddGestionePdd();
@@ -3184,23 +3063,6 @@ public class ControlStationCore {
 			throw new ControlStationCoreException("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
 		}
 		
-		
-		
-		// Leggo le informazioni da queue.properties
-		QueueProperties queueProperties = null;
-		if(this.singlePdD==false){
-			try {
-	
-				queueProperties = QueueProperties.getInstance();
-				
-				this.cfName = queueProperties.getConnectionFactory();
-				this.cfProp = queueProperties.getConnectionFactoryContext();
-				
-			} catch (java.lang.Exception e) {
-				ControlStationCore.logError("[ControlStationCore::initCore] Impossibile leggere i dati dal file queue.properties[" + e.toString() + "]", e);
-				throw new ControlStationCoreException("ControlStationCore: Impossibile leggere i dati dal file queue.properties[" + e.toString() + "]",e);
-			} 
-		}
 	}
 
 	
@@ -3246,21 +3108,7 @@ public class ControlStationCore {
 					String descrizione = consoleProperties.getJmxPdDDescrizione(alias);
 					if(descrizione!=null)
 						this.jmxPdDDescrizioni.put(alias,descrizione);
-					
-					if(this.singlePdD==false){
-						String url = this.configurazioneNodiRuntime.getResourceUrl(alias);
-						// replace con url del nodo
-						PddCore pddCore = new PddCore(this);
-						PdDControlStation pdd = pddCore.getPdDControlStation(alias); // esiste per forza
-						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_IP_GESTIONE, pdd.getIpGestione());
-						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PORTA_GESTIONE, pdd.getPortaGestione()+"");
-						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PROTOCOLLO_GESTIONE, pdd.getProtocolloGestione());
-						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_IP_PUBBLICO, pdd.getIp());
-						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PORTA_PUBBLICA, pdd.getPorta()+"");
-						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PROTOCOLLO_PUBBLICO, pdd.getProtocollo());
-						this.configurazioneNodiRuntime.addForceResourceUrl(alias, url);
-					}
-					
+										
 					this.jmxPdDConfigurazioneSistemaType.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaType(alias));
 					this.jmxPdDConfigurazioneSistemaNomeRisorsa.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsa(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoVersionePdD.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoVersionePdD(alias));
@@ -3556,13 +3404,9 @@ public class ControlStationCore {
 	private void performOperation(int[] operationTypes, String superUser, boolean smista, Object... oggetti) throws DriverConfigurazioneNotFound, DriverRegistroServiziNotFound, DriverConfigurazioneException, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException {
 		Connection con = null;
 		DriverControlStationDB driver = null;
-		boolean doSetDati = false;
-		List<OperazioneDaSmistare> operazioneDaSmistareList = null;
-		OperazioneDaSmistare operazioneDaSmistare = null;
 
 		try {
 
-			operazioneDaSmistareList = new ArrayList<OperazioneDaSmistare>();
 			con = ControlStationCore.dbM.getConnection();
 			if(con==null) {
 				throw new ControlStationCoreException("Connection is null");
@@ -3572,13 +3416,10 @@ public class ControlStationCore {
 			// disabilito l'autocommit
 			// e lo riabilito solo dopo aver terminato le operazioni
 			con.setAutoCommit(false);
-			PdDControlStation pddGestore = null;
-			int pddGestoreTipoOperazione = -1;
-
+			
 			// creo il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			SoggettiCore soggettiCore = new SoggettiCore(this);
-
+			
 			for (int i = 0; i < oggetti.length; i++) {
 				// prendo il tipo di operazione da effettuare su questo oggetto
 				int operationType = operationTypes[i];
@@ -3607,48 +3448,16 @@ public class ControlStationCore {
 					if (oggetto instanceof PdDControlStation) {
 						PdDControlStation pdd = (PdDControlStation) oggetto;
 						driver.createPdDControlStation(pdd);
-
-						// Una volta creata la PdD avvio il thread di
-						// gestione (a meno che non sia esterna)
-						pddGestore = pdd;
-						pddGestoreTipoOperazione = operationType;
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(pdd.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
-						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
-
-						doSetDati = true;
 					}
 
 					if (oggetto instanceof MappingFruizionePortaDelegata) {
 						MappingFruizionePortaDelegata mapping = (MappingFruizionePortaDelegata) oggetto;
 						driver.createMappingFruizionePortaDelegata(mapping);
-						
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingFruizionePD);
-
-						doSetDati = false;
-
 					}
 					
 					if (oggetto instanceof MappingErogazionePortaApplicativa) {
 						MappingErogazionePortaApplicativa mapping = (MappingErogazionePortaApplicativa) oggetto;
 						driver.createMappingErogazionePortaApplicativa(mapping);
-						
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingErogazionePA);
-
-						doSetDati = false;
-
 					}
 
 					/***********************************************************
@@ -3670,24 +3479,6 @@ public class ControlStationCore {
 						else{
 							driver.getDriverConfigurazioneDB().createSoggetto(sogConf);
 						}
-
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(sogConf.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, soggetto.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, soggetto.getNome());
-
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
-						if(soggetto.getSoggettoReg()!=null){
-							operazioneDaSmistare.setPdd(soggetto.getSoggettoReg().getPortaDominio());
-						}
-
-						doSetDati = true;
-
 					}
 					
 					// soggetto config
@@ -3706,19 +3497,6 @@ public class ControlStationCore {
 							// Anche nel caso di gestione singola degli oggetti deve comunque essere prima creato il soggetto sul registro.
 							throw new ControlStationCoreException("Impossibile gestire la richiesta di creazione di un soggetto ("+idSoggetto+") di tipo [org.openspcoop2.core.config.Soggetto] se il soggetto non esiste sulla base dati. La creazione e' permessa solo per il tipo org.openspcoop2.core.registry.Soggetto, mentre il config puo' essere chiamato per aggiornarne delle informazioni");
 						}
-						
-
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(sogConf.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogConf.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogConf.getNome());
-
-						doSetDati = true;
-
 					}
 					
 					// soggetto reg
@@ -3728,21 +3506,6 @@ public class ControlStationCore {
 						if(this.registroServiziLocale){
 							driver.getDriverRegistroServiziDB().createSoggetto(sogReg);
 						}
-
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(sogReg.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogReg.getNome());
-
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
-						operazioneDaSmistare.setPdd(sogReg.getPortaDominio());
-						
-						doSetDati = true;
 
 					}
 
@@ -3760,21 +3523,6 @@ public class ControlStationCore {
 							sa.setIdSoggetto(DBUtils.getIdSoggetto(sa.getNomeSoggettoProprietario(), sa.getTipoSoggettoProprietario(), con, this.tipoDB, CostantiDB.SOGGETTI));
 						}
 
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(sa.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizioApplicativo);
-						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sog = driver.getDriverRegistroServiziDB().getSoggetto(sa.getIdSoggetto());
-							operazioneDaSmistare.setPdd(sog.getPortaDominio());
-						}
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO_APPLICATIVO, sa.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sa.getTipoSoggettoProprietario());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sa.getNomeSoggettoProprietario());
-						// operazioneDaSmistare.setNomeServizioApplicativo(sa.getNome());
-
-						doSetDati = true;
 					}
 					// PortaDelegata
 					if (oggetto instanceof PortaDelegata) {
@@ -3783,20 +3531,6 @@ public class ControlStationCore {
 							pd.setIdSoggetto(DBUtils.getIdSoggetto(pd.getNomeSoggettoProprietario(), pd.getTipoSoggettoProprietario(), con, this.tipoDB, CostantiDB.SOGGETTI));
 						}
 						driver.getDriverConfigurazioneDB().createPortaDelegata(pd);
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(pd.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pd);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PD, pd.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pd.getTipoSoggettoProprietario());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, pd.getNomeSoggettoProprietario());
-						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(pd.getIdSoggetto());
-							String server = sogg.getPortaDominio();
-							operazioneDaSmistare.setPdd(server);
-						}
-						doSetDati = true;
 					}
 					// PortaApplicativa
 					if (oggetto instanceof PortaApplicativa) {
@@ -3842,82 +3576,51 @@ public class ControlStationCore {
 						}
 
 						driver.getDriverConfigurazioneDB().createPortaApplicativa(pa);
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(pa.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pa);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PA, pa.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pa.getTipoSoggettoProprietario());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, pa.getNomeSoggettoProprietario());
-						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(pa.getIdSoggetto());
-							String server = sogg.getPortaDominio();
-							operazioneDaSmistare.setPdd(server);
-						}
-						doSetDati = true;
 					}
 					// RoutingTable
 					if (oggetto instanceof RoutingTable) {
 						RoutingTable rt = (RoutingTable) oggetto;
 						driver.getDriverConfigurazioneDB().createRoutingTable(rt);
-						doSetDati = false;
 					}
 					// GestioneErrore
 					if (oggetto instanceof GestioneErrore) {
 						GestioneErrore gestErrore = (GestioneErrore) oggetto;
 						driver.getDriverConfigurazioneDB().createGestioneErroreComponenteCooperazione(gestErrore);
-
-						doSetDati = false;
 					}
 					// Configurazione
 					if (oggetto instanceof Configurazione) {
 						Configurazione conf = (Configurazione) oggetto;
 						driver.getDriverConfigurazioneDB().createConfigurazione(conf);
-
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoRegistro
 					if (oggetto instanceof AccessoRegistro) {
 						AccessoRegistro cfgAccessoRegistro = (AccessoRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().createAccessoRegistro(cfgAccessoRegistro);
-
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoRegistroRegistro
 					if (oggetto instanceof AccessoRegistroRegistro) {
 						AccessoRegistroRegistro carr = (AccessoRegistroRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().createAccessoRegistro(carr);
-
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoConfigurazione
 					if (oggetto instanceof AccessoConfigurazione) {
 						AccessoConfigurazione accesso = (AccessoConfigurazione) oggetto;
 						driver.getDriverConfigurazioneDB().createAccessoConfigurazione(accesso);
-
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoDatiAutorizzazione
 					if (oggetto instanceof AccessoDatiAutorizzazione) {
 						AccessoDatiAutorizzazione accesso = (AccessoDatiAutorizzazione) oggetto;
 						driver.getDriverConfigurazioneDB().createAccessoDatiAutorizzazione(accesso);
-
-						doSetDati = false;
 					}
 					// ConfigurazioneSystemProperty
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().createSystemPropertiesPdD(sps);
-
-						doSetDati = false;
 					}
 					// ConfigurazioneUrlInvocazioneRegola
 					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
 						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
 						driver.getDriverConfigurazioneDB().createUrlInvocazioneRegola(regola);
-	
-						doSetDati = false;
 					}
 
 					/***********************************************************
@@ -3927,168 +3630,43 @@ public class ControlStationCore {
 					if (oggetto instanceof PortaDominio && !(oggetto instanceof PdDControlStation)) {
 						PortaDominio pdd = (PortaDominio) oggetto;
 						driver.getDriverRegistroServiziDB().createPortaDominio(pdd);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(pdd.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
-						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
-
-						doSetDati = true;
 					}
 					
 					// Gruppo
 					if (oggetto instanceof Gruppo) {
 						Gruppo gruppo = (Gruppo) oggetto;
 						driver.getDriverRegistroServiziDB().createGruppo(gruppo);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(gruppo.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.gruppo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_GRUPPO, gruppo.getNome());
-
-						doSetDati = true;
 					}
 					
 					// Ruolo
 					if (oggetto instanceof Ruolo) {
 						Ruolo ruolo = (Ruolo) oggetto;
 						driver.getDriverRegistroServiziDB().createRuolo(ruolo);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(ruolo.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_RUOLO, ruolo.getNome());
-
-						doSetDati = true;
 					}
 					
 					// Scope
 					if (oggetto instanceof Scope) {
 						Scope scope = (Scope) oggetto;
 						driver.getDriverRegistroServiziDB().createScope(scope);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(scope.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.scope);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SCOPE, scope.getNome());
-
-						doSetDati = true;
 					}
 
 					// AccordoServizio
 					if (oggetto instanceof AccordoServizioParteComune) {
 						AccordoServizioParteComune as = (AccordoServizioParteComune) oggetto;
 						driver.getDriverRegistroServiziDB().createAccordoServizioParteComune(as);
-
-						// voglio 2 operazioni in coda, 1 viene aggiunta
-						// alla
-						// fine dello switch e
-						// l altra viene aggiunta subito
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(as.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						if(as.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
-						}
-						if(as.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
-						}
-						// inserisco in lista l'operazione
-						operazioneDaSmistareList.add(operazioneDaSmistare);
-
-						// OPERAZIONI PER RepositoryAutorizzazioni
-						// preparo operazione da smistare
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(as.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						if(as.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
-						}
-						if(as.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
-						}
-						// inserisco in lista l'operazione
-						operazioneDaSmistareList.add(operazioneDaSmistare);
-
-						// preparo l'altra operazione da aggiungere
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(as.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome() + "Correlato");
-						if(as.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
-						}
-						if(as.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
-						}
-						doSetDati = true;
-
 					}
 
 					// AccordoCooperazione
 					if (oggetto instanceof AccordoCooperazione) {
 						AccordoCooperazione ac = (AccordoCooperazione) oggetto;
 						driver.getDriverRegistroServiziDB().createAccordoCooperazione(ac);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(ac.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoCooperazione);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, ac.getNome());
-						if(ac.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, ac.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, ac.getSoggettoReferente().getNome());
-						}
-						if(ac.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, ac.getVersione().intValue()+"");
-						}
-
-						doSetDati = true;
 					}
 
 					// Servizio
 					// Servizio Correlato
 					if (oggetto instanceof AccordoServizioParteSpecifica) {
 						AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) oggetto;
-
 						driver.getDriverRegistroServiziDB().createAccordoServizioParteSpecifica(asps);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(asps.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizio);
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, asps.getTipoSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, asps.getNomeSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SERVIZIO, asps.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO, asps.getNome());
-						if(asps.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, asps.getVersione().intValue()+"");
-						}
-
-						doSetDati = true;
 					}
 
 					/***********************************************************
@@ -4098,7 +3676,6 @@ public class ControlStationCore {
 					if (oggetto instanceof User) {
 						User user = (User) oggetto;
 						driver.getDriverUsersDB().createUser(user);
-						doSetDati = false;
 					}
 
 					/***********************************************************
@@ -4108,7 +3685,6 @@ public class ControlStationCore {
 					if (oggetto instanceof Filtro) {
 						Filtro filtro = (Filtro) oggetto;
 						driver.getDriverAuditDB().createFiltro(filtro);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4118,14 +3694,12 @@ public class ControlStationCore {
 					if(oggetto instanceof ConfigurazionePolicy) {
 						ConfigurazionePolicy policy = (ConfigurazionePolicy) oggetto;
 						driver.createConfigurazionePolicy(policy);
-						doSetDati = false;
 					}
 					
 					// Attivazione Policy
 					if(oggetto instanceof AttivazionePolicy) {
 						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
 						driver.createAttivazionePolicy(policy);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4135,7 +3709,6 @@ public class ControlStationCore {
 					if(oggetto instanceof GenericProperties) {
 						GenericProperties genericProperties = (GenericProperties) oggetto;
 						driver.getDriverConfigurazioneDB().createGenericProperties(genericProperties);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4145,21 +3718,18 @@ public class ControlStationCore {
 					if(oggetto instanceof RegistroPlugin) {
 						RegistroPlugin registroPlugin = (RegistroPlugin) oggetto;
 						driver.getDriverConfigurazioneDB().createRegistroPlugin(registroPlugin);
-						doSetDati = false;
 					}
 					
 					// Registro Plugin Archivio
 					if(oggetto instanceof RegistroPluginArchivio) {
 						RegistroPluginArchivio registroPlugin = (RegistroPluginArchivio) oggetto;
 						driver.getDriverConfigurazioneDB().createRegistroPluginArchivio(registroPlugin.getNomePlugin(), registroPlugin);
-						doSetDati = false;
 					}
 					
 					// Plugin Classi
 					if(oggetto instanceof Plugin) {
 						Plugin plugin = (Plugin) oggetto;
 						driver.createPluginClassi(plugin);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4169,13 +3739,11 @@ public class ControlStationCore {
 					if(oggetto instanceof Allarme) {
 						Allarme allarme = (Allarme) oggetto;
 						driver.createAllarme(allarme);
-						doSetDati = false;
 					}
 					// Allarmi History
 					if(oggetto instanceof AllarmeHistory) {
 						AllarmeHistory allarme = (AllarmeHistory) oggetto;
 						driver.createHistoryAllarme(allarme);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4196,19 +3764,6 @@ public class ControlStationCore {
 					if (oggetto instanceof PdDControlStation) {
 						PdDControlStation pdd = (PdDControlStation) oggetto;
 						driver.updatePdDControlStation(pdd);
-
-						// Una volta modificata la PdD avvio il thread di
-						// gestione (a meno che non sia esterna)
-						pddGestore = pdd;
-						pddGestoreTipoOperazione = operationType;
-												
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(pdd.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
-						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
-						doSetDati = true;
 					}
 
 
@@ -4239,28 +3794,6 @@ public class ControlStationCore {
 							sogConf.setOldIDSoggettoForUpdate(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
 						}
 						driver.getDriverConfigurazioneDB().updateSoggetto(sogConf);
-
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(soggetto.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						if(this.registroServiziLocale){
-							operazioneDaSmistare.setPdd(soggetto.getSoggettoReg().getPortaDominio());
-						}
-
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, soggetto.getOldTipoForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, soggetto.getOldNomeForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, soggetto.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, soggetto.getNome());
-
-						// operazioneDaSmistare.setOldNomeSoggetto(soggetto.getSoggettoConf().getOldNomeForUpdate());
-						// operazioneDaSmistare.setOldTipoSoggetto(soggetto.getSoggettoConf().getOldTipoForUpdate());
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
-
-						doSetDati = true;
 					}
 					
 					
@@ -4269,21 +3802,6 @@ public class ControlStationCore {
 						
 						org.openspcoop2.core.config.Soggetto sogConf = (org.openspcoop2.core.config.Soggetto) oggetto;
 						driver.getDriverConfigurazioneDB().updateSoggetto(sogConf);
-
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(sogConf.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						if(sogConf.getOldIDSoggettoForUpdate()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, sogConf.getOldIDSoggettoForUpdate().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, sogConf.getOldIDSoggettoForUpdate().getNome());
-						}
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogConf.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogConf.getNome());
-
-						doSetDati = true;
 
 					}
 					
@@ -4295,25 +3813,6 @@ public class ControlStationCore {
 						if(this.registroServiziLocale){
 							driver.getDriverRegistroServiziDB().updateSoggetto(sogReg);
 						}
-
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(sogReg.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						if(sogReg.getOldIDSoggettoForUpdate()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, sogReg.getOldIDSoggettoForUpdate().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, sogReg.getOldIDSoggettoForUpdate().getNome());
-						}
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogReg.getNome());
-
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
-						operazioneDaSmistare.setPdd(sogReg.getPortaDominio());
-						
-						doSetDati = true;
 
 					}
 					
@@ -4330,30 +3829,6 @@ public class ControlStationCore {
 							sa.setIdSoggetto(DBUtils.getIdSoggetto(sa.getNomeSoggettoProprietario(), sa.getTipoSoggettoProprietario(), con, this.tipoDB, CostantiDB.SOGGETTI));
 						}
 
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(sa.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizioApplicativo);
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO_APPLICATIVO, sa.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sa.getTipoSoggettoProprietario());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sa.getNomeSoggettoProprietario());
-						
-						if(sa.getOldIDServizioApplicativoForUpdate()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SERVIZIO_APPLICATIVO, sa.getOldIDServizioApplicativoForUpdate().getNome());
-							if(sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario()!=null){
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo());
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getNome());
-							}
-						}
-
-						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(sa.getIdSoggetto());
-							operazioneDaSmistare.setPdd(sogg.getPortaDominio());
-						}
-
-						doSetDati = true;
 					}
 					// PortaDelegata
 					if (oggetto instanceof PortaDelegata) {
@@ -4362,27 +3837,6 @@ public class ControlStationCore {
 						if (pd.getIdSoggetto() == null || pd.getIdSoggetto() < 0) {
 							pd.setIdSoggetto(DBUtils.getIdSoggetto(pd.getNomeSoggettoProprietario(), pd.getTipoSoggettoProprietario(), con, this.tipoDB, CostantiDB.SOGGETTI));
 						}
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(pd.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pd);
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PD, pd.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, pd.getNomeSoggettoProprietario());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pd.getTipoSoggettoProprietario());
-						
-						if(pd.getOldIDPortaDelegataForUpdate()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_PD, pd.getOldIDPortaDelegataForUpdate().getNome());
-						}
-						
-						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(pd.getIdSoggetto());
-							String server = sogg.getPortaDominio();
-							operazioneDaSmistare.setPdd(server);
-						}
-						doSetDati = true;
 					}
 					// PortaApplivativa
 					if (oggetto instanceof PortaApplicativa) {
@@ -4391,81 +3845,51 @@ public class ControlStationCore {
 						if (pa.getIdSoggetto() == null || pa.getIdSoggetto() < 0) {
 							pa.setIdSoggetto(DBUtils.getIdSoggetto(pa.getNomeSoggettoProprietario(), pa.getTipoSoggettoProprietario(), con, this.tipoDB, CostantiDB.SOGGETTI));
 						}
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(pa.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pa);
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PA, pa.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, pa.getNomeSoggettoProprietario());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pa.getTipoSoggettoProprietario());
-						
-						if(pa.getOldIDPortaApplicativaForUpdate()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_PA, pa.getOldIDPortaApplicativaForUpdate().getNome());
-						}
-						
-						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(pa.getIdSoggetto());
-							String server = sogg.getPortaDominio();
-							operazioneDaSmistare.setPdd(server);
-						}
-
-						doSetDati = true;
 					}
 					// RoutingTable
 					if (oggetto instanceof RoutingTable) {
 						RoutingTable rt = (RoutingTable) oggetto;
 						driver.getDriverConfigurazioneDB().updateRoutingTable(rt);
-						doSetDati = false;
 					}
 					// GestioneErrore
 					if (oggetto instanceof GestioneErrore) {
 						GestioneErrore gestErrore = (GestioneErrore) oggetto;
 						driver.getDriverConfigurazioneDB().updateGestioneErroreComponenteCooperazione(gestErrore);
-						doSetDati = false;
 					}
 					// Configurazione
 					if (oggetto instanceof Configurazione) {
 						Configurazione conf = (Configurazione) oggetto;
 						driver.getDriverConfigurazioneDB().updateConfigurazione(conf);
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoRegistro
 					if (oggetto instanceof AccessoRegistro) {
 						AccessoRegistro cfgAccessoRegistro = (AccessoRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().updateAccessoRegistro(cfgAccessoRegistro);
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoRegistroRegistro
 					if (oggetto instanceof AccessoRegistroRegistro) {
 						AccessoRegistroRegistro carr = (AccessoRegistroRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().updateAccessoRegistro(carr);
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoConfigurazione
 					if (oggetto instanceof AccessoConfigurazione) {
 						AccessoConfigurazione accesso = (AccessoConfigurazione) oggetto;
 						driver.getDriverConfigurazioneDB().updateAccessoConfigurazione(accesso);
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoDatiAutorizzazione
 					if (oggetto instanceof AccessoDatiAutorizzazione) {
 						AccessoDatiAutorizzazione accesso = (AccessoDatiAutorizzazione) oggetto;
 						driver.getDriverConfigurazioneDB().updateAccessoDatiAutorizzazione(accesso);
-						doSetDati = false;
 					}
 					// SystemProperties
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().updateSystemPropertiesPdD(sps);
-						doSetDati = false;
 					}
 					// ConfigurazioneUrlInvocazioneRegola
 					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
 						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
 						driver.getDriverConfigurazioneDB().updateUrlInvocazioneRegola(regola);
-						doSetDati = false;
 					}
 					// ConfigurazioneUrlInvocazione
 					if (oggetto instanceof ConfigurazioneUrlInvocazione) {
@@ -4481,7 +3905,6 @@ public class ControlStationCore {
 						}
 						
 						driver.getDriverConfigurazioneDB().updateConfigurazione(config);
-						doSetDati = false;
 					}
 
 					/***********************************************************
@@ -4491,204 +3914,49 @@ public class ControlStationCore {
 					if (oggetto instanceof PortaDominio && !(oggetto instanceof PdDControlStation)) {
 						PortaDominio pdd = (PortaDominio) oggetto;
 						driver.getDriverRegistroServiziDB().updatePortaDominio(pdd);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(pdd.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
-						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
-
-						doSetDati = true;
 					}
 					
 					// Gruppo
 					if (oggetto instanceof Gruppo) {
 						Gruppo gruppo = (Gruppo) oggetto;
 						driver.getDriverRegistroServiziDB().updateGruppo(gruppo);
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(gruppo.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.gruppo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_GRUPPO, gruppo.getNome());
-						IDGruppo idGruppoOLD = gruppo.getOldIDGruppoForUpdate();
-						if(idGruppoOLD!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_GRUPPO, idGruppoOLD.getNome());
-						}
-						doSetDati = true;
 					}
 
 					// Ruolo
 					if (oggetto instanceof Ruolo) {
 						Ruolo ruolo = (Ruolo) oggetto;
 						driver.getDriverRegistroServiziDB().updateRuolo(ruolo);
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(ruolo.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_RUOLO, ruolo.getNome());
-						IDRuolo idRuoloOLD = ruolo.getOldIDRuoloForUpdate();
-						if(idRuoloOLD!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_RUOLO, idRuoloOLD.getNome());
-						}
-						doSetDati = true;
 					}
 					
 					// Scope
 					if (oggetto instanceof Scope) {
 						Scope scope = (Scope) oggetto;
 						driver.getDriverRegistroServiziDB().updateScope(scope);
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(scope.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.scope);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SCOPE, scope.getNome());
-						IDScope idScopeOLD = scope.getOldIDScopeForUpdate();
-						if(idScopeOLD!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SCOPE, idScopeOLD.getNome());
-						}
-						doSetDati = true;
 					}
 					
 					// AccordoServizio
 					if (oggetto instanceof AccordoServizioParteComune) {
 						AccordoServizioParteComune as = (AccordoServizioParteComune) oggetto;
 						driver.getDriverRegistroServiziDB().updateAccordoServizioParteComune(as);
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(as.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						if(as.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
-						}
-						if(as.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
-						}
-						IDAccordo idAccordoOLD = as.getOldIDAccordoForUpdate();
-						if(idAccordoOLD!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_ACCORDO, idAccordoOLD.getNome());
-							if(idAccordoOLD.getVersione()!=null){
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_VERSIONE_ACCORDO, idAccordoOLD.getVersione().intValue()+"");
-							}
-							if(idAccordoOLD.getSoggettoReferente()!=null){
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_REFERENTE, idAccordoOLD.getSoggettoReferente().getTipo());
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_REFERENTE, idAccordoOLD.getSoggettoReferente().getNome());
-							}else{
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_REFERENTE, null);
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_REFERENTE, null);
-							}
-						}
-						doSetDati = true;
 					}
 
 					// AccordoCooperazione
 					if (oggetto instanceof AccordoCooperazione) {
 						AccordoCooperazione ac = (AccordoCooperazione) oggetto;
 						driver.getDriverRegistroServiziDB().updateAccordoCooperazione(ac);
-
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(ac.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoCooperazione);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, ac.getNome());
-						if(ac.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, ac.getVersione().intValue()+"");
-						}
-						if(ac.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, ac.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, ac.getSoggettoReferente().getNome());
-						}
-
-						IDAccordoCooperazione idAccordoOLD = ac.getOldIDAccordoForUpdate();
-						if(idAccordoOLD!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_ACCORDO, idAccordoOLD.getNome());
-							if(idAccordoOLD.getVersione()!=null){
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_VERSIONE_ACCORDO, idAccordoOLD.getVersione().intValue()+"");
-							}
-							if(idAccordoOLD.getSoggettoReferente()!=null){
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_REFERENTE, idAccordoOLD.getSoggettoReferente().getTipo());
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_REFERENTE, idAccordoOLD.getSoggettoReferente().getNome());
-							}else{
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_REFERENTE, null);
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_REFERENTE, null);
-							}
-						}
-
-						doSetDati = true;
 					}
 
 					// Servizio
 					// Servizio Correlato
 					if (oggetto instanceof AccordoServizioParteSpecifica) {
 						AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) oggetto;
-
 						driver.getDriverRegistroServiziDB().updateAccordoServizioParteSpecifica(asps);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(asps.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizio);
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, asps.getTipoSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, asps.getNomeSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SERVIZIO, asps.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO, asps.getNome());
-						if(asps.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, asps.getVersione().intValue()+"");
-						}
-						
-						if(asps.getOldIDServizioForUpdate()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SERVIZIO, asps.getOldIDServizioForUpdate().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SERVIZIO, asps.getOldIDServizioForUpdate().getNome());
-							if(asps.getOldIDServizioForUpdate().getSoggettoErogatore()!=null){
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo());
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome());
-							}
-							if(asps.getOldIDServizioForUpdate().getVersione()!=null){
-								operazioneDaSmistare.addParameter(OperationsParameter.OLD_VERSIONE_ACCORDO, asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
-							}
-						}
-
-						doSetDati = true;
-
 					}
 
 					// PortType
 					if (oggetto instanceof PortType) {
 						PortType pt = (PortType) oggetto;
 						driver.getDriverRegistroServiziDB().updatePortType(pt);
-
-						// Chiedo la setDati per l'accordo servizio
-						long idAcc = pt.getIdAccordo();
-						AccordoServizioParteComune as = driver.getDriverRegistroServiziDB().getAccordoServizioParteComune(idAcc);
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(pt.getIdAccordo().intValue());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						if(as.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
-						}
-						if(as.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
-						}
-
-						doSetDati = true;
 					}
 
 					/***********************************************************
@@ -4698,7 +3966,6 @@ public class ControlStationCore {
 					if (oggetto instanceof User) {
 						User user = (User) oggetto;
 						driver.getDriverUsersDB().updateUser(user);
-						doSetDati = false;
 					}
 
 					/***********************************************************
@@ -4709,14 +3976,12 @@ public class ControlStationCore {
 						org.openspcoop2.web.lib.audit.dao.Configurazione confAudit = 
 								(org.openspcoop2.web.lib.audit.dao.Configurazione) oggetto;
 						driver.getDriverAuditDB().updateConfigurazione(confAudit);
-						doSetDati = false;
 					}
 
 					// Filtro
 					if (oggetto instanceof Filtro) {
 						Filtro filtro = (Filtro) oggetto;
 						driver.getDriverAuditDB().updateFiltro(filtro);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4727,21 +3992,18 @@ public class ControlStationCore {
 					if(oggetto instanceof ConfigurazioneGenerale) {
 						ConfigurazioneGenerale configurazioneControlloTraffico = (ConfigurazioneGenerale) oggetto;
 						driver.updateConfigurazioneControlloTraffico(configurazioneControlloTraffico);
-						doSetDati = false;
 					}
 
 					// Configurazione Policy
 					if(oggetto instanceof ConfigurazionePolicy) {
 						ConfigurazionePolicy policy = (ConfigurazionePolicy) oggetto;
 						driver.updateConfigurazionePolicy(policy);
-						doSetDati = false;
 					}
 					
 					// Attivazione Policy
 					if(oggetto instanceof AttivazionePolicy) {
 						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
 						driver.updateAttivazionePolicy(policy);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4751,7 +4013,6 @@ public class ControlStationCore {
 					if(oggetto instanceof GenericProperties) {
 						GenericProperties genericProperties = (GenericProperties) oggetto;
 						driver.getDriverConfigurazioneDB().updateGenericProperties(genericProperties);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4765,21 +4026,18 @@ public class ControlStationCore {
 							nome = registroPlugin.getOldNome();
 						}
 						driver.getDriverConfigurazioneDB().updateDatiRegistroPlugin(nome,registroPlugin);
-						doSetDati = false;
 					}
 					
 					// Registro Plugin Archivio
 					if(oggetto instanceof RegistroPluginArchivio) {
 						RegistroPluginArchivio registroPlugin = (RegistroPluginArchivio) oggetto;
 						driver.getDriverConfigurazioneDB().updateRegistroPluginArchivio(registroPlugin.getNomePlugin(),registroPlugin);
-						doSetDati = false;
 					}
 					
 					// Plugin Classi
 					if(oggetto instanceof Plugin) {
 						Plugin plugin = (Plugin) oggetto;
 						driver.updatePluginClassi(plugin);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4789,7 +4047,6 @@ public class ControlStationCore {
 					if(oggetto instanceof Allarme) {
 						Allarme allarme = (Allarme) oggetto;
 						driver.updateAllarme(allarme);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -4811,53 +4068,16 @@ public class ControlStationCore {
 					if (oggetto instanceof PdDControlStation) {
 						PdDControlStation pdd = (PdDControlStation) oggetto;
 						driver.deletePdDControlStation(pdd);
-
-						// Una volta modificata la PdD avvio il thread di
-						// gestione (a meno che non sia esterna)
-						pddGestore = pdd;
-						pddGestoreTipoOperazione = operationType;
-						
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(pdd.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
-						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
-
-						doSetDati = true;
 					}
 
 					if (oggetto instanceof MappingFruizionePortaDelegata) {
 						MappingFruizionePortaDelegata mapping = (MappingFruizionePortaDelegata) oggetto;
 						driver.deleteMappingFruizionePortaDelegata(mapping);
-						
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						//operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
-						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_FRUITORE, "" + driver.getTableIdSoggetto(mapping.getIdFruitore()));
-						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_SERVIZIO, "" + driver.getTableIdAccordoServizioParteSpecifica(mapping.getIdServizio()));
-						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_PORTA_DELEGATA, "" + driver.getTableIdPortaDelegata(mapping.getIdPortaDelegata()));
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingFruizionePD);
-
-						doSetDati = false;
-
 					}
 					
 					if (oggetto instanceof MappingErogazionePortaApplicativa) {
 						MappingErogazionePortaApplicativa mapping = (MappingErogazionePortaApplicativa) oggetto;
 						driver.deleteMappingErogazionePortaApplicativa(mapping);
-						
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						//operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
-						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_SERVIZIO, "" + driver.getTableIdAccordoServizioParteSpecifica(mapping.getIdServizio()));
-						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_PORTA_APPLICATIVA, "" + driver.getTableIdPortaApplicativa(mapping.getIdPortaApplicativa()));
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingErogazionePA);
-
-						doSetDati = false;
-
 					}
 					
 					
@@ -4877,19 +4097,6 @@ public class ControlStationCore {
 							driver.getDriverConfigurazioneDB().deleteSoggetto(soggetto.getSoggettoConf());
 						}
 
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(soggetto.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						if(soggetto.getSoggettoReg()!=null){
-							operazioneDaSmistare.setPdd(soggetto.getSoggettoReg().getPortaDominio());
-						}
-
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, soggetto.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, soggetto.getNome());
-
-						doSetDati = true;
 					}
 					
 					// soggetto config
@@ -4897,17 +4104,6 @@ public class ControlStationCore {
 						
 						org.openspcoop2.core.config.Soggetto sogConf = (org.openspcoop2.core.config.Soggetto) oggetto;
 						driver.getDriverConfigurazioneDB().deleteSoggetto(sogConf);
-
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(sogConf.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogConf.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogConf.getNome());
-
-						doSetDati = true;
 
 					}
 					
@@ -4919,21 +4115,6 @@ public class ControlStationCore {
 						if(this.registroServiziLocale){
 							driver.getDriverRegistroServiziDB().deleteSoggetto(sogReg);
 						}
-
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(sogReg.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogReg.getNome());
-
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
-						operazioneDaSmistare.setPdd(sogReg.getPortaDominio());
-						
-						doSetDati = true;
 
 					}
 					
@@ -4947,121 +4128,61 @@ public class ControlStationCore {
 					if (oggetto instanceof ServizioApplicativo) {
 						ServizioApplicativo sa = (ServizioApplicativo) oggetto;
 						driver.getDriverConfigurazioneDB().deleteServizioApplicativo(sa);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(sa.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizioApplicativo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO_APPLICATIVO, sa.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sa.getNomeSoggettoProprietario());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sa.getTipoSoggettoProprietario());
-						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sogg = null;
-							if(sa.getIdSoggetto()!=null && sa.getIdSoggetto()>0){
-								sogg = driver.getDriverRegistroServiziDB().getSoggetto(sa.getIdSoggetto());
-							}
-							else{
-								sogg = driver.getDriverRegistroServiziDB().getSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-							}	
-							operazioneDaSmistare.setPdd(sogg.getPortaDominio());
-						}
-
-						doSetDati = true;
 					}
 					// PortaDelegata
 					if (oggetto instanceof PortaDelegata) {
 						PortaDelegata pd = (PortaDelegata) oggetto;
 						driver.getDriverConfigurazioneDB().deletePortaDelegata(pd);
-						// Chiedo la setDati
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(pd.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pd);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PD, pd.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, pd.getNomeSoggettoProprietario());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pd.getTipoSoggettoProprietario());
-						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sogg = soggettiCore.getSoggettoRegistro(new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
-							String server = sogg.getPortaDominio();
-							operazioneDaSmistare.setPdd(server);
-						}
-						doSetDati = true;
 					}
 					// PortaApplivativa
 					if (oggetto instanceof PortaApplicativa) {
 						PortaApplicativa pa = (PortaApplicativa) oggetto;
 						driver.getDriverConfigurazioneDB().deletePortaApplicativa(pa);
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(pa.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pa);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PA, pa.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, pa.getNomeSoggettoProprietario());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pa.getTipoSoggettoProprietario());
-						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sogg = soggettiCore.getSoggettoRegistro(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
-							String server = sogg.getPortaDominio();
-							operazioneDaSmistare.setPdd(server);
-						}
-
-						doSetDati = true;
 					}
 					// RoutingTable
 					if (oggetto instanceof RoutingTable) {
 						RoutingTable rt = (RoutingTable) oggetto;
 						driver.getDriverConfigurazioneDB().deleteRoutingTable(rt);
-						doSetDati = false;
 					}
 					// GestioneErrore
 					if (oggetto instanceof GestioneErrore) {
 						GestioneErrore gestErrore = (GestioneErrore) oggetto;
 						driver.getDriverConfigurazioneDB().deleteGestioneErroreComponenteCooperazione(gestErrore);
-						doSetDati = false;
 					}
 					// Configurazione
 					if (oggetto instanceof Configurazione) {
 						Configurazione conf = (Configurazione) oggetto;
 						driver.getDriverConfigurazioneDB().deleteConfigurazione(conf);
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoRegistro
 					if (oggetto instanceof AccessoRegistro) {
 						AccessoRegistro cfgAccessoRegistro = (AccessoRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().deleteAccessoRegistro(cfgAccessoRegistro);
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoRegistroRegistro
 					if (oggetto instanceof AccessoRegistroRegistro) {
 						AccessoRegistroRegistro carr = (AccessoRegistroRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().deleteAccessoRegistro(carr);
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoConfigurazione
 					if (oggetto instanceof AccessoConfigurazione) {
 						AccessoConfigurazione accesso = (AccessoConfigurazione) oggetto;
 						driver.getDriverConfigurazioneDB().deleteAccessoConfigurazione(accesso);
-						doSetDati = false;
 					}
 					// ConfigurazioneAccessoDatiAutorizzazione
 					if (oggetto instanceof AccessoDatiAutorizzazione) {
 						AccessoDatiAutorizzazione accesso = (AccessoDatiAutorizzazione) oggetto;
 						driver.getDriverConfigurazioneDB().deleteAccessoDatiAutorizzazione(accesso);
-						doSetDati = false;
 					}
 					// SystemProperties
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().deleteSystemPropertiesPdD(sps);
-						doSetDati = false;
 					}
 					// ConfigurazioneUrlInvocazioneRegola
 					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
 						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
 						driver.getDriverConfigurazioneDB().deleteUrlInvocazioneRegola(regola);
-						doSetDati = false;
 					}
 
 					/***********************************************************
@@ -5071,156 +4192,43 @@ public class ControlStationCore {
 					if (oggetto instanceof PortaDominio && !(oggetto instanceof PdDControlStation)) {
 						PortaDominio pdd = (PortaDominio) oggetto;
 						driver.getDriverRegistroServiziDB().deletePortaDominio(pdd);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(pdd.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
-						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
-
-						doSetDati = true;
 					}
 					
 					// Ruolo
 					if (oggetto instanceof Gruppo) {
 						Gruppo gruppo = (Gruppo) oggetto;
 						driver.getDriverRegistroServiziDB().deleteGruppo(gruppo);
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(gruppo.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.gruppo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_GRUPPO, gruppo.getNome());
-						operazioneDaSmistareList.add(operazioneDaSmistare);
 					}
 
 					// Ruolo
 					if (oggetto instanceof Ruolo) {
 						Ruolo ruolo = (Ruolo) oggetto;
 						driver.getDriverRegistroServiziDB().deleteRuolo(ruolo);
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(ruolo.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_RUOLO, ruolo.getNome());
-						operazioneDaSmistareList.add(operazioneDaSmistare);
 					}
 					
 					// Scope
 					if (oggetto instanceof Scope) {
 						Scope scope = (Scope) oggetto;
 						driver.getDriverRegistroServiziDB().deleteScope(scope);
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(scope.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.scope);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SCOPE, scope.getNome());
-						operazioneDaSmistareList.add(operazioneDaSmistare);
 					}
 					
 					// AccordoServizio
 					if (oggetto instanceof AccordoServizioParteComune) {
 						AccordoServizioParteComune as = (AccordoServizioParteComune) oggetto;
 						driver.getDriverRegistroServiziDB().deleteAccordoServizioParteComune(as);
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(as.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						if(as.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
-						}
-						if(as.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
-						}
-						operazioneDaSmistareList.add(operazioneDaSmistare);
-
-						// OPERAZIONI PER RepositoryAutorizzazioni
-						// preparo operazione da smistare
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(as.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						if(as.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
-						}
-						if(as.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
-						}
-						// inserisco in lista l'operazione
-						operazioneDaSmistareList.add(operazioneDaSmistare);
-
-						// preparo l'altra operazione da aggiungere
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(as.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome() + "Correlato");
-						if(as.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
-						}
-						if(as.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
-						}
-
-						doSetDati = true;
 					}
 
 					// AccordoCooperazione
 					if (oggetto instanceof AccordoCooperazione) {
 						AccordoCooperazione ac = (AccordoCooperazione) oggetto;
 						driver.getDriverRegistroServiziDB().deleteAccordoCooperazione(ac);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(ac.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoCooperazione);
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, ac.getNome());
-						if(ac.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, ac.getVersione().intValue()+"");
-						}
-						if(ac.getSoggettoReferente()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, ac.getSoggettoReferente().getTipo());
-							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, ac.getSoggettoReferente().getNome());
-						}
-
-						doSetDati = true;
 					}
 
 					// Servizio
 					// Servizio Correlato
 					if (oggetto instanceof AccordoServizioParteSpecifica) {
 						AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) oggetto;
-						
 						driver.getDriverRegistroServiziDB().deleteAccordoServizioParteSpecifica(asps);
-
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(asps.getId());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizio);
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, asps.getTipoSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, asps.getNomeSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SERVIZIO, asps.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO, asps.getNome());
-						if(asps.getVersione()!=null){
-							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, asps.getVersione().intValue()+"");
-						}
-
-						doSetDati = true;
-
 					}
 
 					/***********************************************************
@@ -5230,7 +4238,6 @@ public class ControlStationCore {
 					if (oggetto instanceof User) {
 						User user = (User) oggetto;
 						driver.getDriverUsersDB().deleteUser(user);
-						doSetDati = false;
 					}
 
 					/***********************************************************
@@ -5240,7 +4247,6 @@ public class ControlStationCore {
 					if (oggetto instanceof Filtro) {
 						Filtro filtro = (Filtro) oggetto;
 						driver.getDriverAuditDB().deleteFiltro(filtro);
-						doSetDati = false;
 					}
 
 					// Operation
@@ -5248,7 +4254,6 @@ public class ControlStationCore {
 						org.openspcoop2.web.lib.audit.log.Operation auditOp = 
 								(org.openspcoop2.web.lib.audit.log.Operation) oggetto;
 						driver.getDriverAuditDBAppender().deleteOperation(auditOp);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -5258,7 +4263,6 @@ public class ControlStationCore {
 					if(oggetto instanceof ConfigurazionePolicy) {
 						ConfigurazionePolicy policy = (ConfigurazionePolicy) oggetto;
 						driver.deleteConfigurazionePolicy(policy); 
-						doSetDati = false;
 					}
 					
 					// Attivazione Policy
@@ -5278,7 +4282,6 @@ public class ControlStationCore {
 								// ignore
 							}
 						}
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -5288,7 +4291,6 @@ public class ControlStationCore {
 					if(oggetto instanceof GenericProperties) {
 						GenericProperties genericProperties = (GenericProperties) oggetto;
 						driver.getDriverConfigurazioneDB().deleteGenericProperties(genericProperties);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -5298,21 +4300,18 @@ public class ControlStationCore {
 					if(oggetto instanceof RegistroPlugin) {
 						RegistroPlugin registroPlugin = (RegistroPlugin) oggetto;
 						driver.getDriverConfigurazioneDB().deleteRegistroPlugin(registroPlugin);
-						doSetDati = false;
 					}
 					
 					// Registro Plugin Archivio
 					if(oggetto instanceof RegistroPluginArchivio) {
 						RegistroPluginArchivio registroPlugin = (RegistroPluginArchivio) oggetto;
 						driver.getDriverConfigurazioneDB().deleteRegistroPluginArchivio(registroPlugin.getNomePlugin(), registroPlugin);
-						doSetDati = false;
 					}
 					
 					// Plugin Classi
 					if(oggetto instanceof Plugin) {
 						Plugin plugin = (Plugin) oggetto;
 						driver.deletePluginClassi(plugin);
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -5335,7 +4334,6 @@ public class ControlStationCore {
 								// ignore
 							}
 						}
-						doSetDati = false;
 					}
 					
 					/***********************************************************
@@ -5353,78 +4351,12 @@ public class ControlStationCore {
 
 				}// fine switch
 
-				// inserisco l'operazione nella lista
-				if (doSetDati) {
-					operazioneDaSmistareList.add(operazioneDaSmistare);
-				}
 
 			}// chiudo for
-
-			if (doSetDati && smista) {
-				/* Inoltro ogni operazione nella coda dello smistatore */
-
-				// controllo su idTable
-				for (OperazioneDaSmistare operazione : operazioneDaSmistareList) {
-					if ((operazione == null) || (operazione.getIDTable() <= 0)) {
-						// se ci sono degli errori faccio il rollback
-						ControlStationCore.logError("[ControlStationCore::performOperation] Operazione da smistare non valida.");
-
-						// il rollback viene gestito da dal blocco di catch
-						throw new ControlStationCoreException("[ControlStationCore::performOperation]Operazione da smistare non valida.");
-					} else {
-						ControlStationJMSCore.setDati(operazione, this.smistatoreQueue, this.cfName, this.cfProp);
-					}
-				}
-
-			}
-
-			// Prima di committare provo a eseguire lo script se previsto
-			if(pddGestore!=null && this.isSinglePdD()==false){
-				String tipoPdd = pddGestore.getTipo();
-				if (tipoPdd != null && PddTipologia.OPERATIVO.toString().equals(tipoPdd)) {
-					if(this.getSincronizzazionePddEngineEnabled_scriptShell_Path()!=null){
-						if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione || 
-								CostantiControlStation.PERFORM_OPERATION_DELETE == pddGestoreTipoOperazione){
-							ScriptInvoker scriptInvoker = new ScriptInvoker(this.getSincronizzazionePddEngineEnabled_scriptShell_Path());
-							String tipoOperazione = null;
-							if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione){
-								tipoOperazione = CostantiControlStation.SCRIPT_PERFORM_OPERATION_CREATE;
-							}else{
-								tipoOperazione = CostantiControlStation.SCRIPT_PERFORM_OPERATION_DELETE;
-							}
-							String nomeCoda = this.getSincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd() + pddGestore.getNome();
-							scriptInvoker.run(tipoOperazione,nomeCoda,this.getSincronizzazionePddEngineEnabled_scriptShell_Args());
-							String msg = "Invocazione script ["+this.getSincronizzazionePddEngineEnabled_scriptShell_Path()+"] ha ritornato un codice di uscita ["+scriptInvoker.getExitValue()+
-									"] (Param1:"+tipoOperazione+" Param2:"+nomeCoda+" Param3:"+this.getSincronizzazionePddEngineEnabled_scriptShell_Args()+
-									").\nOutputStream: "+scriptInvoker.getOutputStream()+"\nErrorStream: "+scriptInvoker.getErrorStream();
-							if(scriptInvoker.getExitValue()!=0){
-								throw new Exception(msg);
-							}
-							else{
-								ControlStationCore.logDebug(msg);
-							}
-						}
-					}
-				}
-			}
 			
 			// ogni operazione e' andata a buon fine quindi faccio il commit
 			con.commit();
 			
-			// Devo Fermare e ricreare. Potrebbero essere stati modificati dei parametri
-			if(pddGestore!=null && this.isSinglePdD()==false){
-				if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione){
-					GestorePdDInitThread.addGestore(pddGestore);
-				}
-				else if (CostantiControlStation.PERFORM_OPERATION_UPDATE == pddGestoreTipoOperazione){
-					GestorePdDInitThread.deleteGestore(pddGestore.getNome());
-					GestorePdDInitThread.addGestore(pddGestore);
-				}
-				else if (CostantiControlStation.PERFORM_OPERATION_DELETE == pddGestoreTipoOperazione){
-					GestorePdDInitThread.deleteGestore(pddGestore.getNome());	
-				}
-			}
-
 		} catch (Exception e) {
 			ControlStationCore.logError(e.getMessage(),e);
 

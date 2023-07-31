@@ -900,18 +900,12 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<>();
 
-			if(confCore.isSinglePdD()){
-				if(aliases.size()>1){
-					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
-							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD));
-					lstParam.add(new Parameter(descrizioneAlias, 
-							 null));
-				}else{
-					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
-							 null));
-				}
+			if(aliases.size()>1){
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD));
+				lstParam.add(new Parameter(descrizioneAlias, 
+						 null));
 			}else{
-				lstParam.add(new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_LIST));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
 						 null));
 			}

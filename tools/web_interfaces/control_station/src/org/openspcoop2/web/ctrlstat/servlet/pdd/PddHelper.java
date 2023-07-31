@@ -33,14 +33,12 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -49,7 +47,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * PddHelper
@@ -94,7 +91,7 @@ public class PddHelper extends ConsoleHelper {
 	
 	public List<DataElement> addPddToDati(List<DataElement> dati, String nome, String id, String ip, String subject, String password, String confpw, PddTipologia tipo, 
 			TipoOperazione tipoOp, String[] protocolli, String protocollo, String protocolloGestione, int porta, String descrizione, 
-			String ipGestione, int portaGestione, String implementazione, String clientAuth, boolean singlePdd) throws DriverRegistroServiziException {
+			String ipGestione, int portaGestione, String implementazione, String clientAuth) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
@@ -133,124 +130,15 @@ public class PddHelper extends ConsoleHelper {
 		de.setValue(descrizione);
 		de.setSize(this.getSize());
 		dati.add(de);
-
-		if (!singlePdd) {
 			
-			/** Protocollo (solo in caso di pdd control station) */
-			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_PROTOCOLLO);
-			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
-				de.setType(DataElementType.SELECT);
-			}else
-				de.setType(DataElementType.HIDDEN);
-			de.setName(PddCostanti.PARAMETRO_PDD_PROTOCOLLO);
-			de.setValues(protocolli);
-			de.setSelected(protocollo);
-			dati.add(de);
-
-			/** Indirizzo Pubblico (solo in caso di pdd control station) */
-			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_INDIRIZZO_PUBBLICO);
-			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
-			}else
-				de.setType(DataElementType.HIDDEN);
-			de.setName(PddCostanti.PARAMETRO_PDD_INDIRIZZO_PUBBLICO);
-			de.setValue(ip);
-			de.setSize(this.getSize());
-			dati.add(de);
-
-			/** Porta Pubblica (solo in caso di pdd control station) */
-			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_PORTA_PUBBLICA);
-			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
-			}else
-				de.setType(DataElementType.HIDDEN);
-			de.setName(PddCostanti.PARAMETRO_PDD_PORTA_PUBBLICA);
-			de.setValue(porta <= 0 ? PddCostanti.DEFAULT_PDD_PORTA : "" + porta);
-			de.setSize(this.getSize());
-			dati.add(de);
-
-			/** Protocollo Gestione (solo in caso di pdd control station) */
-			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_PROTOCOLLO_GESTIONE);
-			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
-				de.setType(DataElementType.SELECT);
-			}else
-				de.setType(DataElementType.HIDDEN);
-			de.setName(PddCostanti.PARAMETRO_PDD_PROTOCOLLO_GESTIONE);
-			de.setValues(protocolli);
-			de.setSelected(protocolloGestione);
-			dati.add(de);
-			
-			/** Indirizzo Gestione (solo in caso di pdd control station) */
-			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_INDIRIZZO_GESTIONE);
-			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
-			}else
-				de.setType(DataElementType.HIDDEN);
-			de.setName(PddCostanti.PARAMETRO_PDD_INDIRIZZO_GESTIONE);
-			de.setValue(ipGestione);
-			de.setSize(this.getSize());
-			dati.add(de);
-
-			/** Porta Gestione (solo in caso di pdd control station) */
-			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_PORTA_GESTIONE);
-			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
-			}else
-				de.setType(DataElementType.HIDDEN);
-			de.setName(PddCostanti.PARAMETRO_PDD_PORTA_GESTIONE);
-			de.setValue(portaGestione <= 0 ? PddCostanti.DEFAULT_PDD_PORTA : "" + portaGestione);
-			de.setSize(this.getSize());
-			dati.add(de);
-
-			/** Tipologia della Pdd (solo in caso di pdd control station) */
-			// In caso di creazione posso scegliere il tipo che voglio
-			// Se tipo=='esterno' non posso cambiare il tipo
+		/** Tipologia della Pdd */
+		if(!TipoOperazione.ADD.equals(tipoOp)){
 			de = new DataElement();
 			de.setLabel(PddCostanti.LABEL_PDD_TIPOLOGIA);
-			de.setType(DataElementType.SELECT);
+			de.setType(DataElementType.TEXT);
 			de.setName(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
-			if (tipoOp.equals(TipoOperazione.ADD)) {
-				de.setLabels(PddCostanti.getLabelTipi());
-				de.setValues(PddTipologia.TIPI);
-			} else if (tipoOp.equals(TipoOperazione.CHANGE)) {
-				if (tipo.equals(PddTipologia.ESTERNO)) {
-					de.setLabels(PddCostanti.getLabelTipoSoloEsterno());
-					de.setValues(PddTipologia.TIPO_SOLO_ESTERNO);
-				} else {
-					de.setLabels(PddCostanti.getLabelTipiSoloOperativi());
-					de.setValues(PddTipologia.TIPI_SOLO_OPERATIVI);
-				}
-			}
-			de.setSelected(tipo.toString());
-//			if(this.core.isSinglePdD()){
-				de.setPostBack(true);	
-//			}
-//			else{
-//				de.setOnChangeAlternativePostBack("changePdDType()");
-//			}
+			de.setValue(tipo.toString());
 			dati.add(de);
-		}else{
-			
-			/** Tipologia della Pdd */
-			if(TipoOperazione.ADD.equals(tipoOp)==false){
-				// SinglePdD
-				de = new DataElement();
-				de.setLabel(PddCostanti.LABEL_PDD_TIPOLOGIA);
-				de.setType(DataElementType.TEXT);
-				de.setName(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
-				de.setValue(tipo.toString());
-				dati.add(de);
-			}
 		}
 
 		/** Implementazione della Pdd */
@@ -277,23 +165,17 @@ public class PddHelper extends ConsoleHelper {
 		de.setSelected(clientAuth);
 		de.setValues(tipiAuth);
 		de.setSize(this.getSize());
-//		de.setOnChange("CambiaClientAuth('" + tipoOp + "'," + singlePdd + ")");
 		de.setPostBack(true);
 		dati.add(de);
 		
 		/** Subject della Pdd */
 		de = new DataElement();
 		de.setLabel(PddCostanti.LABEL_PDD_SUBJECT);
-		//if (clientAuth != null && clientAuth.equals("abilitato")) {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setValue(StringEscapeUtils.escapeHtml(subject));
 		if (clientAuth != null && clientAuth.equals(CostantiRegistroServizi.ABILITATO.getValue())) {
 			de.setRequired(true);
 		}
-		//}  else {
-		//    de.setType(DataElementType.HIDDEN);
-		//    de.setValue("");
-		//}
 		de.setName(PddCostanti.PARAMETRO_PDD_SUBJECT);
 		de.setSize(this.getSize());
 		dati.add(de);
@@ -303,21 +185,16 @@ public class PddHelper extends ConsoleHelper {
 	
 	
 	// Controlla i dati dei Pdd
-	boolean pddCheckData(TipoOperazione tipoOp, boolean singlePdd)
-			throws Exception {
+	boolean pddCheckData(TipoOperazione tipoOp) throws ControlStationCoreException {
 
 		try{
 
 			String nome = this.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
-			String ip = this.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_PUBBLICO);
-			String ipGestione = this.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_GESTIONE);
 			String tipoParam = this.getParameter(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
 			PddTipologia tipo = PddTipologia.toPddTipologia(tipoParam); 
 			String implementazione = this.getParameter(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
 			String clientAuth = this.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
 			String subject = this.getParameter(PddCostanti.PARAMETRO_PDD_SUBJECT);
-			String porta = this.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_PUBBLICA);
-			String portaGestione = this.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_GESTIONE);
 
 			if (implementazione == null || "".equals(implementazione)) {
 				this.pd.setMessage("Il campo Implementazione deve essere specificato.");
@@ -333,25 +210,14 @@ public class PddHelper extends ConsoleHelper {
 				}
 			}
 
-			if (CostantiConfigurazione.ABILITATO.toString().equals(clientAuth)){
-				if (subject == null || "".equals(subject)) {
-					this.pd.setMessage("&Egrave; necessario specificare il subject in caso di Client Auth abilitato.");
-					return false;
-				}
+			if (CostantiConfigurazione.ABILITATO.toString().equals(clientAuth) &&
+				(subject == null || "".equals(subject))
+				){
+				this.pd.setMessage("&Egrave; necessario specificare il subject in caso di Client Auth abilitato.");
+				return false;
 			}
 
-			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!singlePdd) {
-				if (!tipo.equals(PddTipologia.OPERATIVO) && !tipo.equals(PddTipologia.NONOPERATIVO) && !tipo.equals(PddTipologia.ESTERNO)) {
-					this.pd.setMessage("Tipo dev'essere operativo, non-operativo o esterno");
-					return false;
-				}
-			}
-
-			if (
-					singlePdd 
-					|| 
-					(tipo.equals(PddTipologia.ESTERNO))) {
+			if (tipo.equals(PddTipologia.ESTERNO)) {
 				// campi obbligatori
 
 				// nome
@@ -367,87 +233,29 @@ public class PddHelper extends ConsoleHelper {
 				}
 				
 				// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-				if(singlePdd){
-					if(this.checkNCName(nome, PddCostanti.LABEL_PDD_NOME)==false){
-						return false;
-					}
-				}
-				else{
-					// Le code JMS possono avere vincoli sul nome
-					if(this.checkSimpleName(nome, PddCostanti.LABEL_PDD_NOME)==false){
-						return false;
-					}
+				if(this.checkNCName(nome, PddCostanti.LABEL_PDD_NOME)==false){
+					return false;
 				}
 
 			} else {// in caso di operativo o non-operativo
 				// Campi obbligatori
-				if (nome.equals("") || ip.equals("") || ipGestione.equals("") || porta.equals("") || portaGestione.equals("")) {
+				if (nome.equals("")) {
 					String tmpElenco = "";
 					if (nome.equals("")) {
 						tmpElenco = "Nome";
-					}
-					if (ip.equals("")) {
-						if (tmpElenco.equals("")) {
-							tmpElenco = "Indirizzo IP";
-						} else {
-							tmpElenco = tmpElenco + ", Indirizzo IP";
-						}
-					}
-					if (ipGestione.equals("")) {
-						if (tmpElenco.equals("")) {
-							tmpElenco = "Indirizzo IP Gestione";
-						} else {
-							tmpElenco = tmpElenco + ", Indirizzo IP Gestione";
-						}
-					}
-					if (porta.equals("")) {
-						if (tmpElenco.equals("")) {
-							tmpElenco = "Porta";
-						} else {
-							tmpElenco = tmpElenco + ", Porta";
-						}
-					}
-					if (portaGestione.equals("")) {
-						if (tmpElenco.equals("")) {
-							tmpElenco = "Porta Gestione";
-						} else {
-							tmpElenco = tmpElenco + ", Porta Gestione";
-						}
 					}
 					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
 					return false;
 				}
 
 				// Controllo che non ci siano spazi nei campi di testo
-				if ((nome.indexOf(" ") != -1) || (ip.indexOf(" ") != -1) || (ipGestione.indexOf(" ") != -1) || (porta.indexOf(" ") != -1) || (portaGestione.indexOf(" ") != -1)) {
+				if ((nome.indexOf(" ") != -1)) {
 					this.pd.setMessage("Non inserire spazi nei campi di testo");
 					return false;
 				}
 
-				// Le code JMS possono avere vincoli sul nome
+				// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 				if(this.checkSimpleName(nome, PddCostanti.LABEL_PDD_NOME)==false){
-					return false;
-				}
-
-				// ip dev'essere un indirizzo ip o un hostname valido
-				if (!org.openspcoop2.utils.regexp.RegExpUtilities.isIPOrHostname(ip)) {
-					this.pd.setMessage("Indirizzo pubblico dev'essere un ip o un hostname valido");
-					return false;
-				}
-
-				// ip_gestione dev'essere un indirizzo ip o un hostname valido
-				if (!org.openspcoop2.utils.regexp.RegExpUtilities.isIPOrHostname(ipGestione)) {
-					this.pd.setMessage("Indirizzo gestione dev'essere un ip o un hostname valido");
-					return false;
-				}
-
-				// La porta deve essere un numero
-				if(this.checkNumber(porta, PddCostanti.LABEL_PDD_PORTA_PUBBLICA, false)==false){
-					return false;
-				}
-
-				// La porta gestione deve essere un numero
-				if(this.checkNumber(portaGestione, PddCostanti.LABEL_PDD_PORTA_GESTIONE, false)==false){
 					return false;
 				}
 				
@@ -480,13 +288,13 @@ public class PddHelper extends ConsoleHelper {
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
 
-	public void preparePddSinglePddList(List<PdDControlStation> lista, ISearch ricerca) throws Exception {
+	public void preparePddSinglePddList(List<PdDControlStation> lista, ISearch ricerca) throws ControlStationCoreException {
 		try {
 
 			ServletUtils.addListElementIntoSession(this.request, this.session, PddCostanti.OBJECT_NAME_PDD_SINGLEPDD);
@@ -552,14 +360,11 @@ public class PddHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setUrl(PddCostanti.SERVLET_NAME_PDD_SOGGETTI_LIST,
 						new Parameter(PddCostanti.PARAMETRO_PDD_ID, pdd.getId().toString()));
-				if (contaListe) {
+				if (contaListe!=null && contaListe.booleanValue()) {
 					// BugFix OP-674
-					//List<org.openspcoop2.core.config.Soggetto> lista1 = this.pddCore.pddSoggettiList(pdd.getId().intValue(), new Search(true));
 					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.pddCore.pddSoggettiList(pdd.getId().intValue(), searchForCount);
 					int numSog = 0;
-//					if (lista1 != null)
-//						numSog = lista1.size();
 					numSog = searchForCount.getNumEntries(Liste.PDD_SOGGETTI);
 					ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSog));
 				} else
@@ -573,145 +378,19 @@ public class PddHelper extends ConsoleHelper {
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 
-	public void preparePddList(List<PdDControlStation> lista, ISearch ricerca) throws Exception {
-		try {
-			ServletUtils.addListElementIntoSession(this.request, this.session, PddCostanti.OBJECT_NAME_PDD);
-			
-			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-
-			int idLista = Liste.PDD;
-			int limit = ricerca.getPageSize(idLista);
-			int offset = ricerca.getIndexIniziale(idLista);
-			
-			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
-			
-			this.pd.setIndex(offset);
-			this.pd.setPageSize(limit);
-			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
-			
-			// setto la barra del titolo
-			if (search.equals("")) {
-				this.pd.setSearchDescription("");
-				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,PddCostanti.SERVLET_NAME_PDD_LIST));
-			}
-			else{
-				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,PddCostanti.SERVLET_NAME_PDD_LIST), 
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
-			}
-
-			// controllo eventuali risultati ricerca
-			if (!search.equals("")) {
-				ServletUtils.enabledPageDataSearch(this.pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, search);
-			}
-
-			User user = ServletUtils.getUserFromSession(this.request, this.session);
-			boolean showConfigurazioneSistema = user!=null && user.getPermessi()!=null && user.getPermessi().isSistema() &&
-					this.pddCore.getJmxPdDAliases()!=null && this.pddCore.getJmxPdDAliases().size()>0;
-			
-			// setto le label delle colonne
-			List<String> listLabels = new ArrayList<>();
-			listLabels.add(PddCostanti.LABEL_PDD_NOME);
-			listLabels.add(PddCostanti.LABEL_PDD_INDIRIZZO);
-			listLabels.add(PddCostanti.LABEL_PDD_TIPOLOGIA);
-			listLabels.add(PddCostanti.LABEL_PDD_IMPLEMENTAZIONE);
-			if(showConfigurazioneSistema){
-				listLabels.add(PddCostanti.LABEL_PDD_CONFIGURAZIONE_SISTEMA);
-			}
-			listLabels.add(PddCostanti.LABEL_PDD_SOGGETTI);
-			String[] labels = listLabels.toArray(new String[1]);
-			this.pd.setLabels(labels);
-
-			// preparo i dati
-			List<List<DataElement>> dati = new ArrayList<>();
-
-			Iterator<PdDControlStation> it = lista.iterator();
-			PdDControlStation pdd = null;
-			while (it.hasNext()) {
-				pdd = it.next();
-				List<DataElement> e = new ArrayList<>();
-
-				DataElement de = new DataElement();
-				de.setUrl(PddCostanti.SERVLET_NAME_PDD_CHANGE,
-						new Parameter(PddCostanti.PARAMETRO_PDD_ID, pdd.getId().toString()),
-						new Parameter(PddCostanti.PARAMETRO_PDD_NOME, pdd.getNome()));
-				de.setValue(pdd.getNome());
-				de.setIdToRemove(pdd.getId().toString());
-				e.add(de);
-
-				de = new DataElement();
-				if (PddTipologia.ESTERNO.toString().equals(pdd.getTipo()))
-					de.setValue("");
-				else
-					de.setValue(pdd.getIp());
-				e.add(de);
-
-				de = new DataElement();
-				de.setValue(pdd.getTipo());
-				e.add(de);
-
-				de = new DataElement();
-				de.setValue(pdd.getImplementazione());
-				e.add(de);
-
-				if(showConfigurazioneSistema){
-					de = new DataElement();
-					if(PddTipologia.OPERATIVO.toString().equals(pdd.getTipo())){
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD,
-								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER, pdd.getNome()));
-						de.setValue(Costanti.LABEL_VISUALIZZA);
-					}
-					else{
-						de.setType(DataElementType.TEXT);
-						de.setValue("-");
-					}
-					e.add(de);
-				}
-				
-				de = new DataElement();
-				de.setUrl(PddCostanti.SERVLET_NAME_PDD_SOGGETTI_LIST,
-						new Parameter(PddCostanti.PARAMETRO_PDD_ID, pdd.getId().toString()));
-				if (contaListe) {
-					// BugFix OP-674
-					//List<org.openspcoop2.core.config.Soggetto> lista1 = this.pddCore.pddSoggettiList(pdd.getId().intValue(), new Search(true));
-					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
-					this.pddCore.pddSoggettiList(pdd.getId().intValue(), searchForCount);
-					int numSog = 0;
-//					if (lista1 != null)
-//						numSog = lista1.size();
-					numSog = searchForCount.getNumEntries(Liste.PDD_SOGGETTI);
-					ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSog));
-				} else
-					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.add(de);				
-
-				dati.add(e);
-			}
-
-			this.pd.setDati(dati);
-			this.pd.setAddButton(true);
-
-		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
-		}
-	}
 	
 	// Prepara la lista di soggetti associati al pdd
 	public void preparePddSoggettiList(String nomePdd, int id, List<org.openspcoop2.core.config.Soggetto> lista, ISearch ricerca)
-			throws Exception {
+			throws ControlStationCoreException {
 		try {
 			
 			ServletUtils.addListElementIntoSession(this.request, this.session, PddCostanti.OBJECT_NAME_PDD_SOGGETTI,
 					new Parameter(PddCostanti.PARAMETRO_PDD_ID, id+""));
-			
-			Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
 			int idLista = Liste.PDD_SOGGETTI;
 			int limit = ricerca.getPageSize(idLista);
@@ -725,10 +404,6 @@ public class PddHelper extends ConsoleHelper {
 			
 			// setto la barra del titolo
 			String t2URL = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST;
-			boolean sPdD = singlePdD != null ? singlePdD.booleanValue() : false;
-			if (sPdD == false){
-				t2URL = PddCostanti.SERVLET_NAME_PDD_LIST;
-			}
 			String t3Label = "Soggetti associati alla Porta di Dominio " + nomePdd;
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
@@ -764,7 +439,6 @@ public class PddHelper extends ConsoleHelper {
 					List<DataElement> e = new ArrayList<>();
 
 					DataElement de = new DataElement();
-					//if (idsSogg.contains(sog.getId()))
 					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
 							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, sog.getId().toString()),
 							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, sog.getNome()),
@@ -781,8 +455,8 @@ public class PddHelper extends ConsoleHelper {
 			this.pd.setSelect(false);
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError(e.getMessage(), e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		}
 	}
 }

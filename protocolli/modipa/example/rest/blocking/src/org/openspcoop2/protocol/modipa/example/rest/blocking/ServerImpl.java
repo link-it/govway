@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.protocol.modipa.example.rest.blocking;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.openspcoop2.protocol.modipa.example.rest.blocking.api.DefaultApi;
 import org.openspcoop2.protocol.modipa.example.rest.blocking.model.ErrorMessage;
@@ -45,12 +45,12 @@ public class ServerImpl implements DefaultApi {
     	if(idResource==null || idResource<=0) {
     		String descrizione = "IdRisorsa non fornito";
     		Response response = Response.status(400).entity(toFault(400, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
-    		throw new javax.ws.rs.WebApplicationException(descrizione,response);
+    		throw new jakarta.ws.rs.WebApplicationException(descrizione,response);
     	}
     	if(body==null) {
     		String descrizione = "Dati richiesta non forniti";
     		Response response = Response.status(400).entity(toFault(400, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
-    		throw new javax.ws.rs.WebApplicationException(descrizione,response);
+    		throw new jakarta.ws.rs.WebApplicationException(descrizione,response);
     	}
     	
     	System.out.println("Parametri richiesta:");

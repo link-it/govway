@@ -4384,7 +4384,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								//System.out.println("FLUSH");
 								// forzo la lettura del messaggio per impostare la dimensione della richiesta
 								try{
-									responseMessage.writeTo(NullOutputStream.NULL_OUTPUT_STREAM, true);
+									responseMessage.writeTo(NullOutputStream.INSTANCE, true);
 								}catch(Exception eFlush){
 									// ignore
 								}

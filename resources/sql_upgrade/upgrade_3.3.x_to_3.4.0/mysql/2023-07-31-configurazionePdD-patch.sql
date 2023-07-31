@@ -1,0 +1,1 @@
+../../../../tools/web_interfaces/control_station/deploy/sql/patch/mysql/2023-07-31-patch.sql

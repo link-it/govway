@@ -10,7 +10,6 @@
 	<import file="./ant/openspcoop2-govwayConsole-war.xml" />
 	<import file="./ant/openspcoop2-govwayConsole-sql.xml" />
 	<import file="${mvc}/build.xml" />
-	<import file="${queue}/build.xml" />
 	<import file="${users}/build.xml" />
 	<import file="${audit}/build.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
@@ -269,7 +268,7 @@
 			</then>
 		</if>
 	</target>
-	<target name="compile_dipendenze_invoke" depends="compile_mvc,compile_users,compile_queue,compile_audit" description="compila le dipendenze" />
+	<target name="compile_dipendenze_invoke" depends="compile_mvc,compile_users,compile_audit" description="compila le dipendenze" />
 
 	<!-- Compilazione della PddConsole-->
 	<target name="compile_govwayConsole" depends="init_compile_govwayConsole,compile_dipendenze,compile_openspcoop2_govwayConsole" description="compila govwayConsole"/>

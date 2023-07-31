@@ -1412,16 +1412,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			if (pdd != null && (!nomePdD.equals("-"))){
 				if (!nomePdD.equals("-")){
-					//if (nomiPdd.contains(nomePdD)) {
-					if(this.core.isSinglePdD()){
-						de.setUrl(PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_CHANGE,
-								new Parameter(PddCostanti.PARAMETRO_PDD_ID,pdd.getId()+""),
-								new Parameter(PddCostanti.PARAMETRO_PDD_NOME,pdd.getNome()));
-					}else{
-						de.setUrl(PddCostanti.SERVLET_NAME_PDD_CHANGE,
-								new Parameter(PddCostanti.PARAMETRO_PDD_ID,pdd.getId()+""));
-					}
-					//}
+					de.setUrl(PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_CHANGE,
+							new Parameter(PddCostanti.PARAMETRO_PDD_ID,pdd.getId()+""),
+							new Parameter(PddCostanti.PARAMETRO_PDD_NOME,pdd.getNome()));
 				}
 				de.setValue(nomePdD);
 			}

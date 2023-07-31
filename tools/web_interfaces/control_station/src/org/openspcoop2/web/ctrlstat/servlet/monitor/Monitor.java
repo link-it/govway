@@ -50,7 +50,6 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
@@ -75,7 +74,6 @@ import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
-import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
@@ -1182,42 +1180,21 @@ public final class Monitor extends Action {
 			de.setPostBack(true);
 			dati.add(de);
 			
-			if(singlePdD){
-				de = new DataElement();
-                de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SORGENTE);
-                de.setName(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE);
-                String sorgenteSelezionata = mb != null ? mb.getSorgenteDati() : sorgentiDriverMonitoraggioLocale.get(0);
-                if(sorgentiDriverMonitoraggioLocale.size()>1) {
-	                de.setType(DataElementType.SELECT);
-	                de.setValues(sorgentiDriverMonitoraggioLocale);
-	                de.setLabels(labelSorgentiDriverMonitoraggioLocale);
-	                de.setSelected(sorgenteSelezionata);
-                }
-                else {
-                	de.setType(DataElementType.HIDDEN);
-                	de.setValue(sorgenteSelezionata);
-                }
-                dati.add(de);
-			}
-			else {
-                String user = ServletUtils.getUserLoginFromSession(session);
-                List<PdDControlStation> pdds = pddCore.pddList(user, new ConsoleSearch(true));
-                // String[] nomiPdD = new String[];
-                List<String> nomiPdD = new ArrayList<>();
-                for (PdDControlStation pdd : pdds) {
-                        // visualizzo tutte le pdd che non sono esterne
-                        if (!pdd.getTipo().equals(PddTipologia.ESTERNO.toString())) {
-                                nomiPdD.add(pdd.getNome());
-                        }
-                }
-                de = new DataElement();
-                de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_PORTA_DOMINIO);
+			de = new DataElement();
+            de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SORGENTE);
+            de.setName(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE);
+            String sorgenteSelezionata = mb != null ? mb.getSorgenteDati() : sorgentiDriverMonitoraggioLocale.get(0);
+            if(sorgentiDriverMonitoraggioLocale.size()>1) {
                 de.setType(DataElementType.SELECT);
-                de.setName(MonitorCostanti.PARAMETRO_MONITOR_PDD);
-                de.setValues(nomiPdD.toArray(new String[nomiPdD.size()]));
-                de.setSelected(mb != null ? mb.getPdd() : consoleProperties.getGestioneCentralizzataWSMonitorPddDefault());
-                dati.add(de);
-			}
+                de.setValues(sorgentiDriverMonitoraggioLocale);
+                de.setLabels(labelSorgentiDriverMonitoraggioLocale);
+                de.setSelected(sorgenteSelezionata);
+            }
+            else {
+            	de.setType(DataElementType.HIDDEN);
+            	de.setValue(sorgenteSelezionata);
+            }
+            dati.add(de);
 			
 			boolean showFilterConsegnaAsincrona = (mb==null || mb.getMethod()==null || mb.getMethod().equals(MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome())); 
 					

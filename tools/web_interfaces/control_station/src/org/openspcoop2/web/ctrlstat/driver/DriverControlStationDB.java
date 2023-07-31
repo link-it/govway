@@ -510,17 +510,9 @@ public class DriverControlStationDB  {
 				pdd.setNome(risultato.getString("nome"));
 				pdd.setDescrizione(risultato.getString("descrizione"));
 
-				pdd.setIp(risultato.getString("ip"));
-				pdd.setPorta(risultato.getInt("porta"));
-				pdd.setIpGestione(risultato.getString("ip_gestione"));
-				pdd.setPortaGestione(risultato.getInt("porta_gestione"));
-				pdd.setProtocollo(risultato.getString("protocollo"));
-				pdd.setProtocolloGestione(risultato.getString("protocollo_gestione"));
-
 				pdd.setTipo(risultato.getString("tipo"));
 				pdd.setImplementazione(risultato.getString("implementazione"));
 
-				pdd.setPassword(risultato.getString("password"));
 				pdd.setSubject(risultato.getString("subject"));
 				pdd.setClientAuth(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("client_auth")));
 

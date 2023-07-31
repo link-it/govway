@@ -230,7 +230,8 @@ public class ConsoleProperties {
 	}
 	
 	public Boolean isSinglePdD() throws UtilsException{
-		return this.readBooleanRequiredProperty("singlePdD");
+		/**return this.readBooleanRequiredProperty("singlePdD");*/
+		return true;
 	}
 	
 	public Boolean isTokenGenerazioneAutomaticaPorteDelegateEnabled() throws UtilsException{
@@ -1588,154 +1589,7 @@ public class ConsoleProperties {
 	public String getCSPHeaderValue() throws UtilsException{
 		return this.readProperty(true, "console.csp.header.value");
 	}
-	
-	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
-
-	public Boolean isGestioneCentralizzataSincronizzazionePdd() throws UtilsException{
-		return this.readBooleanRequiredProperty("sincronizzazionePdd");
-	}
-	
-	public Boolean isGestioneCentralizzataSincronizzazioneRegistro() throws UtilsException{
-		return this.readBooleanRequiredProperty("sincronizzazioneRegistro");
-	}
-	
-	public Boolean isGestioneCentralizzataSincronizzazioneGestoreEventi() throws UtilsException{
-		return this.readBooleanRequiredProperty("sincronizzazioneGE");
-	}
-	
-	public String getGestioneCentralizzataNomeCodaSmistatore() throws UtilsException{
-		return this.readProperty(true, "SmistatoreQueue");
-	}
-	
-	public String getGestioneCentralizzataNomeCodaRegistroServizi() throws UtilsException{
-		return this.readProperty(true, "RegistroServiziQueue");
-	}
-	
-	public String getGestioneCentralizzataWSRegistroServiziEndpointPdd() throws UtilsException{
-		return this.readProperty(true, "RegistroServiziWS.endpoint.portaDominio");
-	}
-	
-	public String getGestioneCentralizzataWSRegistroServiziEndpointSoggetto() throws UtilsException{
-		return this.readProperty(true, "RegistroServiziWS.endpoint.soggetto");
-	}
-	
-	public String getGestioneCentralizzataWSRegistroServiziEndpointAccordoCooperazione() throws UtilsException{
-		return this.readProperty(true, "RegistroServiziWS.endpoint.accordoCooperazione");
-	}
-	
-	public String getGestioneCentralizzataWSRegistroServiziEndpointAccordoServizioParteComune() throws UtilsException{
-		return this.readProperty(true, "RegistroServiziWS.endpoint.accordoServizioParteComune");
-	}
-	
-	public String getGestioneCentralizzataWSRegistroServiziEndpointAccordoServizioParteSpecifica() throws UtilsException{
-		return this.readProperty(true, "RegistroServiziWS.endpoint.accordoServizioParteSpecifica");
-	}
-	
-	public String getGestioneCentralizzataWSRegistroServiziCredenzialiBasicUsername() throws UtilsException{
-		return this.readProperty(false, "RegistroServiziWS.username");
-	}
-	
-	public String getGestioneCentralizzataWSRegistroServiziCredenzialiBasicPassword() throws UtilsException{
-		return this.readProperty(false, "RegistroServiziWS.password");
-	}
-	
-	public String getGestioneCentralizzataPrefissoNomeCodaConfigurazionePdd() throws UtilsException{
-		return this.readProperty(true, "PdDQueuePrefix");
-	}
-	
-	public String getGestioneCentralizzataGestorePddScriptShellPath() throws UtilsException{
-		return this.readProperty(false, "GestorePdD.script.path");
-	}
-	
-	public String getGestioneCentralizzataGestorePddScriptShellArgs() throws UtilsException{
-		return this.readProperty(false, "GestorePdD.script.args");
-	}
-	
-	public String getGestioneCentralizzataWSConfigurazioneEndpointSuffixPortaApplicativa() throws UtilsException{
-		return this.readProperty(true, "ConfigurazioneWS.endpoint.suffix.portaApplicativa");
-	}
-	
-	public String getGestioneCentralizzataWSConfigurazioneEndpointSuffixPortaDelegata() throws UtilsException{
-		return this.readProperty(true, "ConfigurazioneWS.endpoint.suffix.portaDelegata");
-	}
-	
-	public String getGestioneCentralizzataWSConfigurazioneEndpointSuffixServizioApplicativo() throws UtilsException{
-		return this.readProperty(true, "ConfigurazioneWS.endpoint.suffix.servizioApplicativo");
-	}
-	
-	public String getGestioneCentralizzataWSConfigurazioneEndpointSuffixSoggetto() throws UtilsException{
-		return this.readProperty(true, "ConfigurazioneWS.endpoint.suffix.soggetto");
-	}
-	
-	public String getGestioneCentralizzataWSConfigurazioneCredenzialiBasicUsername() throws UtilsException{
-		return this.readProperty(false, "ConfigurazioneWS.username");
-	}
-	
-	public String getGestioneCentralizzataWSConfigurazioneCredenzialiBasicPassword() throws UtilsException{
-		return this.readProperty(false, "ConfigurazioneWS.password");
-	}
-	
-	public String getGestioneCentralizzataNomeCodaGestoreEventi() throws UtilsException{
-		return this.readProperty(true, "GestoreEventiQueue");
-	}
-	
-	public String getGestioneCentralizzataPrefissoWSGestoreEventi() throws UtilsException{
-		return this.readProperty(true, "UrlWebServiceGestoreEventi");
-	}
-	
-	public String getGestioneCentralizzataGestoreEventiTipoSoggetto() throws UtilsException{
-		return this.readProperty(true, "gestoreEventi.tipo_soggetto");
-	}
-	
-	public String getGestioneCentralizzataGestoreEventiNomeSoggetto() throws UtilsException{
-		return this.readProperty(true, "gestoreEventi.nome_soggetto");
-	}
-	
-	public String getGestioneCentralizzataGestoreEventiNomeServizioApplicativo() throws UtilsException{
-		return this.readProperty(true, "gestoreEventi.nome_servizio_applicativo");
-	}
-	
-	public String getGestioneCentralizzataWSMonitorPddDefault() throws UtilsException{
-		return this.readProperty(true, "MonitoraggioWS.pdd.default");
-	}
-	
-	public String getGestioneCentralizzataWSMonitorEndpointSuffixStatoPdd() throws UtilsException{
-		return this.readProperty(true, "MonitoraggioWS.endpoint.suffix.statoPdd");
-	}
-	
-	public String getGestioneCentralizzataWSMonitorEndpointSuffixMessaggio() throws UtilsException{
-		return this.readProperty(true, "MonitoraggioWS.endpoint.suffix.messaggio");
-	}
-	
-	public String getGestioneCentralizzataWSMonitorCredenzialiBasicUsername() throws UtilsException{
-		return this.readProperty(false, "MonitoraggioWS.username");
-	}
-	
-	public String getGestioneCentralizzataWSMonitorCredenzialiBasicPassword() throws UtilsException{
-		return this.readProperty(false, "MonitoraggioWS.password");
-	}
-	
-	public String getGestioneCentralizzataURLContextCreazioneAutomaticaSoggetto() throws UtilsException{
-		return this.readProperty(true, "UrlConnettoreSoggetto");
-	}
-	
-	public String getGestioneCentralizzataPddIndirizzoIpPubblico() throws UtilsException{
-		return this.readProperty(true, "pdd.indirizzoIP.pubblico");
-	}
-	
-	public Integer getGestioneCentralizzataPddPortaPubblica() throws UtilsException{
-		return this.readIntegerProperty(true, "pdd.porta.pubblica");
-	}
-	
-	public String getGestioneCentralizzataPddIndirizzoIpGestione() throws UtilsException{
-		return this.readProperty(true, "pdd.indirizzoIP.gestione");
-	}
-	
-	public Integer getGestioneCentralizzataPddPortaGestione() throws UtilsException{
-		return this.readIntegerProperty(true, "pdd.porta.gestione");
-	}
-	
-	
+		
 	
 	/* ---------------- Gestione govwayConsole locale ----------------------- */
 

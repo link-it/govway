@@ -24,12 +24,6 @@
 		    <globmapper from="*.sql" to="*.sql"/>
 		</copy>
 		<copy todir="${sql_govwayConsole}">
-		    <fileset dir="${sql_queue}">
-			<exclude name="patch/**"/>
-		    </fileset>
-		    <globmapper from="*.sql" to="*.sql"/>
-		</copy>
-		<copy todir="${sql_govwayConsole}">
 		    <fileset dir="${sql_audit}">
 			<exclude name="patch/**"/>
 		    </fileset>

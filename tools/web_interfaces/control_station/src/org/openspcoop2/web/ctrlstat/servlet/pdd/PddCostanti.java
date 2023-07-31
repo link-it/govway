@@ -37,9 +37,7 @@ public class PddCostanti {
 	private PddCostanti() {}
 
 	/* OBJECT NAME */
-	
-	public static final String OBJECT_NAME_PDD = "pdd";
-	
+		
 	public static final String OBJECT_NAME_PDD_SINGLEPDD = "pddSinglePdD";
 	
 	public static final String OBJECT_NAME_PDD_SOGGETTI = "pddSoggetti";
@@ -47,21 +45,7 @@ public class PddCostanti {
 	
 	/* SERVLET NAME */
 	
-	public static final String SERVLET_NAME_PDD_ADD = OBJECT_NAME_PDD+Costanti.STRUTS_ACTION_SUFFIX_ADD;
-	public static final String SERVLET_NAME_PDD_CHANGE = OBJECT_NAME_PDD+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
-	public static final String SERVLET_NAME_PDD_DELETE = OBJECT_NAME_PDD+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
-	public static final String SERVLET_NAME_PDD_LIST = OBJECT_NAME_PDD+Costanti.STRUTS_ACTION_SUFFIX_LIST;
-	private static final List<String> SERVLET_PDD = new ArrayList<>();
-	public static List<String> getServletPdd() {
-		return SERVLET_PDD;
-	}
-	static{
-		SERVLET_PDD.add(SERVLET_NAME_PDD_ADD);
-		SERVLET_PDD.add(SERVLET_NAME_PDD_CHANGE);
-		SERVLET_PDD.add(SERVLET_NAME_PDD_DELETE);
-		SERVLET_PDD.add(SERVLET_NAME_PDD_LIST);
-	}
-	
+		
 	public static final String SERVLET_NAME_PDD_SINGLEPDD_ADD = OBJECT_NAME_PDD_SINGLEPDD+Costanti.STRUTS_ACTION_SUFFIX_ADD;
 	public static final String SERVLET_NAME_PDD_SINGLEPDD_CHANGE = OBJECT_NAME_PDD_SINGLEPDD+Costanti.STRUTS_ACTION_SUFFIX_CHANGE;
 	public static final String SERVLET_NAME_PDD_SINGLEPDD_DELETE = OBJECT_NAME_PDD_SINGLEPDD+Costanti.STRUTS_ACTION_SUFFIX_DELETE;
@@ -103,12 +87,6 @@ public class PddCostanti {
 	public static final String PARAMETRO_PDD_ID = "id";
 	public static final String PARAMETRO_PDD_TIPOLOGIA = "tipo";
 	public static final String PARAMETRO_PDD_DESCRIZIONE = "descrizione";
-	public static final String PARAMETRO_PDD_PROTOCOLLO = "protocollo";
-	public static final String PARAMETRO_PDD_PROTOCOLLO_GESTIONE = "protocollo_gestione";
-	public static final String PARAMETRO_PDD_INDIRIZZO_PUBBLICO = "ip";
-	public static final String PARAMETRO_PDD_PORTA_PUBBLICA = "porta";
-	public static final String PARAMETRO_PDD_INDIRIZZO_GESTIONE = "ip_gestione";
-	public static final String PARAMETRO_PDD_PORTA_GESTIONE = "porta_gestione";
 	public static final String PARAMETRO_PDD_IMPLEMENTAZIONE = "implementazione";
 	public static final String PARAMETRO_PDD_SUBJECT = "subject";
 	public static final String PARAMETRO_PDD_CLIENT_AUTH = "client_auth";
@@ -120,13 +98,6 @@ public class PddCostanti {
 	public static final String LABEL_PDD_ID = "Id";
 	public static final String LABEL_PDD_TIPOLOGIA ="Tipo";
 	public static final String LABEL_PDD_DESCRIZIONE = "Descrizione";
-	public static final String LABEL_PDD_PROTOCOLLO = "Protocollo";
-	public static final String LABEL_PDD_PROTOCOLLO_GESTIONE = "Protocollo gestione";
-	public static final String LABEL_PDD_INDIRIZZO_PUBBLICO = "Indirizzo pubblico (IP/Hostname)";
-	public static final String LABEL_PDD_PORTA_PUBBLICA = "Porta pubblica";
-	public static final String LABEL_PDD_INDIRIZZO_GESTIONE = "Indirizzo gestione (IP/Hostname)";
-	public static final String LABEL_PDD_PORTA_GESTIONE = "Porta gestione";
-	public static final String LABEL_PDD_INDIRIZZO = "IP/Hostname";
 	public static final String LABEL_PDD_IMPLEMENTAZIONE = "Implementazione";
 	public static final String LABEL_PDD_SUBJECT = "Subject";
 	public static final String LABEL_PDD_CLIENT_AUTH = "Client Auth";

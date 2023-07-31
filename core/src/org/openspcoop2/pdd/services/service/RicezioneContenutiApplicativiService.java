@@ -1721,7 +1721,7 @@ public class RicezioneContenutiApplicativiService {
 							//System.out.println("FLUSH");
 							// forzo la lettura del messaggio per impostare la dimensione della richiesta
 							try{
-								requestMessage.writeTo(NullOutputStream.NULL_OUTPUT_STREAM, true);
+								requestMessage.writeTo(NullOutputStream.INSTANCE, true);
 							}catch(Exception eFlush){
 								// ignore
 							}

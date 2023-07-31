@@ -39,7 +39,6 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
-import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
@@ -210,7 +209,6 @@ public final class SoggettiAdd extends Action {
 			String[] pddList = null;
 			String[] pddEsterneList = null;
 			List<String> tipiSoggetti = null;
-			int totPdd = 1;
 			String nomePddGestioneLocale = null;
 			List<String> versioniProtocollo = null;
 
@@ -239,8 +237,6 @@ public final class SoggettiAdd extends Action {
 				}else{
 					lista.addAll(pddCore.pddList(userLogin, new ConsoleSearch(true)));
 				}
-
-				totPdd = lista.size();
 
 				pddList = new String[lista.size()];
 
@@ -644,24 +640,6 @@ public final class SoggettiAdd extends Action {
 			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, null, strutsBean.tipoprov, strutsBean.nomeprov, strutsBean.codiceIpa, strutsBean.pdUrlPrefixRewriter, strutsBean.paUrlPrefixRewriter,
 					null, false, strutsBean.descr);
 
-			boolean singlePdD = strutsBean.singlePdD!=null && strutsBean.singlePdD.booleanValue();
-			if (isOk &&
-				soggettiCore.isRegistroServiziLocale() &&
-					!singlePdD) {
-				isOk = false;
-				// Controllo che pdd appartenga alla lista di pdd
-				// esistenti
-				for (int i = 0; i < totPdd; i++) {
-					String tmpPdd = pddList[i];
-					if (tmpPdd.equals(strutsBean.pdd) && !strutsBean.pdd.equals("-")) {
-						isOk = true;
-					}
-				}
-				if (!isOk) {
-					pd.setMessage("La Porta di Dominio dev'essere scelta tra quelle definite nel pannello Porte di Dominio");
-				}
-			}
-
 			// updateDynamic
 			if(isOk) {
 				strutsBean.consoleDynamicConfiguration.updateDynamicConfigSoggetto(strutsBean.consoleConfiguration, strutsBean.consoleOperationType, soggettiHelper, strutsBean.protocolProperties, 
@@ -862,33 +840,6 @@ public final class SoggettiAdd extends Action {
 			if(soggettiCore.isRegistroServiziLocale()){
 				connettore = new Connettore();
 				connettore.setTipo(CostantiDB.CONNETTORE_TIPO_DISABILITATO);
-			}
-
-			singlePdD = strutsBean.singlePdD!=null && strutsBean.singlePdD.booleanValue();
-			if ( !singlePdD && soggettiCore.isRegistroServiziLocale() && !strutsBean.pdd.equals("-")) {
-
-				PdDControlStation aPdD = pddCore.getPdDControlStation(strutsBean.pdd);
-				int porta = aPdD.getPorta() <= 0 ? 80 : aPdD.getPorta();
-
-				// nel caso in cui e' stata selezionato un nal
-				// e la PdD e' di tipo operativo oppure non-operativo
-				// allora setto come default il tipo HTTP
-				// altrimenti il connettore e' disabilitato
-				String tipoPdD = aPdD.getTipo();
-				if ((tipoPdD != null) && (!strutsBean.singlePdD) && (tipoPdD.equals(PddTipologia.OPERATIVO.toString()) || tipoPdD.equals(PddTipologia.NONOPERATIVO.toString()))) {
-					String ipPdd = aPdD.getIp();
-
-					String url = aPdD.getProtocollo() + "://" + ipPdd + ":" + porta + "/" + soggettiCore.getSuffissoConnettoreAutomatico();
-					url = url.replace(CostantiControlStation.PLACEHOLDER_SOGGETTO_ENDPOINT_CREAZIONE_AUTOMATICA, 
-							soggettiCore.getWebContextProtocolAssociatoTipoSoggetto(strutsBean.tipoprov));
-					connettore.setTipo(CostantiDB.CONNETTORE_TIPO_HTTP);
-
-					Property property = new Property();
-					property.setNome(CostantiDB.CONNETTORE_HTTP_LOCATION);
-					property.setValore(url);
-					connettore.addProperty(property);
-				}
-
 			}
 
 			if(soggettiCore.isRegistroServiziLocale()){

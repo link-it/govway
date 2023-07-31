@@ -79,18 +79,10 @@ public class DriverControlStationDB_LIB {
 		String nome = pdd.getNome();
 		String descrizione = pdd.getDescrizione();
 
-		String ip = pdd.getIp();
-		int porta = pdd.getPorta();
-		String ipGestione = pdd.getIpGestione();
-		int portaGestione = pdd.getPortaGestione();
-		String protocollo = pdd.getProtocollo();
-		String protocolloGestione = pdd.getProtocolloGestione();
-
 		String tipo = pdd.getTipo();
 		String implementazione = pdd.getImplementazione();
 
 		String subject = pdd.getSubject();
-		String password = pdd.getPassword();
 		StatoFunzionalita client_auth = pdd.getClientAuth();
 
 		String superuser = pdd.getSuperUser();
@@ -112,16 +104,9 @@ public class DriverControlStationDB_LIB {
 					sqlQueryObject.addInsertTable(CostantiDB.PDD);
 					sqlQueryObject.addInsertField("nome", "?");
 					sqlQueryObject.addInsertField("descrizione", "?");
-					sqlQueryObject.addInsertField("ip", "?");
-					sqlQueryObject.addInsertField("porta", "?");
-					sqlQueryObject.addInsertField("ip_gestione", "?");
-					sqlQueryObject.addInsertField("porta_gestione", "?");
-					sqlQueryObject.addInsertField("protocollo", "?");
-					sqlQueryObject.addInsertField("protocollo_gestione", "?");
 					sqlQueryObject.addInsertField("tipo", "?");
 					sqlQueryObject.addInsertField("implementazione", "?");
 					sqlQueryObject.addInsertField("subject", "?");
-					sqlQueryObject.addInsertField("password", "?");
 					sqlQueryObject.addInsertField("client_auth", "?");
 					sqlQueryObject.addInsertField("superuser", "?");
 					if (pdd.getOraRegistrazione() != null)
@@ -133,16 +118,9 @@ public class DriverControlStationDB_LIB {
 					int index = 1;
 					updateStmt.setString(index++, nome);
 					updateStmt.setString(index++, descrizione);
-					updateStmt.setString(index++, ip);
-					updateStmt.setInt(index++, porta);
-					updateStmt.setString(index++, ipGestione);
-					updateStmt.setInt(index++, portaGestione);
-					updateStmt.setString(index++, protocollo);
-					updateStmt.setString(index++, protocolloGestione);
 					updateStmt.setString(index++, tipo);
 					updateStmt.setString(index++, implementazione);
 					updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
-					updateStmt.setString(index++, password);
 					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(client_auth));
 					updateStmt.setString(index++, superuser);
 					if (pdd.getOraRegistrazione() != null)
@@ -155,7 +133,8 @@ public class DriverControlStationDB_LIB {
 
 					DriverControlStationDB_LIB.log.debug("CRUDPdd type = " + type + " row affected =" + n);
 
-					DriverControlStationDB_LIB.log.debug("CRUDPdd CREATE : \n" + DriverControlStationDB_LIB.formatSQLString(updateQuery, nome, descrizione, ip, porta, ipGestione, portaGestione, protocollo, protocolloGestione, tipo, implementazione, subject, password, client_auth));
+					DriverControlStationDB_LIB.log.debug("CRUDPdd CREATE : \n" + DriverControlStationDB_LIB.formatSQLString(updateQuery, nome, descrizione, 
+							tipo, implementazione, subject, client_auth));
 
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverControlStationDB_LIB.tipoDB);
 					sqlQueryObject.addFromTable(CostantiDB.PDD);
@@ -179,16 +158,9 @@ public class DriverControlStationDB_LIB {
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverControlStationDB_LIB.tipoDB);
 					sqlQueryObject.addUpdateTable(CostantiDB.PDD);
 					sqlQueryObject.addUpdateField("descrizione", "?");
-					sqlQueryObject.addUpdateField("ip", "?");
-					sqlQueryObject.addUpdateField("porta", "?");
-					sqlQueryObject.addUpdateField("ip_gestione", "?");
-					sqlQueryObject.addUpdateField("porta_gestione", "?");
-					sqlQueryObject.addUpdateField("protocollo", "?");
-					sqlQueryObject.addUpdateField("protocollo_gestione", "?");
 					sqlQueryObject.addUpdateField("tipo", "?");
 					sqlQueryObject.addUpdateField("implementazione", "?");
 					sqlQueryObject.addUpdateField("subject", "?");
-					sqlQueryObject.addUpdateField("password", "?");
 					sqlQueryObject.addUpdateField("client_auth", "?");
 					sqlQueryObject.addUpdateField("superuser", "?");
 					sqlQueryObject.addUpdateField("nome", "?");
@@ -200,16 +172,9 @@ public class DriverControlStationDB_LIB {
 
 					index = 1;
 					updateStmt.setString(index++, descrizione);
-					updateStmt.setString(index++, ip);
-					updateStmt.setInt(index++, porta);
-					updateStmt.setString(index++, ipGestione);
-					updateStmt.setInt(index++, portaGestione);
-					updateStmt.setString(index++, protocollo);
-					updateStmt.setString(index++, protocolloGestione);
 					updateStmt.setString(index++, tipo);
 					updateStmt.setString(index++, implementazione);
 					updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.SUBJECT) : null));
-					updateStmt.setString(index++, password);
 					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(client_auth));
 					updateStmt.setString(index++, superuser);
 					updateStmt.setString(index++, nome);
@@ -223,7 +188,8 @@ public class DriverControlStationDB_LIB {
 					updateStmt.close();
 					DriverControlStationDB_LIB.log.debug("CRUDPdd type = " + type + " row affected =" + n);
 
-					DriverControlStationDB_LIB.log.debug("CRUDPdd UPDATE : \n" + DriverControlStationDB_LIB.formatSQLString(updateQuery, descrizione, ip, porta, ipGestione, portaGestione, protocollo, protocolloGestione, tipo, implementazione, subject, password, client_auth, pdd.getId()));
+					DriverControlStationDB_LIB.log.debug("CRUDPdd UPDATE : \n" + DriverControlStationDB_LIB.formatSQLString(updateQuery, descrizione, 
+							tipo, implementazione, subject, client_auth, pdd.getId()));
 
 					break;
 

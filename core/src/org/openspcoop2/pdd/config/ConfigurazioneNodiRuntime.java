@@ -156,7 +156,6 @@ public class ConfigurazioneNodiRuntime {
 	private Map<String, String> factory;
 	
 	private Map<String, String> resourceUrl; // check con parametri o proxy in modalità dinamica
-	private Map<String, String> forceResourceUrl = new HashMap<>();
 	private Map<String, String> checkStatusUrl; // check senza parametri
 	
 	private Map<String, String> dominio;
@@ -463,13 +462,7 @@ public class ConfigurazioneNodiRuntime {
 		return this.factory.get(alias);
 	}
 	
-	public void addForceResourceUrl(String alias, String url) {
-		this.forceResourceUrl.put(alias, url);
-	}
 	public String getResourceUrl(String alias) throws UtilsException {
-		if(!this.forceResourceUrl.isEmpty() && this.forceResourceUrl.containsKey(alias)) {
-			return this.forceResourceUrl.get(alias);
-		}
 		return this.resourceUrl.get(alias);
 	}
 	
