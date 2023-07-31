@@ -26,7 +26,7 @@ package org.openspcoop2.example.pdd.server.trasparente.richiestastatofamiglia;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.jws.WebService(
+@jakarta.jws.WebService(
                       serviceName = "RichiestaStatoFamigliaSOAP12SecService",
                       portName = "RichiestaStatoFamigliaSOAP12SecInterfaceEndpoint",
                       targetNamespace = "http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia",

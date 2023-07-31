@@ -173,10 +173,12 @@
 					<classpath>
 						<fileset dir="${required_lib}/cxf" includes="*.jar"/>
 						<fileset dir="${required_lib}/saaj" includes="*.jar"/>
-						<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
-						<fileset dir="${required_lib}/jax" includes="jaxws*.jar"/>
-						<fileset dir="${required_lib}/javax" includes="javax.annotation-api-1.3.2.jar"/>
-						<fileset dir="${required_lib}/shared" includes="jakarta.activation-1.2.2.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.annotation-api-2.1.1.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.activation-api-2.1.2.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.ws-api-3.0.1.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.bind-api-3.0.1.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.jws-api-3.0.0.jar"/>
+						<fileset dir="${required_lib}/jaxb" includes="*.jar"/>
 						<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.3.jar"/>
 						<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
 						<fileset dir="${required_lib}/security" includes="neethi-3.2.0.jar"/>
@@ -194,10 +196,12 @@
 					<classpath>
 						<fileset dir="${required_lib}/cxf" includes="*.jar"/>
 						<fileset dir="${required_lib}/saaj" includes="*.jar"/>
-						<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
-						<fileset dir="${required_lib}/jax" includes="jaxws*.jar"/>
-						<fileset dir="${required_lib}/javax" includes="javax.annotation-api-1.3.2.jar"/>
-						<fileset dir="${required_lib}/shared" includes="jakarta.activation-1.2.2.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.annotation-api-2.1.1.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.activation-api-2.1.2.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.ws-api-3.0.1.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.bind-api-3.0.1.jar"/>
+						<fileset dir="${required_lib}/jakarta" includes="jakarta.jws-api-3.0.0.jar"/>
+						<fileset dir="${required_lib}/jaxb" includes="*.jar"/>
 						<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.3.jar"/>
 						<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
 						<fileset dir="${required_lib}/security" includes="neethi-3.2.0.jar"/>
@@ -241,10 +245,12 @@
 			<classpath>
 				<fileset dir="${required_lib}/cxf" includes="*.jar"/>
 				<fileset dir="${required_lib}/saaj" includes="*.jar"/>
-				<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
-				<fileset dir="${required_lib}/jax" includes="jaxws*.jar"/>
-				<fileset dir="${required_lib}/javax" includes="javax.annotation-api-1.3.2.jar"/>
-				<fileset dir="${required_lib}/shared" includes="jakarta.activation-1.2.2.jar"/>
+				<fileset dir="${required_lib}/jakarta" includes="jakarta.annotation-api-2.1.1.jar"/>
+				<fileset dir="${required_lib}/jakarta" includes="jakarta.activation-api-2.1.2.jar"/>
+				<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.ws-api-3.0.1.jar"/>
+				<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.bind-api-3.0.1.jar"/>
+				<fileset dir="${required_lib}/jakarta" includes="jakarta.jws-api-3.0.0.jar"/>
+				<fileset dir="${required_lib}/jaxb" includes="*.jar"/>
 				<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.3.jar"/>
 				<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
 				<fileset dir="${required_lib}/security" includes="neethi-3.2.0.jar"/>

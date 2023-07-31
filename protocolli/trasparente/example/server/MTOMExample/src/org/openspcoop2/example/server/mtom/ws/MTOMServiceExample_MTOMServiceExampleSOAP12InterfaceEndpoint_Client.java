@@ -35,13 +35,13 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.commons.io.input.ReaderInputStream;
 import org.w3c.dom.Document;
@@ -198,23 +198,23 @@ public final class MTOMServiceExample_MTOMServiceExampleSOAP12InterfaceEndpoint_
 		Document d = documentBuilder.parse(f_xml);
         
         javax.xml.transform.Source _echo_imageData = new DOMSource(d);
-        java.util.List<javax.activation.DataHandler> _echo_other = null;
+        java.util.List<jakarta.activation.DataHandler> _echo_other = null;
         if(f_other1!=null || f_other2!=null){
-        	_echo_other = new ArrayList<javax.activation.DataHandler>();
+        	_echo_other = new ArrayList<jakarta.activation.DataHandler>();
         	if(f_other1!=null){
         		FileDataSource fDS = new FileDataSource(f_other1);
-        		javax.activation.DataHandler dh = new DataHandler(fDS);
+        		jakarta.activation.DataHandler dh = new DataHandler(fDS);
         		_echo_other.add(dh);
         	}
         	if(f_other2!=null){
         		FileDataSource fDS = new FileDataSource(f_other2);
-        		javax.activation.DataHandler dh = new DataHandler(fDS);
+        		jakarta.activation.DataHandler dh = new DataHandler(fDS);
         		_echo_other.add(dh);
         	}
         }
-        javax.xml.ws.Holder<java.lang.String> _echo_risposta = new javax.xml.ws.Holder<java.lang.String>();
-        javax.xml.ws.Holder<javax.xml.transform.Source> _echo_imageDataResponse = new javax.xml.ws.Holder<javax.xml.transform.Source>();
-        javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>> _echo_otherResponse = new javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>>();
+        jakarta.xml.ws.Holder<java.lang.String> _echo_risposta = new jakarta.xml.ws.Holder<java.lang.String>();
+        jakarta.xml.ws.Holder<javax.xml.transform.Source> _echo_imageDataResponse = new jakarta.xml.ws.Holder<javax.xml.transform.Source>();
+        jakarta.xml.ws.Holder<java.util.List<jakarta.activation.DataHandler>> _echo_otherResponse = new jakarta.xml.ws.Holder<java.util.List<jakarta.activation.DataHandler>>();
         port.echo(_echo_richiesta, _echo_imageData, _echo_other,
         		_echo_risposta, _echo_imageDataResponse,_echo_otherResponse);
 
@@ -229,14 +229,14 @@ public final class MTOMServiceExample_MTOMServiceExampleSOAP12InterfaceEndpoint_
         	System.out.println("XML received: "+dResponse.toString());
         }
         
-        java.util.List<javax.activation.DataHandler> other = null;
+        java.util.List<jakarta.activation.DataHandler> other = null;
         if(_echo_otherResponse!=null){
         	other = _echo_otherResponse.value;
         }
         if(other!=null){
         	System.out.println("risposta.other.size=" + other.size());
         	for (int i = 0; i < other.size(); i++) {
-        		javax.activation.DataHandler dh = other.get(i);
+        		jakarta.activation.DataHandler dh = other.get(i);
         		System.out.println("risposta.other.size[i] received: "+dh.getContent().getClass().getName());
         		ByteArrayOutputStream bout = new ByteArrayOutputStream();
         		InputStream is = dh.getInputStream();

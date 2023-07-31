@@ -32,7 +32,7 @@ package org.openspcoop2.example.server.mtom.ws;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.jws.WebService(
+@jakarta.jws.WebService(
                       serviceName = "MTOMServiceExampleSOAP11Service",
                       portName = "MTOMServiceExampleSOAP11InterfaceEndpoint",
                       targetNamespace = "http://www.openspcoop2.org/example/server/mtom/ws",
@@ -42,10 +42,10 @@ package org.openspcoop2.example.server.mtom.ws;
 public class MTOMServiceExampleSOAP11Impl implements MTOMServiceExample {
 
     /* (non-Javadoc)
-     * @see org.openspcoop2.example.server.mtom.ws.MTOMServiceExample#echo(java.lang.String  richiesta ,)javax.xml.transform.Source  imageData ,)java.util.List<javax.activation.DataHandler>  other ,)java.lang.String  risposta ,)javax.xml.transform.Source  imageDataResponse ,)java.util.List<javax.activation.DataHandler>  otherResponse )*
+     * @see org.openspcoop2.example.server.mtom.ws.MTOMServiceExample#echo(java.lang.String  richiesta ,)javax.xml.transform.Source  imageData ,)java.util.List<jakarta.activation.DataHandler>  other ,)java.lang.String  risposta ,)javax.xml.transform.Source  imageDataResponse ,)java.util.List<jakarta.activation.DataHandler>  otherResponse )*
      */
     @Override
-	public void echo(java.lang.String richiesta,javax.xml.transform.Source imageData,java.util.List<javax.activation.DataHandler> other,javax.xml.ws.Holder<java.lang.String> risposta,javax.xml.ws.Holder<javax.xml.transform.Source> imageDataResponse,javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>> otherResponse) { 
+	public void echo(java.lang.String richiesta,javax.xml.transform.Source imageData,java.util.List<jakarta.activation.DataHandler> other,jakarta.xml.ws.Holder<java.lang.String> risposta,jakarta.xml.ws.Holder<javax.xml.transform.Source> imageDataResponse,jakarta.xml.ws.Holder<java.util.List<jakarta.activation.DataHandler>> otherResponse) { 
     	MTOMServiceExampleImpl.echo(richiesta, imageData, other, risposta, imageDataResponse, otherResponse);
     }
 

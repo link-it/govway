@@ -19,12 +19,12 @@
  */
 package org.openspcoop2.example.server.mtom.ws;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.ResponseWrapper;
 
 /**
  * MTOMServiceExample
@@ -46,12 +46,12 @@ public interface MTOMServiceExample {
         @WebParam(name = "ImageData", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
         javax.xml.transform.Source imageData,
         @WebParam(name = "other", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
-        java.util.List<javax.activation.DataHandler> other,
+        java.util.List<jakarta.activation.DataHandler> other,
         @WebParam(mode = WebParam.Mode.OUT, name = "risposta", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
-        javax.xml.ws.Holder<java.lang.String> risposta,
+        jakarta.xml.ws.Holder<java.lang.String> risposta,
         @WebParam(mode = WebParam.Mode.OUT, name = "ImageDataResponse", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
-        javax.xml.ws.Holder<javax.xml.transform.Source> imageDataResponse,
+        jakarta.xml.ws.Holder<javax.xml.transform.Source> imageDataResponse,
         @WebParam(mode = WebParam.Mode.OUT, name = "otherResponse", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
-        javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>> otherResponse
+        jakarta.xml.ws.Holder<java.util.List<jakarta.activation.DataHandler>> otherResponse
     );
 }

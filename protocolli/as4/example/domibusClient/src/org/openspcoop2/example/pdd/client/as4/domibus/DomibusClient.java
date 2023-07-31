@@ -29,8 +29,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.ErrorResultImpl;

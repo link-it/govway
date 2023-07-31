@@ -20,7 +20,7 @@
 
 package org.openspcoop2.example.server.mtom.ws;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 /**
  * MTOMServiceExample_MTOMServiceExampleSOAP12InterfaceEndpoint_Server

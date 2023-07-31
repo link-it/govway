@@ -27,6 +27,7 @@
 	<modules>
 		<module>ant</module>
 		<module>antinstaller</module>
+		<module>angus</module>
 		<module>bean-validation</module>
 		<module>cxf</module>
 		<module>commons</module>
@@ -36,6 +37,7 @@
 		<module>httpcore</module>
 		<module>jackson</module>
 		<module>jakarta</module>
+		<module>jaxb</module>
 		<module>jetty</module>
 		<module>jminix</module>
 		<module>json</module>

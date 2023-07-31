@@ -57,9 +57,10 @@
 			<include name="stub/cxf/*"/>
 			<include name="cxf/*.jar"/>
 			<include name="saaj/*.jar"/>
-			<include name="jax/jaxb*.jar"/>
-			<include name="jax/jaxws*.jar"/>
-			<include name="shared/jakarta.activation-1.2.2.jar"/>
+			<include name="jakarta/jakarta.activation-api-2.1.2.jar"/>
+			<include name="jakarta/jakarta.xml.ws-api-3.0.1.jar"/>
+			<include name="jakarta/jakarta.jws-api-3.0.0.jar"/>
+			<include name="jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_dist}" >
 			<include name="*.jar"/>
@@ -74,14 +75,16 @@
 			<include name="stub/cxf/*.jar"/>
 			<include name="cxf/*.jar"/>
 			<include name="saaj/*.jar"/>
-			<include name="jax/jaxb*.jar"/>
+			<include name="jakarta/jakarta.annotation-api-2.1.1.jar"/>
+			<include name="jakarta/jakarta.activation-api-2.1.2.jar"/>
+			<include name="jakarta/jakarta.xml.ws-api-3.0.1.jar"/>
+			<include name="jakarta/jakarta.jws-api-3.0.0.jar"/>
+			<include name="jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
+			<include name="jaxb/*.jar"/>
 			<include name="security/*.jar"/>
 			<include name="shared/*.jar"/>
 			<include name="httpcore/*.jar"/>
 			<include name="commons/*.jar"/>
-                        <include name="jax/jaxb*.jar"/>
-                        <include name="jax/jaxws*.jar"/>
-                        <include name="shared/jakarta.activation-1.2.2.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_dist}" >
 			<include name="*.jar"/>

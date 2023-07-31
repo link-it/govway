@@ -2,6 +2,7 @@
 ant
 antinstaller
 applicationServer
+angus
 axis14
 bean-validation
 commons
@@ -14,6 +15,7 @@ git
 httpcore
 jackson
 jakarta
+jaxb
 jetty
 jminix
 json

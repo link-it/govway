@@ -17,5 +17,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione")
 package org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione;

@@ -21,10 +21,10 @@ package org.openspcoop2.example.server.mtom.ws;
 
 import java.net.URL;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.WebEndpoint;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.Service;
 
 /**
  * MTOMServiceExampleSOAP11Service
@@ -101,7 +101,7 @@ public class MTOMServiceExampleSOAP11Service extends Service {
     /**
      * 
      * @param features
-     *     A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
+     *     A list of {@link jakarta.xml.ws.WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
      * @return
      *     returns MTOMServiceExample
      */

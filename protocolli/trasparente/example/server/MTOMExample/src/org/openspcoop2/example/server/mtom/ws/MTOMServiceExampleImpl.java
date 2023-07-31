@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -53,10 +53,10 @@ public class MTOMServiceExampleImpl {
 	
     public static void echo(java.lang.String richiesta,
     		javax.xml.transform.Source imageData,
-    		java.util.List<javax.activation.DataHandler> other,
-    		javax.xml.ws.Holder<java.lang.String> risposta,
-    		javax.xml.ws.Holder<javax.xml.transform.Source> imageDataResponse,
-    		javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>> otherResponse) { 
+    		java.util.List<jakarta.activation.DataHandler> other,
+    		jakarta.xml.ws.Holder<java.lang.String> risposta,
+    		jakarta.xml.ws.Holder<javax.xml.transform.Source> imageDataResponse,
+    		jakarta.xml.ws.Holder<java.util.List<jakarta.activation.DataHandler>> otherResponse) { 
       
     	try{
     		
@@ -85,7 +85,7 @@ public class MTOMServiceExampleImpl {
 	        if(other!=null){
 	        	LOG.fine("richiesta.other.size=" + other.size());
 	        	for (int i = 0; i < other.size(); i++) {
-	        		javax.activation.DataHandler dh = other.get(i);
+	        		jakarta.activation.DataHandler dh = other.get(i);
 	        		LOG.fine("richiesta.other.size[i] received: "+dh.getContent().getClass().getName());
 	        		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 	        		InputStream is = dh.getInputStream();
@@ -108,12 +108,12 @@ public class MTOMServiceExampleImpl {
             javax.xml.transform.Source imageDataResponseValue = new DOMSource(d);
             imageDataResponse.value = imageDataResponseValue;
             
-            java.util.List<javax.activation.DataHandler> otherResponseValue = null;
+            java.util.List<jakarta.activation.DataHandler> otherResponseValue = null;
             if(dhReceived!=null && dhReceived.size()>0){
-            	otherResponseValue = new ArrayList<javax.activation.DataHandler>();
+            	otherResponseValue = new ArrayList<jakarta.activation.DataHandler>();
             	for (int i = 0; i < dhReceived.size(); i++) {
-            		javax.mail.util.ByteArrayDataSource fDS = new javax.mail.util.ByteArrayDataSource(dhReceived.get(i),dhReceivedCT.get(i));
-            		javax.activation.DataHandler dh = new DataHandler(fDS);
+            		jakarta.mail.util.ByteArrayDataSource fDS = new jakarta.mail.util.ByteArrayDataSource(dhReceived.get(i),dhReceivedCT.get(i));
+            		jakarta.activation.DataHandler dh = new DataHandler(fDS);
             		otherResponseValue.add(dh);
 				}
             }

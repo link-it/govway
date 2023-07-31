@@ -25,5 +25,5 @@
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/example/server/mtom", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/example/server/mtom", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.openspcoop2.example.server.mtom;
