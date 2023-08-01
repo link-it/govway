@@ -20,8 +20,8 @@
 
 package org.openspcoop2.protocol.modipa.example.soap.non_blocking.push;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Holder;
 
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.server.stub.AckMessage;
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.server.stub.ErrorMessageException;
@@ -39,7 +39,7 @@ import org.openspcoop2.utils.id.UUIDUtilsGenerator;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@BindingType(value = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
+@BindingType(value = jakarta.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
 public class ServerPushRequestImpl implements SOAPCallback {
 
 	private boolean generateCorrelationId = false;

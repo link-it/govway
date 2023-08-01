@@ -22,8 +22,8 @@ package org.openspcoop2.protocol.modipa.example.soap.non_blocking.push;
 
 import java.io.FileInputStream;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.server.stub.AComplexType;

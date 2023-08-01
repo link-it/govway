@@ -143,8 +143,13 @@
 			</then>
 		</if>
 
-		<!-- Impostazione package jakarta.validation -->
-		<replace dir="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/model" token="javax.validation." value="jakarta.validation."/>
+		<!-- Impostazione package jakarta -->
+		<antcall target="-swagger_codegen_fix_jakarta">
+			<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/model"/>
+		</antcall>
+		<antcall target="-swagger_codegen_fix_jakarta">
+			<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/api"/>
+		</antcall>
 
 		<!-- Aggiunta GPL ai nuovi sorgenti generati -->	
 		<if>
@@ -331,8 +336,10 @@ paths:
 			</then>
 		</if>
 
-		<!-- Impostazione package jakarta.validation -->
-		<replace dir="${swaggerCodeGen.outputDir}" token="javax.validation." value="jakarta.validation."/>
+		<!-- Impostazione package jakarta -->
+		<antcall target="-swagger_codegen_fix_jakarta">
+			<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}"/>
+		</antcall>
 
 		<!-- Aggiunta GPL ai nuovi sorgenti generati -->
 		<if>
@@ -400,6 +407,13 @@ public class @CLASS_NAME@</replacevalue>
 		
 	</target>
 
+	<!-- Impostazione package jakarta -->
+	<target name="-swagger_codegen_fix_jakarta">
+		<replace dir="${swaggerCodeGen.srcDir}" token="javax.validation." value="jakarta.validation."/>
+		<replace dir="${swaggerCodeGen.srcDir}" token="javax.xml.bind." value="jakarta.xml.bind."/>
+		<replace dir="${swaggerCodeGen.srcDir}" token="javax.ws.rs." value="jakarta.ws.rs."/>
+	</target>
+
 	<target name="-swagger_codegen_jar_stub">
 				
 		<!-- Compilazione classi -->
@@ -410,14 +424,13 @@ public class @CLASS_NAME@</replacevalue>
 				<fileset dir="${required_lib}/cxf" includes="*.jar"/>
 				<fileset dir="${required_lib}/saaj" includes="*.jar"/>
 				<fileset dir="${required_lib}/jackson" includes="*.jar"/>
-				<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
-				<fileset dir="${required_lib}/javax" includes="validation-api-2.0.1.Final.jar"/>
-				<fileset dir="${required_lib}/shared" includes="jakarta.activation-1.2.2.jar"/>
-				<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.3.jar"/>
 				<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
-				<fileset dir="${required_lib}/security" includes="neethi-3.2.0.jar"/>
 				<fileset dir="${required_lib}/swagger" includes="*.jar"/>
 				<fileset dir="${required_lib}/commons" includes="*.jar"/>
+				<fileset dir="${required_lib}/jakarta" includes="jakarta.validation-api-3.0.2.jar"/>
+				<fileset dir="${required_lib}/jakarta" includes="jakarta.ws.rs-api-3.1.0.jar"/>
+				<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.bind-api-3.0.1.jar"/>
+				<fileset dir="${required_lib}/jaxb" includes="*.jar"/>
 			</classpath>
 		</javac>
 

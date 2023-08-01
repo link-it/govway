@@ -17,5 +17,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types")
 package org.openspcoop2.example.pdd.server.sdi.ricevi_notifica;

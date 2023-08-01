@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.modipa.example.soap.blocking;
 
-import javax.xml.ws.BindingType;
+import jakarta.xml.ws.BindingType;
 
 import org.openspcoop2.protocol.modipa.example.soap.blocking.stub.ErrorMessageException;
 import org.openspcoop2.protocol.modipa.example.soap.blocking.stub.ErrorMessageFault;
@@ -35,7 +35,7 @@ import org.openspcoop2.protocol.modipa.example.soap.blocking.stub.SOAPBlockingIm
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@BindingType(value = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
+@BindingType(value = jakarta.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
 public class ServerImpl implements SOAPBlockingImpl {
 
 	@Override

@@ -24,12 +24,12 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.push.server.model.ACKMessage;
@@ -110,7 +110,7 @@ public class ClientPushRequest {
 			password = password.trim();
 		}
 		
-		javax.ws.rs.client.Client client = ClientBuilder.newClient().register(JacksonJsonProviderCustomized.class);
+		jakarta.ws.rs.client.Client client = ClientBuilder.newClient().register(JacksonJsonProviderCustomized.class);
 		if(username!=null && password!=null){
 			System.out.println("Basic Auth username["+username+"] password["+password+"]");
 			client.register(new HTTPBasicAuthFilter(username, password));

@@ -19,10 +19,10 @@
  */
 package org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
 
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull.api.DefaultApi;
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull.model.ErrorMessage;
@@ -55,7 +55,7 @@ public class ServerImpl implements DefaultApi {
     	if(body==null) {
     		String descrizione = "Dati richiesta non forniti";
     		Response response = Response.status(400).entity(toFault(400, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
-    		throw new javax.ws.rs.WebApplicationException(descrizione,response);
+    		throw new jakarta.ws.rs.WebApplicationException(descrizione,response);
     	}
     	
     	System.out.println("Parametri richiesta:");
@@ -68,7 +68,7 @@ public class ServerImpl implements DefaultApi {
 		}catch(Exception e) {
     		String descrizione = "Generazione ID Correlazione fallita: "+e.getMessage();
     		Response response = Response.status(500).entity(toFault(500, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
-    		throw new javax.ws.rs.WebApplicationException(descrizione,e,response);
+    		throw new jakarta.ws.rs.WebApplicationException(descrizione,e,response);
 		}
     	
     	this.servletResponse.setStatus(202);
@@ -85,7 +85,7 @@ public class ServerImpl implements DefaultApi {
 		if(idOperazione==null) {
     		String descrizione = "IdOperazione non fornito";
     		Response response = Response.status(400).entity(toFault(400, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
-    		throw new javax.ws.rs.WebApplicationException(descrizione,response);
+    		throw new jakarta.ws.rs.WebApplicationException(descrizione,response);
     	}
 		
 		boolean risorsaNonAncoraPronta = idOperazione.contains("NOT_READY");
@@ -114,7 +114,7 @@ public class ServerImpl implements DefaultApi {
 		if(idOperazione==null) {
     		String descrizione = "IdOperazione non fornito";
     		Response response = Response.status(400).entity(toFault(400, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
-    		throw new javax.ws.rs.WebApplicationException(descrizione,response);
+    		throw new jakarta.ws.rs.WebApplicationException(descrizione,response);
     	}
 		
 		MResponseType response = new MResponseType();

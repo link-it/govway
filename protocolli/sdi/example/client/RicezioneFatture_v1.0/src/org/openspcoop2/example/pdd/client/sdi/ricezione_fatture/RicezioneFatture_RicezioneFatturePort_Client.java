@@ -37,7 +37,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.openspcoop2.protocol.sdi.utils.SDICompatibilitaNamespaceErrati;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -157,7 +157,7 @@ public final class RicezioneFatture_RicezioneFatturePort_Client {
 		}
         RicezioneFatture port = ss.getRicezioneFatturePort();  
         ((BindingProvider)port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, pdd+pa);
-        ((javax.xml.ws.soap.SOAPBinding)((BindingProvider)port).getBinding()).setMTOMEnabled(isMTOMEnabled);
+        ((jakarta.xml.ws.soap.SOAPBinding)((BindingProvider)port).getBinding()).setMTOMEnabled(isMTOMEnabled);
         if(username!=null && password!=null){
             ((BindingProvider)port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  username);
         	((BindingProvider)port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,  password);

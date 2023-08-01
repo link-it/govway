@@ -28,9 +28,17 @@
 			<include name="**/commons/*"/>
 			<include name="**/shared/*"/>
 			<include name="**/spring/*"/>
-			<include name="**/jax/*"/>
 			<include name="**/log/*"/>
-			<include name="**/javax/javax.annotation-api-1.3.2.jar"/>
+			<include name="jakarta/jakarta.annotation-api-2.1.1.jar"/>
+			<include name="jakarta/jakarta.servlet-api-5.0.0.jar"/>
+			<include name="jakarta/jakarta.xml.ws-api-3.0.1.jar"/>
+			<include name="jakarta/jakarta.jws-api-3.0.0.jar"/>
+			<include name="jakarta/jakarta.mail-api-2.1.2.jar"/>
+			<include name="jakarta/jakarta.xml.soap-api-3.0.0.jar"/>
+			<include name="jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
+			<include name="jaxb/*"/>
+			<include name="jakarta/jakarta.activation-api-2.1.2.jar"/>
+			<include name="angus/*"/>
 		</fileset>
 		<fileset dir="${openspcoop2_core_dist}" >
 			<include name="*.jar"/>

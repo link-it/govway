@@ -32,7 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
@@ -173,7 +173,7 @@ public final class TrasmissioneFatture_TrasmissioneFatturePort_Client {
 		}
         TrasmissioneFatture port = ss.getTrasmissioneFatturePort();  
         ((BindingProvider)port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
-        ((javax.xml.ws.soap.SOAPBinding)((BindingProvider)port).getBinding()).setMTOMEnabled(isMTOMEnabled);
+        ((jakarta.xml.ws.soap.SOAPBinding)((BindingProvider)port).getBinding()).setMTOMEnabled(isMTOMEnabled);
         if(username!=null && password!=null){
             ((BindingProvider)port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  username);
         	((BindingProvider)port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,  password);

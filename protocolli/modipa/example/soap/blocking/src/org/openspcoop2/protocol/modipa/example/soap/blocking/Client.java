@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.modipa.example.soap.blocking;
 
 import java.io.FileInputStream;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.protocol.modipa.example.soap.blocking.stub.A1ComplexType;

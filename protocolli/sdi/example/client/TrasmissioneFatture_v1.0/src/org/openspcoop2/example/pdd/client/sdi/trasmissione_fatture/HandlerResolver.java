@@ -22,8 +22,8 @@ package org.openspcoop2.example.pdd.client.sdi.trasmissione_fatture;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.PortInfo;
 
 /**
  * HandlerResolver
@@ -32,7 +32,7 @@ import javax.xml.ws.handler.PortInfo;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class HandlerResolver implements javax.xml.ws.handler.HandlerResolver {
+public class HandlerResolver implements jakarta.xml.ws.handler.HandlerResolver {
 
 	EGOVHeader egovHeader;
 	

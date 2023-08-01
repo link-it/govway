@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.modipa.example.soap.non_blocking.push;
 
 import java.io.FileInputStream;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;

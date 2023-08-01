@@ -61,6 +61,9 @@
 			<include name="shared/joda-time-2.12.5.jar"/>
 			<include name="jakarta/jakarta.annotation-api-2.1.1.jar"/>
 			<include name="jakarta/jakarta.ws.rs-api-3.1.0.jar"/>
+			<include name="jakarta/jakarta.servlet-api-5.0.0.jar"/>
+			<include name="jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
+			<include name="jaxb/*"/>
 		</fileset>
 	</path>
 	

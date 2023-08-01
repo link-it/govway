@@ -19,8 +19,8 @@
  */
 package org.openspcoop2.protocol.modipa.example.rest.non_blocking.push;
 
-import javax.validation.Valid;
-import javax.ws.rs.core.Response;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.core.Response;
 
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.push.client.api.DefaultApi;
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.push.client.model.ACKMessage;
@@ -47,12 +47,12 @@ public class ServerPushResponseImpl implements DefaultApi {
 		if(correlationId==null) {
     		String descrizione = "IdCorrelazione non fornito";
     		Response response = Response.status(400).entity(toFault(400, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
-    		throw new javax.ws.rs.WebApplicationException(descrizione,response);
+    		throw new jakarta.ws.rs.WebApplicationException(descrizione,response);
     	}
     	if(body==null) {
     		String descrizione = "Dati richiesta non forniti";
     		Response response = Response.status(400).entity(toFault(400, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
-    		throw new javax.ws.rs.WebApplicationException(descrizione,response);
+    		throw new jakarta.ws.rs.WebApplicationException(descrizione,response);
     	}
     	
     	System.out.println("Parametri risposta:");

@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.MessageContext;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.client.stub.ErrorMessageException;

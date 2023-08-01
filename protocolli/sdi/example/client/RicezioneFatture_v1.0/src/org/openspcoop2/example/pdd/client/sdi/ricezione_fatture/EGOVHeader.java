@@ -27,9 +27,9 @@ import jakarta.xml.soap.SOAPElement;
 import jakarta.xml.soap.SOAPEnvelope;
 import jakarta.xml.soap.SOAPFactory;
 import jakarta.xml.soap.SOAPHeader;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.openspcoop2.utils.xml.XMLUtils;
 

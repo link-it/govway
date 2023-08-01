@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  * @version $Rev$, $Date$
  */
 
-@javax.jws.WebService(
+@jakarta.jws.WebService(
                       serviceName = "TrasmissioneFatture_service",
                       portName = "TrasmissioneFatture_port",
                       targetNamespace = "http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0",

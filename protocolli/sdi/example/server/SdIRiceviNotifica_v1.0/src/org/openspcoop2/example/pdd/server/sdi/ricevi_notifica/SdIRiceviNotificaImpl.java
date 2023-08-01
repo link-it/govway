@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.logging.Logger;
 
-import javax.jws.HandlerChain;
+import jakarta.jws.HandlerChain;
 
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
@@ -44,7 +44,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  * @version $Rev$, $Date$
  */
 
-@javax.jws.WebService(
+@jakarta.jws.WebService(
                       serviceName = "SdIRiceviNotifica_service",
                       portName = "SdIRiceviNotifica_port",
                       targetNamespace = "http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0",
