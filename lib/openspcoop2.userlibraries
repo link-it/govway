@@ -8,7 +8,7 @@
         <archive path="/op2_3.4.dev/lib/commons/commons-net-3.9.0.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-logging-1.2.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-lang-2.6.jar"/>
-	<archive path="/op2_3.4.dev/lib/commons/commons-lang3-3.12.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/commons/commons-lang3-3.13.0.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-io-2.13.0.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-fileupload2-core-2.0.0-M1.jar"/>
 	<archive path="/op2_3.4.dev/lib/commons/commons-fileupload2-jakarta-2.0.0-M1.jar"/>

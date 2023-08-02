@@ -789,7 +789,7 @@ public abstract class AbstractXPathExpressionEngine {
 					
 					boolean hasChildNodes = false;
 					for(int i=0;i<childNodes.getLength();i++){
-						// elimino i text node che possono contenere "\n" con axiom
+						// elimino i text node che possono contenere "\n"
 						Node n = childNodes.item(i);
 						if(n.hasChildNodes()){
 							hasChildNodes = true;
@@ -892,7 +892,7 @@ public abstract class AbstractXPathExpressionEngine {
 					
 					boolean hasChildNodes = false;
 					for(int i=0;i<childNodes.getLength();i++){
-						// elimino i text node che possono contenere "\n" con axiom
+						// elimino i text node che possono contenere "\n"
 						Node n = childNodes.item(i);
 						if(n.hasChildNodes()){
 							hasChildNodes = true;

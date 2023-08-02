@@ -159,14 +159,14 @@
 				<include name="commons-collections4-4.4.jar" />
 				<include name="commons-digester-2.1.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-fileupload-1.5.jar" />
-				<include name="commons-io-2.11.0.jar" />
+				<include name="commons-fileupload2-*.jar" />
+				<include name="commons-io-2.13.0.jar" />
 				<include name="commons-lang-2.6.jar" />
 				<include name="${commons_logging_jar}"/>
-				<include name="commons-lang3-3.12.0.jar"/>
-				<include name="commons-codec-1.15.jar" />
+				<include name="commons-lang3-3.13.0.jar"/>
+				<include name="commons-codec-1.16.0.jar" />
 				<include name="commons-math3-3.6.1.jar" />
-				<include name="commons-csv-1.9.0.jar" />
+				<include name="commons-csv-1.10.0.jar" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/console">
 				<include name="jquery-3.6.4.jar"/>

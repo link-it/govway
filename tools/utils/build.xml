@@ -115,7 +115,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
-			<include name="commons-codec-1.15.jar"/>
+			<include name="commons-codec-1.16.0.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/log" >
 			<include name="*.jar"/>
@@ -138,7 +138,7 @@
 			<include name="snakeyaml-1.33-gov4j-1.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
-			<include name="commons-lang3-3.12.0.jar"/>
+			<include name="commons-lang3-3.13.0.jar"/>
 		</fileset>
 	</path>	
 		

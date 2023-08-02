@@ -193,9 +193,9 @@
 			</classes>
 			<lib dir="${libs}/commons">
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-io-2.11.0.jar"/>
+				<include name="commons-io-2.13.0.jar"/>
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-codec-1.15.jar"/>
+				<include name="commons-codec-1.16.0.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${libs}/cxf">
@@ -234,7 +234,7 @@
 			</lib>
 			<!-- Risoluzione Warning WARN  [org.jboss.as.ee] (MSC service thread 1-5) WFLYEE0007: Not installing optional component org.springframework ... -->
 			<lib dir="${libs}/commons">
-				<include name="commons-lang3-3.12.0.jar"/>
+				<include name="commons-lang3-3.13.0.jar"/>
 			</lib>
 			<lib dir="${libs}/shared">
 				<include name="reactive-streams-1.0.4.jar"/>

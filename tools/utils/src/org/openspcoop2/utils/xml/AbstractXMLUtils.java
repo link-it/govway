@@ -1085,7 +1085,6 @@ public abstract class AbstractXMLUtils {
 		if("http://www.w3.org/2000/xmlns/".equals(attr.getNamespaceURI())){
 			if("xmlns".equals(attr.getName())){
 				if(attr.getClass().getName().contains("org.apache.axiom.")){
-					// axiom
 					//System.out.println("REMOVE NS SPECIAL AXIOM XMLNS ["+attr.getClass().getName()+"]");
 					src.removeAttributeNS(attr.getNamespaceURI(), "");
 				}
