@@ -235,5 +235,9 @@ public class HttpConstants {
 	public static final String HEADER_NAME_CONTENT_SECURITY_POLICY = "Content-Security-Policy";
 	public static final String HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY = "Content-Security-Policy-Report-Only";
 	
+	/** XSS Protection*/
+	public static final String HEADER_NAME_X_FRAME_OPTIONS = "X-Frame-Options";
+	public static final String HEADER_NAME_X_XSS_PROTECTION = "X-XSS-Protection";
+	public static final String HEADER_NAME_X_CONTENT_TYPE_OPTIONS = "X-Content-Type-Options";
 }
 

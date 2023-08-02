@@ -1,0 +1,38 @@
+/*!
+ * jQuery UI CSS Framework 1.13.2
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/category/theming/
+ */
+
+/* Dialog
+----------------------------------*/
+.ui-dialog { position: absolute; top: 0; left: 0; outline: 0; padding: 0px; width: 300px; box-shadow: 0px 0px 4px 4px #c5c5c5; border-radius: 0px !important; }
+.ui-dialog .ui-dialog-titlebar { padding: .4em 1em; position: relative; background-image: none; background-color: ${menu.header.background.color}; color: ${menu.header.color}; border-radius: 0px; }
+.ui-dialog .ui-dialog-title { float: left; margin: .1em 0; white-space: nowrap; width: 90%; overflow: hidden; text-overflow: ellipsis; color: ${menu.header.color}; }
+.ui-dialog .ui-dialog-titlebar-close { position: absolute; right: .3em; top: 50%; width: 20px; margin: -10px 0 0 0; padding: 1px; height: 20px; min-width: 0px; background: none; border: none; }
+.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { background: none; border: none; color: ${menu.header.color}; }
+.ui-dialog .ui-dialog-content { position: relative; border: 0; padding: .5em 1em; background: none; overflow: auto; }
+.ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 1px 0 0 0; background-image: none; margin-top: .5em; padding: .3em 1em .5em .4em; }
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: right; }
+.ui-dialog .ui-dialog-buttonpane button, .ui-dialog .ui-dialog-buttonpane button:focus { float: right; border: none; font-size: 14px; font-weight: bold; padding: 11px; border-radius: 5px; 
+	margin: 8px; cursor:pointer; font-family: 'Roboto'; text-transform: uppercase; color: ${input.button.color}; border: 1px solid ${input.button.border.color};
+	background-color: ${input.button.background.color}; background-image: none; }
+.ui-dialog .ui-dialog-buttonpane button:hover {	border: 1px solid ${input.button.hover.border.color}; background-color: ${input.button.hover.background.color}; color: ${input.button.hover.color}; background-image: none; }
+
+.ui-dialog .ui-resizable-n { height: 2px; top: 0; }
+.ui-dialog .ui-resizable-e { width: 2px; right: 0; }
+.ui-dialog .ui-resizable-s { height: 2px; bottom: 0; }
+.ui-dialog .ui-resizable-w { width: 2px; left: 0; }
+.ui-dialog .ui-resizable-se, .ui-dialog .ui-resizable-sw, .ui-dialog .ui-resizable-ne, .ui-dialog .ui-resizable-nw { width: 12px; height: 12px; }
+.ui-dialog .ui-resizable-se { right: 2px; bottom: 2px; }
+.ui-dialog .ui-resizable-sw { left: 0; bottom: 0; }
+.ui-dialog .ui-resizable-ne { right: 0; top: 0; }
+.ui-dialog .ui-resizable-nw { left: 0; top: 0; }
+.ui-draggable .ui-dialog-titlebar { cursor: move; }
+.ui-draggable-handle { -ms-touch-action: none; touch-action: none; }
+.no-close .ui-dialog-titlebar-close {  display: none; }

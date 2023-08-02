@@ -45,7 +45,13 @@ public String[] getBrowserInfo(String Information) {
 			else
 			info[1] = "";
 			
-		} else if(browser.contains("Firefox")){
+		} else if(browser.contains("Edge")){ // Edge (IE 12+)
+           String subsString = browser.substring( browser.indexOf("Edge"));
+           info = (subsString.split(" ")[0]).split("/");
+       	} else if(browser.contains("Edg")){ // Edge (IE 12+)
+           String subsString = browser.substring( browser.indexOf("Edg"));
+           info = (subsString.split(" ")[0]).split("/");
+    	} else if(browser.contains("Firefox")){
            String subsString = browser.substring( browser.indexOf("Firefox"));
            info = (subsString.split(" ")[0]).split("/");
       	} else if(browser.contains("Chrome")){
@@ -95,33 +101,34 @@ if(params == null) params="";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
-%>
-<script type="text/javascript" nonce="<%= randomNonce %>">
-var destElement;
-console.log("Windows HASH:");
-console.log(window.location.hash);
 
-if(window.location.hash){
-	destElement = window.location.hash.substr(1);
-}  
-</script>
-<%
-boolean debug = false;
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+if(tabSessionKey == null)
+	tabSessionKey = "";
+
+String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";
+
+// boolean debug = true;
 String userAgent = request.getHeader("user-agent");
 String info[] = getBrowserInfo(userAgent);
 String browsername = getBrowserName(info);
 String browserversion = getBrowserVersion(info);
 
 if(browsername != null){
+	// window.location.hash="Again-No-back-button"; viene inserito due volte: again because google chrome don't insert first hash into history
+	
+	
 	// Microsoft IE (Trident e' il browsername che viene impostato da IE11)
 	// <meta http-equiv="X-UA-Compatible" content="IE=8">
-	if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident")){
+	if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident") ||  browsername.equalsIgnoreCase("Edg") ||  browsername.equalsIgnoreCase("Edge")){
 		// fix ie10
 		%>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script type="text/javascript" nonce="<%= randomNonce %>">
 			window.location.hash="no-back-button";
-			window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+			window.location.hash="Again-No-back-button";
 			window.onhashchange=function(){window.location.hash="no-back-button";}
 		</script> 
 		<%
@@ -130,7 +137,7 @@ if(browsername != null){
 			%>
 			<script type="text/javascript" nonce="<%= randomNonce %>">
 				window.location.hash="no-back-button";
-				window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+				window.location.hash="Again-No-back-button";
 				window.onhashchange=function(){window.location.hash="no-back-button";}
 			</script> 
 			<%
@@ -145,88 +152,62 @@ if(browsername != null){
 		%>
 		<script type="text/javascript" nonce="<%= randomNonce %>">
 			window.location.hash="no-back-button";
-			window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+			window.location.hash="Again-No-back-button";
 			window.onhashchange=function(){window.location.hash="no-back-button";}
 		</script> 
 		<%
 	}
 }
+// console.log("Windows HASH:"); console.log(window.location.hash);
 %>
 
-<% if(debug){ %>
 <script type="text/javascript" nonce="<%= randomNonce %>">
+var destElement;
+
+if(window.location.hash){
+//	destElement = window.location.hash.substr(1);
+	destElement = HtmlSanitizer.SanitizeHtml(window.location.hash.substr(1));
+	
+//	console.log(window.location.hash.substr(1));
+//	console.log(HtmlSanitizer.SanitizeHtml(window.location.hash.substr(1)));
+}  
+
 var browserName = '<%=browsername%>';
 var browserVersione = '<%=browserversion %>';
-</script>
-<% } %>
+var browserVersion = parseInt(browserVersione, 10);
 
-
-
-<script type="text/javascript" nonce="<%= randomNonce %>">
-
-function addTabIdParam(href, addPrevTabParam){
-	
-	if(tabValue != ''){
-		var param = (tabSessionKey + "="+tabValue);
-		
-		if((href != '#' && href.indexOf('#tabs-') == -1)){
-	        if (href.charAt(href.length - 1) === '?') //Very unlikely
-	            href = href + param;
-	        else if (href.indexOf('?') > 0)
-	        	href = href + '&' + param;
-	        else
-	        	href = href + '?' + param;
-	        
-	        if(addPrevTabParam) {
-				var paramPrevTab = (prevTabSessionKey + "="+tabValue);
-				return href + '&' + paramPrevTab;
-			}
-	    }
-	}
-    return href;
+function isIE(){
+    return browserName == 'MSIE' || browserName == 'msie'
+    	 || browserName == 'Trident'  || browserName == 'Edge'
+    		 || browserName == 'Edg';
 }
 
-function addParamToURL(href, paramKey, paramValue){
-	
-	if(paramValue != ''){
-		var param = (paramKey + "="+paramValue);
-		
-		if((href != '#' && href.indexOf('#tabs-') == -1)){
-	        if (href.charAt(href.length - 1) === '?') //Very unlikely
-	            href = href + param;
-	        else if (href.indexOf('?') > 0)
-	        	href = href + '&' + param;
-	        else
-	        	href = href + '?' + param;
-	        
-	    }
-	}
-    return href;
+function isChrome(){
+    return browserName == 'Chrome';
 }
 
-<%  
-String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
-if(tabSessionKey == null)
-	tabSessionKey = "";
-%>
-var tabSessionKey = '<%=Costanti.PARAMETER_TAB_KEY %>';
-var prevTabSessionKey = '<%=Costanti.PARAMETER_PREV_TAB_KEY %>';
-var tabValue = '<%=tabSessionKey %>'
-
-if(tabValue != ''){
-    sessionStorage.setItem(tabSessionKey, tabValue);
+function isFirefox(){
+    return browserName == 'Firefox';
 }
 
-console.log('IDTab: ['+tabValue+']');
-</script>
+function isOpera(){
+    return browserName == 'Opera';
+}
 
-<script type="text/javascript" nonce="<%= randomNonce %>">
-<%String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
-if(csrfTokenFromSession == null)
-	csrfTokenFromSession = "";%>
+function isSafari(){
+    return browserName == 'Safari';
+}
 
-var csrfTokenKey = '<%=Costanti.PARAMETRO_CSRF_TOKEN%>';
-var csrfToken = '<%=csrfTokenFromSession %>';
+function IEVersione(){
+	return browserVersion;
+}
+
+var tabSessionKey = HtmlSanitizer.SanitizeHtml('<%=Costanti.PARAMETER_TAB_KEY %>');
+var prevTabSessionKey = HtmlSanitizer.SanitizeHtml('<%=Costanti.PARAMETER_PREV_TAB_KEY %>');
+var tabValue = HtmlSanitizer.SanitizeHtml('<%=tabSessionKey %>');
+var csrfTokenKey = HtmlSanitizer.SanitizeHtml('<%=Costanti.PARAMETRO_CSRF_TOKEN%>');
+var csrfToken = HtmlSanitizer.SanitizeHtml('<%=csrfTokenFromSession %>');
+
 </script>
 
 

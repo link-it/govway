@@ -601,7 +601,7 @@
               $('option', $(this)).attr('selected', 'selected');
           }
 
-          // Init tags from $(this).val()
+          // Init tags f r o m $(this).val()
           $(this).val($(this).val());
       } else if (!arg1 && !arg2) {
           // tagsinput already exists
@@ -620,7 +620,7 @@
     });
 
     if ( typeof arg1 == 'string') {
-      // Return the results from the invoked function calls
+      // Return the results f r o m the invoked function calls
       return results.length > 1 ? results : results[0];
     } else {
       return results;
@@ -676,7 +676,7 @@
   }
 
   /**
-    * Returns boolean indicates whether user has pressed an expected key combination.
+    * Returns boolean indicates whether u s e r has pressed an expected key combination.
     * @param object keyPressEvent: JavaScript event object, refer
     *     http://www.w3.org/TR/2003/WD-DOM-Level-3-Events-20030331/ecma-script-binding.html
     * @param object lookupList: expected key combinations, as in:

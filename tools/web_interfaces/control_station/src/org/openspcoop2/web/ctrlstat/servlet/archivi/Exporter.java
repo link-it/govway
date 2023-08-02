@@ -385,7 +385,10 @@ public final class Exporter extends Action {
 				String send = ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT+"?"+
 						ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+servletSourceExport;
 				// Identificativo TAB
-				send = send + "&" + Costanti.PARAMETER_TAB_KEY +"=" + archiviHelper.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+				String prevIdTab = archiviHelper.getPrevTabId();
+				if(prevIdTab != null) {
+					send = send + "&" + Costanti.PARAMETER_TAB_KEY +"=" + prevIdTab;
+				}
 				if(objToExport!=null && !"".equals(objToExport)){
 					send = send + "&" + Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE+"="+ objToExport;
 				}

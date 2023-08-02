@@ -62,7 +62,6 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 
 <head>
 <meta charset="UTF-8">
-<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <title><%= gd.getTitle() %></title>
 <link rel="stylesheet" href="css/roboto/roboto-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
@@ -73,16 +72,19 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
 <link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
+<!-- JQuery lib-->
+<script type="text/javascript" src="webjars/jquery/3.6.4/jquery.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="webjars/jquery-ui/1.13.2/jquery-ui.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
+<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
-
-
-<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';
 var nomeServletDel_Custom = '<%= nomeServletDel %>';
 var nomeServletList_Custom = '<%= nomeServletList %>';
-</SCRIPT>
+</script>
 <jsp:include page="/jsp/listElementCustom.jsp" flush="true" />
-<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 var iddati = '<%= iddati %>';
 var params = '<%= params %>';
 var nomeServletAdd = nomeServletAdd_Custom;
@@ -95,36 +97,6 @@ var pageSize = <%= pd.getPageSize() %>;
 var nr = 0;
 var eseguiOperazioniConGET = false;
 var nomeServletExport = 'export.do';
-
-function checkAll(){
-	if(n > 0){
-		var chkAll = $("#chkAll:checked").length;
-		
-		if(chkAll > 0) {
-			SelectAll();
-		} else {
-			DeselectAll();
-		}
-	}
-}
-
-function SelectAll() {
-  if (n > 1) {
-    for (var c = 0; c < document.form.selectcheckbox.length; c++)
-      document.form.selectcheckbox[c].checked = true;
-  } else {
-    document.form.selectcheckbox.checked = true;
-  }
-};
-
-function DeselectAll() {
-  if (n > 1) {
-    for (var c = 0; c < document.form.selectcheckbox.length; c++)
-      document.form.selectcheckbox[c].checked = false;
-  } else {
-    document.form.selectcheckbox.checked = false;
-  }
-};
 
 function RemoveEntries(tipo) {
   if (nr != 0) {
@@ -163,7 +135,7 @@ function RemoveEntries(tipo) {
 	 	// addTabID
 		destinazione = addTabIdParam(destinazione,true);
 	 	
-		destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+		destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_REMOVE_ENTRIES %>');
 		
 		//aggiungo parametro csfr
 		if(csrfToken != ''){
@@ -212,7 +184,7 @@ function RemoveEntries(tipo) {
    	 	addHidden(deleteForm, prevTabSessionKey , tabValue);
    	  }
    	  
-   	  addHidden(deleteForm, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+   	  addHidden(deleteForm, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_REMOVE_ENTRIES %>');
    	  
    	  //aggiungo parametro csfr
 	  if(csrfToken != ''){
@@ -230,440 +202,14 @@ function RemoveEntries(tipo) {
   }
 };
 
-function AddEntry() {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-  var destinazione;
-  if (formatPar != null && formatPar != "")
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?'+formatPar+'&iddati='+iddati+params;
-  else
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?iddati='+iddati+params;
-	  
-	//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
-
-function CambiaVisualizzazione(newPageSize) {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-  if (newPageSize == '0') {
-    index = 0; 
-  }
-  var destinazione;
-  if (formatPar != null && formatPar != "")
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-  else
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-    
-//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
-
-function NextPage() {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-  index += pageSize;
-  var destinazione;
-  if (formatPar != null && formatPar != "")
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-  else
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-    
-//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
-
-function PrevPage(pageSize) {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-  index -= pageSize;
-  if (index < 0) {
-    index = 0;
-  }
-  var destinazione;
-  if (formatPar != null && formatPar != "")
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-  else
-	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
-    
-//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
-
-function Search(form) {
-  if (nr != 0) {
-    return false;
-  }
-  nr = 1;
-
-  addHidden(form, 'index' , 0);
-  addHidden(form, 'iddati' , iddati);
-  addHidden(form, 'pageSize' , pageSize);
-  addHidden(form, '_searchDone' , true);
-
-  // formatParams
-  
-   if (formatPar != null && formatPar != ""){
-  	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
-  	for (var i = 0; i < pairs.length; i++) {
-      	var pair = pairs[i].split('=');
-      	addHidden(form, pair[0] , pair[1]);
-  	}
-   }
-   if (params != null && params != ""){
-	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
-	   for (var i = 0; i < pairs.length; i++) {
-	       var pair = pairs[i].split('=');
-	       addHidden(form, pair[0] , pair[1]);
-	   }
-   }
-
-  // imposto la destinazione
-  document.form.action = nomeServletList;
-  
-  //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-  for (var k=0; k<document.form.elements.length; k++) {
-		var nome = document.form.elements[k].name;
-		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-		if(hiddenInfo > -1) {
-			document.form.elements[k].value = '';
-		}
-  }
-      
-  // aggiungo parametro idTab
-  if(tabValue != ''){
-  	addHidden(document.form, tabSessionKey , tabValue);
-  	addHidden(document.form, prevTabSessionKey , tabValue);
-  }
-  // form submit
-  document.form.submit();
- 
-};
-
-function Reset(form) {
-	  if (nr != 0) {
-	    return false;
-	  }
-	  nr = 1;
-	  
-	  document.form.reset();
- 	  for (var k=0; k<document.form.elements.length; k++) {
-		var name = document.form.elements[k].name;
-		if (name == "search"){
-			document.form.elements[k].value="";
-		} else {
-			var tipo = document.form.elements[k].type;
-			if (tipo == "select-one" || tipo == "select-multiple") {
-				document.form.elements[k].selectedIndex = 0;
-			} else if (tipo == "text" || tipo == "textarea"|| tipo == "number") {
-				document.form.elements[k].value="";
-			} else if (tipo == "checkbox") {
-				document.form.elements[k].checked=false;
-			}
-		}
-	  }
-
-	  addHidden(form, 'index' , 0);
-	  addHidden(form, 'iddati' , iddati);
-	  addHidden(form, 'pageSize' , pageSize);
-	  addHidden(form, '_searchDone' , true);
-
-	  // formatParams
-	  
-	   if (formatPar != null && formatPar != ""){
-	  	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
-	  	for (var i = 0; i < pairs.length; i++) {
-	      	var pair = pairs[i].split('=');
-	      	addHidden(form, pair[0] , pair[1]);
-	  	}
-	   }
-	   if (params != null && params != ""){
-		   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
-		   for (var i = 0; i < pairs.length; i++) {
-		       var pair = pairs[i].split('=');
-		       addHidden(form, pair[0] , pair[1]);
-		   }
-	  }
-	  
-	   // imposto la destinazione
-	   document.form.action = nomeServletList;
-	   
-	   // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-	   for (var k=0; k<document.form.elements.length; k++) {
-	 		var nome = document.form.elements[k].name;
-	 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-	 		if(hiddenInfo > -1) {
-	 			document.form.elements[k].value = '';
-	 		}
-	   }
-	   
-	   // aggiungo parametro idTab
-	   if(tabValue != ''){
-	   	addHidden(document.form, tabSessionKey , tabValue);
-	   	addHidden(document.form, prevTabSessionKey , tabValue);
-	   }
-	  // form submit
-	  document.form.submit();
-	 
-	};
-
-function Export(url){
-	var destinazione='<%= request.getContextPath() %>/'+url;
-	//addTabID
-	destinazione = addTabIdParam(destinazione,true);
-	document.location = destinazione;
-};
 
 function Esporta(tipo) {
-
-	 var elemToExport = '';
-	  if (n > 1) {
-	    for (var j = 0; j < n; j++) {
-	      if (document.form.selectcheckbox[j].checked) {
-	        if (elemToExport != '') {
-	        	elemToExport += ',';
-	        }
-	        //elemToRemove += j;
-	        elemToExport +=document.form.selectcheckbox[j].value;
-	      }
-	    }
-	  } else {
-	    if (document.form.selectcheckbox.checked)
-	    	elemToExport +=document.form.selectcheckbox.value;
-	  }
-
-
-	if(elemToExport !== '') {
-		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
-		if(eseguiOperazioniConGET) {
-			var destinazione = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport;
-			
-			//addTabID
-			destinazione = addTabIdParam(destinazione,true);
-			document.location = destinazione;
-		} else {
-			
-			var exportForm = document.createElement('FORM');
-			exportForm.name='exportForm';
-			exportForm.method='POST';
-	    	
-	    	addHidden(exportForm, 'obj' , elemToExport);
-	    	addHidden(exportForm, 'tipoExport' , tipo);
-	    	
-	   		// imposto la destinazione
-	   	 	 exportForm.action = nomeServletExport;
-	   	      
-	   	 	 document.body.appendChild(exportForm);
-	   	 	 
-		   	  // aggiungo parametro idTab
-		   	  if(tabValue != ''){
-		   	  	addHidden(exportForm, tabSessionKey , tabValue);
-		   		addHidden(exportForm, prevTabSessionKey , tabValue);
-		   	  }
-	   	 	 // form submit
-	   	 	 exportForm.submit();
-		}
-	} else {
-		$( "#selezioneRichiestaModal" ).dialog( "open" );
-	}
-		  
-};
-
-function Change(form,dataElementName) {
-	Change(form,dataElementName,false);
-}
-function Change(form,dataElementName,fromFilters) {
-    
-	if( fromFilters ){
-		var formAction = form.action;
-		
-		// hack actionvuota
-		if(formAction == ''){
-			formAction = document.location.href;
-		}
-		
-		if(isModificaUrlRicerca(formAction,'Add.do')){
-			form.action=formAction.replace('Add.do','List.do');
-		}
-		if(isModificaUrlRicerca(formAction,'Change.do')){
-			form.action=formAction.replace('Change.do','List.do');
-		}
-		if(isModificaUrlRicerca(formAction,'Del.do')){
-			form.action=formAction.replace('Del.do','List.do');
-		}
-	}
-	
-    //aggiungo parametro per indicare che si tratta di postback e azzero idhid
-    addHidden(form, 'isPostBack' , true);
-    if(dataElementName!=null)
-    	addHidden(document.form, 'postBackElementName' , dataElementName);
-    addHidden(form, 'index' , 0);
-    addHidden(form, 'iddati' , iddati);
-  
-    // formatParams
-    
-     if (formatPar != null && formatPar != ""){
-    	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
-    	for (var i = 0; i < pairs.length; i++) {
-        	var pair = pairs[i].split('=');
-        	addHidden(form, pair[0] , pair[1]);
-    	}
-     }
-     if (params != null && params != ""){
-	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
-	   for (var i = 0; i < pairs.length; i++) {
-	       var pair = pairs[i].split('=');
-	       addHidden(form, pair[0] , pair[1]);
-	   }
-     }
-     
-     // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-     for (var k=0; k<document.form.elements.length; k++) {
-   		var nome = document.form.elements[k].name;
-   		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-   		if(hiddenInfo > -1) {
-   			document.form.elements[k].value = '';
-   		}
-     }
-        
-  // aggiungo parametro idTab
-  	  if(tabValue != ''){
-  	  	addHidden(document.form, tabSessionKey , tabValue);
-  	    addHidden(document.form, prevTabSessionKey , tabValue);
-  	  }
-    // form submit
-    document.form.submit();
+	EsportaImpl(tipo,eseguiOperazioniConGET);
 }
 
-function isModificaUrlRicerca(formAction, urlToCheck){
-	// hack hash documento impostato, la parte di url che contiene la # bisogna eliminarla dal check
-	if(formAction.indexOf('#') > 0) {
-		formAction = formAction.substring(0, formAction.indexOf('#'));
-	}
-	if(formAction.indexOf('?') > 0) {
-		formAction = formAction.substring(0, formAction.indexOf('?'));
-	}
-	
-	return ieEndsWith(formAction, urlToCheck);
-}
-
-function ieEndsWith(str, suffix){
-	return str.indexOf(suffix, str.length - suffix.length) !== -1;
-}
-
-
-function addHidden(theForm, name, value) {
-    // Create a hidden input element, and append it to the form:
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = name;
-    input.value = value;
-    theForm.appendChild(input);
-}
-
-var panelListaRicercaOpen = false; // controlla l'aperture del pannello di ricerca.
-<%
-if ( 
-	(
-		pd.getSearch().equals("on") || 
-		(pd.getSearch().equals("auto") && (pd.getNumEntries() > pd.getSearchNumEntries()))
-	) || 
-	(
-		pd.getFilterNames() != null &&
-		pd.getFilterValues().size()>0
-	)
-) {
-
-	String searchDescription = pd.getSearchDescription();
-	if (!searchDescription.equals("") || (pd.getFilterNames() != null && pd.hasAlmostOneFilterDefined()) || (pd.isPostBackResult())){
-	%>	panelListaRicercaOpen = true; <% 
-	} 
-}%>
-
-</SCRIPT>
-
-<!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
-<!--Funzioni di utilita -->
-<script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.resizable.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/ui.draggable.js" nonce="<%= randomNonce %>"></script>
+</script>
+<jsp:include page="/jsplib/listUtils.jsp" flush="true" />
 <script type="text/javascript" nonce="<%= randomNonce %>">
-function togglePanelListaRicerca(panelListaRicercaOpen){
-	if(panelListaRicercaOpen) {
-    	$("#searchForm").removeClass('searchFormOff');
-    	$("#searchForm").addClass('searchFormOn');
-    	
-    	if($( "#iconaPanelListaSpan" ).length > 0){
-    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
-    	}
-    	
-    	// reinit select del filtro
-    	inizializzaSelectFiltro();
-    	
-//     	$("#iconaPanelLista").removeClass('icon-down-white');
-//     	$("#iconaPanelLista").addClass('icon-up-white');
-    } else {
-    	$("#searchForm").removeClass('searchFormOn');
-    	$("#searchForm").addClass('searchFormOff');
-    	
-    	if($( "#iconaPanelListaSpan" ).length > 0){
-    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
-    	}
-//     	$("#iconaPanelLista").removeClass('icon-up-white');
-//     	$("#iconaPanelLista").addClass('icon-down-white');
-    }
-}
-
-function inizializzaSelectFiltro(){
-	if($('select[id^=filterValue_]').length > 0){
-		// elimino eventuali plugin gia' applicati
-		$('select[id^=filterValue_]').each(function() {
-			var wrapper = $( this ).parent();
-			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
-				$( this ).appendTo($( this ).parent().parent());
-				wrapper.remove();
-				$( this ).css('width','');
-				$( this ).css('height','');
-			}
-			
-			var checkID = $( this ).attr('id') + '_hidden_chk';
-			if($( '#' + checkID ).length > 0) {
-				var val = $( '#' + checkID ).attr('value');
-				if(val && val == 'true'){
-					$( this ).searchable({disableInput : false});	
-				} else {
-					$( this ).searchable({disableInput : true});	
-				}
-			} else {
-				$( this ).searchable({disableInput : true});
-			}
-		});
-	}
-}
-
-function mostraDataElementInfoModal(title,body){
-	$("#dataElementInfoModal").prev().children('span').text(title);
-	$("#dataElementInfoModalBody").html(body);
-	$("#dataElementInfoModal").dialog("open");
-}
-
 	$(document).ready(function(){
 		// pannello ricerca che si apre e chiude iconaPanelLista
 		$("#panelListaRicercaHeader").click(function(){
@@ -687,16 +233,10 @@ function mostraDataElementInfoModal(title,body){
 	 });
 </script>
 <script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.context-menu.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-<script type="text/javascript" nonce="<%= randomNonce %>">
-$(document).ready(function(){
-	focusText(document.form);
-});
-</script>
 </head>
 <body marginwidth=0 marginheight=0>
 	<table class="bodyWrapper">

@@ -2586,3 +2586,8 @@ div.txtA_div_propDialogInfoUso {
 	height:1px;
 }
 
+li.protocolloItem {
+	list-style-type:disc; 
+	margin-left:12px;
+}
+

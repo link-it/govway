@@ -325,7 +325,7 @@
 											</a4j:outputPanel>
 											<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}">
 												<h:outputLabel value="Numero Label" styleClass="labelSpinnerGrafici" />
-												<rich:inputNumberSpinner value="#{andamentoTemporaleBean.slice}" minValue="#{andamentoTemporaleBean.minCategorie}" 
+												<rich:inputNumberSpinner value="#{andamentoTemporaleBean.slice}" minValue="#{andamentoTemporaleBean.minCategorie}" id="numeroRisultatiSlider"
 													maxValue="#{andamentoTemporaleBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici"
 													enableManualInput="false">
 													<a4j:support event="onchange" actionListener="#{andamentoTemporaleBean.updateChartNumeroLabel}" reRender="scriptLineChartPanel,gridComandi" />
@@ -474,7 +474,7 @@
 											</a4j:outputPanel>
 											<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}">
 												<h:outputLabel value="Numero Label" styleClass="labelSpinnerGrafici" />
-												<rich:inputNumberSpinner value="#{andamentoTemporaleBean.slice}" minValue="#{andamentoTemporaleBean.minCategorie}" 
+												<rich:inputNumberSpinner value="#{andamentoTemporaleBean.slice}" minValue="#{andamentoTemporaleBean.minCategorie}" id="numeroRisultatiSliderBars"
 													maxValue="#{andamentoTemporaleBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici"
 													enableManualInput="false">
 													<a4j:support event="onchange" actionListener="#{andamentoTemporaleBean.updateChartNumeroLabel}" reRender="scriptBarChartPanel,gridComandiBars"/>

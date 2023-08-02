@@ -122,7 +122,7 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
                         var cat = (c3.extra.limit !== 0)?c3.extra.catsTooltip[d[i].x]:c3.extra.categories[d[i].x];
                         title = titleFormat ? cat : d[i].x;
                         //title = titleFormat ? titleFormat(d[i].x) : d[i].x;
-                        text = "<table class='" + $$.CLASS.tooltip + "' style='word-wrap: break-word !important; max-width: 250px;'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
+                        text = "<table class='" + $$.CLASS.tooltip + "' class='tooltip-table-style'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
                     }
 
                     name = nameFormat(d[i].name);
@@ -140,9 +140,10 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
                     }
                     else value = c3.extra.tips[d[i].index][i];
                     bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
+                    var bgcolorclass = 'background-color-' + bgcolor.substring(1);
 
                     text += "<tr class='" + $$.CLASS.tooltipName + "-" + d[i].id + "'>";
-                    text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
+                    text += "<td class='name'><span class='" + bgcolorclass + "'></span>" + name + "</td>";
                     text += "<td class='value'>" + value + "</td>";
                     text += "</tr>";
                 }
@@ -656,6 +657,8 @@ function embedFonts(svg) {
     var defs = document.createElement("defs");
     var css = document.createElement("style");
     css.type = 'text/css';
+    css.nonce = document.getElementById('expiredMsgScript').nonce;
+    
     css.appendChild(document.createTextNode("@font-face {font-family: Roboto;font-style: normal;font-weight: 400;"+woff+"}"));
     defs.appendChild(css);
     svg.insertBefore(defs, svg.firstChild);

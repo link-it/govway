@@ -380,7 +380,7 @@ th.extdt-empty-cell.rich-extdt-subheadercell {
 .rich-dtascroller-table {
 	border: none;
 	color: ${table.datascroller.color};
-	line-height: 28px;
+	line-height: 36px;
 }
 
 .rich-datascr-button {

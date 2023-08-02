@@ -45,6 +45,7 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 
 /**
  * AccordiServizioParteComuneResourcesRepresentationList
@@ -73,6 +74,9 @@ public final class AccordiServizioParteComuneResourcesRepresentationList extends
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idAccordo = Integer.parseInt(id);
@@ -83,6 +87,11 @@ public final class AccordiServizioParteComuneResourcesRepresentationList extends
 				tipoAccordo = null;
 
 			String statusResponseS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			boolean isStatusValid = ServletUtils.checkIntegerParameter(apcHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			if(!isStatusValid) {
+				throw new ValidationException("Il parametro [" + AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS + "] contiene un valore non valido.");
+			}
+			
 			Integer statusResponse = null;
 			try {
 				if(StringUtils.isNotEmpty(statusResponseS))
@@ -92,10 +101,14 @@ public final class AccordiServizioParteComuneResourcesRepresentationList extends
 			}
 
 			String isReq = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			boolean isReqValid = ServletUtils.checkBooleanParameter(apcHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			if(!isReqValid) {
+				throw new ValidationException("Il parametro [" + AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST + "] contiene un valore non valido.");
+			}
+			
 			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
 
-			// Preparo il menu
-			apcHelper.makeMenu();
+			
 			
 			// Prendo l'id della risorsa
 			Long idRisorsa = 0L;

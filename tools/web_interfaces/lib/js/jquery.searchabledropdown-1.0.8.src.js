@@ -57,7 +57,7 @@
         var search = null;
 
 		// do not attach on IE6 or lower
-		if ($.browser.msie && parseInt(jQuery.browser.version) < 7)
+		if (isIE() && browserVersion < 7)
 			return this;
 
     	// only active select elements with drop down capability
@@ -69,10 +69,6 @@
         var idxAttr = "lang";
         var enabled = false;
 
-        // detecting chrome
-        $.browser.chrome = /chrome/.test(navigator.userAgent.toLowerCase());
-        if($.browser.chrome) $.browser.safari = false;
-
         // lets you override the options
         // inside the dom objects class property
         // requires the jQuery metadata plugin
@@ -83,16 +79,16 @@
 
         // objects
         var wrapper = $("<div/>");
-        wrapper.attr("id", this.id + "_wrapper");
+        wrapper.prop("id", this.id + "_wrapper");
         var overlay = $("<div/>");
-        overlay.attr("id", this.id + "_overlay");
+        overlay.prop("id", this.id + "_overlay");
         var input = $("<input/>");
-        input.attr("id", this.id + "_input");
+        input.prop("id", this.id + "_input");
         var selector = $("<div/>");
-        selector.attr("id", this.id + "_selector");
+        selector.prop("id", this.id + "_selector");
 
         // matching option items
-       // var noMatchItem = $("<div>"+settings.warnNoMatch+"</div>").attr("disabled", "true");
+       // var noMatchItem = $("<div>"+settings.warnNoMatch+"</div>").prop("disabled", "true");
 
         var selectorHelper = {
 	        /**
@@ -165,7 +161,7 @@
     				divI.get(0).addEventListener("click", function(e) {
     					//console.log('BBB');
     				});
-//    				$(document).on('click', '#' + divI.attr('id') , { idx : i }, divclick);
+//    				$(document).on('click', '#' + divI.prop('id') , { idx : i }, divclick);
 	            }
         	  	
         	  	 this.selectedIndex(idx);	      
@@ -316,8 +312,11 @@
 
             // fix some styles
             self.css("text-decoration", "none");
-            self.width(self.outerWidth());
-            self.height(self.outerHeight());
+            // le funzioni outerWidth e outerHeight sono cambiate in jQuery 3.6.4 utilizzo la vecchia implementazione
+//            self.width(self.outerWidth());
+//            self.height(self.outerHeight());
+            jQuery.style( self[0], "width", jQuery.css( self[0], "width", false, "border"), false );
+            jQuery.style( self[0], "height", jQuery.css( self[0], "height", false, "border"), false );
 
             // wrapper styles
             wrapper.css("position", "relative");
@@ -326,7 +325,7 @@
             wrapper.css("display", "inline-flex");
             
             // relative div needs an z-index (related to IE z-index bug)
-            if($.browser.msie)
+            if(isIE())
             	wrapper.css("z-index", zindex);
 
             // overlay div to block events of source select element
@@ -340,7 +339,7 @@
             });
 
             // overlay text field for searching capability
-            input.attr("type", "text");
+            input.prop("type", "text");
             input.hide();
             input.height(self.outerHeight() - 1);
 
@@ -379,34 +378,34 @@
 
     		// adjust search text field
     		// IE7
-    		if($.browser.msie && parseInt(jQuery.browser.version) < 8) {
+    		if(isIE() && browserVersion < 8) {
     			input.css("padding", "0px");
     			input.css("padding-left", "3px");
     			input.css("border-left-width", "2px");
     			input.css("border-top-width", "3px");
     		}
     		// chrome
-    		else if($.browser.chrome) {
+    		else if(isChrome()) {
     			input.height(self.innerHeight());
     			input.css("text-transform", "none");
     			input.css("padding-left", parseFloatPx(input.css("padding-left"))+3);
     			input.css("padding-top", 0);
     		}
     		// safari
-    		else if($.browser.safari) {
+    		else if(isSafari()) {
     			input.height(self.innerHeight());
     			input.css("padding-top", 2);
     			input.css("padding-left", 3);
     			input.css("text-transform", "none");
     		}
     		// opera
-    		else if($.browser.opera) {
+    		else if(isOpera()) {
     			input.height(self.innerHeight());
     			var pl = parseFloatPx(self.css("padding-left"));
     			input.css("padding-left", pl == 1 ? pl+1 : pl);
     			input.css("padding-top", 0);
     		}
-    		else if($.browser.mozilla) {
+    		else if(isFirefox()) {
     			input.css("padding-top", "0px");
 //    			input.css("border-top", "0px");
     			input.css("padding-left", parseFloatPx(self.css("padding-left"))+3);
@@ -467,7 +466,7 @@
         function enable(e, s, v) {
 
     		// exit event on disabled select element
-    		if(self.attr("disabled"))
+    		if(self.prop("disabled"))
     			return false;
 
     		// set state to enabled
@@ -574,28 +573,28 @@
         		text = createHighlightItem(option.text(), searchVal);
         	}
         	var attrVal = option.val();
-        	var attrSel = option.attr('selected');
+        	var attrSel = option.prop('selected');
         	var div = $("<div>"+text+"</div>");
-        	div.attr("id", "divOpt_" + i);
+        	div.prop("id", "divOpt_" + i);
         	div.addClass('combobox-item');
         	
         	var inputValue = $("<input/>");
-        	inputValue.attr("type", "hidden");
-        	inputValue.attr("value", attrVal);
-        	inputValue.attr("id", "divOpt_value_" + i);
+        	inputValue.prop("type", "hidden");
+        	inputValue.prop("value", attrVal);
+        	inputValue.prop("id", "divOpt_value_" + i);
         	div.append(inputValue);
         	
         	var inputOrigLabel = $("<input/>");
-        	inputOrigLabel.attr("type", "hidden");
-        	inputOrigLabel.attr("value", option.text());
-        	inputOrigLabel.attr("id", "divOpt_origLabel_" + i);
+        	inputOrigLabel.prop("type", "hidden");
+        	inputOrigLabel.prop("value", option.text());
+        	inputOrigLabel.prop("id", "divOpt_origLabel_" + i);
         	div.append(inputOrigLabel);
         	
         	// salvo il vecchio indice
         	var inputOrigIdx = $("<input/>");
-        	inputOrigIdx.attr("type", "hidden");
-        	inputOrigIdx.attr("value", origIdx);
-        	inputOrigIdx.attr("id", "divOpt_origIdx_" + i);
+        	inputOrigIdx.prop("type", "hidden");
+        	inputOrigIdx.prop("value", origIdx);
+        	inputOrigIdx.prop("id", "divOpt_origIdx_" + i);
         	div.append(inputOrigIdx);
         	
         	if(attrSel) {
@@ -620,7 +619,7 @@
         };
         
         function hoverOn(e) {
-        	var val = calcolaIdx($(this).attr('id'));
+        	var val = calcolaIdx($(this).prop('id'));
         	//console.log('Hover:' + val);
         	selectorHelper.selectedIndex(val);
         };
@@ -683,7 +682,7 @@
     				divI.get(0).addEventListener("click", function(e) {
     				//	console.log('BBB');
     				});
-//    				$(document).on('click', '#' +  divI.attr('id') , { idx : i }, divclick);
+//    				$(document).on('click', '#' +  divI.prop('id') , { idx : i }, divclick);
                     matches++;
                 }
             }
@@ -739,10 +738,11 @@
     	// bind function to jQuery fn object
     	$.fn[nsp] = function(settings) {
     		// extend default settings
-    		settings = $.extend({}, plugin.defaults, settings);
-//    		settings = $.extend(plugin.defaults, settings);
+//  		settings = $.extend({}, plugin.defaults, settings);
+    		settings = $.extend(plugin.defaults, settings);
 
-    		var elmSize = this.size();
+//    		var elmSize = this.size();
+    		var elmSize = this.length;
             return this.each(function(index) {
             	plugin.execute.call(this, settings, elmSize-index);
             });

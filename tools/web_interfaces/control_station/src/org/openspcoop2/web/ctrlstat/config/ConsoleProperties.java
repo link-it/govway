@@ -824,15 +824,12 @@ public class ConsoleProperties {
 		String prefix = getJmxPdDBackwardCompatibilityPrefix();
 		
 		Properties p = new Properties();
-		Enumeration<?> en = this.reader.propertyNames();
+		Enumeration<String> en = this.reader.propertyNames();
 		while (en.hasMoreElements()) {
-			Object object = en.nextElement();
-			if(object instanceof String) {
-				String key = (String) object;
-				if(key.contains(prefix)) {
-					String newKey = key.replace(prefix, "");
-					p.put(newKey, this.reader.getValueConvertEnvProperties(key));
-				}
+			String key = en.nextElement();
+			if(key!=null && key.contains(prefix)) {
+				String newKey = key.replace(prefix, "");
+				p.put(newKey, this.reader.getValueConvertEnvProperties(key));
 			}
 		}
 		return p;
@@ -1588,6 +1585,22 @@ public class ConsoleProperties {
 	
 	public String getCSPHeaderValue() throws UtilsException{
 		return this.readProperty(true, "console.csp.header.value");
+	}
+
+	public String getXContentTypeOptionsHeaderValue() throws UtilsException{
+		return this.readProperty(true, "console.xContentTypeOptions.header.value");
+	}
+	
+	public String getXFrameOptionsHeaderValue() throws UtilsException{
+		return this.readProperty(true, "console.xFrameOptions.header.value");
+	}
+	
+	public String getXXssProtectionHeaderValue() throws UtilsException{
+		return this.readProperty(true, "console.xXssProtection.header.value");
+	}
+	
+	public Properties getConsoleSecurityConfiguration() throws UtilsException{
+		return this.reader.readPropertiesConvertEnvProperties("console.security.");
 	}
 		
 	

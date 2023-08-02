@@ -1131,7 +1131,23 @@ public class PddMonitorProperties {
 	}
 	
 	public String getCspHeaderValue() throws Exception {
-		return this.appProperties.getProperty("console.csp.header.value", true, true);
+		return this.appProperties.getProperty("console.csp.header.value", false, true);
+	}
+	
+	public String getXContentTypeOptionsHeaderValue() throws Exception{
+		return this.appProperties.getProperty("console.xContentTypeOptions.header.value", false, true);
+	}
+	
+	public String getXFrameOptionsHeaderValue() throws Exception{
+		return this.appProperties.getProperty("console.xFrameOptions.header.value", false, true);
+	}
+	
+	public String getXXssProtectionHeaderValue() throws Exception{
+		return this.appProperties.getProperty("console.xXssProtection.header.value", false, true);
+	}
+	
+	public Properties getConsoleSecurityConfiguration() throws Exception{
+		return this.appProperties.readProperties("console.security.");
 	}
 	
 	// allarmi

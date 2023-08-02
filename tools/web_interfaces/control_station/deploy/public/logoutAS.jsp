@@ -85,78 +85,26 @@ response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFor
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <title><%= gd.getTitle() %></title>
-<script type="text/javascript" nonce="<%= randomNonce %>">
-
-var ok = true;
-function white(str){
-  for(var n=0; n<str.length; n++){
-    if (str.charAt(n) == " "){
-      ok = false;
-    }
-  }
-};
-
-function CheckDati() {
-  white(document.form.login.value);
-  white(document.form.password.value);
-  if (ok == false) {
-    ok = true;
-    var win = window.open("?op=alert&msg=NoSpace", "winAlert", "width=200,height=130");
-    win.focus();
-    return false;
-  } else { document.form.submit(); }
-};
-
-</script>
-<link href="../css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="../css/<%= gd.getCss() %>" type="text/css">
-<script type="text/javascript" src="../js/webapps.js" nonce="<%= randomNonce %>"></script>
+<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 <!-- JQuery lib-->
-<script type="text/javascript" src="../js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="webjars/jquery/3.6.4/jquery.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
+<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/login-utils.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon" />
 <script type="text/javascript" nonce="<%= randomNonce %>">
-
 $(document).ready(function(){
-				
 	$("a").mousedown(function(e) {
-		
-		var urlDest = $(this).attr('href');
-		
-	    if(e.which == 3) {
-	    	// console.log("right click: " + urlDest);
-	    } else 
-	    if(e.which == 2) {
-	    	// console.log("center click: " + urlDest);
-	    } else 
-	    if(e.which == 1) {
-	    	// aggiungi tab id a tutti i link cliccati col tasto sinistro
-	    	if(urlDest) {
-		    	// console.log("left click: " + urlDest);
-		    	
-		    	var targetDest = $(this).attr('target');
-		    	
-		    	if(targetDest && targetDest == '_blank') {
-		    		return;
-		    	}
-		    	
-		    	var newUrlDest = addTabIdParam(urlDest);
-		    	$(this).attr('href',newUrlDest);
-	    	} else {
-	    		// console.log("href non trovato per l'elemento di tipo: " + $(this));
-	    	}
-	    } else {
-	    	console.log("click non riconosciuto: " + urlDest);
-	    }
+		addTabIdParamToHref($(this),e);
 	});
-	
-	
 });
 </script> 
 </head>
-<body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
+<body marginwidth=0 marginheight=0>
 	<table class="bodyWrapper">
 		<tbody>
 			<% if(StringUtils.isNotEmpty(logoImage)){ %>

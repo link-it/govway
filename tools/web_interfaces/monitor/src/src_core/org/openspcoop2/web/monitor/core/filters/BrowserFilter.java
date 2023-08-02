@@ -38,8 +38,13 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
+import org.openspcoop2.web.monitor.core.bean.LoginBean;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.listener.IEFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -80,6 +85,9 @@ public class BrowserFilter implements Filter {
 	private static final String parametroTipoReport = "tipoReportCombo";
 	private static final String parametroTipoReportTabella = "Tabella";
 	private List<String> listaPagineNoIE8 = null;
+	
+	// messaggio da visualizzare per l'utente
+	private static final String msgErroreAuth = "Autorizzazione negata";
 
 	private static synchronized void loadMappaBrowser(){
 		if(mappaAbilitazioneGraficiSVG == null)
@@ -139,10 +147,11 @@ public class BrowserFilter implements Filter {
 
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-
+		HttpSession session = request.getSession();
 		// Analisi dello user agent
 		String userAgent = request.getHeader(Costanti.USER_AGENT_HEADER_NAME);
-
+		boolean utenteLoggato = isUtenteLoggato(session);
+		
 		if(userAgent != null) {
 
 			try{
@@ -215,6 +224,24 @@ public class BrowserFilter implements Filter {
 				} else {
 					chain.doFilter(request, response);
 				}
+			}catch(ValidationException e){
+				log.error("Errore di validazione dei parametri: " + e.getMessage() + ", redirect verso pagina di errore: "	+ request.getContextPath() + ContentAuthorizationFilter.jspErrore, e);
+				
+				if(utenteLoggato){
+					// setto gli attributi che riguardano il
+					// messaggio da visualizzare all'utente
+					session.setAttribute(ContentAuthorizationFilter.msgErroreKey, msgErroreAuth);
+					session.setAttribute(ContentAuthorizationFilter.accLimKey, true);
+					// redirect
+					response.sendRedirect(request.getContextPath()+ ContentAuthorizationFilter.jspErrore);
+				} else {
+					// utente non loggato va alla pagina di login
+					// redirect
+					response.sendRedirect(request.getContextPath()+ ContentAuthorizationFilter.jspLogin);
+				}
+
+				// blocco la catena di filtri
+				return;
 			}catch(Exception e){
 				log.debug("Browser non riconosciuto.");
 				chain.doFilter(request, response);
@@ -253,9 +280,10 @@ public class BrowserFilter implements Filter {
 	/**
 	 * Controlla che la pagina richiesta sia tra quelle che non necessitano di filtro sui contenuti,
 	 * sono "libere" le pagine di login e timeout, e i path delle risorse richiesta dinamicamente dal framework 
+	 * @throws ValidationException Il parametro *_svg non e' un boolean valido
 	 *	
 	 */
-	public boolean usaSVG(HttpServletRequest httpServletRequest) {
+	public boolean usaSVG(HttpServletRequest httpServletRequest) throws ValidationException {
 		int svgLength = 0;
 		String svg = null;
 		
@@ -267,6 +295,12 @@ public class BrowserFilter implements Filter {
 			log.trace("Parametro ["+parName+"] con Valore ["+httpServletRequest.getParameter(parName)+"].");
 			if(parName!= null && parName.endsWith(parametroSVG)){
 				svg = httpServletRequest.getParameter(parName);
+				// validazione del parametro di tipo boolean
+				boolean isSvgValid = ServletUtils.checkBooleanParameter(httpServletRequest, parName);
+				if(!isSvgValid) {
+					throw new ValidationException("Il parametro [" + parName + "] contiene un valore non valido.");
+				}
+				
 				log.trace("Parametro ["+parName+"] con Valore ["+httpServletRequest.getParameter(parName)+"] Utilizzato per pilotare il disegno dei grafici.");
 				
 				// controllo solo nei form delle statistiche se sto nella schermata form non devo fare cambio di modalita' se navigo si.
@@ -330,4 +364,12 @@ public class BrowserFilter implements Filter {
 			
 	}
 
+	private boolean isUtenteLoggato(HttpSession session) {
+		LoginBean lb =  Utility.getLoginBeanFromSession(session);
+		if (lb != null) {
+			return lb.getLoggedUser() != null;
+		}
+
+		return false;
+	}
 }

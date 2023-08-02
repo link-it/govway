@@ -30,6 +30,12 @@ function postBack(dataElementName) {
 		if (nome && nome.length > 0 && nome != "idhid" && nome != "edit-mode" && hiddenInfo == -1) {
 		    var tipo = document.form.elements[k].type;
 		    var valore = "";
+		    // elimino codice html dall'input testuale
+		    if (tipo == "text" || tipo == "textarea" || tipo == "number"){
+				var valoreTmp = document.form.elements[k].value;
+				document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valoreTmp);
+			}
+		    
 		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea"|| tipo == "number")
 		    	valore = document.form.elements[k].value;
 		    if (tipo == "select-one") {
@@ -65,15 +71,6 @@ function postBack(dataElementName) {
     }
     
     document.location = location;
-}	
-
-function addHidden(theForm, name, value) {
-    // Create a hidden input element, and append it to the form:
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = name;
-    input.value = value;
-    theForm.appendChild(input);
 }
 
 function postVersion_postBack(dataElementName) {
@@ -96,9 +93,15 @@ function postVersion_postBack(dataElementName) {
 		
 		if(nome == "edit-mode")
 			document.form.elements[k].value = 'in_progress_postback';
+			
+		// elimino codice html dall'input testuale
+		var tipo = document.form.elements[k].type;
+		if (tipo == "text" || tipo == "textarea" || tipo == "number"){
+			var valore = document.form.elements[k].value;
+			document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
+		}
 		
 		if(dump) { 
-		    var tipo = document.form.elements[k].type;
 		    var valore = "";
 		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea" || tipo == "number")
 			valore = document.form.elements[k].value;

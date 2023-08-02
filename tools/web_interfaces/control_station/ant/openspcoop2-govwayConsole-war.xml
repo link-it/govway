@@ -205,6 +205,20 @@
 				</if>
 			</then>
 		</if>
+		<!-- Copia della configurazione cookie same site per WF26 -->
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly26"/>
+					</or>
+					<then>
+						<copy file="${appSec.dir}/cookieSameSite/wildfly26/undertow-handlers.conf" tofile="${build_govwayConsole}/tmp/${cookie_same_site}" />
+					</then>
+				</if>
+			</then>
+		</if>
 		
 		<var name="stub_registry" value="" />
 		<var name="stub_config" value="" />		
@@ -317,6 +331,7 @@
 			<webinf dir="${build_govwayConsole}/tmp">
 				<include name="${jboss_deployment_structure}" />
 				<include name="jboss-web.xml" />
+				<include name="${cookie_same_site}" />
 			</webinf>
 			<classes dir="${cfg}">
 				<include name="console.audit.log4j2.properties" />
@@ -341,6 +356,10 @@
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.12.0.jar"/>
 				<include name="commons-compress-1.21.jar"/>
+			</lib>
+			<lib dir="${required_lib_govwayConsole}/console">
+				<include name="jquery-3.6.4.jar"/>
+				<include name="jquery-ui-1.13.2.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/shared">
 				<include name="wsdl4j-1.6.3.jar" />

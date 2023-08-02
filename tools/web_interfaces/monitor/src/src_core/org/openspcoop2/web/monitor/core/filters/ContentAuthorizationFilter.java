@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.core.filters;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +37,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
@@ -68,17 +70,19 @@ public class ContentAuthorizationFilter implements Filter {
 	private static final String msgErrorePost = " non dispone delle autorizzazioni necessarie per visualizzare la pagina richiesta";
 
 	// pagina da mostrare all'utente al posto di quella richiesta
-	private static final String jspErrore = "/commons/pages/welcome.jsf";
-	private static final String jspLogin = "/public/login.jsf";
+	public static final String jspErrore = "/commons/pages/welcome.jsf";
+	public static final String jspLogin = "/public/login.jsf";
 
 	// id delle variabili in sessione per il controllo del messaggio da
 	// visualizzare all'utente
-	private static final String msgErroreKey = "acclim";
+	public static final String msgErroreKey = "acclim";
 
-	private static final String accLimKey = "acclimflag";
+	public static final String accLimKey = "acclimflag";
 
 
 	private List<String> excludedPaths = null;
+	private String jQueryVersion = null;
+	private String jQueryUiVersion = null;
 
 	/***************************************************************************
 	 * Metodo destroy
@@ -168,7 +172,14 @@ public class ContentAuthorizationFilter implements Filter {
 							utenteLoggato = true; // flag che uso per impostare un messaggio di errore = false per non visualizzare il messaggio di accesso errato. 
 						}
 					}
-
+				}
+				
+				// Controllo risorse jQuery
+				if(StringUtils.contains(request.getRequestURI(), Costanti.WEBJARS_DIR) ) {
+					if(!isValidJQueryResource(request)) {
+						effettuaRedirect = true; // effettua redirect verso welcome.jsf
+						utenteLoggato = true; // flag che uso per impostare un messaggio di errore = false per non visualizzare il messaggio di accesso errato. 
+					}
 				}
 			}
 
@@ -248,6 +259,8 @@ public class ContentAuthorizationFilter implements Filter {
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		this.filterConfig = config;
+		this.jQueryVersion = this.filterConfig.getInitParameter(Costanti.FILTER_INIT_PARAMETER_JQUERY_VERSION);
+		this.jQueryUiVersion = this.filterConfig.getInitParameter(Costanti.FILTER_INIT_PARAMETER_JQUERY_UI_VERSION);
 		
 		this.excludedPaths = new ArrayList<>();
 		try {
@@ -255,5 +268,18 @@ public class ContentAuthorizationFilter implements Filter {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
+	}
+	
+	private boolean isValidJQueryResource(HttpServletRequest request) {
+		String urlRichiesta = request.getRequestURI();
+		
+		// regola speciale per le risorse jquery, sono ammesse solo le due librerie jquery-min e jquery-ui-min
+		if((urlRichiesta.indexOf("/"+MessageFormat.format(Costanti.LIB_JQUERY_PATH, this.jQueryVersion)) == -1) // jquery da jar
+		&& (urlRichiesta.indexOf("/"+MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, this.jQueryUiVersion)) == -1) // jquery-ui da jar
+		) {
+			return false;
+		}
+		
+		return true;
 	}
 }

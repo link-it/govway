@@ -6,7 +6,6 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
-	<a4j:loadScript src="resource://jquery.js" />
 	<ui:define name="body">
 		<c:if test="#{!loginBean.loggedIn}">
 			<style type="text/css" nonce="#{_csp_random_nonce}">
@@ -22,7 +21,7 @@
 				<h:form rendered="#{not empty param['principalShowForm'] or not empty param['msg_errore']}">
 					<input type="hidden" id="_csrfErrorPage" name="_csrf" value="#{loginBean.csrf}"/>
 					<h:outputText value="Si sono verificati degli errori, torna alla " />
-					<h:outputLink  value="#{facesContext.externalContext.request.contextPath}/pages/welcome.jsf">
+					<h:outputLink  value="#{facesContext.externalContext.request.contextPath}/pages/welcome.jsf" id="tornaAllaHomeLink">
 						<h:outputText value="Home" />
 					</h:outputLink>
 					<h:outputText value=" " />

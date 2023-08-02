@@ -18,7 +18,7 @@
 					<h:form>			
 						<input type="hidden" id="_csrfTimeoutPage" name="_csrf" value="#{loginBean.csrf}"/>
 						<h:outputText value="La tua sessione è scaduta, effettua nuovamente il " escape="true"/>
-						<h:commandLink action="login" value="Login" />
+						<h:commandLink action="login" value="Login" id="tornaAlLoginLink" />
 						<h:outputText value=" " />
 						<h:outputText value=" ." />
 					</h:form>

@@ -21,6 +21,7 @@ package org.openspcoop2.web.monitor.core.filters;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Properties;
 import java.util.UUID;
 
 import jakarta.servlet.Filter;
@@ -31,10 +32,15 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
+import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletRequest;
+import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletResponse;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
@@ -56,14 +62,26 @@ public class HeadersFilter implements Filter {
 	private FilterConfig filterConfig = null;
 	
 	private String cspHeaderValue;
+	private String xContentTypeOptionsHeaderValue = null;
+	private String xXssProtectionHeaderValue = null;
+	private String xFrameOptionsHeaderValue = null;
+	private String jQueryVersion = null; 
 
 	@Override
 	public void init(FilterConfig filterConfig) {
 
 		this.filterConfig = filterConfig;
+		this.jQueryVersion = this.filterConfig.getInitParameter(Costanti.FILTER_INIT_PARAMETER_JQUERY_VERSION);
 		try {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
 			this.cspHeaderValue = pddMonitorProperties.getCspHeaderValue();
+			this.xContentTypeOptionsHeaderValue = pddMonitorProperties.getXContentTypeOptionsHeaderValue();
+			this.xFrameOptionsHeaderValue = pddMonitorProperties.getXFrameOptionsHeaderValue();
+			this.xXssProtectionHeaderValue = pddMonitorProperties.getXXssProtectionHeaderValue();
+			
+			Properties consoleSecurityConfiguration = pddMonitorProperties.getConsoleSecurityConfiguration();
+			SecurityProperties.init(consoleSecurityConfiguration, log);
+			Validatore.init(SecurityProperties.getInstance(), log);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -75,11 +93,20 @@ public class HeadersFilter implements Filter {
 			HttpServletRequest request = (HttpServletRequest) req;
 			HttpServletResponse response = (HttpServletResponse) res;
 			
+			SecurityWrappedHttpServletRequest seqReq = new SecurityWrappedHttpServletRequest(request, log);
+			
+			SecurityWrappedHttpServletResponse seqRes = new SecurityWrappedHttpServletResponse(response, log);
+			
+			// set versione jQuery
+			seqReq.setAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_VERSION, this.jQueryVersion);
+			
 			// Gestione vulnerabilita' Content Security Policy
-			this.gestioneContentSecurityPolicy(request, response); 
+			this.gestioneContentSecurityPolicy(seqReq, seqRes); 
 
-			// faccio proseguire le chiamate ai filtri
-			chain.doFilter(request, response);
+			// Aggiungo header
+			this.gestioneXContentTypeOptions(seqReq, seqRes);
+			
+			chain.doFilter(seqReq, seqRes);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		} catch (ServletException e) {
@@ -98,13 +125,41 @@ public class HeadersFilter implements Filter {
 	private void gestioneContentSecurityPolicy(HttpServletRequest request, HttpServletResponse response) {
 		// Per abilitare l'esecuzione solo degli script che vogliamo far eseguire, si genera un UUID random e si assegna ai tag script con attributo src e a gli script inline nelle pagine
 		// L'id degli script abilitati e' indicato all'interno del campo script-src
+		HttpSession session = request.getSession();
+		String nonceValue = leggiNonceValue(session);
 		
-		String uuId = UUID.randomUUID().toString().replace("-", "");
-		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, uuId);
+		if(nonceValue == null) {
+			nonceValue = UUID.randomUUID().toString().replace("-", "");
+			salvaNonceValueInSessione(session, nonceValue);
+		}
+		
+		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, nonceValue);
 		
 		if(StringUtils.isNoneBlank(this.cspHeaderValue)) {
-			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.cspHeaderValue, uuId, uuId));
-//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.cspHeaderValue, uuId, uuId));
+			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.cspHeaderValue, nonceValue, nonceValue));
+//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.cspHeaderValue, nonceValue, nonceValue));
+		}
+	}
+	
+	public static String leggiNonceValue(HttpSession session) {
+		if(session == null) return null;
+		return (String) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CSP_RANDOM_NONCE);
+	}
+	
+	public static void salvaNonceValueInSessione(HttpSession session, String nonceValue) {
+		if(session == null) return;
+		session.setAttribute(Costanti.SESSION_ATTRIBUTE_CSP_RANDOM_NONCE, nonceValue);
+	}
+	
+	private void gestioneXContentTypeOptions(HttpServletRequest request, HttpServletResponse response) {
+		if(StringUtils.isNoneBlank(this.xFrameOptionsHeaderValue)) {
+			response.setHeader(HttpConstants.HEADER_NAME_X_FRAME_OPTIONS, this.xFrameOptionsHeaderValue);
+		}
+		if(StringUtils.isNoneBlank(this.xXssProtectionHeaderValue)) {
+			response.setHeader(HttpConstants.HEADER_NAME_X_XSS_PROTECTION, this.xXssProtectionHeaderValue);
+		}
+		if(StringUtils.isNoneBlank(this.xContentTypeOptionsHeaderValue)) {
+			response.setHeader(HttpConstants.HEADER_NAME_X_CONTENT_TYPE_OPTIONS, this.xContentTypeOptionsHeaderValue);
 		}
 	}
 }

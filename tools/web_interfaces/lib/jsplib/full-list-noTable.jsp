@@ -50,7 +50,12 @@ if(csrfTokenFromSession == null)
 %>
 
 <td valign="top" class="td2PageBody">
-<form name='form' method='post' onSubmit='return false;' id="form">
+<form name="form" method="post" id="form">
+	<script type="text/javascript" nonce="<%= randomNonce %>">
+	$(document).ready(function(){
+		$("#form").submit(formSubmit);
+	 });
+	</script>
 
 		<%
 		if(!csrfTokenFromSession.equals("")){

@@ -72,6 +72,10 @@ if (mime) {
 String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
 if(csrfTokenFromSession == null)
 	csrfTokenFromSession = "";
+
+String idsTextArea = ServletUtils.getIdentificativiTextArea(dati);
+if(idsTextArea == null)
+	idsTextArea = "";
 %>
 
 
@@ -84,6 +88,13 @@ if(csrfTokenFromSession == null)
 		if(!csrfTokenFromSession.equals("")){
 			%>
 			<input type="hidden" name="<%=Costanti.PARAMETRO_CSRF_TOKEN%>" id="<%=Costanti.PARAMETRO_CSRF_TOKEN%>"  value="<%= csrfTokenFromSession %>"/>
+			<%			
+		}
+		%>
+		<%
+		if(!idsTextArea.equals("")){
+			%>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>"  value="<%= idsTextArea %>"/>
 			<%			
 		}
 		%>
@@ -417,15 +428,15 @@ for (int i = 0; i < dati.size(); i++) {
 							      		
 							      		if(subtitle_<%= deName  %>_aperto){
 						      				$("#<%= titleDivId  %>").show();
-						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
+						      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
-						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
+						      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 						      			} else {
 						      				$("#<%= titleDivId  %>").hide();
-						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
+						      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
-						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
+						      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 						      			}
 							      		
@@ -434,16 +445,16 @@ for (int i = 0; i < dati.size(); i++) {
 							      			
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
-							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
+							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
-							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
-							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
+							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
-							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
 							      		});
@@ -453,16 +464,16 @@ for (int i = 0; i < dati.size(); i++) {
 							      			
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
-							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
+							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
-							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
-							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
+							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
-							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
 							      		});
@@ -539,16 +550,16 @@ for (int i = 0; i < dati.size(); i++) {
 				      		
 				      		if(subtitle_<%= deName  %>_aperto){
 			      				$("#<%= subtitleDeId  %>").show();
-			      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+			      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 			      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
 			      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
 			      			} else {
 			      				$("#<%= subtitleDeId  %>").hide();
-			      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+			      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 			      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
 			      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
 			      			}
@@ -558,17 +569,17 @@ for (int i = 0; i < dati.size(); i++) {
 				      			
 				      			if(subtitle_<%= deName  %>_aperto){
 				      				$("#<%= subtitleDeId  %>").show();
-				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
 				      				inizializzaSelectSezione('<%= subtitleDeId  %>');
 				      			} else {
 				      				$("#<%= subtitleDeId  %>").hide();
-				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
 				      			}
@@ -579,17 +590,17 @@ for (int i = 0; i < dati.size(); i++) {
 				      			
 				      			if(subtitle_<%= deName  %>_aperto){
 				      				$("#<%= subtitleDeId  %>").show();
-				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
 				      				inizializzaSelectSezione('<%= subtitleDeId  %>');
 				      			} else {
 				      				$("#<%= subtitleDeId  %>").hide();
-				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
 				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
 				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
 				      			}

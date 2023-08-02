@@ -41,6 +41,7 @@
 	<property name="properties_govwayMonitor" value="${govwayMonitor}/deploy/properties" />
 	<property name="deploy_govwayMonitor" value="${govwayMonitor}/deploy" />
 	<property name="commons_temaConsole" value="${deploy_govwayMonitor}/tema_css" />
+	<property name="appSec.dir" location="${deploy_govwayMonitor}/applicationSecurity" />
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />
@@ -71,7 +72,6 @@
 	<var name="commons_logging_jar" value="" />
 	<var name="jaxp_ri_jar" value=""/>
 	<var name="ecj_jar" value="" />
-	<var name="jsr311-api_jar" value="" />
 	<var name="javax_servlet_jsp_jstl_jar" value="" />
 	<var name="javax_servlet_jsp_jstl_api_jar" value="" />
 	<var name="jsf_impl_jar" value="" />
@@ -84,6 +84,7 @@
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value="" />
+	<var name="cookie_same_site" value="" />
 
 	<!-- commons_logging -->
 	<if>
@@ -225,7 +226,15 @@
 			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
 		</then>
 	</if>
-	
+	<!-- cookie_same_site -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="wildfly26"/>
+		</or>
+		<then>
+			<var name="cookie_same_site" value="undertow-handlers.conf" />
+		</then>
+	</if>
 	
 	
 	<!-- Indicazione se produrre la versione singlePdD -->

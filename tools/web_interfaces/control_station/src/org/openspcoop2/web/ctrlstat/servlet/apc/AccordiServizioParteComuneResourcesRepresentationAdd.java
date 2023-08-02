@@ -63,6 +63,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 
 /**
  * AccordiServizioParteComuneResourcesRepresentationAdd
@@ -99,6 +100,9 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
 
 			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
@@ -109,6 +113,10 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 				nomeRisorsa = "";
 			}
 			String statusS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			boolean isStatusValid = ServletUtils.checkIntegerParameter(apcHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			if(!isStatusValid) {
+				throw new ValidationException("Il parametro [" + AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS + "] contiene un valore non valido.");
+			}
 			Integer status = null;
 			try {
 				if(statusS!=null)
@@ -117,6 +125,10 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 				// ignore
 			}
 			String isReq = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			boolean isReqValid = ServletUtils.checkBooleanParameter(apcHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			if(!isReqValid) {
+				throw new ValidationException("Il parametro [" + AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST + "] contiene un valore non valido.");
+			}
 			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
 			
 			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
@@ -138,9 +150,6 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);

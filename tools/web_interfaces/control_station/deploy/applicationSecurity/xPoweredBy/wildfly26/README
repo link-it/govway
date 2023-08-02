@@ -1,0 +1,6 @@
+La configurazione di default di wildfly aggiunge sempre l'header X-Powered-By che potrebbe aiutare a individuare delle vulnerabilita' relative alla versione del prodotto usata.
+Si deve disattivare esplicitamente intervenendo sulla configurazione 'standalone/configuration/standalone.xml'.
+
+Riferimenti:
+https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure.html
+https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/01-Information_Gathering/08-Fingerprint_Web_Application_Framework

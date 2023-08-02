@@ -24,6 +24,7 @@ package org.openspcoop2.web.ctrlstat.servlet.login;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -48,6 +49,7 @@ import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
@@ -506,6 +508,14 @@ public class GestoreAutorizzazioni {
 			boolean servletOk = this.permessiAccordiServizio.or(user.getPermessi());
 			
 			String tipoAccordo = loginHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO); 
+			
+			if(StringUtils.isEmpty(tipoAccordo)) { // puo' essere null perche' non presente o vuoto perche' e' stato filtrato dall'utility di sicurezza
+				String tipoAccordoOriginale = Validatore.getInstance().getParametroOriginale(loginHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
+				
+				if(tipoAccordoOriginale != null) { // se il valore originale non e' null lancio l'errore.
+					tipoAccordo = tipoAccordoOriginale; // forzo il fallimento della validazione.
+				}
+			}
 			
 			//se la richiesta fa parte di un gruppo di servlet consentite 
 			//controllo se viene passato un parametro con nome tipo accordo 

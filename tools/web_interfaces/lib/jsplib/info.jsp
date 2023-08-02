@@ -41,19 +41,15 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <head>
 	<meta charset="UTF-8">
 	<title><%= gd.getTitle() %></title>
-	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
-	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 	<!-- JQuery lib-->
-	<script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
+	<script type="text/javascript" src="webjars/jquery/3.6.4/jquery.min.js" nonce="<%= randomNonce %>"></script>
+	<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
+	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 	<jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-	<script type="text/javascript" nonce="<%= randomNonce %>">
-$(document).ready(function(){
-	focusText(document.form);
-});
-</script>
 </head>
 <body marginwidth=0 marginheight=0>
 	<table class="bodyWrapper">

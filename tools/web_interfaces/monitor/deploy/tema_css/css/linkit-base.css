@@ -463,17 +463,6 @@ span[id$='iconLink']{
 	color: ${a.color};
 }
 
-a.iconLinkie{
-	color: ${a.color};
-}
-
-a:hover.iconLinkie{
-	color: ${a.hover.color};
-}
-
-span.iconLinkie{
-}
-
 .divNoEdit {
 	padding-top: 6px;
 	line-height: 16px;

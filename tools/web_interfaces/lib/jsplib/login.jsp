@@ -49,40 +49,16 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+
 <title><%= gd.getTitle() %></title>
-<script type="text/javascript" nonce="<%= randomNonce %>">
-
-var ok = true;
-function white(str){
-  for(var n=0; n<str.length; n++){
-    if (str.charAt(n) == " "){
-      ok = false;
-    }
-  }
-};
-
-function CheckDati() {
-  white(document.form.login.value);
-  white(document.form.password.value);
-  if (ok == false) {
-    ok = true;
-    var win = window.open("?op=alert&msg=NoSpace", "winAlert", "width=200,height=130");
-    win.focus();
-    return false;
-  } else { document.form.submit(); }
-};
-</script>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
-<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 <!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" nonce="<%= randomNonce %>">
-$(document).ready(function(){
-	focusText(document.form);
-});
-</script>
+<script type="text/javascript" src="webjars/jquery/3.6.4/jquery.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
+<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/login-utils.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" /> 
 </head>

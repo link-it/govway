@@ -49,8 +49,12 @@ if(csrfTokenFromSession == null)
 %>
 
 <td valign="top" class="td2PageBody">
-<form name='form' method='post' onSubmit='return false;' id="form">
-
+<form name="form" method="post" id="form">
+	<script type="text/javascript" nonce="<%= randomNonce %>">
+	$(document).ready(function(){
+		$("#form").submit(formSubmit);
+	 });
+	</script>
 		<%
 		if(!csrfTokenFromSession.equals("")){
 			%>
@@ -520,7 +524,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 															// info
 													    	if($("#<%=idSpanInfo %>").length>0){
 													    		$("#<%=idSpanInfo %>").click(function(e){
-													    			var iconInfoBoxId = $(this).parent().attr('id');
+													    			var iconInfoBoxId = $(this).parent().prop('id');
 													    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
 													    			console.log(idx);
 													    			if(idx) {
@@ -561,7 +565,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 															// info
 													    	if($("#<%=idSpanUso %>").length>0){
 													    		$("#<%=idSpanUso %>").click(function(e){
-													    			var iconInfoBoxId = $(this).parent().attr('id');
+													    			var iconInfoBoxId = $(this).parent().prop('id');
 													    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
 													    			console.log(idx);
 													    			if(idx) {

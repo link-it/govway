@@ -154,6 +154,17 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 								searchPresente = true;
 							}
 							
+							String idsTextAreaFiltriRicerca = ServletUtils.getIdentificativiTextAreaFiltriRicerca(pd.getFilterValues());
+							if(idsTextAreaFiltriRicerca == null)
+								idsTextAreaFiltriRicerca = "";
+							
+							
+							if(!idsTextAreaFiltriRicerca.equals("")){
+								%>
+								<input type="hidden" name="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>" id="<%=Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA%>"  value="<%= idsTextAreaFiltriRicerca %>"/>
+								<%			
+							}
+							
 							// cerco il primo subtitle e conservo la posizione perche' deve essere preceduto da eventuali search;
 							int idxSubtitle =-1;
 							for(int iPD=0; iPD<pd.getFilterValues().size(); iPD++){
@@ -232,16 +243,16 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									      		
 									      		if(subtitle_<%= filterName  %>_aperto){
 								      				$("#<%= filterId  %>").show();
-								      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
 								      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
 								      			} else {
 								      				$("#<%= filterId  %>").hide();
-								      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
 								      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
 								      			}
@@ -251,17 +262,17 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									      			
 									      			if(subtitle_<%= filterName  %>_aperto){
 									      				$("#<%= filterId  %>").show();
-									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
 									      				inizializzaSelectFiltro();
 									      			} else {
 									      				$("#<%= filterId  %>").hide();
-									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
 									      			}
@@ -272,17 +283,17 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									      			
 									      			if(subtitle_<%= filterName  %>_aperto){
 									      				$("#<%= filterId  %>").show();
-									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
 									      				inizializzaSelectFiltro();
 									      			} else {
 									      				$("#<%= filterId  %>").hide();
-									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
 									      			}

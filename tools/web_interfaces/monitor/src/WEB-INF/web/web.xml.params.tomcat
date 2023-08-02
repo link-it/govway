@@ -72,7 +72,10 @@
 		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	
+	    <context-param>
+        <param-name> com.sun.faces.sendPoweredByHeader</param-name>
+        <param-value>false</param-value>
+    </context-param>
 	
 
 <!-- Application properties -->

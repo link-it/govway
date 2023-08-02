@@ -40,14 +40,14 @@
 							if(cd>0){
 								cd--;
 								jQuery("[id='cdLabel']").text("Prossimo Aggiornamento tra "+cd+" secondi");
-								cdt = setTimeout("updateCountDown()", 1000);
+								cdt = setTimeout(function () { updateCountDown();}, 1000);
 							}
 						}
 					
 						function startCounter()
 						{
 							cd=cdifp;
-							t=setTimeout("poll()",cd*1000);
+							t=setTimeout(function () { poll();},cd*1000);
 							updateCountDown();
 						}
 					

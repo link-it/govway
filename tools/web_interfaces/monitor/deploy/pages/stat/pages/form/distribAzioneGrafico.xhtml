@@ -228,7 +228,7 @@
 										<h:inputHidden value="true" id="usaSVG"/>
 										<h:panelGrid columns="2">
 											<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGraficiSolo" />
-											<rich:inputNumberSpinner value="#{distribuzionePerAzioneBean.slice}" minValue="#{distribuzionePerAzioneBean.minCategorie}"
+											<rich:inputNumberSpinner value="#{distribuzionePerAzioneBean.slice}" minValue="#{distribuzionePerAzioneBean.minCategorie}" id="numeroRisultatiSlider"
 												maxValue="#{distribuzionePerAzioneBean.maxCategorie}" cycled="false" styleClass="spinnerNumeroRisultatiGrafici">
 												<a4j:support event="onchange" actionListener="#{distribuzionePerAzioneBean.updateChartNumeroRisultati}" reRender="scriptPieChartPanel,gridComandi"/>
 											</rich:inputNumberSpinner>
@@ -364,7 +364,7 @@
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
 												<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGrafici" />
-												<rich:inputNumberSpinner value="#{distribuzionePerAzioneBean.slice}" minValue="#{distribuzionePerAzioneBean.minCategorie}" 
+												<rich:inputNumberSpinner value="#{distribuzionePerAzioneBean.slice}" minValue="#{distribuzionePerAzioneBean.minCategorie}" id="numeroRisultatiSliderBars"
 													maxValue="#{distribuzionePerAzioneBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici">
 													<a4j:support event="onchange" actionListener="#{distribuzionePerAzioneBean.updateChartNumeroRisultati}" reRender="scriptBarChartPanel,gridComandiBars"/>
 												</rich:inputNumberSpinner>

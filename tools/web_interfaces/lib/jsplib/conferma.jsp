@@ -70,24 +70,6 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 		var nomeServlet_Custom_Ok = '';
 		var nomeServlet_Custom_No = '';
 		
-		function generaUrl() {
-		    var params = '';
-		    
-		    for (var k=0; k<document.form.elements.length; k++) {
-				var nome = document.form.elements[k].name;
-				if (nome && nome.length > 0 && nome != "idhid") {
-				    var tipo = document.form.elements[k].type;
-				    var valore = "";
-				    if ( tipo == "hidden"){
-						valore = document.form.elements[k].value;
-						params += "&" + nome + "=" + valore;
-			    	}
-			    }
-		    }
-		    
-			return params;   
-		}
-		    
 	</SCRIPT>
 	<jsp:include page="/jsp/confermaCustom.jsp" flush="true" />
 	<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
@@ -114,7 +96,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 			  	addHidden(document.form, prevTabSessionKey , tabValue);
 			  }
 				
-			  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'conferma');
+			  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_CONFERMA %>');
 			  
 			  //aggiungo parametro csfr
 			  //if(csrfToken != ''){
@@ -127,7 +109,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
 				
-				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'conferma');
+				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_CONFERMA %>');
 				//aggiungo parametro csfr
 				if(csrfToken != ''){
 				  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
@@ -158,7 +140,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				  	addHidden(document.form, prevTabSessionKey , tabValue);
 				  }
 				
-				  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'annulla');
+				  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA %>');
 				  
 				  //aggiungo parametro csfr
 				  //if(csrfToken != ''){
@@ -171,7 +153,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
 				
-				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'annulla');
+				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA %>');
 				//aggiungo parametro csfr
 				if(csrfToken != ''){
 				  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
@@ -376,7 +358,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 		 		};
 		 		
         		$(".spanIconCopyBox").click(function(evt){
-        			var iconCopyBoxId = $(this).parent().attr('id');
+        			var iconCopyBoxId = $(this).parent().prop('id');
         			var idx = iconCopyBoxId.substring(iconCopyBoxId.indexOf("_")+1);
         			// console.log(idx);
         			if(idx) {

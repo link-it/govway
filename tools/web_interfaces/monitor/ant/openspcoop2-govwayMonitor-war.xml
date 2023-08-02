@@ -140,6 +140,7 @@
 			<webinf dir="${build_govwayMonitor_war}/WEB-INF">
 				<include name="${jboss_deployment_structure}" />
 				<include name="jboss-web.xml" />
+				<include name="${cookie_same_site}" />
 			</webinf>
 			<classes dir="${properties_govwayMonitor}">
 				<include name="monitor.log4j2.properties" />
@@ -166,6 +167,10 @@
 				<include name="commons-codec-1.15.jar" />
 				<include name="commons-math3-3.6.1.jar" />
 				<include name="commons-csv-1.9.0.jar" />
+			</lib>
+			<lib dir="${required_lib_govwayMonitor}/console">
+				<include name="jquery-3.6.4.jar"/>
+				<include name="jquery-ui-1.13.2.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/shared">
 				<include name="wsdl4j-1.6.3.jar" />

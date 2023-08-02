@@ -112,6 +112,7 @@ public class Costanti {
 	public static final String CHECK_BOX_ENABLED_ABILITATO = "abilitato";
 	public static final String CHECK_BOX_DISABLED = "no";
 	public static final String CHECK_BOX_DISABLED_FALSE = "false";
+	public static final String CHECK_BOX_DISABLED_DISABILITATO = "disabilitato";
 	public static final String CHECK_BOX_WARN = "warn";
 	public static final String CHECK_BOX_CONFIG_ENABLE = "config_enable";
 	public static final String CHECK_BOX_CONFIG_WARNING = "config_warning";
@@ -233,6 +234,10 @@ public class Costanti {
 	public static final String PARAMETRO_AGGIORNA_RICERCA = "aggiornaRicerca";
 	public static final String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = "rmElFromCache";
 	public static final String PARAMETRO_AZIONE = "azione";
+	public static final String VALUE_PARAMETRO_AZIONE_SALVA = "salva";
+	public static final String VALUE_PARAMETRO_AZIONE_REMOVE_ENTRIES = "removeEntries";
+	public static final String VALUE_PARAMETRO_AZIONE_CONFERMA = "conferma";
+	public static final String VALUE_PARAMETRO_AZIONE_ANNULLA = "annulla";
 	
 	public static final String LABEL_MONITOR_BUTTON_OK = "Ok";
 	public static final String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma";
@@ -373,6 +378,21 @@ public class Costanti {
 	
 	public static final String SA_TIPO_DEFAULT_VALUE = "clientORserver";	
 	
-	/* CSP */
+	/** CSP */
 	public static final String REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE = "_csp_random_nonce";
+	public static final String SESSION_ATTRIBUTE_CSP_RANDOM_NONCE =  REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE;
+	
+	/** LIB JQUERY */
+	
+	public static final String REQUEST_ATTRIBUTE_JQUERY_VERSION = "__jquery_version__";
+	public static final String FILTER_INIT_PARAMETER_JQUERY_VERSION = "jquery_version";
+	public static final String FILTER_INIT_PARAMETER_JQUERY_UI_VERSION = "jquery-ui_version";
+	public static final String LIB_JQUERY_PATH = "webjars/jquery/{0}/jquery.min.js";
+	public static final String LIB_JQUERY_UI_PATH = "webjars/jquery-ui/{0}/jquery-ui.min.js";
+	public static final String WEBJARS_DIR = "webjars";
+	
+	/** VALIDAZIONE INPUT */
+	
+	public static final String PARAMETRO_IDENTIFICATIVI_TEXT_AREA = "__ta__";
+	public static final String VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE = ",";
 }

@@ -15,10 +15,6 @@
 		<tag-name>extendedDataTable</tag-name>
 		<source>taglib/ExtendedPagedDataTable.xhtml</source>
 	</tag>
-	<tag>
-		<tag-name>confirm</tag-name>
-		<source>taglib/confirmation.xhtml</source>
-   	</tag>
    	<tag>
    		<tag-name>fieldset</tag-name>
    		<source>taglib/FieldSet.xhtml</source>

@@ -22,6 +22,7 @@ package org.openspcoop2.web.lib.mvc;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,8 @@ import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
 
@@ -479,8 +482,6 @@ public class ServletUtils {
 			// lettura dalla sessione associata all'id del tab
 			String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
 			
-			String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
-			
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
@@ -493,6 +494,11 @@ public class ServletUtils {
 				
 			} else {
 				// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+				String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+				
+				// validazione prevTabId
+				prevTabId = Validatore.getInstance().validatePrevTabId(prevTabId);
+				
 				copiaAttributiSessioneTab(session, prevTabId, tabId);
 				sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 				mapTabId = sessionMap.get(tabId);
@@ -518,8 +524,6 @@ public class ServletUtils {
 			// lettura dalla sessione associata all'id del tab
 			String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
 			
-			String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
-			
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
@@ -532,6 +536,11 @@ public class ServletUtils {
 				
 			} else {
 				// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+				String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+				
+				// validazione prevTabId
+				prevTabId = Validatore.getInstance().validatePrevTabId(prevTabId);
+				
 				copiaAttributiSessioneTab(session, prevTabId, tabId);
 				sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 				mapTabId = sessionMap.get(tabId);
@@ -566,8 +575,6 @@ public class ServletUtils {
 			// lettura dalla sessione associata all'id del tab
 			String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
 			
-			String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
-			
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
@@ -580,6 +587,11 @@ public class ServletUtils {
 				
 			} else {
 				// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+				String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+				
+				// validazione prevTabId
+				prevTabId = Validatore.getInstance().validatePrevTabId(prevTabId);
+				
 				copiaAttributiSessioneTab(session, prevTabId, tabId);
 				sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 				mapTabId = sessionMap.get(tabId);
@@ -857,5 +869,167 @@ public class ServletUtils {
 		}
 		
 		return true;
+	}
+	
+	/***
+	 * Validazione del valore ricevuto per il parametro di tipo integer
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkIntegerParameter(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
+			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+			return parameterValueOriginale == null;
+		}
+		
+		try {
+			Integer.parseInt(parameterValueFiltrato);
+		}catch(IllegalArgumentException e) {
+			return false;
+		}
+
+		return true;
+	}
+	
+	/***
+	 * Validazione del valore ricevuto per il parametro di tipo boolean
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkBooleanParameter(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
+			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+			return parameterValueOriginale == null;
+		}
+		
+		// i valori accettati sono solo i seguenti
+		return  Costanti.CHECK_BOX_ENABLED.equals(parameterValueFiltrato) ||  Costanti.CHECK_BOX_DISABLED.equals(parameterValueFiltrato) 
+				|| Costanti.CHECK_BOX_ENABLED_ABILITATO.equals(parameterValueFiltrato) ||  Costanti.CHECK_BOX_DISABLED_DISABILITATO.equals(parameterValueFiltrato)
+				|| Costanti.CHECK_BOX_ENABLED_TRUE.equals(parameterValueFiltrato) ||  Costanti.CHECK_BOX_DISABLED_FALSE.equals(parameterValueFiltrato)
+				;
+	}
+	
+	/**
+	 * Controlla che il parametro richiesto sia valido, l'utility di validazione restituisce null per i parametri che violano le condizioni di validazione, 
+	 * l'applicazione ha bisogno di sapere se si tratta di un valore originale non valido o non presente. 
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkParametro(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o vuoto perche' e' stato filtrato dall'utility di sicurezza
+			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+			return parameterValueOriginale == null;
+		}
+		
+		return true;
+	}
+	
+	/***
+	 * Validazione del valore ricevuto per il parametro 
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkParametroResetSearch(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
+			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+			return parameterValueOriginale == null;
+		}
+		
+		// i valori accettati sono Costanti.CHECK_BOX_ENABLED o Costanti.CHECK_BOX_DISABLED
+		return  Costanti.CHECK_BOX_ENABLED.equals(parameterValueFiltrato) ||  Costanti.CHECK_BOX_DISABLED.equals(parameterValueFiltrato);
+	}
+	
+	/**
+	 * Controlla che il parametro richiesto sia valido, l'utility di validazione restituisce null per i parametri che violano le condizioni di validazione, 
+	 * l'applicazione ha bisogno di sapere se si tratta di un valore originale non valido o non presente. 
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkParametroAzione(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
+			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+			return parameterValueOriginale == null;
+		}
+		
+		// i valori accettati sono 'salva' e 'removeEntries'
+		return  Costanti.VALUE_PARAMETRO_AZIONE_SALVA.equals(parameterValueFiltrato) 
+				|| Costanti.VALUE_PARAMETRO_AZIONE_REMOVE_ENTRIES.equals(parameterValueFiltrato)
+				|| Costanti.VALUE_PARAMETRO_AZIONE_CONFERMA.equals(parameterValueFiltrato)
+				|| Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA.equals(parameterValueFiltrato);
+	}
+	
+	public static boolean usaValidazioneTextArea(HttpServletRequest request, String parameterToCheck) {
+		String parametroIdentificativi = Validatore.getInstance().getParametroOriginale(request, Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA);
+		
+		if(parametroIdentificativi != null) {
+			try {
+				Validatore.getInstance().validate("Il valore del parametro [" + Costanti.PARAMETRO_IDENTIFICATIVI_TEXT_AREA + "]:["+parametroIdentificativi+"]",
+						parametroIdentificativi, false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TEXT_AREA);
+			}catch(ValidationException e) {
+				// se il contenuto del parametro con gli id text area non rispetta il suo pattern allora non abilito la validazione custom
+				return false;
+			}
+			
+			String[] ids = parametroIdentificativi.split(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
+			
+			if(ids != null && ids.length > 0) {
+				List<String> asList = Arrays.asList(ids);
+				return asList.contains(parameterToCheck);
+			}
+		}
+		
+		return false;
+	}
+	
+	public static String getIdentificativiTextArea(List<?> dati) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < dati.size(); i++) {
+			DataElement de = (DataElement) dati.get(i);
+			String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
+			if (de.getType().equals("textarea") || de.getType().equals("textarea-noedit")) {
+				if(sb.length() > 0) {
+					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
+				}
+				sb.append(deName);
+			}
+		}
+		
+		return sb.length() > 0 ? sb.toString() : null;
+	}
+	
+	public static String getIdentificativiTextAreaFiltriRicerca(List<DataElement> filterValues) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < filterValues.size(); i++) {
+			DataElement filtro = filterValues.get(i);
+			String filterName = filtro.getName();
+			if (filtro.getType().equals("textarea") || filtro.getType().equals("textarea-noedit")) {
+				if(sb.length() > 0) {
+					sb.append(Costanti.VALUE_PARAMETRO_IDENTIFICATIVI_TEXT_AREA_SEPARATORE);
+				}
+				sb.append(filterName);
+			}
+		}
+		
+		return sb.length() > 0 ? sb.toString() : null;
 	}
 }

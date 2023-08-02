@@ -673,64 +673,6 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return this.soggettiAssociati;
 	}
 
-//	@Override
-//	protected List<Soggetto> _getListaSoggetti(Object val, String tipoProtocollo) {
-//		if(this.search==null){
-//			return new ArrayList<Soggetto>();
-//		}
-//		List<Soggetto> list = null;
-//		Soggetto s = new Soggetto();
-//		s.setNomeSoggetto("--");
-//
-//		// ricerca soggetti
-//		if(val==null || StringUtils.isEmpty((String)val))
-//			list = new ArrayList<Soggetto>();
-//		else{
-//			list = this.dynamicUtilsService.soggettiAutoComplete(tipoProtocollo,(String)val);
-//		}
-//
-//		UserDetailsBean loggedUser = Utility.getLoggedUser();
-//		//se non e' admin allora devo controllare i tipi dei soggetti associati
-//		if(!loggedUser.isAdmin()){
-//			List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
-//			if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0){
-//				List<Soggetto> listaFiltrata = new ArrayList<Soggetto>();
-//				List<String> listaTipi = new ArrayList<>();
-//
-//				// controllo soggetto locale
-//				String tipoSoggettoLocale = Utility.parseTipoSoggetto(this.search.getTipoNomeSoggettoLocale());
-//				String nomeSoggettoLocale = Utility.parseNomeSoggetto(this.search.getTipoNomeSoggettoLocale());
-//				// se il tipo soggetto locale e' impostato allora filtro per il tipo compatibile con quello scelto
-//				if(nomeSoggettoLocale != null){
-//					listaTipi.add(tipoSoggettoLocale);
-//				} else {
-//
-//					// prelevo il tipo dei soggetti compatibili
-//					for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
-//						if(!listaTipi.contains(utenteSoggetto.getTipo()))
-//							listaTipi.add(utenteSoggetto.getTipo());
-//					}
-//
-//				}
-//				for (Soggetto soggetto : list) {
-//					for (String tipo : listaTipi) {
-//						try {
-//							if(this.dynamicUtils.isTipoSoggettoCompatibile(tipo, soggetto.getTipoSoggetto()))
-//								listaFiltrata.add(soggetto);
-//						} catch (Exception e) {
-//
-//						}
-//					}
-//				}
-//
-//				listaFiltrata.add(0,s);
-//				return listaFiltrata;
-//			}
-//		}  
-//
-//		list.add(0,s);
-//		return list;	
-//	}
 
 	public String getSoggettiAssociatiSelectItemsWidth() throws Exception{
 		this.soggettiAssociatiSelectItemsWidthCheck = false;
