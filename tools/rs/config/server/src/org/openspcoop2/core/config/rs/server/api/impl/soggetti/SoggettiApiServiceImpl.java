@@ -101,7 +101,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				}
 				
 			}
-			catch(javax.ws.rs.WebApplicationException e) {
+			catch(jakarta.ws.rs.WebApplicationException e) {
 				throw e;
 			}
 			catch(Exception e) {
@@ -165,7 +165,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -223,7 +223,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			context.getLogger().info("Invocazione completata con successo");     
 		}
 		
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -288,7 +288,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -329,7 +329,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			return soggettoApi;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -363,7 +363,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			try{
 				credenziali = Helper.translateCredenziali(body.getCredenziali(), true); // metto true, come se fosse create per obbligare la password basic
 			}
-			catch(javax.ws.rs.WebApplicationException e) {
+			catch(jakarta.ws.rs.WebApplicationException e) {
 				throw e;
 			}
 			catch(Throwable e) {
@@ -433,7 +433,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			context.getLogger().info("Invocazione completata con successo");
              
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -462,7 +462,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				soggetto = (Soggetto) body;
 				soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), false));
 			}
-			catch(javax.ws.rs.WebApplicationException e) {
+			catch(jakarta.ws.rs.WebApplicationException e) {
 				throw e;
 			}
 			catch(Throwable e) {
@@ -558,7 +558,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			context.getLogger().info("Invocazione completata con successo");
              
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}

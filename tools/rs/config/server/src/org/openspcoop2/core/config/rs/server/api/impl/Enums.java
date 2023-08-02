@@ -81,13 +81,13 @@ public class Enums {
 	//RuoloAllegatoAPIImpl -> RuoiliDocumento
 	//public static final Map<RuoloAllegatoAPIImpl,RuoliDocumento> 
 	
-	public static final Map<FonteEnum, RuoloTipologia> ruoloTipologiaFromRest = new HashMap<FonteEnum, RuoloTipologia>();
+	public static final Map<FonteEnum, RuoloTipologia> ruoloTipologiaFromRest = new HashMap<>();
 	static {
 		Enums.ruoloTipologiaFromRest.put(FonteEnum.ESTERNA, RuoloTipologia.ESTERNO);
 		Enums.ruoloTipologiaFromRest.put(FonteEnum.QUALSIASI, RuoloTipologia.QUALSIASI);
 		Enums.ruoloTipologiaFromRest.put(FonteEnum.REGISTRO, RuoloTipologia.INTERNO);
 	}
-	public static final Map<FonteEnum, org.openspcoop2.core.config.constants.RuoloTipologia> ruoloTipologiaConfigFromRest = new HashMap<FonteEnum, org.openspcoop2.core.config.constants.RuoloTipologia>();
+	public static final Map<FonteEnum, org.openspcoop2.core.config.constants.RuoloTipologia> ruoloTipologiaConfigFromRest = new HashMap<>();
 	static {
 		Enums.ruoloTipologiaConfigFromRest.put(FonteEnum.ESTERNA, org.openspcoop2.core.config.constants.RuoloTipologia.ESTERNO);
 		Enums.ruoloTipologiaConfigFromRest.put(FonteEnum.QUALSIASI, org.openspcoop2.core.config.constants.RuoloTipologia.QUALSIASI);
@@ -95,7 +95,7 @@ public class Enums {
 	}
 	
 	
-	public static final Map<TipoAutenticazioneEnum, TipoAutenticazione> tipoAutenticazioneFromRest = new HashMap<TipoAutenticazioneEnum, TipoAutenticazione>();
+	public static final Map<TipoAutenticazioneEnum, TipoAutenticazione> tipoAutenticazioneFromRest = new HashMap<>();
 	static {
 		Enums.tipoAutenticazioneFromRest.put(TipoAutenticazioneEnum.DISABILITATO, TipoAutenticazione.DISABILITATO);
 		Enums.tipoAutenticazioneFromRest.put(TipoAutenticazioneEnum.HTTP_BASIC, TipoAutenticazione.BASIC);
@@ -125,61 +125,59 @@ public class Enums {
 	}
 	
 	
-	public static final Map<TipoApiEnum,ServiceBinding> serviceBindingFromTipo = new HashMap<TipoApiEnum,ServiceBinding>();
+	public static final Map<TipoApiEnum,ServiceBinding> serviceBindingFromTipo = new HashMap<>();
 	static {
 		Enums.serviceBindingFromTipo.put(TipoApiEnum.REST, ServiceBinding.REST);
 		Enums.serviceBindingFromTipo.put(TipoApiEnum.SOAP, ServiceBinding.SOAP);
 	}
 	
 	
-	public static final Map<FormatoSoapEnum,FormatoSpecifica> formatoSpecificaFromSoap = new HashMap<FormatoSoapEnum,FormatoSpecifica>();
+	public static final Map<FormatoSoapEnum,FormatoSpecifica> formatoSpecificaFromSoap = new HashMap<>();
 	static {
 		Enums.formatoSpecificaFromSoap.put(FormatoSoapEnum._1, FormatoSpecifica.WSDL_11);
 	}
 	
 	
-	public static final Map<FormatoSpecifica,FormatoSoapEnum> formatoSoapFromSpecifica = new HashMap<FormatoSpecifica,FormatoSoapEnum>();
+	public static final Map<FormatoSpecifica,FormatoSoapEnum> formatoSoapFromSpecifica = new HashMap<>();
 	static {
 		Enums.formatoSpecificaFromSoap.forEach( (soapenum, fspec) -> Enums.formatoSoapFromSpecifica.put(fspec,soapenum) );
 	}
 	
 	
-	public static final Map<FormatoRestEnum,FormatoSpecifica> formatoSpecificaFromRest = new HashMap<FormatoRestEnum,FormatoSpecifica>();
+	public static final Map<FormatoRestEnum,FormatoSpecifica> formatoSpecificaFromRest = new HashMap<>();
 	static {
 		Enums.formatoSpecificaFromRest.put(FormatoRestEnum.OPENAPI3_0, FormatoSpecifica.OPEN_API_3);
 		Enums.formatoSpecificaFromRest.put(FormatoRestEnum.SWAGGER2_0, FormatoSpecifica.SWAGGER_2);
-		Enums.formatoSpecificaFromRest.put(FormatoRestEnum.WADL, FormatoSpecifica.WADL);
 	}
 	
 	
-	public static final Map<FormatoSpecifica,FormatoRestEnum> formatoRestFromSpecifica = new HashMap<FormatoSpecifica,FormatoRestEnum>();
+	public static final Map<FormatoSpecifica,FormatoRestEnum> formatoRestFromSpecifica = new HashMap<>();
 	static {
 		Enums.formatoSpecificaFromRest.forEach( (fr, fs) -> Enums.formatoRestFromSpecifica.put(fs, fr));
 	}
 		
 
-	public static final Map<FormatoSpecifica,InterfaceType> interfaceTypeFromFormatoSpecifica = new HashMap<FormatoSpecifica,InterfaceType>();
+	public static final Map<FormatoSpecifica,InterfaceType> interfaceTypeFromFormatoSpecifica = new HashMap<>();
 	static {
 		Enums.interfaceTypeFromFormatoSpecifica.put(FormatoSpecifica.OPEN_API_3, InterfaceType.OPEN_API_3);
 		Enums.interfaceTypeFromFormatoSpecifica.put(FormatoSpecifica.SWAGGER_2, InterfaceType.SWAGGER_2);
-		Enums.interfaceTypeFromFormatoSpecifica.put(FormatoSpecifica.WADL, InterfaceType.WADL);
 		Enums.interfaceTypeFromFormatoSpecifica.put(FormatoSpecifica.WSDL_11, InterfaceType.WSDL_11);
 	}
 	
 	
-	public static final Map<RuoloAllegatoAPI,RuoliDocumento> ruoliDocumentoFromApi = new HashMap<RuoloAllegatoAPI,RuoliDocumento>();
+	public static final Map<RuoloAllegatoAPI,RuoliDocumento> ruoliDocumentoFromApi = new HashMap<>();
 	static {
 		Enums.ruoliDocumentoFromApi.put(RuoloAllegatoAPI.ALLEGATO, RuoliDocumento.allegato);
 		Enums.ruoliDocumentoFromApi.put(RuoloAllegatoAPI.SPECIFICASEMIFORMALE, RuoliDocumento.specificaSemiformale);
 	}
 	
 	
-	public static final Map<RuoliDocumento,RuoloAllegatoAPI> ruoliApiFromDocumento = new HashMap<RuoliDocumento,RuoloAllegatoAPI>();
+	public static final Map<RuoliDocumento,RuoloAllegatoAPI> ruoliApiFromDocumento = new HashMap<>();
 	static {
 		Enums.ruoliDocumentoFromApi.forEach( (ra,rd) -> Enums.ruoliApiFromDocumento.put(rd, ra));
 	}
 	
-	public static final Map<RuoloAllegatoAPIImpl,RuoliDocumento> ruoliDocumentoFromApiImpl = new HashMap<RuoloAllegatoAPIImpl,RuoliDocumento>();
+	public static final Map<RuoloAllegatoAPIImpl,RuoliDocumento> ruoliDocumentoFromApiImpl = new HashMap<>();
 	static {
 		Enums.ruoliDocumentoFromApiImpl.put(RuoloAllegatoAPIImpl.ALLEGATO, RuoliDocumento.allegato);
 		Enums.ruoliDocumentoFromApiImpl.put(RuoloAllegatoAPIImpl.SPECIFICASEMIFORMALE, RuoliDocumento.specificaSemiformale);
@@ -189,14 +187,14 @@ public class Enums {
 	
 	
 	
-	public static final Map<RuoliDocumento,RuoloAllegatoAPIImpl> ruoliApiImplFromDocumento = new HashMap<RuoliDocumento,RuoloAllegatoAPIImpl>();
+	public static final Map<RuoliDocumento,RuoloAllegatoAPIImpl> ruoliApiImplFromDocumento = new HashMap<>();
 	static {
 		Enums.ruoliDocumentoFromApiImpl.forEach( (ra,rd) -> Enums.ruoliApiImplFromDocumento.put(rd, ra));
 	}
 
 
 	
-	public static final Map<TipoSpecificaSemiformaleEnum,TipiDocumentoSemiformale> tipoDocumentoSemiFormaleFromSpecifica = new HashMap<TipoSpecificaSemiformaleEnum,TipiDocumentoSemiformale>();
+	public static final Map<TipoSpecificaSemiformaleEnum,TipiDocumentoSemiformale> tipoDocumentoSemiFormaleFromSpecifica = new HashMap<>();
 	static {
 		Enums.tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.HTML, TipiDocumentoSemiformale.HTML);
 		Enums.tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.JSON, TipiDocumentoSemiformale.JSON);
@@ -207,13 +205,13 @@ public class Enums {
 		Enums.tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.YAML, TipiDocumentoSemiformale.YAML);
 	}
 	
-	public static final Map<TipoSpecificaLivelloServizioEnum,TipiDocumentoLivelloServizio> tipoDocumentoLivelloServizioFromSpecifica = new HashMap<TipoSpecificaLivelloServizioEnum,TipiDocumentoLivelloServizio>();
+	public static final Map<TipoSpecificaLivelloServizioEnum,TipiDocumentoLivelloServizio> tipoDocumentoLivelloServizioFromSpecifica = new HashMap<>();
 	static {
 		Enums.tipoDocumentoLivelloServizioFromSpecifica.put(TipoSpecificaLivelloServizioEnum.WS_AGREEMENT, TipiDocumentoLivelloServizio.WSAGREEMENT);
 		Enums.tipoDocumentoLivelloServizioFromSpecifica.put(TipoSpecificaLivelloServizioEnum.WSLA, TipiDocumentoLivelloServizio.WSLA);
 	}
 	
-	public static final Map<TipoSpecificaSicurezzaEnum,TipiDocumentoSicurezza> tipoDocumentoSicurezzaFromSpecifica = new HashMap<TipoSpecificaSicurezzaEnum,TipiDocumentoSicurezza>();
+	public static final Map<TipoSpecificaSicurezzaEnum,TipiDocumentoSicurezza> tipoDocumentoSicurezzaFromSpecifica = new HashMap<>();
 	static {
 		Enums.tipoDocumentoSicurezzaFromSpecifica.put(TipoSpecificaSicurezzaEnum.WS_POLICY, TipiDocumentoSicurezza.WSPOLICY);
 		Enums.tipoDocumentoSicurezzaFromSpecifica.put(TipoSpecificaSicurezzaEnum.XACML_POLICY, TipiDocumentoSicurezza.XACML_POLICY);
@@ -221,7 +219,7 @@ public class Enums {
 	}
 	
 	
-	public static final Map<ProfiloCollaborazioneEnum,ProfiloCollaborazione> profiloCollaborazioneFromApiEnum = new HashMap<ProfiloCollaborazioneEnum,ProfiloCollaborazione>();
+	public static final Map<ProfiloCollaborazioneEnum,ProfiloCollaborazione> profiloCollaborazioneFromApiEnum = new HashMap<>();
 	static {
 		Enums.profiloCollaborazioneFromApiEnum.put(ProfiloCollaborazioneEnum.ASINCRONOASIMMETRICO, ProfiloCollaborazione.ASINCRONO_ASIMMETRICO);
 		Enums.profiloCollaborazioneFromApiEnum.put(ProfiloCollaborazioneEnum.ASINCRONOSIMMETRICO, ProfiloCollaborazione.ASINCRONO_SIMMETRICO);
@@ -230,7 +228,7 @@ public class Enums {
 	}
 	
 	
-	public static final Map<ProfiloCollaborazione,ProfiloCollaborazioneEnum> profiloCollaborazioneApiFromRegistro = new HashMap<ProfiloCollaborazione,ProfiloCollaborazioneEnum>();
+	public static final Map<ProfiloCollaborazione,ProfiloCollaborazioneEnum> profiloCollaborazioneApiFromRegistro = new HashMap<>();
 	static {
 		Enums.profiloCollaborazioneFromApiEnum.forEach( (a,r) -> Enums.profiloCollaborazioneApiFromRegistro.put(r, a));
 	}
@@ -291,14 +289,14 @@ public class Enums {
 	
 	
 
-	public static final Map<TipoGestioneCorsEnum,TipoGestioneCORS> tipoGestioneCorsFromRest = new HashMap<TipoGestioneCorsEnum,TipoGestioneCORS>();
+	public static final Map<TipoGestioneCorsEnum,TipoGestioneCORS> tipoGestioneCorsFromRest = new HashMap<>();
 	static {
 		Enums.tipoGestioneCorsFromRest.put(TipoGestioneCorsEnum.APPLICATIVO, TipoGestioneCORS.TRASPARENTE);
 		Enums.tipoGestioneCorsFromRest.put(TipoGestioneCorsEnum.GATEWAY, TipoGestioneCORS.GATEWAY);
 	}
 	
 	
-	public static final Map<RateLimitingChiaveEnum,TipoFiltroApplicativo> tipoFiltroApplicativo = new HashMap<RateLimitingChiaveEnum,TipoFiltroApplicativo>();
+	public static final Map<RateLimitingChiaveEnum,TipoFiltroApplicativo> tipoFiltroApplicativo = new HashMap<>();
 	static {
 		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.CONTENT_BASED, TipoFiltroApplicativo.CONTENT_BASED);
 		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.FORM_BASED, TipoFiltroApplicativo.FORM_BASED);
@@ -310,12 +308,12 @@ public class Enums {
 		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.URL_BASED, TipoFiltroApplicativo.URLBASED);
 	}
 	
-	public static final Map<TipoFiltroApplicativo,RateLimitingChiaveEnum> rateLimitingChiaveEnum = new HashMap<TipoFiltroApplicativo,RateLimitingChiaveEnum>();
+	public static final Map<TipoFiltroApplicativo,RateLimitingChiaveEnum> rateLimitingChiaveEnum = new HashMap<>();
 	static {
 		tipoFiltroApplicativo.forEach( (a,r) -> rateLimitingChiaveEnum.put(r, a));
 	}
 	
-	public static final Map<TipoAutenticazioneEnum, CredenzialeTipo> credenzialeTipoFromTipoAutenticazione = new HashMap<TipoAutenticazioneEnum, CredenzialeTipo>();
+	public static final Map<TipoAutenticazioneEnum, CredenzialeTipo> credenzialeTipoFromTipoAutenticazione = new HashMap<>();
 	static {
 		credenzialeTipoFromTipoAutenticazione.put(TipoAutenticazioneEnum.HTTP_BASIC, CredenzialeTipo.BASIC);
 		credenzialeTipoFromTipoAutenticazione.put(TipoAutenticazioneEnum.HTTPS,  CredenzialeTipo.SSL);

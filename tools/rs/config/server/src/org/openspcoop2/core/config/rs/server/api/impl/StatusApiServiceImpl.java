@@ -91,7 +91,7 @@ public class StatusApiServiceImpl extends BaseImpl implements StatusApi {
 			context.getLogger().info("Invocazione completata con successo");
             return p;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}

@@ -21,11 +21,11 @@ package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   

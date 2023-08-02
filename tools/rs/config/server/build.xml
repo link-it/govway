@@ -333,7 +333,7 @@
 			</then>
 		</if>
 	</target>
-	<target name="compile_dipendenze_apiConfigRS_invoke" depends="compile_mvc,compile_users,compile_queue,compile_audit,compile_openspcoop2_govwayConsole" description="compila le dipendenze" />
+	<target name="compile_dipendenze_apiConfigRS_invoke" depends="compile_mvc,compile_users,compile_audit,compile_openspcoop2_govwayConsole" description="compila le dipendenze" />
 
 	<!-- Compilazione del servizio-->
 	<target name="compile_govwayConfigApiRS" depends="init_compile_govwayConfigApiRS,compile_dipendenze_apiConfigRS,compile_openspcoop2_govwayConfigApiRS" description="compila govwayConfig"/>

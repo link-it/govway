@@ -94,11 +94,6 @@
 			<lib dir="${openspcoop2.lib}/spring-security">
 				<include name="*.jar"/>
 			</lib>
-			<lib dir="${openspcoop2.lib}/jax">
-				<include name="jaxws-*.jar"/>
-				<include name="${jaxp_ri_jar}"/>
-				<include name="jaxb-*.jar" />
-			</lib>
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="neethi-3.2.0.jar"/>
 				<include name="xmlsec-2.3.0.jar"/>
@@ -125,7 +120,7 @@
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>
 			</lib>
-			<lib dir="${openspcoop2.lib}/javax">
+			<lib dir="${openspcoop2.lib}/jakarta">
 				<include name="${validation-api-2.0.1_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/bean-validation">
@@ -158,15 +153,6 @@
 				<include name="bcutil-jdk18on-1.74.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
-			<lib dir="${openspcoop2.lib}/faces">
-                                <include name="richfaces-api-3.3.4.Final.jar" />
-                                <include name="richfaces-ui-3.3.4.Final-gov4j-4.jar" />
-                                <include name="richfaces-impl-3.3.4.Final-gov4j-4.jar" />
-				<include name="jsf-facelets-1.1.15.jar" />
-				<include name="jsf-impl-1.2_15-06.jar" />
-				<include name="jsf-api-1.2_15-06.jar" />
-				<include name="${jsf-api-1.2_15-06_jar}"/>
-                        </lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>
 			</lib>

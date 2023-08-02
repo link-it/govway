@@ -47,14 +47,14 @@ import org.openspcoop2.core.monitor.rs.server.model.TokenClaimEnum;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * GovWay Monitor API

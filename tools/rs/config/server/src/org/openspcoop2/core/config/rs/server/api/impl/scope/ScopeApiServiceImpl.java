@@ -99,7 +99,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -144,7 +144,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			                          
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -198,7 +198,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 				
 			return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -237,7 +237,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			
 			return ScopeApiHelper.registroScopeToScope(regScope);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -294,7 +294,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			env.scopeCore.performUpdateOperation(env.userLogin, false, listOggettiDaAggiornare.toArray());
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}

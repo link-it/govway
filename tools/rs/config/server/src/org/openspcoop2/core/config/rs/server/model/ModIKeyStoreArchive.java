@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 public class ModIKeyStoreArchive extends BaseKeyStoreArchive implements OneOfModIApplicativoSicurezzaMessaggioKeystore, OneOfModIKeyStoreRidefinitoDatiKeystore {
   

@@ -149,7 +149,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			}
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -193,7 +193,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -225,7 +225,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -255,7 +255,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -325,7 +325,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -376,7 +376,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			ListaTransazioni ret = TransazioniHelper.searchTransazioni(search, offset, limit, sort, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -442,7 +442,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			ListaTransazioni ret = TransazioniHelper.findAllTransazioni(bodyRicerca, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -490,7 +490,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			}
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -543,7 +543,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 				dbManager.releaseConnectionTracce(connection);
 			}
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}

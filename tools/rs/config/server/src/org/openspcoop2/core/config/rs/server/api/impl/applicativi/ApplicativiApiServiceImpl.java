@@ -101,7 +101,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			try{
 				applicativo.setCredenziali(ApplicativiApiHelper.translateCredenzialiApplicativo(applicativo, true));
 			}
-			catch(javax.ws.rs.WebApplicationException e) {
+			catch(jakarta.ws.rs.WebApplicationException e) {
 				throw e;
 			}
 			catch(Throwable e) {
@@ -192,7 +192,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -249,7 +249,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			context.getLogger().info("Invocazione completata con successo");     
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -317,7 +317,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			return Helper.returnOrNotFound(ret);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -361,7 +361,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			return applicativo;
 
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -391,7 +391,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			try{
 				applicativo.setCredenziali(ApplicativiApiHelper.translateCredenzialiApplicativo(applicativo, false));
 			}
-			catch(javax.ws.rs.WebApplicationException e) {
+			catch(jakarta.ws.rs.WebApplicationException e) {
 				throw e;
 			}
 			catch(Throwable e) {
@@ -502,7 +502,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					
 			context.getLogger().info("Invocazione completata con successo");     
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -532,7 +532,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			try{
 				credenziali = ApplicativiApiHelper.translateCredenzialiApplicativo(body, true); // metto true, come se fosse create per obbligare la password basic
 			}
-			catch(javax.ws.rs.WebApplicationException e) {
+			catch(jakarta.ws.rs.WebApplicationException e) {
 				throw e;
 			}
 			catch(Throwable e) {
@@ -593,7 +593,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			context.getLogger().info("Invocazione completata con successo");     
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}

@@ -250,7 +250,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -346,7 +346,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getServletResponse().setStatus(201);
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -429,7 +429,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getServletResponse().setStatus(201);
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -513,7 +513,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -567,7 +567,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -633,7 +633,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getServletResponse().setStatus(201);
 			
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -738,7 +738,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -804,7 +804,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -867,7 +867,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -907,7 +907,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -953,7 +953,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -994,7 +994,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			context.getLogger().info("Invocazione completata con successo");     
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1040,7 +1040,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			context.getLogger().info("Invocazione completata con successo");   
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1082,7 +1082,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
 			context.getLogger().info("Invocazione completata con successo");        
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1124,7 +1124,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");        
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1179,7 +1179,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1231,7 +1231,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1281,7 +1281,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1316,7 +1316,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return pd.getXacmlPolicy().getBytes();
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1371,7 +1371,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
    
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1429,7 +1429,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1485,7 +1485,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         	return ret;
 		     
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1518,7 +1518,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1561,7 +1561,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return canale;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1820,7 +1820,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1854,7 +1854,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1891,7 +1891,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1928,7 +1928,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1965,7 +1965,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         	return ret;
           
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2001,7 +2001,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
         	return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2036,7 +2036,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2079,7 +2079,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;        
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2130,7 +2130,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2180,7 +2180,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2225,7 +2225,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2270,7 +2270,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2313,7 +2313,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2345,7 +2345,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;     
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2380,7 +2380,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
         	return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2424,7 +2424,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2469,7 +2469,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2502,7 +2502,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2545,7 +2545,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");       
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2600,7 +2600,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2645,7 +2645,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2687,7 +2687,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");        
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2733,7 +2733,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			env.pdCore.performUpdateOperation(env.userLogin, false, newPd);
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2798,7 +2798,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2870,7 +2870,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			env.pdCore.performUpdateOperation(env.userLogin, false, newPd);
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2918,7 +2918,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -2975,7 +2975,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -3014,7 +3014,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
 			context.getLogger().info("Invocazione completata con successo");             
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -3056,7 +3056,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -3126,7 +3126,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -3194,7 +3194,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
         
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -3249,7 +3249,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}

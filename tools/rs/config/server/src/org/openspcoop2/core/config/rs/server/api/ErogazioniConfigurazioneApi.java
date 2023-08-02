@@ -54,14 +54,14 @@ import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneV
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
 import org.openspcoop2.core.config.rs.server.model.Validazione;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * GovWay Config API

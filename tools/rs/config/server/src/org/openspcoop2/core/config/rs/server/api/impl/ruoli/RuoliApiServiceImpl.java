@@ -107,7 +107,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -152,7 +152,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 	
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -216,7 +216,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -255,7 +255,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			context.getLogger().info("Invocazione completata con successo");
 			return RuoliApiHelper.ruoloRegistroToApiRuolo(regRuolo);     
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -313,7 +313,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			rEnv.ruoliCore.performUpdateOperation(rEnv.userLogin, false, listOggettiDaAggiornare.toArray());
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}

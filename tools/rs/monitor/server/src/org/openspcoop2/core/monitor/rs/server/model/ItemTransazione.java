@@ -28,11 +28,11 @@ import org.openspcoop2.utils.service.beans.TransazioneExtDettaglioRispostaBase;
 import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniApiBase;
 import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniMittenteBase;
 import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniSoggetto;
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 public class ItemTransazione extends TransazioneBase {
   

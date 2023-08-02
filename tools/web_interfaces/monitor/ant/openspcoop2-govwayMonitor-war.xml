@@ -81,17 +81,19 @@
 		
 		
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
+		<var name="mailapi_jar" value="" />
 		<!-- <if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then> --> <!-- Aggiungo sempre, serve anche per allarmi -->
-				<unzip src="${required_lib}/shared/mailapi-1.6.7.jar" dest="${build_govwayMonitor}/tmp/mailapi"/>
+				<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.2.jar" dest="${build_govwayMonitor}/tmp/mailapi"/>
 				<concat destfile="${build_govwayMonitor}/tmp/mailapi/META-INF/mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
 		                           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build_govwayMonitor}/tmp/mailapi-1.6.7.gw.jar" manifest="${build_govwayMonitor}/tmp/mailapi/META-INF/MANIFEST.MF">
+				<jar jarfile="${build_govwayMonitor}/tmp/jakarta.mail-api-2.1.2.gw.jar" manifest="${build_govwayMonitor}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build_govwayMonitor}/tmp/mailapi"/>
 				</jar>
+				<var name="mailapi_jar" value="jakarta.mail-api-2.1.2.gw.jar" />
 		<!--	</then>
 		</if> -->
 
@@ -195,31 +197,11 @@
 			<lib dir="${required_lib_govwayMonitor}/saaj">
 				<include name="*.jar" />
 			</lib>
-			<lib dir="${required_lib_govwayMonitor}/faces">
-				<include name="richfaces-api-3.3.4.Final.jar" />
-				<include name="richfaces-ui-3.3.4.Final-gov4j-4.jar" />
-				<include name="richfaces-impl-3.3.4.Final-gov4j-4.jar" />
-				<include name="jsf-facelets-1.1.15.jar" />
-				<include name="aopalliance-1.0.jar" />
-				<include name="cglib-nodep-2.2.3.jar" />
-				<include name="${jsr311-api_jar}" />
-				<include name="${javax_servlet_jsp_jstl_jar}" />
-				<include name="${javax_servlet_jsp_jstl_api_jar}" />
-				<include name="${jsf_impl_jar}" />
-				<include name="${jsf_api_jar}" />
-				<include name="${el_impl_jar}" />
-			</lib>
-			<lib dir="${required_lib_govwayMonitor}/jax">
-				<include name="jaxws-*.jar" />
-				<include name="${jaxp_ri_jar}" />
-				<include name="jaxb-*.jar" />
-			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-2.0.3-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
-			<lib dir="${required_lib}/javax">
-				<include name="${javax.jms-api-2.0.1.jar}"/>
+			<lib dir="${required_lib}/jakarta">
 				<include name="${el-api-1.0.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
@@ -234,9 +216,6 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jackson">
-				<include name="*.jar"/>
-			</lib>
-			<lib dir="${required_lib}/wadl">
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/spring">
@@ -284,7 +263,7 @@
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build_govwayMonitor}/tmp">
-				<include name="mailapi-1.6.7.gw.jar" />
+				<include name="${mailapi_jar}" />
 			</lib>
 			<!-- Plugins -->
 			<lib dir="${plugins_govwayMonitor}">

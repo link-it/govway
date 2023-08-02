@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.soggetti;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.core.config.rs.server.api.impl.Environment;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;

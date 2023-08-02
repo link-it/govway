@@ -35,14 +35,14 @@ import org.openspcoop2.core.monitor.rs.server.model.TipoIdApplicativoEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoMessaggioEnum;
 import java.util.UUID;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * GovWay Monitor API

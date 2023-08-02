@@ -21,11 +21,11 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.joda.time.DateTime;
 import org.openspcoop2.utils.service.beans.TransazioneExt;
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 public class DetailTransazione extends TransazioneExt {
   

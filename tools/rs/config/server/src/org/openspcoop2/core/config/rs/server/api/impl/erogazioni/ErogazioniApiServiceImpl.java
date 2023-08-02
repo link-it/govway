@@ -229,7 +229,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -266,7 +266,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -316,7 +316,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			context.getLogger().info("Invocazione completata con successo");
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -349,7 +349,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			context.getLogger().info("Invocazione completata con successo");
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -392,7 +392,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			return allegato.getByteContenuto();
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -460,7 +460,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			return Helper.returnOrNotFound(ret);
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -495,7 +495,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -531,7 +531,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -565,7 +565,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -606,7 +606,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			return ErogazioniApiHelper.documentoToImplAllegato(doc);
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -660,7 +660,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -695,7 +695,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -730,7 +730,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			return ret;
 
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -797,7 +797,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -854,7 +854,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			env.apsCore.performUpdateOperation(env.userLogin, false, oggettiDaAggiornare.toArray());
 
 			context.getLogger().info("Invocazione completata con successo");
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -889,7 +889,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			ErogazioniApiHelper.updateAllegatoAsps(body, nomeAllegato, env, asps);
 
 			context.getLogger().info("Invocazione completata con successo");
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1167,7 +1167,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			context.getLogger().info("Invocazione completata con successo");
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1255,7 +1255,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			context.getLogger().info("Invocazione completata con successo");
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1303,7 +1303,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			context.getLogger().info("Invocazione completata con successo");
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -1515,7 +1515,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			context.getLogger().info("Invocazione completata con successo");
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {

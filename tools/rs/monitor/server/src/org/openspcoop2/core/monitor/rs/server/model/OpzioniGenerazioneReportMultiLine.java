@@ -21,7 +21,7 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 public class OpzioniGenerazioneReportMultiLine extends OpzioniGenerazioneReportBase {
   

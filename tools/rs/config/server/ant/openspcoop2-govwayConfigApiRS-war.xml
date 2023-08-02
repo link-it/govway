@@ -94,11 +94,6 @@
 			<lib dir="${openspcoop2.lib}/spring-security">
 				<include name="*.jar"/>
 			</lib>
-			<lib dir="${openspcoop2.lib}/jax">
-				<include name="jaxws-*.jar"/>
-				<include name="${jaxp_ri_jar}"/>
-				<include name="jaxb-*.jar" />
-			</lib>
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="neethi-3.2.0.jar"/>
 				<include name="xmlsec-2.3.0.jar"/>
@@ -129,7 +124,7 @@
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>
 			</lib>
-			<lib dir="${openspcoop2.lib}/javax">
+			<lib dir="${openspcoop2.lib}/jakarta">
 				<include name="${validation-api-2.0.1_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/bean-validation">

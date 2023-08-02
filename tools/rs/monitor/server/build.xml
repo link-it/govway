@@ -59,7 +59,6 @@
 	<var name="jsf_api_jar" value="" />
 	<var name="el_impl_jar" value="" />
 	<var name="el-api-1.0.jar" value="" />
-	<var name="jsf-api-1.2_15-06_jar" value="" />
 	<var name="jakarta_activation_jar" value="" />
 	<var name="validation-api-2.0.1_jar" value="" />
 	<var name="bean-validation_jars" value="" />
@@ -179,15 +178,6 @@
 		</or>
 		<then>
 			<var name="el-api-1.0.jar" value="el-api-1.0.jar" />
-		</then>
-	</if>
-	<!-- jsf-api-1.2_15-06.jar -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-		</or>
-		<then>
-			<var name="jsf-api-1.2_15-06_jar" value="jsf-api-1.2_15-06.jar" />
 		</then>
 	</if>
 	<!-- jakarta.activation -->

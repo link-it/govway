@@ -21,7 +21,7 @@ package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 import java.util.HashMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.transport.http.WrappedHttpServletRequest;
 

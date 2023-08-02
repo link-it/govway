@@ -23,7 +23,7 @@ import org.joda.time.DateTime;
 import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 public class Evento  {
   

@@ -197,7 +197,7 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -258,7 +258,7 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
         
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -317,7 +317,7 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 			return Helper.returnOrNotFound(ret);
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -366,7 +366,7 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 			
 			return applicativo;     
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -494,7 +494,7 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
         
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}

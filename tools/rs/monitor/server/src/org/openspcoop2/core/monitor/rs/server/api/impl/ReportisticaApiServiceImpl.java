@@ -113,7 +113,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -150,7 +150,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;			
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -217,7 +217,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				dbManager.releaseConnectionConfig(connection);
 			}
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -250,7 +250,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -326,7 +326,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -359,7 +359,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -433,7 +433,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -466,7 +466,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -535,7 +535,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -568,7 +568,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -638,7 +638,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			return ret;
      
 		}
-		catch(javax.ws.rs.WebApplicationException e) {
+		catch(jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
@@ -674,7 +674,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -731,7 +731,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -764,7 +764,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -837,7 +837,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -869,7 +869,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			byte[] ret = ReportisticaHelper.getReportDistribuzioneSoggettoLocale(body, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -937,7 +937,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			byte[] ret = ReportisticaHelper.getReportDistribuzioneSoggettoLocale(ricerca, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -970,7 +970,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1042,7 +1042,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1075,7 +1075,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1147,7 +1147,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1178,7 +1178,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			byte[] ret = ReportisticaHelper.getReportDistribuzioneTokenInfo(body, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1251,7 +1251,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1282,7 +1282,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1352,7 +1352,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			return ret;
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1412,7 +1412,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				dbManager.releaseConnectionConfig(connection);
 			}
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
@@ -1468,7 +1468,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				dbManager.releaseConnectionConfig(connection);
 			}
 
-		} catch (javax.ws.rs.WebApplicationException e) {
+		} catch (jakarta.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {

@@ -28,8 +28,6 @@
       <property name="src_audit" value="${audit}/src"/>
       <property name="users" value="${webInterfaces}/lib/users"/>
       <property name="src_users" value="${users}/src"/>
-      <property name="queue" value="${webInterfaces}/lib/queue"/>
-      <property name="src_queue" value="${queue}/src"/>
       <property name="govwayConsole" location="${webInterfaces}/control_station" />
       <property name="src_govwayConsole" value="${govwayConsole}/src" />
 

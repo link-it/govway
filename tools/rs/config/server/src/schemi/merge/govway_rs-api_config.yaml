@@ -11770,7 +11770,6 @@ components:
       type: "string"
       default: "OpenApi3.0"
       enum:
-      - "Wadl"
       - "Swagger2.0"
       - "OpenApi3.0"
     TipoApiEnum:

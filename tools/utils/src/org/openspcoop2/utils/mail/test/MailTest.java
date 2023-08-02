@@ -71,10 +71,6 @@ public class MailTest {
 		Sender senderCommonsNet = SenderFactory.newSender(SenderType.COMMONS_NET, LoggerWrapperFactory.getLogger(MailTest.class));
 		senderCommonsNet.setConnectionTimeout(100);
 		senderCommonsNet.setReadTimeout(5 * 1000);
-		// Sender [Commons-Mail]
-		Sender senderCommonsMail = SenderFactory.newSender(SenderType.COMMONS_MAIL, LoggerWrapperFactory.getLogger(MailTest.class));
-		senderCommonsMail.setConnectionTimeout(100);
-		senderCommonsMail.setReadTimeout(5 * 1000);
 
 		
 		
@@ -129,10 +125,6 @@ public class MailTest {
 //		System.out.println("Invio mail con attachments ["+SenderType.COMMONS_NET+"] in corso ...");
 //		senderCommonsNet.send(mail, true); 
 //		System.out.println("Invio mail con attachments ["+SenderType.COMMONS_NET+"] effettuato");
-		
-		System.out.println("Invio mail con attachments ["+SenderType.COMMONS_MAIL+"] in corso ...");
-		senderCommonsMail.send(mail, true); 
-		System.out.println("Invio mail con attachments ["+SenderType.COMMONS_MAIL+"] effettuato");
 		
 		
 	}
