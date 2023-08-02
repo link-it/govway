@@ -1913,7 +1913,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String tipo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 			String utente = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTENTE);
 			String password = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PW);
-			String confpw = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONFERMA_PW);
 
 			// Campi obbligatori
 			if (nome.equals("") || location.equals("") || tipo.equals("")) {

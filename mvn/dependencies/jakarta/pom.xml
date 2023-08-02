@@ -29,6 +29,7 @@
 		<jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
 		<jakarta.xml.ws.api.version>3.0.1</jakarta.xml.ws.api.version>
 		<jakarta.xml.bind.api.version>3.0.1</jakarta.xml.bind.api.version>
+		<jakarta.el-api.version>5.0.1</jakarta.el-api.version>
 
 	</properties>
 
@@ -159,6 +160,17 @@
 			<groupId>jakarta.xml.bind</groupId>
 			<artifactId>jakarta.xml.bind-api</artifactId>
 			<version>${jakarta.xml.bind.api.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.el</groupId>
+			<artifactId>jakarta.el-api</artifactId>
+			<version>${jakarta.el-api.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

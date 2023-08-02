@@ -19,13 +19,9 @@
  */
 package org.openspcoop2.web.monitor.core.report;
 
+import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-
-import javax.faces.context.FacesContext;
-
 import org.slf4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.jsf.FacesContextUtils;
 
 /***
  * 
@@ -80,11 +76,13 @@ public class ReportFactory {
 		try{
 			log.debug("Init Report Manager Transazioni in corso...");
 			if(this.transazioniReportManager == null){
-				FacesContext currentInstance = FacesContext.getCurrentInstance();
+				this.transazioniReportManager = (ILiveReport) Loader.getInstance().newInstance("org.openspcoop2.web.monitor.transazioni.report.TransazioniReportManager");
+				
+				/**FacesContext currentInstance = FacesContext.getCurrentInstance();
 				ApplicationContext context = FacesContextUtils.getWebApplicationContext(currentInstance);
 				if(context!=null) {
 					this.transazioniReportManager = (ILiveReport) context.getBean("transazioniReportManager");
-				}
+				}*/
 			}
 			log.debug("Init Report Manager Transazioni completato.");
 		}catch(Exception e){
@@ -103,11 +101,14 @@ public class ReportFactory {
 		try{
 			log.debug("Init Report Manager Statistiche in corso...");
 			if(this.statisticaReportManager == null){
-				FacesContext currentInstance = FacesContext.getCurrentInstance();
+				
+				this.statisticaReportManager = (ILiveReport) Loader.getInstance().newInstance("org.openspcoop2.web.monitor.statistiche.report.StatisticaReportManager");
+				
+				/**FacesContext currentInstance = FacesContext.getCurrentInstance();
 				ApplicationContext context = FacesContextUtils.getWebApplicationContext(currentInstance);
 				if(context!=null) {
 					this.statisticaReportManager = (ILiveReport) context.getBean("statisticaReportManager");
-				}
+				}*/
 			}
 			log.debug("Init Report Manager Statistiche completato.");
 		}catch(Exception e){

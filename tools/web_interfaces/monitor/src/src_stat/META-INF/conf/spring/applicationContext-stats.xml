@@ -75,8 +75,5 @@
 		<property name="service" ref="configurazioniGeneraliService"/>
 		<property name="search" ref="configurazioniGeneraliSearchForm"/>
 	</bean>
-	
-	<!-- Report Esiti -->
-	<bean id="statisticaReportManager" class="org.openspcoop2.web.monitor.statistiche.report.StatisticaReportManager" scope="request"/>
-	
+		
 </beans>

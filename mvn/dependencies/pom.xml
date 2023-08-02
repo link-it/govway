@@ -32,7 +32,6 @@
 		<module>cxf</module>
 		<module>commons</module>
 		<module>console</module>
-		<module>faces</module>
 		<module>git</module>
 		<module>httpcore</module>
 		<module>jackson</module>

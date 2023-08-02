@@ -18,6 +18,7 @@
 		<jar.group.name>console</jar.group.name>
 		
 		<govway-console-ui.version>20230726-SNAPSHOT</govway-console-ui.version>
+		<govway-monitor-ui.version>20230726-SNAPSHOT</govway-monitor-ui.version>
 
 	</properties>
 
@@ -27,6 +28,17 @@
 			<groupId>org.govway-console-ui</groupId>
 			<artifactId>govway-console-ui</artifactId>
 			<version>${govway-console-ui.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.govway-monitor-ui</groupId>
+			<artifactId>govway-monitor-ui</artifactId>
+			<version>${govway-monitor-ui.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

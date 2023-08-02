@@ -223,7 +223,7 @@ public final class MTOMServiceExample_MTOMServiceExampleSOAP12InterfaceEndpoint_
         System.out.println("echo._echo_imageDataResponse=" + _echo_imageDataResponse.value.getClass().getName());
         if(_echo_imageDataResponse.value instanceof javax.xml.transform.stream.StreamSource){
         	javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) _echo_imageDataResponse.value;
-        	ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
+        	ReaderInputStream ris = ReaderInputStream.builder().setReader(ssi.getReader()).setCharset(StandardCharsets.UTF_8).get(); 
         	documentBuilder = documentFactory.newDocumentBuilder();
         	Document dResponse = documentBuilder.parse(ris);
         	System.out.println("XML received: "+dResponse.toString());

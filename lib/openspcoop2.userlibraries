@@ -26,6 +26,7 @@
 	<archive path="/op2_3.4.dev/lib/commons/commons-math3-3.6.1.jar"/>
 	<!-- console -->
 	<archive path="/op2_3.4.dev/lib/console/govway-console-ui-20230726-SNAPSHOT.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-20230726-SNAPSHOT.jar"/>
 	<!-- cxf -->
         <archive path="/op2_3.4.dev/lib/cxf/cxf-core-4.0.2-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-bindings-soap-4.0.2.jar"/>
@@ -91,6 +92,7 @@
 	<archive path="/op2_3.4.dev/lib/jakarta/jakarta.xml.ws-api-3.0.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/jakarta/jakarta.annotation-api-2.1.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/jakarta/jakarta.el-api-5.0.1.jar"/>
 	<!-- jminix -->
 	<archive path="/op2_3.4.dev/lib/jminix/jminix-1.2.0-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/jminix/jminix-standalone-1.2.0-gov4j-1.jar"/>
@@ -271,13 +273,6 @@
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-dom-3.0.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-policy-stax-3.0.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-stax-3.0.1.jar"/>
-    </library>
-    <library name="openspcoop2_3.4_lib_faces" systemlibrary="false">
-        <archive path="/op2_3.4.dev/lib/faces/richfaces-api-3.3.4.Final.jar"/>
-        <archive path="/op2_3.4.dev/lib/faces/richfaces-impl-3.3.4.Final-gov4j-4.jar"/>
-        <archive path="/op2_3.4.dev/lib/faces/richfaces-ui-3.3.4.Final-gov4j-4.jar"/>
-        <archive path="/op2_3.4.dev/lib/faces/jsf-api-1.2_15-06.jar"/>
-	<archive path="/op2_3.4.dev/lib/faces/jsf-impl-1.2_15-06.jar"/>
     </library>
     <library name="openspcoop2_3.4_lib_stub" systemlibrary="false">
         <archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_integrationManagerStub_cxf.jar"/>

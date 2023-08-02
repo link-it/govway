@@ -27,9 +27,9 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import javax.el.ELContext;
-import javax.el.ExpressionFactory;
-import javax.el.ValueExpression;
+import jakarta.el.ELContext;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.ValueExpression;
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 import jakarta.servlet.http.HttpServletRequest;

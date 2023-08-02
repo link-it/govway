@@ -47,7 +47,6 @@ import org.apache.wss4j.common.saml.bean.SubjectLocalityBean;
 import org.apache.wss4j.common.saml.bean.Version;
 import org.apache.wss4j.common.saml.builder.SAML1Constants;
 import org.apache.wss4j.common.saml.builder.SAML2Constants;
-import org.joda.time.DateTime;
 
 /**
  * SAMLCallbackHandler

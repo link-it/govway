@@ -22,7 +22,7 @@ package org.openspcoop2.web.monitor.core.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.mail.internet.ContentType;
+import jakarta.mail.internet.ContentType;
 
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.slf4j.Logger;

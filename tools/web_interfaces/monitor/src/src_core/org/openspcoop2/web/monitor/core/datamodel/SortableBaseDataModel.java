@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.el.Expression;
+import jakarta.el.Expression;
 import javax.faces.context.FacesContext;
 
 import org.ajax4jsf.model.DataVisitor;

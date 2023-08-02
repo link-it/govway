@@ -41,7 +41,9 @@ import org.openspcoop2.web.monitor.core.status.BaseSondaPdd;
 import org.openspcoop2.web.monitor.core.status.ISondaPdd;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.jsf.FacesContextUtils;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import jakarta.servlet.ServletContext;
 
 /**     
  * AllarmeStatus
@@ -105,7 +107,10 @@ public class AllarmeStatus extends BaseSondaPdd implements ISondaPdd{
 			FacesContext currentInstance = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = currentInstance.getExternalContext();
 			this.requestContextPath = externalContext.getRequestContextPath();
-			ApplicationContext context = FacesContextUtils.getWebApplicationContext(currentInstance);
+			
+			ServletContext servletContext = (ServletContext)externalContext.getContext();
+			
+			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 			if(context==null) {
 				throw new Exception("Context is null");
 			}

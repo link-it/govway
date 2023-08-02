@@ -10,7 +10,7 @@
 		<location>/public/timeoutPage.jsf</location>
 	</error-page>
 	<error-page>
-		<exception-type>javax.el.ELException</exception-type>
+		<exception-type>jakarta.el.ELException</exception-type>
 		<location>/public/error.jsf</location>
 	</error-page>
 	<error-page>

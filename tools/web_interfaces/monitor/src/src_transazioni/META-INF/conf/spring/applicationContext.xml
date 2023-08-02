@@ -21,7 +21,5 @@
 	
 	<bean id="transazioniApplicativoServerService" class="org.openspcoop2.web.monitor.transazioni.dao.TransazioniApplicativoServerService" scope="request"/>
 	
-	<bean id="transazioniReportManager" class="org.openspcoop2.web.monitor.transazioni.report.TransazioniReportManager" scope="request"/>
-	
 </beans>
 

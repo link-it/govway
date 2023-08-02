@@ -72,7 +72,7 @@ public class MTOMServiceExampleImpl {
 	        	javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) imageData;
 	        	documentBuilder = documentFactory.newDocumentBuilder();
 	             if(ssi.getReader()!=null){
-	     	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
+	     	        ReaderInputStream ris = ReaderInputStream.builder().setReader(ssi.getReader()).setCharset(StandardCharsets.UTF_8).get(); 
 	     	        d = documentBuilder.parse(ris);
 	             }
 	             else{
