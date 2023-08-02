@@ -22,9 +22,9 @@
 
 package org.openspcoop2.pools.pdd.jms.session;
 
-import javax.jms.Connection;
-import javax.jms.JMSContext;
-import javax.jms.JMSException;
+import jakarta.jms.Connection;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSException;
 
 import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
 import org.openspcoop2.pools.pdd.jms.JMSInfo;
@@ -36,7 +36,7 @@ import org.openspcoop2.pools.pdd.jms.JMSInfo;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnectionFactory  extends SessionJMSPool implements javax.jms.ConnectionFactory{
+public class ConnectionFactory  extends SessionJMSPool implements jakarta.jms.ConnectionFactory{
 
 	/**
 	 * 

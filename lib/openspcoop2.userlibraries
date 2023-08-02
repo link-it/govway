@@ -27,6 +27,8 @@
 	<!-- console -->
 	<archive path="/op2_3.4.dev/lib/console/govway-console-ui-20230726-SNAPSHOT.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-20230726-SNAPSHOT.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/jquery-3.6.4.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/jquery-ui-1.13.2.jar"/>
 	<!-- cxf -->
         <archive path="/op2_3.4.dev/lib/cxf/cxf-core-4.0.2-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-bindings-soap-4.0.2.jar"/>

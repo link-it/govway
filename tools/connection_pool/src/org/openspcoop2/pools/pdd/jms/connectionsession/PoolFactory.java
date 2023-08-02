@@ -30,11 +30,11 @@ import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
-import javax.jms.Destination;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
 
 
 

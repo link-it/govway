@@ -25,10 +25,10 @@ package org.openspcoop2.pools.pdd.jms.session;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
@@ -57,8 +57,8 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 	private java.util.Properties context;
 
 	/** Connection */
-	private javax.jms.Connection con;
-	protected javax.jms.JMSException validationExceptionListener = null;
+	private jakarta.jms.Connection con;
+	protected jakarta.jms.JMSException validationExceptionListener = null;
 	
 	/** Informazione sull'autenticazione */
 	private String username;

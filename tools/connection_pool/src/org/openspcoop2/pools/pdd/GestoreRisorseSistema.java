@@ -65,7 +65,7 @@ public class GestoreRisorseSistema {
 
 	/** Variabile che contiene i ConnectionSessionJMSPool costruiti da OpenSPCoop */
 	private List<String> jndi_qm = new ArrayList<>();
-	private List<javax.jms.ConnectionFactory> qmList = new ArrayList<javax.jms.ConnectionFactory>(); 
+	private List<jakarta.jms.ConnectionFactory> qmList = new ArrayList<jakarta.jms.ConnectionFactory>(); 
 
 	/** Logger utilizzato per debug. */
 	private Logger logCore = null;
@@ -431,7 +431,7 @@ public class GestoreRisorseSistema {
 				}
 				
 				// Creazione ConnectionFactory
-				javax.jms.ConnectionFactory qm = null;
+				jakarta.jms.ConnectionFactory qm = null;
 				if( Costanti.ABILITATO.equals(qfConf.getSingleConnectionWithSessionPool()) ){
 					// sessione
 					try{
@@ -513,7 +513,7 @@ public class GestoreRisorseSistema {
 			// ConnectionFactory
 			if(this.qmList!=null && this.jndi_qm!=null){
 				while(this.qmList.size()>0){
-					javax.jms.ConnectionFactory qmUnbind = this.qmList.remove(0);
+					jakarta.jms.ConnectionFactory qmUnbind = this.qmList.remove(0);
 					String jndiqmUnbind = this.jndi_qm.remove(0);
 					try{
 						if(qmUnbind instanceof org.openspcoop2.pools.pdd.jms.connectionsession.ConnectionFactory){

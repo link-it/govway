@@ -22,7 +22,7 @@
 
 package org.openspcoop2.pools.pdd.jms.session;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 import org.slf4j.Logger;
 
@@ -33,7 +33,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ExceptionListener implements javax.jms.ExceptionListener{
+public class ExceptionListener implements jakarta.jms.ExceptionListener{
 
 	private PoolFactory poolFactory;
 	private Logger logger;

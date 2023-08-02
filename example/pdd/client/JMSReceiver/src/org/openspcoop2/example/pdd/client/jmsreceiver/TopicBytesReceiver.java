@@ -21,7 +21,7 @@
 package org.openspcoop2.example.pdd.client.jmsreceiver;
 
 import java.util.Properties;
-import javax.jms.*;
+import jakarta.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.ByteArrayOutputStream;

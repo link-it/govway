@@ -22,14 +22,14 @@
 
 package org.openspcoop2.pools.pdd.jms.connectionsession;
 
-import javax.jms.ConnectionConsumer;
-import javax.jms.ConnectionMetaData;
-import javax.jms.Destination;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.ServerSessionPool;
-import javax.jms.Session;
-import javax.jms.Topic;
+import jakarta.jms.ConnectionConsumer;
+import jakarta.jms.ConnectionMetaData;
+import jakarta.jms.Destination;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.ServerSessionPool;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
 
 /**
  * Connection
@@ -38,22 +38,22 @@ import javax.jms.Topic;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Connection implements javax.jms.Connection {
+public class Connection implements jakarta.jms.Connection {
 
 	
 	private String jndiNamePool = null;
-	private javax.jms.Connection connection = null;
-	private javax.jms.Session sessionJMXOriginale = null;
+	private jakarta.jms.Connection connection = null;
+	private jakarta.jms.Session sessionJMXOriginale = null;
 	private org.openspcoop2.pools.pdd.jms.connectionsession.Session sessionOpenSPCoop = null;
-	private javax.jms.JMSException validationExceptionListener = null;
+	private jakarta.jms.JMSException validationExceptionListener = null;
 		
-	public Connection(String jndiNamePool,javax.jms.Connection connection,javax.jms.Session session){
+	public Connection(String jndiNamePool,jakarta.jms.Connection connection,jakarta.jms.Session session){
 		this.jndiNamePool = jndiNamePool;
 		this.connection = connection;
 		this.sessionJMXOriginale = session;
 		this.sessionOpenSPCoop = new  org.openspcoop2.pools.pdd.jms.connectionsession.Session(session);
 	}
-	public Connection(javax.jms.Connection connection,javax.jms.Session session){
+	public Connection(jakarta.jms.Connection connection,jakarta.jms.Session session){
 		this(null,connection,session);
 	}
 	
@@ -74,13 +74,13 @@ public class Connection implements javax.jms.Connection {
 	/**
 	 * @return the connection
 	 */
-	protected javax.jms.Connection getConnection() {
+	protected jakarta.jms.Connection getConnection() {
 		return this.connection;
 	}
 	/**
 	 * @return the session
 	 */
-	protected javax.jms.Session getSession() {
+	protected jakarta.jms.Session getSession() {
 		return this.sessionJMXOriginale;
 	}
 	
@@ -127,7 +127,7 @@ public class Connection implements javax.jms.Connection {
 	}
 
 	@Override
-	public javax.jms.Session createSession(boolean arg0, int arg1) throws JMSException {
+	public jakarta.jms.Session createSession(boolean arg0, int arg1) throws JMSException {
 		if(this.sessionOpenSPCoop == null){
 			throw new JMSException("Session is null");
 		}
@@ -145,19 +145,19 @@ public class Connection implements javax.jms.Connection {
 			if(this.sessionOpenSPCoop.getAcknowledgeMode()!=arg1){
 				
 				String poolAck = "Valore non definito nello standard ("+this.sessionOpenSPCoop.getAcknowledgeMode()+")";
-				if(javax.jms.Session.AUTO_ACKNOWLEDGE == this.sessionOpenSPCoop.getAcknowledgeMode())
+				if(jakarta.jms.Session.AUTO_ACKNOWLEDGE == this.sessionOpenSPCoop.getAcknowledgeMode())
 					poolAck = "AUTO_ACKNOWLEDGE";
-				else if(javax.jms.Session.CLIENT_ACKNOWLEDGE == this.sessionOpenSPCoop.getAcknowledgeMode())
+				else if(jakarta.jms.Session.CLIENT_ACKNOWLEDGE == this.sessionOpenSPCoop.getAcknowledgeMode())
 					poolAck = "CLIENT_ACKNOWLEDGE";
-				else if(javax.jms.Session.DUPS_OK_ACKNOWLEDGE == this.sessionOpenSPCoop.getAcknowledgeMode())
+				else if(jakarta.jms.Session.DUPS_OK_ACKNOWLEDGE == this.sessionOpenSPCoop.getAcknowledgeMode())
 					poolAck = "DUPS_OK_ACKNOWLEDGE";
 				
 				String requestAck = "Valore non definito nello standard ("+arg1+")";
-				if(javax.jms.Session.AUTO_ACKNOWLEDGE == arg1)
+				if(jakarta.jms.Session.AUTO_ACKNOWLEDGE == arg1)
 					requestAck = "AUTO_ACKNOWLEDGE";
-				else if(javax.jms.Session.CLIENT_ACKNOWLEDGE == arg1)
+				else if(jakarta.jms.Session.CLIENT_ACKNOWLEDGE == arg1)
 					requestAck = "CLIENT_ACKNOWLEDGE";
-				else if(javax.jms.Session.DUPS_OK_ACKNOWLEDGE == arg1)
+				else if(jakarta.jms.Session.DUPS_OK_ACKNOWLEDGE == arg1)
 					requestAck = "DUPS_OK_ACKNOWLEDGE";
 				
 				throw new JMSException("Pool e' stato configurato per contenere sessioni con AcknowledgeMode="+
@@ -220,11 +220,11 @@ public class Connection implements javax.jms.Connection {
 		}
 		this.connection.stop();
 	}
-	public javax.jms.JMSException getValidationExceptionListener() {
+	public jakarta.jms.JMSException getValidationExceptionListener() {
 		return this.validationExceptionListener;
 	}
 	public void setValidationExceptionListener(
-			javax.jms.JMSException validationExceptionListener) {
+			jakarta.jms.JMSException validationExceptionListener) {
 		this.validationExceptionListener = validationExceptionListener;
 	}
 	

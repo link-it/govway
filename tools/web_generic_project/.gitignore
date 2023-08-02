@@ -1,7 +1,0 @@
-# Ignore everything in this directory
-build
-dist
-doc
-.ant-targets-build.xml
-# Except this file
-!.gitignore

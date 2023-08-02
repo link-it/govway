@@ -25,9 +25,9 @@ package org.openspcoop2.example.pdd.server.testservice;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.utils.ServletTestService;
 
