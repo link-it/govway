@@ -20,7 +20,6 @@
 	<import file="./ant/ds-build.xml" />
 	<import file="./ant/govwayConsole-build.xml" />
 	<import file="./ant/govwayMonitor-build.xml" />
-	<import file="./ant/loader-build.xml" />
 	<import file="./ant/govwayAPIConfig-build.xml" />
 	<import file="./ant/govwayAPIMonitor-build.xml" />
 	<import file="./ant/batchStatistiche-build.xml" />
@@ -203,10 +202,6 @@
 			antinstaller_as4_oracle_mode=SID/serviceName
 			
 	 -->
-
-	<!-- Per agganciare loader valorizzare questa proprieta'
-	<var name="antinstaller_loader" value="true" />
-	-->	
 
 	<if>
 		<or>
@@ -1984,32 +1979,6 @@
 					</then>
 				</if>
 				-->
-
-
-				<!-- govwayLoader -->
-				<if>
-					<and>
-						<!-- Sganciata la generazone del loader con questa proprieta' finta. 
-							Se la si vuole reintrodurre basta settarla a true -->
-						<istrue value="${antinstaller_loader}"/>
-					</and>
-					<then>
-						<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayLoader.xml" todir="${tmp_ds}"/>
-						<if>
-							<equals arg1="${antinstaller_config_db}" arg2="config"/>
-							<then>
-								<antcall target="config_ds_settings">
-								    <param name="file" value="${tmp_ds}/govwayLoader.xml"/>
-								</antcall>
-							</then>
-							<else>
-								<antcall target="ds_settings">
-								    <param name="file" value="${tmp_ds}/govwayLoader.xml"/>
-								</antcall>
-							</else>
-						</if>
-					</then>
-				</if>
 				
 				<!-- govwayConsole -->
 				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayConsole.xml" todir="${tmp_ds}"/>
@@ -2346,103 +2315,6 @@
 		</antcall>
 	</target>
 	
-	<target name="setup_loader" depends="_setup_loader"/>
-	<target name="_setup_loader">
-		<if>
-			<and>
-				<!-- Sganciata la generazone del loader con questa proprieta' finta. 
-					Se la si vuole reintrodurre basta settarla a true -->
-				<istrue value="${antinstaller_loader}"/>
-			</and>
-			<then>
-				<unzip src="${deploy_sw}/${build_for_as}/govwayLoader.war" dest="${tmp_archivi}/govwayLoader.war"/>
-				<antcall target="loader_properties_settings">
-				    <param name="file" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes/loader.properties"/>
-				</antcall>
-				<antcall target="loader_datasource_properties_settings">
-				    <param name="file" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes/loader.datasource.properties"/>
-				</antcall>
-				<antcall target="loader_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes/loader.log4j2.properties"/>
-				</antcall>
-				<antcall target="loader_default_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes/log4j2.properties"/>
-				</antcall>
-				<antcall target="dos2unix">
-					<param name="dir" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes"/>
-				    <param name="file" value="*.properties"/>
-				</antcall>
-				<!-- trasparente -->
-				<if>
-					<istrue value="${antinstaller_protocollo_trasparente}" />
-					<then>
-						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_trasparente-protocol_*.jar"/>
-							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
-						</copy>
-					</then>
-				</if>
-				<!-- modipa -->
-				<if>
-					<istrue value="${antinstaller_protocollo_modipa}"/>
-					<then>
-						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_modipa-protocol_*.jar"/>
-							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
-						</copy>
-					</then>
-				</if>
-				<!-- spcoop -->
-				<if>
-					<istrue value="${antinstaller_protocollo_spcoop}"/>
-					<then>
-						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_spcoop-protocol_*.jar"/>
-							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
-						</copy>
-					</then>
-				</if>
-				<!-- as4 -->
-				<if>
-					<istrue value="${antinstaller_protocollo_as4}" />
-					<then>
-						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_as4-protocol_*.jar"/>
-								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
-							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
-						</copy>
-					</then>
-				</if>
-				<!-- sdi -->
-				<if>
-					<istrue value="${antinstaller_protocollo_sdi}"/>
-					<then>
-						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_sdi-protocol_*.jar"/>
-							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
-						</copy>
-					</then>
-				</if>
-				<!-- Ripristino jar -->
-				<antcall target="ripristina_jar">
-				    <param name="archiveFile" value="${tmp_archivi}/govwayLoader.war"/>
-					<param name="as" value="${build_for_as}"/>
-					<param name="archiveType" value="WAR"/>
-				</antcall>
-			</then>
-		</if>
-	</target>
-
 
 	<target name="setup_apiConfig" depends="_setup_apiConfig"/>
 	<target name="_setup_apiConfig">

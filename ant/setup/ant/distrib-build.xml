@@ -503,14 +503,6 @@
 		</if>
 		<if>
 			<not>
-				<istrue value="${antinstaller_loader}"/>
-			</not>
-			<then>
-				<delete file="${dist}/cfg/loader_local.properties"/>
-			</then>
-		</if>
-		<if>
-			<not>
 				<istrue value="${antinstaller_rs_config}" />
 			</not>
 			<then>
@@ -1582,51 +1574,12 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 				<zip destfile="${dist}/archivi/govwayMonitor.war" basedir="${tmp_archivi}/govwayMonitor.war"/>
 			</else>
 		</if>
-				
-		<!-- *** Aggiunta dell'applicazione govwayLoader ***-->
-		<if>
-			<and>
-				<istrue value="${antinstaller_loader}"/>
-			</and>
-			<then>
-				<if>
-					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
-					<then>
-						<fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib" id="govway_loader.jar">
-							<include name="*.jar"/>
-						</fileset>
-						<pathconvert pathsep=" " property="govway_loader.classpath" refid="govway_loader.jar">
-							<map from="${tmp_archivi}/govwayLoader.war/WEB-INF/lib/" to="lib/"/>
-						</pathconvert>
-						<var name="manifest.classpath.govway_loader" value="${govway_loader.classpath}" />	
-						<move todir="${dist}/archivi/OpenSPCoop2/lib" overwrite="true">
-						    <fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib"/>
-						</move>
-						<move todir="${dist}/archivi/OpenSPCoop2/properties" overwrite="true">
-						    <fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/classes"/>
-						</move>
-						<war destfile="${dist}/archivi/OpenSPCoop2/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war">
-							<manifest>
-								<attribute name="Class-Path" value="${manifest.classpath.govway_loader} properties/" />
-							</manifest>
-						</war>
-					</then>
-					<else>
-						<zip destfile="${dist}/archivi/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war"/>
-					</else>
-				</if>
-			</then>
-		</if>
-				
+								
 		<!-- *** Correzione Application.xml (aggiunta archivi) ***-->
 		<if>
 			<or>
 				<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
 				<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
-				<and>
-					<istrue value="${antinstaller_loader}"/>
-					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
-				</and>
 			</or>
 			<then>
 		        <replace file="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" token="&lt;/application&gt;" value=""/>
@@ -1664,28 +1617,6 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 	</module>
 	<!-- End MODULE govwayMonitor -->
 		        				
-]]>
-		        		</concat>
-					</then>
-				</if>
-				<if>
-					<and>
-						<istrue value="${antinstaller_loader}"/>
-						<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
-					</and>
-					<then>
-		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
-<![CDATA[
-	
-	<!-- Start MODULE govwayLoader -->
-	<module>
-		<web>
-			<web-uri>govwayLoader.war</web-uri>
-			<context-root>govwayLoader</context-root>
-		</web>
-	</module>
-	<!-- End MODULE govwayLoader -->
-		        			
 ]]>
 		        		</concat>
 					</then>
@@ -1884,10 +1815,6 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 				<or>
 					<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
 					<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
-					<and>
-						<istrue value="${antinstaller_loader}"/>
-						<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
-					</and>
 				</or>
 			</and>
 			<then>
@@ -1997,63 +1924,7 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 							</else>
 						</if>
 					</then>
-				</if>
-				<if>
-					<and>
-						<istrue value="${antinstaller_loader}"/>
-						<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
-					</and>
-					<then>
-						<if>
-							<or>
-								<matches string="${as}" pattern="wildfly22"/>
-								<matches string="${as}" pattern="wildfly23"/>
-								<matches string="${as}" pattern="wildfly24"/>
-								<matches string="${as}" pattern="wildfly25"/>
-								<matches string="${as}" pattern="wildfly26"/>
-							</or>
-							<then>
-								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
-<![CDATA[
-
-	<!-- Start MODULE govwayLoader -->
-	<sub-deployment name="govwayLoader.war">
-        <exclusions>
-		<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
-		<module name="org.apache.log4j"/>
-                <module name="org.slf4j" />
-                <module name="org.apache.commons.logging"/>
-                <module name="org.jboss.logging"/>
-		<module name="org.apache.logging.log4j.api"/>
-		-->
-        </exclusions>
-    </sub-deployment>
-	<!-- End MODULE govwayLoader -->
-								
-]]>
-								</concat>
-							</then>
-							<else>
-								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
-<![CDATA[
-
-	<!-- Start MODULE govwayLoader -->
-    <sub-deployment name="govwayLoader.war">
-        <exclusions>
-                <module name="org.apache.log4j"/>
-                <module name="org.slf4j" />
-                <module name="org.apache.commons.logging"/>
-                <module name="org.jboss.logging"/>
-        </exclusions>
-    </sub-deployment>
-	<!-- End MODULE govwayLoader -->
-
-]]>
-								</concat>
-							</else>
-						</if>
-					</then>
-				</if>		
+				</if>	
 				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 <![CDATA[
 </jboss-deployment-structure>
@@ -2349,16 +2220,6 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 		
 		<!-- *** Aggiunta dell'applicazione govwayMonitor ***-->
 		<zip destfile="${dist}/archivi/govwayMonitor.war" basedir="${tmp_archivi}/govwayMonitor.war"/>
-		
-		<!-- *** Aggiunta dell'applicazione govwayLoader ***-->
-		<if>
-			<and>
-				<istrue value="${antinstaller_loader}"/>
-			</and>
-			<then>
-				<zip destfile="${dist}/archivi/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war"/>
-			</then>
-		</if>
 
 		<!-- *** Aggiunta dell'applicazione govwayAPIConfig.war ***-->
 		<if>

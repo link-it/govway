@@ -171,13 +171,6 @@
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_web-lib-users*.jar"/>
 		</antcall>
-		<!-- WEB Loader -->
-		<antcall target="_findBugs">
-			<param name="analyzeType" value="web-loader"/>
-			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/loader/src"/>
-			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
-			<param name="analyzeJar" value="openspcoop2_web-loaderConsole*.jar"/>
-		</antcall>
 		<!-- WEB Console -->
 		<antcall target="_findBugs">
 			<param name="analyzeType" value="web-govwayConsole"/>

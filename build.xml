@@ -194,20 +194,6 @@
 		</then>
 	</if>
 	<import file="${web.govwayMonitor.dir}/build.xml" />
-	
-	<!-- Tools - WebInterfaces - govwayLoader -->
-	<property name="web.govwayLoader.dir" location="${rootDir}/tools/web_interfaces/loader" />
-	<available file="${web.govwayLoader.dir}/local_env.xml" property="web_govwayLoader_localenv.present"/>
-	<if>
-		<not>
-			<equals arg1="${web_govwayLoader_localenv.present}" arg2="true"/>
-		</not>
-		<then>
-			<copy file="${web.govwayLoader.dir}/local_env.xml.template" tofile="${web.govwayLoader.dir}/local_env.xml"/>
-			<replace file="${web.govwayLoader.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
-		</then>
-	</if>
-	<import file="${web.govwayLoader.dir}/build.xml" />
 
 	<!-- Tools - RS - config -->
 	<property name="rs.config.dir" location="${rootDir}/tools/rs/config/server" />
@@ -440,15 +426,6 @@
 			<param name="src_transazioni_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_transazioni" />
 			<param name="src_eventi_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_eventi" />
 			<param name="src_allarmi_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_allarmi" />
-			<param name="debug" value="${debug}"/>
-			<param name="buildAsRelease" value="true"/>
-			<param name="buildAPI" value="false"/>
-		</antcall>
-		
-		<antcall target="compile_govway_loaderConsole" >
-			<param name="as" value="${as}"/>
-			<param name="rootDir" value="${rootDir}"/>
-			<param name="src_loaderConsole" value="${web.govwayLoader.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>

@@ -1260,11 +1260,10 @@ public class SummaryBean implements Serializable{
 		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaServizi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
 		List<SelectItem> listaServiziTmp = new ArrayList<>();
 		if(val==null || StringUtils.isEmpty((String)val)) {
+			listaServiziTmp.add(0, new SelectItem("--", "--"));			
 		}else{
 			listaServiziTmp = this._soggettiServiziAutoComplete((String)val);
 		}
-		
-//		listaServiziTmp.add(0, new SelectItem("--", "--"));
 		
 		for (SelectItem selectItem : listaServiziTmp) {
 			String label = selectItem.getLabel();

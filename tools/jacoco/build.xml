@@ -1087,53 +1087,6 @@
 			</else>
                 </if>
 
-		<!-- WEB Loader -->
-		<var name="projectAnalyze" value="web-loader"/>
-		<if>
-                        <equals arg1="${jacoco.skipPackages}" arg2="$${jacoco.skipPackages}"/>
-                        <then>
-				<var name="_jacocoSkipProject_web_loader" value="false"/>                                
-                        </then>
-			<else>
-				<condition property="_jacocoSkipProject_web_loader" value="true" else="false">
-					<contains string="${jacoco.skipPackages}" substring="${projectAnalyze}"/>
-				</condition>	
-			</else>
-                </if>
-		<if>
-			<and>
-				<isfalse value="${_jacocoSkipProject_web_loader}"/>
-				<or>
-			                <equals arg1="${govway.group}" arg2="all"/>
-					<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
-					<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
-					<equals arg1="${govway.group}" arg2="govwayloader"/>
-					<equals arg1="${govway.group}" arg2="govwayLoader"/>
-				</or>
-			</and>
-                        <then>
-				<if>
-					<equals arg1="${jacoco.sources.analyze}" arg2=""/>
-					<then>
-						<var name="jacoco.sources.analyze" value="tools/web_interfaces/loader/src"/>
-					</then>
-					<else>
-						<var name="jacoco.sources.analyze" value="${jacoco.sources.analyze},tools/web_interfaces/loader/src"/>
-					</else>
-				</if>
-
-				<antcall target="-prepare">
-					<param name="analyzeType" value="web-loader"/>
-					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/loader"/>
-					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/loader/src"/>
-					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
-					<param name="analyzeJar" value="openspcoop2_web-loaderConsole*.jar"/>
-				</antcall>
-			</then>
-			<else>
-				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
-			</else>
-                </if>
 		<!-- WEB Console -->
 		<var name="projectAnalyze" value="web-govwayConsole"/>
 		<if>
@@ -1463,7 +1416,6 @@
 					<fileset dir="${openspcoop2}/tools/web_interfaces/lib/mvc/src"/>
 					<fileset dir="${openspcoop2}/tools/web_interfaces/lib/queue/src"/>
 					<fileset dir="${openspcoop2}/tools/web_interfaces/lib/users/src"/>
-					<fileset dir="${openspcoop2}/tools/web_interfaces/loader/src"/>
 					<fileset dir="${openspcoop2}/tools/web_interfaces/control_station/src"/>
 					<fileset dir="${openspcoop2}/tools/web_interfaces/monitor/src"/>
 					<fileset dir="${openspcoop2}/tools/rs/config/server/src"/>

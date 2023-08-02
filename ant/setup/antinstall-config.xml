@@ -749,6 +749,6 @@
     </page>
 
    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_batchRuntimeRepository,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_batchRuntimeRepository,setup_finished"/>
 
 </installer>

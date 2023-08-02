@@ -72,12 +72,6 @@
 	<property name="required_lib_govwayMonitor" value="${required_lib}"/>
 	<import file="${govwayMonitor}/build.xml"/>
 
-	<!-- Loader -->
-	<property name="loaderConsole" value="${rootDir}/tools/web_interfaces/loader/" />
-	<property name="src_loaderConsole" value="${loaderConsole}/src" />
-	<property name="required_lib_loaderConsole" value="${required_lib}"/>
-	<import file="${loaderConsole}/build.xml"/>
-
 	<!-- APIConfig -->
 	<property name="govwayConfigApiRS" value="${rootDir}/tools/rs/config/server/" />
 	<property name="required_lib_govwayConfigApiRS" location="${required_lib}"/>

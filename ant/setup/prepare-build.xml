@@ -14,7 +14,6 @@
 	<import file="./ant/prepare/spcoop-build.xml" />
 	<import file="./ant/prepare/as4-build.xml" />
 	<import file="./ant/prepare/sdi-build.xml" />
-	<import file="./ant/prepare/loader-build.xml" />
 	<import file="./ant/prepare/govwayConsole-build.xml" />
 	<import file="./ant/prepare/govwayMonitor-build.xml" />
 	<import file="./ant/prepare/govwayAPIConfig-build.xml" />
@@ -42,7 +41,6 @@
 		<antcall target="prepare_spcoop_setup" />
 		<antcall target="prepare_as4_setup" />
 		<antcall target="prepare_sdi_setup" />
-		<antcall target="prepare_loader_setup" />
 		<antcall target="prepare_govwayConsole_setup" />
 		<antcall target="prepare_govwayMonitor_setup" />
 		<antcall target="prepare_govwayAPIConfig_setup" />

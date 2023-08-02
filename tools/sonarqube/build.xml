@@ -638,8 +638,12 @@
 				</if>
 
 				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/mvc/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.mvc.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/mvc/enum.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.mvc.enum.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/mvc/security_hotspots.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.mvc.sec.falsePositives}"/>
 
 				<antcall target="-prepare">
 					<param name="analyzeType" value="web-lib-mvc"/>
@@ -806,40 +810,6 @@
 			</else>
                 </if>
 
-		<!-- WEB Loader -->
-		<var name="projectAnalyze" value="web-loader"/>
-		<if>
-			<or>
-	                        <equals arg1="${govway.group}" arg2="all"/>
-				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
-				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
-				<equals arg1="${govway.group}" arg2="govwayloader"/>
-				<equals arg1="${govway.group}" arg2="govwayLoader"/>
-			</or>
-                        <then>
-				<if>
-					<equals arg1="${sonar.sources.analyze}" arg2=""/>
-					<then>
-						<var name="sonar.sources.analyze" value="tools/web_interfaces/loader/src"/>
-					</then>
-					<else>
-						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/loader/src"/>
-					</else>
-				</if>
-				<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/web_interfaces/loader/deploy/jsp"/>
-
-				<antcall target="-prepare">
-					<param name="analyzeType" value="web-loader"/>
-					<param name="analyzeBaseDir" value="${openspcoop2}/tools/web_interfaces/loader"/>
-					<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/loader/src"/>
-					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
-					<param name="analyzeJar" value="openspcoop2_web-loaderConsole*.jar"/>
-				</antcall>
-			</then>
-			<else>
-				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
-			</else>
-                </if>
 		<!-- WEB Console -->
 		<var name="projectAnalyze" value="web-govwayConsole"/>
 		<if>

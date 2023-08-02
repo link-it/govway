@@ -308,12 +308,6 @@
   </Match>
 
   <Match>
-    <Class name="org.openspcoop2.web.loader.core.LoaderCore" />
-    <Method name="getNomePddOperativa" />
-    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
-  </Match>
-
-  <Match>
     <Class name="org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB_LIB" />
     <Method name="CRUDPdd" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />

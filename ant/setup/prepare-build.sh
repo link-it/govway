@@ -16,7 +16,6 @@ CORE=${ROOT}/core
 WEB_LIB=${ROOT}/tools/web_interfaces/lib
 PDD_CONSOLE=${ROOT}/tools/web_interfaces/control_station
 PDD_MONITOR=${ROOT}/tools/web_interfaces/monitor
-LOADER_CONSOLE=${ROOT}/tools/web_interfaces/loader
 TRASPARENTE_PROTOCOL=${ROOT}/protocolli/trasparente
 MODIPA_PROTOCOL=${ROOT}/protocolli/modipa
 SPCOOP_PROTOCOL=${ROOT}/protocolli/spcoop
@@ -68,12 +67,6 @@ fi
 if [ ! -f ${PDD_MONITOR}/local_env.xml  ]
 then
 	cp ${PDD_MONITOR}/local_env.xml.template ${PDD_MONITOR}/local_env.xml
-fi
-
-# Web LoaderConsole
-if [ ! -f ${LOADER_CONSOLE}/local_env.xml  ]
-then
-        cp ${LOADER_CONSOLE}/local_env.xml.template ${LOADER_CONSOLE}/local_env.xml
 fi
 
 # Protocollo Trasparente
