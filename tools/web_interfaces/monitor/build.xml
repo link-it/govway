@@ -133,16 +133,6 @@
 			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
 		</then>
 	</if>
-	<!-- geronimo_jaxws_spec -->
-	<var name="geronimo_jaxws_spec_jar" value="" />
-	<if>
-		<or>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="geronimo_jaxws_spec_jar" value="DADEFINIREMEGLIOgeronimo-jaxws_2.2_spec-1.1.jar"/>
-		</then>
-	</if>
 	<!-- ecj_jar -->
 	<if> 
 		<or>

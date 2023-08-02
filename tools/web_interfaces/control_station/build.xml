@@ -129,16 +129,6 @@
 			<var name="neethi_jar" value="neethi-3.2.0.jar"/>
 		</then>
 	</if>
-	<!-- geronimo_jaxws_spec -->
-	<var name="geronimo_jaxws_spec_jar" value="" />
-	<if>
-		<or>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="geronimo_jaxws_spec_jar" value="DADEFINIREMEGLIOgeronimo-jaxws_2.2_spec-1.1.jar"/>
-		</then>
-	</if>
 	<!-- jakarta.activation -->
 	<var name="jakarta_activation_jar" value="" />
 	<if>

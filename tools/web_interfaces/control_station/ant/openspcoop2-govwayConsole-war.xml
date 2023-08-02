@@ -384,8 +384,6 @@
 			<lib dir="${required_lib_govwayConsole}/cxf">
 				<include name="cxf-core-*.jar" />
 				<include name="cxf-rt-*.jar" />
-				<include name="jakarta.ws.rs-api-2.1.6.jar" />
-				<include name="${geronimo_jaxws_spec_jar}" />
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/saaj">
 				<include name="*.jar" />
