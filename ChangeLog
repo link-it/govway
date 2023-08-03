@@ -1,3 +1,9 @@
+2023-08-03  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio]
+	Risolto Bug OP-1619
+	Nel dettaglio di una transazion veniva restituito un elemento vuoto 'informazioni_token:{}'; se non valorizzato adesso l'elemento non viene prodotto.
+
 2023-07-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

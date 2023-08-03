@@ -702,29 +702,35 @@ public class Converter {
 		if(extended) {
 			if((this.mittente_tokenClaims && credenzialiMittente!=null) || (this.mittente_token && transazioneDB.getTokenInfo()!=null)) {
 				TransazioneExtInformazioniToken informazioniToken = new TransazioneExtInformazioniToken();
+				boolean add = false;
 				if(this.mittente_tokenClaims && credenzialiMittente!=null) {
 					if(credenzialiMittente.getToken_clientId()!=null) {
 						informazioniToken.setClientId(CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale()));
+						add=true;
 					}
 					if(credenzialiMittente.getToken_issuer()!=null) {
 						informazioniToken.setIssuer(credenzialiMittente.getToken_issuer().getCredenziale());
+						add=true;
 					}
 					if(credenzialiMittente.getToken_subject()!=null) {
 						informazioniToken.setSubject(credenzialiMittente.getToken_subject().getCredenziale());
+						add=true;
 					}
 					if(credenzialiMittente.getToken_username()!=null) {
 						informazioniToken.setUsername(credenzialiMittente.getToken_username().getCredenziale());
+						add=true;
 					}
 					if(credenzialiMittente.getToken_eMail()!=null) {
 						informazioniToken.setMail(credenzialiMittente.getToken_eMail().getCredenziale());
+						add=true;
 					}
 				}
-				if(this.mittente_token) {
-					if(transazioneDB.getTokenInfo()!=null) {
-						((TransazioneExtInformazioniMittente)mittente).setToken(transazioneDB.getTokenInfo().getBytes());
-					}
+				if(add) {
+					((TransazioneExtInformazioniMittente)mittente).setInformazioniToken(informazioniToken);
 				}
-				((TransazioneExtInformazioniMittente)mittente).setInformazioniToken(informazioniToken);
+				if(this.mittente_token && transazioneDB.getTokenInfo()!=null) {
+					((TransazioneExtInformazioniMittente)mittente).setToken(transazioneDB.getTokenInfo().getBytes());
+				}
 			}
 			((TransazioneExt)transazione).setMittente((TransazioneExtInformazioniMittente)mittente);
 		}
