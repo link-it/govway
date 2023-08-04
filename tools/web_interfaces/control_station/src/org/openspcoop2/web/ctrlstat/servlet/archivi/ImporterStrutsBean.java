@@ -20,13 +20,19 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
+import java.io.Serializable;
 import java.util.List;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * ImporterStrutsBean
@@ -40,6 +46,27 @@ import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
  */
 public class ImporterStrutsBean {
 
+	private static final String IMPORT_MAP_PLACE_HOLDER = Costanti.CONSOLE_ATTRIBUTO_TAB_SESSION_KEY_PREFIX + "importMap";
+	private static final String IMPORT_STEP = Costanti.CONSOLE_ATTRIBUTO_TAB_SESSION_KEY_PREFIX + "step";
+	
+	public ImporterStrutsBean(HttpServletRequest request, HttpSession session, boolean newInstance) {
+		if(!newInstance && session!=null) {
+			this.importInformationMissingGlobalPlaceholder = ServletUtils.getObjectFromSession(request, session, MapPlaceholder.class, IMPORT_MAP_PLACE_HOLDER);
+			this.stepCounter = ServletUtils.getObjectFromSession(request, session, StepCounter.class, IMPORT_STEP);
+		}
+		else {
+			this.importInformationMissingGlobalPlaceholder = new MapPlaceholder();
+			ServletUtils.setObjectIntoSession(request, session,
+					this.importInformationMissingGlobalPlaceholder,
+					IMPORT_MAP_PLACE_HOLDER);
+			
+			this.stepCounter = new StepCounter(); 
+			ServletUtils.setObjectIntoSession(request, session,
+					this.stepCounter,
+					IMPORT_STEP);
+		}
+	}
+	
 	protected String filePath;
 	protected String protocollo;
 	protected String importMode;
@@ -49,27 +76,42 @@ public class ImporterStrutsBean {
 	protected String importInformationMissingCollectionFilePath = null;
 	
 	// Campi per lo specifico missingObjectId in corso
-	protected Class<?> importInformationMissing_classObject = null;
-	protected Object importInformationMissing_object = null;
-	protected String importInformationMissing_soggettoInput = null;
-	protected String importInformationMissing_versioneInput = null;
-	protected List<PortType> importInformationMissing_portTypes = null;
-	protected String importInformationMissing_modalitaAcquisizioneInformazioniProtocollo = null;
-	protected String importInformationMissing_portTypeImplementedInput = null;
-	protected String importInformationMissing_accordoServizioParteComuneInput = null;
-	protected String importInformationMissing_accordoCooperazioneInput = null;
-	protected InvocazioneServizio importInformationMissing_invocazioneServizio = null;
-	protected Connettore importInformationMissing_connettore = null;
-	protected Credenziali importInformationMissing_credenziali = null;
-	
-	protected MapPlaceholder importInformationMissing_globalPlaceholder = new MapPlaceholder();
+	protected Class<?> importInformationMissingClassObject = null;
+	protected Object importInformationMissingObject = null;
+	protected String importInformationMissingSoggettoInput = null;
+	protected String importInformationMissingVersioneInput = null;
+	protected List<PortType> importInformationMissingPortTypes = null;
+	protected String importInformationMissingModalitaAcquisizioneInformazioniProtocollo = null;
+	protected String importInformationMissingPortTypeImplementedInput = null;
+	protected String importInformationMissingAccordoServizioParteComuneInput = null;
+	protected String importInformationMissingAccordoCooperazioneInput = null;
+	protected InvocazioneServizio importInformationMissingInvocazioneServizio = null;
+	protected Connettore importInformationMissingConnettore = null;
+	protected Credenziali importInformationMissingCredenziali = null;
 	
 	protected boolean validazioneDocumenti = true;
 	protected boolean updateEnabled = false;
 	protected boolean importDeletePolicyConfig = false;
 	protected boolean importDeletePluginConfig = false;
 	protected boolean importConfig = false;
-
-	protected int step = 0;
 	
+	// Variabili in sessione
+	protected MapPlaceholder importInformationMissingGlobalPlaceholder = new MapPlaceholder();
+	protected StepCounter stepCounter = null;
+
+}
+
+class StepCounter implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
+	private int step = 0;
+
+	public int getStep() {
+		return this.step;
+	}
+
+	public void increment() {
+		this.step++;
+	}
 }
