@@ -1,3 +1,10 @@
+2023-08-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Risolto Bug OP-1623
+	Utilizzando la configurazione di Apache suggerita per inoltrare il certificato TLS ('RequestHeader set SSL_CLIENT_CERT "%{SSL_CLIENT_CERT}s" "expr=-n %{SSL_CLIENT_CERT}"') 
+	avviene un inoltro dell'header in una formato che non veniva supportato da GovWay: PEM su una unica linea dove i ritorni a capo venivano sostituiti da spazi.
+
 2023-08-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
