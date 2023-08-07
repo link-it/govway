@@ -746,23 +746,15 @@ public class CertificateUtils {
 				certificate = UriUtils.decode(certificate, charset);
 			}
 			
+			boolean forceEnrichPEMBeginEnd = false;
 			if(config.isReplace()) {
-				int index = 0; // per evitare bug di cicli infiniti
-				while(certificate.contains(config.getReplaceSource()) && index<10000) {
-					certificate = certificate.replace(config.getReplaceSource(), config.getReplaceDest());
-					index++;
-				}
+				StringBuilder sbNewCertificate = new StringBuilder();
+				forceEnrichPEMBeginEnd = replaceCharacters(config, certificate, sbNewCertificate);
+				certificate = sbNewCertificate.toString();
 			}
 			
-			if(config.isEnrichPEMBeginEnd()) {
-				String bEGIN = "-----BEGIN CERTIFICATE-----";
-				String eND = "-----END CERTIFICATE-----";
-				if(!certificate.startsWith(bEGIN)) {
-					certificate = bEGIN+"\n"+certificate;
-				}
-				if(!certificate.endsWith(eND)) {
-					certificate = certificate+ "\n"+eND;
-				}
+			if(config.isEnrichPEMBeginEnd() || forceEnrichPEMBeginEnd) {
+				certificate = addPEMDeclaration(certificate, forceEnrichPEMBeginEnd);
 			}
 			
 			byte [] certBytes = null;
@@ -785,6 +777,36 @@ public class CertificateUtils {
 		}
 		
 	} 
+	
+	private static boolean replaceCharacters(CertificateDecodeConfig config, String certificate, StringBuilder sbNewCertificate) {
+		boolean forceEnrichPEMBeginEnd = false;
+		// per evitare di sovrascrivere 'BEGIN' e 'END'
+		if(certificate.startsWith(PEMReader.X509_BEGIN) && certificate.length()>PEMReader.X509_BEGIN.length()) {
+			certificate = certificate.substring(PEMReader.X509_BEGIN.length());
+			forceEnrichPEMBeginEnd = true;
+		}
+		if(certificate.endsWith(PEMReader.X509_END) && certificate.length()>PEMReader.X509_END.length()) {
+			certificate = certificate.substring(0, certificate.length()-PEMReader.X509_END.length());
+		}
+		
+		int index = 0; // per evitare bug di cicli infiniti
+		while(certificate.contains(config.getReplaceSource()) && index<10000) {
+			certificate = certificate.replace(config.getReplaceSource(), config.getReplaceDest());
+			index++;
+		}
+		sbNewCertificate.append(certificate);
+		return forceEnrichPEMBeginEnd;
+	}
+	
+	private static String addPEMDeclaration(String certificate, boolean forceEnrichPEMBeginEnd) {
+		if(!certificate.startsWith(PEMReader.X509_BEGIN)) {
+			certificate = PEMReader.X509_BEGIN+ (forceEnrichPEMBeginEnd?"":"\n")+ certificate;
+		}
+		if(!certificate.endsWith(PEMReader.X509_END)) {
+			certificate = certificate+ (forceEnrichPEMBeginEnd?"":"\n") +PEMReader.X509_END;
+		}
+		return certificate;
+	}
 	
 	public static String toPEM(java.security.cert.X509Certificate cert) throws UtilsException {
 		try {

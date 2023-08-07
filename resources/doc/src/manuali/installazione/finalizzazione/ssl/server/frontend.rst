@@ -47,7 +47,7 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
       # Certificato tramite l'header:
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate=#CLIENT-CERT_HEADER-NAME#
 
-   Il certificato inserito nell'header http dal frontend può essere stato codificato in base64/hex e/o tramite url encoding. È possibile effettuare la decodifica abilitando uno o più delle seguenti proprietà: 
+   Il certificato inserito nell'header http dal frontend può essere stato codificato in base64/hex e/o tramite url encoding. È possibile effettuare la corretta decodifica configurando le seguenti proprietà: 
 
    ::
 
@@ -67,6 +67,24 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
    .. note::
 
       Se viene abilitata la proprietà 'url_decode_or_base64_decode_or_hex_decode', viene provata la decodificata del certificato ricevuto prima tramite urlDecode e successivamente, solamente se la decodifica non va a buon fine, viene provata la modalità base64 e infine la modalità hex. Le tre modalità vengono quindi utilizzate in alternativa. Se si desidera effettuare entrambe le decodifiche sul certificato (prima urlDecode e a seguire base64Decode o hexDecode), deve essere disabilita la proprietà 'url_decode_or_base64_decode_or_hex_decode' e devono essere abilitate le due modalità singole 'url_decode' e 'base64_decode' o 'hex_decode'.
+
+   Sono inoltre disponibili ulteriori opzioni che consentono di gestire eventuali codifiche personalizzate attuate dal web server http come ad es. avviene tramite 'apache' utilizzando la regola 'RequestHeader set SSL_CLIENT_CERT "%{SSL_CLIENT_CERT}s" "expr=-n %{SSL_CLIENT_CERT}"' che comporta l'inoltro di un certificato PEM su unica linea, in cui i ritorni a capo vengono sostituiti tramite spazi. Per supportare questa modalità è possibile utilizzare la seguente configurazione:
+
+   ::
+
+      # Disabilito tutte le precedenti decodifiche:
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode=false
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode=false
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.hex_decode=false
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode_or_hex_decode=false
+      # Abilito la conversione dei caratteri:
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.replaceCharacters=true
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.replaceCharacters.source=\\s
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.replaceCharacters.dest=\\n
+
+   .. note::
+
+      Si suggerisce comunque di cercare di configurare il frontend per inoltrare il certificato tramite una delle modalità di codifica standard sopra indicate: base64, hex o urlEncoded. Ad esempio su 'apache' la regola sopra indicata può essere rivista in questa forma: 'RequestHeader set SSL_CLIENT_CERT "expr=%{base64:%{SSL_CLIENT_CERT}s}" "expr=-n %{SSL_CLIENT_CERT}"'
                                 
    La modalità di ricezione di un certificato x.509 in un header HTTP consente anche di definire un truststore per verificare nuovamente i certificati ricevuti dal FrontEnd tramite la seguente configurazione:
 

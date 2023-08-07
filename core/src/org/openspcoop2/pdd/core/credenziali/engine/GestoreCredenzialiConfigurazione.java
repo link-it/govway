@@ -290,8 +290,17 @@ public class GestoreCredenzialiConfigurazione {
 						if("\\t".equals(this.headerSslCertificateReplaceCharactersSource)) {
 							this.headerSslCertificateReplaceCharactersSource = "\t";
 						}
+						else if("\\r".equals(this.headerSslCertificateReplaceCharactersSource)) {
+							this.headerSslCertificateReplaceCharactersSource = "\r";
+						}
 						else if("\\n".equals(this.headerSslCertificateReplaceCharactersSource)) {
 							this.headerSslCertificateReplaceCharactersSource = "\n";
+						}
+						else if("\\r\\n".equals(this.headerSslCertificateReplaceCharactersSource)) {
+							this.headerSslCertificateReplaceCharactersSource = "\r\n";
+						}
+						else if("\\s".equals(this.headerSslCertificateReplaceCharactersSource)) {
+							this.headerSslCertificateReplaceCharactersSource = " "; // viene codificato in spazio
 						}
 					}
 					else {
@@ -305,8 +314,17 @@ public class GestoreCredenzialiConfigurazione {
 						if("\\t".equals(this.headerSslCertificateReplaceCharactersDest)) {
 							this.headerSslCertificateReplaceCharactersDest = "\t";
 						}
+						if("\\r".equals(this.headerSslCertificateReplaceCharactersDest)) {
+							this.headerSslCertificateReplaceCharactersDest = "\r";
+						}
 						else if("\\n".equals(this.headerSslCertificateReplaceCharactersDest)) {
 							this.headerSslCertificateReplaceCharactersDest = "\n";
+						}
+						else if("\\r\\n".equals(this.headerSslCertificateReplaceCharactersDest)) {
+							this.headerSslCertificateReplaceCharactersDest = "\r\n";
+						}
+						else if("\\s".equals(this.headerSslCertificateReplaceCharactersDest)) {
+							this.headerSslCertificateReplaceCharactersDest = " "; // viene codificato in spazio
 						}
 					}
 					else {
