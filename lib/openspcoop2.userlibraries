@@ -67,6 +67,7 @@
 	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-fluent-5.2.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-5.2.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-h2-5.2.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-testing-5.2.2.jar"/>
 	<!-- jackson -->
 	<archive path="/op2_3.4.dev/lib/jackson/jackson-annotations-2.15.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/jackson/jackson-core-2.15.2.jar"/>

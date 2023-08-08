@@ -22,19 +22,46 @@
 
 package org.openspcoop2.example.pdd.client.benchmark;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.http.benchmark.Config;
-import org.apache.http.benchmark.HttpBenchmark;
+import org.apache.hc.core5.benchmark.BenchmarkConfig;
+import org.apache.hc.core5.benchmark.HttpBenchmark;
+import org.apache.hc.core5.benchmark.ResultFormatter;
+import org.apache.hc.core5.benchmark.Results;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
+import org.apache.logging.log4j.Level;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.utils.mime.MimeTypes;
+import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
+
+import jakarta.activation.DataHandler;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.util.ByteArrayDataSource;
 
 
 /**
@@ -46,33 +73,42 @@ import org.openspcoop2.utils.io.Base64Utilities;
  */
 
 public class Client {
+	
+	private static Logger log = null;
+	private static void info(String msg){
+		log.info(msg);
+	}
+	private static void error(String msg){
+		log.error(msg);
+	}
+	
 	public static void main(String[] args) throws Exception {
 
-		System.out.println();
-
+		LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.DEBUG);
+		log = LoggerWrapperFactory.getLogger(Client.class);
+		
 		if (args.length  < 1) {
-			System.err.println("ERROR, Usage:  java Client " +
+			error("ERROR, Usage:  java Client " +
 			"soapEnvelopefile.xml");
-			System.err.println("PortaDelegata,User,Password impostabili da file 'properties'.");
+			error("PortaDelegata,User,Password impostabili da file 'properties'.");
 			System.exit(1);
 		}
 
 		java.util.Properties reader = new java.util.Properties();
-		try{ 
-			InputStreamReader isr = new InputStreamReader(
-				    new FileInputStream("Client.properties"), "UTF-8");
+		try (InputStreamReader isr = new InputStreamReader(
+			    new FileInputStream("Client.properties"), Charset.UTF_8.getValue());){ 
 			reader.load(isr);
 		}catch(java.io.IOException e) {
-			System.err.println("ERROR : "+e.toString());
+			error("ERROR : "+e.toString());
 			return;
 		}
 
-		String PD = Client.getProperty(reader, "openspcoop2.PD", true);
+		String interfaceName = Client.getProperty(reader, "openspcoop2.PD", true);
 		String httpMethod = Client.getProperty(reader, "openspcoop2.httpMethod", false);
 		if(httpMethod==null) {
 			httpMethod = "POST";
 		}
-		String soapActon = Client.getProperty(reader, "openspcoop2.soapAction", true);
+		String soapActon = Client.getProperty(reader, "openspcoop2.soapAction", false);
 		String contentType = Client.getProperty(reader, "openspcoop2.contentType", true);
 		String urlPD = Client.getProperty(reader, "openspcoop2.portaDiDominio", true);
 
@@ -107,9 +143,17 @@ public class Client {
 		
 
 
-		//if(urlPD.endsWith("/")==false)
-		//	urlPD = urlPD + "/"; 
-		String SOAPUrl = urlPD + PD; 
+		if(!urlPD.endsWith("/")) {
+			if(!interfaceName.startsWith("/")) {
+				urlPD = urlPD + "/"; 
+			}		
+		}
+		else {
+			if(interfaceName.startsWith("/") && interfaceName.length()>1) {
+				interfaceName = interfaceName.substring(1); 
+			}
+		}
+		String soapUrl = urlPD + interfaceName; 
 
 		String xmlFile2Send = args[0];
 		if(reader.getProperty("file")!=null){
@@ -121,122 +165,120 @@ public class Client {
 		String printFileReceived = reader.getProperty("openspcoop2.printFileReceived","true");
 		boolean isPrintFileReceived = Boolean.parseBoolean(printFileReceived);
 		
-		System.out.println("Dati utilizzati URL["+SOAPUrl+"] Method["+httpMethod+"] SOAPAction["+soapActon+"] ContentType["+contentType+"] File["+
+		info("Dati utilizzati URL["+soapUrl+"] Method["+httpMethod+"] SOAPAction["+soapActon+"] ContentType["+contentType+"] File["+
 				xmlFile2Send+"] printFileSent["+isPrintFileSent+"] printFileReceived["+isPrintFileReceived+"]");
 		
 		String user = Client.getProperty(reader, "openspcoop2.username", false);
 		String passw = Client.getProperty(reader, "openspcoop2.password", false);
 		if((user == null) || (passw == null))
-			System.err.println("WARNING : Authentication not used.\n\n");
+			info("WARNING : Authentication not used.\n\n");
 		else{
-			System.err.println("Autenticazione BASIC Username["+user+"] Password["+passw+"]");
+			info("Autenticazione BASIC Username["+user+"] Password["+passw+"]");
 		}
 
 
+		BenchmarkConfig.Builder builder = BenchmarkConfig.custom();
 		
-        Config config = new Config();
-        
         // Set verbosity level - 4 and above prints response
         // content, 3 and above prints information on headers,
         // 2 and above prints response codes (404, 200, etc.),
         //1 and above prints warnings and info.
-        config.setVerbosity(Integer.parseInt(Client.getProperty(reader, "openspcoop2.verbosity", true)));
+		builder.setVerbosity(Integer.parseInt(Client.getProperty(reader, "openspcoop2.verbosity", true)));
         
         // Enable the HTTP KeepAlive feature, i.e., perform multiple requests within one HTTP session. 
         // Default is no KeepAlive
-        config.setKeepAlive(Boolean.parseBoolean(Client.getProperty(reader, "openspcoop2.keepAlive", true)));
+		builder.setKeepAlive(Boolean.parseBoolean(Client.getProperty(reader, "openspcoop2.keepAlive", true)));
         
         // Concurrency while performing the benchmarking session. 
         // The default is to just use a single thread/client.
-        config.setThreads(Integer.parseInt(Client.getProperty(reader, "openspcoop2.threads", true)));
+		builder.setConcurrencyLevel(Integer.parseInt(Client.getProperty(reader, "openspcoop2.threads", true)));
         
         String numReq = Client.getProperty(reader, "openspcoop2.requests", false);
         String timeSec = Client.getProperty(reader, "openspcoop2.durationInSeconds", false);
         if(numReq!=null && timeSec!=null){
-        	throw new Exception("Indicare solo una tra le due seguenti proprietà 'openspcoop2.requests' e 'openspcoop2.durationInSeconds'");
+        	builder.setRequests(Integer.parseInt(numReq));
+        	builder.setTimeLimit(TimeValue.of(Integer.parseInt(timeSec), TimeUnit.SECONDS));
         }
         else if(numReq!=null){
 	        //  Number of requests to perform for the benchmarking session. 
 	        // The default is to just perform a single request which usually leads to non-representative benchmarking results.
-	        config.setRequests(Integer.parseInt(numReq));
-        }
-        else{
+	        builder.setRequests(Integer.parseInt(numReq));
+        }else{
         	// Durata del test in secondi
-        	config.setDurationSec(Integer.parseInt(timeSec));
+        	builder.setTimeLimit(TimeValue.of(Integer.parseInt(timeSec), TimeUnit.SECONDS));
+        	builder.setRequests(Integer.MAX_VALUE); // infinito
         }
+                
+        // Method
+        builder.setMethod(httpMethod);
+                        
+        // SOAPAction
+        if(soapActon!=null && !"".equals(soapActon)) {
+        	builder.setSoapAction(soapActon);
+        }
+        
+        // Socket Timeout
+        builder.setSocketTimeout(Timeout.of(Integer.parseInt(Client.getProperty(reader, "openspcoop2.socketTimeout", true)),TimeUnit.MILLISECONDS));
+        
+        // Url
+        builder.setUri(new java.net.URI(soapUrl));
+        
+        // Https
+        boolean disableSSLVerification = Boolean.parseBoolean(Client.getProperty(reader, "openspcoop2.disableSSLVerification", true));
+        builder.setDisableSSLVerification(disableSSLVerification);
+        if(!disableSSLVerification && soapUrl.startsWith("https:")) {
+        	builder.setTrustStorePath(Client.getProperty(reader, "openspcoop2.trustStorePath", true));
+        	builder.setTrustStorePassword(Client.getProperty(reader, "openspcoop2.trustStorePassword", true));
+        }
+        
+        // HttpsClient
+        String keystore = Client.getProperty(reader, "openspcoop2.keyStorePath", false);
+        if(keystore!=null && !"".equals(keystore)) {
+        	String keystorePassword = Client.getProperty(reader, "openspcoop2.keyStorePassword", true);
+        	builder.setIdentityStorePath(keystore);
+        	builder.setIdentityStorePassword(keystorePassword);
+        }
+        
+        // Chunking
+        builder.setUseChunking(Boolean.parseBoolean(Client.getProperty(reader, "openspcoop2.useChunking", true)));
+        
+        // Http2
+        builder.setForceHttp2(Boolean.parseBoolean(Client.getProperty(reader, "openspcoop2.http2", true)));
+        
+        // File
+        File file = new File(xmlFile2Send);
+        // Attachment directory
+        String attachDir = Client.getProperty(reader, "openspcoop2.attachmentDirectory", false);
+        if(attachDir!=null){
+        	String subType = Client.getProperty(reader, "openspcoop2.attachment.subType", false);
+        	if(subType==null || "".equals(subType)) {
+        		subType = HttpConstants.CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE;
+        	}
+        	
+        	StringBuilder ctBuilder = new StringBuilder();
+        	file = buildMime(subType, file, attachDir, ctBuilder);
+        	contentType = ctBuilder.toString();
+        }
+        builder.setPayloadFile(file);
         
         // ContentType
         if(contentType!=null && !"".equals(contentType)) {
-        	config.setContentType(contentType);
-        }
-        
-        // Method
-        config.setMethod(httpMethod);
-        
-        // File
-        config.setPayloadFile(new File(xmlFile2Send));
-                
-        // SOAPAction
-        config.setSoapAction(soapActon);
-        
-        // Socket Timeout
-        config.setSocketTimeout(Integer.parseInt(Client.getProperty(reader, "openspcoop2.socketTimeout", true)));
-        
-        // Url
-        config.setUrl(new URL(SOAPUrl));
-        
-        // Chunking
-        config.setUseChunking(Boolean.parseBoolean(Client.getProperty(reader, "openspcoop2.useChunking", true)));
-        
-        // Http1.0
-        config.setUseHttp1_0(Boolean.parseBoolean(Client.getProperty(reader, "openspcoop2.http10", true)));
-        
-        // Attchment directory
-        String attachDir = Client.getProperty(reader, "openspcoop2.attachmentDirectory", false);
-        if(attachDir!=null){
-        	File f = new File(attachDir);
-        	config.setAttachmentsDir(f);
-        }
-        
-        // Gestione
-        String busta = Client.getProperty(reader, "openspcoop2.busta", false);
-        if(busta!=null){
-        	File f = new File(busta);
-        	config.setBustaFileHeader(f);
-        }
-        
-        // FileBodyTemplate (Possibilità di generare un messaggio dinamico)
-        // Non è utilizzabile in combinazione con l'utilizzo di una busta (in tal caso aggiungere l'id dinamico nell'header).
-        String bodyTemplate = Client.getProperty(reader, "file.isTemplate", false);
-        if(bodyTemplate!=null){
-        	config.setPayloadFileTemplate(Boolean.parseBoolean(bodyTemplate));
-        }
-        
-        // Accepted Return Code
-        String acceptedReturnCode = Client.getProperty(reader, "openspcoop2.acceptedReturnCode", false);
-        if(acceptedReturnCode!=null){
-        	List<Integer> acceptedReturnCodes = new ArrayList<Integer>();
-        	String [] tmp = acceptedReturnCode.split(",");
-        	for (int i = 0; i < tmp.length; i++) {
-        		acceptedReturnCodes.add(Integer.parseInt(tmp[i].trim()));
-			}
-        	config.setAcceptedReturnCode(acceptedReturnCodes);
-        }
-
-        // Random Time
-        String randomInterval = Client.getProperty(reader, "openspcoop2.randomTimeIntervalBeforeInvoke", false);
-        if(randomInterval!=null){
-        	boolean randomIntervalEnabled = Boolean.parseBoolean(randomInterval);
-        	if(randomIntervalEnabled){
-        		config.setSleepMinBeforeRun(Integer.parseInt(Client.getProperty(reader, "openspcoop2.randomTimeIntervalBeforeInvoke.minIntervalMS", true)));
-        		config.setSleepMaxBeforeRun(Integer.parseInt(Client.getProperty(reader, "openspcoop2.randomTimeIntervalBeforeInvoke.maxIntervalMS", true)));
-        		String randomIntervalEveryMessage = Client.getProperty(reader, "openspcoop2.randomTimeIntervalBeforeInvoke.sleepEveryMessage", false);
-                if(randomIntervalEveryMessage!=null){
-                	config.setSleepBeforeEveryMessage(Boolean.parseBoolean(randomIntervalEveryMessage));
-                }
+        	jakarta.mail.internet.ContentType ct = new jakarta.mail.internet.ContentType(contentType);
+        	if(ct.getParameterList()!=null && ct.getParameterList().size()>0) {
+        		List<NameValuePair> l = new ArrayList<>();
+        		Enumeration<String> names = ct.getParameterList().getNames();
+        		while (names.hasMoreElements()) {
+					String name = names.nextElement();
+					String value = ct.getParameter(name);
+					NameValuePair nv = new BasicNameValuePair(name, value);
+					l.add(nv);
+				}
+        		builder.setContentType(ContentType.create(ct.getBaseType(),l.toArray(new NameValuePair[1])));
+        	}
+        	else {
+        		builder.setContentType(ContentType.create(ct.getBaseType()));
         	}
         }
-
         
         List<String> headers = new ArrayList<>();
         
@@ -245,7 +287,6 @@ public class Client {
 		if(user!=null && passw!=null){
 			authentication = user + ":" + passw;
 			authentication = "Basic " + Base64Utilities.encodeAsString(authentication.getBytes());
-			//System.out.println("CODE["+authentication+"]");
 			headers.add("Authorization:"+authentication);
 		}
         
@@ -289,33 +330,40 @@ public class Client {
 			headers.add(trasportoKeywordAzione+":"+azione.trim());
 		}
 		
-		if(headers.size()>0){
-			config.setHeaders(headers.toArray(new String[1]));
+		if(!headers.isEmpty()){
+			builder.setHeaders(headers.toArray(new String[1]));
 		}
+		
+		BenchmarkConfig config = builder.build();
 		
         // Esecuzione
         HttpBenchmark httpBenchmark = new HttpBenchmark(config);
-        String risultato = httpBenchmark.execute();
+        Results risultato = httpBenchmark.execute();
 		
-        FileOutputStream fout = new FileOutputStream("Result.txt");
-        fout.write(risultato.getBytes());
-        fout.flush();
-        fout.close();
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        try(PrintStream pin = new PrintStream(buf, true, StandardCharsets.US_ASCII.name())){
+        	ResultFormatter.print(pin, risultato);
+        	pin.flush();
+        	buf.flush();
+        }
+        buf.close();
         
-        System.out.println(risultato);
-		
-
-
+        try(FileOutputStream fout = new FileOutputStream("Result.txt");){
+	        fout.write(buf.toByteArray());
+	        fout.flush();
+        }
+        
+        info(buf.toString());
 		
 	}
 
 	
-	private static String getProperty(Properties reader,String key, boolean required) throws Exception{
+	private static String getProperty(Properties reader,String key, boolean required) throws UtilsException{
 	
 		String tmp = reader.getProperty(key);
 		if(tmp == null){
 			if(required){
-				throw new Exception("ERROR : Proprieta' ["+key+"] non definita all'interno del file 'Client.properties'");
+				throw new UtilsException("ERROR : Proprieta' ["+key+"] non definita all'interno del file 'Client.properties'");
 			}
 			else{
 				return null;
@@ -327,11 +375,11 @@ public class Client {
 		
 	}
 	
-	private static java.util.Properties readProperties (String prefix,java.util.Properties sorgente)throws Exception{
+	private static java.util.Properties readProperties (String prefix,java.util.Properties sorgente)throws UtilsException{
 		java.util.Properties prop = new java.util.Properties();
 		try{ 
 			java.util.Enumeration<?> en = sorgente.propertyNames();
-			for (; en.hasMoreElements() ;) {
+			while (en.hasMoreElements()) {
 				String property = (String) en.nextElement();
 				if(property.startsWith(prefix)){
 					String key = (property.substring(prefix.length()));
@@ -346,7 +394,53 @@ public class Client {
 			}
 			return prop;
 		}catch(java.lang.Exception e) {
-			throw new Exception("Utilities.readProperties Riscontrato errore durante la lettura delle propriete con prefisso ["+prefix+"]: "+e.getMessage(),e);
+			throw new UtilsException("Utilities.readProperties Riscontrato errore durante la lettura delle propriete con prefisso ["+prefix+"]: "+e.getMessage(),e);
 		}  
+	}
+	
+	private static File buildMime(String subType, File payloadFile, String attachDir, StringBuilder ctBuilder) throws UtilsException, MessagingException, IOException {
+		
+    	MimeMultipart mm = new MimeMultipart(subType);
+    	
+    	addPart(mm, payloadFile);
+    	
+    	File f = new File(attachDir);
+    	if(f.exists() && f.isDirectory()) {
+    		File [] c = f.listFiles();
+    		if(c.length>0) {
+    			for (File file : c) {
+    				if(file.exists() && file.isFile()) {
+    					addPart(mm, file);
+    				}
+				}
+    		}
+    	}
+    	
+    	File fTmp = File.createTempFile("mime", ".bin");
+    	try(FileOutputStream fout = new FileOutputStream(fTmp)){
+    		mm.writeTo(fout);
+    		fout.flush();
+    	}
+    	
+    	ctBuilder.append(mm.getContentType());
+    	
+    	return fTmp;
+	}
+	private static void addPart(MimeMultipart mm, File file) throws UtilsException, MessagingException, FileNotFoundException {
+		MimeTypes mimeTypes = MimeTypes.getInstance();
+    	String type = mimeTypes.getMimeType(file);
+		byte[] content = FileSystemUtilities.readBytesFromFile(file);
+		BodyPart body = new MimeBodyPart();
+		body.setDataHandler(new DataHandler(new ByteArrayDataSource(content, type)));
+		body.addHeader(HttpConstants.CONTENT_TYPE, type);
+		if(file.getName()!=null) {
+			String hV = HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_FORM_DATA+"; "+HttpConstants.CONTENT_DISPOSITION_NAME_PREFIX+""+file.getName();
+			String fileName = file.getName();
+			if(fileName!=null) {
+				hV = hV + "; "+HttpConstants.CONTENT_DISPOSITION_FILENAME_PREFIX+fileName;
+			}
+			body.addHeader(HttpConstants.CONTENT_DISPOSITION,hV);
+		}
+		mm.addBodyPart(body);
 	}
 }

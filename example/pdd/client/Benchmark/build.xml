@@ -40,7 +40,7 @@
 	<target name="run" depends="build"
         description="Esegue il Client" >
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.example.pdd.client.benchmark.Client" fork="false">
+		<java classname="org.openspcoop2.example.pdd.client.benchmark.Client" fork="true">
 			<arg value="${parameter}" />
 			<classpath>
 				<path refid="classpath_run" />
@@ -59,7 +59,10 @@
    <path id="classpath_run">
 		<fileset dir="${required_lib}" includes="httpcore/*.jar"/>
    		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		<fileset dir="${utils_dist}"/>
+		<fileset dir="${required_lib}" includes="jakarta/*.jar"/>
+		<fileset dir="${required_lib}" includes="log/*.jar"/>
+		<fileset dir="${required_lib}" includes="angus/*.jar"/>
+		<fileset dir="${utils_dist}" includes="*.jar"/>
    </path>
 
 
