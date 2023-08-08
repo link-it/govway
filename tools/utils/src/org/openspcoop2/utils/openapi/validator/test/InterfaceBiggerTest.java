@@ -118,10 +118,10 @@ public class InterfaceBiggerTest {
 			switch (openAPILibrary) {
 			case json_schema:
 			case openapi4j:
-				maxAtteso = ambienteTestNonPerformante ? 9000 : 3500; 
+				maxAtteso = ambienteTestNonPerformante ? 10000 : 3500; 
 				break;
 			case swagger_request_validator:
-				maxAtteso = ambienteTestNonPerformante ? 9000 : 3500;
+				maxAtteso = ambienteTestNonPerformante ? 10000 : 3500;
 				break;
 			}	
 			System.out.println("\tReader time:"+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
@@ -149,7 +149,7 @@ public class InterfaceBiggerTest {
 				maxAtteso = Long.MAX_VALUE;
 				break;
 			case swagger_request_validator:
-				maxAtteso = ambienteTestNonPerformante ? 9000 : 3500;
+				maxAtteso = ambienteTestNonPerformante ? 10000 : 3500;
 				break;
 			}			
 			System.out.println("\tInit validator time:"+Utilities.convertSystemTimeIntoStringMillisecondi(time, true));
