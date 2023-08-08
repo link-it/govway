@@ -76,6 +76,11 @@
 				<include name="${jboss_deployment_structure}" />
 			</webinf>
 
+			<!-- Specifying Logging per CXF -->
+			<zipfileset dir="${src_govwayMonitorApiRS}/META-INF/cxf" prefix="META-INF/cxf">
+				<include name="org.apache.cxf.Logger" />
+			</zipfileset>
+
 			<lib dir="${openspcoop2.dist}">
 				<include name="openspcoop2_*.jar"/>
 			</lib>
