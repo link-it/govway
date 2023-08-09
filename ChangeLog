@@ -1,3 +1,13 @@
+2023-08-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1625
+	Utilizzando la funzionalità 'Importa' e caricando un archivio che contiene configurazioni che richiedono una token policy non esistente sul registro, 
+	se non si abilita l'opzione 'Policy di Configurazione' l'import non va a buon fine e vengono create solamente in parte le configurazioni per via della mancanza della policy sulla base dati. 
+	Al di là dell'importare correttamente l'archivio con l'opzione abilitata, se invece si volesse procedere immediatamente all'eliminazione di quanto importato parzialmente, 
+	utilizzando la funzionalità 'Elimina' la console terminava con un errore inatteso e dal file di log si poteva riscontrare il seguente errore: 
+		"Caused by: org.openspcoop2.core.registry.driver.DriverRegistroServiziException: Fruizione da parte del soggetto [modipa/xxx] del servizio [modipa/yyyy:modipa/yyyy:1] non esistente"
+
 2023-08-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]
