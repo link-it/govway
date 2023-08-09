@@ -172,8 +172,21 @@ public class DeleterArchiveUtils {
 				if(archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate()!=null &&
 						archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate().size()>0){
 					List<IDPortaApplicativa> idPACheck = null;
-					if(this.importerEngine.existsAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica()) && 
-							this.importerEngine.existsIDPorteApplicativeAssociateErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica())) {
+					boolean existsParteSpecifica = false;
+					try {
+						existsParteSpecifica = this.importerEngine.existsAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
+					}catch(Exception e) {
+						// ignore
+					}
+					boolean existsIDPorteApplicativeAssociateErogazione = false;
+					try {
+						existsIDPorteApplicativeAssociateErogazione = this.importerEngine.existsIDPorteApplicativeAssociateErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
+					}catch(Exception e) {
+						// ignore
+					}
+					
+					if(existsParteSpecifica && 
+							existsIDPorteApplicativeAssociateErogazione) {
 						idPACheck = this.importerEngine.getIDPorteApplicativeAssociateErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
 					}
 					for (MappingErogazionePortaApplicativa mappingPorteApplicativeAssociata : archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate()) {
@@ -193,8 +206,20 @@ public class DeleterArchiveUtils {
 				if(archiveFruitore.getMappingPorteDelegateAssociate()!=null &&
 						archiveFruitore.getMappingPorteDelegateAssociate().size()>0){
 					List<IDPortaDelegata> idPDCheck = null;
-					if(this.importerEngine.existsAccordoServizioParteSpecifica(archiveFruitore.getIdAccordoServizioParteSpecifica()) &&
-							this.importerEngine.existsIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore())) {
+					boolean existsParteSpecifica = false;
+					try {
+						existsParteSpecifica = this.importerEngine.existsAccordoServizioParteSpecifica(archiveFruitore.getIdAccordoServizioParteSpecifica());
+					}catch(Exception e) {
+						// ignore
+					}
+					boolean existsIDPorteDelegateAssociateFruizione = false;
+					try {
+						existsIDPorteDelegateAssociateFruizione = this.importerEngine.existsIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
+					}catch(Exception e) {
+						// ignore
+					}
+					if(existsParteSpecifica &&
+							existsIDPorteDelegateAssociateFruizione) {
 						idPDCheck = this.importerEngine.getIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
 					}
 					for (MappingFruizionePortaDelegata mappingPorteDelegateAssociata : archiveFruitore.getMappingPorteDelegateAssociate()) {
