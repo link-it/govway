@@ -172,7 +172,7 @@
 				<include name="jackson-datatype-joda-2.15.2.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-2.0.3-gov4j-1.jar"/>
+				<include name="slf4j-api-2.0.7-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
