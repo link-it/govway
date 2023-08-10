@@ -150,8 +150,8 @@
 			</lib>
 
 			<lib dir="${openspcoop2.lib}/saaj">
-				<include name="saaj-impl-1.5.3-gov4j-1.jar"/>
-				<include name="${javax_xml_soap-api_jar}"/>
+				<include name="saaj-impl-3.0.2-gov4j-1.jar"/>
+				<include name="${jakarta_xml_soap-api_jar}"/>
 			</lib>
 
 			<lib dir="${openspcoop2.lib}/security">

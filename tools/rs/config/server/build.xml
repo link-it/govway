@@ -59,7 +59,7 @@
 	<var name="jsf_api_jar" value="" />
 	<var name="el_impl_jar" value="" />
 	<var name="el-api-1.0.jar" value="" />
-	<var name="javax_xml_soap-api_jar" value="" />
+	<var name="jakarta_xml_soap-api_jar" value="" />
 	<var name="jakarta_activation_jar" value="" />
 	<var name="validation-api-2.0.1_jar" value="" />
 	<var name="bean-validation_jars" value="" />
@@ -183,13 +183,13 @@
 			<var name="el-api-1.0.jar" value="el-api-1.0.jar" />
 		</then>
 	</if>
-	<!-- javax_xml_soap-api_jar -->
+	<!-- jakarta_xml_soap-api_jar -->
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="javax_xml_soap-api_jar" value="javax.xml.soap-api-1.4.0.jar" />
+			<var name="jakarta_xml_soap-api_jar" value="jakarta.xml.soap-api-3.0.0.jar" />
 		</then>
 	</if>
 	<!-- jakarta.activation -->

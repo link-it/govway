@@ -67,6 +67,8 @@ public class MTOMTest {
 		// TEST 4
 		System.out.println("============ SOAP 12 (attach) ============");
 		new MTOMTest(MessageType.SOAP_12, null, true);
+		
+		System.out.println("Testsuite terminata");
 				
 	}
 	
