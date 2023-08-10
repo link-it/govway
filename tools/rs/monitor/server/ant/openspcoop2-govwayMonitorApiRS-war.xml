@@ -101,7 +101,7 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="neethi-3.2.0.jar"/>
-				<include name="xmlsec-2.3.0.jar"/>
+				<include name="xmlsec-3.0.2.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/swagger">
 				<include name="*.jar"/>
@@ -152,10 +152,10 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
-				<include name="herasaf-xacml-core-2.0.4.jar"/>
-				<include name="bcpkix-jdk18on-1.74.jar"/>
-				<include name="bcprov-ext-jdk18on-1.74.jar"/>
-				<include name="bcutil-jdk18on-1.74.jar"/>
+				<include name="herasaf-xacml-core-3.0.2.jar"/>
+				<include name="bcpkix-jdk18on-1.76.jar"/>
+				<include name="bcprov-ext-jdk18on-1.76.jar"/>
+				<include name="bcutil-jdk18on-1.76.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/json">

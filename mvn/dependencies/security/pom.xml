@@ -17,15 +17,15 @@
 
 		<jar.group.name>security</jar.group.name>
 		
-		<bcpkix-jdk18on.version>1.75</bcpkix-jdk18on.version>
-		<bcprov-ext-jdk18on.version>1.75</bcprov-ext-jdk18on.version>
-		<bcutil-jdk18on.version>1.75</bcutil-jdk18on.version>
+		<bcpkix-jdk18on.version>1.76</bcpkix-jdk18on.version>
+		<bcprov-ext-jdk18on.version>1.76</bcprov-ext-jdk18on.version>
+		<bcutil-jdk18on.version>1.76</bcutil-jdk18on.version>
 		<cryptacular.version>1.2.5</cryptacular.version>
 		<herasaf-xacml-core.version>3.0.2</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>
 		<neethi.version>3.2.0</neethi.version>
 		<xmlsec.version>3.0.2</xmlsec.version>
-		<xml-security-impl.version>1.0</xml-security-impl.version>
+		<!-- <xml-security-impl.version>1.0</xml-security-impl.version> -->
 		<nimbus-jose.version>9.31</nimbus-jose.version>
 
 	</properties>
@@ -128,7 +128,7 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.sun.xml.security</groupId>
 			<artifactId>xml-security-impl</artifactId>
 			<version>${xml-security-impl.version}</version>
@@ -138,7 +138,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>com.nimbusds</groupId>

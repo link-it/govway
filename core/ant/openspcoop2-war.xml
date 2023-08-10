@@ -244,15 +244,15 @@
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk18on-1.74.jar"/>
-				<include name="bcpkix-jdk18on-1.74.jar"/>
-				<include name="bcutil-jdk18on-1.74.jar"/>
+				<include name="bcprov-ext-jdk18on-1.76.jar"/>
+				<include name="bcpkix-jdk18on-1.76.jar"/>
+				<include name="bcutil-jdk18on-1.76.jar"/>
 				<include name="neethi-3.2.0.jar"/>
-				<include name="xmlsec-2.3.0.jar"/>
+				<include name="xmlsec-3.0.2.jar"/>
 				<include name="cryptacular-1.2.5.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
-				<include name="herasaf-xacml-core-2.0.4.jar"/>
-				<include name="nimbus-jose-jwt-9.25.6.jar"/>
+				<include name="herasaf-xacml-core-3.0.2.jar"/>
+				<include name="nimbus-jose-jwt-9.31.jar"/>
 			</lib>
 			<lib dir="${required_lib}/wss4j">
 				<include name="*.jar"/>
