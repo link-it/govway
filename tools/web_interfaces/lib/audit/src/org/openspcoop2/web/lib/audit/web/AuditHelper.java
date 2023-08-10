@@ -140,7 +140,7 @@ public class AuditHelper {
 			dati.add(de);
 
 			String[] tipiFormato =
-				{ Costanti.DUMP_JSON_FORMAT, Costanti.DUMP_XML_FORMAT };
+				{ Costanti.DUMP_JSON_FORMAT };
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_FORMATO_DUMP);
 			if(!useXml) {
@@ -210,10 +210,8 @@ public class AuditHelper {
 				String msg = "Dump dev'essere abilitato o disabilitato";
 				return msg;
 			}
-			if (!formatodump.equals(Costanti.DUMP_JSON_FORMAT) &&
-					!formatodump.equals(Costanti.DUMP_XML_FORMAT)) {
-				String msg = "Formato dump dev'essere "+Costanti.DUMP_JSON_FORMAT+
-						" o "+Costanti.DUMP_XML_FORMAT;
+			if (!formatodump.equals(Costanti.DUMP_JSON_FORMAT)) {
+				String msg = "Formato dump dev'essere "+Costanti.DUMP_JSON_FORMAT;
 				return msg;
 			}
 			if (!log4j.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO) && !log4j.equals(AuditCostanti.DEFAULT_VALUE_DISABILITATO)) {

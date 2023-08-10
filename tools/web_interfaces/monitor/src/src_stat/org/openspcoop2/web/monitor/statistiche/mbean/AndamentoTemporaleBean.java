@@ -41,6 +41,8 @@ import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.dao.IService;
@@ -57,8 +59,9 @@ import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.json.JSONObject;
 
 /**
  * AndamentoTemporaleBean
@@ -148,7 +151,10 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	}
 	
 	private String _getJson(boolean nuovaRicerca){
-		JSONObject grafico = null;
+		
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		
+		ObjectNode grafico = null;
 		List<Res> list = null;
 		this.setVisualizzaComandiExport(false);
 		try {
@@ -177,7 +183,13 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 			}
 			
 			if(list!=null) {
-				grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), Integer.MAX_VALUE, this.getSlice(), tempo);
+				try {
+					grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), Integer.MAX_VALUE, this.getSlice(), tempo);
+				} catch (UtilsException e) {
+					MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+					DynamicPdDBean.log.error(e.getMessage(), e);
+					return null;
+				}
 			}
 			break;
 		case LINE_CHART:
@@ -205,20 +217,31 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				}
 			}
 			
-			
-			grafico = JsonStatsUtils.getJsonAndamentoTemporale(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , tempo, this.getDirezioneLabel(), this.getSlice());
+			try {
+				grafico = JsonStatsUtils.getJsonAndamentoTemporale(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , tempo, this.getDirezioneLabel(), this.getSlice());
+			} catch (UtilsException e) {
+				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+				DynamicPdDBean.log.error(e.getMessage(), e);
+				return null;
+			}
 			
 			break;
 		default:
 			break;
 		}
 		
-		if(list != null && list.size() > 0)
+		if(list != null && !list.isEmpty())
 			this.setVisualizzaComandiExport(true);
 		
-		String json = grafico != null ?  grafico.toString() : "";
-		//log.debug(json); 
-		return json ;
+		try {
+			String json = grafico != null ?  jsonUtils.toString(grafico) : "";
+			//	log.debug(json); 
+			return json ;
+		} catch (UtilsException e) {
+			MessageUtils.addErrorMsg("Si e' verificato un errore durante la serializzazione json:"	+ e.getMessage());
+			DynamicPdDBean.log.error(e.getMessage(), e);
+			return null;
+		}
 	}
 	
 	

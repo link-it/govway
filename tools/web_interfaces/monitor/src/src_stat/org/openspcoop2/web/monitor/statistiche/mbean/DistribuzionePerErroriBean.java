@@ -40,6 +40,8 @@ import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
@@ -55,8 +57,10 @@ import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.json.JSONObject;
+
 
 /**
  * DistribuzionePerErroriBean
@@ -126,7 +130,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 	}
 	
 	public String getJson(){
-		JSONObject grafico = null;
+		ObjectNode grafico = null;
 		List<ResDistribuzione> list;
 		this.setVisualizzaComandiExport(false);
 		try {
@@ -139,23 +143,36 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		
-		switch (tipoReport) {
-		case BAR_CHART:
-			grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice());
-			break;
-		case PIE_CHART:
-			grafico = JsonStatsUtils.getJsonPieChartDistribuzione(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , this.getSlice());
-			break;
-		default:
-			break;
+		try {
+			switch (tipoReport) {
+			case BAR_CHART:
+				grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice());
+				break;
+			case PIE_CHART:
+				grafico = JsonStatsUtils.getJsonPieChartDistribuzione(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , this.getSlice());
+				break;
+			default:
+				break;
+			}
+		} catch (UtilsException e) {
+			MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+			DynamicPdDBean.log.error(e.getMessage(), e);
+			return null;
 		}
 		
 		if(list != null && list.size() > 0)
 			this.setVisualizzaComandiExport(true);
 		
-		String json = grafico != null ?  grafico.toString() : "";
-		//log.debug(json); 
-		return json ;
+		try {
+			JSONUtils jsonUtils = JSONUtils.getInstance();
+			String json = grafico != null ?  jsonUtils.toString(grafico) : "";
+			//log.debug(json); 
+			return json ;
+		} catch (UtilsException e) {
+			MessageUtils.addErrorMsg("Si e' verificato un errore durante la serializzazione json:"	+ e.getMessage());
+			DynamicPdDBean.log.error(e.getMessage(), e);
+			return null;
+		}
 	}
 
 	

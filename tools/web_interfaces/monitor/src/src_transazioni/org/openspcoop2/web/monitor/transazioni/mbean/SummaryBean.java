@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -85,8 +86,8 @@ import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.slf4j.Logger;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * SummaryBean
@@ -605,177 +606,186 @@ public class SummaryBean implements Serializable{
 	}
 
 	public String getJson(){
-		JSONObject grafico = new JSONObject();
-
-		if(!CostantiReport.PERIODO_NOT_SET.equals(this.periodo)){
-
-			grafico.put(CostantiGrafici.USA_COLORI_AUTOMATICI_KEY, false);
-			grafico.put(CostantiGrafici.TITOLO_KEY, this.getCaption());
-			grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, this.getSubCaption());
-			grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, CostantiGrafici.NUMERO_ESITI_LABEL);
-			grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, true);
-
-			JSONArray categorie = new JSONArray();
-			JSONObject categoria = new JSONObject();
-			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.OK_KEY);
-			categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.OK_LABEL);
-			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_OK);
-			categorie.add(categoria);
-
-			JSONObject categoria2 = new JSONObject();
-			categoria2.put(CostantiGrafici.KEY_KEY , CostantiGrafici.FAULT_KEY);
-			categoria2.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.FAULT_LABEL);
-			categoria2.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_FAULT_APPLICATIVO);
-			categorie.add(categoria2);
-
-			JSONObject categoria3 = new JSONObject();
-			categoria3.put(CostantiGrafici.KEY_KEY , CostantiGrafici.ERRORE_KEY);
-			categoria3.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.ERRORE_LABEL);
-			categoria3.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_ERROR);
-			categorie.add(categoria3);
-
-			// Inserisco le catergorie del grafico
-			grafico.put(CostantiGrafici.CATEGORIE_KEY, categorie);
-
-			try{
-				JSONArray dati = new JSONArray();
-
-				int[] error_array = new int[this.offset];
-				int[] fault_array = new int[this.offset];
-				int[] ok_array = new int[this.offset];
-				String[] labelArray = new String[this.offset];
-
-				SimpleDateFormat sdf = null;
-				SimpleDateFormat sdfend = null;
-				Calendar w_end = null;
-				Calendar w_start = null;
-				Calendar actualStart = null;
-
-				int field = Calendar.DATE;
-				int increment = 0;
-
-				w_end=Calendar.getInstance();
-				w_end.setTime(this.maxDate);
-
-
-				w_start = (Calendar)w_end.clone();
-				w_start.setTime(this.minDate);
-
-				boolean clearEndMs = false;
-
-				if(CostantiReport.ULTIMO_ANNO.equals(this.periodo)){
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MMM_YY, ApplicationBean.getInstance().getLocale());
-
-					field = Calendar.MONTH;
-					increment = 1;
-					//siccome incremento i mesi devo impostare l'actual come 00:00 del primo del mese
-					actualStart = (Calendar) w_start.clone();
-					actualStart.set(Calendar.DAY_OF_MONTH, actualStart.getActualMinimum(Calendar.DAY_OF_MONTH));
-					actualStart.set(Calendar.HOUR_OF_DAY,actualStart.getActualMinimum(Calendar.HOUR_OF_DAY));
-					actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
-					actualStart.clear(Calendar.SECOND);
-					actualStart.clear(Calendar.MILLISECOND);
-
-
-				}else if(CostantiReport.ULTIMI_30_GIORNI.equals(this.periodo)){
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
-					sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
-					field = Calendar.WEEK_OF_YEAR;
-					increment = 1;
-
-					actualStart = (Calendar) w_start.clone();
-					actualStart.set(Calendar.HOUR_OF_DAY,actualStart.getActualMinimum(Calendar.HOUR_OF_DAY));
-					actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
-					actualStart.clear(Calendar.SECOND);
-					actualStart.clear(Calendar.MILLISECOND);
-
-				}else if(CostantiReport.ULTIMI_7_GIORNI.equals(this.periodo)){
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_EEE_DD_MM, ApplicationBean.getInstance().getLocale());
-					field = Calendar.DATE;
-					increment = 1;
-
-					actualStart = (Calendar) w_start.clone();
-					actualStart.set(Calendar.HOUR_OF_DAY,actualStart.getActualMinimum(Calendar.HOUR_OF_DAY));
-					actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
-					actualStart.clear(Calendar.SECOND);
-					actualStart.clear(Calendar.MILLISECOND);
-
-				}else if(CostantiReport.ULTIME_24_ORE.equals(this.periodo)){
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
-					sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
-					field = Calendar.HOUR_OF_DAY;
-					increment = 1;
-
-					actualStart = (Calendar) w_start.clone();
-					actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
-					actualStart.clear(Calendar.SECOND);
-					actualStart.clear(Calendar.MILLISECOND);
-					clearEndMs = true;
-				}
-
-				for (int i=0;i<this.offset;i++){
-					Calendar actualEnd = (Calendar)actualStart.clone();
-					actualEnd.add(field, increment);
-
-					actualEnd.add(Calendar.MILLISECOND, -1);
-
-					Date s = actualStart.getTime();
-					Date e = actualEnd.getTime();
-
-					ResLive r = null;
-					try{
-						String protocolloSelected = this.isSelectedShowAllProtocols() ? null : this.protocollo;
-						r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, protocolloSelected, this.protocolloDefault, this.tipologiaRicerca);
-					} catch (CoreException er) {
-						MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
-						SummaryBean.log.error(er.getMessage(),er);
-						return null;
-					}
-
-					error_array[i] = r.getEsitoKo().intValue();
-					fault_array[i] = r.getEsitoFault().intValue();
-					ok_array[i] = r.getEsitoOk().intValue();
-					if(sdfend!=null){
-						if(clearEndMs){
-							actualEnd.add(Calendar.MILLISECOND, 1);
-							e = actualEnd.getTime();
-						}
-						labelArray[i] = MessageFormat.format("[{0}-{1})", sdf.format(s), sdfend.format(e));
-					}
-					else
-						labelArray[i] = sdf.format(s);
-
-					//incremento actual
-					actualStart.add(field, increment);
-
-					JSONObject bar = new JSONObject();
-
-					bar.put(CostantiGrafici.DATA_KEY, labelArray[i]);
-					bar.put(CostantiGrafici.DATA_LABEL_KEY, labelArray[i]);
-					bar.put(CostantiGrafici.OK_KEY, ok_array[i]);
-					bar.put(CostantiGrafici.FAULT_KEY, fault_array[i]);
-					bar.put(CostantiGrafici.ERRORE_KEY, error_array[i]);
-					bar.put(CostantiGrafici.OK_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.OK_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(ok_array[i]));
-					bar.put(CostantiGrafici.FAULT_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.FAULT_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(fault_array[i]));
-					bar.put(CostantiGrafici.ERRORE_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.ERRORE_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(error_array[i]));
-
-					dati.add(bar);
-				}
-
-				grafico.put(CostantiGrafici.DATI_KEY, dati);
-				grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, dati.size() > 12 ? CostantiGrafici.DIREZIONE_LABEL_OBLIQUO : CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE);
-				grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
-			}catch(Exception e){
-				SummaryBean.log.error("Errore durante la generazione del json: " + e.getMessage(),e);
-				return "";
-			}
-			//String json = grafico != null ?  grafico.toString() : "";
-			//log.debug(json); 
+		
+		try {
+			JSONUtils jsonUtils = JSONUtils.getInstance();
 			
-			return grafico.toString();	
+			ObjectNode grafico = jsonUtils.newObjectNode();
+			
+			if(!CostantiReport.PERIODO_NOT_SET.equals(this.periodo)){
+	
+				grafico.put(CostantiGrafici.USA_COLORI_AUTOMATICI_KEY, false);
+				grafico.put(CostantiGrafici.TITOLO_KEY, this.getCaption());
+				grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, this.getSubCaption());
+				grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, CostantiGrafici.NUMERO_ESITI_LABEL);
+				grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, true);
+	
+				ArrayNode categorie = jsonUtils.newArrayNode();
+				ObjectNode categoria = jsonUtils.newObjectNode();
+				categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.OK_KEY);
+				categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.OK_LABEL);
+				categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_OK);
+				categorie.add(categoria);
+	
+				ObjectNode categoria2 = jsonUtils.newObjectNode();
+				categoria2.put(CostantiGrafici.KEY_KEY , CostantiGrafici.FAULT_KEY);
+				categoria2.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.FAULT_LABEL);
+				categoria2.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_FAULT_APPLICATIVO);
+				categorie.add(categoria2);
+	
+				ObjectNode categoria3 = jsonUtils.newObjectNode();
+				categoria3.put(CostantiGrafici.KEY_KEY , CostantiGrafici.ERRORE_KEY);
+				categoria3.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.ERRORE_LABEL);
+				categoria3.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_ERROR);
+				categorie.add(categoria3);
+	
+				// Inserisco le catergorie del grafico
+				grafico.set(CostantiGrafici.CATEGORIE_KEY, categorie);
+	
+				try{
+					ArrayNode dati = jsonUtils.newArrayNode();
+	
+					int[] errorArray = new int[this.offset];
+					int[] faultArray = new int[this.offset];
+					int[] okArray = new int[this.offset];
+					String[] labelArray = new String[this.offset];
+	
+					SimpleDateFormat sdf = null;
+					SimpleDateFormat sdfend = null;
+					Calendar wEnd = null;
+					Calendar wStart = null;
+					Calendar actualStart = null;
+	
+					int field = Calendar.DATE;
+					int increment = 0;
+	
+					wEnd=Calendar.getInstance();
+					wEnd.setTime(this.maxDate);
+	
+	
+					wStart = (Calendar)wEnd.clone();
+					wStart.setTime(this.minDate);
+	
+					boolean clearEndMs = false;
+	
+					if(CostantiReport.ULTIMO_ANNO.equals(this.periodo)){
+						sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MMM_YY, ApplicationBean.getInstance().getLocale());
+	
+						field = Calendar.MONTH;
+						increment = 1;
+						//siccome incremento i mesi devo impostare l'actual come 00:00 del primo del mese
+						actualStart = (Calendar) wStart.clone();
+						actualStart.set(Calendar.DAY_OF_MONTH, actualStart.getActualMinimum(Calendar.DAY_OF_MONTH));
+						actualStart.set(Calendar.HOUR_OF_DAY,actualStart.getActualMinimum(Calendar.HOUR_OF_DAY));
+						actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
+						actualStart.clear(Calendar.SECOND);
+						actualStart.clear(Calendar.MILLISECOND);
+	
+	
+					}else if(CostantiReport.ULTIMI_30_GIORNI.equals(this.periodo)){
+						sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
+						sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
+						field = Calendar.WEEK_OF_YEAR;
+						increment = 1;
+	
+						actualStart = (Calendar) wStart.clone();
+						actualStart.set(Calendar.HOUR_OF_DAY,actualStart.getActualMinimum(Calendar.HOUR_OF_DAY));
+						actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
+						actualStart.clear(Calendar.SECOND);
+						actualStart.clear(Calendar.MILLISECOND);
+	
+					}else if(CostantiReport.ULTIMI_7_GIORNI.equals(this.periodo)){
+						sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_EEE_DD_MM, ApplicationBean.getInstance().getLocale());
+						field = Calendar.DATE;
+						increment = 1;
+	
+						actualStart = (Calendar) wStart.clone();
+						actualStart.set(Calendar.HOUR_OF_DAY,actualStart.getActualMinimum(Calendar.HOUR_OF_DAY));
+						actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
+						actualStart.clear(Calendar.SECOND);
+						actualStart.clear(Calendar.MILLISECOND);
+	
+					}else if(CostantiReport.ULTIME_24_ORE.equals(this.periodo)){
+						sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
+						sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
+						field = Calendar.HOUR_OF_DAY;
+						increment = 1;
+	
+						actualStart = (Calendar) wStart.clone();
+						actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
+						actualStart.clear(Calendar.SECOND);
+						actualStart.clear(Calendar.MILLISECOND);
+						clearEndMs = true;
+					}
+	
+					for (int i=0;i<this.offset;i++){
+						Calendar actualEnd = (Calendar)actualStart.clone();
+						actualEnd.add(field, increment);
+	
+						actualEnd.add(Calendar.MILLISECOND, -1);
+	
+						Date s = actualStart.getTime();
+						Date e = actualEnd.getTime();
+	
+						ResLive r = null;
+						try{
+							String protocolloSelected = this.isSelectedShowAllProtocols() ? null : this.protocollo;
+							r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, protocolloSelected, this.protocolloDefault, this.tipologiaRicerca);
+						} catch (CoreException er) {
+							MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
+							SummaryBean.log.error(er.getMessage(),er);
+							return null;
+						}
+	
+						errorArray[i] = r.getEsitoKo().intValue();
+						faultArray[i] = r.getEsitoFault().intValue();
+						okArray[i] = r.getEsitoOk().intValue();
+						if(sdfend!=null){
+							if(clearEndMs){
+								actualEnd.add(Calendar.MILLISECOND, 1);
+								e = actualEnd.getTime();
+							}
+							labelArray[i] = MessageFormat.format("[{0}-{1})", sdf.format(s), sdfend.format(e));
+						}
+						else
+							labelArray[i] = sdf.format(s);
+	
+						//incremento actual
+						actualStart.add(field, increment);
+	
+						ObjectNode bar = jsonUtils.newObjectNode();
+	
+						bar.put(CostantiGrafici.DATA_KEY, labelArray[i]);
+						bar.put(CostantiGrafici.DATA_LABEL_KEY, labelArray[i]);
+						bar.put(CostantiGrafici.OK_KEY, okArray[i]);
+						bar.put(CostantiGrafici.FAULT_KEY, faultArray[i]);
+						bar.put(CostantiGrafici.ERRORE_KEY, errorArray[i]);
+						bar.put(CostantiGrafici.OK_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.OK_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(okArray[i]));
+						bar.put(CostantiGrafici.FAULT_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.FAULT_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(faultArray[i]));
+						bar.put(CostantiGrafici.ERRORE_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.ERRORE_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(errorArray[i]));
+	
+						dati.add(bar);
+					}
+	
+					grafico.set(CostantiGrafici.DATI_KEY, dati);
+					grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, dati.size() > 12 ? CostantiGrafici.DIREZIONE_LABEL_OBLIQUO : CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE);
+					grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
+				}catch(Exception e){
+					SummaryBean.log.error("Errore durante la generazione del json: " + e.getMessage(),e);
+					return "";
+				}
+				/**String json = grafico != null ?  jsonUtils.toString(grafico) : "";
+				log.debug(json);*/ 
+				
+				return jsonUtils.toString(grafico);	
+			}
+	
+			return ""; 
+			
+		}catch(Exception e) {
+			log.error("Generazione JSON non riuscita: "+e.getMessage(),e);
+			return ""; 
 		}
-
-		return ""; 
 	}
 
 	public String getData(){
@@ -949,36 +959,39 @@ public class SummaryBean implements Serializable{
 	}
 
 	public String getJsonLive(){
-		JSONObject grafico = new JSONObject();
-
+		
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		
 		try{
+			ObjectNode grafico = jsonUtils.newObjectNode();
+			
 			grafico.put(CostantiGrafici.USA_COLORI_AUTOMATICI_KEY, false);
 			grafico.put(CostantiGrafici.TITOLO_KEY, CostantiGrafici.ESITO_TRANSAZIONI_LABEL);
 			grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, "");
 			grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, CostantiGrafici.TOTALE_TRANSAZIONI_LABEL);
 			grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, true);
 
-			JSONArray categorie = new JSONArray();
-			JSONObject categoria = new JSONObject();
+			ArrayNode categorie = jsonUtils.newArrayNode();
+			ObjectNode categoria = jsonUtils.newObjectNode();
 			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.OK_KEY);
 			categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.OK_LABEL);
 			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_OK);
 			categorie.add(categoria);
 
-			JSONObject categoria2 = new JSONObject();
+			ObjectNode categoria2 = jsonUtils.newObjectNode();
 			categoria2.put(CostantiGrafici.KEY_KEY , CostantiGrafici.FAULT_KEY);
 			categoria2.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.FAULT_LABEL);
 			categoria2.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_FAULT_APPLICATIVO);
 			categorie.add(categoria2);
 
-			JSONObject categoria3 = new JSONObject();
+			ObjectNode categoria3 = jsonUtils.newObjectNode();
 			categoria3.put(CostantiGrafici.KEY_KEY , CostantiGrafici.ERRORE_KEY);
 			categoria3.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.ERRORE_LABEL);
 			categoria3.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_ERROR);
 			categorie.add(categoria3);
 
 			// Inserisco le catergorie del grafico
-			grafico.put(CostantiGrafici.CATEGORIE_KEY, categorie);
+			grafico.set(CostantiGrafici.CATEGORIE_KEY, categorie);
 			
 			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
@@ -1005,7 +1018,7 @@ public class SummaryBean implements Serializable{
 					this.dataLive.remove(0);
 			}
 
-			JSONArray dati = new JSONArray();
+			ArrayNode dati = jsonUtils.newArrayNode();
 			
 			for (ResLive res : this.dataLive) {
 				
@@ -1013,7 +1026,7 @@ public class SummaryBean implements Serializable{
 				String nOk = res.getEsitoOk()+"";
 				String nFault = res.getEsitoFault()+"";
 				String nKo = res.getEsitoKo()+"";
-				JSONObject bar = new JSONObject();
+				ObjectNode bar = jsonUtils.newObjectNode();
 
 				bar.put(CostantiGrafici.DATA_KEY, data);
 				bar.put(CostantiGrafici.OK_KEY, nOk);
@@ -1026,14 +1039,15 @@ public class SummaryBean implements Serializable{
 				dati.add(bar);
 			}
 
-			grafico.put(CostantiGrafici.DATI_KEY, dati);
+			grafico.set(CostantiGrafici.DATI_KEY, dati);
 			grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, dati.size() > 12 ? CostantiGrafici.DIREZIONE_LABEL_OBLIQUO : CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE);
 			grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
+			
+			return jsonUtils.toString(grafico);
 		}catch(Exception e){
 			SummaryBean.log.error("Errore durante la generazione del json live: " + e.getMessage(),e);
 			return "";
-		}
-		return grafico.toString();	
+		}	
 	}
 
 	public String getPeriodo() {

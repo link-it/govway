@@ -58,7 +58,7 @@ public class ValidatorTest {
 
 	private static boolean printLogError = false;
 	
-	private static boolean everit_validaFileNonValidi = false;
+	private static boolean everitValidaFileNonValidi = false;
 	
 	/*
 	 * NOTA: in caso di errore 'should be valid to one and only one of the schemas'
@@ -104,7 +104,6 @@ public class ValidatorTest {
 		ExecutorService executor = Executors.newFixedThreadPool(100);
 		
 		byte[] schema = null;
-		boolean testEverit = true;
 		switch (testVersion) {
 		case V4:
 			schema = ValidatorTest.loadResource("schema_vDraft04.json");
@@ -117,11 +116,9 @@ public class ValidatorTest {
 			break;
 		case V201909:
 			schema = ValidatorTest.loadResource("schema_v201909.json");
-			testEverit = false; // unsupported
 			break;
 		case V202012:
 			schema = ValidatorTest.loadResource("schema_v202012.json");
-			testEverit = false; // unsupported
 			break;
 		}
 		
@@ -138,45 +135,30 @@ public class ValidatorTest {
 		byte[] json50K = ValidatorTest.loadResource("file50K.json");
 		byte[] json500K = ValidatorTest.loadResource("file500K.json");
 		
-		List<byte[]> file1K = new ArrayList<byte[]>();
+		List<byte[]> file1K = new ArrayList<>();
 		file1K.add(json1K);
 
-		List<byte[]> file50K = new ArrayList<byte[]>();
+		List<byte[]> file50K = new ArrayList<>();
 		file50K.add(json50K);
 
-		List<byte[]> file500K = new ArrayList<byte[]>();
+		List<byte[]> file500K = new ArrayList<>();
 		file500K.add(json500K);
 
-		List<byte[]> fileNonValidi = new ArrayList<byte[]>();
+		List<byte[]> fileNonValidi = new ArrayList<>();
 		fileNonValidi.add(jsonInvalid);
 
-		List<byte[]> file2M = new ArrayList<byte[]>();
+		List<byte[]> file2M = new ArrayList<>();
 		file2M.add(json2M);
 
-		List<ApiName> listTest = new ArrayList<ApiName>();
+		List<ApiName> listTest = new ArrayList<>();
 		String tipo = null;
 		if(args!=null && args.length>0) {
 			tipo = args[0];
 			ApiName apiName = ApiName.valueOf(tipo);
-			boolean add = true;
-			if(ApiName.EVERIT.equals(apiName)) {
-				if(!testEverit) {
-					add = false;
-				}
-			}
-			if(add) {
-				listTest.add(apiName);
-			}
+			listTest.add(apiName);
 		}
 		else {
-			for(ApiName name : ApiName.values()) {
-				if(ApiName.EVERIT.equals(name)) {
-					if(!testEverit) {
-						continue;
-					}
-				}
-				listTest.add(name);
-			}
+			listTest.addAll(Arrays.asList(ApiName.values()));
 		}
 		
 		if(!listTest.isEmpty()) {
@@ -184,7 +166,7 @@ public class ValidatorTest {
 							
 				System.out.println("=========================== "+name+" ======================================");
 				
-				if(!ApiName.EVERIT.equals(name) || everit_validaFileNonValidi) {
+				if(everitValidaFileNonValidi) {
 					ValidatorTest.validazioneListaFile("fileNonValidi", name, fileNonValidi, 10, false, schema, executor);
 				}
 				ValidatorTest.validazioneListaFile("file1K", name, file1K, 10000, true, schema, executor);
@@ -196,6 +178,8 @@ public class ValidatorTest {
 			}
 		}
 		executor.shutdown();
+		
+		System.out.println("Testsuite terminata");
 	}
 
 	private static byte[] loadResource(String resourceName) throws Exception {

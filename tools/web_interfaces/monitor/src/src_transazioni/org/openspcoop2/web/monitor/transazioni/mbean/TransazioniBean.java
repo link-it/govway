@@ -38,6 +38,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -64,8 +65,9 @@ import org.openspcoop2.web.monitor.transazioni.exporter.ColonnaExportManager;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
 import org.slf4j.Logger;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * TransazioniBean
@@ -526,17 +528,21 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		}else if(colonneEsportate.equals(CostantiExport.COLONNE_VALUE_VISUALIZZATE_NELLO_STORICO)){
 			if(this.visualizzazioneStoricoTabellare) {
 				try{
-					JSONObject json = JSONObject.fromObject(this.getTableState());
+					JSONUtils jsonUtils = JSONUtils.getInstance();
+					
+					ObjectNode json = (ObjectNode) jsonUtils.getAsNode(this.getTableState());
 					if(json != null){
 						// prelevo l'array dell'ordine delle colonne
-						JSONArray jsonArrayColumnsOrder = json.getJSONArray(TransazioniBean.COLUMNS_ORDER_STATO_TABELLE_KEY);
-						JSONObject jsonObjectColumnsVisibility = json.getJSONObject(TransazioniBean.COLUMNS_VISIBILITY_STATO_TABELLE_KEY); 
+						ArrayNode jsonArrayColumnsOrder = (ArrayNode) json.get(TransazioniBean.COLUMNS_ORDER_STATO_TABELLE_KEY);
+						ObjectNode jsonObjectColumnsVisibility = (ObjectNode) json.get(TransazioniBean.COLUMNS_VISIBILITY_STATO_TABELLE_KEY); 
 	
 						for (int i = 0; i < jsonArrayColumnsOrder.size(); i++) {
-							String key = jsonArrayColumnsOrder.getString(i);
-							int visibility = jsonObjectColumnsVisibility.getInt(key);
+							JsonNode keyNode = jsonArrayColumnsOrder.get(i);
+							String key = keyNode.asText();
+							JsonNode visibilityNode = jsonObjectColumnsVisibility.get(key);
+							int visibility = visibilityNode.asInt();
 							
-							if(isCsvColumnEnabled(key)==false){
+							if(!isCsvColumnEnabled(key)){
 								visibility = -1;
 							}
 	

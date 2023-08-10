@@ -35,7 +35,10 @@ import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.deser.DefaultDeserializationContext;
 import com.fasterxml.jackson.databind.deser.DeserializerFactory;
+import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationIntrospector;
 
 /**	
  * Contiene utility per effettuare la de-serializzazione di un oggetto
@@ -97,6 +100,11 @@ public class JsonJacksonDeserializer implements IDeserializer{
 		DeserializerFactory dFactory = BeanDeserializerFactory.instance.withDeserializerModifier(modifier);
 
 		this.mapper = new ObjectMapper(null, null, new DefaultDeserializationContext.Impl(dFactory));
+		this.mapper.setAnnotationIntrospector(
+				new AnnotationIntrospectorPair(
+						new JakartaXmlBindAnnotationIntrospector(TypeFactory.defaultInstance()), new JakartaXmlBindAnnotationIntrospector(TypeFactory.defaultInstance())
+						)
+				);
 		this.mapper.setDateFormat(config.getDf());
 		if(config.isSerializeEnumAsString())
 			this.mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);

@@ -40,7 +40,6 @@ public class TestJsonValidator {
 	@DataProvider(name="jsonValidatorProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-				{ApiName.EVERIT},
 				{ApiName.FGE},
 				{ApiName.NETWORK_NT}
 		};

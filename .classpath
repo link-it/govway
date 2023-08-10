@@ -36,9 +36,9 @@
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore|*/.faces-config.xml.jsfdia" kind="src" path="tools/web_interfaces/monitor/src/src_eventi"/>
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore|*/.faces-config.xml.jsfdia" kind="src" path="tools/web_interfaces/monitor/src/src_allarmi"/>
 	<classpathentry kind="src" path="tools/web_interfaces/monitor/deploy/pages"/>
-	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/monitor/server/src"/>
-	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/config/server/src"/>
-	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/traccia/server/src"/>
+	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml|**/org.apache.cxf.Logger" kind="src" path="tools/rs/monitor/server/src"/>
+	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml|**/org.apache.cxf.Logger" kind="src" path="tools/rs/config/server/src"/>
+	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml|**/org.apache.cxf.Logger" kind="src" path="tools/rs/traccia/server/src"/>
 	<classpathentry kind="src" path="tools/command_line_interfaces/monitor_pdd/src"/>
 	<classpathentry kind="src" path="tools/command_line_interfaces/config_loader/src"/>
 	<classpathentry kind="src" path="tools/batch/statistiche/src"/>
@@ -62,8 +62,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib"/>
 	<!-- <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_axis14_withoutSecurity"/> -->
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_stub"/>
-	<!-- <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_jboss6"/> -->
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_faces"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_impl"/>
 	<!-- <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_karate"/> -->
 	<classpathentry kind="output" path="bin"/>
 </classpath>

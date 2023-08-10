@@ -25,7 +25,6 @@
 		<aspectjweaver.version>1.9.9.1</aspectjweaver.version>
 		<commons-jcs3-core.gov4j.version>3.1-gov4j-2</commons-jcs3-core.gov4j.version>
 		<com.springsource.edu.oswego.cs.dl.util.concurrent.version>1.3.4</com.springsource.edu.oswego.cs.dl.util.concurrent.version>
-		<ezmorph.version>1.0.6</ezmorph.version>
 		<freemarker.version>2.3.32</freemarker.version>
 		<guava.version>32.1.1-jre</guava.version>
 		<java-uuid-generator.version>4.2.0</java-uuid-generator.version>
@@ -303,18 +302,6 @@
 			<groupId>edu.oswego.cs.concurrent</groupId>
 			<artifactId>com.springsource.edu.oswego.cs.dl.util.concurrent</artifactId>
 			<version>${com.springsource.edu.oswego.cs.dl.util.concurrent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>net.sf.ezmorph</groupId>
-			<artifactId>ezmorph</artifactId>
-			<version>${ezmorph.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

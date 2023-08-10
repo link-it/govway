@@ -21703,7 +21703,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator' con un valore non ammesso (valori consentiti: "+ApiName.NETWORK_NT.name()+","+ApiName.FGE+","+ApiName.EVERIT+"), viene utilizzato il default, errore:"+e.getMessage(),e);
+				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator' con un valore non ammesso (valori consentiti: "+ApiName.NETWORK_NT.name()+","+ApiName.FGE+"), viene utilizzato il default, errore:"+e.getMessage(),e);
 				this.getValidazioneContenutiApplicativi_openApi_jsonValidator = ApiName.NETWORK_NT;
 			}
 		}

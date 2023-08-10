@@ -380,22 +380,6 @@ public class AuditAppender {
 		}
 	}
 	
-	private String serializeXMLObject(Object o,org.openspcoop2.utils.serialization.Filter listFilter, boolean registrazioneBinari) throws AuditException{
-		try{
-			if(registrazioneBinari==false) {
-				listFilter.addFilterByValue(byte[].class);
-			}
-			SerializationConfig config = new SerializationConfig();
-			config.setFilter(listFilter);
-			config.setIdBuilder(AuditAppender.idBuilder);
-			config.setPrettyPrint(true);
-			org.openspcoop2.utils.serialization.XMLSerializer serializer = 
-				new org.openspcoop2.utils.serialization.XMLSerializer(config);
-			return  serializer.getObject(o);		
-		}catch(Exception e){
-			throw new AuditException("serializeXMLObject error: "+e.getMessage(),e);
-		}
-	}
 	
 	private void filtraOperazione(Operation operation, boolean registrazioneBinari) throws AuditException,AuditDisabilitatoException{
 		this.filtraOperazione(operation, null, null, registrazioneBinari);
@@ -527,9 +511,7 @@ public class AuditAppender {
 		if(Costanti.DUMP_JSON_FORMAT.equals(AuditAppender.configurazioneAuditing.getDumpFormat())){
 			return this.serializeJsonObject(object, listFilter, registrazioneBinari);
 		}
-		else if(Costanti.DUMP_XML_FORMAT.equals(AuditAppender.configurazioneAuditing.getDumpFormat())){
-			return this.serializeXMLObject(object, listFilter, registrazioneBinari);
-		}else {
+		else {
 			throw new AuditException("Tipo di formattazione non conosciuta: "+AuditAppender.configurazioneAuditing.getDumpFormat());
 		}
 	}

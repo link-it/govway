@@ -37,6 +37,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
@@ -61,8 +63,10 @@ import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.json.JSONObject;
 
 /**
  * StatsPersonalizzateBean
@@ -181,7 +185,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 
 	
 	public String getJson(){
-		JSONObject grafico = null;
+		ObjectNode grafico = null;
 		try {
 			SimpleDateFormat sdf;
 			SimpleDateFormat sdf_last_hour = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
@@ -239,9 +243,16 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 			DynamicPdDBean.log.error(e.getMessage(), e);
 		}
 		
-		String json = grafico != null ?  grafico.toString() : "";
-		log.debug(json); 
-		return json ;
+		try {
+			JSONUtils jsonUtils = JSONUtils.getInstance();
+			String json = grafico != null ?  jsonUtils.toString(grafico) : "";
+			log.debug(json); 
+			return json ;
+		} catch (UtilsException e) {
+			MessageUtils.addErrorMsg("Si e' verificato un errore durante la serializzazione json:"	+ e.getMessage());
+			DynamicPdDBean.log.error(e.getMessage(), e);
+			return null;
+		}
 	}
 	
 	@Override

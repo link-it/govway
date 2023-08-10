@@ -19,7 +19,6 @@
 		
 		<jackson.version>2.15.2</jackson.version>
 		<jackson-databind.version>2.15.2</jackson-databind.version>
-		<!-- <jackson-coreutils.version>1.8</jackson-coreutils.version> -->
 
 	</properties>
 
@@ -126,7 +125,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jaxb-annotations</artifactId>
+			<artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
 			<version>${jackson.version}</version>
 			<exclusions>
 				<exclusion>
@@ -168,18 +167,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<!-- <dependency>
-			<groupId>com.github.fge</groupId>
-			<artifactId>jackson-coreutils</artifactId>
-			<version>${jackson-coreutils.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency> -->
 
 	</dependencies>
 

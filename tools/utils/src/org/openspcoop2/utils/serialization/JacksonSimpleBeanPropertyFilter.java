@@ -39,7 +39,7 @@ public class JacksonSimpleBeanPropertyFilter extends SerializeExceptFilter {
 
 	
 	private static final long serialVersionUID = 1L;
-	private PropertyFilterCore core;
+	private transient PropertyFilterCore core;
 	private List<String> excludes;
 	private List<Class<?>> excludesByClass;
 	
@@ -55,10 +55,10 @@ public class JacksonSimpleBeanPropertyFilter extends SerializeExceptFilter {
 	}
 
 	private static Set<String> getHashSet(Filter filter, List<String> excludes) {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		if(filter!= null && filter.sizeFiltersByName()>0)
 			set.addAll(filter.getFilterByName());
-		if(excludes !=null && excludes.size() > 0) {
+		if(excludes !=null && !excludes.isEmpty()) {
 			set.addAll(excludes);
 		}
 
@@ -70,7 +70,7 @@ public class JacksonSimpleBeanPropertyFilter extends SerializeExceptFilter {
             throws Exception {
     	
         if (include(writer) && !this.excludesByClass.contains(writer.getType().getRawClass())) {
-            writer.serializeAsField(pojo, gen, provider);
+        	writer.serializeAsField(pojo, gen, provider);
         } else {
         	if (gen.canOmitFields()) { // since 2.3
         		writer.serializeAsOmittedField(pojo, gen, provider);

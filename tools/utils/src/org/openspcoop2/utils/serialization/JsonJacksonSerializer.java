@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationIntrospector;
 
 
 
@@ -59,6 +59,7 @@ public class JsonJacksonSerializer implements ISerializer {
 	}
 	
 	public JsonJacksonSerializer(SerializationConfig config) {
+		
 		ObjectMapper mapper = new ObjectMapper().setAnnotationIntrospector(
 				new AnnotationIntrospectorPair(
 						new JacksonAnnotationIntrospector() {
@@ -70,7 +71,7 @@ public class JsonJacksonSerializer implements ISerializer {
 								return DEFAULT;
 							}
 
-						}, new JaxbAnnotationIntrospector(TypeFactory.defaultInstance())
+						}, new JakartaXmlBindAnnotationIntrospector(TypeFactory.defaultInstance())
 						)
 				);
 
@@ -92,7 +93,7 @@ public class JsonJacksonSerializer implements ISerializer {
 			config.getExcludes() != null) {
 			filters = filters.addFilter(DEFAULT, new JacksonSimpleBeanPropertyFilter(config, new JsonJacksonSerializer()));
 		} else if(config.getIncludes()!=null) {
-			HashSet<String> hashSet = new HashSet<String>();
+			HashSet<String> hashSet = new HashSet<>();
 			hashSet.addAll(config.getIncludes());
 			filters = filters.addFilter(DEFAULT, SimpleBeanPropertyFilter.filterOutAllExcept(hashSet));
 		}

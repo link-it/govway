@@ -33,8 +33,9 @@ package org.openspcoop2.web.lib.audit.costanti;
  */
 public class Costanti {
 
+	private Costanti() {}
+	
 	public static final String DUMP_JSON_FORMAT = "JSON";
-	public static final String DUMP_XML_FORMAT = "XML";
 	
 	public static final String DB_AUDIT_CONFIGURAZIONE = "audit_conf";
 	public static final String DB_AUDIT_FILTRI = "audit_filters";

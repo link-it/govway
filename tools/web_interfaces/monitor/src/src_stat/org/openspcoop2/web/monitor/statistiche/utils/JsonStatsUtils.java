@@ -35,6 +35,8 @@ import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
@@ -42,8 +44,9 @@ import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * JsonStatsUtils
@@ -54,11 +57,16 @@ import net.sf.json.JSONObject;
  *
  */
 public class JsonStatsUtils {
+	
+	private JsonStatsUtils() {}
 
 	/* ******* PIE CHART ********** */
 
-	public static JSONObject getJsonPieChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, String caption, String subCaption, Integer slice){
-		JSONObject grafico = new JSONObject();
+	public static ObjectNode getJsonPieChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, String caption, String subCaption, Integer slice) throws UtilsException{
+				
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		
+		ObjectNode grafico = jsonUtils.newObjectNode();
 		
 		grafico.put(CostantiGrafici.USA_COLORI_AUTOMATICI_KEY, true);
 		grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
@@ -80,13 +88,13 @@ public class JsonStatsUtils {
 			tempoMedio = true;
 		}
 
-		JSONArray dati = new JSONArray();
+		ArrayNode dati = jsonUtils.newArrayNode();
 
 		int maxLenghtLabel = 0;
-		if(list!=null  && list.size()>0){
+		if(list!=null  && !list.isEmpty()){
 			int i = 0;
-			long altri_sum=0;
-			int altri_sum_numeroItem=0;
+			long altriSum=0;
+			int altriSumNumeroItem=0;
 
 			for (ResDistribuzione entry : list) {
 				String r = entry.getRisultato();
@@ -100,37 +108,48 @@ public class JsonStatsUtils {
 					if(!entry.getParentMap().isEmpty())
 						toolText = StatsUtils.getToolTextConParent(search, r ,entry.getParentMap(), sum);
 
-					JSONObject spicchio = new JSONObject();
+					ObjectNode spicchio = jsonUtils.newObjectNode();
 					spicchio.put(CostantiGrafici.LABEL_KEY, escapeJsonLabel(r));
 					spicchio.put(CostantiGrafici.TOOLTIP_KEY, toolText);
-					spicchio.put(CostantiGrafici.VALUE_KEY, sum);
+					if(sum instanceof Long v) {
+						spicchio.put(CostantiGrafici.VALUE_KEY, v);
+					}
+					else if(sum instanceof Integer vi) {
+						spicchio.put(CostantiGrafici.VALUE_KEY, vi);
+					}
+					else if(sum instanceof Float vf) {
+						spicchio.put(CostantiGrafici.VALUE_KEY, vf);
+					}
+					else if(sum instanceof Double vd) {
+						spicchio.put(CostantiGrafici.VALUE_KEY, vd);
+					}
 
 					dati.add(spicchio);
 				} else{
-					altri_sum+=sum.longValue();
-					altri_sum_numeroItem++;
+					altriSum+=sum.longValue();
+					altriSumNumeroItem++;
 				}
 			}
 
 			if(i>slice){
 
-				long v = altri_sum;
-				if(altri_sum_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-					if(altri_sum_numeroItem>0) {
-						v = v / altri_sum_numeroItem;
-					}
+				long v = altriSum;
+				if(altriSumNumeroItem>1 && (occupazioneBanda || tempoMedio) &&
+					(altriSumNumeroItem>0)
+					){
+					v = v / altriSumNumeroItem;
 				}
 
 				String toolText = StatsUtils.getToolText(search,v); 
 
-				JSONObject spicchio = new JSONObject();
+				ObjectNode spicchio = jsonUtils.newObjectNode();
 				spicchio.put(CostantiGrafici.LABEL_KEY, CostantiGrafici.ALTRI_LABEL);
 				spicchio.put(CostantiGrafici.TOOLTIP_KEY, toolText);
 				spicchio.put(CostantiGrafici.VALUE_KEY, v);
 
 				dati.add(spicchio);
 			}
-			grafico.put(CostantiGrafici.DATI_KEY, dati);
+			grafico.set(CostantiGrafici.DATI_KEY, dati);
 			
 			if(maxLenghtLabel > CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE)
 				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE);
@@ -147,21 +166,23 @@ public class JsonStatsUtils {
 
 	/* ************** BAR CHART **************** */
 
-	public static JSONObject getJsonBarChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer slice){
-		List<ResBase> listI = new ArrayList<ResBase>();
+	public static ObjectNode getJsonBarChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer slice) throws UtilsException{
+		List<ResBase> listI = new ArrayList<>();
 		listI.addAll(list);
-		return _getJsonBarChartDistribuzione(listI, search, caption, subCaption, direzioneLabelParam, slice, null, null);
+		return getJsonBarChartDistribuzioneEngine(listI, search, caption, subCaption, direzioneLabelParam, slice, null, null);
 	}
-	public static JSONObject getJsonBarChartDistribuzione(List<Res> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer slice, Integer numeroLabel, StatisticType tempo){
-		List<ResBase> listI = new ArrayList<ResBase>();
+	public static ObjectNode getJsonBarChartDistribuzione(List<Res> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer slice, Integer numeroLabel, StatisticType tempo) throws UtilsException{
+		List<ResBase> listI = new ArrayList<>();
 		listI.addAll(list);
-		return _getJsonBarChartDistribuzione(listI, search, caption, subCaption, direzioneLabelParam, slice, numeroLabel, tempo);
+		return getJsonBarChartDistribuzioneEngine(listI, search, caption, subCaption, direzioneLabelParam, slice, numeroLabel, tempo);
 	}
 
-	private static JSONObject _getJsonBarChartDistribuzione(List<ResBase> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, Integer numeroLabel, StatisticType tempo
+	private static ObjectNode getJsonBarChartDistribuzioneEngine(List<ResBase> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, Integer numeroLabel, StatisticType tempo
 			,		String ... series
-			){
-		JSONObject grafico = new JSONObject();
+			) throws UtilsException{
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		
+		ObjectNode grafico = jsonUtils.newObjectNode();
 
 		grafico.put(CostantiGrafici.USA_COLORI_AUTOMATICI_KEY, false);
 		grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
@@ -170,9 +191,9 @@ public class JsonStatsUtils {
 		grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, getDirezioneLabel(direzioneLabelParam));
 
 		SimpleDateFormat sdf = null;
-		SimpleDateFormat sdf_last = null;
+		SimpleDateFormat sdfLast = null;
 		if(tempo!=null) {
-			sdf_last = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
+			sdfLast = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
 			if (StatisticType.ORARIA.equals(tempo)) {
 				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, ApplicationBean.getInstance().getLocale());
 			} else {
@@ -180,7 +201,7 @@ public class JsonStatsUtils {
 			}
 		}
 
-		JSONArray categorie = new JSONArray();
+		ArrayNode categorie = jsonUtils.newArrayNode();
 
 		// calcolo series
 		boolean occupazioneBanda = false;
@@ -201,13 +222,12 @@ public class JsonStatsUtils {
 
 		int numeroCategorie = 1;
 		boolean showSeries = false;
-		//		String color = null;
-		if(list!=null  && list.size()>0){
+		if(list!=null  && !list.isEmpty()){
 			if(series!=null && series.length>0){
 				numeroCategorie = series.length;
 				for (int i = 0 ; i < series.length ; i++) {
 					String string = series[i];
-					JSONObject categoria = new JSONObject();
+					ObjectNode categoria = jsonUtils.newObjectNode();
 					categoria.put(CostantiGrafici.KEY_KEY , string);
 					categoria.put(CostantiGrafici.LABEL_KEY , string);
 					categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
@@ -215,26 +235,26 @@ public class JsonStatsUtils {
 				}
 
 				showSeries = true;
-				//				color = Colors.CODE_TOTALE; // TODO gestire i colori in questo caso. Comunque per ora è un caso non usato, il metodo con le series come parametro è commentato
+				/**				color = Colors.CODE_TOTALE;  Gestire i colori in questo caso. Comunque per ora è un caso non usato, il metodo con le series come parametro è commentato*/
 			}
 			else {
 				if(distribuzionePerEsiti){
 					numeroCategorie = 3;
 					showSeries = true;
 
-					JSONObject categoria = new JSONObject();
+					ObjectNode categoria = jsonUtils.newObjectNode();
 					categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.OK_KEY);
 					categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.OK_LABEL);
 					categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_OK);
 					categorie.add(categoria);
 
-					JSONObject categoria2 = new JSONObject();
+					ObjectNode categoria2 = jsonUtils.newObjectNode();
 					categoria2.put(CostantiGrafici.KEY_KEY , CostantiGrafici.FAULT_KEY);
 					categoria2.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.FAULT_LABEL);
 					categoria2.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_FAULT_APPLICATIVO);
 					categorie.add(categoria2);
 
-					JSONObject categoria3 = new JSONObject();
+					ObjectNode categoria3 = jsonUtils.newObjectNode();
 					categoria3.put(CostantiGrafici.KEY_KEY , CostantiGrafici.ERRORE_KEY);
 					categoria3.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.ERRORE_LABEL);
 					categoria3.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_ERROR);
@@ -243,7 +263,7 @@ public class JsonStatsUtils {
 				}
 				else if(occupazioneBanda) {
 					numeroCategorie = search.getTipiBandaImpostati().size();
-					showSeries = numeroCategorie > 1 ? true : false;
+					showSeries = numeroCategorie > 1;
 					for (int i = 0; i < numeroCategorie; i++) {
 						String[] strings = search.getTipiBanda();
 						if(strings != null && strings.length == numeroCategorie){
@@ -251,29 +271,29 @@ public class JsonStatsUtils {
 							if(tipoLat != null){
 								if(tipoLat.equals("0")){
 									if(showSeries){
-										JSONObject categoria = new JSONObject();
+										ObjectNode categoria = jsonUtils.newObjectNode();
 										categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.COMPLESSIVA.getValue().toLowerCase().replace(" ", "_"));
 										categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.COMPLESSIVA.getValue());
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_COMPLESSIVA);
-										categorie.add(i,categoria);
+										categorie.set(i,categoria);
 									}
 								}
 								else if(tipoLat.equals("1")){
 									if(showSeries){
-										JSONObject categoria = new JSONObject();
+										ObjectNode categoria = jsonUtils.newObjectNode();
 										categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.INTERNA.getValue().toLowerCase().replace(" ", "_"));
 										categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.INTERNA.getValue());
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_INTERNA);
-										categorie.add(i,categoria);
+										categorie.set(i,categoria);
 									}
 								}
 								else if(tipoLat.equals("2")){
 									if(showSeries){
-										JSONObject categoria = new JSONObject();
+										ObjectNode categoria = jsonUtils.newObjectNode();
 										categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.ESTERNA.getValue().toLowerCase().replace(" ", "_"));
 										categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.ESTERNA.getValue());
 										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_ESTERNA);
-										categorie.add(i,categoria);
+										categorie.set(i,categoria);
 									}
 								}
 							}
@@ -282,38 +302,32 @@ public class JsonStatsUtils {
 				}
 				else if(tempoMedio) {
 					numeroCategorie = search.getTipiLatenzaImpostati().size();
-					showSeries = numeroCategorie > 1 ? true : false;
+					showSeries = numeroCategorie > 1;
 					for (int i = 0; i < numeroCategorie; i++) {
 						String[] strings = search.getTipiLatenza();
 						if(strings != null && strings.length == numeroCategorie){
 							String tipoLat = strings[i];
-							if(tipoLat != null){
+							if(tipoLat != null && showSeries){
 								if(tipoLat.equals("0")){
-									if(showSeries){
-										JSONObject categoria = new JSONObject();
-										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
-										categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
-										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
-										categorie.add(i,categoria);
-									}
+									ObjectNode categoria = jsonUtils.newObjectNode();
+									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
+									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
+									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
+									categorie.set(i,categoria);
 								}
 								else if(tipoLat.equals("1")){
-									if(showSeries){
-										JSONObject categoria = new JSONObject();
-										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
-										categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
-										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
-										categorie.add(i,categoria);
-									}
+									ObjectNode categoria = jsonUtils.newObjectNode();
+									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
+									categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
+									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
+									categorie.set(i,categoria);
 								}
 								else if(tipoLat.equals("2")){
-									if(showSeries){
-										JSONObject categoria = new JSONObject();
-										categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
-										categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
-										categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
-										categorie.add(i,categoria);
-									}
+									ObjectNode categoria = jsonUtils.newObjectNode();
+									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
+									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
+									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
+									categorie.set(i,categoria);
 								}
 							}
 						}
@@ -322,7 +336,7 @@ public class JsonStatsUtils {
 			}
 		}
 		if(categorie.isEmpty()){
-			JSONObject categoria = new JSONObject();
+			ObjectNode categoria = jsonUtils.newObjectNode();
 			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.TOTALE_KEY);
 			categoria.put(CostantiGrafici.LABEL_KEY , StatsUtils.getSubCaption(search,true));
 			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
@@ -330,7 +344,7 @@ public class JsonStatsUtils {
 		}
 
 		// Inserisco le catergorie del grafico
-		grafico.put(CostantiGrafici.CATEGORIE_KEY, categorie);
+		grafico.set(CostantiGrafici.CATEGORIE_KEY, categorie);
 
 		grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, showSeries);
 
@@ -338,16 +352,16 @@ public class JsonStatsUtils {
 
 		grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, yAxisName);
 
-		JSONArray dati = new JSONArray();
+		ArrayNode dati = jsonUtils.newArrayNode();
 		// colleziono i dati
-		if(list!=null  && list.size()>0){
+		if(list!=null  && !list.isEmpty()){
 			int iterazione = 0;
-			long altri_sum_serie1=0;
-			int altri_sum_serie1_numeroItem=0;
-			long altri_sum_serie2=0;
-			int altri_sum_serie2_numeroItem=0;
-			long altri_sum_serie3=0;
-			int altri_sum_serie3_numeroItem=0;
+			long altriSumSerie1=0;
+			int altriSumSerie1NumeroItem=0;
+			long altriSumSerie2=0;
+			int altriSumSerie2NumeroItem=0;
+			long altriSumSerie3=0;
+			int altriSumSerie3NumeroItem=0;
 
 
 
@@ -362,11 +376,12 @@ public class JsonStatsUtils {
 
 			for (int z = 0 ; z <list.size() ; z++) {
 				ResBase entry = list.get(z);
-				JSONObject bar = new JSONObject();
+				ObjectNode bar = jsonUtils.newObjectNode();
 
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
-					String key = categorie.getJSONObject(j).getString(CostantiGrafici.KEY_KEY);
+					JsonNode keyNode = categorie.get(j).get(CostantiGrafici.KEY_KEY);
+					String key = keyNode.asText();
 
 					Number sum = null;
 					if(entry instanceof ResDistribuzione){
@@ -379,29 +394,29 @@ public class JsonStatsUtils {
 					if(++iterazione<=slice) {
 
 						String r = null;
-						if(entry instanceof ResDistribuzione){
-							r = ((ResDistribuzione)entry).getRisultato();
+						if(entry instanceof ResDistribuzione resDistribuzione){
+							r = resDistribuzione.getRisultato();
 						}
-						else if(entry instanceof Res){
+						else if(entry instanceof Res res){
 							
-							Date rDate = ((Res)entry).getRisultato();
+							Date rDate = res.getRisultato();
 							Calendar c = Calendar.getInstance();
 							c.setTime(rDate);
 							
 							StringBuilder sb = new StringBuilder();
 							if (StatisticType.ORARIA.equals(tempo)) {
-								sdf_last.applyPattern(CostantiGrafici.PATTERN_HH);
+								sdfLast.applyPattern(CostantiGrafici.PATTERN_HH);
 								c.add(Calendar.HOUR, 1);
-								sb.append(sdf.format(rDate) + "-").append( sdf_last.format(c.getTime()));
+								sb.append(sdf.format(rDate) + "-").append( sdfLast.format(c.getTime()));
 							} else if (StatisticType.SETTIMANALE.equals(tempo)) {
 								// settimanale
 								sdf.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
-								sdf_last.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
+								sdfLast.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
 
 								c.add(Calendar.WEEK_OF_MONTH, 1);
 								c.add(Calendar.DAY_OF_WEEK, -1);
 
-								sb.append(sdf.format(rDate) + "-").append( sdf_last.format(c.getTime()));
+								sb.append(sdf.format(rDate) + "-").append( sdfLast.format(c.getTime()));
 
 							} else if (StatisticType.MENSILE.equals(tempo)) {
 								// mensile
@@ -456,21 +471,21 @@ public class JsonStatsUtils {
 
 						if(j==0){
 							if(sum!=null) {
-								altri_sum_serie1+=sum.longValue();
+								altriSumSerie1+=sum.longValue();
 							}
-							altri_sum_serie1_numeroItem++;
+							altriSumSerie1NumeroItem++;
 						}
 						else if(j==1){
 							if(sum!=null) {
-								altri_sum_serie2+=sum.longValue();
+								altriSumSerie2+=sum.longValue();
 							}
-							altri_sum_serie2_numeroItem++;
+							altriSumSerie2NumeroItem++;
 						}
 						else if(j==2){
 							if(sum!=null) {
-								altri_sum_serie3+=sum.longValue();
+								altriSumSerie3+=sum.longValue();
 							}
-							altri_sum_serie3_numeroItem++;
+							altriSumSerie3NumeroItem++;
 						}
 					}
 				}
@@ -478,31 +493,32 @@ public class JsonStatsUtils {
 				
 			}
 			if(iterazione>slice){
-				JSONObject bar = new JSONObject();
+				ObjectNode bar = jsonUtils.newObjectNode();
 				bar.put(CostantiGrafici.DATA_KEY, CostantiGrafici.ALTRI_LABEL);
 				bar.put(CostantiGrafici.DATA_LABEL_KEY, CostantiGrafici.ALTRI_LABEL);
 
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
-					String key = categorie.getJSONObject(j).getString(CostantiGrafici.KEY_KEY);
+					JsonNode keyNode = categorie.get(j).get(CostantiGrafici.KEY_KEY);
+					String key = keyNode.asText();
 
 					long v = -1;
 					if(j==0){
-						v = altri_sum_serie1;
-						if(altri_sum_serie1_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-							v = v / altri_sum_serie1_numeroItem;
+						v = altriSumSerie1;
+						if(altriSumSerie1NumeroItem>1 && (occupazioneBanda || tempoMedio)){
+							v = v / altriSumSerie1NumeroItem;
 						}
 					}
 					else if(j==1){
-						v = altri_sum_serie2;
-						if(altri_sum_serie2_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-							v = v / altri_sum_serie2_numeroItem;
+						v = altriSumSerie2;
+						if(altriSumSerie2NumeroItem>1 && (occupazioneBanda || tempoMedio)){
+							v = v / altriSumSerie2NumeroItem;
 						}
 					}
 					else if(j==2){
-						v = altri_sum_serie3;
-						if(altri_sum_serie3_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-							v = v / altri_sum_serie3_numeroItem;
+						v = altriSumSerie3;
+						if(altriSumSerie3NumeroItem>1 && (occupazioneBanda || tempoMedio)){
+							v = v / altriSumSerie3NumeroItem;
 						}
 					}
 
@@ -520,12 +536,12 @@ public class JsonStatsUtils {
 				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE);
 
 			// inserisco l'array dei dati calcolati nel JSON
-			grafico.put(CostantiGrafici.DATI_KEY, dati);
+			grafico.set(CostantiGrafici.DATI_KEY, dati);
 		}
 		else{
 			// reset categorie
-			categorie.clear();
-			JSONObject categoria = new JSONObject();
+			categorie.removeAll();
+			ObjectNode categoria = jsonUtils.newObjectNode();
 			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.TOTALE_KEY);
 			categoria.put(CostantiGrafici.LABEL_KEY , StatsUtils.getSubCaption(search,true));
 			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
@@ -536,11 +552,14 @@ public class JsonStatsUtils {
 		return grafico;
 	}
 
-	public static JSONObject getJsonAndamentoTemporale(List<Res> list, StatsSearchForm search, String caption, String subCaption,StatisticType tempo,String direzioneLabelParam, Integer numeroLabel){
-		JSONObject grafico = new JSONObject();
+	public static ObjectNode getJsonAndamentoTemporale(List<Res> list, StatsSearchForm search, String caption, String subCaption,StatisticType tempo,String direzioneLabelParam, Integer numeroLabel) throws UtilsException{
+		
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		
+		ObjectNode grafico = jsonUtils.newObjectNode();
 
 		SimpleDateFormat sdf;
-		SimpleDateFormat sdf_last = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
+		SimpleDateFormat sdfLast = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
 		if (StatisticType.ORARIA.equals(tempo)) {
 			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, ApplicationBean.getInstance().getLocale());
 		} else {
@@ -552,7 +571,7 @@ public class JsonStatsUtils {
 		grafico.put(CostantiGrafici.TITOLO_KEY, caption);
 		grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, subCaption);
 		grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, getDirezioneLabel(direzioneLabelParam));		
-		JSONArray categorie = new JSONArray();
+		ArrayNode categorie = jsonUtils.newArrayNode();
 
 		// calcolo series
 		boolean occupazioneBanda = false;
@@ -573,24 +592,24 @@ public class JsonStatsUtils {
 
 		int numeroCategorie = 1;
 		boolean showSeries = false;
-		if (list != null && list.size()>0) {
+		if (list != null && !list.isEmpty()) {
 			if(distribuzionePerEsiti){
 				numeroCategorie = 3;
 				showSeries = true;
 
-				JSONObject categoria = new JSONObject();
+				ObjectNode categoria = jsonUtils.newObjectNode();
 				categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.OK_KEY);
 				categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.OK_LABEL);
 				categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_OK);
 				categorie.add(categoria);
 
-				JSONObject categoria2 = new JSONObject();
+				ObjectNode categoria2 = jsonUtils.newObjectNode();
 				categoria2.put(CostantiGrafici.KEY_KEY , CostantiGrafici.FAULT_KEY);
 				categoria2.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.FAULT_LABEL);
 				categoria2.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_FAULT_APPLICATIVO);
 				categorie.add(categoria2);
 
-				JSONObject categoria3 = new JSONObject();
+				ObjectNode categoria3 = jsonUtils.newObjectNode();
 				categoria3.put(CostantiGrafici.KEY_KEY , CostantiGrafici.ERRORE_KEY);
 				categoria3.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.ERRORE_LABEL);
 				categoria3.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_ERROR);
@@ -599,38 +618,32 @@ public class JsonStatsUtils {
 			}
 			else if(occupazioneBanda) {
 				numeroCategorie = search.getTipiBandaImpostati().size();
-				showSeries = numeroCategorie > 1 ? true : false;
+				showSeries = numeroCategorie > 1;
 				for (int i = 0; i < numeroCategorie; i++) {
 					String[] strings = search.getTipiBanda();
 					if(strings != null && strings.length == numeroCategorie){
 						String tipoLat = strings[i];
-						if(tipoLat != null){
+						if(tipoLat != null && showSeries){
 							if(tipoLat.equals("0")){
-								if(showSeries){
-									JSONObject categoria = new JSONObject();
-									categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.COMPLESSIVA.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.COMPLESSIVA.getValue());
-									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_COMPLESSIVA);
-									categorie.add(i,categoria);
-								}
+								ObjectNode categoria = jsonUtils.newObjectNode();
+								categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.COMPLESSIVA.getValue().toLowerCase().replace(" ", "_"));
+								categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.COMPLESSIVA.getValue());
+								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_COMPLESSIVA);
+								categorie.set(i,categoria);
 							}
 							else if(tipoLat.equals("1")){
-								if(showSeries){
-									JSONObject categoria = new JSONObject();
-									categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.INTERNA.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.INTERNA.getValue());
-									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_INTERNA);
-									categorie.add(i,categoria);
-								}
+								ObjectNode categoria = jsonUtils.newObjectNode();
+								categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.INTERNA.getValue().toLowerCase().replace(" ", "_"));
+								categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.INTERNA.getValue());
+								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_INTERNA);
+								categorie.set(i,categoria);
 							}
 							else if(tipoLat.equals("2")){
-								if(showSeries){
-									JSONObject categoria = new JSONObject();
-									categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.ESTERNA.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.ESTERNA.getValue());
-									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_ESTERNA);
-									categorie.add(i,categoria);
-								}
+								ObjectNode categoria = jsonUtils.newObjectNode();
+								categoria.put(CostantiGrafici.KEY_KEY , TipoBanda.ESTERNA.getValue().toLowerCase().replace(" ", "_"));
+								categoria.put(CostantiGrafici.LABEL_KEY , TipoBanda.ESTERNA.getValue());
+								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_BANDA_ESTERNA);
+								categorie.set(i,categoria);
 							}
 						}
 					}
@@ -638,38 +651,32 @@ public class JsonStatsUtils {
 			}
 			else if(tempoMedio) {
 				numeroCategorie = search.getTipiLatenzaImpostati().size();
-				showSeries = numeroCategorie > 1 ? true : false;
+				showSeries = numeroCategorie > 1;
 				for (int i = 0; i < numeroCategorie; i++) {
 					String[] strings = search.getTipiLatenza();
 					if(strings != null && strings.length == numeroCategorie){
 						String tipoLat = strings[i];
-						if(tipoLat != null){
+						if(tipoLat != null && showSeries){
 							if(tipoLat.equals("0")){
-								if(showSeries){
-									JSONObject categoria = new JSONObject();
-									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
-									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
-									categorie.add(i,categoria);
-								}
+								ObjectNode categoria = jsonUtils.newObjectNode();
+								categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_TOTALE.getValue().toLowerCase().replace(" ", "_"));
+								categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_TOTALE.getValue());
+								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_TOTALE);
+								categorie.set(i,categoria);
 							}
 							else if(tipoLat.equals("1")){
-								if(showSeries){
-									JSONObject categoria = new JSONObject();
-									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
-									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
-									categorie.add(i,categoria);
-								}
+								ObjectNode categoria = jsonUtils.newObjectNode();
+								categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_SERVIZIO.getValue().toLowerCase().replace(" ", "_"));
+								categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.LABEL_TIPO_LATENZA_LATENZA_SERVIZIO);
+								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_SERVIZIO);
+								categorie.set(i,categoria);
 							}
 							else if(tipoLat.equals("2")){
-								if(showSeries){
-									JSONObject categoria = new JSONObject();
-									categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
-									categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
-									categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
-									categorie.add(i,categoria);
-								}
+								ObjectNode categoria = jsonUtils.newObjectNode();
+								categoria.put(CostantiGrafici.KEY_KEY , TipoLatenza.LATENZA_PORTA.getValue().toLowerCase().replace(" ", "_"));
+								categoria.put(CostantiGrafici.LABEL_KEY , TipoLatenza.LATENZA_PORTA.getValue());
+								categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_LATENZA_PORTA);
+								categorie.set(i,categoria);
 							}
 						}
 					}
@@ -677,7 +684,7 @@ public class JsonStatsUtils {
 			}
 		}
 		if(categorie.isEmpty()){
-			JSONObject categoria = new JSONObject();
+			ObjectNode categoria = jsonUtils.newObjectNode();
 			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.TOTALE_KEY);
 			categoria.put(CostantiGrafici.LABEL_KEY , StatsUtils.getSubCaption(search,true));
 			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
@@ -685,14 +692,14 @@ public class JsonStatsUtils {
 		}
 
 		// Inserisco le catergorie del grafico
-		grafico.put(CostantiGrafici.CATEGORIE_KEY, categorie);
+		grafico.set(CostantiGrafici.CATEGORIE_KEY, categorie);
 		grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, showSeries);
 		String yAxisName = StatsUtils.getSubCaption(search,true);
 		grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, yAxisName);
 
-		JSONArray dati = new JSONArray();
+		ArrayNode dati = jsonUtils.newArrayNode();
 
-		if (list != null && list.size()>0) {
+		if (list != null && !list.isEmpty()) {
 			// check estremi in modo da visualizzare sempre gli estremi ed eliminare il problema
 			// dell'unico risultato con il "puntino" difficilmente visualizzabile
 			list = StatsUtils.checkEstremi(list, search, tempo, sdf);
@@ -702,8 +709,8 @@ public class JsonStatsUtils {
 
 			for (int z = 0; z < list.size(); z++) {
 				Res entry = list.get(z);
-//			for (Res entry : list) {
-				JSONObject point = new JSONObject();
+
+				ObjectNode point = jsonUtils.newObjectNode();
 
 				Date r = entry.getRisultato();
 				Calendar c = Calendar.getInstance();
@@ -711,18 +718,18 @@ public class JsonStatsUtils {
 
 				StringBuilder sb = new StringBuilder();
 				if (StatisticType.ORARIA.equals(tempo)) {
-					sdf_last.applyPattern(CostantiGrafici.PATTERN_HH);
+					sdfLast.applyPattern(CostantiGrafici.PATTERN_HH);
 					c.add(Calendar.HOUR, 1);
-					sb.append(sdf.format(r) + "-").append( sdf_last.format(c.getTime()));
+					sb.append(sdf.format(r) + "-").append( sdfLast.format(c.getTime()));
 				} else if (StatisticType.SETTIMANALE.equals(tempo)) {
 					// settimanale
 					sdf.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
-					sdf_last.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
+					sdfLast.applyPattern(CostantiGrafici.PATTERN_DD_MM_YY);
 
 					c.add(Calendar.WEEK_OF_MONTH, 1);
 					c.add(Calendar.DAY_OF_WEEK, -1);
 
-					sb.append(sdf.format(r) + "-").append( sdf_last.format(c.getTime()));
+					sb.append(sdf.format(r) + "-").append( sdfLast.format(c.getTime()));
 
 				} else if (StatisticType.MENSILE.equals(tempo)) {
 					// mensile
@@ -749,7 +756,8 @@ public class JsonStatsUtils {
 				
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
-					String key = categorie.getJSONObject(j).getString(CostantiGrafici.KEY_KEY);
+					JsonNode keyNode = categorie.get(j).get(CostantiGrafici.KEY_KEY);
+					String key = keyNode.asText();
 					Number sum = entry.getSomme().get(j);
 
 					// calcolo il tooltip
@@ -764,27 +772,31 @@ public class JsonStatsUtils {
 			}
 			
 			// inserisco l'array dei dati calcolati nel JSON
-			grafico.put(CostantiGrafici.DATI_KEY, dati);
+			grafico.set(CostantiGrafici.DATI_KEY, dati);
 		} else {
 			// reset categorie
-			categorie.clear();
-			JSONObject categoria = new JSONObject();
+			categorie.removeAll();
+			ObjectNode categoria = jsonUtils.newObjectNode();
 			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.TOTALE_KEY);
 			categoria.put(CostantiGrafici.LABEL_KEY , StatsUtils.getSubCaption(search,true));
 			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
-
+			/** NO categorie.add(categoria); */
+			
 			grafico.put(CostantiGrafici.NO_DATA_KEY, CostantiGrafici.DATI_NON_PRESENTI);
 		}
 		return grafico;
 	}
 
 
-	/*** STATISTICHE PERSONALIZZATE ***/
+	/*** STATISTICHE PERSONALIZZATE 
+	 * @throws UtilsException ***/
 
-	public static JSONObject getJsonAndamentoTemporaleStatPersonalizzate(SimpleDateFormat sdf,
-			SimpleDateFormat sdf_last_hour, StatisticType tempo, Map<String, List<Res>> results, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam) {
+	public static ObjectNode getJsonAndamentoTemporaleStatPersonalizzate(SimpleDateFormat sdf,
+			SimpleDateFormat sdfLastHour, StatisticType tempo, Map<String, List<Res>> results, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam) throws UtilsException {
 
-		JSONObject grafico = new JSONObject();
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		
+		ObjectNode grafico = jsonUtils.newObjectNode();
 
 		grafico.put(CostantiGrafici.TITOLO_KEY, caption);
 		grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, subCaption);
@@ -794,7 +806,7 @@ public class JsonStatsUtils {
 		grafico.put(CostantiGrafici.COLONNE_LEGENDA_KEY, CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE);
 		grafico.put(CostantiGrafici.LIMITE_COLONNE_LEGENDA_KEY, CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE);
 
-		JSONArray categorie = new JSONArray();
+		ArrayNode categorie = jsonUtils.newArrayNode();
 
 		// Inserisco le categorie del grafico
 		String yAxisName = StatsUtils.getSubCaption(search,true);
@@ -803,7 +815,7 @@ public class JsonStatsUtils {
 		grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, true);
 		grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, yAxisName);
 
-		JSONArray dati = new JSONArray();
+		ArrayNode dati = jsonUtils.newArrayNode();
 
 		if (results != null && results.size()>0) {
 
@@ -816,7 +828,7 @@ public class JsonStatsUtils {
 
 				List<Res> list = results.get(key);
 				
-				JSONObject categoria = new JSONObject();
+				ObjectNode categoria = jsonUtils.newObjectNode();
 				categoria.put(CostantiGrafici.KEY_KEY , catKey);
 				categoria.put(CostantiGrafici.LABEL_KEY , escapeJsonLabel(key));
 				categorie.add(categoria);
@@ -828,7 +840,7 @@ public class JsonStatsUtils {
 				// imposto le category solo la prima volta
 				if (i < 1) {
 					for (Res entry : list) {
-						JSONObject point = new JSONObject();
+						ObjectNode point = jsonUtils.newObjectNode();
 						Date r = entry.getRisultato();
 						StringBuilder sb = new StringBuilder();
 						if (StatisticType.ORARIA.equals(tempo)) {
@@ -836,7 +848,7 @@ public class JsonStatsUtils {
 							c.setTime(r);
 							c.add(Calendar.HOUR, +1);
 							sb.append(sdf.format(r) + "-"
-									+ sdf_last_hour.format(c.getTime()));
+									+ sdfLastHour.format(c.getTime()));
 						} else {
 							sb.append(sdf.format(r));
 						}
@@ -849,7 +861,7 @@ public class JsonStatsUtils {
 
 				for (int j = 0; j < list.size(); j++) {
 					Res entry = list.get(j);
-					JSONObject point = dati.getJSONObject(j);
+					ObjectNode point = (ObjectNode) dati.get(j);
 					
 					Number sum = entry.getSomma();
 					String toolText = StatsUtils.getToolText(search,sum); 
@@ -862,11 +874,11 @@ public class JsonStatsUtils {
 				i++;
 			}// fine ciclo dataset
 			
-			grafico.put(CostantiGrafici.DATI_KEY, dati);
+			grafico.set(CostantiGrafici.DATI_KEY, dati);
 		} else {
 			// reset categorie
-			categorie.clear();
-			JSONObject categoria = new JSONObject();
+			categorie.removeAll();
+			ObjectNode categoria = jsonUtils.newObjectNode();
 			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.TOTALE_KEY);
 			categoria.put(CostantiGrafici.LABEL_KEY , StatsUtils.getSubCaption(search,true));
 			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
@@ -876,12 +888,15 @@ public class JsonStatsUtils {
 		}
 
 		// Inserisco le catergorie del grafico
-		grafico.put(CostantiGrafici.CATEGORIE_KEY, categorie);
+		grafico.set(CostantiGrafici.CATEGORIE_KEY, categorie);
 		return grafico;
 	}
 
-	public static JSONObject getJsonPieChartStatistichePersonalizzate( List<ResDistribuzione> list,  StatsSearchForm search, int slice, String caption, String subCaption) {
-		JSONObject grafico = new JSONObject();
+	public static ObjectNode getJsonPieChartStatistichePersonalizzate( List<ResDistribuzione> list,  StatsSearchForm search, int slice, String caption, String subCaption) throws UtilsException {
+		
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		
+		ObjectNode grafico = jsonUtils.newObjectNode();
 		
 		grafico.put(CostantiGrafici.TITOLO_KEY, caption);
 		grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, subCaption);
@@ -904,13 +919,13 @@ public class JsonStatsUtils {
 			tempoMedio = true;
 		}
 
-		JSONArray dati = new JSONArray();
+		ArrayNode dati = jsonUtils.newArrayNode();
 
 		int maxLenghtLabel = 0;
-		if(list!=null  && list.size()>0){
+		if(list!=null  && !list.isEmpty()){
 			int i = 0;
-			long altri_sum=0;
-			int altri_sum_numeroItem=0;
+			long altriSum=0;
+			int altriSumNumeroItem=0;
 
 			for (ResDistribuzione entry : list) {
 				String r = entry.getRisultato();
@@ -921,30 +936,41 @@ public class JsonStatsUtils {
 						maxLenghtLabel = r.length();
 					
 					String toolText = StatsUtils.getToolText(search,sum); 
-					JSONObject spicchio = new JSONObject();
+					ObjectNode spicchio = jsonUtils.newObjectNode();
 					spicchio.put(CostantiGrafici.LABEL_KEY, escapeJsonLabel(r));
 					spicchio.put(CostantiGrafici.TOOLTIP_KEY, toolText);
-					spicchio.put(CostantiGrafici.VALUE_KEY, sum);
+					if(sum instanceof Long v) {
+						spicchio.put(CostantiGrafici.VALUE_KEY, v);
+					}
+					else if(sum instanceof Integer vi) {
+						spicchio.put(CostantiGrafici.VALUE_KEY, vi);
+					}
+					else if(sum instanceof Float vf) {
+						spicchio.put(CostantiGrafici.VALUE_KEY, vf);
+					}
+					else if(sum instanceof Double vd) {
+						spicchio.put(CostantiGrafici.VALUE_KEY, vd);
+					}
 
 					dati.add(spicchio);
 				} else{
-					altri_sum+=sum.longValue();
-					altri_sum_numeroItem++;
+					altriSum+=sum.longValue();
+					altriSumNumeroItem++;
 				}
 			}
 
 			if(i>slice){
 
-				long v = altri_sum;
-				if(altri_sum_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-					if(altri_sum_numeroItem>0) {
-						v = v / altri_sum_numeroItem;
-					}
+				long v = altriSum;
+				if(altriSumNumeroItem>1 && (occupazioneBanda || tempoMedio) &&
+					(altriSumNumeroItem>0) 
+				){
+					v = v / altriSumNumeroItem;
 				}
 
 				String toolText = StatsUtils.getToolText(search,v); 
 
-				JSONObject spicchio = new JSONObject();
+				ObjectNode spicchio = jsonUtils.newObjectNode();
 				spicchio.put(CostantiGrafici.LABEL_KEY, CostantiGrafici.ALTRI_LABEL);
 				spicchio.put(CostantiGrafici.TOOLTIP_KEY, toolText);
 				spicchio.put(CostantiGrafici.VALUE_KEY, v);
@@ -955,18 +981,20 @@ public class JsonStatsUtils {
 			if(maxLenghtLabel > CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE)
 				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE);
 			
-			grafico.put(CostantiGrafici.DATI_KEY, dati);
+			grafico.set(CostantiGrafici.DATI_KEY, dati);
 		}
 		else{
 			grafico.put(CostantiGrafici.NO_DATA_KEY, CostantiGrafici.DATI_NON_PRESENTI);
 		}
 
-		grafico.put(CostantiGrafici.DATI_KEY, dati);
+		grafico.set(CostantiGrafici.DATI_KEY, dati);
 		return grafico;	
 	}
 
-	public static JSONObject getJsonBarChartStatistichePersonalizzate( List<ResDistribuzione> list,  StatsSearchForm search, String direzioneLabelParam, int slice, String caption, String subCaption) {
-		JSONObject grafico = new JSONObject();
+	public static ObjectNode getJsonBarChartStatistichePersonalizzate( List<ResDistribuzione> list,  StatsSearchForm search, String direzioneLabelParam, int slice, String caption, String subCaption) throws UtilsException {
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		
+		ObjectNode grafico = jsonUtils.newObjectNode();
 
 		grafico.put(CostantiGrafici.TITOLO_KEY, caption);
 		grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, subCaption);
@@ -974,9 +1002,9 @@ public class JsonStatsUtils {
 		grafico.put(CostantiGrafici.USA_COLORI_AUTOMATICI_KEY, false);
 		grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
 		
-		JSONArray categorie = new JSONArray();
+		ArrayNode categorie = jsonUtils.newArrayNode();
 
-		JSONObject categoria = new JSONObject();
+		ObjectNode categoria = jsonUtils.newObjectNode();
 		categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.TOTALE_KEY);
 		categoria.put(CostantiGrafici.LABEL_KEY , StatsUtils.getSubCaption(search,true));
 		categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
@@ -990,28 +1018,29 @@ public class JsonStatsUtils {
 		String yAxisName = StatsUtils.getSubCaption(search,true);
 
 		// Inserisco le catergorie del grafico
-		grafico.put(CostantiGrafici.CATEGORIE_KEY, categorie);
+		grafico.set(CostantiGrafici.CATEGORIE_KEY, categorie);
 		grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, false);
 		grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, yAxisName);
 
-		JSONArray dati = new JSONArray();
+		ArrayNode dati = jsonUtils.newArrayNode();
 
 		int maxLenghtLabel = 0;
-		if(list!=null  && list.size()>0){
+		if(list!=null  && !list.isEmpty()){
 			int iterazione = 0;
-			long altri_sum_serie1=0;
-			int altri_sum_serie1_numeroItem=0;
+			long altriSumSerie1=0;
+			int altriSumSerie1NumeroItem=0;
 
 			if(slice != Integer.MAX_VALUE) // viene usato il maxValue per "disattivare" lo slice
 				slice = slice * numeroCategorie;
 
 			for (int z = 0 ; z <list.size() ; z++) {
 				ResDistribuzione entry = list.get(z);
-				JSONObject bar = new JSONObject();
+				ObjectNode bar = jsonUtils.newObjectNode();
 
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
-					String key = categorie.getJSONObject(j).getString(CostantiGrafici.KEY_KEY);
+					JsonNode keyNode = categorie.get(j).get(CostantiGrafici.KEY_KEY);
+					String key = keyNode.asText();
 					Number sum =  entry.getSomma();
 
 					if(++iterazione<=slice) {
@@ -1038,8 +1067,8 @@ public class JsonStatsUtils {
 						}
 					} else{
 						if(j==0){
-							altri_sum_serie1+=sum.longValue();
-							altri_sum_serie1_numeroItem++;
+							altriSumSerie1+=sum.longValue();
+							altriSumSerie1NumeroItem++;
 						}
 					}
 				}
@@ -1047,19 +1076,20 @@ public class JsonStatsUtils {
 			}
 
 			if(iterazione>slice){
-				JSONObject bar = new JSONObject();
+				ObjectNode bar = jsonUtils.newObjectNode();
 				bar.put(CostantiGrafici.DATA_KEY, CostantiGrafici.ALTRI_LABEL);
 				bar.put(CostantiGrafici.DATA_LABEL_KEY, CostantiGrafici.ALTRI_LABEL);
 
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
-					String key = categorie.getJSONObject(j).getString(CostantiGrafici.KEY_KEY);
+					JsonNode keyNode = categorie.get(j).get(CostantiGrafici.KEY_KEY);
+					String key = keyNode.asText();
 
 					long v = -1;
 					if(j==0){
-						v = altri_sum_serie1;
-						if(altri_sum_serie1_numeroItem>1 && (occupazioneBanda || tempoMedio)){
-							v = v / altri_sum_serie1_numeroItem;
+						v = altriSumSerie1;
+						if(altriSumSerie1NumeroItem>1 && (occupazioneBanda || tempoMedio)){
+							v = v / altriSumSerie1NumeroItem;
 						}
 					}
 
@@ -1078,11 +1108,11 @@ public class JsonStatsUtils {
 				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE);
 			
 			// inserisco l'array dei dati calcolati nel JSON
-			grafico.put(CostantiGrafici.DATI_KEY, dati);
+			grafico.set(CostantiGrafici.DATI_KEY, dati);
 		} else{
 			// reset categorie
-			categorie.clear();
-			categoria = new JSONObject();
+			categorie.removeAll();
+			categoria = jsonUtils.newObjectNode();
 			categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.TOTALE_KEY);
 			categoria.put(CostantiGrafici.LABEL_KEY , StatsUtils.getSubCaption(search,true));
 			categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_TOTALE);
@@ -1119,27 +1149,27 @@ public class JsonStatsUtils {
 	public static List<Integer> getListaIndiciLabelDaVisualizzare(int size, Integer numeroLabel){
 		List<Integer> posizioni = null;
 		
-		if(numeroLabel != null) {
-			if(size > numeroLabel.intValue()) {
+		if(numeroLabel != null &&
+			size > numeroLabel.intValue()) {
 				
-				if(numeroLabel < 2)
-					numeroLabel = 2;
-				
-				posizioni = new ArrayList<Integer>();
-				// estremo di sx;
-				posizioni.add(Integer.valueOf(0));
-				
-				int denom = numeroLabel - 1;
-				int numeroPosizioni = numeroLabel - 2;
-				
-				for (int j = 1; j <= numeroPosizioni; j++) {
-					int pos = (int) (j * size / denom);
-					posizioni.add(Integer.valueOf(pos));
-				}
-				
-				// estremo di dx
-				posizioni.add(Integer.valueOf(size -1));
+			if(numeroLabel < 2)
+				numeroLabel = 2;
+			
+			posizioni = new ArrayList<>();
+			// estremo di sinistra
+			posizioni.add(Integer.valueOf(0));
+			
+			int denom = numeroLabel - 1;
+			int numeroPosizioni = numeroLabel - 2;
+			
+			for (int j = 1; j <= numeroPosizioni; j++) {
+				int pos = (j * size / denom);
+				posizioni.add(Integer.valueOf(pos));
 			}
+			
+			// estremo di dx
+			posizioni.add(Integer.valueOf(size -1));
+			
 		} 
 		
 		return posizioni;
