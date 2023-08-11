@@ -26,13 +26,13 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.13.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.1-gov4j-2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.9.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-4.0.2-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-4.0.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-4.0.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jakarta.ws.rs-api-3.1.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.1-gov4j-2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-4.3.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-4.3.0.jar"/>
@@ -82,7 +82,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-2.4.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.4.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.5.1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.12.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.12.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-32.1.1-jre.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />
 		<!-- <echo message="3PARTI: ${manifest.classpath.3parti}"/> -->
@@ -578,8 +578,8 @@
 				<equals arg1="${hazelcastLibraries}" arg2="true"/>
 			</or>
 			<then>
-				<var name="hazelcast-all_jar" value="hazelcast-5.3.0.jar" />
-				<var name="hazelcast-hibernate_jar" value="hibernate-core-6.1.4.Final.jar" />
+				<var name="hazelcast-all_jar" value="hazelcast-5.3.1.jar" />
+				<var name="hazelcast-hibernate_jar" value="hibernate-core-6.2.7.Final.jar" />
 				<var name="hazelcast_properties" value="govway.hazelcast*" />
 			</then>
 		</if>
@@ -791,6 +791,7 @@
 				<include name="commons-collections4-4.4.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-io-2.13.0.jar"/>
+				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-net-3.9.0.jar"/>
 				<include name="commons-validator-1.7.jar"/>
@@ -819,22 +820,19 @@
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/shared">
-				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>				
 				<include name="velocity-*.jar"/>
-				<include name="urlrewritefilter-4.0.4.jar"/>
+				<include name="urlrewritefilter-5.1.0-SNAPSHOT.jar"/>
 				<include name="${concurrent_jar}"/>
-				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
-				<include name="xom-1.2.11.jar" /> <!--jmx mini console -->
-				<include name="joda-time-2.12.0.jar" />
+				<include name="joda-time-2.12.5.jar" />
 				<include name="guava-32.1.1-jre.jar"/>
-				<include name="java-uuid-generator-4.0.1.jar"/>
-				<include name="freemarker-2.3.31.jar"/>
-				<include name="snakeyaml-1.33-gov4j-1.jar"/>
+				<include name="java-uuid-generator-4.2.0.jar"/>
+				<include name="freemarker-2.3.32.jar"/>
+				<include name="snakeyaml-2.1-gov4j-1.jar"/>
 				<include name="rhino-1.7.14.jar"/>
 				<include name="${hazelcast-all_jar}"/>
 				<include name="${hazelcast-hibernate_jar}"/>

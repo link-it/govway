@@ -109,16 +109,18 @@
 			<lib dir="${openspcoop2.lib}/openapi4j">
 				<include name="*.jar"/>
 			</lib>
+			<lib dir="${required_lib_govwayConsole}/console">
+				<include name="govway-console-ui-20230726-SNAPSHOT.jar"/>
+			</lib>
 			<lib dir="${openspcoop2.lib}/shared">
 				<include name="reactive-streams-1.0.4.jar"/>
 				<include name="reflections-0.10.2.jar"/>
-				<include name="joda-time-2.12.0.jar"/>
+				<include name="joda-time-2.12.5.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="guava-32.1.1-jre.jar"/>
-				<include name="snakeyaml-1.33-gov4j-1.jar"/>
+				<include name="snakeyaml-2.1-gov4j-1.jar"/>
 				<include name="javassist-3.29.2-GA.jar"/>
-				<include name="struts-core-1.3.10.jar"/>
-				<include name="freemarker-2.3.31.jar" />
+				<include name="freemarker-2.3.32.jar" />
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>

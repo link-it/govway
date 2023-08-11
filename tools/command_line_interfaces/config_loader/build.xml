@@ -154,9 +154,9 @@
 			<fileset dir="${openspcoop2.lib}/security" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="xercesImpl-2.12.2.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="jakarta.activation-1.2.2.jar"/>
-			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.12.0.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.12.5.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="wsdl4j-1.6.3.jar"/>
-			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-1.33-gov4j-1.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-2.1-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}/testsuite" includes="spring-jdbc-5.3.27.jar"/>
 			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-2.4.1.jar"/>
 			<fileset dir="${openspcoop2.lib}/applicationServer/tomcat9" includes="*.jar"/> <!-- Serve per il datasource env -->

@@ -38,7 +38,7 @@
 			<fileset dir="${openspcoop2.lib}" includes="saaj/jakarta.xml.soap-api-3.0.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="saaj/saaj-impl-3.0.2-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="shared/jakarta.activation-1.2.2.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="shared/joda-time-2.12.0.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="shared/joda-time-2.12.5.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="shared/xercesImpl-2.12.2.jar"/>
 		</copy>
 

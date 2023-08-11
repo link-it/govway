@@ -1,7 +1,7 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
    <suppress>
       <notes><![CDATA[
-      file name: snakeyaml-1.33-gov4j-1.jar
+      file name: snakeyaml-2.1-gov4j-1.jar
       Vulnerabilità descritta come: "Using snakeYAML to parse untrusted YAML files may be vulnerable to Denial of Service attacks (DOS). If the parser is running on user supplied input, an attacker may supply content that causes the parser to crash by stack-overflow."
       La libreria viene utilizzata solamente per la gestione delle interfacce yaml caricate sulla console dagli amministratori. Non viene utilizzata per input fornito dinamicamente nelle richieste gestite dal Gateway.
       ]]></notes>
@@ -10,7 +10,7 @@
    </suppress>
    <suppress>
       <notes><![CDATA[
-      file name: snakeyaml-1.33-gov4j-1.jar
+      file name: snakeyaml-2.1-gov4j-1.jar
       Vulnerabilità descritta come: "Those using Snakeyaml to parse untrusted YAML files may be vulnerable to Denial of Service attacks (DOS). If the parser is running on user supplied input, an attacker may supply content that causes the parser to crash by stack overflow. This effect may support a denial of service attack."
       La libreria viene utilizzata solamente per la gestione delle interfacce yaml caricate sulla console dagli amministratori. Non viene utilizzata per input fornito dinamicamente nelle richieste gestite dal Gateway.
       ]]></notes>
@@ -19,7 +19,7 @@
    </suppress>
    <suppress>
       <notes><![CDATA[
-      file name: snakeyaml-1.33-gov4j-1.jar
+      file name: snakeyaml-2.1-gov4j-1.jar
       Vulnerabilità descritta come: "SnakeYaml's Constructor() class does not restrict types which can be instantiated during deserialization. Deserializing yaml content provided by an attacker can lead to remote code execution. We recommend using SnakeYaml's SafeConsturctor when parsing untrusted content to restrict deserialization."
       La libreria viene utilizzata solamente per la gestione delle interfacce yaml caricate sulla console dagli amministratori. Non viene utilizzata per input fornito dinamicamente nelle richieste gestite dal Gateway.
       ]]></notes>
@@ -28,7 +28,7 @@
    </suppress>
    <suppress>
       <notes><![CDATA[
-      file name: snakeyaml-1.33-gov4j-1.jar
+      file name: snakeyaml-2.1-gov4j-1.jar
       Vulnerabilità descritta come: "Parsing malicious or large YAML documents can consume excessive amounts of CPU or memory."
       La libreria viene utilizzata solamente per la gestione delle interfacce yaml caricate sulla console dagli amministratori. Non viene utilizzata per input fornito dinamicamente nelle richieste gestite dal Gateway.
       ]]></notes>
@@ -37,7 +37,7 @@
    </suppress>
    <suppress>
       <notes><![CDATA[
-      file name: snakeyaml-1.33-gov4j-1.jar
+      file name: snakeyaml-2.1-gov4j-1.jar
       Vulnerabilità descritta come: "Due to unbounded alias chasing, a maliciously crafted YAML file can cause the system to consume significant system resources. If parsing user input, this may be used as a denial of service vector."
       La libreria viene utilizzata solamente per la gestione delle interfacce yaml caricate sulla console dagli amministratori. Non viene utilizzata per input fornito dinamicamente nelle richieste gestite dal Gateway.
       ]]></notes>
