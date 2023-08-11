@@ -1,8 +1,8 @@
-/* ***** jboss 7.x e WildFly *****
+/* ***** WildFly *****
 
 1) Creazione di una utenza
 
-In jboss7 e wildfly è obbligatoria l'autenticazione per accedere alle code.
+In wildfly è obbligatoria l'autenticazione per accedere alle code.
 Di seguito vengono fornite le indicazioni.
 
 E' necessario creare un application user:
@@ -13,10 +13,10 @@ Fornire anche un ruolo (o group), es. 'testrole' poi da personalizzare nel file 
 NOTA: per la testsuite è necessario creare una utenza 'openspcoop2', password 'op3n.spc00p' e gruppo 'testrole'
 
 L'application user viene creato nei files:
-Added user 'openspcoop2' to file 'jboss-as-7.x/standalone/configuration/application-users.properties'
-Added user 'openspcoop2' to file 'jboss-as-7.x/domain/configuration/application-users.properties'
-Added user 'openspcoop2' with roles testrole to file 'jboss-as-7.x/standalone/configuration/application-roles.properties'
-Added user 'openspcoop2' with roles testrole to file 'jboss-as-7.x/domain/configuration/application-roles.properties'
+Added user 'openspcoop2' to file 'WF_HOME/standalone/configuration/application-users.properties'
+Added user 'openspcoop2' to file 'WF_HOME/domain/configuration/application-users.properties'
+Added user 'openspcoop2' with roles testrole to file 'WF_HOME/standalone/configuration/application-roles.properties'
+Added user 'openspcoop2' with roles testrole to file 'WF_HOME/domain/configuration/application-roles.properties'
 
 
 2) Associazione dei permessi all'utenza

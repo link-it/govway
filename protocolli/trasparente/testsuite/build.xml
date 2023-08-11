@@ -215,7 +215,6 @@
 		<if>
 			<or>
 				<matches string="${as}" pattern="tomcat.*"/>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -230,49 +229,7 @@
 		<copy file="deploy/properties/testsuite_trasparente.log4j2.properties" todir="${build_testunits}/NG_UNITS/log4j2.properties" />
 		<copy file="${govway_testsuite_properties}/testsuite.properties" todir="${build_testunits}/NG_UNITS" />
 		<copy file="${openspcoop2}/testsuite/deploy/properties/testsuite.log4j2.properties" todir="${build_testunits}/NG_UNITS" />
-		
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
-			</or>
-			<then>
-				<concat destfile="${build_testunits}/NG_UNITS/testsuite_testunits.properties" append="yes" >
-
-# ----- Personalizzazione JMS (jboss 7.x) -------------
-				</concat>
-				<antcall target="set_property">
-				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
-					<param name="token" value="org.openspcoop2.testsuite.jms-lookup.property.java.naming.provider.url"/>
-					<param name="value" value="remote://127.0.0.1:4447"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
-					<param name="token" value="org.openspcoop2.testsuite.jms-lookup.property.java.naming.factory.initial"/>
-					<param name="value" value="org.jboss.naming.remote.client.InitialContextFactory"/>
-				</antcall>
-				<antcall target="replace_token">
-				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
-					<param name="token" value="org.openspcoop2.testsuite.jms-lookup.property.java.naming.factory.url.pkgs"/>
-					<param name="value" value="#org.openspcoop2.testsuite.jms-lookup.property.java.naming.factory.url.pkgs"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
-					<param name="token" value="org.openspcoop2.testsuite.jms.connectionFactory"/>
-					<param name="value" value="jms/RemoteConnectionFactory"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
-					<param name="token" value="org.openspcoop2.testsuite.jms.username"/>
-					<param name="value" value="openspcoop2"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
-					<param name="token" value="org.openspcoop2.testsuite.jms.password"/>
-					<param name="value" value="op3n.spc00p"/>
-				</antcall>
-			</then>
-		</if>
-		
+				
 		<if>
 			<or>
 				<matches string="${as}" pattern="wildfly.*"/>

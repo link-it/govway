@@ -1,5 +1,0 @@
-I files presenti in questa cartella richiedono i moduli per il broker JMS hornetQ non presenti per default nella configurazione base di jbossas standalone/configuration/standalone.xml
-Pertanto i files sono utilizzabili, per quanto concerne la versione 'standalone', nella configurazione standalone/configuration/standalone-full.xml. Sono inoltre utilizzabili nella versione 'domain'.
-
-Il Server JBossas deve essere avviato utilizzando la configurazione full:
-- ./standalone.sh --server-config=standalone-full.xml

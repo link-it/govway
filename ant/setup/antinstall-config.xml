@@ -134,38 +134,14 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="wildfly25" property="antinstaller_as" displayText="Application Server">
+        <large-select defaultValue="wildfly27" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly25" text="WildFly 25-26"/>
-		<option value="wildfly22" text="WildFly 22-24"/>
-		<option value="wildfly18" text="WildFly 18-21"/>
-		<!--
-			Deprecati: 10, 11, 12, 13, 14, 15, 15, 17
-			<option value="wildfly10" text="WildFly 10-17"/>
-		-->
-		<!--
-			Deprecati
-			<option value="wildfly9" text="WildFly 9"/>
-			<option value="wildfly8" text="WildFly 8"/>
-		-->
-		<!--
-			Deprecati 
-			<option value="jboss7" text="JBoss 7"/>
-			<option value="jboss6" text="JBoss 6"/>
-			<option value="jboss5" text="JBoss 5"/>
-	    		<option value="jboss4" text="JBoss 4"/>
-		-->
+		<option value="wildfly27" text="WildFly 27-29"/>
            
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<option value="tomcat9" text="Apache Tomcat 9"/>
-		<!-- 
-			Deprecati
-			<option value="tomcat8" text="Apache Tomcat 8-9"/>
-			<option value="tomcat7" text="Apache Tomcat 7"/>
-            		<option value="tomcat6" text="Apache Tomcat 6"/>
-			<option value="tomcat5" text="Apache Tomcat 5"/> 
-		-->
+            	<option value="tomcat10" text="Apache Tomcat 10"/>
+
         </large-select>
         
         <comment displayText=""/>
@@ -174,8 +150,6 @@
         <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
             <option value="postgresql" text="PostgreSQL"/>
             <option value="mysql" text="MySQL"/>
-	    <!-- <option value="mariadb" text="MariaDB"/> TODO -->
-  	    <!-- <option value="mysql" text="MariaDB"/> -->
             <option value="oracle" text="Oracle"/>
             <option value="hsql" text="HyperSQL"/>
             <option value="sqlserver" text="SQLServer"/>
@@ -200,38 +174,14 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="wildfly25" property="antinstaller_as" displayText="Application Server">
+        <large-select defaultValue="wildfly27" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly25" text="WildFly 25-26"/>
-		<option value="wildfly22" text="WildFly 22-24"/>
-		<option value="wildfly18" text="WildFly 18-21"/>
-		<!--
-			Deprecati: 10, 11, 12, 13, 14, 15, 16, 17
-			<option value="wildfly10" text="WildFly 10-17"/>
-		-->
-		<!--
-			Deprecati
-			<option value="wildfly9" text="WildFly 9"/>
-			<option value="wildfly8" text="WildFly 8"/>
-		-->
-		<!--
-			Deprecati 
-			<option value="jboss7" text="JBoss 7"/>
-			<option value="jboss6" text="JBoss 6"/>
-			<option value="jboss5" text="JBoss 5"/>
-	    		<option value="jboss4" text="JBoss 4"/>
-		-->
+		<option value="wildfly27" text="WildFly 27-29"/>
            
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
-		<option value="tomcat9" text="Apache Tomcat 9"/> 
-            	<!-- 
-			Deprecati
-		    	<option value="tomcat8" text="Apache Tomcat 8-9"/>
-			<option value="tomcat7" text="Apache Tomcat 7"/>
-			<option value="tomcat6" text="Apache Tomcat 6"/>
-			<option value="tomcat5" text="Apache Tomcat 5"/> 
-		-->
+		<option value="tomcat10" text="Apache Tomcat 10"/> 
+
         </large-select>
 
         <comment displayText=""/>
@@ -243,8 +193,6 @@
         <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
             <option value="postgresql" text="PostgreSQL"/>
             <option value="mysql" text="MySQL"/>
-	    <!-- <option value="mariadb" text="MariaDB"/> TODO -->
-  	    <!-- <option value="mysql" text="MariaDB"/> -->
             <option value="oracle" text="Oracle"/>
             <option value="hsql" text="HyperSQL"/>
             <option value="sqlserver" text="SQLServer"/>
@@ -627,7 +575,7 @@
         
     </page>
     
-    <page name="preinstallazioneStato" type="input" displayText="Configurazione Avanzata" ifProperty="(${antinstaller_conf_avanzata_enabled}==true) AND (${antinstaller_as}!=tomcat5) AND (${antinstaller_as}!=tomcat6) AND (${antinstaller_as}!=tomcat7) AND (${antinstaller_as}!=tomcat8) AND (${antinstaller_as}!=tomcat9)">
+    <page name="preinstallazioneStato" type="input" displayText="Configurazione Avanzata" ifProperty="(${antinstaller_conf_avanzata_enabled}==true) AND (${antinstaller_as}!=tomcat10)">
 
 	<comment bold="true" displayText="Presa in carico"/>
 	<checkbox defaultValue="false" property="antinstaller_stateful" displayText="Attivazione tramite broker JMS"/>
@@ -640,7 +588,7 @@
 
     </page>
 
-    <page name="preinstallazioneStato" type="input" displayText="Configurazione Avanzata" ifProperty="(${antinstaller_conf_avanzata_enabled}==true) AND (${antinstaller_as}==tomcat5) OR (${antinstaller_as}==tomcat6) OR (${antinstaller_as}==tomcat7) OR (${antinstaller_as}==tomcat8) OR (${antinstaller_as}==tomcat9)">
+    <page name="preinstallazioneStato" type="input" displayText="Configurazione Avanzata" ifProperty="(${antinstaller_conf_avanzata_enabled}==true) AND (${antinstaller_as}==tomcat10)">
 
 	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat"/>
 	<comment displayText="   impedisce l'utilizzo della funzionalità 'Presa in carico' con attivazione tramite broker JMS."/>

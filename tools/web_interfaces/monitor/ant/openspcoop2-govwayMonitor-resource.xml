@@ -14,25 +14,7 @@
 		<mkdir dir="${build_govwayMonitor_war}/WEB-INF" />
 	</target>
 
-	<target name="-create_jsf_faces_config">
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss6"/>
-				<equals arg1="${as}" arg2="jboss7"/>
-			</or> 
-			<then>
-				<delete file="${build_govwayMonitor_war}/WEB-INF/faces-config.xml" />
-				<concat destfile="${build_govwayMonitor_war}/WEB-INF/faces-config.xml" append="yes">
-					<filelist dir="${src_core_govwayMonitor}/META-INF" files="faces-config.xml"/>
-				</concat>
-				<concat destfile="${build_govwayMonitor_war}/WEB-INF/faces-config.xml" append="yes">
-					<filelist dir="${src_core_govwayMonitor}/META-INF" files="faces-config.xml.end"/>
-				</concat>
-	 		</then>
-		</if>
-	</target>
-
-	<target name="-prepare" depends="-init_prepare,-create_jsf_faces_config">
+	<target name="-prepare" depends="-init_prepare">
 		<tstamp/>
 		
 		<!-- Genero il file web.xml -->
@@ -51,27 +33,7 @@
 					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.params.wildfly"/>
 				</concat>
 			</then>
-		</if>
-		<if> 
-			<equals arg1="${as}" arg2="jboss7"/>
-			<then>
-				<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
-					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.params.jboss7"/>
-				</concat>
-			</then>
 		</if>		
-		<if> 
-			<or>
-				<equals arg1="${as}" arg2="jboss4"/>
-				<equals arg1="${as}" arg2="jboss5"/>
-				<equals arg1="${as}" arg2="jboss6"/>
-			</or>
-			<then>
-				<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
-					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.params"/>
-				</concat>
-			</then>
-		</if>	
 		<if> 
 			<or>
 				<matches string="${as}" pattern="tomcat.*"/>
@@ -241,41 +203,15 @@
 
 		<delete file="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" />
 		
-		<!-- Copia del descrittore di deploy per jboss7 -->
-		<if> 
-			<equals arg1="${as}" arg2="jboss7"/>
-			<then>
-				<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
-					<filelist dir="${src_webinf_govwayMonitor}" files="jboss-deployment-structure.xml.jboss7"/>
-				</concat>
-			</then>
-		</if>
-		
 		<!-- Copia del descrittore di deploy per wildfly -->
 		<if> 
 			<or>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<if>
-					<or>
-						<matches string="${as}" pattern="wildfly22"/>
-						<matches string="${as}" pattern="wildfly23"/>
-						<matches string="${as}" pattern="wildfly24"/>
-						<matches string="${as}" pattern="wildfly25"/>
-						<matches string="${as}" pattern="wildfly26"/>
-					</or>
-					<then>
-						<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
-							<filelist dir="${src_webinf_govwayMonitor}" files="jboss-deployment-structure.xml.wildfly2"/>
-						</concat>
-					</then>
-					<else>
-						<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
-							<filelist dir="${src_webinf_govwayMonitor}" files="jboss-deployment-structure.xml.wildfly"/>
-						</concat>
-					</else>
-				</if>
+				<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
+					<filelist dir="${src_webinf_govwayMonitor}" files="jboss-deployment-structure.xml.wildfly"/>
+				</concat>
 				<if>
 					<and>
 				    		<equals arg1="${buildJsfAsModule}" arg2="true"/>
@@ -305,7 +241,6 @@
 				<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
 				<or>
 					<matches string="${as}" pattern="wildfly.*"/>
-					<equals arg1="${as}" arg2="jboss7"/>
 				</or>
 			</and>
 			<then>

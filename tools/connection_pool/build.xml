@@ -43,7 +43,6 @@
 	<!-- openspcoop2_pool_driver -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -53,7 +52,6 @@
 	<!-- commons_logging -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
@@ -64,7 +62,6 @@
 	<!-- commons_pool -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
@@ -75,7 +72,6 @@
 	<!-- commons_dbcp -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
@@ -86,8 +82,6 @@
 	<!-- jboss_classloading -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -97,8 +91,6 @@
 	<!-- jboss_scanning -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -108,7 +100,6 @@
 	<!-- jboss_deployment_structure -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -210,32 +201,10 @@
 		<delete file="${build_openspcoop2Pools}/pluginSRC/WEB-INF/jboss-deployment-structure.xml" />
 		<copy file="${src_openspcoop2Pools}/META-INF/application.openspcoop2Pools.xml" todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF" />
 		<if>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<then>
-				<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.jboss7.xml" 
-					todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure" />
-			</then>
-		</if>
-		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<if>
-					<or>
-						<matches string="${as}" pattern="wildfly22"/>
-						<matches string="${as}" pattern="wildfly23"/>
-						<matches string="${as}" pattern="wildfly24"/>
-						<matches string="${as}" pattern="wildfly25"/>
-						<matches string="${as}" pattern="wildfly26"/>
-					</or>
-					<then>
-						<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.wildfly2.xml" 
-							todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure" />
-					</then>
-					<else>
-						<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.wildfly.xml" 
-							todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure" />
-					</else>
-				</if>
+				<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.wildfly.xml" 
+					todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure" />
 			</then>
 		</if>
 		

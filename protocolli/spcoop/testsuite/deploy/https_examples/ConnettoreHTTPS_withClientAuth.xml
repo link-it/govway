@@ -1,14 +1,4 @@
-Esempio di connettore da impostare in apache tomcat 5.x, 6.x, 7.x e 8.x (per tomcat8 solamente versioni inferiori a 8.5.x):
-
-<Connector port="8444" protocol="HTTP/1.1" SSLEnabled="true"
-           maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
-           emptySessionPath="true"
-           scheme="https" secure="true" clientAuth="true" sslProtocol = "TLS"
-           keystoreFile="/etc/govway/keys/erogatore.jks"
-           keystorePass="openspcoop"/>
-
-
-Esempio di connettore da impostare in apache tomcat 8.5.x e 9.x (viene aggiunto l'attributo keyAlias e ssLEnabledProtocols necessario per PKCS11):
+Esempio di connettore da impostare in apache tomcat 10.x (viene aggiunto l'attributo keyAlias e ssLEnabledProtocols necessario per PKCS11):
 
 <Connector port="8444" protocol="HTTP/1.1" SSLEnabled="true"
            maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
@@ -19,41 +9,7 @@ Esempio di connettore da impostare in apache tomcat 8.5.x e 9.x (viene aggiunto 
            keystorePass="openspcoop"/>
 
 
-Esempio di connettore da impostare nel file server.xml del Tomcat presente nelle versioni 4.x, 5.x e 6.x di JBoss:
-
-<Connector port="8444" protocol="HTTP/1.1" SSLEnabled="true" 
-           address="${jboss.bind.address}"
-           maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
-           emptySessionPath="true"
-           scheme="https" secure="true" clientAuth="true" sslProtocol = "TLS"
-           keystoreFile="/etc/govway/keys/erogatore.jks"
-           keystorePass="openspcoop"/>
-
-
-Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di JBoss 7.x:
-
-	...
-        <subsystem xmlns="urn:jboss:domain:web:1.1" default-virtual-server="default-host" native="false">
-            <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
-            ...
-            <connector name="httpsBilanciato" protocol="HTTP/1.1" scheme="https" socket-binding="httpsBilanciato" secure="true">
-                <ssl name="httpsBilanciato" password="openspcoop" certificate-key-file="/etc/govway/keys/erogatore.jks" verify-client="true"/>
-            </connector>
-	    ...
-	    <virtual-server ...>
-            </virtual-server>
-        </subsystem>
-	...
-    </profile> 
-    ....
-    <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
-        ...
-        <socket-binding name="httpsBilanciato" port="8444"/>
-        ...
-    </socket-binding-group>
-
-
-Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) da Wildfly 25 (Elytron subsystem):
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) da Wildfly 27 (Elytron subsystem):
 
     <subsystem xmlns="urn:wildfly:elytron:xx" ....>
             <providers>
@@ -113,48 +69,6 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
 			<application-security-domain name="other" security-domain="ApplicationDomain"/> 
 		-->
             </application-security-domains>
-        </subsystem>
-        ...
-    </profile>
-    ....
-    <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
-        ...
-	<socket-binding name="httpsBilanciato" port="${jboss.https.port:8444}"/>
-        ...
-    </socket-binding-group>
-
-
-Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di Wildfly (10-24):
-
-
-    <management>
-        <security-realms>
-            ...
-            <security-realm name="openspcoop2withClientAuth">
-                <server-identities>
-                        <ssl>
-                                <keystore path="/etc/govway/keys/erogatore.jks" keystore-password="openspcoop" alias="erogatore" key-password="openspcoop" />
-                        </ssl>
-                </server-identities>
-                <authentication>
-                        <truststore path="/etc/govway/keys/erogatore.jks" keystore-password="openspcoop"/>
-                </authentication>
-            </security-realm>
-            ...
-        </security-realms>
-        ...
-    </management>
-    ...
-    <profile>
-        ...
-        <subsystem xmlns="urn:jboss:domain:undertow:1.0">
-                <http-listener name="default" socket-binding="http"/>
-                ...
-		<https-listener name="httpsBilanciato" socket-binding="httpsBilanciato" security-realm="openspcoop2withClientAuth" verify-client="REQUIRED"/>
-                ...
-                <host ...>
-                        ...
-                </<host>
         </subsystem>
         ...
     </profile>

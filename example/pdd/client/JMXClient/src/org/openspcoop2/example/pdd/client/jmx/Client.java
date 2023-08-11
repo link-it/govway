@@ -170,9 +170,6 @@ public class Client {
 			
 			MBeanServerConnection mconn = null;
 			// eliminate librerie 3part per vecchi application server
-//			if(args[0].equals("jboss7") ||
-//					args[0].startsWith("wildfly") ||
-//					args[0].startsWith("tomcat")){
 			JMXServiceURL serviceURL = new JMXServiceURL(serverUrl);  
 			Map<String, Object> env = null;
 			if(username!=null && password!=null){
@@ -182,18 +179,6 @@ public class Client {
 			}
 			JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);             
 			mconn = jmxConnector.getMBeanServerConnection();
-//			}
-//			else{
-//				
-//				Map<String, Object> env = new HashMap<>();
-//				env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, factory);
-//				env.put(javax.naming.Context.PROVIDER_URL, serverUrl);
-//				
-//				javax.naming.Context ctx = new javax.naming.InitialContext(env);
-//				mconn = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor");
-//				SecurityAssociation.setPrincipal(new SimplePrincipal(username));
-//				SecurityAssociation.setCredential(password);	
-//			}
 		
 			// AccessoRegistroServizi
 			System.out.println();

@@ -6,7 +6,7 @@
       <property name="output" location="RisultatiTestSuite" />
 
 	  <!-- ApplicationServer version -->
-	  <property name="as" value="jboss/wildfly/tomcat" />
+	  <property name="as" value="wildfly/tomcat" />
 
       <!-- Libreria jdbc verso i database di tracciamento di OpenSPCoop-->
       <property name="jdbc_lib" location="JDBC_DRIVER.jar" />

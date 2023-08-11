@@ -144,8 +144,7 @@ public class GestoreRisorseJMX {
                 if(modalita2_serverUrl==null || "".equals(modalita2_serverUrl)){
                         throw new Exception("Parametro 'serverUrl' non fornito");
                 }
-                if(modalita2_tipoApplicationServer.equals("jboss7") ||
-                		(modalita2_tipoApplicationServer!=null && modalita2_tipoApplicationServer.startsWith("wildfly")) ||
+                if((modalita2_tipoApplicationServer!=null && modalita2_tipoApplicationServer.startsWith("wildfly")) ||
                 		modalita2_tipoApplicationServer.startsWith("tomcat")){
                 	
                 	Class<?>jmxServiceURLClass = Class.forName("javax.management.remote.JMXServiceURL");

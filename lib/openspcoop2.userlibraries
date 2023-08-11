@@ -242,7 +242,7 @@
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-annotations-2.2.15.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-2.2.15.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-2.2.15.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-jaxrs2-2.2.15.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-jaxrs2-jakarta-2.2.15.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-integration-2.2.15.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-2.1.16.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-core-2.1.16.jar"/>

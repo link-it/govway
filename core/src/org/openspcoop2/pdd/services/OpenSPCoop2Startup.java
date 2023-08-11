@@ -574,7 +574,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 	        			
 			/*
-			 * 	Necessario in jboss7 per evitare errore 'error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC'
+			 * 	Necessario su wildfly per evitare errore 'error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC'
 			 *  se vengono utilizzati keystore P12.
 			 *  Il codice  
 			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.69.jar" use-physical-code-source="true"/>

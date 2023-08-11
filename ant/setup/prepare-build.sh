@@ -30,7 +30,7 @@ BATCH_RUNTIME_REPOSITORY=${ROOT}/tools/batch/runtime-repository
 if [ ! -f ${CORE}/local_env.xml  ]
 then
 	cp ${CORE}/local_env.xml.template ${CORE}/local_env.xml
-	perl -pi -e "s#jboss/wildfly/tomcat#jboss7#g" ${CORE}/local_env.xml;
+	perl -pi -e "s#wildfly/tomcat#wildfly27#g" ${CORE}/local_env.xml;
 fi
 
 # WebLib-MVC

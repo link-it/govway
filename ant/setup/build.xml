@@ -83,7 +83,7 @@
 			antinstaller_directory_lavoro_openspcoop=/var/govway
 			antinstaller_directory_log_openspcoop=/var/govway/log
 			antinstaller_tipo_database=postgresql
-			antinstaller_as=jboss5  -> Trasformata poi nel build reale subito sotto attraverso la variabile build_for_as
+			antinstaller_as=wildfly27  -> Trasformata poi nel build reale subito sotto attraverso la variabile build_for_as
 			
 		Informazioni Dispiegamento
 			antinstaller_config_db=runtime/config
@@ -205,7 +205,6 @@
 
 	<if>
 		<or>
-			<matches string="${antinstaller_as}" pattern="jboss.*"/>
 			<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -224,7 +223,7 @@
 			<matches string="${antinstaller_as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="build_for_as" value="tomcat9"/>
+			<var name="build_for_as" value="tomcat10"/>
 		</then>
 		<else>
 			<var name="build_for_as" value="${antinstaller_as}"/>
@@ -257,10 +256,9 @@
 					<equals arg1="${antinstaller_sec_container}" arg2="$${antinstaller_sec_container}" />
 				</or>
 				<then>
-					<!-- Abilitato per Default su jboss7 e wildfly -->
+					<!-- Abilitato per Default su wildfly -->
 					<if>
 						<or>
-							<matches string="${build_for_as}" pattern="jboss.*"/>
 							<matches string="${build_for_as}" pattern="wildfly.*"/>
 						</or>
 						<then>	
@@ -637,7 +635,6 @@
 	<target name="_setup_pdd">
 		<if>
 			<or>
-				<matches string="${build_for_as}" pattern="jboss.*"/>
 				<matches string="${build_for_as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -1710,117 +1707,6 @@
 	<target name="setup_datasource" depends="_setup_datasource"/>
 	<target name="_setup_datasource">
 		<if>
-			<matches string="${build_for_as}" pattern="jboss.*"/>
-			<then>
-				<var name="jboss_datasource_dir_name" value=""/>
-				<if>
-					<or>
-						<equals arg1="${build_for_as}" arg2="jboss4" />
-						<equals arg1="${build_for_as}" arg2="jboss5" />
-						<equals arg1="${build_for_as}" arg2="jboss6" />
-					</or>
-					<then>
-						<var name="jboss_datasource_dir_name" value="v4_v5_v6"/>
-					</then>
-					<else>
-						<var name="jboss_datasource_dir_name" value="v7"/>
-					</else>
-				</if>		
-
-				<!-- Runtime -->
-				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway-ds.xml" todir="${tmp_ds}"/>
-				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/govway-ds.xml"/>
-				</antcall>
-
-				<!-- Config -->
-				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" todir="${tmp_ds}"/>
-				<if>
-					<equals arg1="${antinstaller_config_db}" arg2="config"/>
-					<then>
-						<antcall target="config_ds_settings">
-						    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
-						</antcall>
-					</then>
-					<else>
-						<antcall target="ds_settings">
-						    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
-						</antcall>
-					</else>
-				</if>
-
-				<!-- Tracce -->
-				<if>
-					<equals arg1="${antinstaller_log_db}" arg2="log"/>
-					<then>
-						<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway-ds.xml" tofile="${tmp_ds}/govway_tracciamento-ds.xml"/>
-						<antcall target="log_ds_settings">
-						    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
-						</antcall>
-					</then>
-					<elseif>
-						<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
-						<equals arg1="${antinstaller_config_db}" arg2="config"/>
-						<then>
-							<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" tofile="${tmp_ds}/govway_tracciamento-ds.xml"/>
-							<antcall target="ds_settings">
-							    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
-							</antcall>
-							<antcall target="replace_token">
-							    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
-								<param name="token" value="org.govway.datasource.console"/>
-								<param name="value" value="org.govway.datasource.tracciamento"/>
-							</antcall>
-						</then>
-					</elseif>
-				</if>
-
-				<!-- Statistiche -->
-				<if>
-					<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
-					<then>
-						<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" tofile="${tmp_ds}/govway_statistiche-ds.xml"/>
-						<antcall target="stats_ds_settings">
-						    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
-						</antcall>
-					</then>
-					<elseif>
-						<!-- se le statistiche sono nel database di runtime e 
-							il database delle configurazioni e' a se, e
-							il database delle trace e' a se, le applicazioni "console" dovranno usare un datasource differente -->
-						<and>
-							<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
-							<equals arg1="${antinstaller_config_db}" arg2="config"/>
-							<equals arg1="${antinstaller_log_db}" arg2="log"/>
-						</and>
-						<then>
-							<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" tofile="${tmp_ds}/govway_statistiche-ds.xml"/>
-							<antcall target="ds_settings">
-							    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
-							</antcall>
-							<antcall target="replace_token">
-							    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
-								<param name="token" value="org.govway.datasource.console"/>
-								<param name="value" value="org.govway.datasource.statistiche"/>
-							</antcall>
-						</then>
-					</elseif>
-				</if>
-
-				<!-- AS4 eDelivery -->
-				<if>
-					<istrue value="${antinstaller_protocollo_as4}" />
-					<then>
-						<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_as4_tipo_database}/govway-ds.xml" 
-							tofile="${tmp_ds}/domibus-ds.xml"/>
-						<antcall target="as4_ds_settings">
-						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
-						</antcall>
-					</then>
-				</if>
-			</then>
-		</if>
-		<if>
 			<matches string="${build_for_as}" pattern="wildfly.*"/>
 			<then>		
 
@@ -1920,20 +1806,7 @@
 		<if>
 			<matches string="${build_for_as}" pattern="tomcat.*"/>
 			<then>
-				<var name="tomcat_datasource_dir_name" value=""/>
-				<if>
-					<or>
-						<equals arg1="${antinstaller_as}" arg2="tomcat5" />
-						<equals arg1="${antinstaller_as}" arg2="tomcat6" />
-						<equals arg1="${antinstaller_as}" arg2="tomcat7" />
-					</or>
-					<then>
-						<var name="tomcat_datasource_dir_name" value="v5_v6_v7"/>
-					</then>
-					<else>
-						<var name="tomcat_datasource_dir_name" value="v8_v9"/>
-					</else>
-				</if>		
+				<var name="tomcat_datasource_dir_name" value="v10"/>		
 
 				<!-- govway.war -->
 				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govway.xml" todir="${tmp_ds}"/>

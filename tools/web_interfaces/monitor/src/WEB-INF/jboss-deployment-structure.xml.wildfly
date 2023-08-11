@@ -8,11 +8,15 @@
 			<subsystem name="jsf" />
 			<!-- End SenzaModulo JSF -->
 			<!-- se si elimina, spuntano i warning <subsystem name="weld" /> -->
+			<subsystem name="logging"/>
                 </exclude-subsystems>   
                 <exclusions>
-                	<module name="org.slf4j" />
+                	<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
+			<module name="org.slf4j" />
                         <module name="org.apache.log4j" />
 			<module name="org.apache.commons.logging"/>
+			<module name="org.apache.logging.log4j.api"/>
+			-->
                         <!-- non caricato in wf18 e java 11
 			<module name="com.sun.jsf-impl"/>
                 	<module name="org.jboss.as.webservices" />

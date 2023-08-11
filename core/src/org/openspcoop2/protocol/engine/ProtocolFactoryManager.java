@@ -233,7 +233,7 @@ public class ProtocolFactoryManager {
 				loadManifest(configPdD, pluginURL, false, tmp_manifests, tmp_manifestURLs);
 			}
 			else{
-				// 1. Cerco nel classloader (funziona per jboss5.x)
+				// 1. Cerco nel classloader
 				Enumeration<URL> en = ProtocolFactoryManager.class.getClassLoader().getResources("/"+Costanti.MANIFEST_OPENSPCOOP2);
 				while(en.hasMoreElements()){
 					URL pluginURL = en.nextElement();
@@ -241,7 +241,6 @@ public class ProtocolFactoryManager {
 				}
 				
 				if(tmp_manifests.size()<=0){
-					// 2. (funziona per jboss4.x) ma vengono forniti jar duplicati, quelli dentro ear e quelli dentro tmp.
 					en = ProtocolFactoryManager.class.getClassLoader().getResources(Costanti.MANIFEST_OPENSPCOOP2);
 					while(en.hasMoreElements()){
 						URL pluginURL = en.nextElement();

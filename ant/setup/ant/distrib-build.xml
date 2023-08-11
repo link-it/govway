@@ -12,60 +12,7 @@
 
 	<target name="make-distrib">
 		
-		<!-- Installazione GovWay -->
-		<if>
-			<matches string="${antinstaller_as}" pattern="jboss.*"/>
-			<then>
-				<if>
-					<equals arg1="${build_openspcoop_archive_suffix}" arg2="stateless"/>
-					<then>
-						<if>
-							<or>
-								<equals arg1="${antinstaller_as}" arg2="jboss4" />
-								<equals arg1="${antinstaller_as}" arg2="jboss5" />
-								<equals arg1="${antinstaller_as}" arg2="jboss6" />
-							</or>
-							<then>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v4_v5_v6" tofile="${dist}/INSTALL.txt" />
-							</then>
-							<else>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v7" tofile="${dist}/INSTALL.txt" />
-							</else>
-						</if>
-					</then>
-					<else>
-						<if>
-							<or>
-								<equals arg1="${antinstaller_as}" arg2="jboss4" />
-								<equals arg1="${antinstaller_as}" arg2="jboss5" />
-							</or>
-							<then>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v4_v5" tofile="${dist}/INSTALL.txt" />
-							</then>
-						</if>
-						<if>
-							<equals arg1="${antinstaller_as}" arg2="jboss6" />
-							<then>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v6" tofile="${dist}/INSTALL.txt" />
-							</then>
-						</if>
-						<if>
-							<equals arg1="${antinstaller_as}" arg2="jboss7" />
-							<then>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v7" tofile="${dist}/INSTALL.txt" />
-							</then>
-						</if>
-						<mkdir dir="${dist}/jms" />
-						<copy todir="${dist}/jms" flatten="true">
-							<fileset dir="${deploy_jms}/${antinstaller_as}">
-								<include name="*"/>
-								<type type="file"/>
-							</fileset>
-						</copy>
-					</else>
-				</if>
-			</then>
-		</if>		
+		<!-- Installazione GovWay -->		
 		<if>
 			<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 			<then>
@@ -76,16 +23,7 @@
 					</then>
 					<else>
 						<if>
-							<or>
-								<equals arg1="${antinstaller_as}" arg2="wildfly8" />
-								<equals arg1="${antinstaller_as}" arg2="wildfly9" />
-							</or>
-							<then>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v8_v9" tofile="${dist}/INSTALL.txt" />
-							</then>
-							<else>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v26" tofile="${dist}/INSTALL.txt" />
-							</else>
+							<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY" tofile="${dist}/INSTALL.txt" />
 						</if>
 						<mkdir dir="${dist}/jms" />
 						<copy todir="${dist}/jms" flatten="true">
@@ -1296,7 +1234,6 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 		<mkdir dir="${dist}/archivi"/>
 		<if>
 			<or>
-				<matches string="${antinstaller_as}" pattern="jboss.*"/>
 				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 			</or>	
 			<then>
@@ -1809,7 +1746,6 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 		<if>
 			<and>
 				<or>
-					<equals arg1="${antinstaller_as}" arg2="jboss7" />
 					<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 				</or>
 				<or>
@@ -1824,11 +1760,9 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 					<then>
 						<if>
 							<or>
-								<matches string="${as}" pattern="wildfly22"/>
-								<matches string="${as}" pattern="wildfly23"/>
-								<matches string="${as}" pattern="wildfly24"/>
-								<matches string="${as}" pattern="wildfly25"/>
-								<matches string="${as}" pattern="wildfly26"/>
+								<matches string="${as}" pattern="wildfly27"/>
+								<matches string="${as}" pattern="wildfly28"/>
+								<matches string="${as}" pattern="wildfly29"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1877,11 +1811,9 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 					<then>
 						<if>
 							<or>
-								<matches string="${as}" pattern="wildfly22"/>
-								<matches string="${as}" pattern="wildfly23"/>
-								<matches string="${as}" pattern="wildfly24"/>
-								<matches string="${as}" pattern="wildfly25"/>
-								<matches string="${as}" pattern="wildfly26"/>
+								<matches string="${as}" pattern="wildfly27"/>
+								<matches string="${as}" pattern="wildfly28"/>
+								<matches string="${as}" pattern="wildfly29"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">

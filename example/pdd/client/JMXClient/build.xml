@@ -54,7 +54,7 @@
 		<if>
 			<equals arg1="${as}" arg2="$${as}"/>
 		    <then>
-		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant run -Das=VERSION (indicare jbossVersionNumber es. jboss6)"/>
+		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant run -Das=VERSION (indicare asVersionNumber es. wildfly27)"/>
 			</then>
 		</if>
 

@@ -163,9 +163,6 @@ public class RisorseEsterne extends GestioneViaJmx {
 		
 		MBeanServerConnection jmxconn = null;
 		// eliminato supporto di jboss
-//		if("jboss7".equals(version_jbossas) || 
-//				(version_jbossas!=null && version_jbossas.startsWith("wildfly")) || 
-//				version_jbossas.startsWith("tomcat")){
 			
 		String as = version_jbossas;
 		if(version_jbossas.startsWith("tomcat")){
@@ -181,16 +178,6 @@ public class RisorseEsterne extends GestioneViaJmx {
 		}
 		JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);           
 		jmxconn = jmxConnector.getMBeanServerConnection();	
-//		}else{
-//			Map<String, Object> env = new HashMap<>();
-//			env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, this.unitsTestsuiteProperties.getJMXFactory());
-//			env.put(javax.naming.Context.PROVIDER_URL, this.unitsTestsuiteProperties.getJMXServer());
-//			
-//			javax.naming.Context ctx = new javax.naming.InitialContext(env);
-//			jmxconn = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor");
-//			SecurityAssociation.setPrincipal(new SimplePrincipal(this.unitsTestsuiteProperties.getJMXUsername()));
-//			SecurityAssociation.setCredential(this.unitsTestsuiteProperties.getJMXPassword());
-//		}
 		
 		return jmxconn;
 	}

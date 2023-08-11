@@ -19,11 +19,19 @@
 			<subsystem name="webservices" />
 			<subsystem name="jaxrs" />
 			<subsystem name="jsf" />
+			<subsystem name="logging"/>
+			<!-- 
+				Elimina il WARN:  WFLYTRACEXT0012: No Jaeger endpoint or sender-binding configured. Installing a no-op sender
+			-->
+			<subsystem name="microprofile-opentracing-smallrye"/>
 		</exclude-subsystems>
 		<exclusions>
+			<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
 			<module name="org.slf4j" />
 			<module name="org.apache.log4j" />
 			<module name="org.apache.commons.logging"/>
+			<module name="org.apache.logging.log4j.api"/>
+			-->
 
 			<module name="org.bouncycastle"/>
 
@@ -60,26 +68,35 @@
 	</deployment>
 	<sub-deployment name="govway.war">
 		<exclusions>
+			<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
 			<module name="org.apache.log4j"/>
 			<module name="org.slf4j" />
 			<module name="org.apache.commons.logging"/>
 			<module name="org.jboss.logging"/>
+			<module name="org.apache.logging.log4j.api"/>
+			-->
 		</exclusions>
 	</sub-deployment>
 	<sub-deployment name="govwaySec.war">
 		<exclusions>
+			<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
 			<module name="org.apache.log4j"/>
 			<module name="org.slf4j" />
 			<module name="org.apache.commons.logging"/>
 			<module name="org.jboss.logging"/>
+			<module name="org.apache.logging.log4j.api"/>
+			-->
 		</exclusions>
 	</sub-deployment>	
 	<sub-deployment name="govway.jar">
 		<exclusions>
+			<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
 			<module name="org.apache.log4j"/>
 			<module name="org.slf4j" />
 			<module name="org.apache.commons.logging"/>
 			<module name="org.jboss.logging"/>
+			<module name="org.apache.logging.log4j.api"/>
+			-->
 		</exclusions>
 	</sub-deployment>
 </jboss-deployment-structure>

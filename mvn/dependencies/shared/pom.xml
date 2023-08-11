@@ -46,6 +46,7 @@
 		<rhino.version>1.7.14</rhino.version>
 		<hazelcast.version>5.3.1</hazelcast.version>
 		<hibernate.version>6.2.7.Final</hibernate.version>
+		<jboss-logging.version>3.5.3.Final</jboss-logging.version>
 		<urlrewritefilter.version>5.1.0-SNAPSHOT</urlrewritefilter.version>
 
 	</properties>
@@ -400,6 +401,17 @@
 			<groupId>org.hibernate.orm</groupId>
         		<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>${jboss-logging.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

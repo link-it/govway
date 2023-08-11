@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.3.dev"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.3.dev_testsuite"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.4.dev"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.4.dev_testsuite"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3.9_lib"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3.9_lib_karate"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3.9_lib_stub"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_karate"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.4_lib_stub"/>
 	<classpathentry kind="lib" path="lib/openspcoop2_protocol-trasparente_rpc_literal_example_skeleton.jar"/>
 	<classpathentry kind="lib" path="lib/openspcoop2_protocol-trasparente_rpc_literal_example_stub.jar"/>
 	<classpathentry kind="output" path="bin"/>

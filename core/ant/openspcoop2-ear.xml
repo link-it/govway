@@ -111,20 +111,6 @@
 		<var name="jboss_xml" value=""/>
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss4"/>
-				<equals arg1="${as}" arg2="jboss5"/>
-				<equals arg1="${as}" arg2="jboss6"/>
-			</or>
-			<then>
-				<copy file="${src}/META-INF/ejb-jar.xml.ejb2" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
-				<copy file="${src}/META-INF/jboss.xml.ejb2" tofile="${build}/tmpEJB/META-INF/jboss.xml" />
-				<var name="ejb_jar_xml" value="ejb-jar.xml"/>
-				<var name="jboss_xml" value="jboss.xml"/>
-			</then>
-		</if>
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -132,19 +118,7 @@
 				<copy file="${src}/META-INF/jboss.xml.ejb3" tofile="${build}/tmpEJB/META-INF/jboss-ejb3.xml" />
 				<var name="ejb_jar_xml" value="ejb-jar.xml"/>
 				<var name="jboss_xml" value="jboss-ejb3.xml"/>
-				<if>
-					<or>
-						<equals arg1="${as}" arg2="jboss7"/>
-						<equals arg1="${as}" arg2="wildfly8"/>
-						<equals arg1="${as}" arg2="wildfly9"/>
-					</or>
-					<then>
-						<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="hornetq-ra-govway"/>
-					</then>
-					<else>
-						<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="activemq-ra-govway"/>
-					</else>
-				</if>
+				<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="activemq-ra-govway"/>
 			</then>
 		</if>
 		
@@ -152,7 +126,6 @@
 		<var name="mailcap_info" value=""/>
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -184,7 +157,6 @@
 		<var name="mailcap_info" value=""/>
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -210,27 +182,10 @@
 		<mkdir dir="${build}/web-module" />
 		<copy file="${deploy_web_dir}/web_app/WEB-INF/jbossws-cxf.xml" todir="${build}/web-module" />
 		<copy file="${deploy_web_dir}/web_app/WEB-INF/urlrewrite.xml" todir="${build}/web-module" />
-		<var name="jboss_web_xml" value=""/>
-		<if>
-			<and>
-				<not>
-					<istrue value="${forceDisableJ2eeMode}"/>
-				</not>
-				<or>
-					<equals arg1="${as}" arg2="jboss4"/>
-					<equals arg1="${as}" arg2="jboss5"/>
-					<equals arg1="${as}" arg2="jboss6"/>
-				</or>
-			</and>
-			<then>
-				<var name="jboss_web_xml" value="jboss-web.xml"/>
-			</then>
-		</if>
 		<!-- mailcap -->
 		<var name="mailcap_info" value=""/>
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -305,15 +260,6 @@
 		<!-- costruzione application.xml -->
 		<delete file="${build}/application.xml" />
 		<if>
-			<matches string="${as}" pattern="jboss.*"/>
-			<then>
-				<concat destfile="${build}/application.xml" append="yes">
-					<filelist dir="${src}/META-INF"
-		                           files="application.xml.${as}"/>
-				</concat>
-			</then>
-		</if>
-		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
 				<concat destfile="${build}/application.xml" append="yes">
@@ -363,13 +309,12 @@
 		<copy file="${properties_dir}/govway.properties" todir="${build}/tmp" />
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<concat destfile="${build}/tmp/govway.properties" append="yes" >
 
-# ----- Personalizzazione per JBoss7.x/WildFly -------------
+# ----- Personalizzazione per WildFly -------------
 				</concat>
 				<antcall target="set_property">
 				    <param name="file" value="${build}/tmp/govway.properties"/>
@@ -378,8 +323,9 @@
 				</antcall>
 				<if>
 					<or>
-						<matches string="${as}" pattern="wildfly25"/>
-						<matches string="${as}" pattern="wildfly26"/>
+						<matches string="${as}" pattern="wildfly27"/>
+						<matches string="${as}" pattern="wildfly28"/>
+						<matches string="${as}" pattern="wildfly29"/>
 					</or>
 					<then>
 						<antcall target="set_property">
@@ -391,7 +337,7 @@
 				</if>
 				<concat destfile="${build}/tmp/govway.properties" append="yes" >
 
-# ----- Personalizzazione Timer EJB Name per JBoss7.x/WildFly -------------
+# ----- Personalizzazione Timer EJB Name per WildFly -------------
 				</concat>
 				<antcall target="set_property">
 				    <param name="file" value="${build}/tmp/govway.properties"/>
@@ -473,15 +419,9 @@
 		<var name="mailapi_jar" value="" />
 		<if>
 			<or>
-				<matches string="${as}" pattern="wildfly18"/>
-				<matches string="${as}" pattern="wildfly19"/>
-				<matches string="${as}" pattern="wildfly20"/>
-				<matches string="${as}" pattern="wildfly21"/>
-				<matches string="${as}" pattern="wildfly22"/>
-				<matches string="${as}" pattern="wildfly23"/>
-				<matches string="${as}" pattern="wildfly24"/>
-				<matches string="${as}" pattern="wildfly25"/>
-				<matches string="${as}" pattern="wildfly26"/>
+				<matches string="${as}" pattern="wildfly27"/>
+				<matches string="${as}" pattern="wildfly28"/>
+				<matches string="${as}" pattern="wildfly29"/>
 			</or>
 			<then>
 				<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.2.jar" dest="${build}/tmp/mailapi"/>
@@ -501,7 +441,6 @@
 		<var name="commons_logging_jar" value="" />
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -513,9 +452,6 @@
 		<var name="xalan_serializer_jar" value="" />
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss4"/>
-				<equals arg1="${as}" arg2="jboss6"/>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -528,7 +464,6 @@
 		<var name="xml_apis_jar" value=""/>
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -539,6 +474,7 @@
 		<!-- hazecalst lib -->
 		<var name="hazelcast-all_jar" value="" />
 		<var name="hazelcast-hibernate_jar" value="" />
+		<var name="hazelcast-jboss-logging_jar" value="" />
 		<var name="hazelcast_properties" value="" />
 		<if>
 			<or>
@@ -547,6 +483,7 @@
 			<then>
 				<var name="hazelcast-all_jar" value="hazelcast-5.3.1.jar" />
 				<var name="hazelcast-hibernate_jar" value="hibernate-core-6.2.7.Final.jar" />
+				<var name="hazelcast-jboss-logging_jar" value="jboss-logging-3.5.3.Final.jar" />
 				<var name="hazelcast_properties" value="govway.hazelcast*" />
 			</then>
 		</if>
@@ -570,51 +507,17 @@
 				<var name="jminix_jar" value="*.jar" />
 			</then>
 		</if>
-		<!-- jboss_app -->
-		<var name="jboss_app_xml" value=""/>
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss4"/>
-				<equals arg1="${as}" arg2="jboss5"/>
-				<equals arg1="${as}" arg2="jboss6"/>
-			</or>
-			<then>
-				<copy file="${src}/META-INF/jboss-app.xml.${as}" tofile="${build}/tmp/jboss-app.xml" />
-				<var name="jboss_app_xml" value="jboss-app.xml"/>
-			</then>
-		</if>
 		<!-- jboss_deployment_structure -->
 		<var name="jboss_deployment_structure_xml" value=""/>
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<if>
-					<equals arg1="${as}" arg2="jboss7"/>
-					<then>
-						<copy file="${src}/META-INF/jboss-deployment-structure.xml.${as}" tofile="${build}/tmp/jboss-deployment-structure.xml" />
-					</then>
-				</if>
-				<if>
 					<matches string="${as}" pattern="wildfly.*"/>
 					<then>
-						<if>
-							<or>
-								<matches string="${as}" pattern="wildfly22"/>
-								<matches string="${as}" pattern="wildfly23"/>
-								<matches string="${as}" pattern="wildfly24"/>
-								<matches string="${as}" pattern="wildfly25"/>
-								<matches string="${as}" pattern="wildfly26"/>
-							</or>
-							<then>
-								<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build}/tmp/jboss-deployment-structure.xml" />
-							</then>
-							<else>
-								<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly" tofile="${build}/tmp/jboss-deployment-structure.xml" />
-							</else>
-						</if>
+						<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly" tofile="${build}/tmp/jboss-deployment-structure.xml" />
 					</then>
 				</if>
 				<var name="jboss_deployment_structure_xml" value="jboss-deployment-structure.xml"/>
@@ -698,18 +601,6 @@
 				<var name="jboss_all_xml" value="jboss-all.xml"/>
 			</then>
 		</if>
-		<!-- mailcap -->
-		<var name="mailcap_info" value=""/>
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss4"/>
-				<equals arg1="${as}" arg2="jboss5"/>
-				<equals arg1="${as}" arg2="jboss6"/>
-			</or>
-			<then>
-				<var name="mailcap_info" value="mailcap"/>
-			</then>
-		</if>
 		
 		<!-- Ripulisco file su cui ho fatto replace token -->
 		<antcall target="dos2unix">
@@ -731,10 +622,6 @@
 				<include name="${jboss_app_xml}" />
 				<include name="${jboss_deployment_structure_xml}" />
 				<include name="${jboss_all_xml}" />
-			</zipfileset>
-			<!-- DataContentHandler per application/openspcoop2 -->
-			<zipfileset dir="${data_content_handler_dir}" prefix="META-INF">
-				<include name="${mailcap_info}" />
 			</zipfileset>
 			<!-- Applicazioni proprietarie di OpenSPCoop -->
 			<zipfileset dir="${dist}">
@@ -801,6 +688,7 @@
 				<include name="rhino-1.7.14.jar"/>
 				<include name="${hazelcast-all_jar}"/>
 				<include name="${hazelcast-hibernate_jar}"/>
+				<include name="${hazelcast-jboss-logging_jar}"/>
 				<include name="ehcache-3.10.0.jar"/>
 				<!-- NOTA: 
 					non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF)
@@ -827,6 +715,8 @@
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jakarta">
 				<include name="jakarta.xml.ws-api-3.0.1.jar"/>
+				<include name="jakarta.jws-api-3.0.0.jar"/>
+				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/spring">
 				<include name="*.jar"/>

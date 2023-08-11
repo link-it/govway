@@ -354,7 +354,6 @@
 	<target name="_build_archivio">
 		<if>
 			<or>
-				<matches string="${as}" pattern="jboss.*"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -379,7 +378,6 @@
 	<target name="_deploy_as">
 		<if>
 			<or>
-				<matches string="${as}" pattern="jboss.*"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -407,7 +405,6 @@
 	<target name="touch">
 		<if>
 			<or>
-				<matches string="${as}" pattern="jboss.*"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>

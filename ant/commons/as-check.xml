@@ -19,73 +19,32 @@
 			</then>
 		</if>
 		<if>
-			<matches string="${as}" pattern="jboss.*"/>
+			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 4.x (jboss4), 5.x (jboss5), 6.x (jboss6) e 7.x (jboss7)"/>
+				<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 27.x (wildfly27), 28.x (wildfly28) e 29.x (wildfly29)"/>
 				<if>
 					<equals arg1="${as}" arg2="jboss"/>
 					<then>
-						<fail message="Non è stata indicata una versione per l'application server JBoss. ${versioniSupportate}"/>				
+						<fail message="Non è stata indicata una versione per l'application server WildFly. ${versioniSupportate}"/>				
 					</then>
 				</if>
 				<if>
 					<not>
 						<or>
-							<equals arg1="${as}" arg2="jboss4"/>
-							<equals arg1="${as}" arg2="jboss5"/>
-							<equals arg1="${as}" arg2="jboss6"/>
-							<equals arg1="${as}" arg2="jboss7"/>
+							<equals arg1="${as}" arg2="wildfly27"/>
+							<equals arg1="${as}" arg2="wildfly28"/>
+							<equals arg1="${as}" arg2="wildfly29"/>
 						</or>
 					</not>
 					<then>
-						<fail message="Versione fornita [${as}] dell'application server JBoss non supportata. ${versioniSupportate}"/>
+						<fail message="Versione fornita [${as}] dell'application server WildFly non supportata. ${versioniSupportate}"/>
 					</then>
 				</if>
 			</then>
 			<elseif>
-				<matches string="${as}" pattern="wildfly.*"/>
-				<then>
-					<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 8.x (wildfly8), 9.x (wildfly9), 10.x (wildfly10), 11.x (wildfly11), 12.x (wildfly12), 13.x (wildfly13), 14.x (wildfly14), 15.x (wildfly15), 16.x (wildfly16), 17.x (wildfly17), 18.x (wildfly18), 19.x (wildfly19), 20.x (wildfly20), 21.x (wildfly21), 22.x (wildfly22), 23.x (wildfly23), 24.x (wildfly24), 25.x (wildfly25) e 26.x (wildfly26)"/>
-					<if>
-						<equals arg1="${as}" arg2="wildfly"/>
-						<then>
-							<fail message="Non è stata indicata una versione per l'application server WildFly. ${versioniSupportate}"/>				
-						</then>
-					</if>
-					<if>
-						<not>
-							<or>
-								<equals arg1="${as}" arg2="wildfly8"/>
-								<equals arg1="${as}" arg2="wildfly9"/>
-								<equals arg1="${as}" arg2="wildfly10"/>
-								<equals arg1="${as}" arg2="wildfly11"/>
-								<equals arg1="${as}" arg2="wildfly12"/>
-								<equals arg1="${as}" arg2="wildfly13"/>
-								<equals arg1="${as}" arg2="wildfly14"/>
-								<equals arg1="${as}" arg2="wildfly15"/>
-								<equals arg1="${as}" arg2="wildfly16"/>
-								<equals arg1="${as}" arg2="wildfly17"/>
-								<equals arg1="${as}" arg2="wildfly18"/>
-								<equals arg1="${as}" arg2="wildfly19"/>
-								<equals arg1="${as}" arg2="wildfly20"/>
-								<equals arg1="${as}" arg2="wildfly21"/>
-								<equals arg1="${as}" arg2="wildfly22"/>
-								<equals arg1="${as}" arg2="wildfly23"/>
-								<equals arg1="${as}" arg2="wildfly24"/>
-								<equals arg1="${as}" arg2="wildfly25"/>
-								<equals arg1="${as}" arg2="wildfly26"/>
-							</or>
-						</not>
-						<then>
-							<fail message="Versione fornita [${as}] dell'application server WildFly non supportata. ${versioniSupportate}"/>
-						</then>
-					</if>
-				</then>	
-			</elseif>
-			<elseif>
 				<matches string="${as}" pattern="tomcat.*"/>
 				<then>
-					<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 5.x (tomcat5), 6.x (tomcat6), 7.x (tomcat7), 8.x (tomcat8) e 9.x (tomcat9)"/>
+					<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 10.x (tomcat10)"/>
 					<if>
 						<equals arg1="${as}" arg2="tomcat"/>
 						<then>
@@ -95,11 +54,7 @@
 					<if>
 						<not>
 							<or>
-								<equals arg1="${as}" arg2="tomcat5"/>
-								<equals arg1="${as}" arg2="tomcat6"/>
-								<equals arg1="${as}" arg2="tomcat7"/>
-								<equals arg1="${as}" arg2="tomcat8"/>
-								<equals arg1="${as}" arg2="tomcat9"/>
+								<equals arg1="${as}" arg2="tomcat10"/>
 							</or>
 						</not>
 						<then>
@@ -109,7 +64,7 @@
 				</then>	
 			</elseif>
 			<else>
-				<fail message="GovWay non supporta il server indicato [${as}], richiede uno dei seguenti server: tomcat, jboss, wildfly"/>
+				<fail message="GovWay non supporta il server indicato [${as}], richiede uno dei seguenti server: tomcat, wildfly"/>
 			</else>
 		</if>
 		<if>

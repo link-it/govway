@@ -3,11 +3,17 @@
     	<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
     	<dependencies>
             <module name="deployment.custom" />
-        </dependencies> 
+        </dependencies>
+	<exclude-subsystems>
+		<subsystem name="logging"/>
+	</exclude-subsystems> 
     	<exclusions>
-        	<module name="org.slf4j" />
+        	<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
+		<module name="org.slf4j" />
 		<module name="org.apache.log4j" />
-		<module name="org.apache.commons.logging"/>		
+		<module name="org.apache.commons.logging"/>
+		<module name="org.apache.logging.log4j.api"/>
+		-->
 		<!-- non caricato in wf18 e java 11
 		<module name="org.apache.cxf" />
         	<module name="org.springframework.spring" />

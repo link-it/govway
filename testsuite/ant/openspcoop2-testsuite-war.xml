@@ -48,7 +48,6 @@
 		<copy file="${cfg_testsuite}/testsuite.properties" todir="${build_testsuite}/tmp" />
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
@@ -62,29 +61,9 @@
 
 		<!-- jboss-deployment-structure -->
 		<if>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<then>
-				<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.${as}" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
-			</then>
-		</if>
-		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<if>
-					<or>
-						<matches string="${as}" pattern="wildfly22"/>
-						<matches string="${as}" pattern="wildfly23"/>
-						<matches string="${as}" pattern="wildfly24"/>
-						<matches string="${as}" pattern="wildfly25"/>
-						<matches string="${as}" pattern="wildfly26"/>
-					</or>
-					<then>
-						<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
-					</then>
-					<else>
-						<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
-					</else>
-				</if>
+				<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
 			</then>
 		</if>
 
@@ -163,7 +142,7 @@
 				<include name="spring-web-6.0.11.jar"/>
 				<include name="spring-core-6.0.11.jar"/>
 			</lib>
-			<lib dir="${required_lib}/jax">
+			<lib dir="${required_lib}/jaxb">
 				<include name="${jaxb_jar}" />
 			</lib>
 			<lib dir="${required_lib}/jackson">
@@ -174,8 +153,8 @@
 				<include name="slf4j-api-2.0.7-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
-			<lib dir="${required_lib}/javax">
-				<include name="${javax.jms-api-2.0.1.jar}"/>
+			<lib dir="${required_lib}/jakarta">
+				<include name="${jakarta_jms-api_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/stub/axis14">
 				<include name="openspcoop2_integrationManagerStub_axis14.jar"/>

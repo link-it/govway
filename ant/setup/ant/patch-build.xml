@@ -119,7 +119,6 @@ Esempi:
 		<!-- *** Aggiunta dell'applicazione govway ***-->
 		<if>
 			<or>
-				<matches string="${antinstaller_as}" pattern="jboss.*"/>
 				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 			</or>	
 			<then>

@@ -19,7 +19,6 @@
 		
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<classmate.version>1.5.1</classmate.version>
-		<jboss-logging.version>3.5.0.Final</jboss-logging.version>
 
 	</properties>
 
@@ -52,18 +51,6 @@
 			<groupId>com.fasterxml</groupId>
 			<artifactId>classmate</artifactId>
 			<version>${classmate.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.logging</groupId>
-			<artifactId>jboss-logging</artifactId>
-			<version>${jboss-logging.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

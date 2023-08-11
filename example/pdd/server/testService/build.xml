@@ -64,7 +64,6 @@
 	<!-- commons_logging -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
@@ -86,7 +85,6 @@
 	<var name="jboss_deployment_structure" value="" />
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -99,7 +97,6 @@
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -113,9 +110,6 @@
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
-			<equals arg1="${as}" arg2="jboss4"/>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -141,32 +135,10 @@
 		<mkdir dir="${build}/example" />
 		
 		<if>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<then>
-				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.${as}" 
-						tofile="${build}/example/${jboss_deployment_structure}" />
-			</then>
- 		</if>
-		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<if>
-					<or>
-						<matches string="${as}" pattern="wildfly22"/>
-						<matches string="${as}" pattern="wildfly23"/>
-						<matches string="${as}" pattern="wildfly24"/>
-						<matches string="${as}" pattern="wildfly25"/>
-						<matches string="${as}" pattern="wildfly26"/>
-					</or>
-					<then>
-						<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly2" 
-								tofile="${build}/example/${jboss_deployment_structure}" />
-					</then>
-					<else>
-						<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly" 
-								tofile="${build}/example/${jboss_deployment_structure}" />
-					</else>
-				</if>
+				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly" 
+						tofile="${build}/example/${jboss_deployment_structure}" />
 			</then>
  		</if>
 		
@@ -214,7 +186,12 @@
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
+			</lib>
+			<lib dir="${libs}/jakarta">
 				<include name="${jakarta_activation_jar}"/>
+				<include name="jakarta.xml.ws-api-3.0.1.jar"/>
+				<include name="jakarta.jws-api-3.0.0.jar"/>
+				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
 			</lib>
 			<!-- Risoluzione Warning WARN  [org.jboss.as.ee] (MSC service thread 1-5) WFLYEE0007: Not installing optional component org.springframework ... -->
 			<lib dir="${libs}/commons">
@@ -224,15 +201,11 @@
 				<include name="reactive-streams-1.0.4.jar"/>
 			</lib>
 			<lib dir="${libs}/swagger">
-				<include name="swagger-annotations-2.2.15.jar .
-./replaceJar.sh swagger-core-1.6.8.jar swagger-core-1.6.11.jar"/>
-				<include name="swagger-core-2.2.15.jar .
-./replaceJar.sh swagger-integration-2.2.4.jar swagger-integration-2.2.15.jar"/>
-				<include name="swagger-integration-2.2.4.jar"/>
-				<include name="swagger-jaxrs2-2.2.15.jar .
-./replaceJar.sh swagger-models-1.6.8.jar swagger-models-1.6.11.jar"/>
-				<include name="swagger-models-2.2.15.jar .
-./replaceJar.sh swagger-parser-1.0.63.jar swagger-parser-1.0.67.jar"/>
+				<include name="swagger-annotations-2.2.15.jar"/>
+				<include name="swagger-core-2.2.15.jar"/>
+				<include name="swagger-integration-2.2.15.jar"/>
+				<include name="swagger-jaxrs2-jakarta-2.2.15.jar"/>
+				<include name="swagger-models-2.2.15.jar"/>
 			</lib>
 			<!-- Fine Risoluzione Warning WARN  [org.jboss.as.ee] (MSC service thread 1-5) WFLYEE0007: Not installing optional component org.springframework ... -->
 			<lib dir="${openspcoop2_libs}/">

@@ -171,6 +171,7 @@
 		<!-- hazecalst lib -->
 		<var name="hazelcast-all_jar" value="" />
 		<var name="hazelcast-hibernate_jar" value="" />
+		<var name="hazelcast-jboss-logging_jar" value="" />
 		<var name="hazelcast_properties" value="" />
 		<if>
 			<or>
@@ -179,6 +180,7 @@
 			<then>
 				<var name="hazelcast-all_jar" value="hazelcast-5.3.1.jar" />
 				<var name="hazelcast-hibernate_jar" value="hibernate-core-6.2.7.Final.jar" />
+				<var name="hazelcast-jboss-logging_jar" value="jboss-logging-3.5.3.Final.jar" />
 				<var name="hazelcast_properties" value="govway.hazelcast*" />
 			</then>
 		</if>
@@ -283,6 +285,7 @@
 				<include name="rhino-1.7.14.jar"/>
 				<include name="${hazelcast-all_jar}"/>
 				<include name="${hazelcast-hibernate_jar}"/>
+				<include name="${hazelcast-jboss-logging_jar}"/>
 				<include name="ehcache-3.10.0.jar"/>
 				<!-- NOTA: 
 					non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF)
@@ -304,6 +307,8 @@
 				<include name="*.jar" />
 			</lib>
 			<lib dir="${required_lib}/jakarta">
+				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
+				<include name="jakarta.jws-api-3.0.0.jar"/>
 				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
 			</lib>
 			<lib dir="${required_lib}/spring">

@@ -6,9 +6,9 @@
 	<property name="openspcoop2" location="../.."/>
 
 	<!-- ApplicationServer version -->
-	<property name="as" value="jboss/wildfly/tomcat" />
+	<property name="as" value="wildfly/tomcat" />
 	  
-	<!-- Driver JDBC (Necessario in jboss7, wildfly) -->
+	<!-- Driver JDBC (Necessario in wildfly) -->
 	<property name="driverJDBC" value="PATH_DRIVER_JDBC" />
 
 	<!-- OpenSPCoop2 libs -->

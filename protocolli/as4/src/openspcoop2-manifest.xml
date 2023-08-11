@@ -340,7 +340,6 @@
     			<undefined messageType="binary"/>
     		</mediaTypeCollection>
     		<interfaces>
-    			<specification type="wadl" />
     			<specification type="swagger2" />
     			<specification type="openApi3" />
     		</interfaces>

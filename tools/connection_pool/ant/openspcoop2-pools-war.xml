@@ -18,7 +18,6 @@
 		<mkdir dir="${build_openspcoop2Pools}/tmp_driver_jdbc"/>
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>

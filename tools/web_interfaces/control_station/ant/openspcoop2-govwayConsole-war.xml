@@ -180,29 +180,9 @@
 		</if>
 		
 		<if>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<then>
-				<copy file="${src_govwayConsole}/WEB-INF/${jboss_deployment_structure}.${as}" tofile="${build_govwayConsole}/tmp/${jboss_deployment_structure}" />
-			</then>
-		</if>
-		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<if>
-					<or>
-						<matches string="${as}" pattern="wildfly22"/>
-						<matches string="${as}" pattern="wildfly23"/>
-						<matches string="${as}" pattern="wildfly24"/>
-						<matches string="${as}" pattern="wildfly25"/>
-						<matches string="${as}" pattern="wildfly26"/>
-					</or>
-					<then>
-						<copy file="${src_govwayConsole}/WEB-INF/${jboss_deployment_structure}.wildfly2" tofile="${build_govwayConsole}/tmp/${jboss_deployment_structure}" />
-					</then>
-					<else>
-						<copy file="${src_govwayConsole}/WEB-INF/${jboss_deployment_structure}.wildfly" tofile="${build_govwayConsole}/tmp/${jboss_deployment_structure}" />
-					</else>
-				</if>
+				<copy file="${src_govwayConsole}/WEB-INF/${jboss_deployment_structure}.wildfly" tofile="${build_govwayConsole}/tmp/${jboss_deployment_structure}" />
 			</then>
 		</if>
 		<!-- Copia della configurazione cookie same site per WF26 -->
@@ -293,7 +273,6 @@
 				<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
 				<or>
 					<matches string="${as}" pattern="wildfly.*"/>
-					<equals arg1="${as}" arg2="jboss7"/>
 				</or>
 			</and>
 			<then>

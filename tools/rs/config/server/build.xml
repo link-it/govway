@@ -57,11 +57,11 @@
 	<var name="jsf_impl_jar" value="" />
 	<var name="jsf_api_jar" value="" />
 	<var name="el_impl_jar" value="" />
-	<var name="el-api-1.0.jar" value="" />
 	<var name="jakarta_xml_soap-api_jar" value="" />
 	<var name="jakarta_activation_jar" value="" />
 	<var name="validation-api-2.0.1_jar" value="" />
 	<var name="bean-validation_jars" value="" />
+	<var name="jboss-logging_jar" value="" />
 	<var name="jsf_module_jar" value="" />
 	<var name="wildfly_module_jar" value="" />
 	<var name="jboss_classloading" value="" />
@@ -71,7 +71,6 @@
 	<!-- commons_logging -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
@@ -92,9 +91,6 @@
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
-			<equals arg1="${as}" arg2="jboss4"/>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -106,7 +102,6 @@
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -126,8 +121,6 @@
 	<!-- jsr311-api_jar -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -161,15 +154,6 @@
 		</or>
 		<then>
 			<var name="el_impl_jar" value="el-impl-2.2.jar" />
-		</then>
-	</if>
-	<!-- el-api-1.0.jar -->
-	<if>
-		<or>
-			<equals arg1="${as}" arg2="tomcat5"/>
-		</or>
-		<then>
-			<var name="el-api-1.0.jar" value="el-api-1.0.jar" />
 		</then>
 	</if>
 	<!-- jakarta_xml_soap-api_jar -->
@@ -206,6 +190,7 @@
 		</or>
 		<then>
 			<var name="bean-validation_jars" value="*.jar" />
+			<var name="jboss-logging_jar" value="*.jar" /> <!-- richiesto da hibernate-validation -->
 		</then>
 	</if>	
 
@@ -235,8 +220,6 @@
 	<!-- jboss_classloading -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -246,8 +229,6 @@
 	<!-- jboss_scanning -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
@@ -257,7 +238,6 @@
 	<!-- jboss_deployment_structure -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
