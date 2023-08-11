@@ -5,6 +5,7 @@
     </description>
 
 	<property name="libs" value="../../../../lib/" />
+	<property name="utils_dist" value="../../../../tools/utils/dist/" />
 
 	<!-- estensione di ant (if .... ) -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
@@ -44,7 +45,7 @@
                         <compilerarg value="-Xlint:deprecation"/>-->
 			<src path="${src}" />
 			<classpath>
-				<fileset dir="${libs}" includes="**/*.jar"/>
+				<path refid="classpath" />
 			</classpath>
 		</javac>
 	</target>
@@ -58,7 +59,7 @@
 		<if>
 			<equals arg1="${as}" arg2="$${as}"/>
 		    <then>
-		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant receive -Das=VERSION -DtipoTest=TEST' [-Dusername=username -Dpassword=password] (indicare jbossVersionNumber es. jboss6)"/>
+		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant receive -Das=VERSION -DtipoTest=TEST' [-Dusername=username -Dpassword=password] (indicare jbossVersionNumber es. wildfly27)"/>
 			</then>
 		</if>
 		
@@ -97,7 +98,7 @@
 		<if>
 			<equals arg1="${as}" arg2="$${as}"/>
 		    <then>
-		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant send -Das=VERSION -DtipoTest=TEST' [-Dusername=username -Dpassword=password] (indicare jbossVersionNumber es. jboss6)"/>
+		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant send -Das=VERSION -DtipoTest=TEST' [-Dusername=username -Dpassword=password] (indicare jbossVersionNumber es. wildfly27)"/>
 			</then>
 		</if>
 		
@@ -110,7 +111,7 @@
 
 		
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.example.pdd.client.jmsreceiver.${tipoTest}Sender" fork="false">
+		<java classname="org.openspcoop2.example.pdd.client.jmsreceiver.${tipoTest}Sender" fork="true">
 			<arg value="${as}" />
 			<arg value="${username}" />
 			<arg value="${password}" />
@@ -129,10 +130,10 @@
 
 	<!-- Classpath -->
 	<path id="classpath">
-		<fileset dir="${libs}/javax" includes="javax.jms-api-2.0.1.jar"/>
-		<fileset dir="${libs}/shared" includes="com.springsource.edu.oswego.cs.dl.util.concurrent-1.3.4.jar"/>
+		<fileset dir="${libs}/jakarta" includes="jakarta.jms-api-3.1.0.jar"/>
 		<fileset dir="${libs}/shared" includes="xercesImpl-2.12.2.jar"/>
 		<fileset dir="${libs}/log" includes="*.jar"/>
+		<fileset dir="${utils_dist}" includes="*.jar"/>
 	</path>
 
 

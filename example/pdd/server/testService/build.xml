@@ -72,17 +72,6 @@
 			<var name="commons_logging_jar" value="commons-logging-1.2.jar" />
 		</then>
 	</if>
-	<!-- jaxp_ri -->
-	<var name="jaxp_ri_jar" value=""/>
-	<if>
-		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
-		</then>
-	</if>
 	<!-- neethi -->
 	<var name="neethi_jar" value="" />
 	<if>
@@ -211,10 +200,6 @@
 			</lib>
 			<lib dir="${libs}/spring">
 				<include name="*.jar"/>
-			</lib>
-			<lib dir="${libs}/jax">
-				<include name="jaxws-*.jar"/>
-				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${libs}/log">
 				<include name="slf4j-api-2.0.7-gov4j-1.jar"/>

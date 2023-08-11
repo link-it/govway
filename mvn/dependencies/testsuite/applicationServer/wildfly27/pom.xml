@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>${revision}</version>
-	<artifactId>org.openspcoop2.testsuite.applicationServer.wildfly8</artifactId>
+	<artifactId>org.openspcoop2.testsuite.applicationServer.wildfly27</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.testsuite.as.wildfly8</name>
+	<name>dependencies.testsuite.as.wildfly27</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
@@ -15,9 +15,9 @@
 
 	<properties>
 
-		<jar.group.name>wildfly8</jar.group.name>
+		<jar.group.name>wildfly27</jar.group.name>
 		
-		<wildfly.version>wf8</wildfly.version>
+		<wildfly.version>wf27</wildfly.version>
 
 	</properties>
 
@@ -108,5 +108,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

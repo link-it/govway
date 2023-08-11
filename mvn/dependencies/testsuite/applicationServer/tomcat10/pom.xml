@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>${revision}</version>
-	<artifactId>org.openspcoop2.testsuite.applicationServer.wildfly15</artifactId>
+	<artifactId>org.openspcoop2.testsuite.applicationServer.tomcat10</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.testsuite.as.wildfly15</name>
+	<name>dependencies.testsuite.as.tomcat10</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
@@ -15,18 +15,18 @@
 
 	<properties>
 
-		<jar.group.name>wildfly15</jar.group.name>
+		<jar.group.name>tomcat10</jar.group.name>
 		
-		<wildfly.version>wf15</wildfly.version>
+		<tomcat.version>10.1.11</tomcat.version>
 
 	</properties>
 
 	<dependencies>
 	
 		<dependency>
-			<groupId>org.wildfly</groupId>
-			<artifactId>jboss-client</artifactId>
-			<version>${wildfly.version}</version>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<version>${tomcat.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -35,6 +35,19 @@
 			</exclusions>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-juli</artifactId>
+			<version>${tomcat.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
 
 	</dependencies>
 

@@ -58,7 +58,6 @@
 	
 	<!-- Jar dipendenti dall'A.S. -->
 	<var name="commons_logging_jar" value="" />
-	<var name="jaxp_ri_jar" value=""/>
 	<var name="jboss_deployment_structure" value="" />		
 
 	<!-- commons_logging -->
@@ -70,16 +69,6 @@
 		</or>
 		<then>
 			<var name="commons_logging_jar" value="commons-logging-1.2.jar" />
-		</then>
-	</if>
-	<!-- jaxp_ri -->
-	<if>
-		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
 		</then>
 	</if>
 	<!-- jboss_deployment_structure -->
@@ -207,9 +196,6 @@
 			<lib dir="${ws_validazione_lib}/log">
 				<include name="slf4j-api-2.0.7-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
-			</lib>
-			<lib dir="${ws_validazione_lib}/jax">
-				<include name="${jaxp_ri_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.dist}" >
 				<include name="openspcoop2_utils*.jar"/>

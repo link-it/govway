@@ -11,26 +11,8 @@
 	</properties>
 
 	<modules>
-                <module>wildfly8</module>
-		<module>wildfly9</module>
-		<module>wildfly10</module>
-		<module>wildfly11</module>
-		<module>wildfly12</module>
-		<module>wildfly13</module>
-		<module>wildfly14</module>
-		<module>wildfly15</module>
-		<module>wildfly16</module>
-		<module>wildfly17</module>
-		<module>wildfly18</module>
-		<module>wildfly19</module>
-		<module>wildfly20</module>
-		<module>wildfly21</module>
-		<module>wildfly22</module>
-		<module>wildfly23</module>
-		<module>wildfly24</module>
-		<module>wildfly25</module>
-		<module>wildfly26</module>
-		<module>tomcat9</module>
+                <module>wildfly27</module>
+		<module>tomcat10</module>
 	</modules>
 
 	<parent>

@@ -131,6 +131,9 @@ public class LoggerWrapperFactory {
 	public static void setDefaultLogConfiguration(Level level,boolean console,String layoutConsole,
 			File file,String layoutFile) {
 		
+		// log4j2.disable.jmx=true
+		System.setProperty("log4j2.disable.jmx", "true");
+		
 		if(layoutConsole==null){
 			layoutConsole=FORMAT_MSG;
 		}

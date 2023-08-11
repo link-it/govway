@@ -48,7 +48,6 @@
 	<var name="xalan_jar" value="" />
 	<var name="xalan_serializer_jar" value="" />
 	<var name="jaxb_jar" value=""/>
-	<var name="jaxp_ri_jar" value=""/>
 	<var name="axis_saaj_jar" value=""/>
 	<var name="jackson_jar" value=""/>
 	<var name="jboss_classloading" value="" />
@@ -108,16 +107,6 @@
 		</or>
 		<then>
 			<var name="jaxb_jar" value="jaxb-*.jar"/>
-		</then>
-	</if>
-	<!-- jaxp_ri -->
-	<if>
-		<or>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
 		</then>
 	</if>
 	<!-- axis_saaj_jar -->
