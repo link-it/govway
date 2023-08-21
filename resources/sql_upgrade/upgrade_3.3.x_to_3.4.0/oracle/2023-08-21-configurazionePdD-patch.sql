@@ -1,0 +1,1 @@
+../../../../tools/web_interfaces/control_station/deploy/sql/patch/oracle/2023-08-21-patch.sql

@@ -32,7 +32,6 @@
 			<param name="tipoDatabase" value="${TIPO_DB}"/>
 			<param name="sql" value="${core}/deploy/sql"/>
 			<param name="sql_govwayConsole" value="${govwayConsole}/deploy/sql"/>
-			<param name="sql_queue" value="${sql_queue}"/>
 			<param name="sql_audit" value="${sql_audit}"/>
 			<param name="sql_users" value="${sql_users}"/>
 			<param name="dist_govwayConsole" value="${deploy_sql}/${TIPO_DB}/"/>

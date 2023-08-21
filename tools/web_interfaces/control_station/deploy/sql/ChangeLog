@@ -1,3 +1,7 @@
+2023-08-21  Andrea Poli <apoli@link.it>
+
+	Eliminate tabelle per la libreria 'queue'
+
 2023-07-31  Andrea Poli <apoli@link.it>
 
 	Eliminate colonne ip e porta sulla tabella 'pdd'

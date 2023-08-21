@@ -67,12 +67,12 @@
 			<exclude name="*.userlibraries"/>
 			<exclude name="axis14/*"/>
 			<include name="commons/*"/>
+			<include name="console/*"/>
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>
 			<include name="faces/*"/>
 			<include name="jackson/*"/>
-			<include name="jax/jaxb*"/>
-			<include name="jax/jaxws*"/>
+			<include name="jaxb/*"/>
 			<include name="jakarta/*"/>
 			<include name="jminix/*"/>
 			<include name="json/*"/>

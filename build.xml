@@ -13,7 +13,7 @@
 	<property name="build" location="build" />
 	<property name="buildAPI" location="false" />
 	<property name="buildAsRelease" value="false" />
-	<property name="as" value="wildfly10" />
+	<property name="as" value="wildfly27" />
 	<property name="debug" value="true" />
 
 	<!-- estensione di ant (if .... ) -->
@@ -152,21 +152,6 @@
 	</if>
 	<import file="${web.lib.audit.dir}/build.xml" />
 	
-	<!-- Tools - WebInterfaces - Lib - Queue -->
-	<property name="web.lib.queue.dir" location="${rootDir}/tools/web_interfaces/lib/queue" />
-	<property name="queue" value="${web.lib.queue.dir}" />
-	<available file="${web.lib.queue.dir}/local_env.xml" property="web_lib_queue_localenv.present"/>
-	<if>
-		<not>
-			<equals arg1="${web_lib_queue_localenv.present}" arg2="true"/>
-		</not>
-		<then>
-			<copy file="${web.lib.queue.dir}/local_env.xml.template" tofile="${web.lib.queue.dir}/local_env.xml"/>
-			<replace file="${web.lib.queue.dir}/local_env.xml" token="wildfly/tomcat" value="${as}"/>
-		</then>
-	</if>
-	<import file="${web.lib.queue.dir}/build.xml" />
-	
 	<!-- Tools - WebInterfaces - govwayConsole -->
 	<property name="web.govwayConsole.dir" location="${rootDir}/tools/web_interfaces/control_station" />
 	<available file="${web.govwayConsole.dir}/local_env.xml" property="web_govwayConsole_localenv.present"/>
@@ -262,12 +247,12 @@
 			<exclude name="*.userlibraries"/>
 			<exclude name="axis14/*"/>
 			<include name="commons/*"/>
+			<include name="console/*"/>
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>
 			<include name="faces/*"/>
 			<include name="jackson/*"/>
-			<include name="jax/jaxb*"/>
-			<include name="jax/jaxws*"/>
+			<include name="jaxb/*"/>
 			<include name="jakarta/*"/>
 			<include name="jminix/*"/>
 			<include name="json/*"/>
@@ -285,7 +270,6 @@
 			<include name="openapi4j/*"/>
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
-			<include name="wadl/*"/>
 			<include name="testsuite/*"/>
 			<include name="stub/cxf/openspcoop2_registrySearchStub_cxf.jar"/>
 		</fileset>
@@ -392,15 +376,6 @@
 			<param name="src_audit" value="${web.lib.audit.dir}/src"/>
 			<param name="src_mvc" value="${web.lib.mvc.dir}/src"/>
 			<param name="src_users" value="${web.lib.users.dir}/src"/>
-			<param name="debug" value="${debug}"/>
-			<param name="buildAsRelease" value="true"/>
-			<param name="buildAPI" value="false"/>
-		</antcall>
-		
-		<antcall target="compile_queue" >
-			<param name="as" value="${as}"/>
-			<param name="rootDir" value="${rootDir}"/>
-			<param name="src_queue" value="${web.lib.queue.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>

@@ -38,13 +38,6 @@
 	<property name="src_mvc" value="${mvc}/src" />
 	<property name="required_lib_mvc" value="${required_lib}"/>
 	<import file="${mvc}/build.xml"/>
-	
-	<!-- Libreria Queue -->
-	<property name="queue" value="${rootDir}/tools/web_interfaces/lib/queue/" />
-	<property name="src_queue" value="${queue}/src" />
-	<property name="sql_queue" value="${queue}/deploy/sql" />
-	<property name="required_lib_queue" value="${required_lib}"/>
-	<import file="${queue}/build.xml"/>
 		
 	<!-- Libreria Audit -->
 	<property name="audit" value="${rootDir}/tools/web_interfaces/lib/audit/" />

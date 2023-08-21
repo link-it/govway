@@ -12,7 +12,6 @@
 		
 		<antcall target="_jar_weblib_users" />
 		<antcall target="_jar_weblib_mvc" />
-		<antcall target="_jar_weblib_queue" />
 		<antcall target="_jar_weblib_audit" />
 	    	
 		<delete includeEmptyDirs="true">
@@ -135,26 +134,6 @@
 			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_mvc" value="${src_mvc}"/>
-	 	</antcall>
-	
-	</target>
-	
-	<target name="_jar_weblib_queue">
-					
-		<if>
-			<not>
-				<available file="${queue}/local_env.xml"/>
-			</not>
-			<then>
-				<copy file="${queue}/local_env.xml.template" tofile="${queue}/local_env.xml" />
-			</then>
-		</if>
-						
-		<antcall target="compile_queue" >
-	    	<param name="dist_queue" value="${deploy_sw_openspcoop2_jars}"/>
-			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/>
-			<param name="rootDir" value="${rootDir}"/>
-			<param name="src_queue" value="${src_queue}"/>
 	 	</antcall>
 	
 	</target>

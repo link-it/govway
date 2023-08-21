@@ -395,12 +395,16 @@ public class OCSPTest {
 					_checkOCSPResponse_signedByResponderCertificate("checkOCSPResponse_signedByResponderCertificate_case3_noca", configType_noca, trustStore_noca);
 					throw new Exception("Attesa eccezione");
 				}catch(Exception e) {
-					if(e.getMessage().contains("Signing certificate is not authorized to sign OCSP responses: unauthorized different issuer certificate 'C=IT,ST=Italy,L=Pisa,O=Example,CN=ExampleCA'")) {
+					String caOrder1 = "C=IT,ST=Italy,L=Pisa,O=Example,CN=ExampleCA";
+					String caOrder2 = "CN=ExampleCA, O=Example, L=Pisa, ST=Italy, C=IT"; 
+					String msg = "Signing certificate is not authorized to sign OCSP responses: unauthorized different issuer certificate '@CA@'";
+					if(e.getMessage().contains(msg.replace("@CA@", caOrder1)) || e.getMessage().contains(msg.replace("@CA@", caOrder2))) {
 						System.out.println("Generata eccezione attesa: "+e.getMessage());
 					}
 					else {
 						throw e;
 					}
+
 				}
 				
 			}

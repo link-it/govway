@@ -39,7 +39,6 @@
 			<param name="openspcoop2" value="${rootDir}"/>
 			<param name="openspcoop2.dist" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
 			<param name="build_govwayMonitor" value="build"/>
-			<param name="queue" value="${queue}"/>
 			<param name="plugins_govwayMonitor" value="${govwayMonitor}/deploy/plugins"/>
 			<param name="deploy_govwayMonitor" value="${govwayMonitor}/deploy"/>
 			<param name="buildJsfAsModule" value="false"/>
@@ -47,9 +46,7 @@
 			<param name="src_govwayMonitor" value="${src_govwayMonitor}"/>
 			<param name="dist_govwayMonitor" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="build_govwayMonitor" value="build"/>
-			<param name="queue" value="${queue}"/>
 			<param name="dist_mvc" value="${deploy_sw}/${TIPO_AS}/dist"/>
-			<param name="dist_queue" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="dist_users" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="dist_audit" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="required_lib_govwayMonitorApiRS" value="${required_lib_govwayMonitorApiRS}"/>

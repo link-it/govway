@@ -38,16 +38,13 @@
 			<param name="printServerInfo" value="true"/>
 			<param name="openspcoop2" value="${rootDir}"/>
 			<param name="openspcoop2.dist" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
-			<param name="queue" value="${queue}"/>
 			<param name="plugins_govwayConsole" value="${govwayConsole}/deploy/plugins"/>
 			<param name="singlePdD" value="true"/>
 	 		<param name="data_content_handler_dir" value="${core}/deploy/data_content_handler" />
 			<param name="src_govwayConsole" value="${src_govwayConsole}"/>
 			<param name="dist_govwayConsole" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="build_govwayConsole" value="build"/>
-			<param name="queue" value="${queue}"/>
 			<param name="dist_mvc" value="${deploy_sw}/${TIPO_AS}/dist"/>
-			<param name="dist_queue" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="dist_users" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="dist_audit" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="required_lib_govwayConfigApiRS" value="${required_lib_govwayConfigApiRS}"/>

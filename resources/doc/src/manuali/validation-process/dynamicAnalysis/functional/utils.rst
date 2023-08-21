@@ -49,8 +49,6 @@ I sorgenti sono disponibili in `tools/utils/src/org/openspcoop2/utils/test <http
 
 - `org.openspcoop2.utils.test.transport <https://github.com/link-it/govway/tree/master/tools/utils/src/org/openspcoop2/utils/test/org/openspcoop2/utils/test/transport>`_; i test verificano l'utility che consente di ottenere un CORS Filter e l'utility che consente di trattere header HTTP compatibili con RFC 2047.
 
-- `org.openspcoop2.utils.test.wadl <https://github.com/link-it/govway/tree/master/tools/utils/src/org/openspcoop2/utils/test/org/openspcoop2/utils/test/wadl>`_; vengono verificate le utility che consentono di leggere e validare interfacce WADL.
-
 - `org.openspcoop2.utils.test.xacml <https://github.com/link-it/govway/tree/master/tools/utils/src/org/openspcoop2/utils/test/org/openspcoop2/utils/test/xacml>`_; i test verificano l'utility che consente di processare policy XACML.
 
 - `org.openspcoop2.utils.test.xml <https://github.com/link-it/govway/tree/master/tools/utils/src/org/openspcoop2/utils/test/org/openspcoop2/utils/test/xml>`_; i test verificano la corretta gestione delle entity references, le utility che consentono di processare XQuery, effettuare diff di file xml. Inoltre viene verificato che non sia attuabile un attacco XML eXternal Entity injection (XXE).
