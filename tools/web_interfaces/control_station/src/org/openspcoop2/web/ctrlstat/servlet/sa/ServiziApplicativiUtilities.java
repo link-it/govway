@@ -130,6 +130,16 @@ public class ServiziApplicativiUtilities {
 			soggettiListLabel[0] =saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
 		}
 		else {
+			
+			long idProvider = -1;
+			try {
+				if(provider!=null) {
+					idProvider = Long.parseLong(provider);
+				}
+			}catch(Exception e) {
+				// ignore
+			}
+			
 			tipoProtocollo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 			if(tipoProtocollo == null){
 				tipoProtocollo = saCore.getProtocolloDefault(saHelper.getRequest(), saHelper.getSession(), listaTipiProtocollo);
@@ -172,11 +182,17 @@ public class ServiziApplicativiUtilities {
 						if(filtraSoggettiEsterni) {
 							if(pddEsterna){
 								listFiltrata.add(soggetto);
+								if(soggetto.getId().longValue()==idProvider) {
+									providerTmp = idProvider;
+								}
 							}
 						}
 						else {
 							if(!pddEsterna){
 								listFiltrata.add(soggetto);
+								if(soggetto.getId().longValue()==idProvider) {
+									providerTmp = idProvider;
+								}
 							}
 						}
 					}
@@ -187,7 +203,7 @@ public class ServiziApplicativiUtilities {
 					for (Soggetto soggetto : list) {
 						if(tipiSoggettiCompatibiliGestitiProtocollo.contains(soggetto.getTipo())){
 							listFiltrataCompatibileProtocollo.add(soggetto);
-							if(providerTmp < 0) {
+							if(providerTmp < 0 || providerTmp == soggetto.getId().longValue()) {
 								providerTmp = soggetto.getId();
 								idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
 							}
