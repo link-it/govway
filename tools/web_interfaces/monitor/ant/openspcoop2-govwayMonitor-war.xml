@@ -172,9 +172,14 @@
 			<lib dir="${required_lib_govwayMonitor}/console">
 				<include name="jquery-3.6.4.jar"/>
 				<include name="jquery-ui-1.13.2.jar"/>
+				<include name="govway-monitor-ui-*.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/jakarta">
 				<include name="jakarta.activation-api-2.1.2.jar" />
+				<include name="jakarta.xml.bind-api-3.0.1.jar"/>
+			</lib>
+			<lib dir="${required_lib_govwayMonitor}/jaxb">
+				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/shared">
 				<include name="wsdl4j-1.6.3.jar" />

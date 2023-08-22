@@ -49,14 +49,9 @@
 	<var name="xalan_jar" value="" />
 	<var name="xalan_serializer_jar" value="" />
 	<var name="commons_logging_jar" value="" />
-	<var name="javax.jms-api-2.0.1.jar" value="" />
 	<var name="ecj_jar" value="" />
-	<var name="jsr311-api_jar" value="" />
 	<var name="javax_servlet_jsp_jstl_jar" value="" />
 	<var name="javax_servlet_jsp_jstl_api_jar" value="" />
-	<var name="jsf_impl_jar" value="" />
-	<var name="jsf_api_jar" value="" />
-	<var name="el_impl_jar" value="" />
 	<var name="jakarta_activation_jar" value="" />
 	<var name="validation-api-2.0.1_jar" value="" />
 	<var name="bean-validation_jars" value="" />
@@ -73,15 +68,6 @@
 		</or>
 		<then>
 			<var name="commons_logging_jar" value="commons-logging-1.2.jar" />
-		</then>
-	</if>
-	<!-- javax_jms -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-		</or>
-		<then>
-			<var name="javax.jms-api-2.0.1.jar" value="javax.jms-api-2.0.1.jar" />
 		</then>
 	</if>
 	<!-- xalan -->
@@ -115,15 +101,6 @@
 			<var name="ecj_jar" value="ecj-3.31.0.jar" />
 		</then>
 	</if>
-	<!-- jsr311-api_jar -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="jsr311-api_jar" value="jsr311-api-1.1.1.jar" />
-		</then>
-	</if>
 	<!-- javax_servlet_jsp_jstl_jar -->
 	<if>
 		<or>
@@ -132,25 +109,6 @@
 		<then>
 			<var name="javax_servlet_jsp_jstl_jar" value="javax.servlet.jsp.jstl-1.2.1.jar" />
 			<var name="javax_servlet_jsp_jstl_api_jar" value="javax.servlet.jsp.jstl-api-1.2.1.jar" />
-		</then>
-	</if>
-	<!-- jsf_jar -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-		</or>
-		<then>
-			<var name="jsf_impl_jar" value="jsf-impl-1.2_15-06.jar" />
-			<var name="jsf_api_jar" value="jsf-api-1.2_15-06.jar" />
-		</then>
-	</if>
-	<!-- el_jar -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-		</or>
-		<then>
-			<var name="el_impl_jar" value="el-impl-2.2.jar" />
 		</then>
 	</if>
 	<!-- jakarta.activation -->
@@ -168,7 +126,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="validation-api-2.0.1_jar" value="validation-api-2.0.1.Final.jar" />
+			<var name="validation-api_jar" value="jakarta.validation-api-3.0.2.jar" />
 		</then>
 	</if>
 	<!-- bean-validation/* -->

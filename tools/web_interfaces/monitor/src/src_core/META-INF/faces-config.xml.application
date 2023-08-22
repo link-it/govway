@@ -4,7 +4,9 @@
 			<default-locale>it</default-locale>
 			<supported-locale>it</supported-locale>
 		</locale-config>
-	<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+	<!-- <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>-->
+		<!-- <el-resolver>com.sun.faces.el.ManagedBeanELResolver</el-resolver> -->
+		<el-resolver>com.sun.faces.el.SpringBeanFacesELResolver</el-resolver>
 		<message-bundle>messages_it</message-bundle>
 		<!-- message-bundle>properties/messages_it</message-bundle -->
 		<resource-bundle>

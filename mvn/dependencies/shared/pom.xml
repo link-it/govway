@@ -17,11 +17,6 @@
 
 		<jar.group.name>shared</jar.group.name>
 		
-		<!-- da eliminare 
-		<xmldb.version>1.0</xmldb.version>
-		<com.springsource.edu.oswego.cs.dl.util.concurrent.version>1.3.4</com.springsource.edu.oswego.cs.dl.util.concurrent.version>
-		-->
-
 		<reactive-streams.version>1.0.4</reactive-streams.version>
 		<reflections.version>0.10.2</reflections.version>
 		<javassist.version>3.29.2-GA</javassist.version>
@@ -48,37 +43,11 @@
 		<hibernate.version>6.2.7.Final</hibernate.version>
 		<jboss-logging.version>3.5.3.Final</jboss-logging.version>
 		<urlrewritefilter.version>5.1.0-SNAPSHOT</urlrewritefilter.version>
+		<micrometer.version>1.11.3</micrometer.version>
 
 	</properties>
 
 	<dependencies>
-
-		<!-- da eliminare 
-		<dependency>
-			<groupId>org.xmldb</groupId>
-			<artifactId>xmldb</artifactId>
-			<version>${xmldb.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.oswego.cs.concurrent</groupId>
-			<artifactId>com.springsource.edu.oswego.cs.dl.util.concurrent</artifactId>
-			<version>${com.springsource.edu.oswego.cs.dl.util.concurrent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		-->
-
 
 		<dependency>
 			<groupId>org.reactivestreams</groupId>
@@ -424,6 +393,18 @@
 			<groupId>org.tuckey</groupId>
 			<artifactId>urlrewritefilter</artifactId>
 			<version>${urlrewritefilter.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-observation</artifactId>
+			<version>${micrometer.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

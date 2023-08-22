@@ -87,8 +87,8 @@
 			<lib dir="${openspcoop2.lib}/openapi4j">
 				<include name="*.jar"/>
 			</lib>
-			<lib dir="${required_lib_govwayConsole}/console">
-				<include name="govway-console-ui-20230726-SNAPSHOT.jar"/>
+			<lib dir="${openspcoop2.lib}/console">
+				<include name="govway-console-ui-*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/shared">
 				<include name="reactive-streams-1.0.4.jar"/>
@@ -105,6 +105,7 @@
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
 				<include name="${jboss-logging_jar}"/>	
+				<include name="micrometer-observation-1.11.3.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>
@@ -112,6 +113,12 @@
 			<lib dir="${openspcoop2.lib}/jakarta">
 				<include name="${validation-api-2.0.1_jar}"/>
 				<include name="${jakarta_activation_jar}"/>
+				<include name="jakarta.xml.bind-api-3.0.1.jar"/>
+				<include name="jakarta.xml.ws-api-3.0.1.jar"/>
+				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/jaxb">
+				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/bean-validation">
 				<include name="${bean-validation_jars}"/>
