@@ -52,7 +52,6 @@
 			<param name="openspcoop2" value="${rootDir}"/>
 			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
 			<param name="build_govwayConsole" value="build"/>
-			<param name="queue" value="${queue}"/>
 			<param name="plugins_govwayConsole" value="${govwayConsole}/deploy/plugins"/>
 			<param name="singlePdD" value="true"/>
 	 		<param name="data_content_handler_dir" value="${core}/deploy/data_content_handler" />

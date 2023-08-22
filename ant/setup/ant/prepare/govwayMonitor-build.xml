@@ -44,7 +44,6 @@
 			<param name="openspcoop2" value="${rootDir}"/>
 			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
 			<param name="build_govwayMonitor" value="build"/>
-			<param name="queue" value="${queue}"/>
 			<param name="plugins_govwayMonitor" value="${govwayMonitor}/deploy/plugins"/>
 			<param name="deploy_govwayMonitor" value="${govwayMonitor}/deploy"/>
 			<param name="buildJsfAsModule" value="false"/>

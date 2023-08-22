@@ -2009,9 +2009,6 @@ public class OpenSPCoop2Properties {
 			this.getSemaphoreType();
 			this.isSemaphoreFair();
 			
-			// JminixConsole
-			this.getPortJminixConsole();
-			
 			// Custom Contexts
 			this.isEnabledFunctionPD();
 			this.isEnabledFunctionPDtoSOAP();
@@ -21035,30 +21032,6 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isSemaphoreFair;
-	}
-	
-	
-		
-	/* ------------- JMINIX Console  ---------------------*/
-	
-	private Integer portJminixConsole = null;
-	private Boolean portJminixConsoleReaded = null;
-	public Integer getPortJminixConsole() {	
-		if(this.portJminixConsoleReaded==null){
-			try{ 
-				String p = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.jminix.port");
-				if(p!=null){
-					p = p.trim();
-					this.portJminixConsole = Integer.parseInt(p);
-				}
-				this.portJminixConsoleReaded = true;
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.jminix.port': "+e.getMessage(),e);
-				this.portJminixConsoleReaded = true;
-			}    
-		}
-
-		return this.portJminixConsole;
 	}
 	
 	

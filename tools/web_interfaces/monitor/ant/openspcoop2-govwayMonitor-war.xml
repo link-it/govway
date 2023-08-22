@@ -173,6 +173,9 @@
 				<include name="jquery-3.6.4.jar"/>
 				<include name="jquery-ui-1.13.2.jar"/>
 			</lib>
+			<lib dir="${required_lib_govwayMonitor}/jakarta">
+				<include name="jakarta.activation-api-2.1.2.jar" />
+			</lib>
 			<lib dir="${required_lib_govwayMonitor}/shared">
 				<include name="wsdl4j-1.6.3.jar" />
 				<include name="xom-1.3.5.jar" />
@@ -184,7 +187,6 @@
 				<include name="xmlunit-core-2.9.1.jar" />
 				<include name="snakeyaml-2.1-gov4j-1.jar" />
 				<include name="freemarker-2.3.32.jar" />
-				<include name="jakarta.activation-1.2.2.jar" />
 				<include name="joda-time-2.12.5.jar" />
 				<include name="reactive-streams-1.0.4.jar" />
 			</lib>

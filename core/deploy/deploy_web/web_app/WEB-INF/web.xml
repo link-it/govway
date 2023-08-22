@@ -99,15 +99,37 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-	<!-- JMXConsole embedded -->
-	<!--
-	<servlet>
-	    <servlet-name>JmxMiniConsoleServlet</servlet-name>
-	    <servlet-class>
-	        org.jminix.console.servlet.MiniConsoleServlet
-	    </servlet-class>
-	</servlet>
-	-->
+    <!-- JMXConsole embedded -->
+    <!--
+    <servlet>
+	<servlet-name>LookupMBeansServlet</servlet-name>
+	<servlet-class>com.kendelong.web.jmxconsole.LookupMBeansServlet</servlet-class>
+    </servlet>
+    <servlet>
+	<servlet-name>ShowBeanData</servlet-name>
+	<servlet-class>com.kendelong.web.jmxconsole.ShowBeanData</servlet-class>
+    </servlet>
+    <servlet>
+	<servlet-name>UpdateAttributeServlet</servlet-name>
+	<servlet-class>com.kendelong.web.jmxconsole.UpdateAttributeServlet</servlet-class>
+    </servlet>
+    <servlet>
+	<servlet-name>InvokeOperationServlet</servlet-name>
+	<servlet-class>com.kendelong.web.jmxconsole.InvokeOperationServlet</servlet-class>
+    </servlet>
+    <servlet>
+	<servlet-name>list</servlet-name>
+	<jsp-file>/jmx-console/listBeans.jsp</jsp-file>
+    </servlet>
+    <servlet>
+	<servlet-name>showBeanData</servlet-name>
+	<jsp-file>/jmx-console/showBeanData.jsp</jsp-file>
+    </servlet>
+    <servlet>
+	<servlet-name>operationResult</servlet-name>
+	<jsp-file>/jmx-console/operationResult.jsp</jsp-file>
+    </servlet>
+    -->
 
     <!-- OpenSPCoop: Servizio di dispatching dei servizi della Porta -->
     <servlet>
@@ -127,10 +149,34 @@
     <!-- servlet-mapping JMXConsole embedded -->
     <!--
     <servlet-mapping>
-	    <servlet-name>JmxMiniConsoleServlet</servlet-name>
-	    <url-pattern>/jmx-console/*</url-pattern>
-	</servlet-mapping>
-	-->
+	<servlet-name>LookupMBeansServlet</servlet-name>
+	<url-pattern>/jmx-console/list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>ShowBeanData</servlet-name>
+	<url-pattern>/jmx-console/showBean</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>UpdateAttributeServlet</servlet-name>
+	<url-pattern>/jmx-console/updateAttributes</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>InvokeOperationServlet</servlet-name>
+	<url-pattern>/jmx-console/invokeOperation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>list</servlet-name>
+	<url-pattern>/jmx-console/listBeans.jsp</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>showBeanData</servlet-name>
+	<url-pattern>/jmx-console/showBeanData.jsp</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>operationResult</servlet-name>
+	<url-pattern>/jmx-console/operationResult.jsp</url-pattern>
+    </servlet-mapping>
+    -->
 
     <!-- Servlet Mapping: CXF -->
     <servlet-mapping>
@@ -154,7 +200,6 @@
         <mime-type>text/xml</mime-type>
     </mime-mapping>
 
-
     <mime-mapping>
         <extension>xsd</extension>
         <mime-type>text/xml</mime-type>
@@ -162,29 +207,6 @@
 
 
     <!-- Altre configurazioni -->
-
-
-
-	<!-- security constraint JMXConsole embedded -->
-    <!--
-    <security-constraint>
-            <web-resource-collection>
-                    <web-resource-name>Resources-Protected</web-resource-name>
-                    <url-pattern>/jmx-console/*</url-pattern>
-            </web-resource-collection>
-            <auth-constraint>
-                    <role-name>MYAPPL_ADMIN</role-name>
-            </auth-constraint>
-    </security-constraint>
-
-    <security-constraint>
-            <web-resource-collection>
-                    <web-resource-name>Resources-Protected</web-resource-name>
-                    <url-pattern>/jmx-console/servers/0/domains/org.openspcoop2.pdd/*</url-pattern>
-            </web-resource-collection>
-    </security-constraint>
-    -->
-
 
 
     <!-- start Security Constraint Authentication Container

@@ -68,7 +68,6 @@
 			<include name="jax/jaxb*"/>
 			<include name="jax/jaxws*"/>
 			<include name="jakarta/*"/>
-			<include name="jminix/*"/>
 			<include name="json/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>

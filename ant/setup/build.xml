@@ -363,10 +363,12 @@
                         <matches pattern=".*/$" string="${work_dir}" /> 
                         <then>
                                 <echo message="Normalizzazione WorkDIR [${work_dir}]"/>
-                                <script language="javascript">
-                                        var w = project.getProperty("work_dir");
-                                        project.setProperty("work_dir", w.substring(0,w.length()-1));
-                                </script>
+				<propertyregex property="work_dir"
+					      input="${work_dir}"
+					      regexp="(.*)/$"
+					      select="\1"
+					      casesensitive="false" 
+					      override="true"/>
                                 <echo message="DOPO Normalizzazione WorkDIR [${work_dir}]"/>
                         </then>
                 </if>
@@ -374,10 +376,12 @@
                         <matches pattern=".*/$" string="${log_dir}" /> 
                         <then>
                                 <echo message="Normalizzazione LogDIR [${log_dir}]"/>
-                                <script language="javascript">
-                                        var w = project.getProperty("log_dir");
-                                        project.setProperty("log_dir", w.substring(0,w.length()-1));
-                                </script>
+				<propertyregex property="log_dir"
+					      input="${log_dir}"
+					      regexp="(.*)/$"
+					      select="\1"
+					      casesensitive="false" 
+					      override="true"/>
                                 <echo message="DOPO Normalizzazione LogDIR [${log_dir}]"/>
                         </then>
                 </if> 
@@ -390,10 +394,12 @@
 				        <matches pattern=".*/$" string="${batch_dir}" /> 
 				        <then>
 				                <echo message="Normalizzazione BatchDIR [${batch_dir}]"/>
-				                <script language="javascript">
-				                        var w = project.getProperty("batch_dir");
-				                        project.setProperty("batch_dir", w.substring(0,w.length()-1));
-				                </script>
+						<propertyregex property="batch_dir"
+							      input="${batch_dir}"
+							      regexp="(.*)/$"
+							      select="\1"
+							      casesensitive="false" 
+							      override="true"/>
 				                <echo message="DOPO Normalizzazione BatchDIR [${batch_dir}]"/>
 				        </then>
 				</if>
@@ -718,8 +724,7 @@
 								</copy>
 								<copy todir="${tmp_archivi}/govway.ear/lib">
 								    <fileset dir="${deploy_sw}/jars">
-									<include name="javax.jms-api-2.0.1.jar"/>
-									<include name="javax.management-1.0-gov4j.jar"/>
+									<include name="jakarta.jms-api-3.1.0.jar"/>
 								    </fileset>
 								</copy>
 							</then>

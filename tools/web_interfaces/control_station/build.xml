@@ -56,7 +56,6 @@
 	<var name="xalan_jar" value="" />
 	<var name="xalan_serializer_jar" value="" />
 	<var name="commons_logging_jar" value="" />
-	<var name="jakarta.jms-api-3.1.0.jar" value="" />
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value="" />
@@ -70,15 +69,6 @@
 		</or>
 		<then>
 			<var name="commons_logging_jar" value="commons-logging-1.2.jar" />
-		</then>
-	</if>
-	<!-- javax_jms -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-		</or>
-		<then>
-			<var name="jakarta.jms-api-3.1.0.jar" value="jakarta.jms-api-3.1.0.jar" />
 		</then>
 	</if>
 	<!-- xalan -->
@@ -120,7 +110,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="jakarta_activation_jar" value="jakarta.activation-1.2.2.jar"/>
+			<var name="jakarta_activation_jar" value="jakarta.activation-api-2.1.2.jar"/>
 		</then>
 	</if>
 
@@ -279,9 +269,6 @@
 		    <param name="build_govwayConsole_resourceDIR" value="${dist_govwayConsole}"/>
 		</antcall>
 	</target>
-
-	<!-- Script Sincronizzatore -->
-	<target name="sincronizzatore" depends="runSincronizzatore_openspcoop2_govwayConsole" description="Esegue lo script di sincronizzazione"/>
 
 
 

@@ -18,7 +18,7 @@
 	<property name="forceDisableJ2eeMode" value="false" />
 	<property name="hazelcastLibraries" value="true" />
 	<property name="redisLibraries" value="true" />
-        <property name="jminixLibraries" value="true" />
+        <property name="jmxLibraries" value="true" />
 
 	<!-- Sub-Build-Options -->
 	<property name="buildSchemi" value="true" />

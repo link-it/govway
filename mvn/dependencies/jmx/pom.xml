@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>${revision}</version>
-	<artifactId>org.openspcoop2.jminix</artifactId>
+	<artifactId>org.openspcoop2.jmx</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.jminix</name>
+	<name>dependencies.jmx</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
@@ -15,65 +15,18 @@
 
 	<properties>
 
-		<jar.group.name>jminix</jar.group.name>
+		<jar.group.name>jmx</jar.group.name>
 		
-		<jminix.gov4j.version>1.2.0-gov4j-1</jminix.gov4j.version>
-		<org.restlet.version>2.4.0</org.restlet.version>
+		<jmx-console.version>3.0.0</jmx-console.version>
 
 	</properties>
 
 	<dependencies>
 	
 		<dependency>
-			<groupId>org.jminix</groupId>
-			<artifactId>jminix-standalone</artifactId>
-			<version>${jminix.gov4j.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jminix</groupId>
-			<artifactId>jminix</artifactId>
-			<version>${jminix.gov4j.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.restlet.jee</groupId>
-			<artifactId>org.restlet</artifactId>
-			<version>${org.restlet.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.restlet.jee</groupId>
-			<artifactId>org.restlet.ext.servlet</artifactId>
-			<version>${org.restlet.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.restlet.jee</groupId>
-			<artifactId>org.restlet.ext.velocity</artifactId>
-			<version>${org.restlet.version}</version>
+			<groupId>com.github.kenwdelong</groupId>
+			<artifactId>jmx-console</artifactId>
+			<version>${jmx-console.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

@@ -153,6 +153,7 @@
 		<antcall target="-create_openspcoop_web">
 			<param name="openspcoopWeb.warName" value="${dist}/govwaySec.war"/>
 			<param name="openspcoopWeb.webXml" value="${build}/web-module/web.xml"/>
+			<param name="jmxLibraries" value="false"/>
 		</antcall>
 		<delete dir="${build}/web-module"/>
 		
@@ -194,15 +195,31 @@
 				<var name="redis_jar" value="*.jar" />
 			</then>
 		</if>
-		<!-- jminix lib -->
-		<var name="jminix_jar" value="" />
+		<!-- jmx lib -->
+		<var name="jmx_jar" value="" />
 		<if>
 			<or>
-				<equals arg1="${jminixLibraries}" arg2="true"/>
+				<equals arg1="${jmxLibraries}" arg2="true"/>
 			</or>
 			<then>
-				<var name="jminix_jar" value="*.jar" />
+				<var name="jmx_jar" value="*.jar" />
 			</then>
+		</if>
+		<!-- JSP Pages per jmx-console -->
+		<delete dir="${build}/jmx-console-jsp" />
+		<mkdir dir="${build}/jmx-console-jsp" />
+		<if>
+			<equals arg1="${jmxLibraries}" arg2="true"/>
+			<then>
+				<unzip src="${required_lib}/jmx/jmx-console-3.0.0.jar" dest="${build}/jmx-console-jsp"/>
+				<replace dir="${build}/jmx-console-jsp/META-INF/resources/jmx-console/" token="http://java.sun.com/jsp/jstl/core" value="jakarta.tags.core"/>
+				<replace dir="${build}/jmx-console-jsp/META-INF/resources/jmx-console/" 
+					token="&lt;link rel=&quot;stylesheet&quot; href=&quot;master.css&quot; type=&quot;text/css&quot;>" 
+					value="&lt;!-- link rel=&quot;stylesheet&quot; href=&quot;master.css&quot; type=&quot;text/css&quot; -->"/>
+			</then>
+			<else>
+				<mkdir dir="${build}/jmx-console-jsp/META-INF/resources/jmx-console/" />
+			</else>
 		</if>
 		<war destfile="${openspcoopWeb.warName}" webxml="${openspcoopWeb.webXml}">
 			<!-- Informazioni sulla versione -->
@@ -216,6 +233,13 @@
 			<!-- Specifying Logging per CXF -->
 			<zipfileset dir="${src}/META-INF/cxf" prefix="META-INF/cxf">
 				<include name="org.apache.cxf.Logger" />
+			</zipfileset>
+
+			<!-- JSP Pages per jmx-console -->
+			<zipfileset dir="${build}/jmx-console-jsp/META-INF/resources/jmx-console/" prefix="jmx-console">
+				<include name="listBeans.jsp" />
+				<include name="operationResult.jsp" />
+				<include name="showBeanData.jsp" />
 			</zipfileset>
 
 			<!-- Librerie di OpenSPCoop -->
@@ -232,9 +256,9 @@
 				<include name="commons-collections4-4.4.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-logging-1.2.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="commons-logging-1.2.jar"/> <!-- (non necessario in wildfly) -->
 				<include name="commons-net-3.9.0.jar"/>
-				<include name="commons-io-2.13.0.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="commons-io-2.13.0.jar"/> <!-- (non necessario in wildfly) -->
 				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
 				<include name="commons-validator-1.7.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
@@ -264,12 +288,21 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jakarta">
-				<include name="jakarta.jms-api-3.1.0.jar"/> <!-- (non necessario in A.S.) -->
-				<include name="jakarta.ejb-api-4.0.1.jar"/> <!-- (non necessario in A.S.) -->
-				<!-- <include name="jta-1.1.jar"/> --> <!-- (non necessario in A.S.) -->
+				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
+				<include name="jakarta.jws-api-3.0.0.jar"/>
+				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
+				<include name="jakarta.jms-api-3.1.0.jar"/> <!-- (non necessario in wildfly) -->
+				<include name="jakarta.ejb-api-4.0.1.jar"/> <!-- (non necessario in wildfly) -->
+				<include name="jakarta.activation-api-2.1.2.jar"/> <!-- (non necessario in wildfly) -->
+				<include name="jakarta.xml.bind-api-3.0.1.jar"/> <!-- (non necessario in wildfly) -->
+				<include name="jakarta.xml.ws-api-3.0.1.jar"/> <!-- (non necessario in wildfly) -->
+				<include name="jakarta.servlet.jsp.jstl-api-3.0.0.jar"/> <!-- (non necessario in wildfly, richiesto per jmxconsole) -->
+				<include name="jakarta.servlet.jsp.jstl-3.0.1.jar"/> <!-- (non necessario in wildfly, richiesto per jmxconsole) -->
+			</lib>
+			<lib dir="${required_lib}/jaxb">
+				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/shared">
-				<include name="jakarta.activation-1.2.2.jar"/> <!-- (non necessario in A.S.) -->
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="xercesImpl-2.12.2.jar"/>
 				<include name="xml-apis-1.4.01.jar"/>
@@ -296,8 +329,8 @@
 			<lib dir="${required_lib}/redis">
 				<include name="${redis_jar}"/>
 			</lib>
-			<lib dir="${required_lib}/jminix">
-				<include name="${jminix_jar}"/>
+			<lib dir="${required_lib}/jmx">
+				<include name="${jmx_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/cxf">
 				<include name="*.jar" />
@@ -305,11 +338,6 @@
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar" />
-			</lib>
-			<lib dir="${required_lib}/jakarta">
-				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
-				<include name="jakarta.jws-api-3.0.0.jar"/>
-				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
 			</lib>
 			<lib dir="${required_lib}/spring">
 				<include name="*.jar" />
@@ -322,7 +350,6 @@
 			</lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>
-				<!-- <include name="json-lib-2.4-jdk15.jar" /> --> <!--jmx mini console -->
 			</lib>
 			<lib dir="${required_lib}/jackson">
 				<include name="*.jar"/>
@@ -342,6 +369,9 @@
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build}/tmp">
 				<include name="jakarta.mail-api-2.1.2.gw.jar" />
+			</lib>
+			<lib dir="${required_lib}/angus">
+				<include name="*.jar"/>
 			</lib>
 			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
 			<classes dir="${properties_dir}">
@@ -378,6 +408,8 @@
 				<include name="*.zip"/>
 			</classes>
 		</war>
+
+		<delete dir="${build}/jmx-console-jsp"/>
 	</target>
 	
 	

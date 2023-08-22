@@ -103,6 +103,9 @@
 				<include name="mailapi-1.5.6.jar"/>
 				<include name="addressing-1.1.jar"/> 
 			</lib>
+			<fileset dir="${required_lib}/jakarta">
+				<include name="jakarta.activation-api-2.1.2.jar"/>
+			</fileset>
 			<lib dir="${required_lib}/shared">
 				<!-- Includendolo, i test con attachments falliscono poiche' axis14 genera dei messaggi non corretti (ContentLength non appropriato rispetto al messaggio) 
 												e la Porta genera errori simili al seguente: com.sun.xml.messaging.saaj.packaging.mime.MessagingException: 
@@ -111,7 +114,6 @@
 				--> 
 				<!-- <include name="mailapi-1.6.7.jar"/> -->
 				<include name="wsdl4j-1.6.3.jar"/>
-				<include name="jakarta.activation-1.2.2.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>

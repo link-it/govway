@@ -39,12 +39,6 @@ then
         cp ${WEB_LIB}/mvc/local_env.xml.template ${WEB_LIB}/mvc/local_env.xml
 fi
 
-# WebLib-QUEUE
-if [ ! -f ${WEB_LIB}/queue/local_env.xml  ]
-then
-        cp ${WEB_LIB}/queue/local_env.xml.template ${WEB_LIB}/queue/local_env.xml
-fi
-
 # WebLib-USERS
 if [ ! -f ${WEB_LIB}/users/local_env.xml  ]
 then

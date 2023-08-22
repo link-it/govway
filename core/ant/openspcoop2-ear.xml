@@ -192,7 +192,23 @@
 				<var name="mailcap_info" value="mailcap"/>
 			</then>
 		</if>
-		
+		<!-- JSP Pages per jmx-console -->
+		<delete dir="${build}/jmx-console-jsp" />
+		<mkdir dir="${build}/jmx-console-jsp" />
+		<if>
+			<equals arg1="${jmxLibraries}" arg2="true"/>
+			<then>
+				<unzip src="${required_lib}/jmx/jmx-console-3.0.0.jar" dest="${build}/jmx-console-jsp"/>
+				<replace dir="${build}/jmx-console-jsp/META-INF/resources/jmx-console/" token="http://java.sun.com/jsp/jstl/core" value="jakarta.tags.core"/>
+				<replace dir="${build}/jmx-console-jsp/META-INF/resources/jmx-console/" 
+					token="&lt;link rel=&quot;stylesheet&quot; href=&quot;master.css&quot; type=&quot;text/css&quot;>" 
+					value="&lt;!-- link rel=&quot;stylesheet&quot; href=&quot;master.css&quot; type=&quot;text/css&quot; -->"/>
+			</then>
+			<else>
+				<mkdir dir="${build}/jmx-console-jsp/META-INF/resources/jmx-console/" />
+			</else>
+		</if>
+
 		<war destfile="${dist}/govway.war" webxml="${deploy_web_dir}/web_app/WEB-INF/web.xml">
 			<manifest>
 				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
@@ -208,6 +224,12 @@
 			<!-- Specifying Logging per CXF -->
 			<zipfileset dir="${src}/META-INF/cxf" prefix="META-INF/cxf">
 				<include name="org.apache.cxf.Logger" />
+			</zipfileset>
+			<!-- JSP Pages per jmx-console -->
+			<zipfileset dir="${build}/jmx-console-jsp/META-INF/resources/jmx-console/" prefix="jmx-console">
+				<include name="listBeans.jsp" />
+				<include name="operationResult.jsp" />
+				<include name="showBeanData.jsp" />
 			</zipfileset>
 		</war>
 
@@ -237,6 +259,7 @@
 		</war>
 
 		<delete dir="${build}/web-module"/>
+		<delete dir="${build}/jmx-console-jsp"/>
 	</target>
 	
 	
@@ -497,14 +520,14 @@
 				<var name="redis_jar" value="*.jar" />
 			</then>
 		</if>
-		<!-- jminix lib -->
-		<var name="jminix_jar" value="" />
+		<!-- jmx lib -->
+		<var name="jmx_jar" value="" />
 		<if>
 			<or>
-				<equals arg1="${jminixLibraries}" arg2="true"/>
+				<equals arg1="${jmxLibraries}" arg2="true"/>
 			</or>
 			<then>
-				<var name="jminix_jar" value="*.jar" />
+				<var name="jmx_jar" value="*.jar" />
 			</then>
 		</if>
 		<!-- jboss_deployment_structure -->
@@ -551,7 +574,7 @@
 					<or>
 						<equals arg1="${hazelcastLibraries}" arg2="true"/>
 						<equals arg1="${redisLibraries}" arg2="true"/>
-						<equals arg1="${jminixLibraries}" arg2="true"/>
+						<equals arg1="${jmxLibraries}" arg2="true"/>
 					</or>
 					<then>
 						<replace file="${build}/tmp/jboss-deployment-structure.xml" token="&lt;!-- start export dependencies" value="&lt;!-- start export dependencies -->"/>
@@ -579,7 +602,7 @@
 						<if>
 							<and>
 								<not>
-									<equals arg1="${jminixLibraries}" arg2="true"/>
+									<equals arg1="${jmxLibraries}" arg2="true"/>
 								</not>							
 							</and>
 							<then>
@@ -649,7 +672,7 @@
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-net-3.9.0.jar"/>
 				<include name="commons-validator-1.7.jar"/>
-				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
+				<include name="commons-beanutils-1.9.4.jar"/>
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.13.0.jar"/>
 				<include name="commons-compress-1.23.0.jar"/>
@@ -703,8 +726,8 @@
 				<include name="slf4j-api-2.0.7-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</zipfileset>
-			<zipfileset prefix="lib" dir="${required_lib}/jminix">
-				<include name="${jminix_jar}"/>
+			<zipfileset prefix="lib" dir="${required_lib}/jmx">
+				<include name="${jmx_jar}"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/cxf">
 				<include name="*.jar"/>
@@ -729,7 +752,6 @@
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/json">
 				<include name="*.jar"/>
-				<!-- <include name="json-lib-2.4-jdk15.jar" /> --> <!--jmx mini console -->
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jackson">
 				<include name="*.jar"/>

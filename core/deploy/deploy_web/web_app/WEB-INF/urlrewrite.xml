@@ -18,11 +18,19 @@
 
     <rule>
         <note>
-            The rule means that requests to /jmx/ will be redirected to /jmx-console/servers/0/domains/org.openspcoop2.pdd/
+            The rule means that requests to /jmx will be redirected to /jmx-console/list
             the url will be rewritten.
         </note>
-        <from>/jmx/</from>
-        <to type="redirect">%{context-path}/jmx-console/servers/0/domains/org.openspcoop2.pdd/</to>
+        <from>/jmx$</from>
+        <to type="redirect">%{context-path}/jmx-console/list</to>
+    </rule>
+    <rule>
+        <note>
+            The rule means that requests to /jmx/ will be redirected to /jmx-console/list
+            the url will be rewritten.
+        </note>
+        <from>/jmx/$</from>
+        <to type="redirect">%{context-path}/jmx-console/list</to>
     </rule>
 
 </urlrewrite>

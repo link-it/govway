@@ -74,7 +74,6 @@
 			<include name="jackson/*"/>
 			<include name="jaxb/*"/>
 			<include name="jakarta/*"/>
-			<include name="jminix/*"/>
 			<include name="json/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>

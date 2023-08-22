@@ -38,7 +38,7 @@
 		<module>jakarta</module>
 		<module>jaxb</module>
 		<module>jetty</module>
-		<module>jminix</module>
+		<module>jmx</module>
 		<module>json</module>
 		<module>log</module>
 		<module>lucene</module>
@@ -98,12 +98,8 @@
 								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/console-back-office.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/commons-discovery.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/snakeyaml.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/spring-web.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/spring-security-crypto.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-45688.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-40705.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-42920.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2023-35116.xml</suppressionFile>
 							</suppressionFiles>
