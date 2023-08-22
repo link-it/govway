@@ -8,31 +8,24 @@
 	<target name="-generatesrc_from_schema">
 		<basename property="schema.basename" file="${schema}"/>
 		<echo message="Generazione sorgenti a partire dallo schema ${schema.basename}..."/>
-<!-- Da Java 11 non e' piu' presente. Si deve usare il jar apposito jaxb-xjc-2.3.7.jar (di seguito verra' invocata la classe registrata come Main nel Manifest del jar)
-                <exec executable="xjc">
-                        <arg value="-verbose" />
-                        <arg value="-npa" />
-                        <arg value="-target" />
-                        <arg value="2.0" />
-                        <arg value="-d" />
-                        <arg value="${outDir}" />
-                        <arg value="${schema}" />
-		</exec>
--->
 		<java classname="com.sun.tools.xjc.XJCFacade" fork="true">
 			<arg value="-verbose" />
                         <arg value="-npa" />
                         <arg value="-target" />
-                        <arg value="2.0" />
+                        <arg value="3.0" />
                         <arg value="-d" />
                         <arg value="${outDir}" />
                         <arg value="${schema}" />
 			<classpath>
-				<pathelement path="${required_lib}/jax/jaxb-xjc-2.3.7.jar"/>
-				<pathelement path="${required_lib}/jax/jaxb-api-2.3.1.jar"/>
-				<pathelement path="${required_lib}/jax/jaxb-impl-2.3.7.jar"/>
-				<pathelement path="${required_lib}/jax/jaxb-core-2.3.0.1.jar"/>
-				<pathelement path="${required_lib}/shared/jakarta.activation-1.2.2.jar"/>
+				<pathelement path="${required_lib}/jaxb/jaxb-xjc-4.0.3.jar"/>
+				<pathelement path="${required_lib}/jaxb/jaxb-core-4.0.3.jar"/>
+				<pathelement path="${required_lib}/jaxb/codemodel-4.0.3.jar"/>
+				<pathelement path="${required_lib}/jaxb/istack-commons-runtime-4.2.0.jar"/>
+				<pathelement path="${required_lib}/jaxb/xsom-4.0.3.jar"/>
+				<pathelement path="${required_lib}/jaxb/rngom-4.0.3.jar"/>
+				<pathelement path="${required_lib}/jaxb/relaxng-datatype-4.0.3.jar"/>
+				<pathelement path="${required_lib}/jakarta/jakarta.activation-api-2.1.2.jar"/>
+				<pathelement path="${required_lib}/jakarta/jakarta.xml.bind-api-3.0.1.jar"/>
 			</classpath>
 		</java>
 	</target>
