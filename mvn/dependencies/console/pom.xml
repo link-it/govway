@@ -18,7 +18,7 @@
 		<jar.group.name>console</jar.group.name>
 		
 		<govway-console-ui.version>20230726-SNAPSHOT</govway-console-ui.version>
-		<govway-monitor-ui.version>20230726-SNAPSHOT</govway-monitor-ui.version>
+		<govway-monitor-ui.version>20230823-SNAPSHOT</govway-monitor-ui.version>
 
 		<jquery.version>3.6.4</jquery.version>
 		<jquery-ui.version>1.13.2</jquery-ui.version>
@@ -38,9 +38,32 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.govway-monitor-ui</groupId>
-			<artifactId>govway-monitor-ui</artifactId>
+			<artifactId>govway-monitor-ui-jsf</artifactId>
+			<version>${govway-monitor-ui.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.govway-monitor-ui</groupId>
+			<artifactId>govway-monitor-ui-api</artifactId>
+			<version>${govway-monitor-ui.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.govway-monitor-ui</groupId>
+			<artifactId>govway-monitor-ui-components</artifactId>
 			<version>${govway-monitor-ui.version}</version>
 			<exclusions>
 				<exclusion>

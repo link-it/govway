@@ -27,7 +27,9 @@
 	<archive path="/op2_3.4.dev/lib/commons/commons-math3-3.6.1.jar"/>
 	<!-- console -->
 	<archive path="/op2_3.4.dev/lib/console/govway-console-ui-20230726-SNAPSHOT.jar"/>
-	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-20230726-SNAPSHOT.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-jsf-20230823-SNAPSHOT.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-api-20230823-SNAPSHOT.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-components-20230823-SNAPSHOT.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/jquery-3.6.4.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/jquery-ui-1.13.2.jar"/>
 	<!-- cxf -->

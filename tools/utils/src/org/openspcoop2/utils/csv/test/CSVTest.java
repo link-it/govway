@@ -63,18 +63,22 @@ public class CSVTest {
 		testMappingProgrammazione(format);
 
 		
+		// Test Serializzazione CSV
 		FormatReader formatWriter = new FormatReader(CSVTest.class.getResourceAsStream("/org/openspcoop2/utils/csv/test/example.formatWriter.properties"));
 		Format formatW = formatWriter.getFormat();
+		testScrittura(formatW,"csv");
 		
-		// Test Serializzazione
-		testScrittura(formatW);
+		// Test Serializzazione Excel
+		FormatReader formatWriterExcel = new FormatReader(CSVTest.class.getResourceAsStream("/org/openspcoop2/utils/csv/test/example.formatWriterExcel.properties"));
+		Format formatWExcel = formatWriterExcel.getFormat();
+		testScrittura(formatWExcel,"xls");
 	}
 
-	private static void testScrittura(Format format) throws Exception{
+	private static void testScrittura(Format format, String ext) throws Exception{
 		System.out.println("============================================================");
-		System.out.println("Printer.testScrittura");
+		System.out.println("Printer.testScrittura ("+ext+")");
 		System.out.println("============================================================");
-		String  file = "/tmp/prova.csv";
+		String  file = "/tmp/prova."+ext;
 		Printer printer = new Printer(format, new File(file));
 		List<String> header = new ArrayList<>();
 		header.add("Valore1");
@@ -84,8 +88,10 @@ public class CSVTest {
 		valori.add("V1");
 		valori.add("V2");
 		valori.add("V3,AltroValoreConVirgola");
-		printer.printComment("Intestazione");
-		printer.printRecord(header);
+		if(!"xls".equals(ext)) {
+			printer.printComment("Intestazione");
+			printer.printRecord(header);
+		}
 		printer.println();
 		printer.printComment("Valori");
 		printer.printRecord(valori);
