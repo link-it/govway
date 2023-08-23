@@ -21,8 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.upload.FormFile;
+import org.govway.struts.action.ActionForm;
+import org.govway.struts.upload.FormFile;
 
 /**
  * FileUploadForm

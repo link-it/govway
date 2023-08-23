@@ -26,8 +26,8 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.govway.struts.action.ActionForward;
+import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;

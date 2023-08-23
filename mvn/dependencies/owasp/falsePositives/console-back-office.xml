@@ -1,9 +1,0 @@
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-   <suppress>
-      <notes><![CDATA[
-      file name: govway-console-ui-20230726-SNAPSHOT.jar contiene una riscrittura dei componenti di interfaccia utente terza parte utilizzate da GovWayConsole in cui sono state risolte le problematiche di sicurezza ed è stata effettuata la migrazione verso Jakarta EE
-      ]]></notes>
-      <packageUrl regex="true">^pkg:maven/org\.govway\-console\-ui/govway\-console\-ui@.*$</packageUrl>
-      <cpe>cpe:/a:apache:struts</cpe>
-   </suppress>
-</suppressions>

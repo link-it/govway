@@ -265,7 +265,7 @@ public class InitListener implements ServletContextListener {
 				// In the unlikely case, that your application depends on the deserialization of DiskFileItems, 
 				// you can revert to the previous behaviour by setting the system property "org.apache.commons.fileupload.disk.DiskFileItem.serializable" to "true".
 				// 
-				// Purtroppo la classe 'org.apache.struts.upload.FormFile', all'interna utilizza DiskFileItem per serializzare le informazioni.
+				// Purtroppo la classe 'org.govway.struts.upload.FormFile', all'interna utilizza DiskFileItem per serializzare le informazioni.
 				// Tale classe viene usata nel meccanismo di import/export nei metodi writeFormFile e readFormFile della classe org.openspcoop2.web.ctrlstat.servlet.archivi.ImporterUtils
 				// Per questo motivo si riabilita' l'opzione!
 				InitListener.log.info("Inizializzazione DiskFileItem (opzione serializable), in corso...");

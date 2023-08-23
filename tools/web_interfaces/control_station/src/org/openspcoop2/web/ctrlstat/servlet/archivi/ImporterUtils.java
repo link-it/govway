@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.upload.FormFile;
+import org.govway.struts.action.ActionForm;
+import org.govway.struts.upload.FormFile;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.constants.Costanti;

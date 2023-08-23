@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.upload.FormFile;
+import org.govway.struts.upload.FormFile;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;

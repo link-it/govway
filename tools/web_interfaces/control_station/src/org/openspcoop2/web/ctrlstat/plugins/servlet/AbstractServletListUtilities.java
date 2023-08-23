@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
-import org.apache.struts.action.Action;
+import org.govway.struts.action.Action;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;

@@ -30,7 +30,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.upload.FormFile;
+import org.govway.struts.upload.FormFile;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;

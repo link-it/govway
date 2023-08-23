@@ -29,11 +29,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.upload.FormFile;
+import org.govway.struts.action.Action;
+import org.govway.struts.action.ActionForm;
+import org.govway.struts.action.ActionForward;
+import org.govway.struts.action.ActionMapping;
+import org.govway.struts.upload.FormFile;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;

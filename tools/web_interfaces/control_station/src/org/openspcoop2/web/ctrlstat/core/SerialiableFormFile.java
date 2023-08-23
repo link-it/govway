@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import org.apache.struts.upload.FormFile;
+import org.govway.struts.upload.FormFile;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.transport.http.HttpConstants;

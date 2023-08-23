@@ -9,7 +9,7 @@
     <!-- ======== Form Bean Definitions =================================== -->
     <form-beans>
         <form-bean name="FileUpload" type="org.openspcoop2.web.ctrlstat.servlet.FileUploadForm">
-            <form-property name="theFile" type="org.apache.struts.upload.FormFile"/>
+            <form-property name="theFile" type="org.govway.struts.upload.FormFile"/>
         </form-bean>
     </form-beans>
 

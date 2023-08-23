@@ -37,8 +37,8 @@ import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.govway.struts.action.ActionForward;
+import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.utils.BooleanNullable;

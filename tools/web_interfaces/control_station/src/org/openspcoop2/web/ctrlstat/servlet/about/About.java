@@ -28,10 +28,10 @@ import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.govway.struts.action.Action;
+import org.govway.struts.action.ActionForm;
+import org.govway.struts.action.ActionForward;
+import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;

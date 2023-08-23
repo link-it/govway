@@ -28,10 +28,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.govway.struts.action.Action;
+import org.govway.struts.action.ActionForm;
+import org.govway.struts.action.ActionForward;
+import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.constants.PddTipologia;
