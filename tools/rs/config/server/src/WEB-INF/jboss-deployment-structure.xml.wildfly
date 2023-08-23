@@ -6,6 +6,10 @@
 			<subsystem name="jaxrs" />
 			<subsystem name="jsf" />
 			<subsystem name="logging"/>
+			<!-- 
+				Elimina il WARN:  WFLYTRACEXT0012: No Jaeger endpoint or sender-binding configured. Installing a no-op sender
+			-->
+			<subsystem name="microprofile-opentracing-smallrye"/>
 		</exclude-subsystems>
 		<exclusions>
 			<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
@@ -14,16 +18,13 @@
 			<module name="org.apache.commons.logging"/>
 			<module name="org.apache.logging.log4j.api"/>
 			-->
-			<!-- non caricato in wf18 e java 11
-			<module name="org.jboss.as.webservices" />
-			<module name="org.apache.cxf" />
-			<module name="org.springframework.spring" />
-			<module name="org.jboss.ws" />
-			<module name="org.jboss.ws.*" />
-			<module name="com.fasterxml.jackson.core.jackson-core" />
-			<module name="com.fasterxml.jackson.core.jackson-databind" />
-			<module name="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider" />
+			<!--
+				WARN  [org.hibernate.validator.internal.properties.javabean.JavaBeanExecutable] 
+				HV000254: Missing parameter metadata for ModalitaAccessoEnum(String, int, String), which declares implicit or synthetic parameters. Automatic resolution of generic type information for method parameters may yield incorrect results if multiple parameters have the same erasure. To solve this, compile your code with the '-parameters' flag
+				Dovuto al fatto che cxf richiede validator hibernate-validator 7, mentre su wildfly c'è a bordo la versione 8
 			-->
+			<module name="org.hibernate.validator" />
+			<module name="org.hibernate.validator.cdi" />
 		</exclusions>
 	</deployment>
 </jboss-deployment-structure>

@@ -33,7 +33,12 @@
 			<module name="org.apache.logging.log4j.api"/>
 			-->
 
+			<!-- BC_PEM
+			    Utilizzando PKCS12 e CRL in formato PEM, nell'application server JBoss EAP 7.3 (all'ultimo patch level) si otteneva il seguente errore:
+			    "java.lang.NoClassDefFoundError: org/bouncycastle/util/encoders/Base64
+			     at org.bouncycastle.jcajce.provider.asymmetric.x509.PEMUtil.readPEMObject()"
 			<module name="org.bouncycastle"/>
+			BC_PEM -->
 
 			<!-- non sono caricati da wf18 con java11:
 			<module name="com.fasterxml.jackson.core.jackson-core" />

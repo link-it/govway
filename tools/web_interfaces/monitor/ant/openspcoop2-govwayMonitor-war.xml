@@ -158,7 +158,6 @@
 				<include name="commons-collections-3.2.2.jar" />
 				<include name="commons-collections4-4.4.jar" />
 				<include name="commons-digester-2.1.jar"/>
-				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-fileupload2-*.jar" />
 				<include name="commons-io-2.13.0.jar" />
 				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
@@ -177,6 +176,7 @@
 			<lib dir="${required_lib_govwayMonitor}/jakarta">
 				<include name="jakarta.activation-api-2.1.2.jar" />
 				<include name="jakarta.xml.bind-api-3.0.1.jar"/>
+				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/jaxb">
 				<include name="*.jar"/>

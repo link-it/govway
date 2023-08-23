@@ -281,6 +281,10 @@ public class DynamicClusterManager {
 			String insert = sqlQueryObject.createSQLInsert();
 			pstmt = con.prepareStatement(insert);
 			int index = 1;
+			String hostname = this.op2Properties.getClusterHostname();
+			if(hostname==null) {
+				throw new SQLException("ClusterHostname non definito ne tramite proprietà 'org.openspcoop2.pdd.cluster_id.hostname' ne tramite proprietà 'org.openspcoop2.pdd.cluster_id'");
+			}
 			pstmt.setString(index++, this.op2Properties.getClusterHostname());
 			pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
 			Timestamp now = DateManager.getTimestamp();

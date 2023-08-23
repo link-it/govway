@@ -89,7 +89,7 @@
 				<include name="reflections-0.10.2.jar"/>
 				<include name="joda-time-2.12.5.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
-				<include name="guava-32.1.1-jre.jar"/>
+				<include name="guava-32.1.2-jre.jar"/>
 				<include name="snakeyaml-2.1-gov4j-1.jar"/>
 				<include name="javassist-3.29.2-GA.jar"/>
 				<include name="xom-1.3.5.jar" />

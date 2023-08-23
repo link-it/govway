@@ -50,7 +50,6 @@
 	<var name="xalan_serializer_jar" value="" />
 	<var name="commons_logging_jar" value="" />
 	<var name="ecj_jar" value="" />
-	<var name="jakarta_xml_soap-api_jar" value="" />
 	<var name="jakarta_activation_jar" value="" />
 	<var name="validation-api_jar" value="" />
 	<var name="bean-validation_jars" value="" />
@@ -102,15 +101,6 @@
 			<var name="ecj_jar" value="ecj-3.31.0.jar" />
 		</then>
 	</if>
-	<!-- jakarta_xml_soap-api_jar -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-		</or>
-		<then>
-			<var name="jakarta_xml_soap-api_jar" value="jakarta.xml.soap-api-3.0.0.jar" />
-		</then>
-	</if>
 	<!-- jakarta.activation -->
 	<if>
 		<or>
@@ -133,6 +123,12 @@
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
+			<!--
+				WARN  [org.hibernate.validator.internal.properties.javabean.JavaBeanExecutable] 
+				HV000254: Missing parameter metadata for ModalitaAccessoEnum(String, int, String), which declares implicit or synthetic parameters. Automatic resolution of generic type information for method parameters may yield incorrect results if multiple parameters have the same erasure. To solve this, compile your code with the '-parameters' flag
+				Dovuto al fatto che cxf richiede validator hibernate-validator 7, mentre su wildfly c'è a bordo la versione 8
+			-->
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="bean-validation_jars" value="*.jar" />

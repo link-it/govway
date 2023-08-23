@@ -254,7 +254,6 @@
 				<include name="commons-codec-1.16.0.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-collections4-4.4.jar"/>
-				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-logging-1.2.jar"/> <!-- (non necessario in wildfly) -->
 				<include name="commons-net-3.9.0.jar"/>
@@ -311,7 +310,7 @@
 				<include name="velocity-*.jar"/>
 				<include name="urlrewritefilter-5.1.0-SNAPSHOT.jar"/>
 				<include name="joda-time-2.12.5.jar" />
-				<include name="guava-32.1.1-jre.jar"/>
+				<include name="guava-32.1.2-jre.jar"/>
 				<include name="java-uuid-generator-4.2.0.jar"/>
 				<include name="freemarker-2.3.32.jar"/>
 				<include name="snakeyaml-2.1-gov4j-1.jar"/>

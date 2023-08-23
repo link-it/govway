@@ -155,7 +155,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.apache.velocity.tools</groupId>
 			<artifactId>velocity-tools-view-jsp</artifactId>
 			<version>${velocity-tools.version}</version>
@@ -165,7 +165,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>com.google.guava</groupId>

@@ -153,7 +153,6 @@
 				<include name="**/*.properties"/>
 			</classes>
 			<lib dir="${libs}/commons">
-				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-io-2.13.0.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-codec-1.16.0.jar"/>

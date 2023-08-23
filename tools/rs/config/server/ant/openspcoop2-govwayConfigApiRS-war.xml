@@ -95,7 +95,7 @@
 				<include name="reflections-0.10.2.jar"/>
 				<include name="joda-time-2.12.5.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
-				<include name="guava-32.1.1-jre.jar"/>
+				<include name="guava-32.1.2-jre.jar"/>
 				<include name="snakeyaml-2.1-gov4j-1.jar"/>
 				<include name="javassist-3.29.2-GA.jar"/>
 				<include name="freemarker-2.3.32.jar" />
@@ -139,7 +139,7 @@
 
 			<lib dir="${openspcoop2.lib}/saaj">
 				<include name="saaj-impl-3.0.2-gov4j-1.jar"/>
-				<include name="${jakarta_xml_soap-api_jar}"/>
+				<include name="jakarta.xml.soap-api-3.0.0.jar"/>
 			</lib>
 
 			<lib dir="${openspcoop2.lib}/security">

@@ -7,6 +7,10 @@
 			<subsystem name="jsf" />
 			<!-- se si elimina, spuntano i warning <subsystem name="weld" /> -->
 			<subsystem name="logging"/>
+			<!-- 
+				Elimina il WARN:  WFLYTRACEXT0012: No Jaeger endpoint or sender-binding configured. Installing a no-op sender
+			-->
+			<subsystem name="microprofile-opentracing-smallrye"/>
 		</exclude-subsystems>
 		<exclusions>
 			<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 

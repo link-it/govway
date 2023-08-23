@@ -682,8 +682,15 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 						this.requestMsg.writeTo(out, consumeRequestMessage);
 					}
 					
-					out.flush();
-					out.close();
+					try {
+						out.flush();
+						out.close();
+					}catch(java.io.IOException io) {
+						// Fix: wildfly
+						if(io.getMessage()==null || !io.getMessage().equals("closed")) {
+							throw io;
+						}
+					}
 					
 					this.dataRichiestaInoltrata = DateManager.getDate();
 				}

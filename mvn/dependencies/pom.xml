@@ -97,7 +97,6 @@
 							<suppressionFiles>
 								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/console-back-office.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/commons-discovery.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-45688.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2022-42920.xml</suppressionFile>

@@ -123,7 +123,6 @@
 			</lib>
 			<lib dir="${required_lib}/commons">
 				<include name="commons-codec-1.16.0.jar"/>
-				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-io-2.13.0.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>

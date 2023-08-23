@@ -133,6 +133,12 @@
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
+			<!--
+				WARN  [org.hibernate.validator.internal.properties.javabean.JavaBeanExecutable] 
+				HV000254: Missing parameter metadata for ModalitaAccessoEnum(String, int, String), which declares implicit or synthetic parameters. Automatic resolution of generic type information for method parameters may yield incorrect results if multiple parameters have the same erasure. To solve this, compile your code with the '-parameters' flag
+				Dovuto al fatto che cxf richiede validator hibernate-validator 7, mentre su wildfly c'è a bordo la versione 8
+			-->
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="bean-validation_jars" value="*.jar" />
