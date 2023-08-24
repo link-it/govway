@@ -19,11 +19,6 @@
  */
 package org.openspcoop2.web.monitor.statistiche.export;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.export;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-import static net.sf.dynamicreports.report.builder.DynamicReports.type;
-
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,6 +77,9 @@ import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.utils.csv.Printer;
+import org.openspcoop2.web.monitor.core.report.Colonna;
+import org.openspcoop2.web.monitor.core.report.ReportDataSource;
 import org.openspcoop2.web.monitor.core.report.Templates;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA;
@@ -93,12 +91,7 @@ import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.IgnoreCaseComp;
 import org.slf4j.Logger;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.jasper.builder.export.JasperCsvExporterBuilder;
-import net.sf.dynamicreports.report.builder.column.ColumnBuilder;
-import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.datasource.DRDataSource;
-import net.sf.jasperreports.engine.JRDataSource;
+import be.quodlibet.boxable.HorizontalAlignment;
 
 /**
  * ConfigurazioniCsvExporter
@@ -556,56 +549,41 @@ public class ConfigurazioniCsvExporter {
 	public String exportConfigurazioni(List<ConfigurazioneGenerale> listaConfigurazioni, java.io.OutputStream out) throws Exception {
 		String errMsg = null;
 
-		DRDataSource dataSource = creaDatasourceConfigurazioni(this.chiaviColonne, this.log);
+		List<List<String>> dati = new ArrayList<>();
+		popolaDataSourceExport(dati, listaConfigurazioni);
+		
+		ReportDataSource dataSource = new ReportDataSource(this.chiaviColonne);
+		dataSource.setDati(dati);
 
-		popolaDataSourceExport(dataSource,listaConfigurazioni);
-
-		JasperReportBuilder reportBuilder = creaReportBuilder(dataSource, this.log);
-
-		this.esportaCsv(out, reportBuilder, this.chiaviColonne, this.labelColonne);
+		this.esportaCsv(out, dataSource, this.chiaviColonne, this.labelColonne);
 
 		return errMsg;
 	}
 
 
-	public void esportaCsv(OutputStream outputStream, JasperReportBuilder report,List<String> chiaviColonne, List<String> labelColonne) throws Exception{
-		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();
-
+	public void esportaCsv(OutputStream outputStream, ReportDataSource datasource, List<String> chiaviColonne, List<String> labelColonne) throws Exception{
+		List<Colonna> colonne = new ArrayList<>();
+		
 		// generazione delle label delle colonne
 		for (int i = 0; i < labelColonne.size(); i++) {
 			String label = labelColonne.get(i);
 			String keyColonna = chiaviColonne.get(i);
-			TextColumnBuilder<String> nomeColumn = col.column(label, keyColonna, type.stringType());
-			colonne.add(nomeColumn);
+			colonne.add(new Colonna(keyColonna, label, HorizontalAlignment.CENTER));
 		}
+		
+		// imposto le label
+		datasource.setColonne(colonne);
 
-		report
-		.setColumnTitleStyle(Templates.columnTitleStyle)
-		.addProperty("net.sf.jasperreports.export.csv.exclude.origin.keep.first.band.1", "columnHeader")
-		.ignorePageWidth()
-		.ignorePagination()
-		.columns(colonne.toArray(new ColumnBuilder[colonne.size()]));
-
-		JasperCsvExporterBuilder builder = export.csvExporter(outputStream);
-		report.toCsv(builder); 
+		Printer printer = Templates.getPrinter(outputStream);
+		List<String> labelColonna = datasource.getLabelColonne();
+		List<List<String>> dati = datasource.getDati();
+		Templates.writeDataIntoCsv(dati, labelColonna, printer);
+		printer.close();
+		
+		this.log.debug("Scrittura CSV Configurazioni completata.");
 	}
 
-	public JasperReportBuilder creaReportBuilder(JRDataSource dataSource,Logger log) throws Exception{
-		JasperReportBuilder builder = report();
-		builder.setDataSource(dataSource);
-		return builder;
-	}
-
-	private DRDataSource creaDatasourceConfigurazioni(List<String> colonneSelezionate,Logger log) throws Exception {
-		// Scittura Intestazione sono le chiavi delle colonne scelte
-		List<String> header = new ArrayList<>();
-		header.addAll(colonneSelezionate);
-
-		DRDataSource dataSource = new DRDataSource(header.toArray(new String[header.size()])); 
-		return dataSource;
-	}
-
-	private void popolaDataSourceExport(DRDataSource dataSource, List<ConfigurazioneGenerale> lstConfigurazioni) throws Exception  {
+	private void popolaDataSourceExport(List<List<String>> dataSource, List<ConfigurazioneGenerale> lstConfigurazioni) throws Exception  {
 
 		for(ConfigurazioneGenerale configurazione: lstConfigurazioni){
 			if(this.ruolo.equals(PddRuolo.DELEGATA)) {
@@ -664,8 +642,8 @@ public class ConfigurazioniCsvExporter {
 		}//chiudo for configurazioni
 	}
 
-	private void addLinePA(DRDataSource dataSource, ConfigurazioneGenerale configurazione, DettaglioSA dettaglioSA) throws Exception  {
-		List<Object> oneLine = new ArrayList<>();
+	private void addLinePA(List<List<String>> dataSource, ConfigurazioneGenerale configurazione, DettaglioSA dettaglioSA) throws Exception  {
+		List<String> oneLine = new ArrayList<>();
 		DettaglioPA dettaglioPA = configurazione.getPa();
 		PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
 		org.openspcoop2.core.commons.search.PortaApplicativa portaApplicativa = dettaglioPA.getPortaApplicativa();
@@ -1383,11 +1361,11 @@ public class ConfigurazioniCsvExporter {
 		}
 		oneLine.add(nomeApplicativoServer);
 		
-		dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
+		dataSource.add(oneLine); 
 	}
 
-	private void addLinePD(DRDataSource dataSource, ConfigurazioneGenerale configurazione) throws Exception  {
-		List<Object> oneLine = new ArrayList<>();
+	private void addLinePD(List<List<String>> dataSource, ConfigurazioneGenerale configurazione) throws Exception  {
+		List<String> oneLine = new ArrayList<>();
 		DettaglioPD dettaglioPD = configurazione.getPd();
 		PortaDelegata pdOp2 = dettaglioPD.getPortaDelegataOp2();
 		PortaDelegata pdOp2Default = dettaglioPD.getPortaDelegataDefaultOp2();
@@ -2015,7 +1993,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		
 
-		dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
+		dataSource.add(oneLine); 
 	}
 
 	/*
@@ -2035,10 +2013,10 @@ public class ConfigurazioniCsvExporter {
 		14 CONNETTORE_CLIENT_CERTIFICATE
 		15 CONNETTORE_ALTRE_CONFIGURAZIONI
 	 * */
-	public  List<Object> printConnettore(Connettore connettore,String labelTipoConnettore,
+	public  List<String> printConnettore(Connettore connettore,String labelTipoConnettore,
 			InvocazioneCredenziali invCredenziali, 
 			StatoFunzionalita integrationManager, InvocazionePorta invocazionePorta){
-		List<Object> oneLine = new ArrayList<>();
+		List<String> oneLine = new ArrayList<>();
 		Map<Integer, String> mapProperties = new HashMap<Integer, String>();
 
 		mapProperties.put(1, connettore.getTipo());

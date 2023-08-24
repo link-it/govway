@@ -34,31 +34,32 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.utils.NamingUtils;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.XMLRootElement;
-import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
-import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
-import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
-import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
-import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
-import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
-import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
-import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
-import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
-import org.slf4j.Logger;
-
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openspcoop2.core.transazioni.TransazioneExport;
 import org.openspcoop2.core.transazioni.constants.DeleteState;
 import org.openspcoop2.core.transazioni.constants.ExportState;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.XMLRootElement;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
+import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
+import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
+import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
+import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.csv.Printer;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.converter.DurataConverter;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -69,14 +70,7 @@ import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.RuoloType;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniExportService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.jasper.builder.export.JasperCsvExporterBuilder;
-import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
-import net.sf.dynamicreports.report.builder.DynamicReports;
-import net.sf.dynamicreports.report.builder.column.ColumnBuilder;
-import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.datasource.DRDataSource;
-import net.sf.jasperreports.engine.JRDataSource;
+import org.slf4j.Logger;
 
 /**
  * SingleCsvFileExporter
@@ -165,18 +159,14 @@ public class SingleCsvFileExporter implements IExporter{
 		this(new File(pathToFile), properties, transazioniService, tracciamentoService, diagnosticiService,transazioniExport);
 	}
 
-	private void popolaDataSourceExport(DRDataSource dataSource, List<TransazioneBean> transazioni) throws ExportException{
-
+	private void popolaDataSourceExport(List<List<String>> datasource, List<TransazioneBean> transazioni) throws ExportException{
 		for(TransazioneBean t: transazioni){
 			// elemento della lista che deve contenere i valori scelti dall'utente
-			List<Object> oneLine = getLine(t);
-
-			// aggiungo la entry al datasource
-			dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
+			datasource.add(getLine(t)); 
 		}//chiudo for transazioni
 	}
 
-	private void scriviDiagnostici(TransazioneBean t, List<Object> oneLine) throws ExportException {
+	private void scriviDiagnostici(TransazioneBean t, List<String> oneLine) throws ExportException {
 		//diagnostici
 		if(this.exportDiagnostici){
 			try{
@@ -235,7 +225,7 @@ public class SingleCsvFileExporter implements IExporter{
 		}
 	}
 
-	private void scriviTraccia(TransazioneBean t,List<Object> oneLine, boolean isRisposta) throws ExportException {
+	private void scriviTraccia(TransazioneBean t,List<String> oneLine, boolean isRisposta) throws ExportException {
 		//tracce
 		if(this.exportTracce){
 			//devo impostare solo l'idtransazione
@@ -343,8 +333,8 @@ public class SingleCsvFileExporter implements IExporter{
 		}
 	}
 
-	private List<Object> getLine(TransazioneBean t) throws ExportException {
-		List<Object> oneLine = new ArrayList<>();
+	private List<String> getLine(TransazioneBean t) throws ExportException {
+		List<String> oneLine = new ArrayList<>();
 		try {
 			
 			EsitoUtils esitoUtils = new EsitoUtils(SingleCsvFileExporter.log, t.getProtocollo());
@@ -976,14 +966,12 @@ public class SingleCsvFileExporter implements IExporter{
 		Date startTime = Calendar.getInstance().getTime();
 		TransazioneExport te = null;
 		try{
-			DRDataSource dataSource = creaDatasourceTransazioni(this.colonneSelezionate, SingleCsvFileExporter.log);
-
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 			SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
 			SingleCsvFileExporter.log.debug("Avvio esportazione ...");
-			SingleCsvFileExporter.log.debug("Inizio esportazione alle:"+time.format(startTime));
-			List<TransazioneBean> transazioni = new ArrayList<TransazioneBean>();
+			SingleCsvFileExporter.log.debug("Inizio esportazione alle: {}",time.format(startTime));
+			List<TransazioneBean> transazioni = new ArrayList<>();
 
 			for (String id : idtransazioni) {
 				transazioni.add(this.transazioniService.findByIdTransazione(id));
@@ -1000,15 +988,13 @@ public class SingleCsvFileExporter implements IExporter{
 
 				this.transazioniExporterService.store(te);
 			}
-
-			popolaDataSourceExport(dataSource,transazioni);
-
-			JasperReportBuilder reportBuilder = creaReportBuilder(dataSource, SingleCsvFileExporter.log);
+			List<List<String>> dataSourceTransazioni = new ArrayList<>();
+			popolaDataSourceExport(dataSourceTransazioni, transazioni);
 
 			if(this.formato.equals(CostantiExport.FORMATO_CSV_VALUE)){
-				this.esportaCsv(this.outStream, reportBuilder, this.colonneSelezionate);
+				this.esportaCsv(this.outStream, dataSourceTransazioni, this.colonneSelezionate);
 			} else if(this.formato.equals(CostantiExport.FORMATO_XLS_VALUE)){
-				this.esportaXls(this.outStream, reportBuilder, this.colonneSelezionate);
+				this.esportaXls(this.outStream, dataSourceTransazioni, this.colonneSelezionate);
 			} else {
 				throw new ExportException("Formato export ["+this.formato+"] non valido.");
 			}
@@ -1057,8 +1043,6 @@ public class SingleCsvFileExporter implements IExporter{
 		Date startTime = Calendar.getInstance().getTime();
 		TransazioneExport te = null;
 		try{
-			DRDataSource dataSource = creaDatasourceTransazioni(this.colonneSelezionate, SingleCsvFileExporter.log);
-
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 			int start = 0;
@@ -1080,17 +1064,18 @@ public class SingleCsvFileExporter implements IExporter{
 				this.transazioniExporterService.store(te);
 			}
 
-			List<TransazioneBean> transazioni = new ArrayList<TransazioneBean>();
+			List<TransazioneBean> transazioni = new ArrayList<>();
+			List<List<String>> dataSourceTransazioni = new ArrayList<>();
 
 			transazioni = this.transazioniService.findAll(start, limit);
 			
 			int totale = transazioni.size();
 			boolean stopExport = false;
 
-			try{
-				while(transazioni.size()>0 && !stopExport){
+//			try{
+				while(!transazioni.isEmpty() && !stopExport){
 
-					popolaDataSourceExport(dataSource,transazioni);
+					popolaDataSourceExport(dataSourceTransazioni,transazioni);
 
 					start+=limit;
 					
@@ -1111,27 +1096,25 @@ public class SingleCsvFileExporter implements IExporter{
 					if(!this.useCount) {
 						if(totale >= Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES) {
 							stopExport = true;
-							popolaDataSourceExport(dataSource,transazioni); // altrimenti l'ultima lista recuperata non viene inserita
+							popolaDataSourceExport(dataSourceTransazioni,transazioni); // altrimenti l'ultima lista recuperata non viene inserita
 						}
 					}
 				}
 
-				JasperReportBuilder reportBuilder = creaReportBuilder(dataSource, SingleCsvFileExporter.log);
-
 				if(this.formato.equals(CostantiExport.FORMATO_CSV_VALUE)){
-					this.esportaCsv(this.outStream, reportBuilder, this.colonneSelezionate);
+					this.esportaCsv(this.outStream, dataSourceTransazioni, this.colonneSelezionate);
 				} else if(this.formato.equals(CostantiExport.FORMATO_XLS_VALUE)){
-					this.esportaXls(this.outStream, reportBuilder, this.colonneSelezionate);
+					this.esportaXls(this.outStream, dataSourceTransazioni, this.colonneSelezionate);
 				} else {
 					throw new ExportException("Formato export ["+this.formato+"] non valido.");
 				}
 
-			}catch(IOException ioe){
-				String msg = "Si e' verificato un errore durante l'esportazione delle transazioni";
-				msg+=" Non sono riuscito a creare il file SearchFilter.xml ("+ioe.getMessage()+")";
-				SingleCsvFileExporter.log.error(msg,ioe);
-				throw new ExportException(msg, ioe);
-			}
+//			}catch(IOException ioe){
+//				String msg = "Si e' verificato un errore durante l'esportazione delle transazioni";
+//				msg+=" Non sono riuscito a creare il file SearchFilter.xml ("+ioe.getMessage()+")";
+//				SingleCsvFileExporter.log.error(msg,ioe);
+//				throw new ExportException(msg, ioe);
+//			}
 
 			Date dataFine = Calendar.getInstance().getTime();
 
@@ -1179,77 +1162,34 @@ public class SingleCsvFileExporter implements IExporter{
 		return this.abilitaMarcamentoTemporale;
 	}
 
-	public void esportaXls(OutputStream outputStream, JasperReportBuilder report,List<String> colonneSelezionate) throws Exception{
-		JasperXlsExporterBuilder builder = DynamicReports.export.xlsExporter(outputStream).setDetectCellType(true).setIgnorePageMargins(true)
-				.setWhitePageBackground(false)
-				.setRemoveEmptySpaceBetweenColumns(true);
-
-		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();
-
+	public void esportaXls(OutputStream outputStream, List<List<String>> dati, List<String> colonneSelezionate) throws IOException{
+		List<String> labelColonna = new ArrayList<>();
+		
 		// generazione delle label delle colonne
 		for (String keyColonna : colonneSelezionate) {
 			ColonnaExport defColonna = ColonnaExportManager.getInstance().getColonna(keyColonna);
 			String label = defColonna != null ? defColonna.getLabel() : keyColonna;
-			TextColumnBuilder<String> nomeColumn = DynamicReports.col.column(label, keyColonna, DynamicReports.type.stringType());
-			colonne.add(nomeColumn);
+			labelColonna.add(label);
 		}
-
-		report
-		.setColumnTitleStyle(Templates.columnTitleStyle)
-		.addProperty("net.sf.jasperreports.export.csv.exclude.origin.keep.first.band.1", "columnHeader")
-		//		.addProperty(JasperProperty.EXPORT_XLS_FREEZE_ROW, "2")
-		.ignorePageWidth()
-		.ignorePagination()
-		.columns(colonne.toArray(new ColumnBuilder[colonne.size()]));
-
-
-		report.toXls(builder);
+		
+		try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+			Templates.writeDataIntoXls(dati, labelColonna, workbook);
+			workbook.write(outputStream);
+		}
 	}
 
-	public void esportaCsv(OutputStream outputStream, JasperReportBuilder report,List<String> colonneSelezionate) throws Exception{
-		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();
-
+	public void esportaCsv(OutputStream outputStream, List<List<String>> dati, List<String> colonneSelezionate) throws UtilsException{
+		List<String> labelColonna = new ArrayList<>();
+		
 		// generazione delle label delle colonne
 		for (String keyColonna : colonneSelezionate) {
 			ColonnaExport defColonna = ColonnaExportManager.getInstance().getColonna(keyColonna);
 			String label = defColonna != null ? defColonna.getLabel() : keyColonna;
-			TextColumnBuilder<String> nomeColumn = DynamicReports.col.column(label, keyColonna, DynamicReports.type.stringType());
-			colonne.add(nomeColumn);
+			labelColonna.add(label);
 		}
-
-		report
-		.setColumnTitleStyle(Templates.columnTitleStyle)
-		.addProperty("net.sf.jasperreports.export.csv.exclude.origin.keep.first.band.1", "columnHeader")
-		.ignorePageWidth()
-		.ignorePagination()
-		.columns(colonne.toArray(new ColumnBuilder[colonne.size()]));
-
-
-		JasperCsvExporterBuilder builder = DynamicReports.export.csvExporter(outputStream);
-		report.toCsv(builder); 
-	}
-
-	public JasperReportBuilder creaReportBuilder(JRDataSource dataSource,Logger log) throws Exception{
-		JasperReportBuilder builder = DynamicReports.report();
-		builder.setDataSource(dataSource);
-		return builder;
-	}
-
-	private DRDataSource creaDatasourceTransazioni (List<String> colonneSelezionate,Logger log) throws Exception {
-		// Scittura Intestazione sono le chiavi delle colonne scelte
-		List<String> header = new ArrayList<>();
-		header.addAll(colonneSelezionate);
-
-		DRDataSource dataSource = new DRDataSource(header.toArray(new String[header.size()])); 
-
-		//		// scorro le transazioni e in base alla colonna selezionata aggiungo il field corrispondente nell'ordine delle colonne scelto dall'utente
-		//		for (TransazioneBean transazione : transazioni) {
-		//			
-		//			List<Object> oneLine = new ArrayList<>();
-		//			
-		//			dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
-		//		}
-
-		return dataSource;
+		
+		Printer printer = Templates.getPrinter(outputStream);
+		Templates.writeDataIntoCsv(dati, labelColonna, printer);
+		printer.close();
 	}
 }

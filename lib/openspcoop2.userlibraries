@@ -170,14 +170,10 @@
 	<archive path="/op2_3.4.dev/lib/redis/jboss-marshalling-2.1.1.Final.jar"/>
 	<archive path="/op2_3.4.dev/lib/redis/jboss-marshalling-river-2.1.1.Final.jar"/>
 	<!-- reports -->
-	<archive path="/op2_3.4.dev/lib/reports/dynamicreports-core-6.12.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/jasperreports-6.20.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/jasperreports-metadata-6.20.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/jcommon-1.0.24.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/jfreechart-1.5.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/reports/poi-5.2.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/SparseBitSet-1.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/net.tascalate.javaflow.api-2.7.3.jar"/>
+  <archive path="/op2_3.4.dev/lib/reports/poi-ooxml-5.2.3.jar"/>
+  <archive path="/op2_3.4.dev/lib/reports/poi-ooxml-lite-5.2.3.jar"/>
+  <archive path="/op2_3.4.dev/lib/reports/xmlbeans-5.1.1.jar"/>
 	<!-- saaj -->
 	<archive path="/op2_3.4.dev/lib/saaj/jakarta.xml.soap-api-3.0.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/saaj/saaj-impl-3.0.2-gov4j-1.jar"/>
@@ -282,7 +278,7 @@
         <archive path="/op2_3.4.dev/lib/jaxb/relaxng-datatype-4.0.3.jar"/>
         <archive path="/op2_3.4.dev/lib/jaxb/rngom-4.0.3.jar"/>
         <archive path="/op2_3.4.dev/lib/jaxb/txw2-4.0.3.jar"/>
-        <archive path="/op2_3.4.dev/lib/jaxb/xsom-4.0.3.jar"/>       
+        <archive path="/op2_3.4.dev/lib/jaxb/xsom-4.0.3.jar"/>
     </library>
     <library name="openspcoop2_3.4_lib_stub" systemlibrary="false">
         <archive path="/op2_3.4.dev/lib/stub/cxf/openspcoop2_integrationManagerStub_cxf.jar"/>

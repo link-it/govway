@@ -23,13 +23,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.el.ELContext;
-import jakarta.el.ExpressionFactory;
-import jakarta.el.ValueExpression;
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -49,6 +45,7 @@ import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.report.ReportDataSource;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
@@ -62,7 +59,10 @@ import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import jakarta.el.ELContext;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.ValueExpression;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * DistribuzionePerAzioneBean
@@ -363,7 +363,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
 
 			// scrittura del report sullo stream
 			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
@@ -460,7 +460,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
 
 			// scrittura del report sullo stream
 			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
@@ -557,7 +557,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), true); 
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), true); 
 
 			// scrittura del report sullo stream
 			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());

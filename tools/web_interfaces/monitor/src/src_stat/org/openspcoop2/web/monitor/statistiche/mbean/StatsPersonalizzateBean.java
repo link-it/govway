@@ -25,35 +25,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.el.ELContext;
-import jakarta.el.ExpressionFactory;
-import jakarta.el.ValueExpression;
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.json.JSONUtils;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
-
-import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.report.ReportDataSource;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
@@ -66,7 +62,10 @@ import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import jakarta.el.ELContext;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.ValueExpression;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * StatsPersonalizzateBean
@@ -437,7 +436,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 
 
-			JasperReportBuilder report = null;
+			ReportDataSource report = null;
 			String headerLabel = null;
 
 			TipoReport tipoReport = ((StatistichePersonalizzateSearchForm) this.search).getTipoReport();
@@ -565,7 +564,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 
-			JasperReportBuilder report = null;
+			ReportDataSource report = null;
 			String headerLabel = null;
 
 			TipoReport tipoReport = ((StatistichePersonalizzateSearchForm) this.search).getTipoReport();
@@ -694,7 +693,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 
-			JasperReportBuilder report = null;
+			ReportDataSource report = null;
 			String headerLabel = null;
 
 			TipoReport tipoReport = ((StatistichePersonalizzateSearchForm) this.search).getTipoReport();

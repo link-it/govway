@@ -24,13 +24,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.el.ELContext;
-import jakarta.el.ExpressionFactory;
-import jakarta.el.ValueExpression;
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -49,6 +45,7 @@ import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.report.ReportDataSource;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
@@ -61,7 +58,10 @@ import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import jakarta.el.ELContext;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.ValueExpression;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * AndamentoTemporaleBean
@@ -416,7 +416,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 			List<TipoLatenza> tipiLatenza =  ((StatsSearchForm)this.search).getTipiLatenzaImpostati();
 			StatisticType modalitaTemporale = ((StatsSearchForm)this.search).getModalitaTemporale();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportAndamentoTemporale(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza, modalitaTemporale,
+			ReportDataSource report = ExportUtils.creaReportAndamentoTemporale(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza, modalitaTemporale,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), false);
 			
 			// scrittura del report sullo stream
@@ -513,7 +513,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 			List<TipoLatenza> tipiLatenza =  ((StatsSearchForm)this.search).getTipiLatenzaImpostati();
 			StatisticType modalitaTemporale = ((StatsSearchForm)this.search).getModalitaTemporale();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportAndamentoTemporale(list, titoloReport, log, tipoVisualizzazione, tipiBanda,tipiLatenza, modalitaTemporale,
+			ReportDataSource report = ExportUtils.creaReportAndamentoTemporale(list, titoloReport, log, tipoVisualizzazione, tipiBanda,tipiLatenza, modalitaTemporale,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), false); 
 
 			// scrittura del report sullo stream
@@ -611,7 +611,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 			List<TipoLatenza> tipiLatenza =  ((StatsSearchForm)this.search).getTipiLatenzaImpostati();
 			StatisticType modalitaTemporale = ((StatsSearchForm)this.search).getModalitaTemporale();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportAndamentoTemporale(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza, modalitaTemporale,
+			ReportDataSource report = ExportUtils.creaReportAndamentoTemporale(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza, modalitaTemporale,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), true);
 
 			// scrittura del report sullo stream

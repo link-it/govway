@@ -16,55 +16,13 @@
 	<properties>
 
 		<jar.group.name>reports</jar.group.name>
-		
-		<dynamicreports.version>6.12.1</dynamicreports.version>
-		<ecj.version>3.31.0</ecj.version>
-		<jasperreports.version>6.20.0</jasperreports.version>
-		<jcommon.version>1.0.24</jcommon.version>
-		<jfreechart.version>1.5.3</jfreechart.version>
+
 		<poi.version>5.2.3</poi.version>
-		<SparseBitSet.version>1.2</SparseBitSet.version>
-		<net.tascalate.javaflow.version>2.7.3</net.tascalate.javaflow.version>
+		<xmlbeans.version>5.1.1</xmlbeans.version>
 
 	</properties>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>net.tascalate.javaflow</groupId>
-			<artifactId>net.tascalate.javaflow.api</artifactId>
-			<version>${net.tascalate.javaflow.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>SparseBitSet</artifactId>
-			<version>${SparseBitSet.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jfree</groupId>
-			<artifactId>jfreechart</artifactId>
-			<version>${jfreechart.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -79,9 +37,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jfree</groupId>
-			<artifactId>jcommon</artifactId>
-			<version>${jcommon.version}</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${poi.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -91,9 +49,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
-			<version>${jasperreports.version}</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-lite</artifactId>
+			<version>${poi.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -103,33 +61,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports-metadata</artifactId>
-			<version>${jasperreports.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.jdt</groupId>
-			<artifactId>ecj</artifactId>
-			<version>${ecj.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>net.sourceforge.dynamicreports</groupId>
-			<artifactId>dynamicreports-core</artifactId>
-			<version>${dynamicreports.version}</version>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>${xmlbeans.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

@@ -23,13 +23,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.el.ELContext;
-import jakarta.el.ExpressionFactory;
-import jakarta.el.ValueExpression;
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -51,6 +47,7 @@ import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.report.ReportDataSource;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
@@ -63,7 +60,10 @@ import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import jakarta.el.ELContext;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.ValueExpression;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * DistribuzionePerSABean
@@ -436,7 +436,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
@@ -538,7 +538,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
@@ -640,7 +640,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, true); 
 
 			// scrittura del report sullo stream
