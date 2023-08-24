@@ -18,13 +18,15 @@
 		<jar.group.name>axis14</jar.group.name>
 		
 		<axis.version>1.4</axis.version>
-		<axis.gov4j.version>1.4-gov4j-1</axis.gov4j.version>
+		<axis.gov4j.version>1.4-gov4j-jk1</axis.gov4j.version>
 		<mailapi.version>1.5.6</mailapi.version>
 		<neethi.version>2.0.4</neethi.version>
 		<opensaml.version>1.1</opensaml.version>
 		<wss4j.version>1.5.11</wss4j.version>
 		<xmlsec.version>1.4.4</xmlsec.version>
 		<addressing.version>1.1</addressing.version>
+		<activation.version>1.2.2</activation.version>
+		<commons.discovery.version>0.5</commons.discovery.version>
 
 	</properties>
 
@@ -150,6 +152,32 @@
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>addressing</artifactId>
 			<version>${addressing.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.activation</groupId>
+			<artifactId>jakarta.activation</artifactId>
+			<version>${activation.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>${commons.discovery.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

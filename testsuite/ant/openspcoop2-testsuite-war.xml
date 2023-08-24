@@ -94,25 +94,24 @@
 				<include name="openspcoop2*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/axis14">
-				<include name="axis-1.4-gov4j-1.jar"/>
+				<include name="axis-1.4-gov4j-jk1.jar"/>
 				<include name="${axis_saaj_jar}"/>
-				<include name="axis-jaxrpc-1.4-gov4j-1.jar"/>
+				<include name="axis-jaxrpc-1.4-gov4j-jk1.jar"/>
 				<include name="wss4j-1.5.11.jar"/>
 				<include name="opensaml-1.1.jar"/>
 				<include name="xmlsec-1.4.4.jar"/>
-				<include name="mailapi-1.5.6.jar"/>
 				<include name="addressing-1.1.jar"/> 
-			</lib>
-			<fileset dir="${required_lib}/jakarta">
-				<include name="jakarta.activation-api-2.1.2.jar"/>
-			</fileset>
-			<lib dir="${required_lib}/shared">
+				<include name="commons-discovery-0.5.jar"/>
+				<include name="jakarta.activation-1.2.2.jar"/>
 				<!-- Includendolo, i test con attachments falliscono poiche' axis14 genera dei messaggi non corretti (ContentLength non appropriato rispetto al messaggio) 
 												e la Porta genera errori simili al seguente: com.sun.xml.messaging.saaj.packaging.mime.MessagingException: 
 																									Missing End Boundary for Mime Package : EOF while skipping headers 
 					Deve essere usata una versione compatibile (mailapi-1.5.6.jar presente tra i jar axis14) con le classi della versione 1.4 di axis.
 				--> 
 				<!-- <include name="mailapi-1.6.7.jar"/> -->
+				<include name="mailapi-1.5.6.jar"/>
+			</lib>
+			<lib dir="${required_lib}/shared">
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>

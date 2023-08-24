@@ -48,7 +48,7 @@ public abstract class GestioneViaJmx {
 		this.unitsTestsuiteProperties = unitsTestsuiteProperties;
 	}
 	
-	private static final Boolean _lock_semaphore = true; 
+	private static final String _lock_semaphore = "semaphore"; 
 	private static String _lock = null; 
 	public void lock(String name) throws Exception {
 		

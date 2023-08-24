@@ -1436,6 +1436,9 @@ public class OpenSPCoop2Properties {
 			this.getReadConnectionTimeout_ricezioneContenutiApplicativi();
 			this.getReadConnectionTimeout_ricezioneBuste();
 			
+			this.getBIOConfigSyncClientMaxPerRoute();
+			this.getBIOConfigSyncClientMaxTotal();
+			
 			this.isConnettoriUseDiagnosticInputStream_inoltroBuste();
 			this.isConnettoriUseDiagnosticInputStream_consegnaContenutiApplicativi();
 			this.isConnettoriUseDiagnosticInputStream_ricezioneContenutiApplicativi();
@@ -13810,6 +13813,55 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.readConnectionTimeout_ricezioneBuste;
+	}
+
+	
+	/* ***************** BIO  ************* */
+	
+	private Integer getBIOConfigSyncClientMaxPerRoute = null;
+	public int getBIOConfigSyncClientMaxPerRoute() {	
+		if(this.getBIOConfigSyncClientMaxPerRoute==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.maxPerRoute";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getBIOConfigSyncClientMaxPerRoute = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE);
+					this.getBIOConfigSyncClientMaxPerRoute = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE+", errore:"+e.getMessage(),e);
+				this.getBIOConfigSyncClientMaxPerRoute = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
+			}  
+		}
+
+		return this.getBIOConfigSyncClientMaxPerRoute;
+	}
+	
+	private Integer getBIOConfigSyncClientMaxTotal = null;
+	public int getBIOConfigSyncClientMaxTotal() {	
+		if(this.getBIOConfigSyncClientMaxTotal==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.maxTotal";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getBIOConfigSyncClientMaxTotal = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL);
+					this.getBIOConfigSyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL+", errore:"+e.getMessage(),e);
+				this.getBIOConfigSyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
+			}  
+		}
+
+		return this.getBIOConfigSyncClientMaxTotal;
 	}
 	
 	

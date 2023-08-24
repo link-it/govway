@@ -33,7 +33,6 @@ import javax.xml.transform.TransformerException;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
@@ -43,6 +42,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.testsuite.axis14.Axis14DynamicNamespaceContextFactory;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteException;
@@ -124,7 +124,8 @@ public class XMLEncoding {
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		DynamicNamespaceContext dnc = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
+		Axis14DynamicNamespaceContextFactory dncUtils = new Axis14DynamicNamespaceContextFactory();
+		DynamicNamespaceContext dnc = dncUtils.getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		String msg = null;
 		try {
@@ -193,7 +194,8 @@ public class XMLEncoding {
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		DynamicNamespaceContext dncBody = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
+		Axis14DynamicNamespaceContextFactory dncUtils = new Axis14DynamicNamespaceContextFactory();
+		DynamicNamespaceContext dncBody = dncUtils.getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		String msg = null;
 		try {
@@ -277,7 +279,8 @@ public class XMLEncoding {
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		DynamicNamespaceContext dnc = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
+		Axis14DynamicNamespaceContextFactory dncUtils = new Axis14DynamicNamespaceContextFactory();
+		DynamicNamespaceContext dnc = dncUtils.getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		String msg = null;
 		try {
@@ -347,7 +350,8 @@ public class XMLEncoding {
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		DynamicNamespaceContext dncBody = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
+		Axis14DynamicNamespaceContextFactory dncUtils = new Axis14DynamicNamespaceContextFactory();
+		DynamicNamespaceContext dncBody = dncUtils.getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		String msg = null;
 		try {

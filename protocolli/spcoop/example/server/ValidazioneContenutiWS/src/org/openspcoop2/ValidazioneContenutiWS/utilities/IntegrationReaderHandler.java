@@ -53,8 +53,8 @@ public class IntegrationReaderHandler extends BasicHandler
 	public void invoke(MessageContext msgContext) throws AxisFault
     {
 
-    	javax.servlet.http.HttpServletRequest req = 
-			(javax.servlet.http.HttpServletRequest) msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
+    	jakarta.servlet.http.HttpServletRequest req = 
+			(jakarta.servlet.http.HttpServletRequest) msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
 
     	java.util.Properties headerTrasporto = 
 			new java.util.Properties();	    

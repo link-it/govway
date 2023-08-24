@@ -21,7 +21,7 @@
 
 
 package org.openspcoop2.testsuite.server;
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
 
 import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;

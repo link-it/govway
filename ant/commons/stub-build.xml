@@ -83,14 +83,14 @@
 					<arg value="${stubPackageOverriding}" />
 					<arg value="${stubBuild.urlWSDL}" />
 					<classpath>
-						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-1.jar"/>
-						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
+						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk1.jar"/>
+						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-jk1.jar"/>
 						<pathelement path="${required_lib}/axis14/axis-saaj-1.4.jar"/>
 						<pathelement path="${required_lib}/axis14/mailapi-1.5.6.jar"/>
-						<pathelement path="${required_lib}/commons/commons-discovery-0.5.jar"/>
+						<pathelement path="${required_lib}/axis14/jakarta.activation-1.2.2.jar"/>
+						<pathelement path="${required_lib}/axis14/commons-discovery-0.5.jar"/>
 						<pathelement path="${required_lib}/commons/commons-logging-1.2.jar"/>
 						<pathelement path="${required_lib}/shared/wsdl4j-1.6.3.jar"/>
-						<pathelement path="${required_lib}/shared/jakarta.activation-1.2.2.jar"/>
 					</classpath>
 				</java>
 			</then>
@@ -100,14 +100,14 @@
 					<arg value="${stubBuild.srcDir}" />
 					<arg value="${stubBuild.urlWSDL}" />
 					<classpath>
-						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-1.jar"/>
-						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
+						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk1.jar"/>
+						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-jk1.jar"/>
 						<pathelement path="${required_lib}/axis14/axis-saaj-1.4.jar"/>
 						<pathelement path="${required_lib}/axis14/mailapi-1.5.6.jar"/>
-						<pathelement path="${required_lib}/commons/commons-discovery-0.5.jar"/>
+						<pathelement path="${required_lib}/axis14/jakarta.activation-1.2.2.jar"/>
+						<pathelement path="${required_lib}/axis14/commons-discovery-0.5.jar"/>
 						<pathelement path="${required_lib}/commons/commons-logging-1.2.jar"/>
 						<pathelement path="${required_lib}/shared/wsdl4j-1.6.3.jar"/>
-						<pathelement path="${required_lib}/shared/jakarta.activation-1.2.2.jar"/>
 					</classpath>
 				</java>	
 			</else>
@@ -117,14 +117,14 @@
 		<javac includeantruntime="false" destdir="${stubBuild.buildDir}" debug="${debug}" encoding="UTF-8">
 			<src path="${stubBuild.srcDir}" />
 			<classpath>
-				<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-1.jar"/>
-				<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
+				<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk1.jar"/>
+				<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-jk1.jar"/>
 				<pathelement path="${required_lib}/axis14/axis-saaj-1.4.jar"/>
 				<pathelement path="${required_lib}/axis14/mailapi-1.5.6.jar"/>
-				<pathelement path="${required_lib}/commons/commons-discovery-0.5.jar"/>
+				<pathelement path="${required_lib}/axis14/jakarta.activation-1.2.2.jar"/>
+				<pathelement path="${required_lib}/axis14/commons-discovery-0.5.jar"/>
 				<pathelement path="${required_lib}/commons/commons-logging-1.2.jar"/>
 				<pathelement path="${required_lib}/shared/wsdl4j-1.6.3.jar"/>
-				<pathelement path="${required_lib}/shared/jakarta.activation-1.2.2.jar"/>
 			</classpath>
 		</javac>
 		

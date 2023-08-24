@@ -49,7 +49,6 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.ByteArrayOutputStream;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.soap.SoapUtils;
 
 /**
  * Engine per la gestione/spedizion di messaggi Soap
@@ -417,7 +416,7 @@ public class SOAPEngine {
 				MessageElement m = new MessageElement("idUnivoco", "test","http://www.openspcoop.org");
 				this.lastIDUnivoco = "ID-"+SOAPEngine.getIDUnivoco();
 				m.setValue(this.lastIDUnivoco);
-				SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(this.sentMessage.getSOAPBody());
+				SOAPElement child = SOAPUtils.getNotEmptyFirstChildSOAPElement(this.sentMessage.getSOAPBody());
 				if(child!=null){
 					child.addChildElement(m);
 				}

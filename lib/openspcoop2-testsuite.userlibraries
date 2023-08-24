@@ -6,15 +6,16 @@
         <archive path="/op2_3.4.dev/lib/axis14/neethi-2.0.4.jar"/>
         <archive path="/op2_3.4.dev/lib/axis14/addressing-1.1.jar"/>
         <archive path="/op2_3.4.dev/lib/axis14/axis-saaj-1.4.jar"/>
-        <archive path="/op2_3.4.dev/lib/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-jaxrpc-1.4-gov4j-jk1.jar"/>
         <archive path="/op2_3.4.dev/lib/axis14/axis-ant-1.4.jar"/>
-        <archive path="/op2_3.4.dev/lib/axis14/axis-1.4-gov4j-1.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-1.4-gov4j-jk1.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/jakarta.activation-1.2.2.jar"/>
     </library>
     <library name="openspcoop2_3.4_lib_axis14_withoutSecurity" systemlibrary="false">
         <archive path="/op2_3.4.dev/lib/axis14/axis-saaj-1.4.jar"/>
-        <archive path="/op2_3.4.dev/lib/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-jaxrpc-1.4-gov4j-jk1.jar"/>
         <archive path="/op2_3.4.dev/lib/axis14/axis-ant-1.4.jar"/>
-        <archive path="/op2_3.4.dev/lib/axis14/axis-1.4-gov4j-1.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-1.4-gov4j-jk1.jar"/>
     </library>
     <library name="openspcoop2_3.4_lib_stub_axis14" systemlibrary="false">
         <archive path="/op2_3.4.dev/lib/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar"/>

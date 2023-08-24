@@ -40,7 +40,7 @@
 	<target name="run" depends="build"
         description="Esegue il Client" >
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.example.pdd.client.pdinvoker.Client" fork="false">
+		<java classname="org.openspcoop2.example.pdd.client.pdinvoker.Client" fork="true">
 			<arg value="${parameter}" />
 			<classpath>
 				<path refid="classpath_run" />
@@ -57,7 +57,6 @@
 	<fileset dir="${utils_dist}"/>
    </path>
    <path id="classpath_run">
-		<fileset dir="${required_lib}" includes="axis14/axis-1.4-gov4j-1.jar"/>
 		<fileset dir="${required_lib}" includes="commons/commons-codec-1.16.0.jar"/>
 		<fileset dir="${utils_dist}"/>
    </path>
