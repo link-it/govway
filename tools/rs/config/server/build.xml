@@ -51,7 +51,7 @@
 	<var name="commons_logging_jar" value="" />
 	<var name="ecj_jar" value="" />
 	<var name="jakarta_activation_jar" value="" />
-	<var name="validation-api_jar" value="" />
+	<var name="jakarta_validation_jar" value="" />
 	<var name="bean-validation_jars" value="" />
 	<var name="jboss-logging_jar" value="" />
 	<var name="jsf_module_jar" value="" />
@@ -101,7 +101,7 @@
 			<var name="ecj_jar" value="ecj-3.31.0.jar" />
 		</then>
 	</if>
-	<!-- jakarta.activation -->
+	<!-- jakarta_activation_jar -->
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
@@ -110,13 +110,13 @@
 			<var name="jakarta_activation_jar" value="jakarta.activation-api-2.1.2.jar"/>
 		</then>
 	</if>	
-	<!-- validation-api -->
+	<!-- jakarta_validation_jar -->
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="validation-api_jar" value="jakarta.validation-api-3.0.2.jar" />
+			<var name="jakarta_validation_jar" value="jakarta.validation-api-3.0.2.jar" />
 		</then>
 	</if>
 	<!-- bean-validation/* -->

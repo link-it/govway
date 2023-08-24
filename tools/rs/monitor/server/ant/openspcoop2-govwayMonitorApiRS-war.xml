@@ -104,7 +104,7 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jakarta">
-				<include name="${validation-api_jar}"/>
+				<include name="${jakarta_validation_jar}"/>
 				<include name="${jakarta_activation_jar}"/>
 				<include name="jakarta.xml.bind-api-3.0.1.jar"/>
 				<include name="jakarta.xml.ws-api-3.0.1.jar"/>
