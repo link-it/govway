@@ -20,7 +20,6 @@
 
 package org.openspcoop2.testsuite.axis14;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 import javax.xml.soap.SOAPBody;
@@ -41,7 +40,7 @@ import org.xml.sax.SAXException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Axis14DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.DynamicNamespaceContextFactory {
+public class Axis14DynamicNamespaceContextFactory {
 
 
 	private static Axis14DynamicNamespaceContextFactory dncfactory = null;
@@ -57,24 +56,13 @@ public class Axis14DynamicNamespaceContextFactory extends org.openspcoop2.utils.
 		return Axis14DynamicNamespaceContextFactory.dncfactory;
 	}
 	
+	public DynamicNamespaceContext getNamespaceContext(Node node)
+	{
+		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+		dnc.findPrefixNamespace(node);
+		return dnc;
+	}
 	
-	@Override
-	public DynamicNamespaceContext getNamespaceContextFromSoapEnvelope11(
-			byte[] soapenvelope) throws SAXException, SOAPException,
-			IOException, Exception {
-		
-		throw new IOException("Not Implemented");
-	}
-
-	@Override
-	public DynamicNamespaceContext getNamespaceContextFromSoapEnvelope12(
-			byte[] soapenvelope) throws SAXException, SOAPException,
-			IOException, Exception {
-		
-		throw new IOException("Not Implemented");
-	}
-
-	@Override
 	public DynamicNamespaceContext getNamespaceContextFromSoapEnvelope11(
 			SOAPEnvelope soapenvelope) throws SAXException, SOAPException {
 		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
@@ -109,12 +97,5 @@ public class Axis14DynamicNamespaceContextFactory extends org.openspcoop2.utils.
 		}
 		return firstElement;
 	}
-
-	@Override
-	public DynamicNamespaceContext getNamespaceContextFromSoapEnvelope12(
-			SOAPEnvelope soapenvelope) throws SAXException, SOAPException {
-		throw new SOAPException("Not Implemented");
-	}
-
 
 }

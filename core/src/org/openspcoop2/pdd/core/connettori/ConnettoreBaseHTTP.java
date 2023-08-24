@@ -113,10 +113,10 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	protected String resultHTTPMessage;
 
 	/** RFC 2047 */
-	boolean encodingRFC2047 = false;
-	Charset charsetRFC2047 = null;
-	RFC2047Encoding encodingAlgorithmRFC2047 = null;
-	boolean validazioneHeaderRFC2047 = false;
+	protected boolean encodingRFC2047 = false;
+	protected Charset charsetRFC2047 = null;
+	protected RFC2047Encoding encodingAlgorithmRFC2047 = null;
+	protected boolean validazioneHeaderRFC2047 = false;
 	
 	
 	/** Proxy Pass Reverse */
@@ -136,6 +136,17 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	protected ForwardProxy forwardProxy;
 	protected String forwardProxy_headerName;
 	protected String forwardProxy_headerValue;
+	
+	
+    /* Costruttori */
+    protected ConnettoreBaseHTTP(){
+            this.connettoreHttps = false;
+    }
+    protected ConnettoreBaseHTTP(boolean https){
+            this.connettoreHttps = https;
+    }
+
+	
 	
 	@Override
 	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired, ResponseCachingConfigurazione responseCachingConfig){

@@ -114,9 +114,12 @@
 		<fileset dir="${openspcoop2_lib}/axis14" >
 			<include name="*.jar"/>
 			<exclude name="neethi-2.0.4.jar"/> <!-- Includendolo causa un errore "org.apache.cxf.bus.extension.ExtensionException  java.lang.IncompatibleClassChangeError: Implementing class" usando gli stub di cxf -->
-		</fileset>
-		<fileset dir="${openspcoop2_lib}/javax" >
-			<include name="*.jar"/>
+			<!-- Includendolo, i test con attachments falliscono poiche' axis14 genera dei messaggi non corretti (ContentLength non appropriato rispetto al messaggio) 
+											e la Porta genera errori simili al seguente: com.sun.xml.messaging.saaj.packaging.mime.MessagingException: 
+																								Missing End Boundary for Mime Package : EOF while skipping headers 
+				Deve essere usata una versione compatibile (mailapi-1.5.6.jar presente tra i jar axis14) con le classi della versione 1.4 di axis.
+			--> 
+			<exclude name="mailapi-1.6.7.jar"/> 
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/log" >
 			<include name="*.jar"/>
@@ -131,12 +134,6 @@
 			<include name="neethi-3.2.0.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >
-			<!-- Includendolo, i test con attachments falliscono poiche' axis14 genera dei messaggi non corretti (ContentLength non appropriato rispetto al messaggio) 
-											e la Porta genera errori simili al seguente: com.sun.xml.messaging.saaj.packaging.mime.MessagingException: 
-																								Missing End Boundary for Mime Package : EOF while skipping headers 
-				Deve essere usata una versione compatibile (mailapi-1.5.6.jar presente tra i jar axis14) con le classi della versione 1.4 di axis.
-			--> 
-			<exclude name="mailapi*.jar"/> 
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/httpcore" >
@@ -148,10 +145,12 @@
 		<fileset dir="${openspcoop2_lib}/saaj">
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${openspcoop2_lib}/jax" >
-			<include name="jaxb*.jar"/>
-			<include name="jaxws-api-2.3.1.jar"/>
-			<include name="jaxws-jsr181-api-2.3.1.jar"/>
+		<fileset dir="${openspcoop2_lib}/jaxb" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/jakarta" >
+			<include name="jakarta.xml.bind-api-3.0.1.jar"/>
+			<include name="jakarta.activation-api-2.1.2.jar"/>
 		</fileset>
 
 	</path>

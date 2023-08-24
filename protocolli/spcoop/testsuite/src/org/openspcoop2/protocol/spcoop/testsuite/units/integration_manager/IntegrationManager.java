@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.xml.rpc.Stub;
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.axis.Message;
 import org.openspcoop2.message.constants.MessageType;

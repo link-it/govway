@@ -5,6 +5,7 @@
     </description>
 
 	<property name="required_lib" value="../../../../lib/" />
+	<property name="utils_dist" value="../../../../tools/utils/dist/" />
 
 
 	<!-- Argomento passato al Client, durante l'esecuzione -->
@@ -39,7 +40,7 @@
 	<target name="run" depends="build"
         description="Esegue il Client" >
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.example.pdd.client.painvoker.Client" fork="false">
+		<java classname="org.openspcoop2.example.pdd.client.painvoker.Client" fork="true">
 			<arg value="${parameter}" />
 			<classpath>
 				<path refid="classpath_run" />
@@ -51,10 +52,12 @@
 
 	<!-- Classpath -->
 	<path id="classpath_compile">
-		<fileset dir="${required_lib}" includes="axis-1.4-gov4j-1.jar"/>
+		<fileset dir="${required_lib}" includes="commons/commons-codec-1.16.0.jar"/>
+		<fileset dir="${utils_dist}"/>
 	</path>
 	<path id="classpath_run">
-		<fileset dir="${required_lib}" includes="axis-1.4-gov4j-1.jar"/>
+		<fileset dir="${required_lib}" includes="commons/commons-codec-1.16.0.jar"/>
+		<fileset dir="${utils_dist}"/>
 	</path>
 
 

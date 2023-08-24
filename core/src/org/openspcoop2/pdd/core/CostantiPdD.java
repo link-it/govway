@@ -351,6 +351,11 @@ public class CostantiPdD {
     /** Dimensione della cache */
     public static final int CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE = 10000;
     
+    /** Maximum limit of connection on a per route basis */
+    public static final int CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE = 100;
+    /** Maximum limit of connection on total */
+    public static final int CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL = 100;
+    
     /** Configurazione default per refresh cluster dinamico */
     public static final int CLUSTER_DINAMICO_REFRESH_SECONDS = 30;
     

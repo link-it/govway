@@ -40,7 +40,7 @@
 		<testng classpathref="classpath_run"
             outputdir="${output}/default"
             listeners="${testsuite_transformer}"
-            haltonfailure="${testHaltOnFailure}" groups="${group}">
+            haltonfailure="${testHaltOnFailure}" groups="${group}" verbose="1">
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 			<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
 			<jvmarg value="${testngXmx}" />

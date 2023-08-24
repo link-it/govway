@@ -7,5 +7,7 @@ local_env.xml
 .ant-targets-build.xml
 RisultatiTestSuite/
 .ant-targets-build.xml
+backup_openspcoop2/
+build.number
 # Except this file
 !.gitignore
