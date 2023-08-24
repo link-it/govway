@@ -77,6 +77,7 @@ import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.csv.Printer;
 import org.openspcoop2.web.monitor.core.report.Colonna;
 import org.openspcoop2.web.monitor.core.report.ReportDataSource;
@@ -561,7 +562,7 @@ public class ConfigurazioniCsvExporter {
 	}
 
 
-	public void esportaCsv(OutputStream outputStream, ReportDataSource datasource, List<String> chiaviColonne, List<String> labelColonne) throws Exception{
+	public void esportaCsv(OutputStream outputStream, ReportDataSource datasource, List<String> chiaviColonne, List<String> labelColonne) throws UtilsException {
 		List<Colonna> colonne = new ArrayList<>();
 		
 		// generazione delle label delle colonne
@@ -592,7 +593,7 @@ public class ConfigurazioniCsvExporter {
 				List<DettaglioSA> listaSA = configurazione.getPa().getListaSA();
 				// se ho piu' di un servizio applicativo aggiungo un linea per servizio
 				if(listaSA == null || listaSA.size() <= 1){
-					DettaglioSA dettaglioSA = (listaSA != null && listaSA.size() > 0) ? listaSA.get(0): null;
+					DettaglioSA dettaglioSA = (listaSA != null && !listaSA.isEmpty()) ? listaSA.get(0): null;
 					this.addLinePA(dataSource,configurazione, dettaglioSA);
 				} else {
 					// Ordino per nome connettore
@@ -601,7 +602,7 @@ public class ConfigurazioniCsvExporter {
 					PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
 					
 					List<String> orderFix = new ArrayList<>();
-					Map<String, DettaglioSA> mapIds = new HashMap<String, DettaglioSA>();
+					Map<String, DettaglioSA> mapIds = new HashMap<>();
 					for (DettaglioSA dettaglioSA : listaSA) {
 						
 						String nomePAConnettore = null;
@@ -609,10 +610,9 @@ public class ConfigurazioniCsvExporter {
 							ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
 							if(StringUtils.isNotEmpty(saOp2.getNome()) && paOp2.sizeServizioApplicativoList()>0) {
 								for (PortaApplicativaServizioApplicativo pasa : paOp2.getServizioApplicativoList()) {
-									if(saOp2.getNome().equals(pasa.getNome())) {
-										if(pasa.getDatiConnettore()!=null && StringUtils.isNotEmpty(pasa.getDatiConnettore().getNome())) {
-											nomePAConnettore = pasa.getDatiConnettore().getNome();
-										}
+									if(saOp2.getNome().equals(pasa.getNome()) &&
+										pasa.getDatiConnettore()!=null && StringUtils.isNotEmpty(pasa.getDatiConnettore().getNome())) {
+										nomePAConnettore = pasa.getDatiConnettore().getNome();
 									}
 								}
 							}
@@ -705,19 +705,18 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 
 		// AZIONE
-		if(StringUtils.isNotEmpty(portaApplicativa.getNomeAzione())){  // TODO controllare lista azioni
-			// Azione: _XXX
+		if(StringUtils.isNotEmpty(portaApplicativa.getNomeAzione())){  
 			oneLine.add(portaApplicativa.getNomeAzione());
 		}
 		else{
 			List<String> azioni = dettaglioPA.getAzioni(); 
-			if(paAzione==null && (azioni == null || azioni.size() == 0)){
+			if(paAzione==null && (azioni == null || azioni.isEmpty())){
 				oneLine.add(CostantiConfigurazioni.LABEL_UTILIZZO_DEL_SERVIZIO_SENZA_AZIONE);
 			}
 			else{
 				StringBuilder sb = new StringBuilder();
 				// Azioni: XXXs
-				if(azioni != null && azioni.size() > 0){
+				if(azioni != null && !azioni.isEmpty()){
 					for (String azione : azioni) {
 						if(sb.length()>0) sb.append("\n");
 						sb.append(azione);
@@ -945,19 +944,6 @@ public class ConfigurazioniCsvExporter {
 		//                                  sa3 (user:xxx)
 		if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())){
 			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
-			/*
-			List<String> fruitori = dettaglioPA.getFruitori();
-
-			if(fruitori != null && fruitori.size() > 0){
-				StringBuilder sb = new StringBuilder();
-				for (String fruitore : fruitori) {
-					if(sb.length()>0) sb.append("\n");
-					sb.append(fruitore);
-				}
-				oneLine.add(sb.toString());
-			} else 
-				oneLine.add("");
-			 */
 			
 			// devo elencare i soggetti autorizzati
 			if(paOp2.getSoggetti()!=null && paOp2.getSoggetti().sizeSoggettoList()>0) {
@@ -976,8 +962,10 @@ public class ConfigurazioniCsvExporter {
 			if(paOp2.getServiziApplicativiAutorizzati()!=null && paOp2.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
 				StringBuilder sb = new StringBuilder();
 				for (PortaApplicativaAutorizzazioneServizioApplicativo sa : paOp2.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
-					if(sb.length()>0) sb.append("\n");
-						sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
+					if(sb.length()>0) {
+						sb.append("\n");
+					}
+					sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
 				}
 				oneLine.add(sb.toString());
 			}
@@ -1006,9 +994,9 @@ public class ConfigurazioniCsvExporter {
 			if(paOp2.getRuoli()!=null){
 				StringBuilder sb = new StringBuilder();
 
-				for (String ruolo : ruoli) {
+				for (String r : ruoli) {
 					if(sb.length()>0) sb.append("\n");
-					sb.append(ruolo);
+					sb.append(r);
 				}
 
 				oneLine.add(sb.toString());
@@ -1030,8 +1018,10 @@ public class ConfigurazioniCsvExporter {
 			StringBuilder sb = new StringBuilder();
 			if(autorizzazioneToken.getServiziApplicativi()!=null && autorizzazioneToken.getServiziApplicativi().sizeServizioApplicativoList()>0) {
 				for (PortaApplicativaAutorizzazioneServizioApplicativo sa : autorizzazioneToken.getServiziApplicativi().getServizioApplicativoList()) {
-					if(sb.length()>0) sb.append("\n");
-						sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
+					if(sb.length()>0) { 
+						sb.append("\n");
+					}
+					sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
 				}
 			}
 			oneLine.add(sb.toString());
@@ -1045,16 +1035,18 @@ public class ConfigurazioniCsvExporter {
 		// Ruoli Forniti (Authz Token)
 		if(autorizzazioneToken!=null && StatoFunzionalita.ABILITATO.equals(autorizzazioneToken.getAutorizzazioneRuoli())){
 			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
-			String match = autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().getMatch()!=null ? 
-					(org.openspcoop2.core.config.constants.RuoloTipoMatch.ANY.equals(autorizzazioneToken.getRuoli().getMatch()) ? CostantiConfigurazioni.LABEL_RUOLI_ANY : CostantiConfigurazioni.LABEL_RUOLI_ALL) 
-					: 
-					"";
+			String match = "";
+			if(autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().getMatch()!=null) {
+				match = (org.openspcoop2.core.config.constants.RuoloTipoMatch.ANY.equals(autorizzazioneToken.getRuoli().getMatch()) ? CostantiConfigurazioni.LABEL_RUOLI_ANY : CostantiConfigurazioni.LABEL_RUOLI_ALL);
+			}
 			oneLine.add(match);
 			if(autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().sizeRuoloList()>0){
 				StringBuilder sb = new StringBuilder();
-				for (Ruolo ruolo : autorizzazioneToken.getRuoli().getRuoloList()) {
-					if(sb.length()>0) sb.append("\n");
-						sb.append(ruolo.getNome());
+				for (Ruolo r : autorizzazioneToken.getRuoli().getRuoloList()) {
+					if(sb.length()>0) { 
+						sb.append("\n");
+					}
+					sb.append(r.getNome());
 				}
 				oneLine.add(sb.toString());
 			} else {
@@ -1280,10 +1272,10 @@ public class ConfigurazioniCsvExporter {
 		if(dettaglioSA != null) {
 			ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
 			// colonne del servizio applicativo NOME - MESSAGE BOX - SBUSTAMENTO SOAP - SBUSTAMENTO PROTOCOLLO
-//			if(StringUtils.isNotEmpty(saOp2.getNome()))
-//				oneLine.add(saOp2.getNome());
-//			else 
-//				oneLine.add("");
+			/**if(StringUtils.isNotEmpty(saOp2.getNome()))
+				oneLine.add(saOp2.getNome());
+			else 
+				oneLine.add("");*/
 
 			if(saOp2.getInvocazioneServizio()!=null){
 				//  MESSAGE BOX 
@@ -1339,10 +1331,9 @@ public class ConfigurazioniCsvExporter {
 			ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
 			if(StringUtils.isNotEmpty(saOp2.getNome()) && paOp2.sizeServizioApplicativoList()>0) {
 				for (PortaApplicativaServizioApplicativo pasa : paOp2.getServizioApplicativoList()) {
-					if(saOp2.getNome().equals(pasa.getNome())) {
-						if(pasa.getDatiConnettore()!=null && StringUtils.isNotEmpty(pasa.getDatiConnettore().getNome())) {
-							nomePAConnettore = pasa.getDatiConnettore().getNome();
-						}
+					if(saOp2.getNome().equals(pasa.getNome()) &&
+						pasa.getDatiConnettore()!=null && StringUtils.isNotEmpty(pasa.getDatiConnettore().getNome())) {
+						nomePAConnettore = pasa.getDatiConnettore().getNome();
 					}
 				}
 			}
@@ -1434,7 +1425,6 @@ public class ConfigurazioniCsvExporter {
 		// Identificazione Azione: ....
 		// Espressione: xpath o regolare
 
-		// TODO controllare lista azioni
 		if(StringUtils.isNotEmpty(portaDelegata.getNomeAzione()) &&
 				pdAzione!=null &&
 				(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_STATIC.equals(pdAzione.getIdentificazione()))){
@@ -1444,14 +1434,14 @@ public class ConfigurazioniCsvExporter {
 		else{
 			List<String> azioni = dettaglioPD.getAzioni();
 			
-			if(pdAzione==null && (azioni == null || azioni.size() == 0)){
+			if(pdAzione==null && (azioni == null || azioni.isEmpty())){
 				oneLine.add(CostantiConfigurazioni.LABEL_UTILIZZO_DEL_SERVIZIO_SENZA_AZIONE);
 			}
 			else{
 				// Azioni: XXXs
 				StringBuilder sb = new StringBuilder();
 				// Azioni: XXXs
-				if(azioni != null && azioni.size() > 0){
+				if(azioni != null && !azioni.isEmpty()){
 					for (String azione : azioni) {
 						if(sb.length()>0) sb.append("\n");
 						sb.append(azione);
@@ -1704,9 +1694,11 @@ public class ConfigurazioniCsvExporter {
 			if(pdOp2.getRuoli()!=null){
 				StringBuilder sb = new StringBuilder();
 
-				for (String ruolo : ruoli) {
-					if(sb.length()>0) sb.append("\n");
-					sb.append(ruolo);
+				for (String r : ruoli) {
+					if(sb.length()>0) { 
+						sb.append("\n");
+					}
+					sb.append(r);
 				}
 
 				oneLine.add(sb.toString());
@@ -1727,8 +1719,10 @@ public class ConfigurazioniCsvExporter {
 			StringBuilder sb = new StringBuilder();
 			if(autorizzazioneToken.getServiziApplicativi()!=null && autorizzazioneToken.getServiziApplicativi().sizeServizioApplicativoList()>0) {
 				for (PortaDelegataServizioApplicativo servApp : autorizzazioneToken.getServiziApplicativi().getServizioApplicativoList()) {
-					if(sb.length()>0) sb.append("\n");
-						sb.append(servApp.getNome());
+					if(sb.length()>0) {
+						sb.append("\n");
+					}
+					sb.append(servApp.getNome());
 				}
 			}
 			oneLine.add(sb.toString());
@@ -1742,16 +1736,18 @@ public class ConfigurazioniCsvExporter {
 		// Ruoli Forniti (Authz Token)
 		if(autorizzazioneToken!=null && StatoFunzionalita.ABILITATO.equals(autorizzazioneToken.getAutorizzazioneRuoli())){
 			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
-			String match = autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().getMatch()!=null ? 
-					(org.openspcoop2.core.config.constants.RuoloTipoMatch.ANY.equals(autorizzazioneToken.getRuoli().getMatch()) ? CostantiConfigurazioni.LABEL_RUOLI_ANY : CostantiConfigurazioni.LABEL_RUOLI_ALL) 
-					: 
-					"";
+			String match = "";
+			if(autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().getMatch()!=null) { 
+				match =	(org.openspcoop2.core.config.constants.RuoloTipoMatch.ANY.equals(autorizzazioneToken.getRuoli().getMatch()) ? CostantiConfigurazioni.LABEL_RUOLI_ANY : CostantiConfigurazioni.LABEL_RUOLI_ALL); 
+			}
 			oneLine.add(match);
 			if(autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().sizeRuoloList()>0){
 				StringBuilder sb = new StringBuilder();
-				for (Ruolo ruolo : autorizzazioneToken.getRuoli().getRuoloList()) {
-					if(sb.length()>0) sb.append("\n");
-						sb.append(ruolo.getNome());
+				for (Ruolo r : autorizzazioneToken.getRuoli().getRuoloList()) {
+					if(sb.length()>0) {
+						sb.append("\n");
+					}
+					sb.append(r.getNome());
 				}
 				oneLine.add(sb.toString());
 			} else {
@@ -2017,21 +2013,24 @@ public class ConfigurazioniCsvExporter {
 			InvocazioneCredenziali invCredenziali, 
 			StatoFunzionalita integrationManager, InvocazionePorta invocazionePorta){
 		List<String> oneLine = new ArrayList<>();
-		Map<Integer, String> mapProperties = new HashMap<Integer, String>();
+		Map<Integer, String> mapProperties = new HashMap<>();
 
+		if(labelTipoConnettore!=null) {
+			// nop
+		}
+		
 		mapProperties.put(1, connettore.getTipo());
 
 		if(TipiConnettore.HTTP.getNome().equals(connettore.getTipo()) || TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
 			mapProperties.put(2, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_LOCATION, connettore.getPropertyList()));
 
 			boolean find = false;
-			if(integrationManager!=null && StatoFunzionalita.ABILITATO.equals(integrationManager)) {
-				if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
-					for (Credenziali c : invocazionePorta.getCredenzialiList()) {
-						if(CredenzialeTipo.BASIC.equals(c.getTipo()) && c.getUser()!=null && StringUtils.isNotEmpty(c.getUser())){
-							find = true;
-							mapProperties.put(4, c.getUser());
-						}
+			if(integrationManager!=null && StatoFunzionalita.ABILITATO.equals(integrationManager) &&
+				invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+				for (Credenziali c : invocazionePorta.getCredenzialiList()) {
+					if(CredenzialeTipo.BASIC.equals(c.getTipo()) && c.getUser()!=null && StringUtils.isNotEmpty(c.getUser())){
+						find = true;
+						mapProperties.put(4, c.getUser());
 					}
 				}
 			}
@@ -2152,7 +2151,7 @@ public class ConfigurazioniCsvExporter {
 		else if(integrationManager!=null && StatoFunzionalita.ABILITATO.equals(integrationManager)) {
 			
 			// confonde e basta. Nel caso di HTTP ci sara' sempre integration manager però con la location http
-			//mapProperties.put(2, "/govway/IntegrationManager/MessageBox");
+			/**mapProperties.put(2, "/govway/IntegrationManager/MessageBox");*/
 			
 			boolean find = false;
 			if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
@@ -2179,7 +2178,7 @@ public class ConfigurazioniCsvExporter {
 		else{
 
 			List<Property> list = connettore.getPropertyList();
-			if(list!=null && list.size()>0){
+			if(list!=null && !list.isEmpty()){
 				StringBuilder sb = new StringBuilder();
 				for (Property property : list) {
 					if(sb.length() > 0)
@@ -2212,7 +2211,7 @@ public class ConfigurazioniCsvExporter {
 	
 	private String toStringProprieta(List<Proprieta> list) {
 		StringBuilder sb = new StringBuilder();
-		if(list!=null && list.size()>0) {
+		if(list!=null && !list.isEmpty()) {
 			for (Proprieta p : list) {
 				if(sb.length()>0) {
 					sb.append("\n");
@@ -2232,7 +2231,7 @@ public class ConfigurazioniCsvExporter {
 	
 	private String toStringAttributeAuthority(List<AttributeAuthority> list) {
 		StringBuilder sb = new StringBuilder();
-		if(list!=null && list.size()>0) {
+		if(list!=null && !list.isEmpty()) {
 			for (AttributeAuthority aa : list) {
 				if(sb.length()>0) {
 					sb.append("\n");
@@ -2282,7 +2281,7 @@ public class ConfigurazioniCsvExporter {
 	private String toStringDump(DumpConfigurazione dump) {
 		StringBuilder sb = new StringBuilder();
 		if(dump!=null) {
-			//sb.append(dump.getRealtime().getValue());
+			/**sb.append(dump.getRealtime().getValue());*/
 			if(StatoFunzionalita.ABILITATO.equals(dump.getRealtime())) {
 				sb.append("\n");
 				sb.append("richiesta-ingresso ").append(toStringDumpRegola(dump.getRichiestaIngresso()));

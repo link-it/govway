@@ -49,7 +49,6 @@
 	<var name="xalan_jar" value="" />
 	<var name="xalan_serializer_jar" value="" />
 	<var name="commons_logging_jar" value="" />
-	<var name="ecj_jar" value="" />
 	<var name="jakarta_activation_jar" value="" />
 	<var name="jakarta_validation_jar" value="" />
 	<var name="bean-validation_jars" value="" />
@@ -90,15 +89,6 @@
 		<then>
 			<var name="xerces_jar" value="xercesImpl-2.12.2.jar"/>
 			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
-		</then>
-	</if>
-	<!-- ecj_jar -->
-	<if> 
-		<or>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="ecj_jar" value="ecj-3.31.0.jar" />
 		</then>
 	</if>
 	<!-- jakarta_activation_jar -->

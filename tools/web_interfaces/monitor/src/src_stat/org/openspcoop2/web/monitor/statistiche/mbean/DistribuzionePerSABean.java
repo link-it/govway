@@ -35,7 +35,6 @@ import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
-import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -107,12 +106,12 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllDistribuzioneServizioApplicativo();
 		} catch (ServiceException e) {
-			MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+			this.addErroreDuranteRecuperoDati(e);
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
 
-		list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
+		calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		String xml = "";
 		switch (tipoReport) {
@@ -126,7 +125,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			break;
 		}
 
-		if(list != null && list.size() > 0)
+		if(list != null && !list.isEmpty())
 			this.setVisualizzaComandiExport(true);
 
 		return xml;
@@ -139,12 +138,12 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllDistribuzioneServizioApplicativo();
 		} catch (ServiceException e) {
-			MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+			this.addErroreDuranteRecuperoDati(e);
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
 
-		list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
+		calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 
 		try {
@@ -159,12 +158,12 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				break;
 			}
 		} catch (UtilsException e) {
-			MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+			this.addErroreDuranteRecuperoDati(e);
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
 
-		if(list != null && list.size() > 0)
+		if(list != null && !list.isEmpty())
 			this.setVisualizzaComandiExport(true);
 
 		try {
@@ -179,26 +178,24 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		}
 	}
 
-	public static List<ResDistribuzione>  calcolaLabels (List<ResDistribuzione> list, String protocollo, StatsSearchForm form){
-		if(form.getTipoStatistica().equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO)){
-			if(form.getRiconoscimento() != null && form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-				if(list!=null  && list.size()>0){
-					for (ResDistribuzione res : list) {
-						String tipoNomeSoggetto = res.getParentMap().get("0");
+	public static void calcolaLabels (List<ResDistribuzione> list, String protocollo, StatsSearchForm form){
+		if(form.getTipoStatistica().equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) &&
+			form.getRiconoscimento() != null && form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO) &&
+			list!=null  && !list.isEmpty()){
+			for (ResDistribuzione res : list) {
+				String tipoNomeSoggetto = res.getParentMap().get("0");
 
-						String tipoSoggetto = Utility.parseTipoSoggetto(tipoNomeSoggetto);
-						String nomeSoggetto = Utility.parseNomeSoggetto(tipoNomeSoggetto);
+				String tipoSoggetto = Utility.parseTipoSoggetto(tipoNomeSoggetto);
+				String nomeSoggetto = Utility.parseNomeSoggetto(tipoNomeSoggetto);
 
-						try {
-							res.getParentMap().put("0", NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
-						} catch (Exception e) {				
-						}
-
-					}
+				try {
+					res.getParentMap().put("0", NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
+				} catch (Exception e) {	
+					// ignore
 				}
+				
 			}
 		}
-		return list;
 	}
 
 	@Override
@@ -280,38 +277,33 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	}
 	
 	public boolean isShowColumnClientIdApplicativoSoggetto() {
-		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
-			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
-				if(StringUtils.isNotEmpty(this.search.getTokenClaim())) {
-					try {
-						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
-						return org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm);
-					}catch(Throwable t) {}
-				}
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento()) &&
+			this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO) &&
+			StringUtils.isNotEmpty(this.search.getTokenClaim())) {
+			try {
+				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
+				return org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm);
+			}catch(Exception t) {
+				// ignore
 			}
 		}
 		return false;
 	}
 	
 	public boolean isShowColumnClientIdApplicativo() {
-		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
-			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-				if (StringUtils.isNotBlank(this.search.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.search.getIdentificazione())) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return StringUtils.isNotEmpty(this.search.getRiconoscimento()) &&
+			this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)&&
+				StringUtils.isNotBlank(this.search.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.search.getIdentificazione());
 	}
 
 	public String getSubCaption() {
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
 		StringBuilder caption = new StringBuilder(
 				captionText);
-		//		if (StringUtils.isNotBlank(this.search.getServizioApplicativo())) {
-		//			caption.append("per l'Applicativo"
-		//					+ this.search.getServizioApplicativo());
-		//		}
+		/**if (StringUtils.isNotBlank(this.search.getServizioApplicativo())) {
+			caption.append("per l'Applicativo"
+					+ this.search.getServizioApplicativo());
+		}*/
 
 		if(this.search.getDataInizio() != null && this.search.getDataFine() != null){
 			if ( this.btnLblPrefix(this.search).toLowerCase().contains(CostantiGrafici.ORA_KEY)) {
@@ -326,6 +318,10 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 	public void newSearch(ActionEvent ae) {
 
+		if(ae!=null) {
+			// nop
+		}
+		
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		Application app = facesContext.getApplication();
 		ExpressionFactory elFactory = app.getExpressionFactory();
@@ -335,7 +331,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 						"#{distribuzionePerSoggettoBean}",
 						DistribuzionePerSABean.class);
 
-		DistribuzionePerSABean<ResDistribuzione> ab = new DistribuzionePerSABean<ResDistribuzione>();
+		DistribuzionePerSABean<ResDistribuzione> ab = new DistribuzionePerSABean<>();
 
 		valueExp.setValue(elContext, ab);
 	}
@@ -349,10 +345,10 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		// form di ricerca
 		// in caso non fosse selezionato allora vengono presi in considerazione
 		// tutti i soggetti associati al soggetto loggato
-		// if(Utility.getSoggettoInGestione()==null){
-		// MessageUtils.addErrorMsg("E' necessario selezionare il Soggetto.");
-		// return null;
-		// }
+		 /**if(Utility.getSoggettoInGestione()==null){
+		 MessageUtils.addErrorMsg("E' necessario selezionare il Soggetto.");
+		 return null;
+		 }*/
 		return "distribSA";
 	}
 
@@ -363,20 +359,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	@Override
 	public String esportaCsv() {
 		try{
-			return this._esportaCsv(null, true);
+			return this.esportaCsvEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaCsv(HttpServletResponse response) throws Exception {
-		this._esportaCsv(response, false);
+		this.esportaCsvEngine(response, false);
 	}
-	private String _esportaCsv(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaCsvEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato CSV in corso...."); 
 		String fileExt = CostantiGrafici.CSV_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -384,20 +380,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		List<ResDistribuzione> list = null;
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllDistribuzioneServizioApplicativo();
-			if(list==null || list.size()<=0){
+			if(list==null || list.isEmpty()){
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
-				throw new NotFoundException("Dati non trovati");
+				throw this.newDatiNonTrovatiException();
 			}
-			list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
+			calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		} catch (Exception e) {
 			if(useFaceContext){
 				DynamicPdDBean.log.error(e.getMessage(), e);
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+				this.addErroreDuranteRecuperoDati(e);
 				return null;
 			}
 			else{
 				DynamicPdDBean.log.debug(e.getMessage(), e);
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -428,9 +424,9 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String headerLabel = this.getTipoFiltroDatiMittente(); 
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
-			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
+			List<TipoBanda> tipiBanda = new ArrayList<>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
-			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
+			List<TipoLatenza> tipiLatenza = new ArrayList<>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			String tipoRiconoscimento = this.search.getRiconoscimento();
 			String identificazione = this.search.getIdentificazione();
@@ -455,7 +451,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				MessageUtils.addErrorMsg(CostantiGrafici.CSV_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -465,20 +461,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	@Override
 	public String esportaXls() {
 		try{
-			return this._esportaXls(null, true);
+			return this.esportaXlsEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaXls(HttpServletResponse response) throws Exception {
-		this._esportaXls(response, false);
+		this.esportaXlsEngine(response, false);
 	}
-	private String _esportaXls(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaXlsEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato XLS in corso...."); 
 		String fileExt = CostantiGrafici.XLS_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -486,20 +482,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		List<ResDistribuzione> list = null;
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllDistribuzioneServizioApplicativo();
-			if(list==null || list.size()<=0){
+			if(list==null || list.isEmpty()){
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
-				throw new NotFoundException("Dati non trovati");
+				throw this.newDatiNonTrovatiException();
 			}
-			list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
+			calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		} catch (Exception e) {
 			if(useFaceContext){
 				DynamicPdDBean.log.error(e.getMessage(), e);
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+				this.addErroreDuranteRecuperoDati(e);
 				return null;
 			}
 			else{
 				DynamicPdDBean.log.debug(e.getMessage(), e);
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -530,9 +526,9 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String headerLabel = this.getTipoFiltroDatiMittente();
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
-			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
+			List<TipoBanda> tipiBanda = new ArrayList<>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
-			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
+			List<TipoLatenza> tipiLatenza = new ArrayList<>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			String tipoRiconoscimento = this.search.getRiconoscimento(); 
 			String identificazione = this.search.getIdentificazione();
@@ -557,7 +553,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				MessageUtils.addErrorMsg(CostantiGrafici.XLS_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -567,20 +563,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	@Override
 	public String esportaPdf() {
 		try{
-			return this._esportaPdf(null, true);
+			return this.esportaPdfEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaPdf(HttpServletResponse response) throws Exception {
-		this._esportaPdf(response, false);
+		this.esportaPdfEngine(response, false);
 	}
-	private String _esportaPdf(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaPdfEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato PDF in corso...."); 
 		String fileExt = CostantiGrafici.PDF_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -588,20 +584,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		List<ResDistribuzione> list = null;
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllDistribuzioneServizioApplicativo();
-			if(list==null || list.size()<=0){
+			if(list==null || list.isEmpty()){
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
-				throw new NotFoundException("Dati non trovati");
+				throw this.newDatiNonTrovatiException();
 			}
-			list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
+			calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		} catch (Exception e) {
 			if(useFaceContext){
 				DynamicPdDBean.log.error(e.getMessage(), e);
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+				this.addErroreDuranteRecuperoDati(e);
 				return null;
 			}
 			else{
 				DynamicPdDBean.log.debug(e.getMessage(), e);
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -632,9 +628,9 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String headerLabel = this.getTipoFiltroDatiMittente();
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
-			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
+			List<TipoBanda> tipiBanda = new ArrayList<>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
-			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
+			List<TipoLatenza> tipiLatenza = new ArrayList<>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			String tipoRiconoscimento = this.search.getRiconoscimento();
 			String identificazione = this.search.getIdentificazione();
@@ -659,7 +655,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				MessageUtils.addErrorMsg(CostantiGrafici.PDF_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -669,20 +665,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	@Override
 	public String esportaXml() {
 		try{
-			return this._esportaXml(null, true);
+			return this.esportaXmlEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaXml(HttpServletResponse response) throws Exception {
-		this._esportaXml(response, false);
+		this.esportaXmlEngine(response, false);
 	}
-	private String _esportaXml(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaXmlEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato XML in corso...."); 
 		String fileExt = CostantiGrafici.XML_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -725,7 +721,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				MessageUtils.addErrorMsg(CostantiGrafici.XML_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -735,20 +731,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	@Override
 	public String esportaJson() {
 		try{
-			return this._esportaJson(null, true);
+			return this.esportaJsonEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaJson(HttpServletResponse response) throws Exception {
-		this._esportaJson(response, false);
+		this.esportaJsonEngine(response, false);
 	}
-	private String _esportaJson(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaJsonEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato JSON in corso...."); 
 		String fileExt = CostantiGrafici.JSON_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -791,7 +787,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				MessageUtils.addErrorMsg(CostantiGrafici.JSON_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 

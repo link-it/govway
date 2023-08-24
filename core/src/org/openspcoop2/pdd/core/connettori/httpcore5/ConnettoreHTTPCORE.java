@@ -641,6 +641,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			CustomResponseHandler httpResponseHandler = new CustomResponseHandler();
 			httpClient.execute(this.httpRequest, httpResponseHandler);
 			ClassicHttpResponse httpResponse = httpResponseHandler.response;
+			//ClassicHttpResponse httpResponse = (ClassicHttpResponse) httpClient.execute(this.httpRequest);
 			this.httpEntityResponse = httpResponse.getEntity();
 			
 			

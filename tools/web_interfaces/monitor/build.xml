@@ -70,7 +70,6 @@
 	<var name="xalan_jar" value="" />
 	<var name="xalan_serializer_jar" value="" />
 	<var name="commons_logging_jar" value="" />
-	<var name="ecj_jar" value="" />
 	<var name="javax_servlet_jsp_jstl_jar" value="" />
 	<var name="javax_servlet_jsp_jstl_api_jar" value="" />
 	<var name="jsf_impl_jar" value="" />
@@ -114,15 +113,6 @@
 		<then>
 			<var name="xerces_jar" value="xercesImpl-2.12.2.jar"/>
 			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
-		</then>
-	</if>
-	<!-- ecj_jar -->
-	<if> 
-		<or>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="ecj_jar" value="ecj-3.31.0.jar" />
 		</then>
 	</if>
 	<!-- stax2-api_jar -->

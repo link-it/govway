@@ -28,11 +28,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 
@@ -104,6 +106,18 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 		}
+	}
+	
+	protected void addErroreDuranteRecuperoDati(Exception e) {
+		MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+	}
+	
+	protected void addErroroInatteso(Exception e) {
+		MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+	}
+	
+	protected NotFoundException newDatiNonTrovatiException () {
+		return new NotFoundException("Dati non trovati");
 	}
 	
 	public abstract String getExportFilename();

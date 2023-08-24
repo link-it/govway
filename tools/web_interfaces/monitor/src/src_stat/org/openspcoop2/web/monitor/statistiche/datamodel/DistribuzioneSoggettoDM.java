@@ -83,7 +83,7 @@ public class DistribuzioneSoggettoDM extends BaseDataModel<String, ResDistribuzi
 				int limit = ((SequenceRange)range).getRows();
 
 				this.wrappedKeys = new ArrayList<>();
-				List<ResDistribuzione> list =  new ArrayList<ResDistribuzione>();
+				List<ResDistribuzione> list =  new ArrayList<>();
 				
 				try {
 					list =  this.getDataProvider().findAllDistribuzioneSoggetto(start, limit);
@@ -91,7 +91,7 @@ public class DistribuzioneSoggettoDM extends BaseDataModel<String, ResDistribuzi
 					DistribuzioneSoggettoDM.log.error(e.getMessage(), e);
 				}
 				
-				list = DistribuzionePerSoggettoBean.calcolaLabels(list, ((StatisticheGiornaliereService) this.getDataProvider()).getDistribSoggettoSearch().getProtocollo());
+				DistribuzionePerSoggettoBean.calcolaLabels(list, ((StatisticheGiornaliereService) this.getDataProvider()).getDistribSoggettoSearch().getProtocollo());
 				
 				for (ResDistribuzione r : list) {
 					this.wrappedData.put(r.getRisultato(), r);

@@ -36,22 +36,22 @@ public class ReportFactory {
 
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 
-	private static ReportFactory _instance = null;
+	private static ReportFactory staticInstance = null;
 
-	private transient ILiveReport transazioniReportManager = null;
-	private transient ILiveReport statisticaReportManager = null;
+	private ILiveReport transazioniReportManager = null;
+	private ILiveReport statisticaReportManager = null;
 
 	public static ReportFactory getInstance(){
-		if (ReportFactory._instance == null) {
+		if (ReportFactory.staticInstance == null) {
 			init();
 		}
 
-		return ReportFactory._instance;
+		return ReportFactory.staticInstance;
 	}
 
 	private static synchronized void init(){
-		if (ReportFactory._instance == null) {
-			ReportFactory._instance = new ReportFactory();
+		if (ReportFactory.staticInstance == null) {
+			ReportFactory.staticInstance = new ReportFactory();
 		}
 	}
 
@@ -67,12 +67,12 @@ public class ReportFactory {
 
 	public ILiveReport getTransazioniReportManager(){
 		if(this.transazioniReportManager == null)
-			_initTransazioniReportManager();
+			initTransazioniReportManagerEngine();
 
 		return this.transazioniReportManager;
 	}
 
-	private synchronized void _initTransazioniReportManager() {
+	private synchronized void initTransazioniReportManagerEngine() {
 		try{
 			log.debug("Init Report Manager Transazioni in corso...");
 			if(this.transazioniReportManager == null){
@@ -92,12 +92,12 @@ public class ReportFactory {
 
 	public ILiveReport getStatisticaReportManager(){
 		if(this.statisticaReportManager == null){
-			_initStatisticaReportManager();
+			initStatisticaReportManagerEngine();
 		}
 		return this.statisticaReportManager;
 	}
 	
-	private synchronized void _initStatisticaReportManager() {
+	private synchronized void initStatisticaReportManagerEngine() {
 		try{
 			log.debug("Init Report Manager Statistiche in corso...");
 			if(this.statisticaReportManager == null){

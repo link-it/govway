@@ -34,7 +34,6 @@ import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
-import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.UtilsException;
@@ -101,7 +100,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	
 	public void setStatisticheGiornaliereService(
 			IStatisticheGiornaliere statisticheGiornaliereService) {
-		this.service =  (IService<ResBase, Integer>) statisticheGiornaliereService;
+		this.service =  statisticheGiornaliereService;
 	}
 
 	public void initSearchListenerAndamentoTemporale(ActionEvent ae){
@@ -120,7 +119,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllAndamentoTemporale();
 		} catch (ServiceException e) {
-			MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+			this.addErroreDuranteRecuperoDati(e);
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
@@ -141,16 +140,16 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		}
 		
 		
-		if(list != null && list.size() > 0)
+		if(list != null && !list.isEmpty())
 			this.setVisualizzaComandiExport(true);
 
 		return  xml;
 	}
 	public String getJson(){
-		return this._getJson(true);
+		return this.getJsonEngine(true);
 	}
 	
-	private String _getJson(boolean nuovaRicerca){
+	private String getJsonEngine(boolean nuovaRicerca){
 		
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		
@@ -160,7 +159,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllAndamentoTemporale();
 		} catch (ServiceException e) {
-			MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+			this.addErroreDuranteRecuperoDati(e);
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
@@ -172,13 +171,13 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		
 		switch (tipoReport) {
 		case BAR_CHART:
-			if(nuovaRicerca && list != null && list.size() > 0) {
+			if(nuovaRicerca && list != null && !list.isEmpty()) {
 				// reset valore numero label
 				this.setSlice(this.getNumeroLabelAsseXDistribuzioneTemporale());
 				this.setMaxCategorie(list.size());
-				if(this.isNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati()) {
-					if(this.getSlice() >= list.size())
-						this.visualizzaComandiSelezioneNumeroLabel = false;
+				if(this.isNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati() &&
+					this.getSlice() >= list.size()) {
+					this.visualizzaComandiSelezioneNumeroLabel = false;
 				}
 			}
 			
@@ -186,14 +185,14 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				try {
 					grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), Integer.MAX_VALUE, this.getSlice(), tempo);
 				} catch (UtilsException e) {
-					MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+					this.addErroreDuranteRecuperoDati(e);
 					DynamicPdDBean.log.error(e.getMessage(), e);
 					return null;
 				}
 			}
 			break;
 		case LINE_CHART:
-			if(nuovaRicerca && list != null && list.size() > 0) {
+			if(nuovaRicerca && list != null && !list.isEmpty()) {
 				// reset valore numero label
 				this.setSlice(this.getNumeroLabelAsseXDistribuzioneTemporale());
 				this.setMaxCategorie(list.size());
@@ -211,16 +210,16 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					this.setMaxCategorie(this.getMaxCategorie() + 1);
 				}
 				
-				if(this.isNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati()) {
-					if(this.getSlice() >= list.size())
-						this.visualizzaComandiSelezioneNumeroLabel = false;
+				if(this.isNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati() &&
+					this.getSlice() >= list.size()) {
+					this.visualizzaComandiSelezioneNumeroLabel = false;
 				}
 			}
 			
 			try {
 				grafico = JsonStatsUtils.getJsonAndamentoTemporale(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , tempo, this.getDirezioneLabel(), this.getSlice());
 			} catch (UtilsException e) {
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+				this.addErroreDuranteRecuperoDati(e);
 				DynamicPdDBean.log.error(e.getMessage(), e);
 				return null;
 			}
@@ -234,9 +233,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 			this.setVisualizzaComandiExport(true);
 		
 		try {
-			String json = grafico != null ?  jsonUtils.toString(grafico) : "";
-			//	log.debug(json); 
-			return json ;
+			return grafico != null ?  jsonUtils.toString(grafico) : "";
 		} catch (UtilsException e) {
 			MessageUtils.addErrorMsg("Si e' verificato un errore durante la serializzazione json:"	+ e.getMessage());
 			DynamicPdDBean.log.error(e.getMessage(), e);
@@ -248,19 +245,11 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	@Override
 	public String getData(){
 		if(((StatsSearchForm)this.search).isUseGraficiSVG())
-			return this._getJson(this.ricalcoloVisualizzaComandiSelezioneNumeroLabel);
+			return this.getJsonEngine(this.ricalcoloVisualizzaComandiSelezioneNumeroLabel);
 		
 		return this.getXml();
 	}
 	
-//	public String getDataNumeroLabel(){ TODO togli
-//		log.debug("GetDATANumeroLabel");
-//		
-//		if(((StatsSearchForm)this.search).isUseGraficiSVG())
-//			return this._getJson(false);
-//		
-//		return this.getXml();
-//	}
 
 	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
@@ -301,6 +290,10 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 
 	public void newSearch(ActionEvent ae) {
 
+		if(ae!=null) {
+			// nop
+		}
+		
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		Application app = facesContext.getApplication();
 		ExpressionFactory elFactory = app.getExpressionFactory();
@@ -320,10 +313,10 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		// form di ricerca
 		// in caso non fosse selezionato allora vengono presi in considerazione
 		// tutti i soggetti associati al soggetto loggato
-		// if(Utility.getSoggettoInGestione()==null){
-		// MessageUtils.addErrorMsg("E' necessario selezionare il Soggetto.");
-		// return null;
-		// }
+		 /**if(Utility.getSoggettoInGestione()==null){
+		 MessageUtils.addErrorMsg("E' necessario selezionare il Soggetto.");
+		 return null;
+		 }*/
 		return "andamentoTemporale";
 	}
 
@@ -348,20 +341,20 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	@Override
 	public String esportaCsv() {
 		try{
-			return this._esportaCsv(null, true);
+			return this.esportaCsvEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaCsv(HttpServletResponse response) throws Exception {
-		this._esportaCsv(response, false);
+		this.esportaCsvEngine(response, false);
 	}
-	private String _esportaCsv(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaCsvEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato CSV in corso...."); 
 		String fileExt = CostantiGrafici.CSV_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -369,19 +362,19 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		List<Res> list = null;
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllAndamentoTemporale();
-			if(list==null || list.size()<=0){
+			if(list==null || list.isEmpty()){
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
-				throw new NotFoundException("Dati non trovati");
+				throw this.newDatiNonTrovatiException();
 			}
 		} catch (Exception e) {
 			if(useFaceContext){
 				DynamicPdDBean.log.error(e.getMessage(), e);
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+				this.addErroreDuranteRecuperoDati(e);
 				return null;
 			}
 			else{
 				DynamicPdDBean.log.debug(e.getMessage(), e);
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -435,7 +428,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				MessageUtils.addErrorMsg(CostantiGrafici.CSV_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -445,20 +438,20 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	@Override
 	public String esportaXls() {
 		try{
-			return this._esportaXls(null, true);
+			return this.esportaXlsEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaXls(HttpServletResponse response) throws Exception {
-		this._esportaXls(response, false);
+		this.esportaXlsEngine(response, false);
 	}
-	private String _esportaXls(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaXlsEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato XLS in corso...."); 
 		String fileExt = CostantiGrafici.XLS_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -466,19 +459,19 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		List<Res> list = null;
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllAndamentoTemporale();
-			if(list==null || list.size()<=0){
+			if(list==null || list.isEmpty()){
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
-				throw new NotFoundException("Dati non trovati");
+				throw this.newDatiNonTrovatiException();
 			}
 		} catch (Exception e) {
 			if(useFaceContext){
 				DynamicPdDBean.log.error(e.getMessage(), e);
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+				this.addErroreDuranteRecuperoDati(e);
 				return null;
 			}
 			else{
 				DynamicPdDBean.log.debug(e.getMessage(), e);
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -533,7 +526,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				MessageUtils.addErrorMsg(CostantiGrafici.XLS_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -543,20 +536,20 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	@Override
 	public String esportaPdf() {
 		try{
-			return this._esportaPdf(null, true);
+			return this.esportaPdfEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaPdf(HttpServletResponse response) throws Exception {
-		this._esportaPdf(response, false);
+		this.esportaPdfEngine(response, false);
 	}
-	private String _esportaPdf(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaPdfEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato PDF in corso...."); 
 		String fileExt = CostantiGrafici.PDF_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -564,19 +557,19 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		List<Res> list = null;
 		try {
 			list = ((IStatisticheGiornaliere)this.service).findAllAndamentoTemporale();
-			if(list==null || list.size()<=0){
+			if(list==null || list.isEmpty()){
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
-				throw new NotFoundException("Dati non trovati");
+				throw this.newDatiNonTrovatiException();
 			}
 		} catch (Exception e) {
 			if(useFaceContext){
 				DynamicPdDBean.log.error(e.getMessage(), e);
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
+				this.addErroreDuranteRecuperoDati(e);
 				return null;
 			}
 			else{
 				DynamicPdDBean.log.debug(e.getMessage(), e);
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -630,7 +623,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				MessageUtils.addErrorMsg(CostantiGrafici.PDF_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -640,20 +633,20 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	@Override
 	public String esportaXml() {
 		try{
-			return this._esportaXml(null, true);
+			return this.esportaXmlEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaXml(HttpServletResponse response) throws Exception {
-		this._esportaXml(response, false);
+		this.esportaXmlEngine(response, false);
 	}
-	private String _esportaXml(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaXmlEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato XML in corso...."); 
 		String fileExt = CostantiGrafici.XML_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -696,7 +689,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				MessageUtils.addErrorMsg(CostantiGrafici.XML_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -706,20 +699,20 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	@Override
 	public String esportaJson() {
 		try{
-			return this._esportaJson(null, true);
+			return this.esportaJsonEngine(null, true);
 		}catch(Exception e){
 			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
 			// Il codice sottostante e' solo per sicurezza
 			DynamicPdDBean.log.error(e.getMessage(), e);
-			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			this.addErroroInatteso(e);
 			return null;
 		}
 	}
 	@Override
 	public void esportaJson(HttpServletResponse response) throws Exception {
-		this._esportaJson(response, false);
+		this.esportaJsonEngine(response, false);
 	}
-	private String _esportaJson(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+	private String esportaJsonEngine(HttpServletResponse responseParam, boolean useFaceContext) throws ServiceException {
 		log.debug("Export in formato JSON in corso...."); 
 		String fileExt = CostantiGrafici.JSON_EXTENSION;
 		String filename = this.getExportFilename()+fileExt;
@@ -762,7 +755,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				MessageUtils.addErrorMsg(CostantiGrafici.JSON_EXPORT_MESSAGGIO_ERRORE);
 			}
 			else{
-				throw e;
+				throw new ServiceException(e.getMessage(),e);
 			}
 		}
 
@@ -792,6 +785,9 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	}
 	
 	public void updateChartNumeroLabel(ActionEvent e) {
+		if(e!=null) {
+			// nop
+		}
 		this.ricalcoloVisualizzaComandiSelezioneNumeroLabel = false;
 	}
 	

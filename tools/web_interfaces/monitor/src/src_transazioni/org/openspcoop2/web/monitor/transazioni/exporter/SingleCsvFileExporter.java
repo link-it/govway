@@ -83,6 +83,21 @@ import org.slf4j.Logger;
 public class SingleCsvFileExporter implements IExporter{
 
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
+	private static void logDebug(String msg) {
+		if(SingleCsvFileExporter.log!=null) {
+			SingleCsvFileExporter.log.debug(msg);
+		}
+	}
+	private static void logInfo(String msg) {
+		if(SingleCsvFileExporter.log!=null) {
+			SingleCsvFileExporter.log.info(msg);
+		}
+	}
+	private static void logError(String msg, Exception e) {
+		if(SingleCsvFileExporter.log!=null) {
+			SingleCsvFileExporter.log.error(msg, e);
+		}
+	}
 
 	private boolean exportTracce = false;
 	private boolean exportDiagnostici = false;
@@ -103,9 +118,9 @@ public class SingleCsvFileExporter implements IExporter{
 
 	private String fileName=null;
 	private OutputStream outStream = null;
-	private SimpleDateFormat _sdfDataTransazioni = new SimpleDateFormat(CostantiExport.PATTERN_DATA_TRANSAZIONI);
+	private SimpleDateFormat sdfDataTransazioni = new SimpleDateFormat(CostantiExport.PATTERN_DATA_TRANSAZIONI);
 	private String formatDate(Date date) {
-		String s = this._sdfDataTransazioni.format(date);
+		String s = this.sdfDataTransazioni.format(date);
 		return s.replace(" ", "T");
 	}
 	
@@ -129,18 +144,18 @@ public class SingleCsvFileExporter implements IExporter{
 		this.diagnosticiService = diagnosticiService;
 		this.transazioniExporterService = transazioniExport;
 		
-		SingleCsvFileExporter.log.info("Single File Exporter inizializzato:");
-		SingleCsvFileExporter.log.info("\t -esportazione Tracce      abilitata: "+this.exportTracce);
-		SingleCsvFileExporter.log.info("\t -esportazione Contenuti   abilitata: "+this.exportContenuti);
-		SingleCsvFileExporter.log.info("\t -esportazione Diagnostici abilitata: "+this.exportDiagnostici);
-		SingleCsvFileExporter.log.info("\t -enable header info abilitato: "+this.enableHeaderInfo);
-		SingleCsvFileExporter.log.info("\t -formato scelto: "+this.formato);
-		SingleCsvFileExporter.log.info("\t -usa count: "+this.useCount);
+		SingleCsvFileExporter.logInfo("Single File Exporter inizializzato:");
+		SingleCsvFileExporter.logInfo("\t -esportazione Tracce      abilitata: "+this.exportTracce);
+		SingleCsvFileExporter.logInfo("\t -esportazione Contenuti   abilitata: "+this.exportContenuti);
+		SingleCsvFileExporter.logInfo("\t -esportazione Diagnostici abilitata: "+this.exportDiagnostici);
+		SingleCsvFileExporter.logInfo("\t -enable header info abilitato: "+this.enableHeaderInfo);
+		SingleCsvFileExporter.logInfo("\t -formato scelto: "+this.formato);
+		SingleCsvFileExporter.logInfo("\t -usa count: "+this.useCount);
 		if(!this.useCount) {
-			SingleCsvFileExporter.log.info("\t -numero massimo elementi esportati: "+Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
+			SingleCsvFileExporter.logInfo("\t -numero massimo elementi esportati: "+Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
 		}
 
-		SingleCsvFileExporter.log.info("\t -MimeType handling (mime.throwExceptionIfMappingNotFound):"+this.mimeThrowExceptionIfNotFound);
+		SingleCsvFileExporter.logInfo("\t -MimeType handling (mime.throwExceptionIfMappingNotFound):"+this.mimeThrowExceptionIfNotFound);
 	}
 
 	public SingleCsvFileExporter(OutputStream outStream,ExporterCsvProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
@@ -152,7 +167,7 @@ public class SingleCsvFileExporter implements IExporter{
 		this(properties,transazioniService,tracciamentoService,diagnosticiService,transazioniExport);
 		this.outStream = new FileOutputStream(destFile);
 		this.fileName = destFile.getName();
-		SingleCsvFileExporter.log.info("\n\t -Esportazione su file:"+destFile.getAbsolutePath());
+		SingleCsvFileExporter.logInfo("\n\t -Esportazione su file:"+destFile.getAbsolutePath());
 	}
 
 	public SingleCsvFileExporter(String pathToFile,ExporterCsvProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
@@ -173,7 +188,6 @@ public class SingleCsvFileExporter implements IExporter{
 				FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
 
 				//devo impostare solo l'idtransazione
-				//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
 				Map<String, String> properties = new HashMap<>();
 				properties.put("id_transazione", t.getIdTransazione());
 				filter.setProperties(properties);
@@ -229,7 +243,6 @@ public class SingleCsvFileExporter implements IExporter{
 		//tracce
 		if(this.exportTracce){
 			//devo impostare solo l'idtransazione
-			//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
 			Map<String, String> properties = new HashMap<>();
 			properties.put("id_transazione", t.getIdTransazione());
 
@@ -261,12 +274,11 @@ public class SingleCsvFileExporter implements IExporter{
 				//ignore
 			}
 
-			if(tracce.size()>0){
+			if(!tracce.isEmpty()){
 				// Add ZIP entry to output stream.
 				try{
 					for (int j = 0; j < tracce.size(); j++) {
 						Traccia tr = tracce.get(j);
-						//						String newLine = j > 0 ? "\n\n" : EMPTY_STRING;
 
 						IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
 						ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
@@ -297,31 +309,31 @@ public class SingleCsvFileExporter implements IExporter{
 
 					// se si sono riscontrati degli errori nella produzione delle tracce
 					// creo un file che contiene la descrizione di tali errori.
-					//					if (errori.size() > 0) {
-					//						// Add ZIP entry to output stream.
-					//						this.zip.putNextEntry(new ZipEntry(transazioneDir+"tracce.xml.error"));
-					//
-					//						for (int i = 0; i < errori.size(); i++) {
-					//							String errore = errori.get(i);
-					//
-					//							String newLine = i > 0 ? "\n\n" : EMPTY_STRING;
-					//
-					//							in = new ByteArrayInputStream((newLine + errore).getBytes());
-					//
-					//							// Transfer bytes from the input stream to the ZIP file
-					//							int len;
-					//							while ((len = in.read(buf)) > 0) {
-					//								this.zip.write(buf, 0, len);
-					//							}
-					//						}
-					//
-					//						// Complete the entry
-					//						this.zip.closeEntry();
-					//						this.zip.flush();
-					//						if (in != null) {
-					//							in.close();
-					//						}
-					//					}
+					/**if (errori.size() > 0) {
+					// Add ZIP entry to output stream.
+					this.zip.putNextEntry(new ZipEntry(transazioneDir+"tracce.xml.error"));
+
+					for (int i = 0; i < errori.size(); i++) {
+						String errore = errori.get(i);
+
+						String newLine = i > 0 ? "\n\n" : EMPTY_STRING;
+
+						in = new ByteArrayInputStream((newLine + errore).getBytes());
+
+						// Transfer bytes from the input stream to the ZIP file
+						int len;
+						while ((len = in.read(buf)) > 0) {
+							this.zip.write(buf, 0, len);
+						}
+					}
+
+					// Complete the entry
+					this.zip.closeEntry();
+					this.zip.flush();
+					if (in != null) {
+						in.close();
+					}
+					}*/
 				}catch(ProtocolException e){
 					String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
 					msg+=" Non sono riuscito a creare il file tracce.xml ("+e.getMessage()+")";
@@ -969,7 +981,7 @@ public class SingleCsvFileExporter implements IExporter{
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 			SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
-			SingleCsvFileExporter.log.debug("Avvio esportazione ...");
+			SingleCsvFileExporter.logDebug("Avvio esportazione ...");
 			SingleCsvFileExporter.log.debug("Inizio esportazione alle: {}",time.format(startTime));
 			List<TransazioneBean> transazioni = new ArrayList<>();
 
@@ -1007,11 +1019,11 @@ public class SingleCsvFileExporter implements IExporter{
 				this.transazioniExporterService.store(te);
 			}
 
-			SingleCsvFileExporter.log.debug("Fine esportazione alle:"+formatter.format(Calendar.getInstance().getTime()));
-			SingleCsvFileExporter.log.debug("Esportazione completata.");
+			SingleCsvFileExporter.logDebug("Fine esportazione alle:"+formatter.format(Calendar.getInstance().getTime()));
+			SingleCsvFileExporter.logDebug("Esportazione completata.");
 
 		}catch(ExportException e){
-			SingleCsvFileExporter.log.error("Errore durante esportazione su file",e);
+			SingleCsvFileExporter.logError("Errore durante esportazione su file",e);
 
 			if(this.abilitaMarcamentoTemporale && te!=null){
 				try{
@@ -1023,13 +1035,13 @@ public class SingleCsvFileExporter implements IExporter{
 
 					this.transazioniExporterService.store(te);
 				}catch(Exception ex){
-					SingleCsvFileExporter.log.error("Errore durante il marcamento temporale.",ex);
+					SingleCsvFileExporter.logError("Errore durante il marcamento temporale.",ex);
 				}
 			}
 
 			throw e;
 		}catch(Exception e){
-			SingleCsvFileExporter.log.error("Errore durante esportazione su file",e);
+			SingleCsvFileExporter.logError("Errore durante esportazione su file",e);
 			throw new ExportException("Errore durante esportazione su file", e);
 		}
 	}
@@ -1049,8 +1061,8 @@ public class SingleCsvFileExporter implements IExporter{
 			int limit = 100;
 
 			SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
-			SingleCsvFileExporter.log.debug("Avvio esportazione ...");
-			SingleCsvFileExporter.log.debug("Inizio esportazione alle:"+time.format(startTime));
+			SingleCsvFileExporter.logDebug("Avvio esportazione ...");
+			SingleCsvFileExporter.logDebug("Inizio esportazione alle:"+time.format(startTime));
 
 			if(this.abilitaMarcamentoTemporale){
 				te = this.transazioniExporterService.getByIntervallo(this.transazioniService.getSearch().getDataInizio(), this.transazioniService.getSearch().getDataFine());
@@ -1064,15 +1076,14 @@ public class SingleCsvFileExporter implements IExporter{
 				this.transazioniExporterService.store(te);
 			}
 
-			List<TransazioneBean> transazioni = new ArrayList<>();
 			List<List<String>> dataSourceTransazioni = new ArrayList<>();
 
-			transazioni = this.transazioniService.findAll(start, limit);
+			List<TransazioneBean> transazioni = this.transazioniService.findAll(start, limit);
 			
 			int totale = transazioni.size();
 			boolean stopExport = false;
 
-//			try{
+			/**try{*/
 				while(!transazioni.isEmpty() && !stopExport){
 
 					popolaDataSourceExport(dataSourceTransazioni,transazioni);
@@ -1109,12 +1120,12 @@ public class SingleCsvFileExporter implements IExporter{
 					throw new ExportException("Formato export ["+this.formato+"] non valido.");
 				}
 
-//			}catch(IOException ioe){
-//				String msg = "Si e' verificato un errore durante l'esportazione delle transazioni";
-//				msg+=" Non sono riuscito a creare il file SearchFilter.xml ("+ioe.getMessage()+")";
-//				SingleCsvFileExporter.log.error(msg,ioe);
-//				throw new ExportException(msg, ioe);
-//			}
+			/**}catch(IOException ioe){
+				String msg = "Si e' verificato un errore durante l'esportazione delle transazioni";
+				msg+=" Non sono riuscito a creare il file SearchFilter.xml ("+ioe.getMessage()+")";
+				SingleCsvFileExporter.logError(msg,ioe);
+				throw new ExportException(msg, ioe);
+			}*/
 
 			Date dataFine = Calendar.getInstance().getTime();
 
@@ -1124,11 +1135,11 @@ public class SingleCsvFileExporter implements IExporter{
 				this.transazioniExporterService.store(te);
 			}
 
-			SingleCsvFileExporter.log.debug("Fine esportazione alle:"+formatter.format(dataFine));
-			SingleCsvFileExporter.log.debug("Esportazione completata.");
+			SingleCsvFileExporter.logDebug("Fine esportazione alle:"+formatter.format(dataFine));
+			SingleCsvFileExporter.logDebug("Esportazione completata.");
 
 		}catch(ExportException e){
-			SingleCsvFileExporter.log.error("Errore durante esportazione su file",e);
+			SingleCsvFileExporter.logError("Errore durante esportazione su file",e);
 
 			if(this.abilitaMarcamentoTemporale){
 				try{
@@ -1140,13 +1151,13 @@ public class SingleCsvFileExporter implements IExporter{
 
 					this.transazioniExporterService.store(te);
 				}catch(Exception ex){
-					SingleCsvFileExporter.log.error("Errore durante il marcamento temporale.",ex);
+					SingleCsvFileExporter.logError("Errore durante il marcamento temporale.",ex);
 				}
 			}
 
 			throw e;
 		}catch(Exception e){
-			SingleCsvFileExporter.log.error("Errore durante esportazione su file",e);
+			SingleCsvFileExporter.logError("Errore durante esportazione su file",e);
 			throw new ExportException("Errore durante esportazione su file", e);
 		}
 	}

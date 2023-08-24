@@ -217,9 +217,7 @@ public class ExportUtils {
 					}
 				}
 				break;
-			case ANDAMENTO_TEMPORALE:
-			case DISTRIBUZIONE_SOGGETTO:
-			case STATISTICA_PERSONALIZZATA:
+			case ANDAMENTO_TEMPORALE, DISTRIBUZIONE_SOGGETTO, STATISTICA_PERSONALIZZATA:
 			default:
 				break;
 			}
@@ -374,9 +372,7 @@ public class ExportUtils {
 					}
 				}
 				break;
-			case ANDAMENTO_TEMPORALE:
-			case DISTRIBUZIONE_SOGGETTO:
-			case STATISTICA_PERSONALIZZATA:
+			case ANDAMENTO_TEMPORALE, DISTRIBUZIONE_SOGGETTO, STATISTICA_PERSONALIZZATA:
 			default:
 				break;
 			}
@@ -544,9 +540,7 @@ public class ExportUtils {
 					}
 				}
 				break;
-			case ANDAMENTO_TEMPORALE:
-			case DISTRIBUZIONE_SOGGETTO:
-			case STATISTICA_PERSONALIZZATA:
+			case ANDAMENTO_TEMPORALE, DISTRIBUZIONE_SOGGETTO, STATISTICA_PERSONALIZZATA:
 			default:
 				break;
 			}
@@ -749,8 +743,7 @@ public class ExportUtils {
 				label = sdf.format(risultato.getRisultato())+"-"+sdfLastHour.format(c.getTime());
 				break;
 
-			case MENSILE:
-			case GIORNALIERA:
+			case MENSILE, GIORNALIERA:
 			default:
 				label = sdf.format(risultato.getRisultato());
 				break;
@@ -1033,7 +1026,7 @@ public class ExportUtils {
 
 	public static void esportaPdfAndamentoTemporalePersonalizzato(OutputStream outputStream, ReportDataSource report, Map<String, List<Res>> results, 
 			String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza) throws IOException, UtilsException{
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza) throws IOException{
 
 		if(tipoVisualizzazione!=null) {
 			// non usato
@@ -1216,8 +1209,7 @@ public class ExportUtils {
 						label = sdf.format(risultato.getRisultato())+"-"+sdfLastHour.format(c.getTime());
 						break;
 
-					case MENSILE:
-					case GIORNALIERA:
+					case MENSILE, GIORNALIERA:
 					default:
 						label = sdf.format(risultato.getRisultato());
 						break;
@@ -1357,9 +1349,7 @@ public class ExportUtils {
 				}
 			}
 			break;
-		case ANDAMENTO_TEMPORALE:
-		case DISTRIBUZIONE_SOGGETTO:
-		case STATISTICA_PERSONALIZZATA:
+		case ANDAMENTO_TEMPORALE, DISTRIBUZIONE_SOGGETTO, STATISTICA_PERSONALIZZATA:
 		default:
 			break;
 		}
