@@ -42,13 +42,13 @@ import org.zaproxy.clientapi.core.ClientApiException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class GovWayConsole {
+public class GovWayMonitor {
 	
 	public static void main(String[] args) throws UtilsException, ClientApiException, UnsupportedEncodingException {
 				
 		String consoleUsage = "url username password scanTypes";
 		int consoleArgs = 4;
-		ZAPContext context = new ZAPContext(args, GovWayConsole.class.getName(), consoleUsage+ZAPReport.SUFFIX);
+		ZAPContext context = new ZAPContext(args, GovWayMonitor.class.getName(), consoleUsage+ZAPReport.SUFFIX);
 		
 		String usageMsg = ZAPContext.PREFIX+consoleUsage+ZAPReport.SUFFIX;
 		
@@ -119,7 +119,7 @@ public class GovWayConsole {
 		String contextName = context.getContextName();
 		String contextId = context.getContextId();
 		
-		ZAPReport report = new ZAPReport(args, GovWayConsole.class.getName(), ZAPContext.PREFIX+" "+consoleUsage, ZAPContext.START_ARGS+consoleArgs, api);
+		ZAPReport report = new ZAPReport(args, GovWayMonitor.class.getName(), ZAPContext.PREFIX+" "+consoleUsage, ZAPContext.START_ARGS+consoleArgs, api);
 		
 		String loginUrl = url+"login.do";
 		String logoutUrl = url+"logout.do";

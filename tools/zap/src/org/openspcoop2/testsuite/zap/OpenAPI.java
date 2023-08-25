@@ -20,8 +20,9 @@
 package org.openspcoop2.testsuite.zap;
 
 import org.apache.commons.lang.StringUtils;
-import org.zaproxy.clientapi.core.ApiResponse;
+import org.openspcoop2.utils.UtilsException;
 import org.zaproxy.clientapi.core.ClientApi;
+import org.zaproxy.clientapi.core.ClientApiException;
 
 /**
  * OpenAPI
@@ -32,36 +33,36 @@ import org.zaproxy.clientapi.core.ClientApi;
  */
 public class OpenAPI {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws UtilsException, ClientApiException {
 				
 		String openApiUsage = "openapiPath|openapiUrl openapiTargetUrl";
 		int openApiArgs = 2;
-		ZAPContext context = new ZAPContext(args, OpenAPI.class.getName(), openApiUsage+ZAPReport.suffix);
+		ZAPContext context = new ZAPContext(args, OpenAPI.class.getName(), openApiUsage+ZAPReport.SUFFIX);
 		
-		String usageMsg = ZAPContext.prefix+openApiUsage+ZAPReport.suffix;
+		String usageMsg = ZAPContext.PREFIX+openApiUsage+ZAPReport.SUFFIX;
 		
 		String openapiPath = null;
 		String openapiUrl = null;
-		int index = ZAPContext.startArgs;
+		int index = ZAPContext.START_ARGS;
 		if(args.length>(index)) {
 			openapiPath = args[index+0];
 		}
 		if(openapiPath==null || StringUtils.isEmpty(openapiPath)) {
-			throw new Exception("ERROR: argument 'openapiPath|openapiUrl' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'openapiPath|openapiUrl' undefined"+usageMsg);
 		}
 		if(openapiPath.startsWith("http://") || openapiPath.startsWith("https://") || openapiPath.startsWith("file://")) {
 			openapiUrl = openapiPath;
 			openapiPath = null;
 		}
 		
-		String _targetUrl = null;
+		String targetUrlArg = null;
 		if(args.length>(index+1)) {
-			_targetUrl = args[index+1];
+			targetUrlArg = args[index+1];
 		}
-		if(_targetUrl==null || StringUtils.isEmpty(_targetUrl)) {
-			throw new Exception("ERROR: argument 'openapiTargetUrl' undefined"+usageMsg);
+		if(targetUrlArg==null || StringUtils.isEmpty(targetUrlArg)) {
+			throw new UtilsException("ERROR: argument 'openapiTargetUrl' undefined"+usageMsg);
 		}
-		String targetUrl = _targetUrl;
+		String targetUrl = targetUrlArg;
 		if(!targetUrl.endsWith("/")) {
 			targetUrl=targetUrl+"/";
 		}
@@ -70,21 +71,19 @@ public class OpenAPI {
 		String contextName = context.getContextName();
 		String contextId = context.getContextId();
 		
-		ZAPReport report = new ZAPReport(args, OpenAPI.class.getName(), ZAPContext.prefix+" "+openApiUsage, ZAPContext.startArgs+openApiArgs, api);
+		ZAPReport report = new ZAPReport(args, OpenAPI.class.getName(), ZAPContext.PREFIX+" "+openApiUsage, ZAPContext.START_ARGS+openApiArgs, api);
 		
-		//api.context.excludeFromContext(contextName, ".*");
+		/**api.context.excludeFromContext(contextName, ".*");*/
 		api.context.includeInContext(contextName, targetUrl.substring(0, (targetUrl.length()-1))+".*");
 		api.context.setContextInScope(contextName, "true");
 		
 		api.sessionManagement.setSessionManagementMethod(contextId, "httpAuthSessionManagement", "");
 		
-		@SuppressWarnings("unused")
-		ApiResponse response = null;
 		if(openapiPath!=null) {
-			response = api.openapi.importFile(openapiPath, targetUrl, contextId);
+			api.openapi.importFile(openapiPath, targetUrl, contextId);
 		}
 		else {
-			response = api.openapi.importUrl(openapiUrl, targetUrl, contextId);
+			api.openapi.importUrl(openapiUrl, targetUrl, contextId);
 		}
 		
 		for (ZAPReportTemplate rt : report.getTemplates()) {

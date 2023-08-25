@@ -20,17 +20,23 @@
 package org.openspcoop2.testsuite.zap;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 
 import javax.wsdl.Port;
 import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
 
 import org.apache.commons.lang.StringUtils;
+import org.ehcache.shadow.org.terracotta.utilities.io.Files;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.zaproxy.clientapi.core.ApiResponse;
 import org.zaproxy.clientapi.core.ClientApi;
+import org.zaproxy.clientapi.core.ClientApiException;
 
 /**
  * Soap
@@ -41,36 +47,36 @@ import org.zaproxy.clientapi.core.ClientApi;
  */
 public class Soap {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws UtilsException, ClientApiException, WSDLException, URISyntaxException, org.openspcoop2.utils.wsdl.WSDLException, IOException {
 				
 		String openApiUsage = "soapPath|soapUrl soapTargetUrl";
 		int openApiArgs = 2;
-		ZAPContext context = new ZAPContext(args, Soap.class.getName(), openApiUsage+ZAPReport.suffix);
+		ZAPContext context = new ZAPContext(args, Soap.class.getName(), openApiUsage+ZAPReport.SUFFIX);
 		
-		String usageMsg = ZAPContext.prefix+openApiUsage+ZAPReport.suffix;
+		String usageMsg = ZAPContext.PREFIX+openApiUsage+ZAPReport.SUFFIX;
 		
 		String soapPath = null;
 		String soapUrl = null;
-		int index = ZAPContext.startArgs;
+		int index = ZAPContext.START_ARGS;
 		if(args.length>(index)) {
 			soapPath = args[index+0];
 		}
 		if(soapPath==null || StringUtils.isEmpty(soapPath)) {
-			throw new Exception("ERROR: argument 'soapPath|soapUrl' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'soapPath|soapUrl' undefined"+usageMsg);
 		}
 		if(soapPath.startsWith("http://") || soapPath.startsWith("https://") || soapPath.startsWith("file://")) {
 			soapUrl = soapPath;
 			soapPath = null;
 		}
 		
-		String _targetUrl = null;
+		String targetUrlArg = null;
 		if(args.length>(index+1)) {
-			_targetUrl = args[index+1];
+			targetUrlArg = args[index+1];
 		}
-		if(_targetUrl==null || StringUtils.isEmpty(_targetUrl)) {
-			throw new Exception("ERROR: argument 'soapTargetUrl' undefined"+usageMsg);
+		if(targetUrlArg==null || StringUtils.isEmpty(targetUrlArg)) {
+			throw new UtilsException("ERROR: argument 'soapTargetUrl' undefined"+usageMsg);
 		}
-		String targetUrl = _targetUrl;
+		String targetUrl = targetUrlArg;
 		if(!targetUrl.endsWith("/")) {
 			targetUrl=targetUrl+"/";
 		}
@@ -79,9 +85,9 @@ public class Soap {
 		String contextName = context.getContextName();
 		String contextId = context.getContextId();
 		
-		ZAPReport report = new ZAPReport(args, Soap.class.getName(), ZAPContext.prefix+" "+openApiUsage, ZAPContext.startArgs+openApiArgs, api);
+		ZAPReport report = new ZAPReport(args, Soap.class.getName(), ZAPContext.PREFIX+" "+openApiUsage, ZAPContext.START_ARGS+openApiArgs, api);
 		
-		//api.context.excludeFromContext(contextName, ".*");
+		/**api.context.excludeFromContext(contextName, ".*");*/
 		api.context.includeInContext(contextName, targetUrl.substring(0, (targetUrl.length()-1))+".*");
 		api.context.setContextInScope(contextName, "true");
 		
@@ -167,7 +173,11 @@ public class Soap {
 			
 			
 		}finally {
-			fTmp.delete();
+			try {
+				Files.delete(fTmp.toPath());
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 
 	}

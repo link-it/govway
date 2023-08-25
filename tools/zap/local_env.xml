@@ -44,6 +44,12 @@
 	<property name="zaproxy.govwayConsole.password" value=""/>
 	<property name="zaproxy.govwayConsole.scanTypes" value=""/>
 
+	<!-- Parametri verifica govwayMonitor -->
+	<property name="zaproxy.govwayMonitor.url" value=""/>
+	<property name="zaproxy.govwayMonitor.username" value=""/>
+	<property name="zaproxy.govwayMonitor.password" value=""/>
+	<property name="zaproxy.govwayMonitor.scanTypes" value=""/>
+
 	<!-- Parametri generazione Reports (https://www.zaproxy.org/docs/desktop/addons/report-generation/api/) -->
 	<property name="zaproxy.report.title" value="GovWay" />
 	<property name="zaproxy.report.description" value="GovWay" />

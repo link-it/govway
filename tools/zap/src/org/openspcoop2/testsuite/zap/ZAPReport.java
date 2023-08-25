@@ -24,12 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.zaproxy.clientapi.core.ApiResponse;
 import org.zaproxy.clientapi.core.ApiResponseElement;
 import org.zaproxy.clientapi.core.ApiResponseList;
 import org.zaproxy.clientapi.core.ApiResponseSet;
 import org.zaproxy.clientapi.core.ClientApi;
+import org.zaproxy.clientapi.core.ClientApiException;
 
 
 /**
@@ -43,19 +45,24 @@ public class ZAPReport {
 
 	public static final String NONE = "none";
 	
-	public static String suffix = " report-title report-description report-includedConfidences report-includedRisks report-reportFileNamePattern report-dir report-display [report-template1 report-theme1 report-sections1] ... [report-templateN report-themeN report-sectionsN]";
+	public static final String SUFFIX = " report-title report-description report-includedConfidences report-includedRisks report-reportFileNamePattern report-dir report-display [report-template1 report-theme1 report-sections1] ... [report-templateN report-themeN report-sectionsN]";
 	
-	public ZAPReport(String[] args, String mainClass, String usage, int index, ClientApi clientApi) throws Exception {
-		String usageMsg = "\nUsage: mainClass "+usage+suffix;
+	public ZAPReport(String[] args, String mainClass, String usage, int index, ClientApi clientApi) throws UtilsException, ClientApiException {
+		
+		if(mainClass!=null) {
+			// nop
+		}
+		
+		String usageMsg = "\nUsage: mainClass "+usage+SUFFIX;
 		if(args==null || args.length<=0) {
-			throw new Exception("ERROR: arguments undefined"+usageMsg);
+			throw new UtilsException("ERROR: arguments undefined"+usageMsg);
 		}
 
 		if(args.length>(index)) {
 			this.title = args[index+0];
 		}
 		if(this.title==null || StringUtils.isEmpty(this.title)) {
-			throw new Exception("ERROR: argument 'report-title' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-title' undefined"+usageMsg);
 		}
 		
 		
@@ -63,7 +70,7 @@ public class ZAPReport {
 			this.description = args[index+1];
 		}
 		if(this.description==null || StringUtils.isEmpty(this.description)) {
-			throw new Exception("ERROR: argument 'report-description' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-description' undefined"+usageMsg);
 		}
 		if(NONE.equalsIgnoreCase(this.description)) {
 			this.description = null;
@@ -75,18 +82,18 @@ public class ZAPReport {
 			this.includedConfidences = args[index+2];
 		}
 		if(this.includedConfidences==null || StringUtils.isEmpty(this.includedConfidences)) {
-			throw new Exception("ERROR: argument 'report-includedConfidences' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-includedConfidences' undefined"+usageMsg);
 		}
 		if(NONE.equalsIgnoreCase(this.includedConfidences)) {
 			this.includedConfidences = null;
 		}
 		else {
-			List<String> includedConfidences = getAllIncludedConfidences();
+			List<String> includedConfidencesCheck = getAllIncludedConfidences();
 			String [] split = this.includedConfidences.split("\\|");
 			if(split!=null && split.length>0) {
 				for (String s : split) {
-					if(!includedConfidences.contains(s)) {
-						throw new Exception("ERROR: argument 'report-includedConfidences'='"+this.includedConfidences+"' unknown confidence '"+s+"' ; usable: "+includedConfidences+usageMsg);
+					if(!includedConfidencesCheck.contains(s)) {
+						throw new UtilsException("ERROR: argument 'report-includedConfidences'='"+this.includedConfidences+"' unknown confidence '"+s+"' ; available: "+includedConfidencesCheck+usageMsg);
 					}	
 				}
 			}
@@ -96,18 +103,18 @@ public class ZAPReport {
 			this.includedRisks = args[index+3];
 		}
 		if(this.includedRisks==null || StringUtils.isEmpty(this.includedRisks)) {
-			throw new Exception("ERROR: argument 'report-includedRisks' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-includedRisks' undefined"+usageMsg);
 		}
 		if(NONE.equalsIgnoreCase(this.includedRisks)) {
 			this.includedRisks = null;
 		}
 		else {
-			List<String> includedRisks = getAllIncludedRisks();
+			List<String> includedRisksCheck = getAllIncludedRisks();
 			String [] split = this.includedRisks.split("\\|");
 			if(split!=null && split.length>0) {
 				for (String s : split) {
-					if(!includedRisks.contains(s)) {
-						throw new Exception("ERROR: argument 'report-includedRisks'='"+this.includedRisks+"' unknown confidence '"+s+"' ; usable: "+includedRisks+usageMsg);
+					if(!includedRisksCheck.contains(s)) {
+						throw new UtilsException("ERROR: argument 'report-includedRisks'='"+this.includedRisks+"' unknown confidence '"+s+"' ; usable: "+includedRisksCheck+usageMsg);
 					}	
 				}
 			}
@@ -117,25 +124,26 @@ public class ZAPReport {
 			this.fileNamePattern = args[index+4];
 		}
 		if(this.fileNamePattern==null || StringUtils.isEmpty(this.fileNamePattern)) {
-			throw new Exception("ERROR: argument 'report-fileNamePattern' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-fileNamePattern' undefined"+usageMsg);
 		}
 		
 		if(args.length>(index+5)) {
 			this.dir = args[index+5];
 		}
 		if(this.dir==null || StringUtils.isEmpty(this.dir)) {
-			throw new Exception("ERROR: argument 'report-dir' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-dir' undefined"+usageMsg);
 		}
 		File fDir = new File(this.dir);
 		if(fDir.exists()) {
+			String prefixError = "ERROR: argument 'report-dir' '"+this.dir+"' ";
 			if(!fDir.isDirectory()) {
-				throw new Exception("ERROR: argument 'report-dir' '"+this.dir+"' isn't a directory"+usageMsg);
+				throw new UtilsException(prefixError+"isn't a directory"+usageMsg);
 			}
 			if(!fDir.canWrite()) {
-				throw new Exception("ERROR: argument 'report-dir' '"+this.dir+"' cannot write"+usageMsg);
+				throw new UtilsException(prefixError+"cannot write"+usageMsg);
 			}
 			if(!fDir.canRead()) {
-				throw new Exception("ERROR: argument 'report-dir' '"+this.dir+"' cannot read"+usageMsg);
+				throw new UtilsException(prefixError+"cannot read"+usageMsg);
 			}
 		}
 		else {
@@ -147,12 +155,12 @@ public class ZAPReport {
 			sDisplay = args[index+6];
 		}
 		if(sDisplay==null || StringUtils.isEmpty(sDisplay)) {
-			throw new Exception("ERROR: argument 'report-display' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-display' undefined"+usageMsg);
 		}
 		try {
 			this.display = Boolean.valueOf(sDisplay);
-		}catch(Throwable t) {
-			throw new Exception("ERROR: argument 'report-display' uncorrect ("+sDisplay+")"+usageMsg);
+		}catch(Exception t) {
+			throw new UtilsException("ERROR: argument 'report-display' uncorrect ("+sDisplay+")"+usageMsg);
 		}
 		
 		
@@ -161,25 +169,25 @@ public class ZAPReport {
 			sTemplates = args[index+7];
 		}
 		if(sTemplates==null || StringUtils.isEmpty(sTemplates)) {
-			throw new Exception("ERROR: argument 'report-templates' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-templates' undefined"+usageMsg);
 		}
 		
 		this.templates = new ArrayList<>();
 		
 		String [] tmp = sTemplates.split(" ");
 		if(tmp==null || tmp.length<=0) {
-			throw new Exception("ERROR: argument 'report-templates' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-templates' undefined"+usageMsg);
 		}
 		
 		for (int i = 0; i < tmp.length; ) {
 						
 			String template = tmp[i];
 			if(template==null || StringUtils.isEmpty(template)) {
-				throw new Exception("ERROR: argument 'report-template' undefined"+usageMsg);
+				throw new UtilsException("ERROR: argument 'report-template' undefined"+usageMsg);
 			}
-			List<String> templates = getTemplates(clientApi);
-			if(!templates.contains(template)) {
-				throw new Exception("ERROR: argument 'report-template'='"+template+"' unknown; usable: "+templates+usageMsg);
+			List<String> templatesCheck = getTemplates(clientApi);
+			if(!templatesCheck.contains(template)) {
+				throw new UtilsException("ERROR: argument 'report-template'='"+template+"' unknown; usable: "+templatesCheck+usageMsg);
 			}
 			i++;
 			
@@ -188,7 +196,7 @@ public class ZAPReport {
 				theme = tmp[i];
 			}
 			if(theme==null || StringUtils.isEmpty(theme)) {
-				throw new Exception("ERROR: argument 'report-theme' undefined"+usageMsg);
+				throw new UtilsException("ERROR: argument 'report-theme' undefined"+usageMsg);
 			}
 			if(NONE.equalsIgnoreCase(theme)) {
 				theme = null;
@@ -196,10 +204,10 @@ public class ZAPReport {
 			else {
 				List<String> themes = getThemes(clientApi, template);
 				if(themes==null || themes.isEmpty()) {
-					throw new Exception("ERROR: argument 'report-theme'='"+theme+"' unknown; template '"+template+"' without theme"+usageMsg);
+					throw new UtilsException("ERROR: argument 'report-theme'='"+theme+"' unknown; template '"+template+"' without theme"+usageMsg);
 				}
 				if(!themes.contains(theme)) {
-					throw new Exception("ERROR: argument 'report-theme'='"+theme+"' unknown; usable: "+themes+usageMsg);
+					throw new UtilsException("ERROR: argument 'report-theme'='"+theme+"' unknown; usable: "+themes+usageMsg);
 				}
 			}
 			i++;
@@ -209,7 +217,7 @@ public class ZAPReport {
 				sections = tmp[i];
 			}
 			if(sections==null || StringUtils.isEmpty(sections)) {
-				throw new Exception("ERROR: argument 'report-sections' undefined"+usageMsg);
+				throw new UtilsException("ERROR: argument 'report-sections' undefined"+usageMsg);
 			}
 			if(NONE.equalsIgnoreCase(sections)) {
 				sections = null;
@@ -217,13 +225,13 @@ public class ZAPReport {
 			else {
 				List<String> sectionsCheck = getSections(clientApi, template);
 				if(sectionsCheck==null || sectionsCheck.isEmpty()) {
-					throw new Exception("ERROR: argument 'report-sections'='"+sections+"' unknown; template '"+template+"' without sections"+usageMsg);
+					throw new UtilsException("ERROR: argument 'report-sections'='"+sections+"' unknown; template '"+template+"' without sections"+usageMsg);
 				}
 				String [] split = sections.split("\\|");
 				if(split!=null && split.length>0) {
 					for (String s : split) {
 						if(!sectionsCheck.contains(s)) {
-							throw new Exception("ERROR: argument 'report-sections'='"+sections+"' unknown section '"+s+"' ; usable: "+sectionsCheck+usageMsg);
+							throw new UtilsException("ERROR: argument 'report-sections'='"+sections+"' unknown section '"+s+"' ; usable: "+sectionsCheck+usageMsg);
 						}	
 					}
 				}
@@ -239,7 +247,7 @@ public class ZAPReport {
 		}
 
 		if(this.templates.isEmpty()) {
-			throw new Exception("ERROR: argument 'report-template' undefined"+usageMsg);
+			throw new UtilsException("ERROR: argument 'report-template' undefined"+usageMsg);
 		}
 	}
 	
@@ -309,7 +317,7 @@ public class ZAPReport {
 	}
 	
 	
-	public static List<String> getTemplates(ClientApi clientApi) throws Exception {
+	public static List<String> getTemplates(ClientApi clientApi) throws ClientApiException {
 		
 		List<String> l = new ArrayList<>();
 		
@@ -317,7 +325,7 @@ public class ZAPReport {
         ApiResponseList list = ((ApiResponseList) response);
         for (ApiResponse res : list.getItems()) {
 			 ApiResponseElement re = (ApiResponseElement) res;
-			 //System.out.println("Template '"+re.getName()+"'='"+re.getValue()+"'");
+			 /**System.out.println("Template '"+re.getName()+"'='"+re.getValue()+"'");*/
 			 l.add(re.getValue());
 			 // Template 'template'='traditional-json'
 			 // Template 'template'='traditional-pdf'
@@ -336,43 +344,43 @@ public class ZAPReport {
         return l;
 	}
 	
-	public static List<String> getThemes(ClientApi clientApi, String template) throws Exception {
+	public static List<String> getThemes(ClientApi clientApi, String template) throws ClientApiException {
 
 		List<String> l = new ArrayList<>();
 		
 		ApiResponse response =  clientApi.reports.templateDetails(template);
 		ApiResponseSet responseSet = (ApiResponseSet) response;
-		/*for (String key : responseSet.getKeys()) {
+		/**for (String key : responseSet.getKeys()) {
 			System.out.println("Key["+key+"] ["+responseSet.getValue(key)+"]");
-		}*/
+		}
 		//System.out.println("NAME: ["+responseSet.getValue("name")+"]");
-		//System.out.println("FORMAT: ["+responseSet.getValue("format")+"]");
+		//System.out.println("FORMAT: ["+responseSet.getValue("format")+"]");*/
 		ApiResponseList list = ((ApiResponseList) responseSet.getValue("themes"));
-		// System.out.println("themes: "+list.getItems().size());
+		/** System.out.println("themes: "+list.getItems().size());*/
 		for (ApiResponse res : list.getItems()) {
 			 ApiResponseElement re = (ApiResponseElement) res;
-			 //System.out.println("Theme '"+re.getName()+"'='"+re.getValue()+"'");
+			 /**System.out.println("Theme '"+re.getName()+"'='"+re.getValue()+"'");*/
 			 l.add(re.getValue());
 		}
 	
 		return l;
 	}
-	public static List<String> getSections(ClientApi clientApi, String template) throws Exception {
+	public static List<String> getSections(ClientApi clientApi, String template) throws ClientApiException {
 
 		List<String> l = new ArrayList<>();
 		
 		ApiResponse response =  clientApi.reports.templateDetails(template);
 		ApiResponseSet responseSet = (ApiResponseSet) response;
-		/*for (String key : responseSet.getKeys()) {
+		/**for (String key : responseSet.getKeys()) {
 			System.out.println("Key["+key+"] ["+responseSet.getValue(key)+"]");
-		}*/
-		//System.out.println("NAME: ["+responseSet.getValue("name")+"]");
-		//System.out.println("FORMAT: ["+responseSet.getValue("format")+"]");
+		}
+		System.out.println("NAME: ["+responseSet.getValue("name")+"]");
+		System.out.println("FORMAT: ["+responseSet.getValue("format")+"]");*/
 		ApiResponseList list = ((ApiResponseList) responseSet.getValue("sections"));
-		//System.out.println("sections: "+list.getItems().size());
+		/**System.out.println("sections: "+list.getItems().size());*/
 		for (ApiResponse res : list.getItems()) {
 			 ApiResponseElement re = (ApiResponseElement) res;
-			 //System.out.println("Section '"+re.getName()+"'='"+re.getValue()+"'");
+			 /**System.out.println("Section '"+re.getName()+"'='"+re.getValue()+"'");*/
 			 l.add(re.getValue());
 		}
 		

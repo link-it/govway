@@ -96,28 +96,28 @@ public class AuthenticationInfos {
 				
 		ZAPContext context = new ZAPContext(args, AuthenticationInfos.class.getName(), "");
 		
-		System.out.println("=======================");
+		LoggerManager.info("=======================");
 		ApiResponse response = context.getClientApi().authentication.getSupportedAuthenticationMethods();
 		ApiResponseList list = ((ApiResponseList) response);
-		System.out.println("Methods: "+list.getItems().size());
+		LoggerManager.info("Methods: "+list.getItems().size());
 		for (ApiResponse res : list.getItems()) {
 			ApiResponseElement re = (ApiResponseElement) res;
-			System.out.println("\n\t '"+re.getValue()+"'");
+			LoggerManager.info("\n\t '"+re.getValue()+"'");
 			
 			ApiResponse responseParams = context.getClientApi().authentication.getAuthenticationMethodConfigParams(re.getValue());
 			ApiResponseList responseParamsList = ((ApiResponseList) responseParams);
-			System.out.println("\tparams: "+responseParamsList.getItems().size());
+			LoggerManager.info("\tparams: "+responseParamsList.getItems().size());
 			int index = 1;
 			for (ApiResponse resParam : responseParamsList.getItems()) {
 				ApiResponseSet reParam = (ApiResponseSet) resParam;
-				System.out.println("\tparam "+index);
+				LoggerManager.info("\tparam "+index);
 				for (String key : reParam.getKeys()) {
-					System.out.println("\t\t'"+key+"'='"+reParam.getValue(key)+"'");
+					LoggerManager.info("\t\t'"+key+"'='"+reParam.getValue(key)+"'");
 				}
 				index++;
 			}
 		}
-		System.out.println("=======================\n\n");
+		LoggerManager.info("=======================\n\n");
 		
 		
 	}

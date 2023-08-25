@@ -512,7 +512,93 @@
 		</java>
 	</target>
 
-	<!-- GovWay Console -->
+	<!-- GovWayMonitor -->
+	<target name="analizeGovWayMonitor">
+
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.url}" arg2="$${zaproxy.govwayMonitor.url}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.url' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.url}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.url' non definito"/>
+                        </then>
+                </if>
+
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.username}" arg2="$${zaproxy.govwayMonitor.username}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.username' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.username}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.username' non definito"/>
+                        </then>
+                </if>
+
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.password}" arg2="$${zaproxy.govwayMonitor.password}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.password' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.password}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.password' non definito"/>
+                        </then>
+                </if>
+
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.scanTypes}" arg2="$${zaproxy.govwayMonitor.scanTypes}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.scanTypes' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.scanTypes}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.scanTypes' non definito"/>
+                        </then>
+                </if>
+
+		<antcall target="-executeZap">
+			<param name="zap_target" value="-analizeGovWayMonitor"/>
+		</antcall>
+	</target>
+	<target name="-analizeGovWayMonitor">
+		<echo message="GovWayMonitor Api Key: '${zap-api-key}'"/>
+		<java classname="org.openspcoop2.testsuite.zap.GovWayMonitor" fork="false">
+			<arg value="${zaproxy.address}" />
+			<arg value="${zaproxy.port}" />
+			<arg value="${zaproxy.session}" />
+			<arg value="${zap-api-key}" />
+			<arg value="${zaproxy.debug}" />
+			<arg value="${zaproxy.govwayMonitor.url}" />
+			<arg value="${zaproxy.govwayMonitor.username}" />
+			<arg value="${zaproxy.govwayMonitor.password}" />
+			<arg value="${zaproxy.govwayMonitor.scanTypes}" />
+			<arg value="${zaproxy.report.title}" />
+			<arg value="${zaproxy.report.description}" />
+			<arg value="${zaproxy.report.includedConfidences}" />
+			<arg value="${zaproxy.report.includedRisks}" />
+			<arg value="${zaproxy.report.fileNamePatternConsole}" />
+			<arg value="${zaproxy.report.dir}" />
+			<arg value="${zaproxy.report.display}" />
+			<arg value="${zaproxy.report.templates}" />
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="${build_zap}"/>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- GovWay Consoles -->
 	<target name="analizeGovWayConsoles">
 
 		<!-- govwayConsole -->
@@ -525,6 +611,18 @@
 			<param name="analyzeScanTypes" value="spider"/> <!--ajaxspider|active"/>-->
 			<param name="analyzeTitle" value="GovWay Console di Configurazione"/>
 			<param name="analyzeDescription" value="Analisi per la console di configurazione di GovWay"/>
+		</antcall>
+
+		<!-- govwayMonitor -->
+		<antcall target="-analizeGovWayConsoles">
+			<param name="analyzeTarget" value="analizeGovWayMonitor"/>
+			<param name="analyzeType" value="console-monitoraggio"/>
+			<param name="analyzeTargetUrl" value="${govway.endpoint}/govwayMonitor"/>
+			<param name="analyzeUsername" value="${govway.console.monitor.username}"/>
+			<param name="analyzePassword" value="${govway.console.monitor.password}"/>
+			<param name="analyzeScanTypes" value="spider"/> <!--ajaxspider|active"/>-->
+			<param name="analyzeTitle" value="GovWay Console di Monitoraggio"/>
+			<param name="analyzeDescription" value="Analisi per la console di monitoraggio di GovWay"/>
 		</antcall>
 
 	</target>
@@ -555,6 +653,21 @@
 							<param name="zaproxy.govwayConsole.username" value="${analyzeUsername}"/>
 							<param name="zaproxy.govwayConsole.password" value="${analyzePassword}"/>
 							<param name="zaproxy.govwayConsole.scanTypes" value="${analyzeScanTypes}"/>
+							<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/${analyzeType}" />
+							<param name="zaproxy.report.fileNamePattern" value="zap_report_SCAN_TYPE_${analyzeType}.ext" />
+							<param name="zaproxy.report.title" value="${analyzeTitle}" />
+							<param name="zaproxy.report.description" value="${analyzeDescription}" />
+						</antcall>
+					</then>
+				</if>
+				<if>
+		                        <equals arg1="${analyzeTarget}" arg2="analizeGovWayMonitor"/>
+		                        <then>
+						<antcall target="analizeGovWayMonitor">
+							<param name="zaproxy.govwayMonitor.url" value="${analyzeTargetUrl}"/>
+							<param name="zaproxy.govwayMonitor.username" value="${analyzeUsername}"/>
+							<param name="zaproxy.govwayMonitor.password" value="${analyzePassword}"/>
+							<param name="zaproxy.govwayMonitor.scanTypes" value="${analyzeScanTypes}"/>
 							<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/${analyzeType}" />
 							<param name="zaproxy.report.fileNamePattern" value="zap_report_SCAN_TYPE_${analyzeType}.ext" />
 							<param name="zaproxy.report.title" value="${analyzeTitle}" />

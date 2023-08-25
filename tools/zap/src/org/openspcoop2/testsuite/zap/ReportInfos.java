@@ -30,6 +30,9 @@ import java.util.List;
  */
 public class ReportInfos {
 
+	private static final String START = "=======================";
+	private static final String END = "=======================\n\n";
+	
 	public static void main(String[] args) throws Exception {
 				
 		ZAPContext context = new ZAPContext(args, ReportInfos.class.getName(), "");
@@ -37,40 +40,40 @@ public class ReportInfos {
 		List<String> templates = ZAPReport.getTemplates(context.getClientApi());
 		for (String template : templates) {
 			
-			System.out.println("=======================");
-			System.out.println("Template: '"+template+"'");
+			LoggerManager.info(START);
+			LoggerManager.info("Template: '"+template+"'");
 			
 			List<String> themas = ZAPReport.getThemes(context.getClientApi(), template);
-			System.out.println("Themas: '"+themas.size()+"'");
+			LoggerManager.info("Themas: '"+themas.size()+"'");
 			for (String thema : themas) {
-				System.out.println("\t'"+thema+"'");
+				LoggerManager.info("\t'"+thema+"'");
 			}
 			
 			List<String> sections = ZAPReport.getSections(context.getClientApi(), template);
-			System.out.println("Sections: '"+sections.size()+"'");
+			LoggerManager.info("Sections: '"+sections.size()+"'");
 			for (String section : sections) {
-				System.out.println("\t'"+section+"'");
+				LoggerManager.info("\t'"+section+"'");
 			}
 			
-			System.out.println("=======================\n\n");
+			LoggerManager.info(END);
 			
 		}
 		
-		System.out.println("=======================");
+		LoggerManager.info(START);
 		List<String> confidences = ZAPReport.getAllIncludedConfidences();
-		System.out.println("Confidence: '"+confidences.size()+"'");
+		LoggerManager.info("Confidence: '"+confidences.size()+"'");
 		for (String confidence : confidences) {
-			System.out.println("\t'"+confidence+"'");
+			LoggerManager.info("\t'"+confidence+"'");
 		}
-		System.out.println("=======================\n\n");
+		LoggerManager.info(END);
 		
-		System.out.println("=======================");
+		LoggerManager.info(START);
 		List<String> risks = ZAPReport.getAllIncludedRisks();
-		System.out.println("Risk: '"+risks.size()+"'");
+		LoggerManager.info("Risk: '"+risks.size()+"'");
 		for (String risk : risks) {
-			System.out.println("\t'"+risk+"'");
+			LoggerManager.info("\t'"+risk+"'");
 		}
-		System.out.println("=======================\n\n");
+		LoggerManager.info(END);
 		
 	}
 	
