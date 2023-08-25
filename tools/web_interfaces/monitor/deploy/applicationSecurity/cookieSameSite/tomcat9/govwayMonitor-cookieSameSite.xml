@@ -1,7 +1,0 @@
-<Context>
-
-	...
-
-    <!-- Configurazione del CookieProcessor -->
-    <CookieProcessor sameSiteCookies="strict" />
-</Context>

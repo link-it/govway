@@ -91,6 +91,7 @@ public class HttpConstants {
 	public static final String SET_COOKIE_DOMAIN_PARAMETER = "Domain"; // <domain-value>
 	public static final String SET_COOKIE_SECURE_PARAMETER = "Secure";
 	public static final String SET_COOKIE_HTTP_ONLY_PARAMETER = "HttpOnly";
+	public static final String SET_COOKIE_SAME_SITE_PARAMETER = "SameSite";
 	
 	/** Digest */
 	public static final String DIGEST = "Digest";

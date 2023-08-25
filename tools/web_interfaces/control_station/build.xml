@@ -143,7 +143,7 @@
 	<!-- cookie_same_site -->
 	<if>
 		<or>
-			<equals arg1="${as}" arg2="wildfly26"/>
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="cookie_same_site" value="undertow-handlers.conf" />

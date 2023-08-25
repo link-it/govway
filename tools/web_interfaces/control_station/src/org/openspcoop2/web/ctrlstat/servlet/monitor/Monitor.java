@@ -211,14 +211,15 @@ public final class Monitor extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);	
 
-		// Inizializzo driver
-		if (Monitor.initialized == null) {
-			Monitor.initMonitoraggio();
-		}
 
 		MonitorHelper monitorHelper = null;
 		try {
 
+			// Inizializzo driver
+			if (Monitor.initialized == null) {
+				Monitor.initMonitoraggio();
+			}
+			
 			MonitorCore monitorCore = new MonitorCore();
 			
 			monitorHelper = new MonitorHelper(request, pd, session);

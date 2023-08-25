@@ -20,6 +20,27 @@
 	</filter-mapping>
 
 	<filter>
+		<filter-name>CookieSameSiteFilter</filter-name>
+		<filter-class>org.openspcoop2.utils.transport.http.CookieSameSiteFilter</filter-class>
+		<init-param>
+			<param-name>sameSite.enabled</param-name>
+			<param-value>false</param-value> <!-- Abilita la gestione del sameSite -->
+		</init-param>
+		<init-param>
+			<param-name>sameSite.value</param-name>
+			<param-value>Strict</param-value> <!-- Strict, Lax o None -->
+		</init-param>
+		<init-param>
+			<param-name>sameSite.logCategory</param-name>
+			<param-value>org.openspcoop2.web.monitor.core</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CookieSameSiteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
    		<filter-name>linkMultipartFilter</filter-name>
    		<filter-class>org.openspcoop2.web.monitor.core.filters.MultipartFilter</filter-class>
 	</filter>

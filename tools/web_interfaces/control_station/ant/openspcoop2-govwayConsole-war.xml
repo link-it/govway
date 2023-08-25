@@ -185,18 +185,11 @@
 				<copy file="${src_govwayConsole}/WEB-INF/${jboss_deployment_structure}.wildfly" tofile="${build_govwayConsole}/tmp/${jboss_deployment_structure}" />
 			</then>
 		</if>
-		<!-- Copia della configurazione cookie same site per WF26 -->
+		<!-- Copia della configurazione cookie same site -->
 		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<if>
-					<or>
-						<matches string="${as}" pattern="wildfly26"/>
-					</or>
-					<then>
-						<copy file="${appSec.dir}/cookieSameSite/wildfly26/undertow-handlers.conf" tofile="${build_govwayConsole}/tmp/${cookie_same_site}" />
-					</then>
-				</if>
+				<copy file="${appSec.dir}/cookieSameSite/wildfly/undertow-handlers.conf" tofile="${build_govwayConsole}/tmp/${cookie_same_site}" />
 			</then>
 		</if>
 		
@@ -244,6 +237,26 @@
 		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
 			<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.filters"/>
 		</concat>
+		<if>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<then>
+				<antcall target="replace_token">
+					<param name="file" value="${build_govwayConsole}/webtmp/web.xml"/>
+					<param name="token" value="&lt;param-value>false&lt;/param-value> &lt;!-- Abilita la gestione del sameSite -->"/>
+					<param name="value" value="&lt;param-value>true&lt;/param-value> &lt;!-- Abilita la gestione del sameSite -->"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<antcall target="replace_token">
+					<param name="file" value="${build_govwayConsole}/webtmp/web.xml"/>
+					<param name="token" value="&lt;param-value>false&lt;/param-value> &lt;!-- Abilita la gestione dell'header 'X-Powered-By' -->"/>
+					<param name="value" value="&lt;param-value>true&lt;/param-value> &lt;!-- Abilita la gestione dell'header 'X-Powered-By' -->"/>
+				</antcall>
+			</then>
+		</if>
 		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
 			<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.listeners"/>
 		</concat>
@@ -344,6 +357,7 @@
 				<include name="${jakarta_activation_jar}"/>
 				<include name="jakarta.xml.bind-api-3.0.1.jar"/>
 				<include name="jakarta.ws.rs-api-3.1.0.jar"/>
+				<include name="jakarta.xml.ws-api-3.0.1.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/jaxb">
 				<include name="*.jar"/>

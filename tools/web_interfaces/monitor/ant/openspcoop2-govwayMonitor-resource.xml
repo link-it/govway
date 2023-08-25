@@ -65,6 +65,16 @@
 			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.filters"/>
 		</concat>
 		<if>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<then>
+				<antcall target="replace_token">
+					<param name="file" value="${build_govwayMonitor_war}/WEB-INF/web.xml"/>
+					<param name="token" value="&lt;param-value>false&lt;/param-value> &lt;!-- Abilita la gestione del sameSite -->"/>
+					<param name="value" value="&lt;param-value>true&lt;/param-value> &lt;!-- Abilita la gestione del sameSite -->"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
 			<not>
 				<equals arg1="${plugins.classpath.web.xml.filters}" arg2=""/>
 			</not>
@@ -252,14 +262,7 @@
 		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<if>
-					<or>
-						<matches string="${as}" pattern="wildfly26"/>
-					</or>
-					<then>
-						<copy file="${appSec.dir}/cookieSameSite/wildfly26/undertow-handlers.conf" tofile="${build_govwayMonitor_war}/WEB-INF/${cookie_same_site}" />
-					</then>
-				</if>
+				<copy file="${appSec.dir}/cookieSameSite/wildfly/undertow-handlers.conf" tofile="${build_govwayMonitor_war}/WEB-INF/${cookie_same_site}" />
 			</then>
 		</if>
 		
