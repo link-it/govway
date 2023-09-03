@@ -78,12 +78,12 @@ public final class ConfigurazioneSystemPropertiesAdd extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
 			String valore = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE);
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Prendo il nome della porta
 			ConfigurazioneCore confCore = new ConfigurazioneCore();

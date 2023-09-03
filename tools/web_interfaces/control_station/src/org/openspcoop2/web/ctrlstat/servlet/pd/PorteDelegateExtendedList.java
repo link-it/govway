@@ -56,7 +56,7 @@ public final class PorteDelegateExtendedList extends AbstractServletListExtended
 			PageData pd, HttpSession session) throws Exception {
 		PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 		
-		String idTab = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+		String idTab = porteDelegateHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 		if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 			ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 		}

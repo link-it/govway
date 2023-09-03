@@ -79,6 +79,9 @@ public final class ConfigurazionePluginsClassiAdd extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			String idPluginS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_ID_PLUGIN);
 			String descrizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_DESCRIZIONE);
 			String stato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_STATO);
@@ -101,8 +104,6 @@ public final class ConfigurazionePluginsClassiAdd extends Action {
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			// Preparo il menu
-			confHelper.makeMenu();
 			List<Parameter> lstParam = new ArrayList<>();
 
 			// setto la barra del titolo

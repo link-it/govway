@@ -89,28 +89,31 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			PorteDelegateCore pdCore = new PorteDelegateCore(confCore);
 			PorteApplicativeCore paCore = new PorteApplicativeCore(confCore);
 			
 			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
 			
-			// uso nome porta per capire se sono entrato per la prima volta nella schermata
+			// uso nome porta per capire se sono entrato per la prima volta nella schermata (Validazione all'interno del metodo)
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
 			
-			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
+			String ruoloPortaParam = confHelper.getParametroRuoloPolicy(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
 			RuoloPolicy ruoloPorta = null;
 			if(ruoloPortaParam!=null) {
 				ruoloPorta = RuoloPolicy.toEnumConstant(ruoloPortaParam);
 			}
 			String nomePorta = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA);
 			ServiceBinding serviceBinding = null;
-			String serviceBindingParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING);
+			String serviceBindingParam = confHelper.getParametroServiceBinding(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING);
 			if(serviceBindingParam!=null && !"".equals(serviceBindingParam)) {
 				serviceBinding = ServiceBinding.valueOf(serviceBindingParam);
 			}
 			
-			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID); 
+			String id = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID); 
 			long idPolicyL = Long.parseLong(id);
 			AttivazionePolicy policy = confCore.getAttivazionePolicy(idPolicyL);
 			
@@ -161,9 +164,6 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				}
 				
 			}
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 			
 			// setto la barra del titolo
 			List<Parameter> lstParamPorta = null;

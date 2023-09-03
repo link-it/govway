@@ -85,10 +85,13 @@ public class ConfigurazioneHandlersServizioChange extends Action {
 			
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			// controllo primo accesso
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FIRST_TIME);
 			
-			String idHandlerS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER);
+			String idHandlerS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER);
 			
 			TipoPdD ruoloPorta = null;
 			String idPortaS = null;
@@ -109,9 +112,6 @@ public class ConfigurazioneHandlersServizioChange extends Action {
 			Plugin plugin = handler.getPlugin();
 			String tipo = plugin.getTipo();
 			List<String> tipiPluginGiaUtilizzati = null;
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 			
 			List<Parameter> lstParamSession = new ArrayList<>();
 

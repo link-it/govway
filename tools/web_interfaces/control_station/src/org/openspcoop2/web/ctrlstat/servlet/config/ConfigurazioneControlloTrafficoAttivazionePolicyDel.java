@@ -74,19 +74,19 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyDel extends Action 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
-			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
 			// Preparo il menu
 			confHelper.makeMenu();
+			
+			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
+			String ruoloPortaParam = confHelper.getParametroRuoloPolicy(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
 			RuoloPolicy ruoloPorta = null;
 			if(ruoloPortaParam!=null) {
 				ruoloPorta = RuoloPolicy.toEnumConstant(ruoloPortaParam);
 			}
 			String nomePorta = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA);
 			ServiceBinding serviceBinding = null;
-			String serviceBindingParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING);
+			String serviceBindingParam = confHelper.getParametroServiceBinding(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING);
 			if(serviceBindingParam!=null && !"".equals(serviceBindingParam)) {
 				serviceBinding = ServiceBinding.valueOf(serviceBindingParam);
 			}

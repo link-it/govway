@@ -68,11 +68,15 @@ public final class PorteDelegateList extends Action {
 		
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			Boolean useIdSogg = parentPD == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO;
-			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idsogg = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = -1;
 			// Posso arrivare a questa pagina anche dal menu' senza specificare il soggetto
 			if(idsogg != null){
@@ -86,9 +90,6 @@ public final class PorteDelegateList extends Action {
 
 			// salvo il punto di ingresso
 			ServletUtils.setObjectIntoSession(request, session, parentPD, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
-
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

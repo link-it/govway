@@ -70,8 +70,11 @@ public final class PorteDelegateCorrelazioneApplicativaResponseDel extends Actio
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
 
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
@@ -101,15 +104,12 @@ public final class PorteDelegateCorrelazioneApplicativaResponseDel extends Actio
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
-
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			List<CorrelazioneApplicativaRispostaElemento> lista = porteDelegateCore.porteDelegateCorrelazioneApplicativaRispostaList(idInt, ricerca);
 
-			porteDelegateHelper.preparePorteDelegateCorrAppRispostaList(pde.getNome(), ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateCorrAppRispostaList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 

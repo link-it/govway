@@ -509,9 +509,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,oldnomeprov),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,oldtipoprov));
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id));
 				Utilities.setDataElementLabelTipoConnettore(de, connettore);
 				dati.add(de);
 				
@@ -526,11 +524,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
-			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, nomeprov);
-			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
 			parametersServletSoggettoChange.add(pIdSoggetto);
-			parametersServletSoggettoChange.add(pNomeSoggetto);
-			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
 			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_PROPRIETA_LIST, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
 			if (contaListe!=null && contaListe.booleanValue()) {
@@ -678,9 +672,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,id+""),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,oldnomeprov),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,oldtipoprov));
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,id+""));
 				if (contaListe) {
 					ServletUtils.setDataElementVisualizzaLabel(de,numPD);
 				} else
@@ -711,9 +703,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,id+""),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,oldnomeprov),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,oldtipoprov));
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,id+""));
 				if (contaListe) {
 					ServletUtils.setDataElementVisualizzaLabel(de,numPA);
 				} else
@@ -1393,9 +1383,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 							
 		DataElement de = new DataElement();
 		de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
 		de.setValue(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
 		de.setIdToRemove(elem.getId().toString());
 		de.setToolTip(de.getValue());
@@ -1441,9 +1429,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			if(showConnettore){
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
 				ServletUtils.setDataElementVisualizzaLabel(de);
 			}
 			else{
@@ -1505,9 +1491,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setValue("-");
 			} else {
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""));
 				if (contaListe) {
 					// BugFix OP-674
 					//List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
@@ -1530,9 +1514,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setValue("-");
 			} else {
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""));
 				if (contaListe) {
 					// BugFix OP-674
 					//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
@@ -1615,8 +1597,6 @@ public class SoggettiHelper extends ConnettoriHelper {
 		
 		List<Parameter> listaParametriChange = new ArrayList<>();
 		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
-		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()));
-		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
 				
 		DataElement de = new DataElement();
 		de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, listaParametriChange.toArray(new Parameter[listaParametriChange.size()]));
@@ -1837,9 +1817,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					//Soggetto
 					DataElement de = new DataElement();
 					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
 					de.setValue(elem.getTipo() + "/" + elem.getNome());
 					de.setIdToRemove(elem.getId().toString());
 					de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
@@ -1874,9 +1852,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						//Porte Applicative
 						de = new DataElement();
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
+								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""));
 						if (contaListe) {
 							// BugFix OP-674
 							// List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
@@ -1892,9 +1868,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						//Porte Delegate
 						de = new DataElement();
 						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""));
 						if (contaListe) {
 							// BugFix OP-674
 							//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
@@ -2034,9 +2008,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				ServletUtils.appendPageDataTitle(this.pd, 
 						new Parameter(tmpTitle, 
 								SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+""),
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,soggettoRegistry.getNome()),
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,soggettoRegistry.getTipo())));
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+"")));
 				ServletUtils.appendPageDataTitle(this.pd, 
 						new Parameter(RuoliCostanti.LABEL_RUOLI, null));
 			}
@@ -2128,11 +2100,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		try {
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
-			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, soggettoRegistry.getNome());
-			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, soggettoRegistry.getTipo());
 			parametersServletSoggettoChange.add(pIdSoggetto);
-			parametersServletSoggettoChange.add(pNomeSoggetto);
-			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
 			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_CREDENZIALI, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
 
@@ -2494,11 +2462,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		try {
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
-			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, soggettoRegistry.getNome());
-			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, soggettoRegistry.getTipo());
 			parametersServletSoggettoChange.add(pIdSoggetto);
-			parametersServletSoggettoChange.add(pNomeSoggetto);
-			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
 			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_PROPRIETA, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
 

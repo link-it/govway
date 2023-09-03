@@ -55,7 +55,7 @@ public final class PorteApplicativeExtendedList extends AbstractServletListExten
 	protected ConsoleHelper getConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) throws Exception {
 		PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 		
-		String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+		String idTab = porteApplicativeHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 		if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 			ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 		}

@@ -141,7 +141,10 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		ApiHelper apcHelper = new ApiHelper(request, pd, session);
 		
-		strutsBean.id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+		// Preparo il menu
+		apcHelper.makeMenu();
+		
+		strutsBean.id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 		
 		strutsBean.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		strutsBean.protocolPropertiesSet = apcHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
@@ -174,7 +177,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		strutsBean.tipoProtocollo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 		strutsBean.actionConfirm = apcHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 		strutsBean.backToStato = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RIPRISTINA_STATO);
-		String serviceBindingS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING);
+		String serviceBindingS = apcHelper.getParametroServiceBinding(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING);
 		strutsBean.serviceBinding = StringUtils.isNotEmpty(serviceBindingS) ? ServiceBinding.valueOf(serviceBindingS) : null;
 		String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE);
 		strutsBean.messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) 
@@ -198,7 +201,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
 
-		String apiGestioneParziale = apcHelper.getParameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
+		String apiGestioneParziale = apcHelper.getParametroApiGestioneParziale(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
 		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 		
 		boolean chiediConferma = true;
@@ -253,9 +256,6 @@ public final class AccordiServizioParteComuneChange extends Action {
 		}else{
 			strutsBean.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 		}
-
-		// Preparo il menu
-		apcHelper.makeMenu();
 
 		// Prendo il nome dell'accordo
 		String nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);

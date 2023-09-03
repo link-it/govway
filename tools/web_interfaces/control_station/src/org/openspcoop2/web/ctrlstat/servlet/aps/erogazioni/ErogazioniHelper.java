@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
@@ -81,8 +78,8 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
@@ -111,6 +108,11 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TargetType;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * ErogazioniHelper
@@ -917,9 +919,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 	
 					List<DataElement> e = new ArrayList<>();
 	
-					Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+asps.getIdSoggetto());
-					Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-					Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 					Parameter pTipoSoggettoFruitore = null;
 					Parameter pNomeSoggettoFruitore = null;
 					if(gestioneFruitori) {
@@ -955,9 +954,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_NOME_SERVIZIO);
 					List<Parameter> listParameters = new ArrayList<>();
 					listParameters.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));
-					listParameters.add(pNomeServizio);
-					listParameters.add(pTipoServizio);
-					listParameters.add(pIdsoggErogatore);
 					if(gestioneFruitori) {
 						listParameters.add(pTipoSoggettoFruitore);
 						listParameters.add(pNomeSoggettoFruitore);
@@ -1584,8 +1580,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		}
 		
 		boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
-		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 		Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, asps.getId()+"");
 		Parameter pId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+"");
 		Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
@@ -1681,9 +1675,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		List<Parameter> listaParametriChange = new ArrayList<>();		
 		listaParametriChange.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));
-		listaParametriChange.add(pNomeServizio);
-		listaParametriChange.add(pTipoServizio);
-		listaParametriChange.add(pIdSoggettoErogatore);
 		if(gestioneFruitori) {
 			listaParametriChange.add(pTipoSoggettoFruitore);
 			listaParametriChange.add(pNomeSoggettoFruitore);
@@ -1776,13 +1767,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			if(listaMappingFruzionePortaDelegata.size()==1) {
 				PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(listaMappingFruzionePortaDelegata.get(0).getIdPortaDelegata());
 				Parameter pIdPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, "" + pd.getId());
-				Parameter pNomePD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, pd.getNome());
 				Parameter pIdSoggPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, pd.getIdSoggetto() + "");
 				Parameter pFromApi = new Parameter(CostantiControlStation.PARAMETRO_API_PAGE_INFO, Costanti.CHECK_BOX_ENABLED_TRUE);
 				boolean statoPD = pd.getStato().equals(StatoFunzionalita.ABILITATO);
 				Parameter pAbilita = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA,  (statoPD ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
 				imageChangeStato = new DataElementImage();
-				imageChangeStato.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita,pFromApi);
+				imageChangeStato.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita,pFromApi);
 				String statoMapping = statoPD ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP;
 				imageChangeStato.setToolTip(statoMapping);
 				imageChangeStato.setImage(statoPD ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
@@ -2412,7 +2402,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						List<Parameter> listParametersVerificaConnettore = new ArrayList<>();
 						listParametersVerificaConnettore.add(pIdPD);
 						listParametersVerificaConnettore.add(pIdFruitore);
-						listParametersVerificaConnettore.add(pIdSoggettoErogatore);
 						listParametersVerificaConnettore.add(pIdProviderFruitore);
 						listParametersVerificaConnettore.add(pConnettoreDaListaAPS);
 						listParametersVerificaConnettore.add(pTipoSoggettoFruitore);
@@ -2512,10 +2501,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		de.setType(DataElementType.LINK);
 		if(gestioneErogatori)
 			de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST, 
-					pId, pNomeServizio, pTipoServizio, pIdSoggettoErogatore,pConfigurazioneTrue,pGruppiFalse,pIdTab);
+					pId, pIdSoggettoErogatore,pConfigurazioneTrue,pGruppiFalse,pIdTab);
 		if(gestioneFruitori)
 			de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,	
-					pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pIdFruitore,pConfigurazioneTrue,pGruppiFalse,pTipoSoggettoFruitore,pNomeSoggettoFruitore,pIdTab);
+					pId, pIdSogg, pIdFruitore,pConfigurazioneTrue,pGruppiFalse,
+//					pTipoSoggettoFruitore,pNomeSoggettoFruitore,
+					pIdTab);
 		if(visualizzazioneTabs)
 			de.setValue(ErogazioniCostanti.LABEL_ASPS_GESTIONE_CONFIGURAZIONI_CONFIGURA);			
 		else
@@ -2529,10 +2520,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de.setType(DataElementType.LINK);
 			if(gestioneErogatori)
 				de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST, 
-						pId, pNomeServizio, pTipoServizio, pIdSoggettoErogatore, pConfigurazioneFalse, pGruppiTrue);
+						pId, pIdSoggettoErogatore, pConfigurazioneFalse, pGruppiTrue);
 			if(gestioneFruitori)
 				de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,	
-						pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pIdFruitore, pConfigurazioneFalse, pGruppiTrue,pTipoSoggettoFruitore,pNomeSoggettoFruitore);
+						pId, pIdSogg, pIdFruitore, pConfigurazioneFalse, pGruppiTrue
+//						,pTipoSoggettoFruitore,pNomeSoggettoFruitore
+						);
 			de.setValue(MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, this.getLabelAzioni(serviceBinding)));
 			de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_GESTIONE_GRUPPI_CON_PARAMETRO);
 			dati.add(de);
@@ -3138,7 +3131,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					de.setSelected(statoPD);
 					de.setIcon(ErogazioniCostanti.LABEL_ASPS_ABILITA_CONFIGURAZIONE);
 					Parameter pAbilita = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA,  (statoPD ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
-					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
 					gruppoList.add(de);
 
 
@@ -3216,8 +3209,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 			}
 		}
-		
-		this.makeMenu();
 		
 		// setto la barra del titolo
 		List<Parameter> lstParm = new ArrayList<>();
@@ -3339,8 +3330,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 		}
 		
-		this.makeMenu();
-		
 		// setto la barra del titolo
 		List<Parameter> lstParm = new ArrayList<>();
 
@@ -3441,4 +3430,41 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		}
 	}
 	
+	public String getParametroTipologiaErogazione(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroTipologiaErogazione(parameterName, true);
+	}
+	
+	public String getParametroTipologiaErogazione(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroTipologiaErogazione(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro per il controllo della tipologia erogazione/fruizione
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroTipologiaErogazione(String parameterToCheck) {
+		String parameterValueFiltrato = this.request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// i valori accettati sono solo i seguenti
+		return  AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA.equals(parameterValueFiltrato) 
+				||  AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(parameterValueFiltrato) 
+				|| AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(parameterValueFiltrato)
+				;
+	}
 }

@@ -94,6 +94,9 @@ public final class AccordiCooperazioneAdd extends Action {
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			acHelper.makeMenu();
+			
 			strutsBean.editMode = acHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			strutsBean.nome = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
 			strutsBean.descr = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
@@ -105,7 +108,7 @@ public final class AccordiCooperazioneAdd extends Action {
 				if("0".equals(strutsBean.versione))
 					strutsBean.versione = "";
 			}*/
-			String privatoS = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
+			String privatoS = acHelper.getParametroBoolean(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
 			strutsBean.privato = ServletUtils.isCheckBoxEnabled(privatoS); // privatoS != null && Costanti.CHECK_BOX_ENABLED.equals(privatoS) ? true : false;
 			strutsBean.statoPackage = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
@@ -114,9 +117,6 @@ public final class AccordiCooperazioneAdd extends Action {
 
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 			SoggettiCore soggettiCore = new SoggettiCore(acCore);
-
-			// Preparo il menu
-			acHelper.makeMenu();
 
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = acCore.getProtocolliByFilter(request, session, true, false);

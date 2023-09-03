@@ -75,7 +75,11 @@ public final class PorteDelegateServizioApplicativoDel extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			
 			String tokenList = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION);
@@ -119,9 +123,6 @@ public final class PorteDelegateServizioApplicativoDel extends Action {
 			
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
-
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
@@ -137,7 +138,7 @@ public final class PorteDelegateServizioApplicativoDel extends Action {
 					:
 					porteDelegateCore.porteDelegateServizioApplicativoList(Integer.parseInt(id), ricerca);
 
-			porteDelegateHelper.preparePorteDelegateServizioApplicativoList(pde.getNome(), ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateServizioApplicativoList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 

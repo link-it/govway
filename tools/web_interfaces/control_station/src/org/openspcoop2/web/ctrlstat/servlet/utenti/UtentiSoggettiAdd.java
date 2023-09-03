@@ -77,12 +77,12 @@ public class UtentiSoggettiAdd extends Action {
 
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
+			
+			// Preparo il menu
+			utentiHelper.makeMenu();
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String soggetto = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SOGGETTO);
 			String protocollo = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PROTOCOLLO);
-
-			// Preparo il menu
-			utentiHelper.makeMenu();
 
 			UtentiCore utentiCore = new UtentiCore();
 			SoggettiCore soggettiCore = new SoggettiCore(utentiCore);

@@ -76,6 +76,9 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
 			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
@@ -213,10 +216,6 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 			}
 			
 			policy.setDescrizione(descrizionePolicy);
-
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<>();

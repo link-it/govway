@@ -25,10 +25,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -38,8 +34,8 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -48,6 +44,10 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * ScopeChange
@@ -77,21 +77,21 @@ public final class ScopeChange extends Action {
 
 		try {
 			ScopeHelper scopeHelper = new ScopeHelper(request, pd, session);
+			
+			// Preparo il menu
+			scopeHelper.makeMenu();
 
-			String id = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_ID);
+			String id = scopeHelper.getParametroLong(ScopeCostanti.PARAMETRO_SCOPE_ID);
 			long scopeId = Long.parseLong(id);
 			String nome = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME);
 			String descrizione = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
 			String tipologia = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_TIPOLOGIA);
 			String nomeEsterno = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
 			String contesto = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_CONTESTO);
-			String resetElementoCacheS = scopeHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			String resetElementoCacheS = scopeHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
 			ScopeCore scopeCore = new ScopeCore();
-
-			// Preparo il menu
-			scopeHelper.makeMenu();
 
 			// Prendo il scope
 			Scope scope  = scopeCore.getScope(scopeId);

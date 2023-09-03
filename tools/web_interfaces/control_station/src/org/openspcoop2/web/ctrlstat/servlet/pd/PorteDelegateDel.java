@@ -84,13 +84,17 @@ public final class PorteDelegateDel extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			boolean useIdSogg = parentPD!=null && parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO;
 			int soggInt = -1;
 			if(useIdSogg){
-				String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+				String idsogg = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 				soggInt = Integer.parseInt(idsogg);
 			}
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
@@ -164,9 +168,6 @@ public final class PorteDelegateDel extends Action {
 			}
 			
 			porteDelegateCore.performDeleteOperation(userLogin, porteDelegateHelper.smista(), listPerformOperations.toArray(new Object[1]));
-
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

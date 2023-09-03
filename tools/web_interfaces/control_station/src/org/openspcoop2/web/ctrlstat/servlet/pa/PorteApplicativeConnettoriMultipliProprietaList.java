@@ -70,11 +70,12 @@ public final class PorteApplicativeConnettoriMultipliProprietaList extends Actio
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			String nomeSAConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String nomeSAConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -102,7 +103,7 @@ public final class PorteApplicativeConnettoriMultipliProprietaList extends Actio
 			
 			List<Proprieta> lista = porteApplicativeCore.porteApplicativeConnettoriMultipliPropList(idPaSa, ricerca);
 
-			porteApplicativeHelper.preparePorteApplicativeConnettoriMultipliPropList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.preparePorteApplicativeConnettoriMultipliPropList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

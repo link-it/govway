@@ -79,13 +79,13 @@ public final class AccordiCooperazioneDel extends Action {
 		
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			acHelper.makeMenu();
 
 			String objToRemove = acHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
-
-			// Preparo il menu
-			acHelper.makeMenu();
 
 			String msg = "";
 			boolean isInUso = false;

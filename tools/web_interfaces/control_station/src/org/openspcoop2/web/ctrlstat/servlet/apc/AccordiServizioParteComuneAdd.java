@@ -128,6 +128,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 		try {
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			
 			strutsBean.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
@@ -154,7 +158,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			strutsBean.referente = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE);
 			strutsBean.versione = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
 			
-			String serviceBindingS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING);
+			String serviceBindingS = apcHelper.getParametroServiceBinding(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING);
 			strutsBean.serviceBinding = StringUtils.isNotEmpty(serviceBindingS) ? ServiceBinding.valueOf(serviceBindingS) : null;
 			String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE);
 			strutsBean.messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorS) : null;
@@ -375,9 +379,6 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			
 			//Carico la lista dei tipi di soggetti gestiti dal protocollo
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(strutsBean.tipoProtocollo);
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 				
 			if(listaTipiProtocollo.isEmpty()) {
 				boolean msg = true;

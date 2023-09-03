@@ -493,9 +493,6 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// setto la barra del titolo
 		ServletUtils.setPageDataTitle(this.pd, lstParm);
 		
-		// Preparo il menu
-		this.makeMenu();
-		
 		List<List<DataElement>> datiPagina = new ArrayList<>();
 		List<DataElement> dati = new ArrayList<>();
 		datiPagina.add(dati);
@@ -531,9 +528,6 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 
 		// setto la barra del titolo
 		ServletUtils.setPageDataTitle(this.pd, lstParm);
-		
-		// Preparo il menu
-		this.makeMenu();
 		
 		// Uso lo stessoAlias
 		List<String> aliases = this.apcCore.getJmxPdDAliases();
@@ -599,7 +593,6 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		this.pd.setCustomListViewName(ApiCostanti.APC_API_NOME_VISTA_CUSTOM_FORM_API);
 		
 		Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, as.getId()+"");
-		Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, as.getNome());
 		Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
 		
 		IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(as);
@@ -614,7 +607,6 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		List<Parameter> listParametersApi = new ArrayList<>();
 		listParametersApi.add(new Parameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE, "")); // lasciare per primo
 		listParametersApi.add(pIdAccordo);
-		listParametersApi.add(pNomeAccordo);
 		listParametersApi.add(pTipoAccordo);
 		
 		// In Uso Button
@@ -624,7 +616,6 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
 			List<Parameter> listaParametriChange = new ArrayList<>();				
 			listaParametriChange.add(pIdAccordo);
-			listaParametriChange.add(pNomeAccordo);
 			listaParametriChange.add(pTipoAccordo);
 			
 			this.pd.addComandoResetCacheElementoButton(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, listaParametriChange);
@@ -946,8 +937,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		case REST:
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
-				listParametersApi.get(0).setValue("");
-				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, listParametersApi.toArray(new Parameter[1]));
+				// copio tutti i parametri tranne il primo gestione parziale, che non viene utilizzato
+				List<Parameter> listParametriFiltrata = listParametersApi.subList(1, listParametersApi.size());
+//				listParametersApi.get(0).setValue("");
+				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, listParametriFiltrata.toArray(new Parameter[1]));
 				de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_RISORSE);
 				de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_RISORSE);
 				dati.add(de);
@@ -957,8 +950,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			// PortType
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			listParametersApi.get(0).setValue("");
-			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, listParametersApi.toArray(new Parameter[1]));
+			// copio tutti i parametri tranne il primo gestione parziale, che non viene utilizzato
+			List<Parameter> listParametriFiltrataSOAP = listParametersApi.subList(1, listParametersApi.size());
+//			listParametersApi.get(0).setValue("");
+			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, listParametriFiltrataSOAP.toArray(new Parameter[1]));
 			de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_SERVIZI);
 			de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_SERVIZI);
 			dati.add(de);
@@ -969,8 +964,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// 2. allegati
 		de = new DataElement();
 		de.setType(DataElementType.LINK);
-		listParametersApi.get(0).setValue("");
-		de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, listParametersApi.toArray(new Parameter[1]));
+		// copio tutti i parametri tranne il primo gestione parziale, che non viene utilizzato
+		List<Parameter> listParametriFiltrataAllegati = listParametersApi.subList(1, listParametersApi.size());
+//		listParametersApi.get(0).setValue("");
+		de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, listParametriFiltrataAllegati.toArray(new Parameter[1]));
 		de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_ALLEGATI);
 		de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_ALLEGATI);
 		dati.add(de);

@@ -91,27 +91,30 @@ public class ConfigurazioneHandlersRichiestaAdd extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			// controllo primo accesso
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FIRST_TIME);
 					
-			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA);
+			String ruoloPortaParam = confHelper.getParametroTipoPdD(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA);
 			TipoPdD ruoloPorta = null;
 			if(ruoloPortaParam!=null) {
 				ruoloPorta = TipoPdD.toTipoPdD(ruoloPortaParam);
 			}
-			String idPortaS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA);
+			String idPortaS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA);
 			Long idPorta = null;
 			if(StringUtils.isNotBlank(idPortaS)) {
 				idPorta = Long.parseLong(idPortaS);
 			}
 			
 			ServiceBinding serviceBinding = null;
-			String serviceBindingParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING);
+			String serviceBindingParam = confHelper.getParametroServiceBinding(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING);
 			if(serviceBindingParam!=null && !"".equals(serviceBindingParam)) {
 				serviceBinding = ServiceBinding.valueOf(serviceBindingParam);
 			}
 			String nomePlugin = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_PLUGIN);
-			String fase = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE);
+			String fase = confHelper.getParametroFaseMessageHandler(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE);
 			String stato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_STATO);
 			
 			FaseMessageHandler faseMH = FaseMessageHandler.toEnumConstant(fase);
@@ -128,10 +131,6 @@ public class ConfigurazioneHandlersRichiestaAdd extends Action {
 					tipiPluginGiaUtilizzati.add(configurazioneHandlerBean.getPlugin().getTipo());
 				}
 			}
-			
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 						
 			List<Parameter> lstParamSession = new ArrayList<>();
 

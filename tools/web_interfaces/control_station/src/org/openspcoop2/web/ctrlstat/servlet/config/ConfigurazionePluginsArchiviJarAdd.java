@@ -80,6 +80,9 @@ public final class ConfigurazionePluginsArchiviJarAdd extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
 			
 			String sorgente = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE);
@@ -89,8 +92,6 @@ public final class ConfigurazionePluginsArchiviJarAdd extends Action {
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			// Preparo il menu
-			confHelper.makeMenu();
 			List<Parameter> lstParam = new ArrayList<>();
 			
 			// setto la barra del titolo

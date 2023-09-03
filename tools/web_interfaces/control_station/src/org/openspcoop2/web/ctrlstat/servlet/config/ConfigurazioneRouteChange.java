@@ -80,8 +80,11 @@ public final class ConfigurazioneRouteChange extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
-			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
+			String id = confHelper.getParametroInteger(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
 			int idInt = Integer.parseInt(id);
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
 			String tipo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -105,9 +108,6 @@ public final class ConfigurazioneRouteChange extends Action {
 				tipiSoggettiPerRotta.addAll(soggettiCore.getTipiSoggettiGestitiProtocollo(soggettiCore.getProtocolloAssociatoTipoSoggetto(tipo)));
 				tipiSoggettiLabelPerProtocollo = tipiSoggettiPerRotta.toArray(new String[1]);
 			}
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Prendo nome e tipo del routing
 			RoutingTable rt = confCore.getRoutingTable();

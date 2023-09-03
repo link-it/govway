@@ -67,11 +67,11 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniList extends Ac
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 	
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 	
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			// Preparo la lista
 			ConsoleSearch ricerca = null;

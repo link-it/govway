@@ -79,6 +79,9 @@ public final class ConfigurazioneAllarmiDel extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA);
 			RuoloPorta ruoloPorta = null;
 			if(ruoloPortaParam!=null) {
@@ -155,8 +158,6 @@ public final class ConfigurazioneAllarmiDel extends Action {
 
 			Object[] oggetti = allarmiRimossi.toArray(new Allarme[allarmiRimossi.size()]); 
 			confCore.performDeleteOperation(userLogin, confHelper.smista(), oggetti);
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			if(inUsoMessage.length()>0) {
 				if(pdMessage!=null) {

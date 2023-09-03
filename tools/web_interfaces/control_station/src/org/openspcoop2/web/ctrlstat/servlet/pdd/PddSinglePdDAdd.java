@@ -75,6 +75,10 @@ public final class PddSinglePdDAdd extends Action {
 
 		try {
 			PddHelper pddHelper = new PddHelper(request, pd, session);
+			
+			// Preparo il menu
+			pddHelper.makeMenu();
+						
 			String nome = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
 			String descr = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_DESCRIZIONE);
 			String implementazione = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
@@ -82,9 +86,6 @@ public final class PddSinglePdDAdd extends Action {
 			String clientAuth = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
 			
 			PddCore pddCore = new PddCore();
-	
-			// Preparo il menu
-			pddHelper.makeMenu();
 	
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
 			if(pddHelper.isEditModeInProgress()){

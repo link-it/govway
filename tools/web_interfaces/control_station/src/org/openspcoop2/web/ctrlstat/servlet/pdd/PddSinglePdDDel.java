@@ -75,14 +75,14 @@ public final class PddSinglePdDDel extends Action {
 
 		try {
 			PddHelper pddHelper = new PddHelper(request, pd, session);
+			
+			// Preparo il menu
+			pddHelper.makeMenu();
 
 			String objToRemove = pddHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 
 			PddCore pddCore = new PddCore();
-
-			// Preparo il menu
-			pddHelper.makeMenu();
 
 			PortaDominio pdd = null;
 			StringBuilder pddOperative = new StringBuilder();

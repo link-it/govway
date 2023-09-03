@@ -87,20 +87,25 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			
+			// Preparo il menu
+			porteApplicativeHelper.makeMenu();
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte applicative
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session, request);
 			if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			int idInt = Integer.parseInt(idPorta);
-			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-			int soggInt = Integer.parseInt(idsogg);
 			
-			String idSoggettoToAdd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
-			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			int idInt = Integer.parseInt(idPorta);
+			String idsogg = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+			int soggInt = Integer.parseInt(idsogg);
+			String idAsps = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
 			
-			String idTrasformazioneS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE);
+			String idSoggettoToAdd = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
+			
+			String idTrasformazioneS = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE);
 			long idTrasformazione = Long.parseLong(idTrasformazioneS);
 
 			String listaTmp = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST);
@@ -135,9 +140,6 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 					break;
 				}
 			}
-			
-			// Preparo il menu
-			porteApplicativeHelper.makeMenu();
 
 			// Prendo nome, tipo e pdd del soggetto
 			String protocollo = null;
@@ -420,7 +422,7 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			
 			List<TrasformazioneRegolaApplicabilitaSoggetto> lista = porteApplicativeCore.porteAppTrasformazioniSoggettoList(Integer.parseInt(idPorta), trasformazioneAggiornata.getId(), ricerca);
 			
-			porteApplicativeHelper.preparePorteAppTrasformazioniSoggettoList(portaApplicativa.getNome(), trasformazioneAggiornata.getId(), ricerca, lista);
+			porteApplicativeHelper.preparePorteAppTrasformazioniSoggettoList(trasformazioneAggiornata.getId(), ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

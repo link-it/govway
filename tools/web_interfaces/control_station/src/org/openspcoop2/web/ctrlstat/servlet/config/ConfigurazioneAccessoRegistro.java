@@ -24,10 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -43,6 +39,10 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * registro
@@ -73,19 +73,19 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String statocache = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY);
 			String dimensionecache = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY);
 			String algoritmocache = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY);
 			String idlecache = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY);
 			String lifecache = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY);
-			String applicaModificaS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_APPLICA_MODIFICA);
+			String applicaModificaS = confHelper.getParametroBoolean(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_APPLICA_MODIFICA);
 			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<>();

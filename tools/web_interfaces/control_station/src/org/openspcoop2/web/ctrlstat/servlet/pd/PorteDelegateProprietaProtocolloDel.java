@@ -74,7 +74,11 @@ public final class PorteDelegateProprietaProtocolloDel extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
+			String idPorta = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -102,9 +106,6 @@ public final class PorteDelegateProprietaProtocolloDel extends Action {
 			
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
-
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
@@ -114,7 +115,7 @@ public final class PorteDelegateProprietaProtocolloDel extends Action {
 
 			List<Proprieta> lista = porteDelegateCore.porteDelPropList(Integer.parseInt(idPorta), ricerca);
 
-			porteDelegateHelper.preparePorteDelPropList(pde.getNome(), ricerca, lista);
+			porteDelegateHelper.preparePorteDelPropList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

@@ -89,10 +89,13 @@ public final class SoggettiCredenzialiChange extends Action {
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			// Preparo il menu
+			soggettiHelper.makeMenu();
+			
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			long idSogg = Long.parseLong(id);
-			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+			String nomeprov = null;
+			String tipoprov = null;
 			
 			String idCredenziale = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID);
 			int idxCredenziale = Integer.parseInt(idCredenziale);
@@ -164,9 +167,6 @@ public final class SoggettiCredenzialiChange extends Action {
 			
 			String toCall = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_CHANGE;
 			
-			// Preparo il menu
-			soggettiHelper.makeMenu();
-			
 			SoggettiCore soggettiCore = new SoggettiCore();
 			
 			Soggetto soggettoRegistry = null;
@@ -199,11 +199,7 @@ public final class SoggettiCredenzialiChange extends Action {
 			
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
-			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, nomeprov);
-			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
 			parametersServletSoggettoChange.add(pIdSoggetto);
-			parametersServletSoggettoChange.add(pNomeSoggetto);
-			parametersServletSoggettoChange.add(pTipoSoggetto);
 			List<Parameter> parametersServletCredenzialiChange = new ArrayList<>();
 			Parameter pIdCredenziale = new Parameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID, idCredenziale);
 			parametersServletCredenzialiChange.add(pIdCredenziale);

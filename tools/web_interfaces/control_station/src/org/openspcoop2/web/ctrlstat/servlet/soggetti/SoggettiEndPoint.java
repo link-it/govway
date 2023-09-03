@@ -90,7 +90,10 @@ public final class SoggettiEndPoint extends Action {
 
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
-			String id = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
+			// Preparo il menu
+			soggettiHelper.makeMenu();
+			
+			String id = soggettiHelper.getParametroLong(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 			long idLong = Long.parseLong(id);
 				
 			String endpointtype = soggettiHelper.readEndPointType();
@@ -102,7 +105,7 @@ public final class SoggettiEndPoint extends Action {
 			String connettoreDebug = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 			
 			// token policy
-			String autenticazioneTokenS = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			String autenticazioneTokenS = soggettiHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			boolean forcePDND = false;
@@ -151,15 +154,15 @@ public final class SoggettiEndPoint extends Action {
 			// https
 			String httpsurl = url;
 			String httpstipologia = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
-			String httpshostverifyS = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			String httpshostverifyS = soggettiHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
-			String httpsTrustVerifyCertS = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			String httpsTrustVerifyCertS = soggettiHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
 			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			String httpsalgoritmo = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-			String httpsstatoS = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
+			String httpsstatoS = soggettiHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			boolean httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
 			String httpskeystore = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
 			String httpspwdprivatekeytrust = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
@@ -188,10 +191,6 @@ public final class SoggettiEndPoint extends Action {
 			String responseInputFileNameHeaders = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 			String responseInputDeleteAfterRead = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
-
-			
-			// Preparo il menu
-			soggettiHelper.makeMenu();
 
 			// Prendo nome, tipo e pdd dal db
 			SoggettiCore soggettiCore = new SoggettiCore();			

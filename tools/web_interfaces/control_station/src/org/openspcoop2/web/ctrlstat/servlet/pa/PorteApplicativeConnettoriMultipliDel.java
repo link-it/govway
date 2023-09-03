@@ -87,7 +87,11 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			
+			// Preparo il menu
+			porteApplicativeHelper.makeMenu();
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String objToRemove = porteApplicativeHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -95,7 +99,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			if(idAsps == null) 
 				idAsps = "";
 
-			String idConnTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			String idConnTab = porteApplicativeHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			if(StringUtils.isNotEmpty(idConnTab)) {
 				ServletUtils.setObjectIntoSession(request, session, idConnTab, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			}
@@ -250,9 +254,6 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 				
 			} 
 
-			// Preparo il menu
-			porteApplicativeHelper.makeMenu();
-
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
@@ -265,7 +266,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
 			List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
 						
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromDeleteConnettore(pa.getNome(), ricerca, listaFiltrata, pa);
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromDeleteConnettore(ricerca, listaFiltrata, pa);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

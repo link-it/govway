@@ -74,6 +74,9 @@ public final class ConfigurazioneAuditing extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String statoaudit = confHelper.getParameter( AuditCostanti.PARAMETRO_AUDIT_STATO_AUDIT);
 			String stato = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO);
@@ -86,8 +89,6 @@ public final class ConfigurazioneAuditing extends Action {
 			AuditingCore auditingCore = new AuditingCore(confCore);
 
 			Configurazione c = auditingCore.getConfigurazioneAudit();
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle_ServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDIT);

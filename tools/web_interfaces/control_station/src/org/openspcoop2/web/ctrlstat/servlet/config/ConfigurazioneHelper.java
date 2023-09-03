@@ -36,9 +36,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
@@ -194,9 +191,9 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DAOConsoleFactory;
-import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
@@ -229,7 +226,11 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.dynamic.components.BaseComponent;
 import org.openspcoop2.web.lib.mvc.dynamic.components.Hidden;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.lib.users.dao.User;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * ConfigurazioneHelper
@@ -16681,7 +16682,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
 
-			String infoType = this.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			String infoType = this.getParametroInfoType(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			if(infoType==null) {
 				infoType = ServletUtils.getObjectFromSession(this.request, this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
@@ -24276,5 +24277,159 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		this.addAzioneButton(e, DataElementType.IMAGE, 
 				ConfigurazioneCostanti.ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP,
 				ConfigurazioneCostanti.ICONA_VISUALIZZA_RUNTIME_ALLARME, servletName,parameters);
+	}
+	
+	public String getParametroInfoType(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroInfoType(parameterName, true);
+	}
+	
+	public String getParametroInfoType(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroInfoType(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro per il controllo info type
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroInfoType(String parameterToCheck) {
+		String parameterValueFiltrato = this.request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// i valori accettati sono solo i seguenti
+		return  ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN.equals(parameterValueFiltrato) 
+				|| ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY.equals(parameterValueFiltrato)
+				;
+	}
+	
+	public String getParametroRuoloPolicy(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroRuoloPolicy(parameterName, true);
+	}
+	
+	public String getParametroRuoloPolicy(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroRuoloPolicy(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro ruolo policy
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroRuoloPolicy(String parameterToCheck) {
+		String parameterValueFiltrato = this.request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// i valori accettati sono solo i seguenti
+		return  RuoloPolicy.APPLICATIVA.getValue().equals(parameterValueFiltrato) 
+				|| RuoloPolicy.DELEGATA.getValue().equals(parameterValueFiltrato)
+				|| RuoloPolicy.ENTRAMBI.getValue().equals(parameterValueFiltrato)
+				;
+	}
+	
+	public String getParametroTipoPdD(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroTipoPdD(parameterName, true);
+	}
+	
+	public String getParametroTipoPdD(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroTipoPdD(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro  tipo pdd
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroTipoPdD(String parameterToCheck) {
+		String parameterValueFiltrato = this.request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// i valori accettati sono solo i seguenti
+		return  TipoPdD.APPLICATIVA.getTipo().equals(parameterValueFiltrato) 
+				|| TipoPdD.DELEGATA.getTipo().equals(parameterValueFiltrato)
+				|| TipoPdD.INTEGRATION_MANAGER.getTipo().equals(parameterValueFiltrato)
+				|| TipoPdD.ROUTER.getTipo().equals(parameterValueFiltrato)
+				;
+	}
+	
+	public String getParametroFaseMessageHandler(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroFaseMessageHandler(parameterName, true);
+	}
+	
+	public String getParametroFaseMessageHandler(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroFaseMessageHandler(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro FaseMessageHandler
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroFaseMessageHandler(String parameterToCheck) {
+		String parameterValueFiltrato = this.request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// i valori accettati sono solo i seguenti
+		return  FaseMessageHandler.IN.getValue().equals(parameterValueFiltrato) 
+				|| FaseMessageHandler.IN_PROTOCOL_INFO.getValue().equals(parameterValueFiltrato)
+				|| FaseMessageHandler.OUT.getValue().equals(parameterValueFiltrato)
+				|| FaseMessageHandler.POST_OUT.getValue().equals(parameterValueFiltrato)
+				|| FaseMessageHandler.PRE_IN.getValue().equals(parameterValueFiltrato)
+				;
 	}
 }

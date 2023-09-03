@@ -86,9 +86,12 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 			FileUploadForm fileUpload = (FileUploadForm) form;
 			
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
+			// Preparo il menu
+			acHelper.makeMenu();
+			
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 
-			String idAccordo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			String idAccordo = acHelper.getParametroLong(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			long idAccordoLong = Long.parseLong(idAccordo);
 			String ruolo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO);
 			String tipoFile = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE);
@@ -98,9 +101,6 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 				tipoSICA = null;*/
 			
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
-
-			// Preparo il menu
-			acHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(idAccordoLong);

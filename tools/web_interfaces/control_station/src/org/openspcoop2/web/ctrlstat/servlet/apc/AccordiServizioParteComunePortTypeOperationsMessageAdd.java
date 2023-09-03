@@ -72,10 +72,14 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		try {
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			
-			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
+			
+			String id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idInt = Integer.parseInt(id);
 			String nomept = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			String nomeop = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NOME);
@@ -91,9 +95,6 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 			String messagePartLocalName = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME);
 			String messagePartNs = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS);
 			String messagePartType = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE);
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo il nome dal db
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idInt);

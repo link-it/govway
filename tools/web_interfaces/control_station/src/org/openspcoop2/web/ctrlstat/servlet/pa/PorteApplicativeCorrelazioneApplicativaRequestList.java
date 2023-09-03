@@ -69,16 +69,13 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestList extends Ac
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			// String idsogg = porteApplicativeHelper.getParameter("idsogg");
-			// int soggInt = Integer.parseInt(idsogg);
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+
+			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
@@ -88,7 +85,7 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestList extends Ac
 
 			List<CorrelazioneApplicativaElemento> lista = porteApplicativeCore.porteApplicativeCorrelazioneApplicativaList(Integer.parseInt(idPorta), ricerca);
 
-			porteApplicativeHelper.preparePorteApplicativeCorrAppList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.preparePorteApplicativeCorrAppList(ricerca, lista);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);

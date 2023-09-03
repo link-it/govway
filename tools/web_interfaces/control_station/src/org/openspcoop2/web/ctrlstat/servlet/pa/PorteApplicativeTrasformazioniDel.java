@@ -72,15 +72,12 @@ public class PorteApplicativeTrasformazioniDel extends Action {
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 			
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			// String idsogg = porteApplicativeHelper.getParameter("idsogg");
-			// int soggInt = Integer.parseInt(idsogg);
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+
+			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 
 			String objToRemove =porteApplicativeHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -117,7 +114,7 @@ public class PorteApplicativeTrasformazioniDel extends Action {
 			
 			List<TrasformazioneRegola> lista = porteApplicativeCore.porteAppTrasformazioniList(Long.parseLong(idPorta), ricerca);
 			
-			porteApplicativeHelper.preparePorteAppTrasformazioniRegolaList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.preparePorteAppTrasformazioniRegolaList(ricerca, lista);
 						
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

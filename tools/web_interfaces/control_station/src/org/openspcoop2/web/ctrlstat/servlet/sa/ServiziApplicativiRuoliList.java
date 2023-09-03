@@ -65,14 +65,14 @@ public final class ServiziApplicativiRuoliList extends Action {
 
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			// Preparo il menu
+			saHelper.makeMenu();
 
-			String idsil = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
+			String idsil = saHelper.getParametroLong(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 			int idSilInt = Integer.parseInt(idsil);
 			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
-
-			// Preparo il menu
-			saHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

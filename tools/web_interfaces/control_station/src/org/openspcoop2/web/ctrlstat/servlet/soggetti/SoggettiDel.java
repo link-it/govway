@@ -72,6 +72,9 @@ public final class SoggettiDel extends Action {
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
+			// Preparo il menu
+			soggettiHelper.makeMenu();
+			
 			// ctrlstatHelper ch = new ctrlstatHelper(request, pd, con, session);
 			String objToRemove = soggettiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 
@@ -88,8 +91,6 @@ public final class SoggettiDel extends Action {
 			// String soggInUsoServizioApplicativo = "", soggInUsoServ = "",
 			// soggInUsoPorteDel = "";
 			// String nomeprov = "", tipoprov = "";
-			
-			soggettiHelper.makeMenu();
 	
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 	

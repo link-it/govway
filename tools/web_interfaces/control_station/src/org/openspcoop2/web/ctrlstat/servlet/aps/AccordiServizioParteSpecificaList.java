@@ -73,11 +73,10 @@ public final class AccordiServizioParteSpecificaList extends Action {
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			
-			ServletUtils.setObjectIntoSession(request, session, null, ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI);
-			// ctrlstatHelper ch = new ctrlstatHelper (request, pd, con, session);
-			
 			// Preparo il menu
 			apsHelper.makeMenu();
+			
+			ServletUtils.setObjectIntoSession(request, session, null, ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI);
 			
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 

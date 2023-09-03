@@ -66,13 +66,17 @@ public class ApiChange extends Action {
 
 		try {
 			ApiHelper apiHelper = new ApiHelper(request, pd, session);
-			String id = apiHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			
+			// Preparo il menu
+			apiHelper.makeMenu();
+			
+			String id = apiHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			long idInt  = Long.parseLong(id);
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idInt);
 			
-			String resetElementoCacheS = apiHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			String resetElementoCacheS = apiHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
 			boolean resetElementoCacheDettaglio = false;

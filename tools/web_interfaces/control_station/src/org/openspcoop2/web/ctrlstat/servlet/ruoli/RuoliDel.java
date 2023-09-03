@@ -73,6 +73,9 @@ public final class RuoliDel extends Action {
 
 		try {
 			RuoliHelper ruoliHelper = new RuoliHelper(request, pd, session);
+			
+			// Preparo il menu
+			ruoliHelper.makeMenu();
 
 			String objToRemove =ruoliHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -100,10 +103,6 @@ public final class RuoliDel extends Action {
 			if (inUsoMessage.length()>0) {
 				pd.setMessage(inUsoMessage.toString());
 			}
-			
-
-			// Preparo il menu
-			ruoliHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

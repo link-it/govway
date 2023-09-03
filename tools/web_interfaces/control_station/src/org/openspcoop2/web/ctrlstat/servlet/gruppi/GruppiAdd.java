@@ -72,6 +72,9 @@ public final class GruppiAdd extends Action {
 
 		try {
 			GruppiHelper gruppiHelper = new GruppiHelper(request, pd, session);
+			
+			// Preparo il menu
+			gruppiHelper.makeMenu();
 
 			String nome = gruppiHelper.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_NOME);
 			String descrizione = gruppiHelper.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_DESCRIZIONE);
@@ -82,9 +85,6 @@ public final class GruppiAdd extends Action {
 
 
 			GruppiCore gruppiCore = new GruppiCore();
-
-			// Preparo il menu
-			gruppiHelper.makeMenu();
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati

@@ -1016,7 +1016,6 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			
 			Parameter pTipoAccordo = new Parameter(AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName(), AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue());
 			Parameter pIdApc = null;
-			Parameter pNomeApc = null;
 			
 			if(proprietario != null){
 				int idProp = Integer.parseInt(idProprietario);
@@ -1101,11 +1100,10 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(apca.getSoggettoReferente().getTipo());
 					idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromValues(apca.getNome(),BeanUtilities.getSoggettoReferenteID(apca.getSoggettoReferente()),apca.getVersione());
 					pIdApc = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, apca.getId()+"");
-					pNomeApc = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, apca.getNome());
 					
 					lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST, pTipoAccordo));
 					lstParam.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_AZIONI + " di " + this.getLabelIdAccordo(tipoProtocollo , idAccordoParteComune), 
-							AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_AZIONI_LIST, pIdApc,pNomeApc, pTipoAccordo));
+							AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_AZIONI_LIST, pIdApc, pTipoAccordo));
 					// Escape della url del link, risolve il problema di autorizzazione
 					lstParam.add(new Parameter(labelProprietario,urlDecode));
 					break;
@@ -1150,11 +1148,10 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(apcop.getSoggettoReferente().getTipo());
 					idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromValues(apcop.getNome(),BeanUtilities.getSoggettoReferenteID(apcop.getSoggettoReferente()),apcop.getVersione());
 					pIdApc = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, apcop.getId()+"");
-					pNomeApc = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, apcop.getNome());
 					Parameter pNomePt = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME, nomeParentProprietario);
 					lstParam = apcHelper.getTitoloApc(TipoOperazione.OTHER, apcop, tipoAccordo, this.getLabelIdAccordo(tipoProtocollo , idAccordoParteComune), null, false);
 					String labelPortTypesOp = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES : AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + this.getLabelIdAccordo(tipoProtocollo , idAccordoParteComune);
-					lstParam.add(new Parameter(labelPortTypesOp, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, pIdApc,pNomeApc, pTipoAccordo));
+					lstParam.add(new Parameter(labelPortTypesOp, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, pIdApc, pTipoAccordo));
 					lstParam.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_AZIONI + " di " + nomeParentProprietario,	AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_LIST,pIdApc,pNomePt,pTipoAccordo));
 					// Escape della url del link, risolve il problema di autorizzazione
 					lstParam.add(new Parameter(labelProprietario,urlDecode));
@@ -1172,12 +1169,11 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 					}
 					pIdApc = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, apc.getId()+"");
-					pNomeApc = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, apc.getNome());
 					idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromValues(apc.getNome(),BeanUtilities.getSoggettoReferenteID(apc.getSoggettoReferente()),apc.getVersione());
 					tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(apc.getSoggettoReferente().getTipo());
 					lstParam = apcHelper.getTitoloApc(TipoOperazione.OTHER, apc, tipoAccordo, this.getLabelIdAccordo(tipoProtocollo , idAccordoParteComune), null, false);
 					String labelPortTypes = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES : AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + this.getLabelIdAccordo(tipoProtocollo , idAccordoParteComune);
-					lstParam.add(new Parameter(labelPortTypes, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, pIdApc, pNomeApc, pNomeApc));
+					lstParam.add(new Parameter(labelPortTypes, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, pIdApc, pTipoAccordo));
 
 					// Escape della url del link, risolve il problema di autorizzazione
 					lstParam.add(new Parameter(labelProprietario,urlDecode));
@@ -1216,10 +1212,9 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(apcr.getSoggettoReferente().getTipo());
 					idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromValues(apcr.getNome(),BeanUtilities.getSoggettoReferenteID(apcr.getSoggettoReferente()),apcr.getVersione());
 					pIdApc = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, apcr.getId()+"");
-					pNomeApc = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, apcr.getNome());
 					lstParam = apcHelper.getTitoloApc(TipoOperazione.OTHER, apcr, tipoAccordo, this.getLabelIdAccordo(tipoProtocollo , idAccordoParteComune), null, false);
 					String labelRisorse = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_RISORSE : AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + this.getLabelIdAccordo(tipoProtocollo , idAccordoParteComune);
-					lstParam.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdApc,pNomeApc, pTipoAccordo));
+					lstParam.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdApc, pTipoAccordo));
 					// Escape della url del link, risolve il problema di autorizzazione
 					lstParam.add(pLabelProprietario);
 					break;

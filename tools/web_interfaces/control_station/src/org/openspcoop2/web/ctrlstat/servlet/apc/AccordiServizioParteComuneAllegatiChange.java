@@ -89,10 +89,14 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 			FileUploadForm fileUpload = (FileUploadForm) form;
 			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 
-			String idAllegato = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ALLEGATO);
-			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO);
+			String idAllegato = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ALLEGATO);
+			String idAccordo = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO);
 			String nomeDocumento = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_NOME_DOCUMENTO);
 			String tipoFile = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_TIPO_FILE);
 			
@@ -107,9 +111,6 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			ArchiviCore archiviCore = new ArchiviCore(apcCore);
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);

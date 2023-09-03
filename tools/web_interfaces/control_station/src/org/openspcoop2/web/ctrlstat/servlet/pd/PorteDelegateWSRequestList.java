@@ -68,11 +68,11 @@ public final class PorteDelegateWSRequestList extends Action {
  
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-	
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
+			
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -84,7 +84,7 @@ public final class PorteDelegateWSRequestList extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
 			List<MessageSecurityFlowParameter> lista = porteDelegateCore.porteDelegateMessageSecurityRequestList(Integer.parseInt(id), ricerca);
 	
-			porteDelegateHelper.preparePorteDelegateMessageSecurityRequestList(nomePorta, ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateMessageSecurityRequestList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

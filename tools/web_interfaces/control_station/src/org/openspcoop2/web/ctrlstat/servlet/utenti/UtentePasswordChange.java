@@ -77,6 +77,9 @@ public final class UtentePasswordChange extends Action {
 
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
+			
+			// Preparo il menu
+			utentiHelper.makeMenu();
 
 			String newpw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PW);
 			String first = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
@@ -168,9 +171,6 @@ public final class UtentePasswordChange extends Action {
 			
 			utentiCore.performAuditLogin(userToUpdate);
 			
-			// Preparo il menu
-			utentiHelper.makeMenu();
-	
 			// Inizializzo parametri di ricerca
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 			utentiHelper.initializeFilter(ricerca);

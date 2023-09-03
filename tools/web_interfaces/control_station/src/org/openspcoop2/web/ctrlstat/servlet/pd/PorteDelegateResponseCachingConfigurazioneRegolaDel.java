@@ -74,15 +74,12 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaDel extends A
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 			
-			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			// String idsogg = porteDelegateHelper.getParameter("idsogg");
-			// int soggInt = Integer.parseInt(idsogg);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-
-			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
-
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
+			
+			String idPorta = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+
+			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 
 			String objToRemove =porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -119,7 +116,7 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaDel extends A
 
 			List<ResponseCachingConfigurazioneRegola> lista = porteDelegateCore.getResponseCachingConfigurazioneRegolaList(Long.parseLong(idPorta), ricerca); 
 
-			porteDelegateHelper.prepareResponseCachingConfigurazioneRegolaList(nomePorta, ricerca, lista, configurazione.getCacheTimeoutSeconds());
+			porteDelegateHelper.prepareResponseCachingConfigurazioneRegolaList(ricerca, lista, configurazione.getCacheTimeoutSeconds());
 						
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

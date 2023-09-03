@@ -87,11 +87,15 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 			
 			Boolean isShowAccordiCooperazione = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 
-			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String idAccordo = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			long idAccordoLong = Long.parseLong(idAccordo);
 			String ruolo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO);
 			String tipoFile = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_TIPO_FILE);
@@ -103,9 +107,6 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 			List<BinaryParameter> binaryParameterDocumenti = apcHelper.getBinaryParameters(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_DOCUMENTO);
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);

@@ -69,12 +69,12 @@ public final class PorteApplicativeWSResponseList extends Action {
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			int idInt = Integer.parseInt(idPorta);
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-	
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			int idInt = Integer.parseInt(idPorta);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -86,7 +86,7 @@ public final class PorteApplicativeWSResponseList extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			List<MessageSecurityFlowParameter> lista = porteApplicativeCore.porteAppMessageSecurityResponseList(idInt, ricerca);
 	
-			porteApplicativeHelper.preparePorteAppMessageSecurityResponseList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.preparePorteAppMessageSecurityResponseList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

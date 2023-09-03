@@ -65,7 +65,7 @@ public class Costanti {
 	/** PARAMETER ATTRIBUTE */
 	
 	public static final String REQUEST_ATTIBUTE_PARAMS = "params";
-	
+	public static final String REQUEST_ATTRIBUTE_SET_ERROR_CODE = "__setErrorCode__";
 	
 	/** SEARCH */
 	

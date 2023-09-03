@@ -65,14 +65,14 @@ public final class AccordiServizioParteComuneResourcesList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-
-			// DriverControlStationDB driver = new
-			// DriverControlStationDB(con,null);
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			
-			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
+			
+			String id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idAccordo = Integer.parseInt(id);
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -80,9 +80,6 @@ public final class AccordiServizioParteComuneResourcesList extends Action {
 
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(id));
 			
-			// Preparo il menu
-			apcHelper.makeMenu();
-
 			// Controllo i criteri di ricerca e recupero eventuali parametri
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 

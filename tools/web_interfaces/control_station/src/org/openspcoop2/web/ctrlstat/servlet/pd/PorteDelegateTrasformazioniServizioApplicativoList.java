@@ -68,14 +68,14 @@ public final class PorteDelegateTrasformazioniServizioApplicativoList extends Ac
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 			
-			String idTrasformazioneS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
-			long idTrasformazione = Long.parseLong(idTrasformazioneS);
-	
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
+			
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			
+			String idTrasformazioneS = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
+			long idTrasformazione = Long.parseLong(idTrasformazioneS);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -87,7 +87,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoList extends Ac
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista = porteDelegateCore.porteDelegateTrasformazioniServiziApplicativiAutorizzatiList(Integer.parseInt(id), idTrasformazione, ricerca);
 	
-			porteDelegateHelper.preparePorteDelegateTrasformazioniServizioApplicativoList(nomePorta, idTrasformazione, ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateTrasformazioniServizioApplicativoList(idTrasformazione, ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

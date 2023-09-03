@@ -61,14 +61,10 @@ public final class SoggettiCredenzialiList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-
-			// ctrlstatHelper ch = new ctrlstatHelper(request, pd, con, session);
-			// Preparo il menu
-			// ch.makeMenu();
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			soggettiHelper.makeMenu();
 			
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idSogg = Integer.parseInt(id);
 
 			SoggettiCore soggettiCore = new SoggettiCore();

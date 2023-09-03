@@ -69,8 +69,11 @@ public final class ConfigurazioneDiagnosticaDatasourcePropertiesList extends Act
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
-			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
+			String id = confHelper.getParametroInteger(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
 			int idInt = Integer.parseInt(id);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
@@ -88,9 +91,6 @@ public final class ConfigurazioneDiagnosticaDatasourcePropertiesList extends Act
 			if(od==null) {
 				throw new Exception("Datasource non trovato");
 			}
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Preparo la lista
 			List<Property> lista1 = od.getPropertyList();

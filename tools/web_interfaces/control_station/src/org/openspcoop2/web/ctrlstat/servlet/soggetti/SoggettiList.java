@@ -68,10 +68,6 @@ public final class SoggettiList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-
-			// ctrlstatHelper ch = new ctrlstatHelper(request, pd, con, session);
-			// Preparo il menu
-			// ch.makeMenu();
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			soggettiHelper.makeMenu();
 

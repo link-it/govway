@@ -72,20 +72,21 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			
+			// Preparo il menu
+			porteApplicativeHelper.makeMenu();
+			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String nomeConnettoreChangeListBreadcump = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_FROM_BREADCUMP_CHANGE_NOME_CONNETTORE);
 	
-			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			String idTab = porteApplicativeHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-						
-			// Preparo il menu
-			porteApplicativeHelper.makeMenu();
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -110,10 +111,10 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 			}
 			
 			if(nomeConnettoreChangeListBreadcump!=null && StringUtils.isNotEmpty(nomeConnettoreChangeListBreadcump)) {
-				porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeConnettore(nomePorta, ricerca, listaFiltrata, portaApplicativa, nomeConnettoreChangeListBreadcump);
+				porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeConnettore(ricerca, listaFiltrata, portaApplicativa, nomeConnettoreChangeListBreadcump);
 			}
 			else {
-				porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, listaFiltrata, portaApplicativa);
+				porteApplicativeHelper.preparePorteAppConnettoriMultipliList(ricerca, listaFiltrata, portaApplicativa);
 			}
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);

@@ -90,9 +90,13 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 			FileUploadForm fileUpload = (FileUploadForm) form;
 
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			
+			// Preparo il menu
+			apsHelper.makeMenu();
 
-			String idAllegato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_ALLEGATO);
-			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			String idAllegato = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_ALLEGATO);
+			
+			String idServizio = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			String nomeDocumento = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_DOCUMENTO);
 			long idAllegatoLong = Long.parseLong(idAllegato);
 			long idServizioLong = Long.parseLong(idServizio);
@@ -112,9 +116,6 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 					gestioneFruitori = true;
 				}
 			}
-			
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizioLong);
@@ -123,7 +124,7 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 			String nomeSoggettoFruitore = null;
 			IDSoggetto idSoggettoFruitore = null;
 			if(gestioneFruitori) {
-				tipoSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
+				tipoSoggettoFruitore = apsHelper.getParametroTipoSoggetto(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
 				nomeSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
 				idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
 			}
@@ -153,11 +154,7 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 				}
 				List<Parameter> listErogazioniChange = new ArrayList<>();
 				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
-				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 				listErogazioniChange.add(pIdServizio);
-				listErogazioniChange.add(pNomeServizio);
-				listErogazioniChange.add(pTipoServizio);
 				if(gestioneFruitori) {
 					Parameter pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
 					Parameter pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);

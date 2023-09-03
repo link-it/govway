@@ -72,17 +72,17 @@ public class PorteApplicativeTrasformazioniRispostaList extends Action {
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-	
-			String id = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE);
-			long idTrasformazione = Long.parseLong(id);
-			
-			String cambiaPosizione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE);
-			String idTrasformazioneRispostaS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+	
+			String id = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE);
+			long idTrasformazione = Long.parseLong(id);
+			
+			String cambiaPosizione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE);
+			String idTrasformazioneRispostaS = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA);
 			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			if(StringUtils.isNotEmpty(cambiaPosizione)) {
@@ -156,7 +156,7 @@ public class PorteApplicativeTrasformazioniRispostaList extends Action {
 			
 			List<TrasformazioneRegolaRisposta> lista = porteApplicativeCore.porteAppTrasformazioniRispostaList(Long.parseLong(idPorta), idTrasformazione, ricerca);
 			
-			porteApplicativeHelper.preparePorteAppTrasformazioniRispostaList(nomePorta, idTrasformazione, ricerca, lista); 
+			porteApplicativeHelper.preparePorteAppTrasformazioniRispostaList(idTrasformazione, ricerca, lista); 
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

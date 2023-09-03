@@ -81,6 +81,9 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String utente = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
 			String tipooperazione = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
@@ -102,9 +105,6 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 			tipiOgg[0] = "-";
 			for (int i = 0; i < tipiOggTmp.length; i++)
 				tipiOgg[i+1] = tipiOggTmp[i];
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati

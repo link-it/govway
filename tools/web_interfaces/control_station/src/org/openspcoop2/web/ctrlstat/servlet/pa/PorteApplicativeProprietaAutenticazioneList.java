@@ -68,11 +68,11 @@ public final class PorteApplicativeProprietaAutenticazioneList extends Action {
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-	
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -85,7 +85,7 @@ public final class PorteApplicativeProprietaAutenticazioneList extends Action {
 			
 			List<Proprieta> lista = porteApplicativeCore.porteApplicativeAutenticazioneCustomPropList(Integer.parseInt(idPorta), ricerca);
 
-			porteApplicativeHelper.preparePorteApplicativeAutenticazioneCustomPropList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.preparePorteApplicativeAutenticazioneCustomPropList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

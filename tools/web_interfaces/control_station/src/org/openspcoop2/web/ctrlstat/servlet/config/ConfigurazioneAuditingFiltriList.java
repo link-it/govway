@@ -72,11 +72,11 @@ public final class ConfigurazioneAuditingFiltriList extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
-
-			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
+			
 			// Preparo il menu
 			confHelper.makeMenu();
+
+			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

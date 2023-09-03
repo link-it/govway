@@ -71,7 +71,7 @@ public final class SoggettiProprietaList extends Action {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			soggettiHelper.makeMenu();
 			
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idSogg = Integer.parseInt(id);
 			
 			// Preparo la lista

@@ -66,13 +66,13 @@ public final class SoggettiRuoliList extends Action {
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			// Preparo il menu
+			soggettiHelper.makeMenu();
+			
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idSogg = Integer.parseInt(id);
 			
 			SoggettiCore soggettiCore = new SoggettiCore();
-
-			// Preparo il menu
-			soggettiHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

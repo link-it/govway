@@ -24,10 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -35,11 +31,10 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceResponse;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.utils.rest.api.ApiResponse;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -50,6 +45,10 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * AccordiServizioParteComuneResourcesRisposteAdd
@@ -80,13 +79,16 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
 
 		try {
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
 			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
-			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			long idAccordoLong = Long.parseLong(id);
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -98,7 +100,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 				descr = "";
 			}
 			
-			String statusS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			String statusS = apcHelper.getParametroInteger(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
 			int status = -1;
 			if(statusS==null || "".equals(statusS)) {
 				status = ApiResponse.getDefaultHttpReturnCode();
@@ -110,9 +112,6 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 					// ignore
 				}
 			}
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);
@@ -126,11 +125,8 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 				}
 			}
 			
-			IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
 			Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id);
-			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uriAS);
 			Parameter pIdRisorsa = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+"");
 			Parameter pNomeRisorsa = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa);
 			
@@ -139,14 +135,14 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 			
 			String labelRisorse = (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue()) ? AccordiServizioParteComuneCostanti.LABEL_RISORSE : AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle;
 			
-			listaParams.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo));
+			listaParams.add(new Parameter(labelRisorse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, pIdAccordo, pTipoAccordo));
 			
 			String labelRisorsa = NamingUtils.getLabelResource(risorsa);
-			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pNomeAccordo, pTipoAccordo,pIdRisorsa));
+			listaParams.add(new Parameter(labelRisorsa, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, pIdAccordo, pTipoAccordo,pIdRisorsa));
 			
 			String labelResponse = AccordiServizioParteComuneCostanti.LABEL_RISPOSTE ;
 			
-			listaParams.add(new Parameter(labelResponse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST, pIdAccordo, pNomeAccordo, pTipoAccordo,pNomeRisorsa));
+			listaParams.add(new Parameter(labelResponse, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST, pIdAccordo, pTipoAccordo,pNomeRisorsa));
 			listaParams.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento

@@ -71,14 +71,14 @@ public final class ConfigurazionePluginsArchiviList extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String cambiaPosizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_POSIZIONE);
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
-			// Preparo il menu
-			confHelper.makeMenu();
 			
 			if(StringUtils.isNotEmpty(cambiaPosizione)) {
 				

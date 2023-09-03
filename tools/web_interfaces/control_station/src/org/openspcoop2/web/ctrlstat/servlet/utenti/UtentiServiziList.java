@@ -64,10 +64,10 @@ public class UtentiServiziList extends Action {
 
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
-			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			
 			// Preparo il menu
 			utentiHelper.makeMenu();
+			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session,ConsoleSearch.class);

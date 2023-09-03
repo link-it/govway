@@ -72,6 +72,9 @@ public final class ScopeDel extends Action {
 
 		try {
 			ScopeHelper scopeHelper = new ScopeHelper(request, pd, session);
+			
+			// Preparo il menu
+			scopeHelper.makeMenu();
 
 			String objToRemove =scopeHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -100,9 +103,6 @@ public final class ScopeDel extends Action {
 			if (inUsoMessage.length()>0) {
 				pd.setMessage(inUsoMessage.toString());
 			}
-
-			// Preparo il menu
-			scopeHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

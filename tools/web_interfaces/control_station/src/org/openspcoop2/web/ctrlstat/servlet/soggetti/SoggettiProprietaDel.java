@@ -76,10 +76,10 @@ public final class SoggettiProprietaDel extends Action {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			soggettiHelper.makeMenu();
 			
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idSogg = Integer.parseInt(id);
-			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+			String nomeprov = null;
+			String tipoprov = null;
 			String objToRemove = soggettiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			
@@ -93,6 +93,15 @@ public final class SoggettiProprietaDel extends Action {
 			}
 
 			soggettoConfig = soggettiCore.getSoggetto(idSogg);// core.getSoggetto(new
+			
+			if(soggettiCore.isRegistroServiziLocale()){
+				nomeprov = soggettoRegistry.getNome();
+				tipoprov = soggettoRegistry.getTipo();
+			}
+			else{
+				nomeprov = soggettoConfig.getNome();
+				tipoprov = soggettoConfig.getTipo();
+			}
 			
 			String nome = "";
 

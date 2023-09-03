@@ -76,7 +76,10 @@ public final class ConfigurazioneCanaliChange extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
-			String idCanaleS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_ID_CANALE);
+			// Preparo il menu
+			confHelper.makeMenu();
+			
+			String idCanaleS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_ID_CANALE);
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
 			String descrizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
 			
@@ -94,10 +97,6 @@ public final class ConfigurazioneCanaliChange extends Action {
 					}
 				}
 			}
-			
-
-			// Preparo il menu
-			confHelper.makeMenu();
 			List<Parameter> lstParam = new ArrayList<>();
 			
 			// setto la barra del titolo

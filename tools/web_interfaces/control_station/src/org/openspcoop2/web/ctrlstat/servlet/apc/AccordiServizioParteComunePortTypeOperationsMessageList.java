@@ -65,11 +65,14 @@ public class AccordiServizioParteComunePortTypeOperationsMessageList extends Act
 			GeneralData gd = generalHelper.initGeneralData(request);
 
 			try {
-				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-				
 				AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 				
-				String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+				// Preparo il menu
+				apcHelper.makeMenu();
+				
+				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
+				
+				String id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 				int idAcc = Integer.parseInt(id);
 				String nomept = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 				
@@ -83,9 +86,6 @@ public class AccordiServizioParteComunePortTypeOperationsMessageList extends Act
 
 				boolean isMessageInput = tipoMessagge.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_INPUT);
 				
-				// Preparo il menu
-				apcHelper.makeMenu();
-
 				// Prendo l'id del port-type e dell'azione
 				int idOperation = 0;
 				AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAcc);

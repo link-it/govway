@@ -23,10 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -34,15 +30,18 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * porteAppServizioApplicativoList
@@ -72,18 +71,16 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoList extends Ac
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			
+			// Preparo il menu
+			porteApplicativeHelper.makeMenu();
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-			
-			String tokenList = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION);
+			String tokenList = porteApplicativeHelper.getParametroBoolean(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION);
 			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
 			
-			String autorizzazioneModi = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
-			@SuppressWarnings("unused")
-			boolean isAutorizzazioneModi = autorizzazioneModi!=null && !"".equals(autorizzazioneModi) && Boolean.valueOf(autorizzazioneModi);
-	
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			
@@ -91,9 +88,6 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoList extends Ac
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
 			boolean modi = porteApplicativeCore.isProfiloModIPA(protocollo);
 			
-			// Preparo il menu
-			porteApplicativeHelper.makeMenu();
-	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 	
@@ -109,7 +103,7 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoList extends Ac
 					:
 					porteApplicativeCore.porteAppServiziApplicativiAutorizzatiList(Integer.parseInt(idPorta), ricerca);
 	
-			porteApplicativeHelper.preparePorteAppServizioApplicativoAutorizzatoList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.preparePorteAppServizioApplicativoAutorizzatoList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

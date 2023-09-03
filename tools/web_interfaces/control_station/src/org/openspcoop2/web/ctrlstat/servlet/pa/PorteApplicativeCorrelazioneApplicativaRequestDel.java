@@ -74,8 +74,11 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestDel extends Act
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			
+			// Preparo il menu
+			porteApplicativeHelper.makeMenu();
 
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			
 			int idInt = Integer.parseInt(idPorta);
 
@@ -107,15 +110,12 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestDel extends Act
 			
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pde);
 
-			// Preparo il menu
-			porteApplicativeHelper.makeMenu();
-
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
 			List<CorrelazioneApplicativaElemento> lista = porteApplicativeCore.porteApplicativeCorrelazioneApplicativaList(idInt, ricerca);
 
-			porteApplicativeHelper.preparePorteApplicativeCorrAppList(pde.getNome(), ricerca, lista);
+			porteApplicativeHelper.preparePorteApplicativeCorrAppList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

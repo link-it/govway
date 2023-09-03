@@ -73,6 +73,9 @@ public final class ScopeAdd extends Action {
 
 		try {
 			ScopeHelper scopeHelper = new ScopeHelper(request, pd, session);
+			
+			// Preparo il menu
+			scopeHelper.makeMenu();
 
 			String nome = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME);
 			String descrizione = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
@@ -88,9 +91,6 @@ public final class ScopeAdd extends Action {
 
 
 			ScopeCore scopeCore = new ScopeCore();
-
-			// Preparo il menu
-			scopeHelper.makeMenu();
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati

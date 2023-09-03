@@ -80,13 +80,12 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 
 		try {
 			ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
+
+			// Preparo il menu
+			apsHelper.makeMenu();
+			
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
-//			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
-//			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
-//			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
-//			PddCore pddCore = new PddCore(apsCore);
-//			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 			
 			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
@@ -111,8 +110,6 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			 */
 			String objToRemove = apsHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			String superUser =   ServletUtils.getUserLoginFromSession(session); 
 

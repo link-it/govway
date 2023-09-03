@@ -75,7 +75,9 @@ public final class AccordiCooperazioneAllegatiDel extends Action {
 
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
-
+			// Preparo il menu
+			acHelper.makeMenu();
+			
 			String objToRemove = acHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
@@ -84,9 +86,6 @@ public final class AccordiCooperazioneAllegatiDel extends Action {
 			
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 			ArchiviCore archiviCore =  new ArchiviCore(acCore);
-
-			// Preparo il menu
-			acHelper.makeMenu();
 
 			AccordoCooperazione ac = null;
 			

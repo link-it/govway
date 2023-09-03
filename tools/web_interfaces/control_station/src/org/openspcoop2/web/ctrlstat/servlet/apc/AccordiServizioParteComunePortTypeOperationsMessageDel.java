@@ -70,10 +70,14 @@ public class AccordiServizioParteComunePortTypeOperationsMessageDel extends Acti
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		try {
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
-			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			long idAccordoLong = Long.parseLong(id);
 			String nomept = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			String nomeop = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NOME);
@@ -85,9 +89,6 @@ public class AccordiServizioParteComunePortTypeOperationsMessageDel extends Acti
 						
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			ArrayList<String> optsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);

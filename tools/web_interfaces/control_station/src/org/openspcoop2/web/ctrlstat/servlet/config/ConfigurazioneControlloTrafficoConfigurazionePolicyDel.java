@@ -75,11 +75,11 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyDel extends Acti
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
-
-			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
+			
 			// Preparo il menu
 			confHelper.makeMenu();
+
+			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
 			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 

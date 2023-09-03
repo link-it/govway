@@ -70,7 +70,11 @@ public final class PorteDelegateScopeDel extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -103,9 +107,6 @@ public final class PorteDelegateScopeDel extends Action {
 			
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
-
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
@@ -115,7 +116,7 @@ public final class PorteDelegateScopeDel extends Action {
 			
 			List<String> lista = porteDelegateCore.portaDelegataScopeList(Integer.parseInt(id), ricerca);
 
-			porteDelegateHelper.preparePorteDelegateScopeList(pde.getNome(), ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateScopeList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 

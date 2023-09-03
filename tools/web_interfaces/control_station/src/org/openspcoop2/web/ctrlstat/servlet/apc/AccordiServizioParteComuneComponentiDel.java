@@ -75,7 +75,11 @@ public final class AccordiServizioParteComuneComponentiDel extends Action {
 
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
-			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
+			String idAccordo = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			String tipoSICA = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_TIPO_SICA);
@@ -83,9 +87,6 @@ public final class AccordiServizioParteComuneComponentiDel extends Action {
 				tipoSICA = null;
 
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.parseLong(idAccordo));
 

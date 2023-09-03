@@ -261,6 +261,7 @@ import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -332,6 +333,7 @@ import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 import org.openspcoop2.web.lib.mvc.security.Validatore;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -748,7 +750,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(idTab == null) { // nuovoTab o nuova finestra o primo accesso
 				log.trace("CHECKTABID: non trovato come parametro");
-				idTab = UUID.randomUUID().toString().replace("-", "");
+				idTab = UUID.randomUUID().toString(); //.replace("-", "");
 				request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
 				log.debug("CHECKTABID: generato nuovo id: ["+idTab+"]");
 				return idTab;
@@ -1460,6 +1462,39 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		return toRet;
+	}
+
+	public String getParametroBoolean(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroBoolean(parameterName, true);
+	}
+	
+	public String getParametroBoolean(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate) {
+			this.validaParametroBoolean(parameterName);
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	public String getParametroInteger(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroInteger(parameterName, true);
+	}
+	
+	public String getParametroInteger(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate) {
+			this.validaParametroInteger(parameterName);
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	public String getParametroLong(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroLong(parameterName, true);
+	}
+	
+	public String getParametroLong(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate) {
+			this.validaParametroLong(parameterName);
+		}
+		return this.getParameter(parameterName);
 	}
 	
 	/***
@@ -11494,8 +11529,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	// Prepara la lista di azioni delle porte
 	public void preparePorteAzioneList(ISearch ricerca,
-			List<String> listaAzioniParamDaPaginare, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
-			String nomePorta, String objectName, List<Parameter> listaParametriSessione,
+			List<String> listaAzioniParamDaPaginare, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
+			String objectName, List<Parameter> listaParametriSessione,
 			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComuneSintetico aspc) throws DriverControlStationException {
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, objectName,listaParametriSessione);
@@ -15558,9 +15593,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public boolean isFirstTimeFromHttpParameters(String firstTimeParameter) throws DriverControlStationException{
+	public boolean isFirstTimeFromHttpParameters(String firstTimeParameter) throws DriverControlStationException, ValidationException{
 		
-		String tmp = this.getParameter(firstTimeParameter);
+		String tmp = this.getParametroBoolean(firstTimeParameter);
 		if(tmp!=null && !"".equals(tmp.trim())){
 			return "true".equals(tmp.trim());
 		}
@@ -23113,5 +23148,136 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		
+	}
+	
+	/**
+	 * Validazione di un parametro di tipo boolean
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroBoolean(String parameterToCheck) throws ValidationException {
+		if(!ServletUtils.checkBooleanParameter(this.request, parameterToCheck)) {
+			throw new ValidationException("Il parametro [" +parameterToCheck + "] contiene un valore non valido.");
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Validazione di un parametro di tipo integer
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroInteger(String parameterToCheck) throws ValidationException {
+		if(!ServletUtils.checkIntegerParameter(this.request, parameterToCheck)) {
+			throw new ValidationException("Il parametro [" +parameterToCheck + "] contiene un valore non valido.");
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Validazione di un parametro di tipo long
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroLong(String parameterToCheck) throws ValidationException {
+		if(!ServletUtils.checkLongParameter(this.request, parameterToCheck)) {
+			throw new ValidationException("Il parametro [" +parameterToCheck + "] contiene un valore non valido.");
+		}
+		
+		return true;
+	}
+	
+	public String getParametroServiceBinding(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroServiceBinding(parameterName, true);
+	}
+	
+	public String getParametroServiceBinding(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroServiceBinding(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro service binding
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroServiceBinding(String parameterToCheck) {
+		String parameterValueFiltrato = this.request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// i valori accettati sono solo i seguenti
+		return  CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST.equals(parameterValueFiltrato) 
+				|| CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP.equals(parameterValueFiltrato)
+				|| CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI.equals(parameterValueFiltrato)
+				;
+	}
+	
+	public String getParametroTipoSoggetto(String parameterName) throws ValidationException, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException {
+		return getParametroTipoSoggetto(parameterName, true);
+	}
+	
+	public String getParametroTipoSoggetto(String parameterName, boolean validate) throws ValidationException, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException{
+		if(validate && !this.validaParametroTipoSoggetto(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro tipo soggetto
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 * @throws DriverRegistroServiziException 
+	 * @throws ControlStationCoreException 
+	 */
+	private boolean validaParametroTipoSoggetto(String parameterToCheck) throws DriverRegistroServiziException, ControlStationCoreException {
+		String parameterValueFiltrato = this.request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// i valori accettati sono solo quelli previsti dai protocolli disponibili all'utente
+		List<String> protocolli = this.core.getProtocolli(this.request,this.session);
+		
+		boolean found = false;
+		for (String protocollo : protocolli) {
+			// leggo i tipi di soggetto supportati dal protocollo
+			List<String> tipiSoggettiProtocollo = this.core.getTipiSoggettiProtocollo(protocollo);
+			for (String tipoSoggettoProtocollo : tipiSoggettiProtocollo) {
+				if(tipoSoggettoProtocollo.equals(parameterValueFiltrato)) {
+					found = true;
+					break;
+				}
+			}
+		}
+		
+		return  found;
 	}
 }

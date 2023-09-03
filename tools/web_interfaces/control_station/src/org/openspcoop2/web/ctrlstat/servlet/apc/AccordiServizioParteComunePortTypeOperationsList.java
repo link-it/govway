@@ -69,20 +69,20 @@ public final class AccordiServizioParteComunePortTypeOperationsList extends Acti
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			
-			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
+			
+			String id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idAcc = Integer.parseInt(id);
 			String nomept = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo l'id del port-type
 			int idPortType = 0;

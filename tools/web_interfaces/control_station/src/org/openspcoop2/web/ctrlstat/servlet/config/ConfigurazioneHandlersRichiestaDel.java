@@ -86,27 +86,30 @@ public final class ConfigurazioneHandlersRichiestaDel extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
-			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA);
+			// Preparo il menu
+			confHelper.makeMenu();
+			
+			String ruoloPortaParam = confHelper.getParametroTipoPdD(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA);
 			TipoPdD ruoloPorta = null;
 			if(ruoloPortaParam!=null) {
 				ruoloPorta = TipoPdD.toTipoPdD(ruoloPortaParam);
 			}
-			String idPortaS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA);
+			String idPortaS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA);
 			Long idPorta = null;
 			if(StringUtils.isNotBlank(idPortaS)) {
 				idPorta = Long.parseLong(idPortaS);
 			}
 			ServiceBinding serviceBinding = null;
-			String serviceBindingParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING);
+			String serviceBindingParam = confHelper.getParametroServiceBinding(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING);
 			if(serviceBindingParam!=null && !"".equals(serviceBindingParam)) {
 				serviceBinding = ServiceBinding.valueOf(serviceBindingParam);
 			}
 			
-			String idTab = confHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			String idTab = confHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!confHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
-			String fase = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE);
+			String fase = confHelper.getParametroFaseMessageHandler(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE);
 			FaseMessageHandler faseMH = FaseMessageHandler.toEnumConstant(fase);
 
 			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
@@ -231,8 +234,6 @@ public final class ConfigurazioneHandlersRichiestaDel extends Action {
 			
 			// update sul db
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), oggettiDaAggiornare.toArray(new Object[oggettiDaAggiornare.size()]));
-			// Preparo il menu
-			confHelper.makeMenu();
 			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

@@ -81,18 +81,17 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			/*
-			 * Validate the request parameters specified by the user Note: Basic
-			 * field validation done in porteDomForm.java Business logic
-			 * validation done in porteDomAdd.java
-			 */
-			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			
+			// Preparo il menu
+			apsHelper.makeMenu();
+
+			String idServizio = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			Long idS = Long.parseLong(idServizio);
 			
-			String idFruizione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);
+			String idFruizione = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);
 			Long idFru = Long.parseLong(idFruizione);
 			
-			String idSoggFruitoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
+			String idSoggFruitoreDelServizio = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
 			@SuppressWarnings("unused")
 			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
 			
@@ -103,9 +102,6 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			// prendo l'id del soggetto erogatore lo propago
 			// lo metto nel pd come campo hidden
 			pd.setHidden(pdold.getHidden());
-
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);

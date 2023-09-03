@@ -80,17 +80,20 @@ public final class ConfigurazioneHandlersServizioList extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+						
 			TipoPdD ruoloPorta = null;
 			String idPortaS = null;
 			ServiceBinding serviceBinding = null;
 			
-			String idTab = confHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			String idTab = confHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!confHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			String fase = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE);
 			String cambiaPosizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_POSIZIONE);
-			String idHandlerS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER);
+			String idHandlerS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER);
 
 			FaseServiceHandler faseSH = FaseServiceHandler.toEnumConstant(fase);		
 			
@@ -161,10 +164,6 @@ public final class ConfigurazioneHandlersServizioList extends Action {
 				}
 			}
 
-
-			// Preparo il menu
-			confHelper.makeMenu();
-			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 

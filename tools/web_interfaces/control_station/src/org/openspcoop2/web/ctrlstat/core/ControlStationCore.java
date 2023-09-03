@@ -6784,6 +6784,30 @@ public class ControlStationCore {
 		}
 	}
 	
+	public List<String> getTipiSoggettiProtocollo(String protocollo) throws ControlStationCoreException {
+		String nomeMetodo = "getTipiSoggettiProtocollo";
+		try{
+
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getTipiSoggetti();
+
+		}catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new ControlStationCoreException(getPrefixError(nomeMetodo,  e),e);
+		}
+	}
+	
+	public List<String> getTipiServiziProtocollo(String protocollo, ServiceBinding serviceBinding) throws ControlStationCoreException {
+		String nomeMetodo = "getTipiServiziProtocollo";
+		try{
+
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getTipiServizi(serviceBinding);
+
+		}catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new ControlStationCoreException(getPrefixError(nomeMetodo,  e),e);
+		}
+	}
+	
 	public List<String> getAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
 			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate) throws DriverConfigurazioneException{
 		return AzioniUtils.getAzioni(asps, aspc, 

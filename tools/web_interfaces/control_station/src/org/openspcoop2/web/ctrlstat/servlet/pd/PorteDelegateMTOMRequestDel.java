@@ -69,7 +69,11 @@ public class PorteDelegateMTOMRequestDel extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -102,9 +106,6 @@ public class PorteDelegateMTOMRequestDel extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 	
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
-	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 	
@@ -114,7 +115,7 @@ public class PorteDelegateMTOMRequestDel extends Action {
 	
 			List<MtomProcessorFlowParameter> lista = porteDelegateCore.porteDelegateMTOMRequestList(Integer.parseInt(id), ricerca);
 	
-			porteDelegateHelper.preparePorteDelegateMTOMRequestList(pde.getNome(), ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateMTOMRequestList(ricerca, lista);
 	
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			

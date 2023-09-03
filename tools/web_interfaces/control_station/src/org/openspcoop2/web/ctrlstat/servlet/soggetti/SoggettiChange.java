@@ -119,7 +119,10 @@ public final class SoggettiChange extends Action {
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
-			strutsBean.id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			// Preparo il menu
+			soggettiHelper.makeMenu();
+			
+			strutsBean.id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			if(strutsBean.id==null) {
 				throw new Exception("Identificativo soggetto non fornito");
 			}
@@ -214,9 +217,6 @@ public final class SoggettiChange extends Action {
 			
 			String resetElementoCacheS = soggettiHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
-	
-			// Preparo il menu
-			soggettiHelper.makeMenu();
 
 			// Prendo i vecchi nome e tipo
 			String oldnomeprov = "";
@@ -267,14 +267,17 @@ public final class SoggettiChange extends Action {
 				oldtipoprov = soggettoConfig.getTipo();
 			}
 			
+			if(strutsBean.tipoprov == null) {
+				strutsBean.tipoprov = oldtipoprov;
+			}
+			
+			if(strutsBean.nomeprov == null) {
+				strutsBean.nomeprov = oldnomeprov;
+			}
 			
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, strutsBean.id);
-			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, oldnomeprov);
-			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, oldtipoprov);
 			parametersServletCredenzialiList = new ArrayList<>();
 			parametersServletCredenzialiList.add(pIdSoggetto);
-			parametersServletCredenzialiList.add(pNomeSoggetto);
-			parametersServletCredenzialiList.add(pTipoSoggetto);
 
 			boolean encryptOldPlainPwd = false;
 			if(soggettoRegistry!=null && soggettoRegistry.sizeCredenzialiList()>0 && 

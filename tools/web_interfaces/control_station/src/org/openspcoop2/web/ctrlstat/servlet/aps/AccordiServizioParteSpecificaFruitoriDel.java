@@ -92,21 +92,17 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			/*
-			 * Validate the request parameters specified by the user Note: Basic
-			 * field validation done in porteDomForm.java Business logic
-			 * validation done in porteDomAdd.java
-			 */
-			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			
+			// Preparo il menu
+			apsHelper.makeMenu();
+			
+			String id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			int idServizio = Integer.parseInt(id);
 			String objToRemove = apsHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 
 			// prendo l'id del soggetto erogatore lo propago
 			// lo metto nel pd come campo hidden
 			pd.setHidden(pdold.getHidden());
-
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			String fruitore = "";

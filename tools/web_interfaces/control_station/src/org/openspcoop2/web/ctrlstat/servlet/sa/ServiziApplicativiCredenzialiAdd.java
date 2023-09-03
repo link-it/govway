@@ -89,16 +89,19 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 		try {
 			Boolean singlePdD = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
-			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
-			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			// Preparo il menu
+			saHelper.makeMenu();
+			
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			boolean useIdSogg = (parentSA!=null && parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO);
 			
-			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
+			String id = saHelper.getParametroLong(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
 			
 			String idCredenziale = null;
@@ -278,9 +281,6 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false);
-
-			// Preparo il menu
-			saHelper.makeMenu();
 
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 

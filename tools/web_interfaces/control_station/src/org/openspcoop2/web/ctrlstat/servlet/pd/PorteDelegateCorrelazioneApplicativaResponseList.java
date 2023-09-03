@@ -66,16 +66,13 @@ public final class PorteDelegateCorrelazioneApplicativaResponseList extends Acti
 		
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			// String idsogg = porteDelegateHelper.getParameter("idsogg");
-			// int soggInt = Integer.parseInt(idsogg);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-
-			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
-
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
+
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+
+			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
 
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
@@ -85,7 +82,7 @@ public final class PorteDelegateCorrelazioneApplicativaResponseList extends Acti
 
 			List<CorrelazioneApplicativaRispostaElemento> lista = porteDelegateCore.porteDelegateCorrelazioneApplicativaRispostaList(Integer.parseInt(id), ricerca);
 
-			porteDelegateHelper.preparePorteDelegateCorrAppRispostaList(nomePorta, ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateCorrAppRispostaList(ricerca, lista);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);

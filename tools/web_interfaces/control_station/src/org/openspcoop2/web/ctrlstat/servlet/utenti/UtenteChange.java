@@ -79,6 +79,9 @@ public final class UtenteChange extends Action {
 
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
+			
+			// Preparo il menu
+			utentiHelper.makeMenu();
 
 			String newpw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PW);
 			String tipogui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI);
@@ -165,8 +168,6 @@ public final class UtenteChange extends Action {
 					}
 				}
 			}
-			// Preparo il menu
-			utentiHelper.makeMenu();
 
 			// setto la barra del titolo
 			if(changeGui == null && changeModalita==null && changeSoggetto == null) {

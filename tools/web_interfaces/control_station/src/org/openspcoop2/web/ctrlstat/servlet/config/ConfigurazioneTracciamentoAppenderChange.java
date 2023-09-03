@@ -75,15 +75,15 @@ public final class ConfigurazioneTracciamentoAppenderChange extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
-			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
+			String id = confHelper.getParametroInteger(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
 			int idInt = Integer.parseInt(id);
 			String tipo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Prendo l'appender
 			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();

@@ -96,19 +96,23 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			
+			// Preparo il menu
+			apsHelper.makeMenu();
+			
 			strutsBean.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
-			strutsBean.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			
+			strutsBean.id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			strutsBean.tipo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO);
 			strutsBean.wsdl = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL);
 
-			strutsBean.idSoggettoErogatoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
+			strutsBean.idSoggettoErogatoreDelServizio = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((strutsBean.idSoggettoErogatoreDelServizio == null) || strutsBean.idSoggettoErogatoreDelServizio.equals("")) {
 				PageData oldPD = ServletUtils.getPageDataFromSession(request, session);
 
 				strutsBean.idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			}
 
-			strutsBean.idSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
+			strutsBean.idSoggettoFruitore = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
 			
 			if(apsHelper.isMultipart()){
 				strutsBean.decodeRequestValidazioneDocumenti = true;
@@ -129,9 +133,6 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			}
 
 			long idFruitoreLong = Integer.parseInt(strutsBean.id);
-
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			// Prendo il wsdl attuale del fruitore
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();

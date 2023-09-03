@@ -76,17 +76,17 @@ public final class ConfigurazioneTracciamentoDatasourcePropertiesChange extends 
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
-			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
+			String id = confHelper.getParametroInteger(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
 			int idInt = Integer.parseInt(id);
-			String idprop = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA);
+			String idprop = confHelper.getParametroInteger(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA);
 			int idPropInt = Integer.parseInt(idprop);
 			String valore = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Prendo l'appender
 			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();

@@ -73,7 +73,11 @@ public final class PorteDelegateWSRequestDel extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -106,9 +110,6 @@ public final class PorteDelegateWSRequestDel extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 	
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
-	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 	
@@ -118,7 +119,7 @@ public final class PorteDelegateWSRequestDel extends Action {
 	
 			List<MessageSecurityFlowParameter> lista = porteDelegateCore.porteDelegateMessageSecurityRequestList(Integer.parseInt(id), ricerca);
 	
-			porteDelegateHelper.preparePorteDelegateMessageSecurityRequestList(pde.getNome(), ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateMessageSecurityRequestList(ricerca, lista);
 	
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			

@@ -66,19 +66,15 @@ public final class ConfigurazioneDiagnosticaDatasourceList extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		// String userLogin = ServletUtils.getUserLoginFromSession(session);	
-
-
-
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
 			MessaggiDiagnostici md = newConfigurazione.getMessaggiDiagnostici();
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Preparo la lista
 			List<OpenspcoopSorgenteDati> lista = null;

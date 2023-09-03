@@ -76,12 +76,12 @@ public class UtentiServiziAdd extends Action {
 
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
-			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
-			String servizio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SERVIZIO);
-			String protocollo = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PROTOCOLLO);
 			
 			// Preparo il menu
 			utentiHelper.makeMenu();
+			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
+			String servizio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SERVIZIO);
+			String protocollo = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PROTOCOLLO);
 			
 			UtentiCore utentiCore = new UtentiCore();
 			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(utentiCore);

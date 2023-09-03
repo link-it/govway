@@ -72,13 +72,14 @@ public final class AccordiServizioParteComuneList extends Action {
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
 			ServletUtils.removeObjectFromSession(request, session, ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-			
-			apcHelper.makeMenu();
 
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			

@@ -22,18 +22,14 @@ package org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni;
 
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -43,6 +39,10 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * ErogazioniList
@@ -69,7 +69,6 @@ public final class ErogazioniList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			// ctrlstatHelper ch = new ctrlstatHelper (request, pd, con, session);
 			ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
 			
 			ServletUtils.setObjectIntoSession(request, session, Boolean.valueOf(true), ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI); 
@@ -93,11 +92,11 @@ public final class ErogazioniList extends Action {
 			erogazioniHelper.clearFiltroSoggettoByPostBackProtocollo(0, ricerca, idLista);
 			
 			String tipologiaParameterName = AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE;
-			String tipologia = erogazioniHelper.getParameter(tipologiaParameterName);
+			String tipologia = erogazioniHelper.getParametroTipologiaErogazione(tipologiaParameterName);
 			if(tipologia==null) {
 				// guardo se sto entrando da altri link fuori dal menu di sinistra
 				// in tal caso e' gia' impostato
-				tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+				tipologia = ServletUtils.getObjectFromSession(request, session, String.class, tipologiaParameterName);
 			}
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;

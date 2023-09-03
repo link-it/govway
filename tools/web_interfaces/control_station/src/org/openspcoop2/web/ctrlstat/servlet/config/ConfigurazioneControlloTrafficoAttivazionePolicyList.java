@@ -70,24 +70,25 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		//	String userLogin = ServletUtils.getUserLoginFromSession(session);	
-
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
-			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
+			String ruoloPortaParam = confHelper.getParametroRuoloPolicy(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
 			RuoloPolicy ruoloPorta = null;
 			if(ruoloPortaParam!=null) {
 				ruoloPorta = RuoloPolicy.toEnumConstant(ruoloPortaParam);
 			}
 			String nomePorta = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA);
 			ServiceBinding serviceBinding = null;
-			String serviceBindingParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING);
+			String serviceBindingParam = confHelper.getParametroServiceBinding(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING);
 			if(serviceBindingParam!=null && !"".equals(serviceBindingParam)) {
 				serviceBinding = ServiceBinding.valueOf(serviceBindingParam);
 			}
 			
-			String idTab = confHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			String idTab = confHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!confHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
@@ -102,7 +103,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 			
 			if(StringUtils.isNotEmpty(cambiaPosizione)) {
 				
-				String idPolicyS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID);
+				String idPolicyS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID);
 				long idPolicyLong = Long.parseLong(idPolicyS);
 				String risorsaPolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA);
 				
@@ -154,10 +155,6 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 						
 				}
 			}
-			
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

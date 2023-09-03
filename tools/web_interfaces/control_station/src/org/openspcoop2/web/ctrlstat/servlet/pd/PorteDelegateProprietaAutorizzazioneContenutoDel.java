@@ -73,7 +73,11 @@ public final class PorteDelegateProprietaAutorizzazioneContenutoDel extends Acti
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
+			String idPorta = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -99,9 +103,6 @@ public final class PorteDelegateProprietaAutorizzazioneContenutoDel extends Acti
 			
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
-
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 
@@ -111,7 +112,7 @@ public final class PorteDelegateProprietaAutorizzazioneContenutoDel extends Acti
 
 			List<Proprieta> lista = porteDelegateCore.porteDelegateAutorizzazioneContenutoCustomPropList(Integer.parseInt(idPorta), ricerca);
 
-			porteDelegateHelper.preparePorteDelegateAutorizzazioneContenutoCustomPropList(pde.getNome(), ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateAutorizzazioneContenutoCustomPropList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

@@ -118,8 +118,11 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 						
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			
+			// Preparo il menu
+			apsHelper.makeMenu();
+			
 			strutsBean.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
-			strutsBean.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			strutsBean.id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			strutsBean.tipo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO);
 			strutsBean.wsdl = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL);
 
@@ -149,9 +152,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
 				gestioneFruitori = true;
 			}
-			
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			// Prendo il nome, il tipo e il wsdl attuale del servizio
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
@@ -214,9 +214,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			Parameter parameterAPSChange = new Parameter( tmpTitle, 
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE ,
 					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+strutsBean.id),
-					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio),
-					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio),
-					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, versioneservizio+""),
 					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, soggettoErogatoreID.getId()+"")
 					);
 			
@@ -225,7 +222,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			Parameter pTipoSoggettoFruitore = null;
 			Parameter pNomeSoggettoFruitore = null;
 			if(gestioneFruitori) {
-				tipoSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
+				tipoSoggettoFruitore = apsHelper.getParametroTipoSoggetto(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
 				nomeSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
 				pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
 				pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
@@ -241,11 +238,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				}
 				List<Parameter> listErogazioniChange = new ArrayList<>();
 				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
-				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 				listErogazioniChange.add(pIdServizio);
-				listErogazioniChange.add(pNomeServizio);
-				listErogazioniChange.add(pTipoServizio);
 				if(gestioneFruitori) {
 					listErogazioniChange.add(pNomeSoggettoFruitore);
 					listErogazioniChange.add(pTipoSoggettoFruitore);

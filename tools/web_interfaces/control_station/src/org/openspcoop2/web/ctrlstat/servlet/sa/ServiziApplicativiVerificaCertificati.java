@@ -130,6 +130,9 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
+			// Preparo il menu
+			saHelper.makeMenu();
+			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(saCore);
@@ -143,14 +146,11 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			boolean useIdSogg = (parentSA!=null && parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO);
 			
-			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
+			String id = saHelper.getParametroLong(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
-			String idProvider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			String idProvider = saHelper.getParametroLong(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
 			String alias = saHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
-			
-			// Preparo il menu
-			saHelper.makeMenu();
 			
 			// Prendo la lista di aliases
 			List<String> aliases = confCore.getJmxPdDAliases();

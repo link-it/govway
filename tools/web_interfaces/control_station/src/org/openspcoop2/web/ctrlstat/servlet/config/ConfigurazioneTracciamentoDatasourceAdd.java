@@ -75,6 +75,9 @@ public final class ConfigurazioneTracciamentoDatasourceAdd extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
 			String nomeJndi = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_JNDI);
@@ -91,9 +94,6 @@ public final class ConfigurazioneTracciamentoDatasourceAdd extends Action {
 			}
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Se nome = null, devo visualizzare la pagina per l'inserimento
 			// dati

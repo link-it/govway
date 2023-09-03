@@ -43,8 +43,8 @@ public class PorteDelegateExtendedUtilities {
 
 	public static void addToHiddenDati(TipoOperazione tipoOperazione,List<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
 		try {
-			String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			String idsogg = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String id = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			PorteDelegateHelper porteDelegateHelper = (PorteDelegateHelper)consoleHelper;
 			porteDelegateHelper.addHiddenFieldsToDati(tipoOperazione, id, idsogg, null, dati);
 		}catch(Exception e) {
@@ -54,20 +54,20 @@ public class PorteDelegateExtendedUtilities {
 	
 	public static Object getObject(ConsoleHelper consoleHelper) throws Exception {
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(consoleHelper.getCore());
-		String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+		String id = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 		int idInt = Integer.parseInt(id);
 		return porteDelegateCore.getPortaDelegata(idInt);
 	}
 	
 	public static List<Parameter> getTitle(ConsoleHelper consoleHelper) throws Exception {
 		
-		String idSoggettoFruitore = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+		String idSoggettoFruitore = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 
-		String idAsps = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+		String idAsps = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 		if(idAsps == null)
 			idAsps = "";
 		
-		String idFruizione = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+		String idFruizione = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 		if(idFruizione == null)
 			idFruizione = "";
 		
@@ -83,8 +83,8 @@ public class PorteDelegateExtendedUtilities {
 	
 	public static Parameter[] getParameterList(ConsoleHelper consoleHelper) throws Exception {
 		
-		String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-		String idsogg = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+		String id = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+		String idsogg = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 		
 		Parameter[] par = new Parameter[2];
 		par[0] = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
@@ -94,8 +94,8 @@ public class PorteDelegateExtendedUtilities {
 	}
 	
 	public static UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper) throws Exception {
-		String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-		String idsogg = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+		String id = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+		String idsogg = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 		UrlParameters urlExtended = new UrlParameters();
 		urlExtended.addParameter(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id));
 		urlExtended.addParameter(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg));
@@ -104,8 +104,8 @@ public class PorteDelegateExtendedUtilities {
 	}
 	
 	public static UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper) throws Exception {
-		String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-		String idsogg = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+		String id = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+		String idsogg = consoleHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 		UrlParameters urlExtended = new UrlParameters();
 		urlExtended.addParameter(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id));
 		urlExtended.addParameter(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg));

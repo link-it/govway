@@ -22,10 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.about;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.govway.struts.action.Action;
@@ -42,6 +38,10 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * About
@@ -87,7 +87,7 @@ public class About extends Action{
 
 			BinaryParameter infoP = aHelper.getBinaryParameter(AboutCostanti.PARAMETRO_ABOUT_INFO);
 			
-			String infoDone = aHelper.getParameter(AboutCostanti.PARAMETRO_ABOUT_INFO_FINISH);
+			String infoDone = aHelper.getParametroBoolean(AboutCostanti.PARAMETRO_ABOUT_INFO_FINISH);
 			boolean doUpdate = ServletUtils.isCheckBoxEnabled(infoDone);
 			
 			String aggiornamentoNonRiuscito = null;

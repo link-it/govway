@@ -107,6 +107,9 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			// controllo primo accesso
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FIRST_TIME);
 						
@@ -203,10 +206,6 @@ public class ConfigurazioneAllarmiAdd extends Action {
 				}
 				
 			}
-			
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 			
 			String postBackElementName = confHelper.getPostBackElementName();
 			if (postBackElementName != null) {

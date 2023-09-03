@@ -128,9 +128,11 @@ public final class ConfigurazioneGenerale extends Action {
 		String userLogin = ServletUtils.getUserLoginFromSession(session);	
 
 		try {
-
-
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
 			List<IExtendedFormServlet> extendedServletList = confCore.getExtendedServletConfigurazione();
@@ -154,7 +156,7 @@ public final class ConfigurazioneGenerale extends Action {
 			String tipoValidazione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE);
 			String applicaMTOM = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_APPLICA_MTOM);
 
-			String configurazioneCachesTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CACHES);
+			String configurazioneCachesTmp = confHelper.getParametroBoolean(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CACHES);
 			boolean isAllHiddenConfigurazione = ServletUtils.isCheckBoxEnabled(configurazioneCachesTmp);
 			boolean isAllHiddenCache = !isAllHiddenConfigurazione;
 			
@@ -219,28 +221,28 @@ public final class ConfigurazioneGenerale extends Action {
 			String idlecachEdatiRichieste = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_DATI_RICHIESTE);
 			String lifecachEdatiRichieste = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_DATI_RICHIESTE);
 			
-			String multitenantStatoTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO);
+			String multitenantStatoTmp = confHelper.getParametroBoolean(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO);
 			boolean multitenantEnabled = CostantiConfigurazione.ABILITATO.getValue().equals(multitenantStatoTmp);
 			String multitenantSoggettiFruizioni = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
 			String multitenantSoggettiErogazioni = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
 
-			String corsStatoTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_STATO);
+			String corsStatoTmp = confHelper.getParametroBoolean(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_STATO);
 			boolean corsStato = ServletUtils.isCheckBoxEnabled(corsStatoTmp); 
 			String corsTipoTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_TIPO);
 			TipoGestioneCORS corsTipo = corsTipoTmp != null ? TipoGestioneCORS.toEnumConstant(corsTipoTmp) : TipoGestioneCORS.GATEWAY;
-			String corsAllAllowOriginsTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
+			String corsAllAllowOriginsTmp = confHelper.getParametroBoolean(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
 			boolean corsAllAllowOrigins = ServletUtils.isCheckBoxEnabled(corsAllAllowOriginsTmp);
-			String corsAllAllowHeadersTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
+			String corsAllAllowHeadersTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
 			boolean corsAllAllowHeaders = ServletUtils.isCheckBoxEnabled(corsAllAllowHeadersTmp);
-			String corsAllAllowMethodsTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
+			String corsAllAllowMethodsTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
 			boolean corsAllAllowMethods = ServletUtils.isCheckBoxEnabled(corsAllAllowMethodsTmp);
 			String corsAllowHeaders =  confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
 			String corsAllowOrigins =  confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS);
 			String corsAllowMethods =  confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
-			String corsAllowCredentialTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
+			String corsAllowCredentialTmp = confHelper.getParametroBoolean(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
 			boolean corsAllowCredential =  ServletUtils.isCheckBoxEnabled(corsAllowCredentialTmp);
 			String corsExposeHeaders = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS);
-			String corsMaxAgeTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
+			String corsMaxAgeTmp = confHelper.getParametroBoolean(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
 			boolean corsMaxAge =  ServletUtils.isCheckBoxEnabled(corsMaxAgeTmp);
 			String corsMaxAgeSecondsTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
 			int corsMaxAgeSeconds = -1;
@@ -249,8 +251,7 @@ public final class ConfigurazioneGenerale extends Action {
 					corsMaxAgeSeconds = Integer.parseInt(corsMaxAgeSecondsTmp);
 				}catch(Exception e) {} 
 			}
-			
-			String responseCachingEnabledTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO);
+			String responseCachingEnabledTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO);
 			boolean responseCachingEnabled = ServletUtils.isCheckBoxEnabled(responseCachingEnabledTmp);
 			
 			String responseCachingSecondsTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_TIMEOUT);
@@ -261,8 +262,7 @@ public final class ConfigurazioneGenerale extends Action {
 				}catch(Exception e) {} 
 			}
 			
-			
-			String responseCachingMaxResponseSizeTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE);
+			String responseCachingMaxResponseSizeTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE);
 			boolean responseCachingMaxResponseSize = ServletUtils.isCheckBoxEnabled(responseCachingMaxResponseSizeTmp);
 			
 			String responseCachingMaxResponseSizeBytesTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE_BYTES);
@@ -272,11 +272,11 @@ public final class ConfigurazioneGenerale extends Action {
 					responseCachingMaxResponseSizeBytes = Integer.parseInt(responseCachingMaxResponseSizeBytesTmp);
 				}catch(Exception e) {} 
 			}
-			String responseCachingDigestUrlInvocazioneTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE);
+			String responseCachingDigestUrlInvocazioneTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE);
 			boolean responseCachingDigestUrlInvocazione = ServletUtils.isCheckBoxEnabled(responseCachingDigestUrlInvocazioneTmp);
-			String responseCachingDigestHeadersTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
+			String responseCachingDigestHeadersTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
 			boolean responseCachingDigestHeaders = ServletUtils.isCheckBoxEnabled(responseCachingDigestHeadersTmp);
-			String responseCachingDigestPayloadTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
+			String responseCachingDigestPayloadTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
 			boolean responseCachingDigestPayload = ServletUtils.isCheckBoxEnabled(responseCachingDigestPayloadTmp);
 			String responseCachingDigestHeadersNomiHeaders = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS);
 			StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter = null;
@@ -286,11 +286,11 @@ public final class ConfigurazioneGenerale extends Action {
 			}
 			String responseCachingDigestNomiParametriQuery = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI);
 			
-			String responseCachingCacheControlNoCacheTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE);
+			String responseCachingCacheControlNoCacheTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE);
 			boolean responseCachingCacheControlNoCache = ServletUtils.isCheckBoxEnabled(responseCachingCacheControlNoCacheTmp);
-			String responseCachingCacheControlMaxAgeTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
+			String responseCachingCacheControlMaxAgeTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
 			boolean responseCachingCacheControlMaxAge = ServletUtils.isCheckBoxEnabled(responseCachingCacheControlMaxAgeTmp);
-			String responseCachingCacheControlNoStoreTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_STORE);
+			String responseCachingCacheControlNoStoreTmp = confHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_STORE);
 			boolean responseCachingCacheControlNoStore = ServletUtils.isCheckBoxEnabled(responseCachingCacheControlNoStoreTmp);
 
 			Boolean confPersB = ServletUtils.getConfigurazioniPersonalizzateFromSession(session); 
@@ -307,7 +307,7 @@ public final class ConfigurazioneGenerale extends Action {
 			int numeroArchiviPlugins = confHelper.numeroPluginsRegistroArchivi();
 			int numeroClassiPlugins = confHelper.numeroPluginsRegistroClassi();
 			
-			String canaliEnabledTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_STATO);
+			String canaliEnabledTmp = confHelper.getParametroBoolean(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_STATO);
 			boolean canaliEnabled = ServletUtils.isCheckBoxEnabled(canaliEnabledTmp);
 			CanaliConfigurazione gestioneCanali = configurazione.getGestioneCanali();
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : null;
@@ -353,11 +353,6 @@ public final class ConfigurazioneGenerale extends Action {
 
 				}
 			}
-
-
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// setto la barra del titolo
 			String title = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE;
