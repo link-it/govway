@@ -1,3 +1,9 @@
+2023-09-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1629	
+	Risultavano le stesse informazioni sulle organizzazioni prelevate dalla PDND relativamente a chiamate (clientId) differenti.
+
 2023-08-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
