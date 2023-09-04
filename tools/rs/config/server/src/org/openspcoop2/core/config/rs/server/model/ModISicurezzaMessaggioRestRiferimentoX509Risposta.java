@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioRestRiferimentoX509Risposta
  */
 public enum ModISicurezzaMessaggioRestRiferimentoX509Risposta {
-RICHIESTA("richiesta"),
+  RICHIESTA("richiesta"),
+  
   RIDEFINITO("ridefinito");
 
   private String value;

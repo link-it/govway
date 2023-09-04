@@ -26,9 +26,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoMessaggioEnum
  */
 public enum TipoMessaggioEnum {
-RICHIESTA("richiesta"),
+  RICHIESTA("richiesta"),
+  
   RISPOSTA("risposta"),
+  
   CONVERSAZIONE("conversazione"),
+  
   RIFERIMENTO_RICHIESTA("riferimento_richiesta");
 
   private String value;

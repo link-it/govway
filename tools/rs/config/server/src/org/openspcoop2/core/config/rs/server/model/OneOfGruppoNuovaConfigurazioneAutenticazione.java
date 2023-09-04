@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfGruppoNuovaConfigurazioneAutenticazione
 */
 public interface OneOfGruppoNuovaConfigurazioneAutenticazione {
+
     public TipoAutenticazioneEnum getTipo();
 }

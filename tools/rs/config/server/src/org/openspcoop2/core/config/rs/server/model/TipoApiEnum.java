@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoApiEnum
  */
 public enum TipoApiEnum {
-SOAP("soap"),
+  SOAP("soap"),
+  
   REST("rest");
 
   private String value;

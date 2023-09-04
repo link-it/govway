@@ -6,10 +6,6 @@
 	<packaging>pom</packaging>
 	<name>dependencies.swagger-codegen</name>
 
-	<modules>
-		<module>linkit</module>
-	</modules>
-
 	<parent>
 		<groupId>org.openspcoop2</groupId>
 		<artifactId>org.openspcoop2.dependencies</artifactId>
@@ -21,7 +17,7 @@
 
 		<jar.group.name>swagger-codegen</jar.group.name>
 		
-		<swagger.codegen.cli.version>3.0.18</swagger.codegen.cli.version>
+		<swagger.codegen.cli.version>3.0.46-gov4j-1</swagger.codegen.cli.version>
 
 	</properties>
 

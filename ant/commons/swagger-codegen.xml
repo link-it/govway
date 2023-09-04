@@ -18,7 +18,7 @@
 		<delete dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN"/>
 		<mkdir dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN"/>
 
-		<!-- per vedere i parametri disponibili: java -jar swagger-codegen-cli-3.0.18.jar config-help -l jaxrs-cxf -->
+		<!-- per vedere i parametri disponibili: java -jar swagger-codegen-cli-3.0.46-gov4j-1.jar config-help -l jaxrs-cxf -->
 		<property name="configSwaggerTemplate" location="${openspcoop2}/ant/commons/swagger-codegen-config.json"/>
 		<property name="configSwagger" value="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN/swagger-codegen-config.json"/>
 		<copy file="${configSwaggerTemplate}" tofile="${configSwagger}"/>
@@ -41,14 +41,14 @@
 		</if>
 
 		<!-- Generazione -->
-		<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.18.jar"/>
+		<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.46-gov4j-1.jar"/>
 		<if>
 			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
 			<then>
-				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.18-gov4j-4.jar"/>	
+				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.46-gov4j-1.jar"/>	
 			</then>
 		</if>
-		<!-- per vedere i parametri disponibili: java -jar lib/swagger-codegen/swagger-codegen-cli-3.0.18.jar generate -h -->
+		<!-- per vedere i parametri disponibili: java -jar lib/swagger-codegen/swagger-codegen-cli-3.0.46-gov4j-1.jar generate -h -->
 		<java jar="${required_lib}/swagger-codegen/${swaggerCodeGenCliJarName}" fork="true">
 			<!-- Fix: Unable to make public boolean java.util.Collections$EmptyMap.isEmpty() accessible: module java.base does not "opens java.util" to unnamed module -->
 			<jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED" /> 
@@ -207,7 +207,7 @@
 		<delete dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN"/>
 		<mkdir dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN"/>
 
-		<!-- per vedere i parametri disponibili: java -jar swagger-codegen-cli-3.0.18.jar config-help -l jaxrs-cxf -->
+		<!-- per vedere i parametri disponibili: java -jar swagger-codegen-cli-3.0.46-gov4j-1.jar config-help -l jaxrs-cxf -->
 		<property name="configSwaggerTemplate" location="${openspcoop2}/ant/commons/swagger-codegen-config.json"/>
 		<property name="configSwagger" value="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN/swagger-codegen-config.json"/>
 		<copy file="${configSwaggerTemplate}" tofile="${configSwagger}"/>
@@ -259,11 +259,11 @@ paths:
 		</if>
 
 		<!-- Generazione -->
-		<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.18.jar"/>
+		<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.46-gov4j-1.jar"/>
 		<if>
 			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
 			<then>
-				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.18-gov4j-4.jar"/>	
+				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.46-gov4j-1.jar"/>	
 			</then>
 		</if>
 		<java jar="${required_lib}/swagger-codegen/${swaggerCodeGenCliJarName}" fork="true">

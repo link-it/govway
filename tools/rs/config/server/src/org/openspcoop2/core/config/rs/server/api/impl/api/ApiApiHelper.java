@@ -305,7 +305,7 @@ public class ApiApiHelper {
 			if (body.getTipoInterfaccia() == null) {
 				ApiInterfacciaSoap iSoap = new ApiInterfacciaSoap();
 				iSoap.setProtocollo(TipoApiEnum.SOAP);
-				iSoap.setFormato(FormatoSoapEnum._1);
+				iSoap.setFormato(FormatoSoapEnum.WSDL1_1);
 				body.setTipoInterfaccia(iSoap);	
 			}
 		}

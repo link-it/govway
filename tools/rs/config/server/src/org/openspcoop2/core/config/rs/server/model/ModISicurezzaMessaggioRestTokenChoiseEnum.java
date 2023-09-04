@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioRestTokenChoiseEnum
  */
 public enum ModISicurezzaMessaggioRestTokenChoiseEnum {
-AGID("agid"),
+  AGID("agid"),
+  
   BEARER("bearer");
 
   private String value;

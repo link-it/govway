@@ -134,7 +134,7 @@ public class Enums {
 	
 	public static final Map<FormatoSoapEnum,FormatoSpecifica> formatoSpecificaFromSoap = new HashMap<>();
 	static {
-		Enums.formatoSpecificaFromSoap.put(FormatoSoapEnum._1, FormatoSpecifica.WSDL_11);
+		Enums.formatoSpecificaFromSoap.put(FormatoSoapEnum.WSDL1_1, FormatoSpecifica.WSDL_11);
 	}
 	
 	

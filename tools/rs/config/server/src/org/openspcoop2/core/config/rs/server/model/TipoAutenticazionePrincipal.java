@@ -26,12 +26,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoAutenticazionePrincipal
  */
 public enum TipoAutenticazionePrincipal {
-CONTAINER("container"),
+  CONTAINER("container"),
+  
   HEADER_BASED("header-based"),
+  
   FORM_BASED("form-based"),
+  
   URL_BASED("url-based"),
+  
   IP_ADDRESS("ip-address"),
+  
   IP_ADDRESS_FORWARDED_FOR("ip-address-forwarded-for"),
+  
   TOKEN("token");
 
   private String value;

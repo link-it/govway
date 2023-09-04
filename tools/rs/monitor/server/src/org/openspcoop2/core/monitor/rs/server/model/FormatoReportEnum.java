@@ -26,10 +26,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets FormatoReportEnum
  */
 public enum FormatoReportEnum {
-CSV("csv"),
+  CSV("csv"),
+  
   PDF("pdf"),
+  
   XLS("xls"),
+  
   XML("xml"),
+  
   JSON("json");
 
   private String value;

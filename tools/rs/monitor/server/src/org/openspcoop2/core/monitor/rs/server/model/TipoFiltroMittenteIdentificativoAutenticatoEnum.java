@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoFiltroMittenteIdentificativoAutenticatoEnum
  */
 public enum TipoFiltroMittenteIdentificativoAutenticatoEnum {
-BASIC("basic"),
+  BASIC("basic"),
+  
   SSL("ssl"),
+  
   PRINCIPAL("principal");
 
   private String value;

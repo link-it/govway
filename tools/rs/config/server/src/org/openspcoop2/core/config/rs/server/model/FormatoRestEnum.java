@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets FormatoRestEnum
  */
 public enum FormatoRestEnum {
-SWAGGER2_0("Swagger2.0"),
+  SWAGGER2_0("Swagger2.0"),
+  
   OPENAPI3_0("OpenApi3.0");
 
   private String value;

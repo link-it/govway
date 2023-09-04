@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets StatoApiEnum
  */
 public enum StatoApiEnum {
-OK("ok"),
+  OK("ok"),
+  
   WARN("warn"),
+  
   ERROR("error");
 
   private String value;

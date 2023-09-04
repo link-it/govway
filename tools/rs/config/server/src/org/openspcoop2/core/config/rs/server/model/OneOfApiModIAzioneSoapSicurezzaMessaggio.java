@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfApiModIAzioneSoapSicurezzaMessaggio
 */
 public interface OneOfApiModIAzioneSoapSicurezzaMessaggio {
+
     public ModISicurezzaMessaggioOperazioneEnum getStato();
 }

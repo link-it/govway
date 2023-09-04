@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets OccupazioneBandaEnum
  */
 public enum OccupazioneBandaEnum {
-COMPLESSIVA("banda_complessiva"),
+  COMPLESSIVA("banda_complessiva"),
+  
   INTERNA("banda_interna"),
+  
   ESTERNA("banda_esterna");
 
   private String value;

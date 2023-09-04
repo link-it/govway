@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ConnettoreJmsTipoEnum
  */
 public enum ConnettoreJmsTipoEnum {
-QUEUE("queue"),
+  QUEUE("queue"),
+  
   TOPIC("topic");
 
   private String value;

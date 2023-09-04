@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoIdentificazioneApplicativoEnum
  */
 public enum TipoIdentificazioneApplicativoEnum {
-TRASPORTO("trasporto"),
+  TRASPORTO("trasporto"),
+  
   TOKEN("token");
 
   private String value;

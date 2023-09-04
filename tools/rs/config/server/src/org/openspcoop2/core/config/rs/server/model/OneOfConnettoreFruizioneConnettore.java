@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfConnettoreFruizioneConnettore
 */
 public interface OneOfConnettoreFruizioneConnettore {
+
     public ConnettoreEnum getTipo();
 }

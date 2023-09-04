@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoValidazioneEnum
  */
 public enum TipoValidazioneEnum {
-INTERFACE("interface"),
+  INTERFACE("interface"),
+  
   XSD("xsd");
 
   private String value;

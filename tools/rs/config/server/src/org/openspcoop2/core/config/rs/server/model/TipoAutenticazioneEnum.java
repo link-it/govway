@@ -26,11 +26,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoAutenticazioneEnum
  */
 public enum TipoAutenticazioneEnum {
-DISABILITATO("disabilitato"),
+  DISABILITATO("disabilitato"),
+  
   HTTP_BASIC("http-basic"),
+  
   HTTPS("https"),
+  
   PRINCIPAL("principal"),
+  
   API_KEY("api-key"),
+  
   CUSTOM("custom");
 
   private String value;

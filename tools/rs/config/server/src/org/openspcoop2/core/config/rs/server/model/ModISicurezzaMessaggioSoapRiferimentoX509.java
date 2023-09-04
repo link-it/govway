@@ -26,10 +26,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioSoapRiferimentoX509
  */
 public enum ModISicurezzaMessaggioSoapRiferimentoX509 {
-BINARY_SECURITY_TOKEN("binary-security-token"),
+  BINARY_SECURITY_TOKEN("binary-security-token"),
+  
   ISSUER_SERIAL_SECURITY_TOKEN_REFERENCE("issuer-serial-security-token-reference"),
+  
   SKI_KEY_IDENTIFIER("ski-key-identifier"),
+  
   THUMBPRINT_KEY_IDENTIFIER("thumbprint-key-identifier"),
+  
   X509_KEY_IDENTIFIER("x509-key-identifier");
 
   private String value;

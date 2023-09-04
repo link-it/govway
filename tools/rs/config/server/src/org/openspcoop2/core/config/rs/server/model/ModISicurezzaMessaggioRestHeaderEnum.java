@@ -26,12 +26,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioRestHeaderEnum
  */
 public enum ModISicurezzaMessaggioRestHeaderEnum {
-AGID("agid"),
+  AGID("agid"),
+  
   BEARER("bearer"),
+  
   AGID_BEARER_REQUEST("agid+bearer-request"),
+  
   AGID_BEARER("agid+bearer"),
+  
   CUSTOM("custom"),
+  
   CUSTOM_BEARER_REQUEST("custom+bearer-request"),
+  
   CUSTOM_BEARER("custom+bearer");
 
   private String value;

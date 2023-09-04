@@ -26,13 +26,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets RateLimitingChiaveEnum
  */
 public enum RateLimitingChiaveEnum {
-CONTENT_BASED("content-based"),
+  CONTENT_BASED("content-based"),
+  
   HEADER_BASED("header-based"),
+  
   SOAP_ACTION_BASED("soap-action-based"),
+  
   URL_BASED("url-based"),
+  
   FORM_BASED("form-based"),
+  
   INDIRIZZO_IP("indirizzo-ip"),
+  
   INDIRIZZO_IP_FORWARDED("indirizzo-ip-forwarded"),
+  
   PLUGIN_BASED("plugin-based");
 
   private String value;

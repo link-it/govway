@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoFiltroMittenteIndirizzoIPEnum
  */
 public enum TipoFiltroMittenteIndirizzoIPEnum {
-CLIENT_IP("client_ip"),
+  CLIENT_IP("client_ip"),
+  
   X_FORWARDED_FOR("x_forwarded_for");
 
   private String value;

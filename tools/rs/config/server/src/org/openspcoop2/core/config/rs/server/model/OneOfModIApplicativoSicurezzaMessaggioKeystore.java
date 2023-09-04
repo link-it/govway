@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfModIApplicativoSicurezzaMessaggioKeystore
 */
 public interface OneOfModIApplicativoSicurezzaMessaggioKeystore {
+
     public ModIKeystoreTipologiaEnum getTipologia();
 }

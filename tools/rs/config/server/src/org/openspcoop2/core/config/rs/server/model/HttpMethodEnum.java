@@ -26,16 +26,26 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets HttpMethodEnum
  */
 public enum HttpMethodEnum {
-QUALSIASI("Qualsiasi"),
+  QUALSIASI("Qualsiasi"),
+  
   GET("GET"),
+  
   POST("POST"),
+  
   PUT("PUT"),
+  
   DELETE("DELETE"),
+  
   OPTIONS("OPTIONS"),
+  
   HEAD("HEAD"),
+  
   TRACE("TRACE"),
+  
   PATCH("PATCH"),
+  
   LINK("LINK"),
+  
   UNLINK("UNLINK");
 
   private String value;

@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoAutenticazioneHttps
  */
 public enum TipoAutenticazioneHttps {
-CERTIFICATO("certificato"),
+  CERTIFICATO("certificato"),
+  
   CONFIGURAZIONE_MANUALE("configurazione-manuale");
 
   private String value;

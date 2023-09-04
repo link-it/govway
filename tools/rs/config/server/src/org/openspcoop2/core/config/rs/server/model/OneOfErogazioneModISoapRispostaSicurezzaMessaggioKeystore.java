@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfErogazioneModISoapRispostaSicurezzaMessaggioKeystore
 */
 public interface OneOfErogazioneModISoapRispostaSicurezzaMessaggioKeystore {
+
     public StatoDefaultRidefinitoEnum getModalita();
 }

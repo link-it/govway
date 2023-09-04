@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfAuthenticationHttpsCertificato
 */
 public interface OneOfAuthenticationHttpsCertificato {
+
     public TipoAutenticazioneHttps getTipo();
 }

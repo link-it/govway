@@ -26,10 +26,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TokenClaimEnum
  */
 public enum TokenClaimEnum {
-SUBJECT("subject"),
+  SUBJECT("subject"),
+  
   ISSUER("issuer"),
+  
   CLIENT_ID("client_id"),
+  
   USERNAME("username"),
+  
   EMAIL("email");
 
   private String value;

@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets StatoFunzionalitaConWarningEnum
  */
 public enum StatoFunzionalitaConWarningEnum {
-ABILITATO("abilitato"),
+  ABILITATO("abilitato"),
+  
   DISABILITATO("disabilitato"),
+  
   WARNINGONLY("warningOnly");
 
   private String value;

@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets AllAnyEnum
  */
 public enum AllAnyEnum {
-ALL("all"),
+  ALL("all"),
+  
   ANY("any");
 
   private String value;
