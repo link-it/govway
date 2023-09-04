@@ -106,7 +106,7 @@ public class Validatore {
 	private String validateTabId(String oggetto, String idTab) {
 		if(idTab != null) {
 			try {
-				return this.validate(oggetto, idTab, Integer.valueOf(32), false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TAB); 
+				return this.validate(oggetto, idTab, Integer.valueOf(36), false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TAB); 
 			} catch(ValidationException e) {
 				log.warn("Valore ["+idTab+"] ricevuto per il parametro ["+oggetto+"] non valido: " + e.getMessage(),e);
 			}

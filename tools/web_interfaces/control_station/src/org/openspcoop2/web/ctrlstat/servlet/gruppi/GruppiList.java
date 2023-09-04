@@ -68,11 +68,11 @@ public final class GruppiList extends Action {
 
 		try {
 			GruppiHelper gruppiHelper = new GruppiHelper(request, pd, session);
-
-			GruppiCore gruppiCore = new GruppiCore();
-
+			
 			// Preparo il menu
 			gruppiHelper.makeMenu();
+
+			GruppiCore gruppiCore = new GruppiCore();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

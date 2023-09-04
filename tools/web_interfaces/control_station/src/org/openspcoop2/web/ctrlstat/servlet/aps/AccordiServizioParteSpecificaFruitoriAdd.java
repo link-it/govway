@@ -138,10 +138,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			
+			// Preparo il menu
+			apsHelper.makeMenu();
+			
 			strutsBean.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
-			strutsBean.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			strutsBean.idSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
+			strutsBean.id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			strutsBean.idSoggettoFruitore = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
 			strutsBean.correlato = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 
 			strutsBean.controlloAccessiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
@@ -302,7 +305,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				// primo accesso alla servlet
 				strutsBean.validazioneDocumenti = true;
 				if (apsHelper.isModalitaAvanzata()) {
-					String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
+					String tmpValidazioneDocumenti = apsHelper.getParametroBoolean(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 					if(tmpValidazioneDocumenti!=null){
 						if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){
 							strutsBean.validazioneDocumenti = true;
@@ -313,7 +316,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				}
 			}else{
 				if(!strutsBean.decodeRequestValidazioneDocumenti){
-					String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
+					String tmpValidazioneDocumenti = apsHelper.getParametroBoolean(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 					if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){
 						strutsBean.validazioneDocumenti = true;
 					}else{
@@ -345,9 +348,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			pd.setHidden(oldPD.getHidden());
 
 			String idSoggErogatore = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
-
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			// Prendo nome e tipo dal db
 

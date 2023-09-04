@@ -68,11 +68,11 @@ public final class PddSinglePdDList extends Action {
 
 		try {
 		    PddHelper pddHelper = new PddHelper(request, pd, session);
-
-			PddCore pddCore = new PddCore();
-
+		    
 			// Preparo il menu
 			pddHelper.makeMenu();
+
+			PddCore pddCore = new PddCore();
 
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session,ConsoleSearch.class); 
 

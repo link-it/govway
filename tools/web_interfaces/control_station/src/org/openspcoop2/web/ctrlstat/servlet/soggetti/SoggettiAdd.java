@@ -108,6 +108,9 @@ public final class SoggettiAdd extends Action {
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
+			// Preparo il menu
+			soggettiHelper.makeMenu();
+			
 			strutsBean.protocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
 			strutsBean.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			strutsBean.tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
@@ -201,9 +204,6 @@ public final class SoggettiAdd extends Action {
 			String servletCredenzialiAdd = null;
 			
 			boolean isRouter = ServletUtils.isCheckBoxEnabled(isRouterParameter);
-
-			// Preparo il menu
-			soggettiHelper.makeMenu();
 
 			// Prendo la lista di pdd e la metto in un array
 			String[] pddList = null;

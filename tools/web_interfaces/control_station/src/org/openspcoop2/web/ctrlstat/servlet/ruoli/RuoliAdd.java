@@ -73,6 +73,9 @@ public final class RuoliAdd extends Action {
 
 		try {
 			RuoliHelper ruoliHelper = new RuoliHelper(request, pd, session);
+			
+			// Preparo il menu
+			ruoliHelper.makeMenu();
 
 			String nome = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
 			String descrizione = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
@@ -88,9 +91,6 @@ public final class RuoliAdd extends Action {
 
 
 			RuoliCore ruoliCore = new RuoliCore();
-
-			// Preparo il menu
-			ruoliHelper.makeMenu();
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati

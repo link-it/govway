@@ -69,11 +69,11 @@ public final class ScopeList extends Action {
 
 		try {
 			ScopeHelper scopeHelper = new ScopeHelper(request, pd, session);
-
-			ScopeCore scopeCore = new ScopeCore();
-
+			
 			// Preparo il menu
 			scopeHelper.makeMenu();
+
+			ScopeCore scopeCore = new ScopeCore();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

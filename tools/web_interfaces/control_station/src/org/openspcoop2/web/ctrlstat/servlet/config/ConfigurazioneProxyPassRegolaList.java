@@ -73,13 +73,13 @@ public final class ConfigurazioneProxyPassRegolaList extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
-			String cambiaPosizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_POSIZIONE);
-			String idRegolaS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_ID_REGOLA);
-			
-			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
 			// Preparo il menu
 			confHelper.makeMenu();
+
+			String cambiaPosizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_POSIZIONE);
+			String idRegolaS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_ID_REGOLA);
+			
+			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
 			if(StringUtils.isNotEmpty(cambiaPosizione)) {
 				

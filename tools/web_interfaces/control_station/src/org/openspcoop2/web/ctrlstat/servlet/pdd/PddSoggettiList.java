@@ -71,13 +71,13 @@ public final class PddSoggettiList extends Action {
 			
 			PddHelper pddHelper = new PddHelper(request, pd, session);
 			
-			String id = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_ID);
+			// Preparo il menu
+			pddHelper.makeMenu();
+			
+			String id = pddHelper.getParametroInteger(PddCostanti.PARAMETRO_PDD_ID);
 	
 			PddCore pddCore = new PddCore();
 			PdDControlStation pdd = pddCore.getPdDControlStation(Integer.parseInt(id));
-	
-			// Preparo il menu
-			pddHelper.makeMenu();
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session,ConsoleSearch.class); 

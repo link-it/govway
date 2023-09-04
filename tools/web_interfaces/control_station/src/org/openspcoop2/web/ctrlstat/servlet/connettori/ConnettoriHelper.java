@@ -156,7 +156,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		String accessoDaAPSParametro = null;
 		// nell'erogazione vale sempre
 		//if(gestioneErogatori) {
-		accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+		accessoDaAPSParametro = this.getParametroBoolean(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
 		if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
 			accessoDaListaAPS = true;
 		}
@@ -434,11 +434,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 			lstParamsPA.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			lstParamsPA.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, id));
 			lstParamsPA.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA, sa.getNome()));
-			String idTabP = this.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			String idTabP = this.getParametroInteger(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			lstParamsPA.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, idTabP));
 			//String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-			String connettoreAccessoGruppi = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
-			String connettoreRegistro = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
+			String connettoreAccessoGruppi = this.getParametroBoolean(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
+			String connettoreRegistro = this.getParametroBoolean(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
 			lstParamsPA.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : ""));
 			lstParamsPA.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, connettoreAccessoGruppi));
 			lstParamsPA.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro));
@@ -534,7 +534,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String servlet = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET);
 			String id = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID);
 			String nomeprov = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO);
-			String tipoprov = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO);
+			String tipoprov = this.getParametroTipoSoggetto(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO);
 			String nomeservizio = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO);
 			String tiposervizio = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO);
 			String myId = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID);
@@ -549,7 +549,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if(idPorta == null)
 				idPorta = "";
 			
-			String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			String accessoDaAPSParametro = this.getParametroBoolean(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
 			if(accessoDaAPSParametro == null)
 				accessoDaAPSParametro = "";
 			
@@ -3074,7 +3074,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						else if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
 							List<Parameter> lstParams = new ArrayList<>();
 							
-							String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+							String accessoDaAPSParametro = this.getParametroBoolean(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
 							if(accessoDaAPSParametro != null)
 								lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
 							

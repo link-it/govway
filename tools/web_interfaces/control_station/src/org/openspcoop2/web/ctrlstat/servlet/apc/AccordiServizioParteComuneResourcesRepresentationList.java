@@ -23,10 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
@@ -38,14 +34,17 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceRepresentation;
 import org.openspcoop2.core.registry.ResourceRequest;
 import org.openspcoop2.core.registry.ResourceResponse;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * AccordiServizioParteComuneResourcesRepresentationList
@@ -70,15 +69,14 @@ public final class AccordiServizioParteComuneResourcesRepresentationList extends
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			
 			// Preparo il menu
 			apcHelper.makeMenu();
+			
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
-			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idAccordo = Integer.parseInt(id);
 			String nomeRisorsa = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 
@@ -86,12 +84,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationList extends
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 
-			String statusResponseS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
-			boolean isStatusValid = ServletUtils.checkIntegerParameter(apcHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
-			if(!isStatusValid) {
-				throw new ValidationException("Il parametro [" + AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS + "] contiene un valore non valido.");
-			}
-			
+			String statusResponseS = apcHelper.getParametroInteger(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
 			Integer statusResponse = null;
 			try {
 				if(StringUtils.isNotEmpty(statusResponseS))
@@ -99,16 +92,9 @@ public final class AccordiServizioParteComuneResourcesRepresentationList extends
 			}catch(Exception e) {
 				statusResponse = null;
 			}
-
-			String isReq = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
-			boolean isReqValid = ServletUtils.checkBooleanParameter(apcHelper.getRequest(), AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
-			if(!isReqValid) {
-				throw new ValidationException("Il parametro [" + AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST + "] contiene un valore non valido.");
-			}
 			
+			String isReq = apcHelper.getParametroBoolean(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
 			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
-
-			
 			
 			// Prendo l'id della risorsa
 			Long idRisorsa = 0L;

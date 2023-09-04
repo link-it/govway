@@ -75,6 +75,10 @@ public final class PddSinglePdDChange extends Action {
 
 		try {
 		    PddHelper pddHelper = new PddHelper(request, pd, session);
+		    
+			// Preparo il menu
+			pddHelper.makeMenu();
+			
 			String id = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_ID);
 			String descr = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_DESCRIZIONE);
 			String implementazione = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
@@ -84,9 +88,6 @@ public final class PddSinglePdDChange extends Action {
 			String nome = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
 			
 			PddCore pddCore = new PddCore();
-
-			// Preparo il menu
-			pddHelper.makeMenu();
 
 			// Prendo il nome della pdd
 

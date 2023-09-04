@@ -75,6 +75,9 @@ public final class AccordiServizioParteComuneAllegatiDel extends Action {
 
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
 
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -85,9 +88,6 @@ public final class AccordiServizioParteComuneAllegatiDel extends Action {
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			ArchiviCore archiviCore = new ArchiviCore(apcCore);
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			AccordoServizioParteComune as = null;
 			List<Long> idAllegati = new ArrayList<>();

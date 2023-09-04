@@ -72,12 +72,15 @@ public final class SoggettiRuoliDel extends Action {
 
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
+			
+			// Preparo il menu
+			soggettiHelper.makeMenu();
 
 			String objToRemove =soggettiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			SoggettiCore soggettiCore = new SoggettiCore();
 
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idSogg = Integer.parseInt(id);
 			
 			Soggetto soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);
@@ -96,10 +99,6 @@ public final class SoggettiRuoliDel extends Action {
 			}// chiudo for
 
 			soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), soggettoRegistry);
-			
-
-			// Preparo il menu
-			soggettiHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

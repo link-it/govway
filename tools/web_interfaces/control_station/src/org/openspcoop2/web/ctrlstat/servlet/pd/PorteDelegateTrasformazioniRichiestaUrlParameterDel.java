@@ -73,17 +73,14 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterDel extends Action 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 			
-			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			// String idsogg = porteDelegateHelper.getParameter("idsogg");
-			// int soggInt = Integer.parseInt(idsogg);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String idTrasformazioneS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
+			String idPorta = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idTrasformazioneS = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
 			long idTrasformazione = Long.parseLong(idTrasformazioneS);
 			
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
-
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
 
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -134,7 +131,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterDel extends Action 
 			
 			List<TrasformazioneRegolaParametro> lista = porteDelegateCore.porteDelegateTrasformazioniRichiestaUrlParameterList(Long.parseLong(idPorta), trasformazioneAggiornata.getId(), ricerca);
 			
-			porteDelegateHelper.preparePorteDelegateTrasformazioniRichiestaUrlParameterList(nomePorta, trasformazioneAggiornata.getId(), ricerca, lista); 
+			porteDelegateHelper.preparePorteDelegateTrasformazioniRichiestaUrlParameterList(trasformazioneAggiornata.getId(), ricerca, lista); 
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

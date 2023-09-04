@@ -76,7 +76,10 @@ public final class ConfigurazionePluginsArchiviChange extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
-			String idArchivioS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ID_ARCHIVIO);
+			// Preparo il menu
+			confHelper.makeMenu();
+			
+			String idArchivioS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ID_ARCHIVIO);
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
 			String oldNome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_OLD_NOME);
 			String descrizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DESCRIZIONE);
@@ -93,8 +96,6 @@ public final class ConfigurazionePluginsArchiviChange extends Action {
 			int numeroArchivi = confCore.getNumeroArchiviJarRegistroPlugin(oldNome);
 			RegistroPlugin oldRegistro = confCore.getDatiRegistroPlugin(oldNome);
 
-			// Preparo il menu
-			confHelper.makeMenu();
 			List<Parameter> lstParam = new ArrayList<>();
 			
 			// setto la barra del titolo

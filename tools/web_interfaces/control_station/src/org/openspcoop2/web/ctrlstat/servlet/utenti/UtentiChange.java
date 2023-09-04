@@ -89,6 +89,9 @@ public final class UtentiChange extends Action {
 
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
+			
+			// Preparo il menu
+			utentiHelper.makeMenu();
 
 			UtentiCore utentiCore = new UtentiCore();
 			SoggettiCore soggettiCore = new SoggettiCore(utentiCore);
@@ -266,9 +269,6 @@ public final class UtentiChange extends Action {
 					intervalloTemporaleHomePageConsoleMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI;
 				}
 			}
-			
-			// Preparo il menu
-			utentiHelper.makeMenu();
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
 			if(utentiHelper.isEditModeInProgress()){
@@ -483,9 +483,6 @@ public final class UtentiChange extends Action {
 			// oggetti a singleSu
 			if (paginaSu) {
 				// Faccio scegliere il superutente a cui assegnare gli oggetti
-
-				// Preparo il menu
-				utentiHelper.makeMenu();
 
 				// setto la barra del titolo
 

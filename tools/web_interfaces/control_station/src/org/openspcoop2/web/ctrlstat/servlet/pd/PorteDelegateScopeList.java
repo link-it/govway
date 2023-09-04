@@ -66,11 +66,11 @@ public final class PorteDelegateScopeList extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-	
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
+			
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -83,7 +83,7 @@ public final class PorteDelegateScopeList extends Action {
 
 			List<String> lista = porteDelegateCore.portaDelegataScopeList(Integer.parseInt(id), ricerca);
 
-			porteDelegateHelper.preparePorteDelegateScopeList(nomePorta, ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateScopeList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

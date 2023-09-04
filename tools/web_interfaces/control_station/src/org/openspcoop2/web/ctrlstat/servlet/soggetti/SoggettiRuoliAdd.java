@@ -79,8 +79,11 @@ public final class SoggettiRuoliAdd extends Action {
 
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
+			
+			// Preparo il menu
+			soggettiHelper.makeMenu();
 
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idSogg = Integer.parseInt(id);
 			
 			String nome = soggettiHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO);
@@ -104,10 +107,6 @@ public final class SoggettiRuoliAdd extends Action {
 					ruoli.add(ruoloSoggetto.getNome());	
 				}
 			}
-			
-			
-			// Preparo il menu
-			soggettiHelper.makeMenu();
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
@@ -120,9 +119,7 @@ public final class SoggettiRuoliAdd extends Action {
 					ServletUtils.appendPageDataTitle(pd, 
 							new Parameter(tmpTitle, 
 									SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
-									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+""),
-									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,soggettoRegistry.getNome()),
-									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,soggettoRegistry.getTipo())));
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+"")));
 					ServletUtils.appendPageDataTitle(pd, 
 							new Parameter(RuoliCostanti.LABEL_RUOLI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
 									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+""),

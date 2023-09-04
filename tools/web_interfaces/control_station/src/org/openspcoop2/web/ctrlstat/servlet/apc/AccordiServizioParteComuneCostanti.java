@@ -403,16 +403,6 @@ public class AccordiServizioParteComuneCostanti {
 	public static final String PARAMETRO_APC_ALLEGATI_ID_ACCORDO = ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO;
 	public static final String PARAMETRO_APC_ALLEGATI_NOME_DOCUMENTO = "nomeDoc";
 
-	public static final String PARAMETRO_APC_EROGATORI_TIPO_SOGGETTO = "tipoprov";
-	public static final String PARAMETRO_APC_EROGATORI_NOME_SOGGETTO = "nomeprov";
-	public static final String PARAMETRO_APC_EROGATORI_TIPO_SERVIZIO = "tiposervizio";
-	public static final String PARAMETRO_APC_EROGATORI_NOME_SERVIZIO = "nomeservizio";
-
-	public static final String PARAMETRO_APC_EROGATORI_NOME_ACCORDO = "nomeAccordo";
-	public static final String PARAMETRO_APC_EROGATORI_CORRELATO = "correlato";
-	public static final String PARAMETRO_APC_EROGATORI_ID_FRUITORE = "myId";
-	public static final String PARAMETRO_APC_EROGATORI_EROGATORE = "provider";
-
 	public static final String PARAMETRO_APC_COMPONENTI_TIPO_SICA = "tipoSICA" ;
 	public static final String PARAMETRO_APC_COMPONENTI_ELEMENTO = "elemento" ;
 	public static final String PARAMETRO_APC_COMPONENTI_COMPONENTE = "componente";

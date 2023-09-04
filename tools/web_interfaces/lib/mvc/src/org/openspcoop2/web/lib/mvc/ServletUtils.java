@@ -49,6 +49,7 @@ import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
 
 /**
  * ServletUtils
@@ -76,11 +77,18 @@ public class ServletUtils {
 		pd.disableEditMode();
 		pd.setMessage(message);
 		pd.setMostraLinkHome(true); 
+		ServletUtils.setErrorStatusCodeInRequestAttribute(request, session, ServletUtils.getErrorStatusCodeFromException(e));
 		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 		return ServletUtils.getStrutsForwardGeneralError(mapping, objectName, forwardType);
 	}
 
-
+	public static HttpStatus getErrorStatusCodeFromException(Throwable t) {
+		if(t instanceof ValidationException) {
+			return HttpStatus.BAD_REQUEST;
+		}
+		
+		return HttpStatus.INTERNAL_SERVER_ERROR;
+	}
 
 	/* ------ STRUTS - FORWARD ---- */
 
@@ -871,6 +879,38 @@ public class ServletUtils {
 		return true;
 	}
 	
+	/**
+	 * Validazione del parametro per il controllo delle sessioni nei tab.
+	 * I valori ammessi sono uuid senza caratteri non alfanumerici
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkTabKeyParameter(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// validazione parametro originale
+		try {
+			UUID.fromString(parameterValueFiltrato);
+		}catch (IllegalArgumentException | NullPointerException e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	/***
 	 * Validazione del valore ricevuto per il parametro di tipo integer
 	 * 
@@ -880,14 +920,50 @@ public class ServletUtils {
 	 */
 	public static boolean checkIntegerParameter(HttpServletRequest request, String parameterToCheck) {
 		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
 		
-		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
-			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
-			return parameterValueOriginale == null;
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
 		}
 		
 		try {
 			Integer.parseInt(parameterValueFiltrato);
+		}catch(IllegalArgumentException e) {
+			return false;
+		}
+
+		return true;
+	}
+	
+	/***
+	 * Validazione del valore ricevuto per il parametro di tipo long
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkLongParameter(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		try {
+			Long.parseLong(parameterValueFiltrato);
 		}catch(IllegalArgumentException e) {
 			return false;
 		}
@@ -904,10 +980,16 @@ public class ServletUtils {
 	 */
 	public static boolean checkBooleanParameter(HttpServletRequest request, String parameterToCheck) {
 		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
 		
-		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
-			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
-			return parameterValueOriginale == null;
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
 		}
 		
 		// i valori accettati sono solo i seguenti
@@ -927,10 +1009,16 @@ public class ServletUtils {
 	 */
 	public static boolean checkParametro(HttpServletRequest request, String parameterToCheck) {
 		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
 		
-		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o vuoto perche' e' stato filtrato dall'utility di sicurezza
-			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
-			return parameterValueOriginale == null;
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
 		}
 		
 		return true;
@@ -945,10 +1033,16 @@ public class ServletUtils {
 	 */
 	public static boolean checkParametroResetSearch(HttpServletRequest request, String parameterToCheck) {
 		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
 		
-		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
-			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
-			return parameterValueOriginale == null;
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
 		}
 		
 		// i valori accettati sono Costanti.CHECK_BOX_ENABLED o Costanti.CHECK_BOX_DISABLED
@@ -965,10 +1059,16 @@ public class ServletUtils {
 	 */
 	public static boolean checkParametroAzione(HttpServletRequest request, String parameterToCheck) {
 		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
 		
-		if(StringUtils.isEmpty(parameterValueFiltrato)) { // puo' essere null perche' non presente o perche' e' stato filtrato dall'utility di sicurezza
-			String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
-			return parameterValueOriginale == null;
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
 		}
 		
 		// i valori accettati sono 'salva' e 'removeEntries'
@@ -1031,5 +1131,9 @@ public class ServletUtils {
 		}
 		
 		return sb.length() > 0 ? sb.toString() : null;
+	}
+	
+	public static void setErrorStatusCodeInRequestAttribute(HttpServletRequest request, HttpSession session, HttpStatus httpStatus){
+		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_SET_ERROR_CODE, httpStatus);
 	}
 }

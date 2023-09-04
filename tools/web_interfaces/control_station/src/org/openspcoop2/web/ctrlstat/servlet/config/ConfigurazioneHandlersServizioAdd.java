@@ -85,6 +85,9 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			// controllo primo accesso
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FIRST_TIME);
 						
@@ -110,10 +113,6 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 					tipiPluginGiaUtilizzati.add(configurazioneHandlerBean.getPlugin().getTipo());
 				}
 			}
-			
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 						
 			List<Parameter> lstParamSession = new ArrayList<>();
 

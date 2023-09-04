@@ -71,6 +71,9 @@ public final class GruppiDel extends Action {
 
 		try {
 			GruppiHelper gruppiHelper = new GruppiHelper(request, pd, session);
+			
+			// Preparo il menu
+			gruppiHelper.makeMenu();
 
 			String objToRemove =gruppiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -89,10 +92,6 @@ public final class GruppiDel extends Action {
 			if (inUsoMessage.length()>0) {
 				pd.setMessage(inUsoMessage.toString());
 			}
-			
-
-			// Preparo il menu
-			gruppiHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

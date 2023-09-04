@@ -84,11 +84,13 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 		try {
 
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
 
-			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String idAccordo = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			String idServizioComponente = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_COMPONENTE);
 			long idAccordoLong = Long.parseLong(idAccordo);
-			/**String portType = apcHelper.getParameter("port_type");*/
 
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_TIPO_SICA );
 			if("".equals(tipoAccordo))
@@ -97,9 +99,6 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);

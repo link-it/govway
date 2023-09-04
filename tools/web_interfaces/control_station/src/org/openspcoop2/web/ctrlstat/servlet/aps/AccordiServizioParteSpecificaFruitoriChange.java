@@ -137,6 +137,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			
+			// Preparo il menu
+			apsHelper.makeMenu();
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
 			if(parentPD == null) 
@@ -148,20 +151,19 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			PageData pdOld = ServletUtils.getPageDataFromSession(request, session);
 			pd.setHidden(pdOld.getHidden());
 
-			
-			
 			boolean isModalitaCompleta = apsHelper.isModalitaCompleta();
 			
 			strutsBean.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			strutsBean.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 
-			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			String idServizio = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			long idServizioLong = Long.valueOf(idServizio);
-			String idServizioFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);// id della fruizione
+			
+			String idServizioFruitore = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);// id della fruizione
 			long idServizioFruitoreInt = Long.parseLong(idServizioFruitore);
 
 			// NOTA PARAMETRO_APS_MY_ID e' l'id della fruizoione, mentre PARAMETRO_APS_PROVIDER_FRUITORE e' l'id del soggetto fruitore 
-			String idSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE); 
+			String idSoggettoFruitore = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE); 
 			String correlato = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 			
 			String myTipo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_TIPO);
@@ -178,7 +180,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String connettoreDebug = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 
 			// token policy
-			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			String autenticazioneTokenS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String tokenPolicy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
@@ -225,17 +227,17 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// https
 			String httpsurl = url;
 			String httpstipologia = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
-			String httpshostverifyS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			String httpshostverifyS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = false;
 			if (httpshostverifyS != null && httpshostverifyS.equals(Costanti.CHECK_BOX_ENABLED))
 				httpshostverify = true;
-			String httpsTrustVerifyCertS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
+			String httpsTrustVerifyCertS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS );
 			boolean httpsTrustVerifyCert = ServletUtils.isCheckBoxEnabled(httpsTrustVerifyCertS);
 			String httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			String httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 			String httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 			String httpsalgoritmo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-			String httpsstatoS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
+			String httpsstatoS = apsHelper.getParametroBoolean(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			boolean httpsstato = false;
 			if (httpsstatoS != null && httpsstatoS.equals(Costanti.CHECK_BOX_ENABLED))
 				httpsstato = true;
@@ -273,7 +275,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String backToStato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
 			String actionConfirm = apsHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 			
-			
 			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
@@ -294,7 +295,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				forceEnableConnettore = false;
 			}
 			
-			String tmpModificaProfilo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
+			String tmpModificaProfilo = apsHelper.getParametroBoolean(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
 			boolean modificaProfilo = false;
 			if(tmpModificaProfilo!=null) {
 				modificaProfilo = "true".equals(tmpModificaProfilo);
@@ -316,14 +317,14 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			boolean accessoDaListaAPS = false;
 			String accessoDaAPSParametro = null;
 			if(gestioneFruitori) {
-				accessoDaAPSParametro = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS);
+				accessoDaAPSParametro = apsHelper.getParametroBoolean(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS);
 				if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro) || modificaProfilo) {
 					accessoDaListaAPS = true;
 				}
 			}
 						
 			boolean validazioneDocumenti = true;
-			String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
+			String tmpValidazioneDocumenti = apsHelper.getParametroBoolean(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 			if(apsHelper.isEditModeInProgress()){
 				// primo accesso alla servlet
 				if(tmpValidazioneDocumenti!=null){
@@ -345,7 +346,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}
 			}
 
-			String idTab = apsHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			String idTab = apsHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(azioneConnettoreIdPorta!=null && !"".equals(azioneConnettoreIdPorta) && !apsHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
@@ -391,7 +392,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// Prendo il soggetto erogatore del servizio
 			String tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
 			String nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
-			String idSoggettoErogatoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
+			String idSoggettoErogatoreDelServizio = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
 				PageData oldPD = ServletUtils.getPageDataFromSession(request, session);
 
@@ -411,9 +412,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			}
 			
 			// setto i dati come campi hidden nel pd per portarmeli dietro
-
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			Soggetto soggettoFruitore = null;
 			if ((idSoggettoFruitore != null) && !idSoggettoFruitore.equals("")) {

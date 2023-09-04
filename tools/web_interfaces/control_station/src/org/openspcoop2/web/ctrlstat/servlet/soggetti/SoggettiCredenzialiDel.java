@@ -71,29 +71,17 @@ public final class SoggettiCredenzialiDel extends Action {
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-			int idSogg = Integer.parseInt(id);
-			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+			// Preparo il menu
+			soggettiHelper.makeMenu();
 			
-			// ctrlstatHelper ch = new ctrlstatHelper(request, pd, con, session);
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			int idSogg = Integer.parseInt(id);
+			String nomeprov = null;
+			String tipoprov = null;
+			
 			String objToRemove = soggettiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// // Elimino i soggetti dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
-	
-			// String soggInUsoServizioApplicativo = "", soggInUsoServ = "",
-			// soggInUsoPorteDel = "";
-			// String nomeprov = "", tipoprov = "";
-			
-			soggettiHelper.makeMenu();
 	
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 	
@@ -108,6 +96,15 @@ public final class SoggettiCredenzialiDel extends Action {
 			}
 
 			soggettoConfig = soggettiCore.getSoggetto(idSogg);// core.getSoggetto(new
+			
+			if(soggettiCore.isRegistroServiziLocale()){
+				nomeprov = soggettoRegistry.getNome();
+				tipoprov = soggettoRegistry.getTipo();
+			}
+			else{
+				nomeprov = soggettoConfig.getNome();
+				tipoprov = soggettoConfig.getTipo();
+			}
 			
 			boolean isPrincipale = false;
 			for (int i = idsToRemove.size() -1; i >=0; i--) {

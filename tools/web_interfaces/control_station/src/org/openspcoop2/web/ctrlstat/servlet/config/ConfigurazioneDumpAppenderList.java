@@ -67,13 +67,13 @@ public final class ConfigurazioneDumpAppenderList extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
 			Dump dump = newConfigurazione.getDump();
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Preparo la lista
 			List<OpenspcoopAppender> lista = null;

@@ -75,6 +75,9 @@ public final class ConfigurazioneAuditingFiltriDel extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			AuditHelper ah = new AuditHelper(request, pd, session);
@@ -91,9 +94,6 @@ public final class ConfigurazioneAuditingFiltriDel extends Action {
 				// Elimino il filtro
 				confCore.performDeleteOperation(userLogin, confHelper.smista(), f);
 			}
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

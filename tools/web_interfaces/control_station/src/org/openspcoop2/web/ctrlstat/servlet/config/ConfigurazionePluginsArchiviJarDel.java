@@ -74,6 +74,9 @@ public final class ConfigurazionePluginsArchiviJarDel extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
 
 			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
@@ -101,10 +104,6 @@ public final class ConfigurazionePluginsArchiviJarDel extends Action {
 			// Aggiorno classLoader interno
 			confCore.updatePluginClassLoader();
 
-			// Preparo il menu
-			confHelper.makeMenu();
-
-			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 

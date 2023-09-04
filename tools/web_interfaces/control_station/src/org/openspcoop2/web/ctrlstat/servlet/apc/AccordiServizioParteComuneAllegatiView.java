@@ -74,9 +74,12 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 		try {
 						
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
 
-			String idAllegato = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ALLEGATO);
-			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO);
+			String idAllegato = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ALLEGATO);
+			String idAccordo = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO);
 			
 			long idAllegatoLong = Long.parseLong(idAllegato);
 			long idAccordoLong = Long.parseLong(idAccordo);
@@ -87,9 +90,6 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			ArchiviCore archiviCore = new ArchiviCore(apcCore);
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoLong);

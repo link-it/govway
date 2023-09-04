@@ -71,8 +71,11 @@ public final class AccordiCooperazioneAllegatiList extends Action {
 
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			acHelper.makeMenu();
 
-			String id = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			String id = acHelper.getParametroLong(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
 				tipoSICA = null;
@@ -80,9 +83,6 @@ public final class AccordiCooperazioneAllegatiList extends Action {
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.valueOf(id));
-
-			// Preparo il menu
-			acHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

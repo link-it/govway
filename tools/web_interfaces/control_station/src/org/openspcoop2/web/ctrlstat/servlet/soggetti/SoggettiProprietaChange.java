@@ -74,19 +74,19 @@ public final class SoggettiProprietaChange extends Action {
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			// Preparo il menu
+			soggettiHelper.makeMenu();
+			
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			long idSogg = Long.parseLong(id);
-			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+			String nomeprov = null;
+			String tipoprov = null;
 			
 			String protocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			String nome = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME);
 			String valore = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE);
-			
-			// Preparo il menu
-			soggettiHelper.makeMenu();
 
 			SoggettiCore soggettiCore = new SoggettiCore();
 			
@@ -112,11 +112,7 @@ public final class SoggettiProprietaChange extends Action {
 
 			List<Parameter> parametersServletSoggettoChange = new ArrayList<>();
 			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
-			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, nomeprov);
-			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
 			parametersServletSoggettoChange.add(pIdSoggetto);
-			parametersServletSoggettoChange.add(pNomeSoggetto);
-			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
 			List<Parameter> lstParam = new ArrayList<>();
 			lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));

@@ -83,10 +83,10 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
-			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
-			
 			// Preparo il menu
 			confHelper.makeMenu();
+			
+			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
@@ -114,7 +114,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			String transazioniTempiElaborazione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TEMPI);
 			String transazioniToken = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TOKEN);
 			
-			String tracciamentoEsitiSelezionePersonalizzataAll = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
+			String tracciamentoEsitiSelezionePersonalizzataAll = confHelper.getParametroBoolean(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
 			boolean selectAll = ServletUtils.isCheckBoxEnabled(tracciamentoEsitiSelezionePersonalizzataAll);
 			
 			

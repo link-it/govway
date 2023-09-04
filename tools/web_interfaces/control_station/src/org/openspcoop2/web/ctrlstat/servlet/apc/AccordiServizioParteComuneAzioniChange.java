@@ -119,10 +119,13 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
 			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			String protocolPropertiesSet = apcHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 
-			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			long idAccordoLong = Long.parseLong(id);
 			String nomeaz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_NOME);
 			if (nomeaz == null) {
@@ -159,9 +162,6 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo il nome dal db
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();

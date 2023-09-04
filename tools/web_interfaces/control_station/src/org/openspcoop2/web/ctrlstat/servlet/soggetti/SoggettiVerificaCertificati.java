@@ -103,15 +103,15 @@ public class SoggettiVerificaCertificati extends Action {
 			
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
-			String id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			// Preparo il menu
+			soggettiHelper.makeMenu();
+			
+			String id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			long idSogg = Long.parseLong(id);
 			String nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			String tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 			
 			String alias = soggettiHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
-			
-			// Preparo il menu
-			soggettiHelper.makeMenu();
 			
 			SoggettiCore soggettiCore = new SoggettiCore();
 			ConfigurazioneCore confCore = new ConfigurazioneCore(soggettiCore);

@@ -70,7 +70,10 @@ public final class ConfigurazioneAllarmiHistoryList extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
-			String idAllarmeS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME);
+			// Preparo il menu
+			confHelper.makeMenu();
+			
+			String idAllarmeS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME);
 			
 			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA);
 			RuoloPorta ruoloPorta = null;
@@ -85,9 +88,6 @@ public final class ConfigurazioneAllarmiHistoryList extends Action {
 			}
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
-			// Preparo il menu
-			confHelper.makeMenu();
 			
 			Long idAllarme = Long.parseLong(idAllarmeS);
 			ConfigurazioneAllarmeBean allarme = confCore.getAllarme(idAllarme);

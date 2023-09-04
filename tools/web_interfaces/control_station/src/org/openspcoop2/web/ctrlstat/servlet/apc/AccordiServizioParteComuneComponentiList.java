@@ -69,8 +69,11 @@ public final class AccordiServizioParteComuneComponentiList extends Action {
 
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
 
-			String idAccordoServizio = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String idAccordoServizio = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 
 			String tipoSICA = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_TIPO_SICA);
 			if("".equals(tipoSICA))
@@ -79,9 +82,6 @@ public final class AccordiServizioParteComuneComponentiList extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idAccordoServizio));
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

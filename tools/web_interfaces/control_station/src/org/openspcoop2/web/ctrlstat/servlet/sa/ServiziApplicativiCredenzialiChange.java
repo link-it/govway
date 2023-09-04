@@ -93,6 +93,9 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
+			// Preparo il menu
+			saHelper.makeMenu();
+			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 			
@@ -101,10 +104,10 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			boolean useIdSogg = (parentSA!=null && parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO);
 			
-			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
+			String id = saHelper.getParametroLong(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
 			
-			String idCredenziale = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_CREDENZIALI_ID);
+			String idCredenziale = saHelper.getParametroLong(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_CREDENZIALI_ID);
 			int idxCredenziale = Integer.parseInt(idCredenziale);
 			
 			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
@@ -171,9 +174,6 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			
 			String toCall = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_CHANGE;
 			
-			// Preparo il menu
-			saHelper.makeMenu();
-
 			// Prendo il nome e il provider del servizioApplicativo
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativo);
 			String oldNome = sa.getNome();

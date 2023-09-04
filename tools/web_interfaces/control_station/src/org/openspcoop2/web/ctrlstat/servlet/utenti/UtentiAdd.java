@@ -83,8 +83,12 @@ public final class UtentiAdd extends Action {
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		try {
-			UtentiCore utentiCore = new UtentiCore();
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
+			
+			// Preparo il menu
+			utentiHelper.makeMenu();
+			
+			UtentiCore utentiCore = new UtentiCore();
 			
 			boolean loginApplication = utentiCore.isLoginApplication();
 	
@@ -191,9 +195,6 @@ public final class UtentiAdd extends Action {
 					intervalloTemporaleHomePageConsoleMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI;
 				}
 			}
-						
-			// Preparo il menu
-			utentiHelper.makeMenu();
 	
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
 			if(utentiHelper.isEditModeInProgress()){

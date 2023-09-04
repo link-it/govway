@@ -70,11 +70,11 @@ public class UtentiServiziDel extends Action {
 
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
-			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
-			String objToRemove = utentiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			
 			// Preparo il menu
 			utentiHelper.makeMenu();
+			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
+			String objToRemove = utentiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			
 			UtentiCore utentiCore = new UtentiCore();
 			StringTokenizer objTok = new StringTokenizer(objToRemove, ",");

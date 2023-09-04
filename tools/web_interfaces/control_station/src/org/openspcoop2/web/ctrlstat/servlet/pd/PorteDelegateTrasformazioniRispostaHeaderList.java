@@ -65,17 +65,17 @@ public class PorteDelegateTrasformazioniRispostaHeaderList extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-	
-			String idTrasformazioneS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
-			long idTrasformazione = Long.parseLong(idTrasformazioneS);
-			
-			String idTrasformazioneRispostaS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA);
-			long idTrasformazioneRisposta = Long.parseLong(idTrasformazioneRispostaS);
 			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
+			
+			String idPorta = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			
+			String idTrasformazioneS = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
+			long idTrasformazione = Long.parseLong(idTrasformazioneS);
+			
+			String idTrasformazioneRispostaS = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA);
+			long idTrasformazioneRisposta = Long.parseLong(idTrasformazioneRispostaS);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -87,7 +87,7 @@ public class PorteDelegateTrasformazioniRispostaHeaderList extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			List<TrasformazioneRegolaParametro> lista = porteDelegateCore.porteDelegateTrasformazioniRispostaHeaderList(Long.parseLong(idPorta), idTrasformazione, idTrasformazioneRisposta, ricerca);
 			
-			porteDelegateHelper.preparePorteDelegateTrasformazioniRispostaHeaderList(nomePorta, idTrasformazione, idTrasformazioneRisposta, ricerca, lista); 
+			porteDelegateHelper.preparePorteDelegateTrasformazioniRispostaHeaderList(idTrasformazione, idTrasformazioneRisposta, ricerca, lista); 
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

@@ -64,11 +64,11 @@ public class PorteApplicativeMTOMRequestList extends Action {
  
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String id = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-	
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+			
+			String id = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -80,7 +80,7 @@ public class PorteApplicativeMTOMRequestList extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore( );
 			List<MtomProcessorFlowParameter> lista = porteApplicativeCore.porteApplicativeMTOMRequestList(Integer.parseInt(id), ricerca);
 	
-			porteApplicativeHelper.preparePorteApplicativeMTOMRequestList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.preparePorteApplicativeMTOMRequestList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

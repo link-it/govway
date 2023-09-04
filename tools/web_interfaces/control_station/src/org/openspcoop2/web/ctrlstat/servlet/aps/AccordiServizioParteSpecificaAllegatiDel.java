@@ -74,14 +74,14 @@ public final class AccordiServizioParteSpecificaAllegatiDel extends Action {
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			
+			// Preparo il menu
+			apsHelper.makeMenu();
 
 			String objToRemove = apsHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			ArchiviCore archiviCore = new ArchiviCore(apsCore);
-
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			AccordoServizioParteSpecifica asps = null;
 			List<Long> idAllegati = new ArrayList<>();

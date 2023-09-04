@@ -73,6 +73,9 @@ public final class ConfigurazioneCanaliDel extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -119,10 +122,6 @@ public final class ConfigurazioneCanaliDel extends Action {
 			}
 
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
-
-			// Preparo il menu
-			confHelper.makeMenu();
-
 			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

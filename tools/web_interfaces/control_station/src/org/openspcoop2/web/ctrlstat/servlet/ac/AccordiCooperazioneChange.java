@@ -117,14 +117,17 @@ public final class AccordiCooperazioneChange extends Action {
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			acHelper.makeMenu();
+			
 			strutsBean.editMode = acHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			strutsBean.protocolPropertiesSet = acHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 
-			String id = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			String id = acHelper.getParametroLong(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			int idAcc = Integer.parseInt(id);
 			String descr = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
 			String referente = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE);
-			String versione = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
+			String versione = acHelper.getParametroInteger(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
 			String tipoProtocollo = acHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			String actionConfirm = acHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 			// patch per version spinner fino a che non si trova un modo piu' elegante
@@ -132,7 +135,7 @@ public final class AccordiCooperazioneChange extends Action {
 				if("0".equals(versione))
 					versione = "";
 			}*/
-			String privatoS = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
+			String privatoS = acHelper.getParametroBoolean(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
 			boolean privato = ServletUtils.isCheckBoxEnabled(privatoS);
 			String statoPackage = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 
@@ -142,9 +145,6 @@ public final class AccordiCooperazioneChange extends Action {
 
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 			SoggettiCore soggettiCore = new SoggettiCore(acCore);
-
-			// Preparo il menu
-			acHelper.makeMenu();
 
 			// prelevo l'accordo
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(idAcc);

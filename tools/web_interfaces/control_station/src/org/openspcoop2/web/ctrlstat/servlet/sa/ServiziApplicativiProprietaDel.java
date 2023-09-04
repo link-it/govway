@@ -73,9 +73,12 @@ public final class ServiziApplicativiProprietaDel extends Action {
 
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			// Preparo il menu
+			saHelper.makeMenu();
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			
-			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
+			String id = saHelper.getParametroLong(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
 			String objToRemove = saHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -107,9 +110,6 @@ public final class ServiziApplicativiProprietaDel extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			saCore.performUpdateOperation(userLogin, saHelper.smista(), sa);
-
-			// Preparo il menu
-			saHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

@@ -129,10 +129,14 @@ public final class PorteDelegateChange extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+			
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request).getValue();
-			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idPorta = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
-			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idsogg = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 			String statoPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
@@ -158,30 +162,30 @@ public final class PorteDelegateChange extends Action {
 
 			String messageEngine = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE);
 						
-			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			String idAsps = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null)
 				idAsps = "";
 			
 			BinaryParameter allegatoXacmlPolicy = porteDelegateHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
-			String idFruizione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			String idFruizione = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			if(idFruizione == null)
 				idFruizione = "";
 			
-			String idTab = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			String idTab = porteDelegateHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
-			String serviceBindingS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVICE_BINDING);
+			String serviceBindingS = porteDelegateHelper.getParametroServiceBinding(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVICE_BINDING);
 			ServiceBinding serviceBinding = null;
 			if(StringUtils.isNotEmpty(serviceBindingS))
 				serviceBinding = ServiceBinding.valueOf(serviceBindingS);
 			
-			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParametroBoolean(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 				
-			boolean datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA));
-			boolean datiAltroApi = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API));
+			boolean datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParametroBoolean(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA));
+			boolean datiAltroApi = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParametroBoolean(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API));
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
@@ -194,13 +198,6 @@ public final class PorteDelegateChange extends Action {
 					parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 				}
 			}
-
-			// check su oldNomePD
-			PageData pdOld =  ServletUtils.getPageDataFromSession(request, session);
-			String oldNomePD = pdOld.getHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD);
-			oldNomePD = (((oldNomePD != null) && !oldNomePD.equals("")) ? oldNomePD : nomePorta);
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
 
 			String postBackElementName = porteDelegateHelper.getPostBackElementName();
 			if(postBackElementName!=null && PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE.equals(postBackElementName)) {
@@ -278,9 +275,11 @@ public final class PorteDelegateChange extends Action {
 
 			
 			// Prendo la porta delegata
+			PortaDelegata pde = porteDelegateCore.getPortaDelegata(Integer.parseInt(idPorta));
+			// Salvo il vecchio nome della PA
+			String oldNomePD = pde.getNome();
 			IDPortaDelegata idpd = new IDPortaDelegata();
 			idpd.setNome(oldNomePD);
-			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idpd);
 			
 			Long idAspsLong = -1L;
 			if(idAsps.equals("")) {
@@ -745,6 +744,10 @@ public final class PorteDelegateChange extends Action {
 				String patternErogatore = nomeSoggettoErogatore;
 				String patternServizio = servizio;
 				String patternAzione = azione;
+				
+				if(nomePorta == null) {
+					nomePorta = pde.getNome();
+				}
 
 				if (descr == null) {
 					descr = pde.getDescrizione();
@@ -1098,9 +1101,6 @@ public final class PorteDelegateChange extends Action {
 				if (azioniList != null)
 					numAzioni = azioniList.length;
 
-				// setto oldNomePD
-				pd.addHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD, oldNomePD);
-
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();
 
@@ -1273,9 +1273,6 @@ public final class PorteDelegateChange extends Action {
 				int numAzioni = 0;
 				if (azioniList != null)
 					numAzioni = azioniList.length;
-
-				// setto oldNomePD
-				pd.addHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD, oldNomePD);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();

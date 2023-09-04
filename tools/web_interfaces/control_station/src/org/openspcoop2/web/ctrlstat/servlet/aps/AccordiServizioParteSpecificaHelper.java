@@ -2084,7 +2084,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Parameter pTipoSoggettoFruitore = null;
 			Parameter pNomeSoggettoFruitore = null;
 			if(gestioneFruitori) {
-				tipoSoggettoFruitore = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
+				tipoSoggettoFruitore = this.getParametroTipoSoggetto(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
 				nomeSoggettoFruitore = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
 				idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
 				pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
@@ -2140,11 +2140,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				List<Parameter> listErogazioniChange = new ArrayList<>();
 				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
-				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 				listErogazioniChange.add(pIdServizio);
-				listErogazioniChange.add(pNomeServizio);
-				listErogazioniChange.add(pTipoServizio);
 				if(gestioneFruitori) {
 					listErogazioniChange.add(pNomeSoggettoFruitore);
 					listErogazioniChange.add(pTipoSoggettoFruitore);
@@ -2530,10 +2526,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				List<DataElement> e = new ArrayList<>();
 
 				Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+asps.getIdSoggetto());
-				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-				@SuppressWarnings("unused")
-				Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
 
 				String uriASPS = this.idServizioFactory.getUriFromAccordo(asps);
 				
@@ -2544,7 +2536,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setUrl(
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
-					pNomeServizio, pTipoServizio, pIdsoggErogatore);
+					pIdsoggErogatore);
 				de.setValue(this.getLabelNomeServizio(protocollo, asps.getTipo(), asps.getNome(), asps.getVersione()));
 				de.setIdToRemove(uriASPS);
 				e.add(de);
@@ -2840,7 +2832,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setUrl(
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
-								pNomeServizio, pTipoServizio, pIdsoggErogatore,
+								pIdsoggErogatore,
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI,"true"),
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,"true"));
 						// +"&nomeprov="+soggErogatore+"&tipoprov="+tipoSoggEr);
@@ -2927,7 +2919,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setUrl(
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,
-							pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pIdFruitore,
+							pId, pIdSogg, pIdFruitore,
 							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI,"true"),
 							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,"true"));
 					if (contaListe) {
@@ -2980,7 +2972,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setUrl(
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST,
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
-								pNomeServizio, pTipoServizio, pIdsoggErogatore);
+								pIdsoggErogatore);
 						// +"&nomeprov="+soggErogatore+"&tipoprov="+tipoSoggEr);
 						if (contaListe) {
 							// BugFix OP-674
@@ -3087,7 +3079,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String idSoggettoErogatoreDelServizio = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
+			String idSoggettoErogatoreDelServizio = this.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
 				PageData oldPD = ServletUtils.getPageDataFromSession(this.request, this.session);
 
@@ -3252,7 +3244,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				else{
 					de.setUrl(
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,
-							pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pMyId,
+							pId, pIdSogg, 
+//							pIdSoggettoErogatore, 
+							pNomeServizio, pTipoServizio, pMyId,
 							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI,"true"),
 							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,"true"));
 					if (contaListe) {
@@ -3439,7 +3433,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			//questo e' il soggetto virtuale
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
-				idSoggettoErogatoreDelServizio = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
+				idSoggettoErogatoreDelServizio = this.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			}
 			
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
@@ -3462,9 +3456,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
 				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
-				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-				lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
+				lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio));
 				String labelConfigurazione = gestioneConfigurazioni ? ErogazioniCostanti.LABEL_ASPS_GESTIONE_CONFIGURAZIONI : 
 					(gestioneGruppi ? MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, labelAzioni) : AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
 				
@@ -3642,7 +3634,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 	
 					Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, paAssociata.getNome());
-					Parameter pIdNome = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, paAssociata.getNome());
 					Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, paAssociata.getIdSoggetto() + "");
 					Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+paAssociata.getId());
 					Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, asps.getId()+ "");
@@ -3650,8 +3641,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					Parameter pIdPortaPerSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, ""+paAssociata.getId());
 					Parameter pIdTAb = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, ""+idTab);
 					
-					@SuppressWarnings("unused")
-					Parameter pConfigurazioneDati = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
 					Parameter pConfigurazioneAltroPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA, Costanti.CHECK_BOX_ENABLED_TRUE);
 	
 					// spostata direttamente nell'elenco delle erogazioni
@@ -3718,10 +3707,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						if(urlCambiaStato) {
 							Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
-							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps, pAbilita);
+							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pIdPorta,pIdAsps, pAbilita);
 							
 							DataElementImage image = new DataElementImage();
-							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps, pAbilita,pIdTAb);
+							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pIdPorta,pIdAsps, pAbilita,pIdTAb);
 							image.setToolTip(statoMapping);
 							image.setImage(statoPA ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
 							
@@ -3761,10 +3750,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						if(urlCambiaStato) {
 							Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
-							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps, pAbilita);
+							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pIdPorta,pIdAsps, pAbilita);
 							
 							DataElementImage image = new DataElementImage();
-							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps, pAbilita,pIdTAb);
+							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pIdPorta,pIdAsps, pAbilita,pIdTAb);
 							image.setToolTip(statoMapping);
 							image.setImage(statoPA ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
 							
@@ -4400,7 +4389,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de = new DataElement();
 							if(visualizzazioneTabs)
 								de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO);
-							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdNome,pIdAsps);
+							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdAsps);
 							if(visualizzazioneTabs) {
 								setStatoTracciamento(de, paAssociata.getCorrelazioneApplicativa(), 
 										paAssociata.getCorrelazioneApplicativaRisposta(), paAssociata.getTracciamento(), configurazioneGenerale);	
@@ -4413,7 +4402,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							if(visualizzazioneTabs) {
 								DataElementImage image = new DataElementImage();
 								
-								image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdNome,pIdAsps,pIdTAb);
+								image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdAsps,pIdTAb);
 								image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO));
 								image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 								
@@ -4546,7 +4535,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							if(visualizzazioneTabs) {
 								DataElementImage image = new DataElementImage();
 								
-								image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneAltroPorta,pIdTAb);
+								image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pIdPorta,pIdAsps,pConfigurazioneAltroPorta,pIdTAb);
 								image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE));
 								image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 								
@@ -4560,7 +4549,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de = new DataElement();
 							if(visualizzazioneTabs)
 								de.setLabel(extendedServletList.getListTitle(this));
-							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST, pIdPorta,pIdNome,pIdPorta, pIdSogg, pNomePorta, pIdAsps, pConfigurazioneAltroPorta);
+							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST, pIdPorta, pIdSogg, pNomePorta, pIdAsps, pConfigurazioneAltroPorta);
 							if(visualizzazioneTabs) {
 								int numExtended = extendedServletList.sizeList(paAssociata);
 								String stato = extendedServletList.getStatoTab(this,paAssociata,mapping.isDefault());
@@ -4578,7 +4567,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							if(visualizzazioneTabs) {
 								DataElementImage image = new DataElementImage();
 								
-								image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST, pIdPorta,pIdNome,pIdPorta, pIdSogg, pNomePorta, pIdAsps, pConfigurazioneAltroPorta,pIdTAb);
+								image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST, pIdPorta, pIdSogg, pNomePorta, pIdAsps, pConfigurazioneAltroPorta,pIdTAb);
 								image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,extendedServletList.getListTitle(this)));
 								image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 								
@@ -5022,8 +5011,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setUrl(
 						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
 						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,pd.getNome())
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId())
 						);
 				if (contaListe) {
 					int numCorrelazione = 0;
@@ -5037,8 +5025,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST,
 						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,pd.getNome())
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId())
 						);
 				if (contaListe) {
 					int numCorrelazione = 0;
@@ -5053,8 +5040,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST,
 							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,pd.getNome())
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId())
 							);
 					if (contaListe) {
 						int numExtended = extendedServletList.sizeList(pd);
@@ -5088,8 +5074,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggFruitoreDelServizio),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione),
-					parametroTipoSoggettoFruitore, parametroNomeSoggettoFruitore);
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione)
+//					,parametroTipoSoggettoFruitore, parametroNomeSoggettoFruitore
+					);
 
 			IExtendedListServlet extendedServletList = this.core.getExtendedServletPortaDelegata();
 			
@@ -5313,10 +5300,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String labelAzioni = this.getLabelAzioni(serviceBindingMessage);
 			if(gestioneFruitori) {
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
-					Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-					Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
-					lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio, 
+					lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio, 
 							parametroTipoSoggettoFruitore, parametroNomeSoggettoFruitore));
 					String labelConfigurazione = gestioneConfigurazioni ? ErogazioniCostanti.LABEL_ASPS_GESTIONE_CONFIGURAZIONI : 
 						(gestioneGruppi ? MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, labelAzioni) : AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
@@ -5428,7 +5413,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					List<DataElement> e = new ArrayList<>();
 	
 					Parameter pIdPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, "" + pdAssociata.getId());
-					Parameter pNomePD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, pdAssociata.getNome());
+//					Parameter pNomePD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, pdAssociata.getNome());
 					Parameter pIdSoggPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, pdAssociata.getIdSoggetto() + "");
 					Parameter pIdTAb = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, ""+idTab);
 					
@@ -5492,7 +5477,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(!mapping.isDefault()) {
 		                       DataElementImage image = new DataElementImage();
 		                       
-		                       image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
+		                       image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE,pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
 		                       image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO));
 		                       image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 		                       
@@ -5503,10 +5488,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		               
 						if(urlCambiaStato) {
 							Parameter pAbilita = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA,  (statoPD ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
-							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
+							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
 							
 							DataElementImage image = new DataElementImage();
-		                    image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita,pIdTAb);
+		                    image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita,pIdTAb);
 		                    image.setToolTip(statoMapping);
 		                    image.setImage(statoPD ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
 		                      
@@ -5546,10 +5531,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						if(urlCambiaStato) {
 							Parameter pAbilita = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA,  (statoPD ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
-							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
+							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD, pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
 							
 							DataElementImage image = new DataElementImage();
-		                    image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita,pIdTAb);
+		                    image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD, pIdSoggPD, pIdAsps, pIdFruitore, pAbilita,pIdTAb);
 		                    image.setToolTip(statoMapping);
 		                    image.setImage(statoPD ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
 		                      
@@ -5566,7 +5551,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						DataElement de = new DataElement();
 						de.setValue(mapping.getDescrizione());
 						if(gestioneGruppi && !mapping.isDefault()) {
-							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE,pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 						}
 						e.add(de);
 					}
@@ -5611,7 +5596,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							DataElementImage image = new DataElementImage();
 							
 							if(!mapping.isDefault()) {
-								de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+								de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 								if(this.isModalitaCompleta()) {
 									ServletUtils.setDataElementVisualizzaLabel(de, countAzioni);
 								}
@@ -5619,7 +5604,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									de.setValue(nomiAzioni);
 								}
 								de.setToolTip(nomiAzioni);
-								image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
+								image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
 								image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELENCO_AZIONI_GRUPPI_PREFIX+labelAzioni));
 								image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 								
@@ -5642,7 +5627,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										}
 									}
 									String nomiAzioniNonRidefinite = sb.toString();
-									de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+									de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 									if(this.isModalitaCompleta()) {
 										ServletUtils.setDataElementVisualizzaLabel(de, countAzioniRidefinite);
 									}
@@ -5651,7 +5636,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									}
 									de.setToolTip(nomiAzioniNonRidefinite);
 									
-									image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
+									image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
 									image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELENCO_AZIONI_GRUPPI_PREFIX+labelAzioni));
 									image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 									
@@ -5756,7 +5741,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										else {
 											de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO);
 										}
-										de.setUrl(servletConnettore, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+										de.setUrl(servletConnettore, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 										String tooltipConnettore = this.getLabelConnettore(connettore,true,true);
 										de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 									} else {
@@ -5767,7 +5752,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										else {
 											de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_DEFAULT);
 										}
-										de.setUrl(servletConnettore, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+										de.setUrl(servletConnettore, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 										String tooltipConnettore = this.getLabelConnettore(fru.getConnettore(),true,true);
 										de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 										
@@ -5776,7 +5761,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									
 									if(visualizzazioneTabs) {
 										DataElementImage image = new DataElementImage();
-										image.setUrl(servletConnettore, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
+										image.setUrl(servletConnettore, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
 										image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
 										image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 										de.setImage(image);
@@ -5800,7 +5785,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								if(visualizzazioneTabs) {
 									if(checkConnettore) {	
 										DataElementImage image = new DataElementImage();
-										image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb,
+										image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb,
 												new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""),
 												new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "true"),
 												new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "true"));
@@ -5812,7 +5797,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									DataElement deVerificaConnettore = new DataElement();
 									if(checkConnettore) {								
 										deVerificaConnettore.setValue(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_VALORE_LINK);
-										deVerificaConnettore.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,
+										deVerificaConnettore.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,
 												new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""),
 												new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "true"),
 												new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "true"));
@@ -5831,7 +5816,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						DataElement de = new DataElement();
 						if(visualizzazioneTabs)
 							de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI);
-						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 						if(visualizzazioneTabs) {
 							this.setStatoControlloAccessiPortaDelegata(protocollo, pdAssociata, de); 
 						}
@@ -5842,7 +5827,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.allineaTdAlCentro();
 						if(visualizzazioneTabs) {
 							DataElementImage image = new DataElementImage();
-							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
+							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
 							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI));
 							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 							de.setImage(image);
@@ -5893,7 +5878,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de = new DataElement();
 						if(visualizzazioneTabs)
 							de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
-						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 						if(visualizzazioneTabs) {
 							setStatoValidazioneContenuti(de, pdAssociata.getValidazioneContenutiApplicativi(), apc.getFormatoSpecifica());
 						}
@@ -5904,7 +5889,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.allineaTdAlCentro();
 						if(visualizzazioneTabs) {
 							DataElementImage image = new DataElementImage();
-							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
+							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
 							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI));
 							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 							de.setImage(image);
@@ -5916,7 +5901,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(visualizzazioneTabs)
 							de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RESPONSE_CACHING);
 						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 						if(visualizzazioneTabs) {
 							setStatoCachingRisposta(de, pdAssociata.getResponseCaching(), configurazioneGenerale);
 						}
@@ -5927,7 +5912,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.allineaTdAlCentro();
 						if(visualizzazioneTabs) {
 							DataElementImage image = new DataElementImage();
-							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
+							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
 							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RESPONSE_CACHING));
 							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 							de.setImage(image);
@@ -6040,7 +6025,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de = new DataElement();
 						if(visualizzazioneTabs)
 							de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DUMP_CONFIGURAZIONE);
-						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 						if(visualizzazioneTabs) {
 							setStatoDump(de, pdAssociata.getDump(), configurazioneGenerale, false);
 						}
@@ -6051,7 +6036,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.allineaTdAlCentro();
 						if(visualizzazioneTabs) {
 							DataElementImage image = new DataElementImage();
-							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
+							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore,pIdTAb);
 							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DUMP_CONFIGURAZIONE));
 							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 							de.setImage(image);
@@ -6134,7 +6119,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de = new DataElement();
 							if(visualizzazioneTabs)
 								de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE);
-							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta);
+							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta);
 							if(visualizzazioneTabs) {
 								setStatoOpzioniAvanzate(de, 
 										protocollo, serviceBindingMessage,
@@ -6150,7 +6135,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							}
 							if(visualizzazioneTabs) {
 								DataElementImage image = new DataElementImage();
-								image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta,pIdTAb);
+								image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta,pIdTAb);
 								image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE));
 								image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 								de.setImage(image);
@@ -6163,7 +6148,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de = new DataElement();
 							if(visualizzazioneTabs)
 								de.setLabel(extendedServletList.getListTitle(this));
-							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta);
+							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta);
 							if(visualizzazioneTabs) {
 								int numExtended = extendedServletList.sizeList(pdAssociata);
 								String stato = extendedServletList.getStatoTab(this,pdAssociata,mapping.isDefault());
@@ -6180,7 +6165,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de.allineaTdAlCentro();
 							if(visualizzazioneTabs) {
 								DataElementImage image = new DataElementImage();
-								image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta,pIdTAb);
+								image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta,pIdTAb);
 								image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,extendedServletList.getListTitle(this)));
 								image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 								de.setImage(image);
@@ -9124,7 +9109,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,
 							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID,idServizio),
 							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoFruitore ),
-							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio),
+							// new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio),
 							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio),
 							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio),
 							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idServizioFruitore));
@@ -10124,15 +10109,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		List<Parameter> listaParams = new ArrayList<>();
 		
 		Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
-		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 		String labelApsChange = null;
 		
 		List<Parameter> listParametersErogazioniChange = new ArrayList<>();
 		listParametersErogazioniChange.add(pIdServizio);
-		listParametersErogazioniChange.add(pNomeServizio);
-		listParametersErogazioniChange.add(pTipoServizio);
 		if(gestioneFruitori) {
 			Parameter pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
 			Parameter pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);

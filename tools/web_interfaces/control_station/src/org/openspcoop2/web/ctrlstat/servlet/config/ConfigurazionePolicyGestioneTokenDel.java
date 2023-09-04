@@ -75,12 +75,12 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
-			ConfigurazioneCore confCore = new ConfigurazioneCore();
-
 			// Preparo il menu
 			confHelper.makeMenu();
+			
+			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			String infoType = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			String infoType = confHelper.getParametroInfoType(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			if(infoType==null) {
 				infoType = ServletUtils.getObjectFromSession(request, session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}

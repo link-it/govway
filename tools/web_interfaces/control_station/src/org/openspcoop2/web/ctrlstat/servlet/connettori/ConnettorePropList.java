@@ -84,29 +84,29 @@ public final class ConnettorePropList extends Action {
 		try {
 			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 			
+			// Preparo il menu
+			connettoriHelper.makeMenu();
+			
 			ConnettoriCore connettoriCore = new ConnettoriCore();
 			SoggettiCore soggettiCore = new SoggettiCore(connettoriCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(connettoriCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(connettoriCore);
 			
 			String servlet = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET);
-			String id = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID);
+			String id = connettoriHelper.getParametroLong(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID);
 //			String nomeprov = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO);
 //			String tipoprov = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO);
 //			String nomeservizio = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO);
 //			String tiposervizio = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO);
-			String myId = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID);
+			String myId = connettoriHelper.getParametroLong(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID);
 //			String correlato = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 //			String idSoggErogatore = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE);
 //			String nomeservizioApplicativo = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO);
-			String idsil = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO);
+			String idsil = connettoriHelper.getParametroLong(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO);
 			
 			String tipoAccordo = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-	
-			// Preparo il menu
-			connettoriHelper.makeMenu();
 	
 			// Preparo la lista
 			Connettore connettore = null;

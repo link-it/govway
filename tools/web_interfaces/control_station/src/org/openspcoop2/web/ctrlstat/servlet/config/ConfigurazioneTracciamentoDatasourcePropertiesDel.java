@@ -74,8 +74,11 @@ public final class ConfigurazioneTracciamentoDatasourcePropertiesDel extends Act
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
-			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
+			String id = confHelper.getParametroInteger(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
 			int idInt = Integer.parseInt(id);
 			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -108,9 +111,6 @@ public final class ConfigurazioneTracciamentoDatasourcePropertiesDel extends Act
 			}
 
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Preparo la lista
 			newConfigurazione = confCore.getConfigurazioneGenerale();

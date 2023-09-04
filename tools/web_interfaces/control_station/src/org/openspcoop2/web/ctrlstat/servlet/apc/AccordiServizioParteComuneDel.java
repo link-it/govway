@@ -74,6 +74,10 @@ public final class AccordiServizioParteComuneDel extends Action {
 
 		try {
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
+			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false).getValue();
 			
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
@@ -112,12 +116,6 @@ public final class AccordiServizioParteComuneDel extends Action {
 			if (inUsoMessage.length()>0) {
 				pd.setMessage(inUsoMessage.toString());
 			}
-
-			// con.commit();
-			// con.setAutoCommit(true);
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// preparo la lista
 			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);

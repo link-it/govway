@@ -88,10 +88,13 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 			FileUploadForm fileUpload = (FileUploadForm) form;
 			
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
+			// Preparo il menu
+			acHelper.makeMenu();
+			
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 
-			String idAllegato = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO);
-			String idAccordo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO);
+			String idAllegato = acHelper.getParametroLong(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO);
+			String idAccordo = acHelper.getParametroLong(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO);
 			String nomeDocumento = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO);
 			long idAllegatoLong = Long.parseLong(idAllegato);
 			long idAccordoLong = Long.parseLong(idAccordo);
@@ -105,9 +108,6 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 			ArchiviCore archiviCore = new ArchiviCore(acCore);
-
-			// Preparo il menu
-			acHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(idAccordoLong);

@@ -72,12 +72,15 @@ public final class ServiziApplicativiRuoliDel extends Action {
 
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			// Preparo il menu
+			saHelper.makeMenu();
 
 			String objToRemove =saHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 
-			String idsil = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
+			String idsil = saHelper.getParametroLong(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 			int idSilInt = Integer.parseInt(idsil);
 			
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
@@ -96,10 +99,6 @@ public final class ServiziApplicativiRuoliDel extends Action {
 			}// chiudo for
 
 			saCore.performUpdateOperation(userLogin, saHelper.smista(), sa);
-			
-
-			// Preparo il menu
-			saHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

@@ -68,14 +68,14 @@ public final class PorteDelegateServizioApplicativoList extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-	
-			String tokenList = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION);
-			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
 			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
+			
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+	
+			String tokenList = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -93,7 +93,7 @@ public final class PorteDelegateServizioApplicativoList extends Action {
 					:
 					porteDelegateCore.porteDelegateServizioApplicativoList(Integer.parseInt(id), ricerca);
 	
-			porteDelegateHelper.preparePorteDelegateServizioApplicativoList(nomePorta, ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateServizioApplicativoList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

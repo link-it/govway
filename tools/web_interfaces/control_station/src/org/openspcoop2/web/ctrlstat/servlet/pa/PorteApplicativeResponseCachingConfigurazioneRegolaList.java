@@ -69,15 +69,12 @@ public final class PorteApplicativeResponseCachingConfigurazioneRegolaList exten
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 			
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			// String idsogg = porteApplicativeHelper.getParameter("idsogg");
-			// int soggInt = Integer.parseInt(idsogg);
-			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+
+			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -91,7 +88,7 @@ public final class PorteApplicativeResponseCachingConfigurazioneRegolaList exten
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta));
 			ResponseCachingConfigurazione configurazione =  portaApplicativa.getResponseCaching();
 			
-			porteApplicativeHelper.prepareResponseCachingConfigurazioneRegolaList(nomePorta, ricerca, lista, configurazione.getCacheTimeoutSeconds());
+			porteApplicativeHelper.prepareResponseCachingConfigurazioneRegolaList(ricerca, lista, configurazione.getCacheTimeoutSeconds());
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);

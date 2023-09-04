@@ -102,10 +102,13 @@ public class ConfigurazioneAllarmiChange extends Action {
 			
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			// controllo primo accesso
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FIRST_TIME);
 			
-			String idAllarmeS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME);
+			String idAllarmeS = confHelper.getParametroLong(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME);
 			
 			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA);
 			RuoloPorta ruoloPorta = null;
@@ -193,10 +196,6 @@ public class ConfigurazioneAllarmiChange extends Action {
 				}
 				
 			}
-			
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 			
 			String postBackElementName = confHelper.getPostBackElementName();
 			if (postBackElementName != null) {

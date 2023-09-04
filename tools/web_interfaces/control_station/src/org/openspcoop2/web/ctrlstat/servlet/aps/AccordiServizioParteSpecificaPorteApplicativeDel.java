@@ -79,12 +79,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			/*
-			 * Validate the request parameters specified by the user Note: Basic
-			 * field validation done in porteDomForm.java Business logic
-			 * validation done in porteDomAdd.java
-			 */
-			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+
+			// Preparo il menu
+			apsHelper.makeMenu();
+
+			String id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			long idServizioLong = Long.parseLong(id);
 			String objToRemove = apsHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			// gli id contenuti nell'array sono i nomi delle porte applicative
@@ -93,9 +92,6 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			// prendo l'id del soggetto erogatore lo propago
 			// lo metto nel pd come campo hidden
 			pd.setHidden(pdold.getHidden());
-
-			// Preparo il menu
-			apsHelper.makeMenu();
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 

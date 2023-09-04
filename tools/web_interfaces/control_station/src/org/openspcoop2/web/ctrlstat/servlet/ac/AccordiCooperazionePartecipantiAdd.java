@@ -80,8 +80,11 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			acHelper.makeMenu();
 
-			String idAccordoCoop = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			String idAccordoCoop = acHelper.getParametroLong(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			String partecipante = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);
 
 			/**String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
@@ -90,9 +93,6 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 			SoggettiCore soggettiCore = new SoggettiCore(acCore);
-
-			// Preparo il menu
-			acHelper.makeMenu();
 
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(idAccordoCoop));
 			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);

@@ -529,7 +529,6 @@ public class PorteDelegateCostanti {
 	public static final String PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA = CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA;
 	public static final String PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE = "integrazione";
 	public static final String PARAMETRO_PORTE_DELEGATE_NOME = "nome";
-	public static final String PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD = "oldNomePD";
 	public static final String PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO = "servizioApplicativo";
 	public static final String PARAMETRO_PORTE_DELEGATE_MODE = CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA;
 	public static final String PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML = CostantiControlStation.PARAMETRO_ELEMENTO_XML;

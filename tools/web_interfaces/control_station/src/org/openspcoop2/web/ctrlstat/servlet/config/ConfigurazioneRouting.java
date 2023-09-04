@@ -79,6 +79,9 @@ public final class ConfigurazioneRouting extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String tiporotta = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA);
 			if (tiporotta == null) {
@@ -93,9 +96,6 @@ public final class ConfigurazioneRouting extends Action {
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			SoggettiCore soggettiCore = new SoggettiCore(confCore);
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Prendo la lista di registri e la metto in un array
 			// aggiungendo il campo "all"

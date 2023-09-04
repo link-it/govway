@@ -70,16 +70,16 @@ public final class PorteDelegateProprietaAutenticazioneList extends Action {
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 			
-			String idTab = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			// Preparo il menu
+			porteDelegateHelper.makeMenu();
+			
+			String idPorta = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			
+			String idTab = porteDelegateHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
-	
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -91,7 +91,7 @@ public final class PorteDelegateProprietaAutenticazioneList extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			List<Proprieta> lista = porteDelegateCore.porteDelegateAutenticazioneCustomPropList(Integer.parseInt(idPorta), ricerca);
 	
-			porteDelegateHelper.preparePorteDelegateAutenticazioneCustomPropList(nomePorta, ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateAutenticazioneCustomPropList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

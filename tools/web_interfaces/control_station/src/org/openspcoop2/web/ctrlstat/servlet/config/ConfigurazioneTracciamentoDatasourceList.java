@@ -69,13 +69,13 @@ public final class ConfigurazioneTracciamentoDatasourceList extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
 			Tracciamento t = newConfigurazione.getTracciamento();
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Preparo la lista
 			List<OpenspcoopSorgenteDati> lista = null;

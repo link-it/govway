@@ -74,7 +74,11 @@ public final class PorteApplicativeConnettoriMultipliProprietaDel extends Action
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			
+			// Preparo il menu
+			porteApplicativeHelper.makeMenu();
+			
+			String idPorta = porteApplicativeHelper.getParametroLong(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String nomeSAConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
 			int idInt = Integer.parseInt(idPorta);
 			String objToRemove = porteApplicativeHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
@@ -113,9 +117,6 @@ public final class PorteApplicativeConnettoriMultipliProprietaDel extends Action
 			
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
-			// Preparo il menu
-			porteApplicativeHelper.makeMenu();
-			
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			oldPaSA = null;
 			for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
@@ -139,7 +140,7 @@ public final class PorteApplicativeConnettoriMultipliProprietaDel extends Action
 			
 			List<Proprieta> lista = porteApplicativeCore.porteApplicativeConnettoriMultipliPropList(idPaSa, ricerca);
 
-			porteApplicativeHelper.preparePorteApplicativeConnettoriMultipliPropList(pa.getNome(), ricerca, lista);
+			porteApplicativeHelper.preparePorteApplicativeConnettoriMultipliPropList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI

@@ -69,11 +69,11 @@ public final class RuoliList extends Action {
 
 		try {
 			RuoliHelper ruoliHelper = new RuoliHelper(request, pd, session);
-
-			RuoliCore ruoliCore = new RuoliCore();
-
+			
 			// Preparo il menu
 			ruoliHelper.makeMenu();
+
+			RuoliCore ruoliCore = new RuoliCore();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

@@ -68,12 +68,12 @@ public class ApiList  extends Action {
 	
 		try {
 			ApiHelper apiHelper = new ApiHelper(request, pd, session);
+			
+			apiHelper.makeMenu();
 
 			String tipoAccordo = apiHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-			
-			apiHelper.makeMenu();
 
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			

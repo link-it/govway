@@ -79,6 +79,9 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String id = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
 			int idFiltro = Integer.parseInt(id);
@@ -102,9 +105,6 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 			tipiOgg[0] = "-";
 			for (int i = 0; i < tipiOggTmp.length; i++)
 				tipiOgg[i+1] = tipiOggTmp[i];
-
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Prendo il filtro
 			Filtro f = confCore.getFiltro((Long.valueOf(idFiltro)).longValue());

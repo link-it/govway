@@ -80,6 +80,9 @@ public final class ConfigurazioneRouteAdd extends Action {
 
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
+			
+			// Preparo il menu
+			confHelper.makeMenu();
 
 			String nome = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
 			String tipo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -107,9 +110,6 @@ public final class ConfigurazioneRouteAdd extends Action {
 				tipiSoggettiPerRotta.addAll(soggettiCore.getTipiSoggettiGestitiProtocollo(soggettiCore.getProtocolloAssociatoTipoSoggetto(tipo)));
 				tipiSoggettiLabelPerProtocollo = tipiSoggettiPerRotta.toArray(new String[1]);
 			}
-			
-			// Preparo il menu
-			confHelper.makeMenu();
 
 			// Prendo la lista di registri e la metto in un array
 			// aggiungendo il campo "all"

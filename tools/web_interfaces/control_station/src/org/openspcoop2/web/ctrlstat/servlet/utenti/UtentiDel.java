@@ -80,13 +80,13 @@ public final class UtentiDel extends Action {
 		
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
+			
+			// Preparo il menu
+			utentiHelper.makeMenu();
 	
 			String objToRemove = utentiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			String singleSuServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
 			String singleSuAccordiCooperazione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
-	
-			// Preparo il menu
-			utentiHelper.makeMenu();
 	
 			UtentiCore utentiCore = new UtentiCore();
 			SoggettiCore soggettiCore = new SoggettiCore(utentiCore);

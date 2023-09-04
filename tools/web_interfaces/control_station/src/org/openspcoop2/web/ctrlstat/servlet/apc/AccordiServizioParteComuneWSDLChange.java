@@ -130,13 +130,16 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 		try {
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
 			
+			// Preparo il menu
+			apcHelper.makeMenu();
+			
 			boolean isModalitaAvanzata = apcHelper.isModalitaAvanzata();
 			
 			String actionConfirm = apcHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
 			strutsBean.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
-			strutsBean.id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			strutsBean.id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			strutsBean.tipo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
 			strutsBean.wsdl = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
 			strutsBean.tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
@@ -189,14 +192,11 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			long idAccordoLong = Long.parseLong(strutsBean.id);
 			
-			String apiGestioneParziale = apcHelper.getParameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
+			String apiGestioneParziale = apcHelper.getParametroApiGestioneParziale(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
 			if(apiGestioneParziale == null) {
 				apiGestioneParziale = "";
 			}
 			boolean isGestioneAllegati = apiGestioneParziale.equals(ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE);
-
-			// Preparo il menu
-			apcHelper.makeMenu();
 
 			// Prendo il nome e il wsdl attuale dell'accordo
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();

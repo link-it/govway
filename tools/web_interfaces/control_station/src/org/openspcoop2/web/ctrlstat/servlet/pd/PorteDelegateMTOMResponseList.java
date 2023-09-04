@@ -66,11 +66,11 @@ public class PorteDelegateMTOMResponseList extends Action {
 		
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-	
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
+			
+			String id = porteDelegateHelper.getParametroLong(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 	
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -82,7 +82,7 @@ public class PorteDelegateMTOMResponseList extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			List<MtomProcessorFlowParameter> lista = porteDelegateCore.porteDelegateMTOMResponseList(Integer.parseInt(id), ricerca);
 	
-			porteDelegateHelper.preparePorteDelegateMTOMResponseList(nomePorta, ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateMTOMResponseList(ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

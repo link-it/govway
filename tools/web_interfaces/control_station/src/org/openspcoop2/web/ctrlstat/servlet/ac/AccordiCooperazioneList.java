@@ -70,14 +70,14 @@ public final class AccordiCooperazioneList extends Action {
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			acHelper.makeMenu();
+			
 			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
 				tipoSICA = null;
 			
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
-
-			// Preparo il menu
-			acHelper.makeMenu();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

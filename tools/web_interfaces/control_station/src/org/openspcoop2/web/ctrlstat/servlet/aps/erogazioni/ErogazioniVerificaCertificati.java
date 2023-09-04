@@ -126,6 +126,9 @@ public class ErogazioniVerificaCertificati  extends Action {
 		try {
 			ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
 			
+			// Preparo il menu
+			apsHelper.makeMenu();
+			
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
@@ -142,12 +145,12 @@ public class ErogazioniVerificaCertificati  extends Action {
 				soloModI = "true".equalsIgnoreCase(par);
 			}
 						
-			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			String id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			long idInt  = Long.parseLong(id);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idInt);
-			String idsogg = apsHelper.getParameter(CostantiControlStation.PARAMETRO_ID_SOGGETTO);
+			String idsogg = apsHelper.getParametroLong(CostantiControlStation.PARAMETRO_ID_SOGGETTO);
 			
-			String tipoSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
+			String tipoSoggettoFruitore = apsHelper.getParametroTipoSoggetto(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
 			String nomeSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
 			IDSoggetto idSoggettoFruitore = null;
 			if(tipoSoggettoFruitore!=null && !"".equals(tipoSoggettoFruitore) &&
@@ -184,9 +187,6 @@ public class ErogazioniVerificaCertificati  extends Action {
 				idFruizione = fruitore.getId()+"";
 			}
 			
-			// Preparo il menu
-			apsHelper.makeMenu();
-						
 			// Prendo la lista di aliases
 			List<String> aliases = apsCore.getJmxPdDAliases();
 			if(aliases==null || aliases.isEmpty()){
@@ -208,8 +208,6 @@ public class ErogazioniVerificaCertificati  extends Action {
 			// setto la barra del titolo
 			List<Parameter> listParameterChange = new ArrayList<>();
 			Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+asps.getIdSoggetto());
-			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 			Parameter pTipoSoggettoFruitore = null;
 			Parameter pNomeSoggettoFruitore = null;
 			if(gestioneFruitori) {
@@ -218,8 +216,6 @@ public class ErogazioniVerificaCertificati  extends Action {
 			}
 			
 			listParameterChange.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));
-			listParameterChange.add(pNomeServizio);
-			listParameterChange.add(pTipoServizio);
 			listParameterChange.add(pIdsoggErogatore);
 			
 			List<Parameter> lstParm = new ArrayList<>();

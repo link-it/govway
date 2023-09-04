@@ -24,10 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.gruppi;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -35,8 +31,8 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -44,6 +40,10 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * GruppiChange
@@ -73,17 +73,17 @@ public final class GruppiChange extends Action {
 
 		try {
 			GruppiHelper gruppiHelper = new GruppiHelper(request, pd, session);
+			
+			// Preparo il menu
+			gruppiHelper.makeMenu();
 
-			String id = gruppiHelper.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_ID);
+			String id = gruppiHelper.getParametroLong(GruppiCostanti.PARAMETRO_GRUPPO_ID);
 			long gruppoId = Long.parseLong(id);
 			String nome = gruppiHelper.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_NOME);
 			String descrizione = gruppiHelper.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_DESCRIZIONE);
 			String serviceBinding = gruppiHelper.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_SERVICE_BINDING);
 			
 			GruppiCore gruppiCore = new GruppiCore();
-
-			// Preparo il menu
-			gruppiHelper.makeMenu();
 
 			// Prendo il gruppo
 			Gruppo gruppo  = gruppiCore.getGruppo(gruppoId);

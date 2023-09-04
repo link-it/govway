@@ -81,11 +81,14 @@ public final class ConfigurazioneHandlersServizioDel extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			
+			// Preparo il menu
+			confHelper.makeMenu();
+			
 			TipoPdD ruoloPorta = null;
 			String idPortaS = null;
 			ServiceBinding serviceBinding = null;
 			
-			String idTab = confHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			String idTab = confHelper.getParametroInteger(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!confHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
@@ -135,8 +138,6 @@ public final class ConfigurazioneHandlersServizioDel extends Action {
 			
 			// update sul db
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), oggettiDaAggiornare.toArray(new Object[oggettiDaAggiornare.size()]));
-			// Preparo il menu
-			confHelper.makeMenu();
 			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
