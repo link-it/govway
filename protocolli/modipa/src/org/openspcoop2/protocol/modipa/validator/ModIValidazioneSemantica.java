@@ -306,7 +306,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 							isRichiesta, prefixAuthorization,
 							checkAudienceByModIConfig);
 					
-					rsc = enrichTokenInfo(requestInfo);
+					rsc = enrichTokenInfo(requestInfo, sicurezzaMessaggio, sicurezzaAudit);
 				
 				}
 				
@@ -1108,7 +1108,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		return digestValue;
 	}
 	
-	private RemoteStoreConfig enrichTokenInfo(RequestInfo requestInfo) throws ProtocolException {
+	private RemoteStoreConfig enrichTokenInfo(RequestInfo requestInfo, boolean sicurezzaMessaggio, boolean sicurezzaAudit) throws ProtocolException {
 	
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		RemoteStoreConfig rsc = null;
@@ -1121,12 +1121,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				}
 				
 				SecurityToken securityTokenForContext = SecurityTokenUtilities.readSecurityToken(this.context);
-								
-				String kid = readKidFromToken(securityTokenForContext);
-				if(kid==null) {
-					return rsc;
-				}
-				
+										
 				Object oInformazioniTokenNormalizzate = null;
 				if(this.context!=null) {
 					oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
@@ -1139,6 +1134,19 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				}
 				if(clientId==null) {
 					return rsc;
+				}
+				
+				// NOTA: il kid DEVE essere preso dall'eventuale token di integrità, poichè il kid nell'access token è sempre uguale ed è quello della PDND
+				String kid = null;
+				if(sicurezzaMessaggio) {
+					kid = readKidFromTokenIntegrity(securityTokenForContext);
+				}
+				if(kid==null && sicurezzaAudit) {
+					kid = readKidFromTokenAudit(securityTokenForContext);
+				}
+				if(kid==null) {
+					// Altrimenti utilizzo la struttura dati per ospitare le informazioni sul clientId
+					kid = "ClientId--"+clientId;
 				}
 				
 				enrichTokenInfo(securityTokenForContext, informazioniTokenNormalizzate, requestInfo, rsc,
@@ -1165,12 +1173,22 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		
 		return this.modiProperties.getRemoteStoreConfigByTokenPolicy(tokenPolicy);
 	}
-	private String readKidFromToken(SecurityToken securityTokenForContext) throws UtilsException {
+	private String readKidFromTokenIntegrity(SecurityToken securityTokenForContext) throws UtilsException {
 		String kid = null;
-		if(securityTokenForContext!=null && securityTokenForContext.getAccessToken()!=null) {
-			kid = securityTokenForContext.getAccessToken().getKid();
+		if(securityTokenForContext!=null && securityTokenForContext.getIntegrity()!=null) {
+			kid = securityTokenForContext.getIntegrity().getKid();
 			if(kid==null) {
-				kid = securityTokenForContext.getAccessToken().getHeaderClaim("kid");
+				kid = securityTokenForContext.getIntegrity().getHeaderClaim("kid");
+			}
+		}
+		return kid;
+	}
+	private String readKidFromTokenAudit(SecurityToken securityTokenForContext) throws UtilsException {
+		String kid = null;
+		if(securityTokenForContext!=null && securityTokenForContext.getAudit()!=null) {
+			kid = securityTokenForContext.getAudit().getKid();
+			if(kid==null) {
+				kid = securityTokenForContext.getAudit().getHeaderClaim("kid");
 			}
 		}
 		return kid;
