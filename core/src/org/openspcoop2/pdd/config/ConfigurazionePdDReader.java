@@ -595,14 +595,12 @@ public class ConfigurazionePdDReader {
 										String check = FiltroRicercaPorteDelegate.PREFIX_PORTA_DELEGANTE + nomePorta + FiltroRicercaPorteDelegate.SUFFIX_PORTA_DELEGANTE;
 										if(msg.contains(check)){
 											keyForClean.add(key);
-											break;
 										}
 										else {
 											if(nomePorta_normalized!=null) {
 												String check_normalized = FiltroRicercaPorteDelegate.PREFIX_PORTA_DELEGANTE + nomePorta_normalized + FiltroRicercaPorteDelegate.SUFFIX_PORTA_DELEGANTE;
 												if(msg.contains(check_normalized)){
 													keyForClean.add(key);
-													break;
 												}
 											}
 										}
@@ -737,14 +735,12 @@ public class ConfigurazionePdDReader {
 										String check = FiltroRicercaPorteApplicative.PREFIX_PORTA_DELEGANTE + nomePorta + FiltroRicercaPorteApplicative.SUFFIX_PORTA_DELEGANTE;
 										if(msg.contains(check)){
 											keyForClean.add(key);
-											break;
 										}
 										else {
 											if(nomePorta_normalized!=null) {
 												String check_normalized = FiltroRicercaPorteApplicative.PREFIX_PORTA_DELEGANTE + nomePorta_normalized + FiltroRicercaPorteApplicative.SUFFIX_PORTA_DELEGANTE;
 												if(msg.contains(check_normalized)){
 													keyForClean.add(key);
-													break;
 												}
 											}
 										}

@@ -2,6 +2,13 @@
 
 	* Rilasciata versione 3.3.13.p1
 
+2023-09-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto OP-1631
+	Modificando la configurazione di una fruizione o di una erogazione (es. sicurezza messaggio) 
+	era necessario effettuare due volte l'operazione 'Rimuovi dalla Cache' per far sì che la modifica venisse effettivamente vista dal runtime.
+
 2023-09-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
