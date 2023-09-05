@@ -26,12 +26,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioEnum
  */
 public enum ModISicurezzaMessaggioEnum {
-DISABILITATO("disabilitato"),
+  DISABILITATO("disabilitato"),
+  
   AUTH01("auth01"),
+  
   AUTH02("auth02"),
+  
   INTEGRITY01_AUTH01("integrity01-auth01"),
+  
   INTEGRITY01_AUTH02("integrity01-auth02"),
+  
   INTEGRITY02_AUTH01("integrity02-auth01"),
+  
   INTEGRITY02_AUTH02("integrity02-auth02");
 
   private String value;

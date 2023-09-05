@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModIPatternInterazioneTipoEnum
  */
 public enum ModIPatternInterazioneTipoEnum {
-PUSH("push"),
+  PUSH("push"),
+  
   PULL("pull");
 
   private String value;

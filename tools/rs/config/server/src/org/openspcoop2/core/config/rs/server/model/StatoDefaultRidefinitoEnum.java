@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets StatoDefaultRidefinitoEnum
  */
 public enum StatoDefaultRidefinitoEnum {
-DEFAULT("default"),
+  DEFAULT("default"),
+  
   RIDEFINITO("ridefinito");
 
   private String value;

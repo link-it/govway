@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModIPatternInterazioneEnum
  */
 public enum ModIPatternInterazioneEnum {
-CRUD("crud"),
+  CRUD("crud"),
+  
   BLOCCANTE("bloccante"),
+  
   NON_BLOCCANTE("non-bloccante");
 
   private String value;

@@ -26,10 +26,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModalitaAccessoEnum
  */
 public enum ModalitaAccessoEnum {
-HTTP_BASIC("http-basic"),
+  HTTP_BASIC("http-basic"),
+  
   HTTPS("https"),
+  
   PRINCIPAL("principal"),
+  
   API_KEY("api-key"),
+  
   TOKEN("token");
 
   private String value;

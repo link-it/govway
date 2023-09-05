@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets DominioEnum
  */
 public enum DominioEnum {
-INTERNO("interno"),
+  INTERNO("interno"),
+  
   ESTERNO("esterno");
 
   private String value;

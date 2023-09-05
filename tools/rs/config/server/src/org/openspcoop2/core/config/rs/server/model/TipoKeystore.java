@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoKeystore
  */
 public enum TipoKeystore {
-JKS("JKS"),
+  JKS("JKS"),
+  
   PKCS12("PKCS12"),
+  
   CER("CER");
 
   private String value;

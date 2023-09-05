@@ -26,13 +26,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ConnettoreEnum
  */
 public enum ConnettoreEnum {
-HTTP("http"),
+  HTTP("http"),
+  
   FILE("file"),
+  
   JMS("jms"),
+  
   NULL("null"),
+  
   ECHO("echo"),
+  
   PLUGIN("plugin"),
+  
   APPLICATIVO_SERVER("applicativo-server"),
+  
   MESSAGE_BOX("message-box");
 
   private String value;

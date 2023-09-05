@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore
 */
 public interface OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore {
+
     public StatoDefaultRidefinitoEnum getModalita();
 }

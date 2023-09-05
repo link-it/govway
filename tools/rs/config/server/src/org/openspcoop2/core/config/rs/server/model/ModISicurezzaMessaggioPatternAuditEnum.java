@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioPatternAuditEnum
  */
 public enum ModISicurezzaMessaggioPatternAuditEnum {
-REST01("audit-rest01"),
+  REST01("audit-rest01"),
+  
   REST02("audit-rest02"),
+  
   LEGACY("audit-legacy");
 
   private String value;

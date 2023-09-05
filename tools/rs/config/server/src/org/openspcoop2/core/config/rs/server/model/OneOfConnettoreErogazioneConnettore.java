@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfConnettoreErogazioneConnettore
 */
 public interface OneOfConnettoreErogazioneConnettore {
+
     public ConnettoreEnum getTipo();
 }

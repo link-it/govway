@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets FonteEnum
  */
 public enum FonteEnum {
-QUALSIASI("qualsiasi"),
+  QUALSIASI("qualsiasi"),
+  
   REGISTRO("registro"),
+  
   ESTERNA("esterna");
 
   private String value;

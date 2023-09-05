@@ -26,13 +26,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets EsitoTransazioneFullSearchEnum
  */
 public enum EsitoTransazioneFullSearchEnum {
-QUALSIASI("qualsiasi"),
+  QUALSIASI("qualsiasi"),
+  
   OK("ok"),
+  
   FAULT("fault"),
+  
   FALLITE("fallite"),
+  
   FALLITE_E_FAULT("fallite_e_fault"),
+  
   ERRORI_CONSEGNA("errori_consegna"),
+  
   RICHIESTE_SCARTATE("richieste_scartate"),
+  
   PERSONALIZZATO("personalizzato");
 
   private String value;

@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModIPatternInterazioneFunzioneEnum
  */
 public enum ModIPatternInterazioneFunzioneEnum {
-RICHIESTA("richiesta"),
+  RICHIESTA("richiesta"),
+  
   RISPOSTA("risposta");
 
   private String value;

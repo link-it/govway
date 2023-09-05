@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ConfigurazioneCanaleEnum
  */
 public enum ConfigurazioneCanaleEnum {
-DEFAULT("default"),
+  DEFAULT("default"),
+  
   RIDEFINITO("ridefinito");
 
   private String value;

@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioOperazioneEnum
  */
 public enum ModISicurezzaMessaggioOperazioneEnum {
-API("api"),
+  API("api"),
+  
   RIDEFINITO("ridefinito");
 
   private String value;

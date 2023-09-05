@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioRestRiferimentoX509
  */
 public enum ModISicurezzaMessaggioRestRiferimentoX509 {
-X5C("x5c"),
+  X5C("x5c"),
+  
   X5T_256("x5t#256"),
+  
   X5U("x5u");
 
   private String value;

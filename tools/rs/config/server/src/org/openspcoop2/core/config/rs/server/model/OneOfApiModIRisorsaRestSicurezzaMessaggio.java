@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfApiModIRisorsaRestSicurezzaMessaggio
 */
 public interface OneOfApiModIRisorsaRestSicurezzaMessaggio {
+
     public ModISicurezzaMessaggioOperazioneEnum getStato();
 }

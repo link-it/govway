@@ -26,9 +26,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets UnitaTempoReportEnum
  */
 public enum UnitaTempoReportEnum {
-ORARIO("orario"),
+  ORARIO("orario"),
+  
   GIORNALIERO("giornaliero"),
+  
   SETTIMANALE("settimanale"),
+  
   MENSILE("mensile");
 
   private String value;

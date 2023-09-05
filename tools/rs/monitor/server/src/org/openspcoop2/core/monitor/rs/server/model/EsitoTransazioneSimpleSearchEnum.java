@@ -26,11 +26,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets EsitoTransazioneSimpleSearchEnum
  */
 public enum EsitoTransazioneSimpleSearchEnum {
-OK("ok"),
+  OK("ok"),
+  
   FAULT("fault"),
+  
   FALLITE("fallite"),
+  
   FALLITE_E_FAULT("fallite_e_fault"),
+  
   ERRORI_CONSEGNA("errori_consegna"),
+  
   RICHIESTE_SCARTATE("richieste_scartate");
 
   private String value;

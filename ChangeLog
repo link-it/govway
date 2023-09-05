@@ -1,3 +1,20 @@
+2023-09-06  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.13.p1
+
+2023-09-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto OP-1631
+	Modificando la configurazione di una fruizione o di una erogazione (es. sicurezza messaggio) 
+	era necessario effettuare due volte l'operazione 'Rimuovi dalla Cache' per far sì che la modifica venisse effettivamente vista dal runtime.
+
+2023-09-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1629	
+	Risultavano le stesse informazioni sulle organizzazioni prelevate dalla PDND relativamente a chiamate (clientId) differenti.
+
 2023-08-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

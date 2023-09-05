@@ -26,13 +26,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets CorrelazioneApplicativaRichiestaEnum
  */
 public enum CorrelazioneApplicativaRichiestaEnum {
-CONTENT_BASED("content-based"),
+  CONTENT_BASED("content-based"),
+  
   HEADER_BASED("header-based"),
+  
   URL_BASED("url-based"),
+  
   INPUT_BASED("input-based"),
+  
   TEMPLATE("template"),
+  
   FREEMARKER_TEMPLATE("freemarker-template"),
+  
   VELOCITY_TEMPLATE("velocity-template"),
+  
   DISABILITATO("disabilitato");
 
   private String value;

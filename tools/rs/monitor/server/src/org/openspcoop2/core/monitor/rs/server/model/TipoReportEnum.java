@@ -26,9 +26,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoReportEnum
  */
 public enum TipoReportEnum {
-LINE("line"),
+  LINE("line"),
+  
   PIE("pie"),
+  
   BAR("bar"),
+  
   TABLE("table");
 
   private String value;

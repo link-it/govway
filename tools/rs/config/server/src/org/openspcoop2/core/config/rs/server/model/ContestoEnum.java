@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ContestoEnum
  */
 public enum ContestoEnum {
-QUALSIASI("qualsiasi"),
+  QUALSIASI("qualsiasi"),
+  
   EROGAZIONE("erogazione"),
+  
   FRUIZIONE("fruizione");
 
   private String value;

@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets RateLimitingIdentificazionePolicyEnum
  */
 public enum RateLimitingIdentificazionePolicyEnum {
-CRITERI("criteri"),
+  CRITERI("criteri"),
+  
   POLICY("policy");
 
   private String value;

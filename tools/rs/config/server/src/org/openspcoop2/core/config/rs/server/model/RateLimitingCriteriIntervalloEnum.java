@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets RateLimitingCriteriIntervalloEnum
  */
 public enum RateLimitingCriteriIntervalloEnum {
-MINUTI("minuti"),
+  MINUTI("minuti"),
+  
   ORARIO("orario"),
+  
   GIORNALIERO("giornaliero");
 
   private String value;

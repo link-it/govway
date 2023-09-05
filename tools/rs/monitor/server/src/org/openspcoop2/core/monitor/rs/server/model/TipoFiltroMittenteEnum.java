@@ -26,12 +26,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoFiltroMittenteEnum
  */
 public enum TipoFiltroMittenteEnum {
-EROGAZIONE_SOGGETTO("erogazione_soggetto"),
+  EROGAZIONE_SOGGETTO("erogazione_soggetto"),
+  
   FRUIZIONE_APPLICATIVO("fruizione_applicativo"),
+  
   EROGAZIONE_APPLICATIVO("erogazione_applicativo"),
+  
   IDENTIFICATIVO_AUTENTICATO("identificativo_autenticato"),
+  
   EROGAZIONE_TOKEN_INFO("erogazione_token_info"),
+  
   TOKEN_INFO("token_info"),
+  
   INDIRIZZO_IP("indirizzo_ip");
 
   private String value;

@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioRestSameDifferentEnum
  */
 public enum ModISicurezzaMessaggioRestSameDifferentEnum {
-SAME("same"),
+  SAME("same"),
+  
   DIFFERENT("different");
 
   private String value;

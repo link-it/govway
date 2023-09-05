@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioGenerazioneTokenEnum
  */
 public enum ModISicurezzaMessaggioGenerazioneTokenEnum {
-LOCALE("locale"),
+  LOCALE("locale"),
+  
   PDND("pdnd"),
+  
   OAUTH("oauth");
 
   private String value;

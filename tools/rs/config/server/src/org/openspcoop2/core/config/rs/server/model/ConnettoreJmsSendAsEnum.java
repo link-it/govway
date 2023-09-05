@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ConnettoreJmsSendAsEnum
  */
 public enum ConnettoreJmsSendAsEnum {
-TEXT("text"),
+  TEXT("text"),
+  
   BYTES("bytes");
 
   private String value;

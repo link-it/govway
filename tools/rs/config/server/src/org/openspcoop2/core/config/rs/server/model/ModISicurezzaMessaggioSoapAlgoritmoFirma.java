@@ -26,12 +26,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioSoapAlgoritmoFirma
  */
 public enum ModISicurezzaMessaggioSoapAlgoritmoFirma {
-DSA_SHA_256("DSA-SHA-256"),
+  DSA_SHA_256("DSA-SHA-256"),
+  
   ECDSA_SHA_256("ECDSA-SHA-256"),
+  
   ECDSA_SHA_384("ECDSA-SHA-384"),
+  
   ECDSA_SHA_512("ECDSA-SHA-512"),
+  
   RSA_SHA_256("RSA-SHA-256"),
+  
   RSA_SHA_384("RSA-SHA-384"),
+  
   RSA_SHA_512("RSA-SHA-512");
 
   private String value;

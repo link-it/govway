@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfApiBaseTipoInterfaccia
 */
 public interface OneOfApiBaseTipoInterfaccia {
+
     public TipoApiEnum getProtocollo();
 }

@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TempoMedioRispostaEnum
  */
 public enum TempoMedioRispostaEnum {
-TOTALE("latenza_totale"),
+  TOTALE("latenza_totale"),
+  
   SERVIZIO("latenza_servizio"),
+  
   GATEWAY("latenza_gateway");
 
   private String value;

@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioSoapFormaCanonicaXml
  */
 public enum ModISicurezzaMessaggioSoapFormaCanonicaXml {
-CANONICAL_XML_10("canonical-xml-10"),
+  CANONICAL_XML_10("canonical-xml-10"),
+  
   CANONICAL_XML_11("canonical-xml-11"),
+  
   EXCLUSIVE_CANONICAL_XML_10("exclusive-canonical-xml-10");
 
   private String value;

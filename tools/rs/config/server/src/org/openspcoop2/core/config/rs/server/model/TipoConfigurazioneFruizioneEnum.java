@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoConfigurazioneFruizioneEnum
  */
 public enum TipoConfigurazioneFruizioneEnum {
-OAUTH("oauth"),
+  OAUTH("oauth"),
+  
   SOAP("soap"),
+  
   REST("rest");
 
   private String value;

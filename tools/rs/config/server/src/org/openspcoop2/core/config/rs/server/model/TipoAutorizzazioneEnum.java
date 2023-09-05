@@ -26,9 +26,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoAutorizzazioneEnum
  */
 public enum TipoAutorizzazioneEnum {
-DISABILITATO("disabilitato"),
+  DISABILITATO("disabilitato"),
+  
   ABILITATO("abilitato"),
+  
   XACML_POLICY("xacml-Policy"),
+  
   CUSTOM("custom");
 
   private String value;

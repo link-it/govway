@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoIdApplicativoEnum
  */
 public enum TipoIdApplicativoEnum {
-RICHIESTA("richiesta"),
+  RICHIESTA("richiesta"),
+  
   RISPOSTA("risposta");
 
   private String value;

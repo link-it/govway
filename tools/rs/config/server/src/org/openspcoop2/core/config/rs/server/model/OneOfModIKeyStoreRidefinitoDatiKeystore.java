@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfModIKeyStoreRidefinitoDatiKeystore
 */
 public interface OneOfModIKeyStoreRidefinitoDatiKeystore {
+
     public ModIKeystoreTipologiaEnum getTipologia();
 }

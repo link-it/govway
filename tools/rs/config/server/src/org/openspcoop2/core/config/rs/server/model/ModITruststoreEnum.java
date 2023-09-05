@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModITruststoreEnum
  */
 public enum ModITruststoreEnum {
-JKS("jks"),
+  JKS("jks"),
+  
   PKCS11("pkcs11");
 
   private String value;

@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaMessaggioApplicabilitaCustomEnum
  */
 public enum ModISicurezzaMessaggioApplicabilitaCustomEnum {
-ABILITATO("abilitato"),
+  ABILITATO("abilitato"),
+  
   DISABILITATO("disabilitato"),
+  
   CUSTOM("custom");
 
   private String value;

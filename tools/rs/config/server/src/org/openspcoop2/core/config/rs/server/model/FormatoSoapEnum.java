@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets FormatoSoapEnum
  */
 public enum FormatoSoapEnum {
-_1("Wsdl1.1");
+  WSDL1_1("Wsdl1.1");
 
   private String value;
 

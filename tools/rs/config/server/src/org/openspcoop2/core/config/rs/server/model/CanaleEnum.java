@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets CanaleEnum
  */
 public enum CanaleEnum {
-DEFAULT("default"),
+  DEFAULT("default"),
+  
   API("api"),
+  
   IMPLEMENTAZIONE_API("implementazione-api");
 
   private String value;

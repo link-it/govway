@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoSpecificaLivelloServizioEnum
  */
 public enum TipoSpecificaLivelloServizioEnum {
-WS_AGREEMENT("WS-Agreement"),
+  WS_AGREEMENT("WS-Agreement"),
+  
   WSLA("WSLA");
 
   private String value;

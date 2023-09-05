@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfApiImplAllegatoItemAllegato
 */
 public interface OneOfApiImplAllegatoItemAllegato {
+
     public RuoloAllegatoAPIImpl getRuolo();
 }

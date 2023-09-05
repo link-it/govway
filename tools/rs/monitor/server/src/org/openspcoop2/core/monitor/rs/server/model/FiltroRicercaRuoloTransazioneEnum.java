@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets FiltroRicercaRuoloTransazioneEnum
  */
 public enum FiltroRicercaRuoloTransazioneEnum {
-FRUIZIONE("fruizione"),
+  FRUIZIONE("fruizione"),
+  
   EROGAZIONE("erogazione"),
+  
   QUALSIASI("qualsiasi");
 
   private String value;

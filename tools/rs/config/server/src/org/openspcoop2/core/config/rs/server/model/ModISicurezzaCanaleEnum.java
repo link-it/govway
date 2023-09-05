@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModISicurezzaCanaleEnum
  */
 public enum ModISicurezzaCanaleEnum {
-AUTH01("auth01"),
+  AUTH01("auth01"),
+  
   AUTH02("auth02");
 
   private String value;

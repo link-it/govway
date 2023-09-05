@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststoreSsl
 */
 public interface OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststoreSsl {
+
     public StatoDefaultRidefinitoEnum getModalita();
 }

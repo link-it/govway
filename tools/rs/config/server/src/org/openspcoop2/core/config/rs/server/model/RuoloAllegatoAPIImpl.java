@@ -26,9 +26,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets RuoloAllegatoAPIImpl
  */
 public enum RuoloAllegatoAPIImpl {
-ALLEGATO("allegato"),
+  ALLEGATO("allegato"),
+  
   SPECIFICASEMIFORMALE("specificaSemiFormale"),
+  
   SPECIFICASICUREZZA("specificaSicurezza"),
+  
   SPECIFICALIVELLOSERVIZIO("specificaLivelloServizio");
 
   private String value;

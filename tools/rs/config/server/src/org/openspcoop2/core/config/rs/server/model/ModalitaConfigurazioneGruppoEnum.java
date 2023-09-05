@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ModalitaConfigurazioneGruppoEnum
  */
 public enum ModalitaConfigurazioneGruppoEnum {
-EREDITA("eredita"),
+  EREDITA("eredita"),
+  
   NUOVA("nuova");
 
   private String value;

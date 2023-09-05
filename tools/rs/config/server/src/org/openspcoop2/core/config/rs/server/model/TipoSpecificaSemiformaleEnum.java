@@ -26,12 +26,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoSpecificaSemiformaleEnum
  */
 public enum TipoSpecificaSemiformaleEnum {
-UML("UML"),
+  UML("UML"),
+  
   HTML("HTML"),
+  
   XSD("XSD"),
+  
   XML("XML"),
+  
   JSON("JSON"),
+  
   YAML("YAML"),
+  
   LINGUAGGIO_NATURALE("Linguaggio Naturale");
 
   private String value;

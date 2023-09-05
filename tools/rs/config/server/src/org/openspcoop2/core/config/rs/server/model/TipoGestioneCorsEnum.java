@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoGestioneCorsEnum
  */
 public enum TipoGestioneCorsEnum {
-DISABILITATO("disabilitato"),
+  DISABILITATO("disabilitato"),
+  
   GATEWAY("gateway"),
+  
   APPLICATIVO("applicativo");
 
   private String value;

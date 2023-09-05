@@ -23,5 +23,6 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfApplicativoServerConnettore
 */
 public interface OneOfApplicativoServerConnettore {
+
     public ConnettoreEnum getTipo();
 }

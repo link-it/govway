@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoInformazioneReportEnum
  */
 public enum TipoInformazioneReportEnum {
-NUMERO_TRANSAZIONI("numero_transazioni"),
+  NUMERO_TRANSAZIONI("numero_transazioni"),
+  
   OCCUPAZIONE_BANDA("occupazione_banda"),
+  
   TEMPO_MEDIO_RISPOSTA("tempo_medio_risposta");
 
   private String value;
