@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.8.dtd">
-<installer name="GovWay Installer v3.3.13" defaultImageResource="/logoSetup.png"
+<installer name="GovWay Installer v3.3.13.p1" defaultImageResource="/logoSetup.png"
     ui="swing,text"
 	verbose="false"
     windowIcon="/iconaSetup.png" wide="550:275" loadDefaults="true">
@@ -14,7 +14,7 @@
 	 - ./install.sh text ant.install.properties 
     -->
 
-    <page type="input" name="intro" displayText="Installer GovWay v3.3.13">
+    <page type="input" name="intro" displayText="Installer GovWay v3.3.13.p1">
         <comment explanatoryText=""/>
         <comment explanatoryText="Il software GovWay e' distribuito con licenza GPL v3"/>
         <comment explanatoryText=""/>
@@ -22,7 +22,7 @@
         <comment explanatoryText="       https://govway.org" bold="true"/>
         <comment explanatoryText="       https://link.it" bold="true"/>
 
-	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.3.13"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
+	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.3.13.p1"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
 	<hidden property="antinstaller_versione_attuale" value="3.3.13"/>
 
         <!-- NOTA: le proprieta seguenti NON devono essere utilizzate al di fuori della ifProperty altrimenti su windows non vengono 
