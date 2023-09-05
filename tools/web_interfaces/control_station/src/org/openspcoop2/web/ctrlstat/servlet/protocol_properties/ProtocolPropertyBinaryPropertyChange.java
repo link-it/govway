@@ -95,7 +95,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 		try{
 			ProtocolPropertiesHelper ppHelper = new ProtocolPropertiesHelper(request, pd, session);
 			
-			strutsBean.id = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID);
+			strutsBean.id = ppHelper.getParametroLong(ProtocolPropertiesCostanti.PARAMETRO_PP_ID);
 			strutsBean.idProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO);
 			String tipoProprietarioS = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO);
 			if(tipoProprietarioS!= null)
@@ -105,7 +105,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			strutsBean.nomeProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO);
 			strutsBean.nomeParentProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO);
 			strutsBean.urlChange = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE);
-			strutsBean.editMode = ppHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			strutsBean.editMode = ppHelper.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			strutsBean.contenutoDocumento = ppHelper.getBinaryParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 			strutsBean.protocollo = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO);
 			strutsBean.tipoAccordo = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO);

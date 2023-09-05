@@ -332,6 +332,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					oldPaSA = paSATmp;					
 				}
 			}
+			if(oldPaSA==null) {
+				throw new Exception("ServizioApplicativo con nome '"+nomeSAConnettore+"' non trovato");
+			}
 			
 			boolean integrationManagerEnabled = !porteApplicativeHelper.isModalitaStandard() && porteApplicativeCore.isIntegrationManagerEnabled();
 			boolean isSoapOneWay = false;

@@ -8629,4 +8629,41 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				|| ApiCostanti.VALORE_PARAMETRO_APC_API_CANALE.equals(parameterValueFiltrato)
 				;
 	}
+	
+	public String getParametroPortTypeOperationMessageType(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroPortTypeOperationMessageType(parameterName, true);
+	}
+	
+	public String getParametroPortTypeOperationMessageType(String parameterName, boolean validate) throws ValidationException, DriverControlStationException{
+		if(validate && !this.validaParametroPortTypeOperationMessageType(parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		return this.getParameter(parameterName);
+	}
+	
+	/**
+	 * Validazione del parametro port type operation message type
+	 * 
+	 * @param parameterToCheck
+	 * @return
+	 */
+	private boolean validaParametroPortTypeOperationMessageType(String parameterToCheck) {
+		String parameterValueFiltrato = this.request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(this.request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// i valori accettati sono solo i seguenti
+		return AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_INPUT.equals(parameterValueFiltrato) 
+				|| AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_OUTPUT.equals(parameterValueFiltrato) 
+				;
+	}
 }

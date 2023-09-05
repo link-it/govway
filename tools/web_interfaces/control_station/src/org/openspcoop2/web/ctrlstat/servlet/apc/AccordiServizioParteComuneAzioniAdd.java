@@ -118,7 +118,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			// Preparo il menu
 			apcHelper.makeMenu();
 			
-			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			String editMode = apcHelper.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
 			String id = apcHelper.getParametroInteger(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idAccordo = 0;

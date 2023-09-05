@@ -87,7 +87,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 			
-			String tipoMessage = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_TYPE);
+			String tipoMessage = apcHelper.getParametroPortTypeOperationMessageType(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_TYPE);
 
 			boolean isMessageInput = tipoMessage.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_INPUT);
 			

@@ -86,18 +86,16 @@ public final class Exporter extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			
-			//String userLogin = ServletUtils.getUserLoginFromSession(session);
-			
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
+			archiviHelper.makeMenu();
+			
 			ArchiviCore archiviCore = new ArchiviCore();
 			SoggettiCore soggettiCore = new SoggettiCore(archiviCore);
 		
 			ExporterUtils exporterUtils = new ExporterUtils(archiviCore);
 			
-			
 			// Sorgente su cui e' stato invocato l'export
-			String servletSourceExport = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO);
+			String servletSourceExport = archiviHelper.getParametroArchiveType(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO);
 			ArchiveType archiveType = ArchiveType.valueOf(servletSourceExport);
 			
 			
@@ -447,13 +445,6 @@ public final class Exporter extends Action {
 				response.sendRedirect(send);
 				
 			}
-			
-			
-			
-			// Visualizzo form delle opzioni	
-				
-			archiviHelper.makeMenu();
-			
 			
 			// setto la barra del titolo	
 			if(provenienza!=null) {

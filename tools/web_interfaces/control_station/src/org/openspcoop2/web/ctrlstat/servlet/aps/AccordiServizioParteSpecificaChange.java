@@ -157,7 +157,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			String tipoProtocollo = apsHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			
-			strutsBean.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			strutsBean.editMode = apsHelper.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			strutsBean.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			
 			String id = apsHelper.getParametroLong(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);

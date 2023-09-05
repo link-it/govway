@@ -86,7 +86,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
-			String editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			String editMode = apcHelper.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
 			String id = apcHelper.getParametroLong(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			long idAccordoLong = Long.parseLong(id);

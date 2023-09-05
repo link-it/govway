@@ -99,7 +99,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-			String editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			String editMode = soggettiHelper.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			
 			String tipoauthSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			if (tipoauthSoggetto == null) {

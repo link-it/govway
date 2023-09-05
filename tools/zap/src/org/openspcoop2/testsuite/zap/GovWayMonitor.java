@@ -121,8 +121,8 @@ public class GovWayMonitor {
 		
 		ZAPReport report = new ZAPReport(args, GovWayMonitor.class.getName(), ZAPContext.PREFIX+" "+consoleUsage, ZAPContext.START_ARGS+consoleArgs, api);
 		
-		String loginUrl = url+"login.do";
-		String logoutUrl = url+"logout.do";
+		String loginUrl = url+"public/login.jsf";
+		String logoutUrl = url+"public/login.jsf";
 		/**String logoutUrl = url+"log.*.do";*/
 		
 		api.context.includeInContext(contextName, url.substring(0, (url.length()-1))+".*");
@@ -133,7 +133,7 @@ public class GovWayMonitor {
         // Prepare the configuration in a format similar to how URL parameters are formed. This
         // means that any value we add for the configuration values has to be URL encoded.
 		
-		String loginRequestData = "login={%username%}&password={%password%}";
+		String loginRequestData = "AJAXREQUEST=_viewRoot&j_id40=j_id40&username=operatore&password=123456&javax.faces.ViewState=j_id2&submitBtn=submitBtn&";
 			
         StringBuilder formBasedConfig = new StringBuilder();
         formBasedConfig.append("loginUrl=").append(URLEncoder.encode(loginUrl, Charset.UTF_8.getValue()));

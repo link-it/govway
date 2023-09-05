@@ -42,6 +42,7 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
@@ -83,8 +84,12 @@ public class ServletUtils {
 	}
 
 	public static HttpStatus getErrorStatusCodeFromException(Throwable t) {
-		if(t instanceof ValidationException) {
-			return HttpStatus.BAD_REQUEST;
+		// ricerco gli errori di validazione all'interno di eventuali altre eccezioni poiche i metodi degli helper lanciano eccezioni generiche.
+		if(Utilities.existsInnerException(t, ValidationException.class)) {
+			Throwable validationEx = Utilities.getInnerInstanceException(t, ValidationException.class, true);
+			if(validationEx != null) {
+				return HttpStatus.BAD_REQUEST;
+			}
 		}
 		
 		return HttpStatus.INTERNAL_SERVER_ERROR;
@@ -1076,6 +1081,33 @@ public class ServletUtils {
 				|| Costanti.VALUE_PARAMETRO_AZIONE_REMOVE_ENTRIES.equals(parameterValueFiltrato)
 				|| Costanti.VALUE_PARAMETRO_AZIONE_CONFERMA.equals(parameterValueFiltrato)
 				|| Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA.equals(parameterValueFiltrato);
+	}
+	
+	/**
+	 * Controlla che il parametro edit-mode sia valido
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkParametroEditMode(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		// i valori accettati sono 'salva' e 'removeEntries'
+		return  Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK.equals(parameterValueFiltrato) 
+				|| Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS.equals(parameterValueFiltrato)
+				|| Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END.equals(parameterValueFiltrato);
 	}
 	
 	public static boolean usaValidazioneTextArea(HttpServletRequest request, String parameterToCheck) {

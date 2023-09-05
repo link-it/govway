@@ -411,14 +411,14 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	@Override
-	public boolean isEditModeInProgress() throws DriverControlStationException{
-		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+	public boolean isEditModeInProgress() throws DriverControlStationException, ValidationException{
+		String editMode = this.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		return ServletUtils.isEditModeInProgress(editMode);		
 	}
 
 	@Override
-	public boolean isEditModeFinished() throws DriverControlStationException{
-		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+	public boolean isEditModeFinished() throws DriverControlStationException, ValidationException{
+		String editMode = this.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		return ServletUtils.isEditModeFinished(editMode);		
 	}
 	
@@ -1661,11 +1661,11 @@ public class ConsoleHelper implements IConsoleHelper {
 
 
 	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
-			String propertyId, BinaryParameter contenutoDocumentoParameter) throws DriverControlStationException {
+			String propertyId, BinaryParameter contenutoDocumentoParameter) throws DriverControlStationException, ValidationException {
 		
 		this.checkErrorInit();
 		
-		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+		String editMode = this.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		String postBackElementName = this.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 		boolean primoAccessoAdd = (ConsoleOperationType.ADD.equals(consoleOperationType) && 
 				(editMode==null || 
@@ -1748,7 +1748,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		return properties;
 	}
-	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws DriverControlStationException {
+	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws DriverControlStationException, ValidationException {
 		
 		this.checkErrorInit();
 				
@@ -23279,5 +23279,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		return  found;
+	}
+	
+	public String getParametroEditMode(String parameterName) throws ValidationException, DriverControlStationException {
+		return getParametroEditMode(parameterName, true);
+	}
+	
+	public String getParametroEditMode(String parameterName, boolean validate) throws ValidationException, DriverControlStationException {
+		if(validate && !ServletUtils.checkParametroEditMode(this.request, parameterName)) {
+			throw new ValidationException("Il parametro [" +parameterName + "] contiene un valore non valido.");
+		}
+		return this.getParameter(parameterName);
 	}
 }

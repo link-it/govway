@@ -120,7 +120,7 @@ public final class AccordiCooperazioneChange extends Action {
 			// Preparo il menu
 			acHelper.makeMenu();
 			
-			strutsBean.editMode = acHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			strutsBean.editMode = acHelper.getParametroEditMode(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			strutsBean.protocolPropertiesSet = acHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 
 			String id = acHelper.getParametroLong(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
