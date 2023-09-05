@@ -32,6 +32,8 @@ Sono state corrette alcune anomalie riguardanti la consegna asincrona:
 
 Per la console di gestione sono stati risolti i seguenti bug:
 
+- modificando la configurazione di una fruizione o di una erogazione (es. sicurezza messaggio) era necessario effettuare due volte l'operazione 'Rimuovi dalla Cache' per far sì che la modifica venisse effettivamente vista dal runtime;
+
 - in un ambiente multi-tenant la creazione di un applicativo con credenziali api-key, dove il soggetto di dominio interno non veniva selezionato attraverso le voci in alto a destra nella console ma utilizzando la select list presente nella form di creazione, non funzionava correttamente poichè le credenziali generate venivano assegnate al soggetto presente inizialmente nella maschera di creazione e non al soggetto successivamente selezionato;
 
 - se su una API REST venivano caricati schemi XSD, il download della 'XSD Schema Collection' produceva l'errore: "Content is not allowed in prolog.";
