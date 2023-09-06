@@ -46,6 +46,7 @@
 			<param name="js" value="${govwayConsole}/deploy/js"/>
 			<param name="jslib" value="${jslib}"/>
 			<param name="deploy.dir" value="${govwayConsole}/deploy"/>
+			<param name="appSec.dir" location="${govwayConsole}/deploy/applicationSecurity" />
 			<param name="cfg" value="${govwayConsole}/deploy/properties"/>
 			<param name="required_lib_govwayConsole" value="${required_lib_govwayConsole}"/>
 			<param name="printServerInfo" value="true"/>

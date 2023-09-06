@@ -48,7 +48,6 @@
 			<include name="*/runtimePdD/*"/>
 			<include name="*/monitoraggio/*"/>
 			<include name="*/Users.sql"/>
-			<include name="*/Operations.sql"/>
 			<include name="*/Audit.sql"/>
 			<include name="*/AuditAppender.sql"/>
 			<include name="*/DBInfo.sql"/>
@@ -59,7 +58,6 @@
 			<include name="utilities/*/runtimePdD/*"/>
 			<include name="utilities/*/monitoraggio/*"/>
 			<include name="utilities/*/Users*.sql"/>
-			<include name="utilities/*/Operations*.sql"/>
 			<include name="utilities/*/Audit*.sql"/>
 			<include name="utilities/*/AuditAppender*.sql"/>
 			<include name="utilities/*/DBInfo*.sql"/>
@@ -195,7 +193,6 @@
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} govwayConsole_MappingPorte.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} AuditAppender.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} Audit.sql"/>
-		<var name="sqlSourceFiles" value="${sqlSourceFiles} Operations.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} Users.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} DBInfo.sql"/>
 
@@ -245,8 +242,7 @@
 				
 		<!-- sql Delete (Dati) -->
 		
-		<var name="sqlSourceFiles_delete" value="Operations_delete.sql"/>			
-		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} AuditAppender_delete.sql"/>
+		<var name="sqlSourceFiles_delete" value="AuditAppender_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} govwayConsole_MappingPorte_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_PorteApplicative_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_PorteDelegate_delete.sql"/>
@@ -286,7 +282,6 @@
 		<!-- sql Drop -->
 		
 		<var name="sqlSourceFiles_drop" value="Users_drop.sql"/>
-		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} Operations_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} Audit_drop.sql"/>			
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} AuditAppender_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} govwayConsole_MappingPorte_drop.sql"/>

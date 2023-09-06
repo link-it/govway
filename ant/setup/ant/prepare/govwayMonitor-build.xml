@@ -38,6 +38,7 @@
 			<param name="js" value="${govwayMonitor}/deploy/js"/>
 			<param name="jslib" value="${jslib}"/>
 			<param name="deploy.dir" value="${govwayMonitor}/deploy"/>
+			<param name="appSec.dir" location="${govwayMonitor}/deploy/applicationSecurity" />
 			<param name="cfg" value="${govwayMonitor}/deploy/properties"/>
 			<param name="required_lib_govwayMonitor" value="${required_lib_govwayMonitor}"/>
 			<param name="printServerInfo" value="true"/>
