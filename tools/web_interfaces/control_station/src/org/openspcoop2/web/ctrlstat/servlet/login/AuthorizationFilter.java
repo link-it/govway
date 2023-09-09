@@ -357,7 +357,7 @@ public final class AuthorizationFilter implements Filter {
 							
 							String userLogin = ServletUtils.getUserLoginFromSession(session);
 							ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la risorsa jQuery ["+urlRichiesta+"]");
-							ServletUtils.setErrorStatusCodeInRequestAttribute(request, session, HttpStatus.FORBIDDEN);
+							ServletUtils.setErrorStatusCodeInRequestAttribute(request, HttpStatus.FORBIDDEN);
 							response.sendRedirect(getRedirectToMessageServletAutorizzazioneNegata(request.getContextPath()));
 //							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
 							// return so that we do not chain to other filters
@@ -709,7 +709,7 @@ public final class AuthorizationFilter implements Filter {
 							String userLogin = ServletUtils.getUserLoginFromSession(session);
 							ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la risorsa jQuery ["+urlRichiesta+"]");
 							// faccio un redirect esplicito alla servlet dei messaggi
-							ServletUtils.setErrorStatusCodeInRequestAttribute(request, session, HttpStatus.FORBIDDEN);
+							ServletUtils.setErrorStatusCodeInRequestAttribute(request, HttpStatus.FORBIDDEN);
 							response.sendRedirect(getRedirectToMessageServletAutorizzazioneNegata(request.getContextPath()));
 //							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig);
 							// return so that we do not chain to other filters
@@ -890,7 +890,7 @@ public final class AuthorizationFilter implements Filter {
 		if(httpStatus == null)
 			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 		
-		ServletUtils.setErrorStatusCodeInRequestAttribute(request, session, httpStatus);
+		ServletUtils.setErrorStatusCodeInRequestAttribute(request, httpStatus);
 		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 
 		filterConfig.getServletContext().getRequestDispatcher(servletDispatcher).forward(request, response);

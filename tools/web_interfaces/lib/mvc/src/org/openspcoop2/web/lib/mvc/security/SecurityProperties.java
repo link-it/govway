@@ -38,7 +38,7 @@ import org.slf4j.Logger;
  */
 public class SecurityProperties {
 
-	private static final Map<String, Pattern> patternCache = new HashMap<String, Pattern>();
+	private static final Map<String, Pattern> patternCache = new HashMap<>();
 
 	private static Logger log;
 	private static SecurityProperties instance;
@@ -72,11 +72,11 @@ public class SecurityProperties {
 
 		// compilazione del nuovo pattern
 		try {
-			Pattern q = Pattern.compile(value);
+			Pattern q = Pattern.compile(value, Pattern.CASE_INSENSITIVE);
 			patternCache.put( value, q );
 			return q;
 		} catch ( PatternSyntaxException e ) {
-			SecurityProperties.log.error("Pattern di validazione non valido per il tipo " + key + ".");
+			SecurityProperties.log.error("Pattern di validazione non valido per il tipo {}.", key);
 			return null;
 		}
 	}

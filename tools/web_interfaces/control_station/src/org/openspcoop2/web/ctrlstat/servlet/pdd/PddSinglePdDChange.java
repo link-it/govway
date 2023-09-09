@@ -104,7 +104,7 @@ public final class PddSinglePdDChange extends Action {
 			if(pddHelper.isEditModeInProgress()){
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, 
+				ServletUtils.setPageDataTitleServletChange(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, 
 						PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST, pdd.getNome());
 
 				if(descr==null)
@@ -141,7 +141,7 @@ public final class PddSinglePdDChange extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, 
+				ServletUtils.setPageDataTitleServletChange(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, 
 						PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST, pdd.getNome());
 
 				// preparo i campi

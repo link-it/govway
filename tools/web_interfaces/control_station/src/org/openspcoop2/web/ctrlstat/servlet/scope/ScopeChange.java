@@ -169,7 +169,7 @@ public final class ScopeChange extends Action {
 			if (scopeHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, ScopeCostanti.LABEL_SCOPE, 
+				ServletUtils.setPageDataTitleServletChange(pd, ScopeCostanti.LABEL_SCOPE, 
 						ScopeCostanti.SERVLET_NAME_SCOPE_LIST, scope.getNome());
 				
 
@@ -209,7 +209,7 @@ public final class ScopeChange extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, ScopeCostanti.LABEL_SCOPE, 
+				ServletUtils.setPageDataTitleServletChange(pd, ScopeCostanti.LABEL_SCOPE, 
 						ScopeCostanti.SERVLET_NAME_SCOPE_LIST, scope.getNome());
 
 				// preparo i campi

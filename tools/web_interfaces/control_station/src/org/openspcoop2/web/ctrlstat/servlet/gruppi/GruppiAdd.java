@@ -91,7 +91,7 @@ public final class GruppiAdd extends Action {
 			if (gruppiHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, GruppiCostanti.LABEL_GRUPPI, GruppiCostanti.SERVLET_NAME_GRUPPI_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, GruppiCostanti.LABEL_GRUPPI, GruppiCostanti.SERVLET_NAME_GRUPPI_LIST);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();
@@ -112,7 +112,7 @@ public final class GruppiAdd extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, GruppiCostanti.LABEL_GRUPPI, GruppiCostanti.SERVLET_NAME_GRUPPI_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, GruppiCostanti.LABEL_GRUPPI, GruppiCostanti.SERVLET_NAME_GRUPPI_LIST);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();

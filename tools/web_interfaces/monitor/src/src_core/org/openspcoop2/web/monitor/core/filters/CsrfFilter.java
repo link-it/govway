@@ -22,6 +22,8 @@ package org.openspcoop2.web.monitor.core.filters;
 import java.io.IOException;
 import java.util.UUID;
 
+import javax.faces.application.ViewExpiredException;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -35,8 +37,10 @@ import jakarta.servlet.http.HttpSession;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
 
 /**
  * Comparator
@@ -56,13 +60,13 @@ public class CsrfFilter implements Filter {
 	private FilterConfig filterConfig = null;
 
 	// pagina da mostrare all'utente al posto di quella richiesta
-	private static final String jspErrore = "/commons/pages/welcome.jsf";
+	private static final String JSP_ERRORE = "/commons/pages/welcome.jsf";
 	
 	// id delle variabili in sessione per il controllo del messaggio da
 	// visualizzare all'utente
-	private static final String msgErroreKey = "acclim";
+	private static final String MSG_ERRORE_KEY = "acclim";
 
-	private static final String accLimKey = "acclimflag";
+	private static final String ACCLIM_KEY = "acclimflag";
 	
 	private Integer validitaTokenCsrf = null;
 
@@ -79,18 +83,17 @@ public class CsrfFilter implements Filter {
 	 * 
 	 */
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) res;
+		HttpSession session = request.getSession();
 		try {
-			HttpServletRequest request = (HttpServletRequest) req;
-			HttpServletResponse response = (HttpServletResponse) res;
-			HttpSession session = request.getSession();
-			
 			String sessionTokenCSRF = CsrfFilter.leggiTokenCSRF(session);
-			CsrfFilter.log.debug("Letto Token CSRF in sessione: ["+sessionTokenCSRF+"]");
+			CsrfFilter.log.debug("Letto Token CSRF in sessione: [{}]", sessionTokenCSRF);
 			try {
 				if(this.isRichiestaScrittura(request)) {
 					String tokenCSRF = request.getParameter(Costanti.PARAMETRO_CSRF_TOKEN);
-					CsrfFilter.log.debug("Ricevuto Token CSRF: ["+tokenCSRF+"]"); 
+					CsrfFilter.log.debug("Ricevuto Token CSRF: [{}]", tokenCSRF); 
 
 					boolean verificaTokenCSRF = ServletUtils.verificaTokenCSRF(tokenCSRF, sessionTokenCSRF, this.validitaTokenCsrf);
 
@@ -103,31 +106,39 @@ public class CsrfFilter implements Filter {
 						// setto gli attributi che riguardano il
 						// messaggio da visualizzare all'utente
 						if(session!=null) {
-							session.setAttribute(msgErroreKey, Costanti.MESSAGGIO_ERRORE_CSRF_TOKEN_NON_VALIDO);
-							session.setAttribute(accLimKey, true);
+							session.setAttribute(MSG_ERRORE_KEY, Costanti.MESSAGGIO_ERRORE_CSRF_TOKEN_NON_VALIDO);
+							session.setAttribute(ACCLIM_KEY, true);
 						}
 						// redirect
-						response.sendRedirect(request.getContextPath()+ jspErrore);
-						
-						// blocco la catena di filtri
-						return;
+						response.sendRedirect(request.getContextPath()+ JSP_ERRORE);
 					}
 				}
 			} finally {
 				if(sessionTokenCSRF == null) {
 					String nuovoTokenCSRF = CsrfFilter.generaESalvaTokenCSRF(session);
-					CsrfFilter.log.debug("Generato Nuovo Token CSRF: ["+nuovoTokenCSRF+"]");
+					CsrfFilter.log.debug("Generato Nuovo Token CSRF: [{}]", nuovoTokenCSRF);
 				}
 			}
 			
 			// faccio proseguire le chiamate ai filtri
 			chain.doFilter(request, response);
-		} catch (IOException e) {
-			log.error(e.getMessage(),e);
 		} catch (ServletException e) {
-			log.error(e.getMessage(),e);
-		} catch (Exception e) {
-			log.error(e.getMessage(),e);
+			Throwable rootCause = e.getRootCause();
+			if(rootCause != null){
+				if (rootCause instanceof ViewExpiredException) { // This is true for any FacesException.
+
+					Utility.setLoginBeanErrorMessage(session, null, HttpStatus.BAD_REQUEST.value());
+					CsrfFilter.log.debug("Rilevata ViewExpiredException: [{}]", rootCause.getMessage()); 
+					String redirPageUrl = request.getContextPath() + "/"+ "public/timeoutPage.jsf";
+					response.sendRedirect(redirPageUrl);
+				} else if (rootCause instanceof RuntimeException runtimeException) { // This is true for any FacesException.
+					throw runtimeException; // Throw wrapped RuntimeException instead of ServletException.
+				} else {
+					throw e;
+				}
+			} else {
+				throw e;
+			}
 		}
 	}
 	
@@ -146,10 +157,11 @@ public class CsrfFilter implements Filter {
 	}
 	
 	public static String generaESalvaTokenCSRF(HttpSession session) {
-		//		String uuId = UUID.randomUUID().toString().replace("-", ""); ServletUtils.generaTokenCSRF(uuId);
-		String uuId = UUID.randomUUID().toString().replace("-", ""); 
+		String uuId = UUID.randomUUID().toString(); 
 		String nuovoToken = ServletUtils.generaTokenCSRF(uuId);
-		session.setAttribute(Costanti.SESSION_ATTRIBUTE_CSRF_TOKEN, nuovoToken);
+		if(session != null) {
+			session.setAttribute(Costanti.SESSION_ATTRIBUTE_CSRF_TOKEN, nuovoToken);
+		}
 		return nuovoToken;
 	}
 
@@ -161,10 +173,6 @@ public class CsrfFilter implements Filter {
 	private boolean isRichiestaScrittura(HttpServletRequest request) {
 		// Le operazioni di scrittura sul monitor sono solo due:
 		// salvataggio password utente e salvataggio profilo utente
-		if(request.getParameter(Costanti.ID_BUTTON_SALVA_PROFILO) != null || request.getParameter(Costanti.ID_BUTTON_SALVA_PASSWORD) != null)  {
-			return true;
-		}
-
-		return false;
+		return (request.getParameter(Costanti.ID_BUTTON_SALVA_PROFILO) != null || request.getParameter(Costanti.ID_BUTTON_SALVA_PASSWORD) != null);
 	}
 }

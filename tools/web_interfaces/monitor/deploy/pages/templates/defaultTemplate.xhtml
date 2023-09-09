@@ -129,6 +129,17 @@
 				  				</div>
 							</h:panelGroup>
 						</a4j:outputPanel>
+						<a4j:outputPanel id="infoPlaceHolderHF" ajaxRendered="#{not empty loginBean.msgException}" layout="block">
+							<h:panelGroup layout="block" styleClass="messages-errors" rendered="#{not empty loginBean.msgException}">
+								<a4j:outputPanel layout="block" styleClass="messages-title">
+				  					<h:outputText value="&#160;&#160;" id="infoTitleIcon3" styleClass="messages-errors-title-icon"/>
+				  					<h:outputText id="infoTitleMessage3" value="Messaggio di Errore" styleClass="messages-title-text"/>
+				  				</a4j:outputPanel>
+				  				<div class="messages-errors-text">
+				  					<h:outputText value="#{loginBean.msgException}" id="messaggioAcclimHF"/>
+				  				</div>
+							</h:panelGroup>
+						</a4j:outputPanel>
 						<div>
 							<ui:insert name="body"/>
 						</div>

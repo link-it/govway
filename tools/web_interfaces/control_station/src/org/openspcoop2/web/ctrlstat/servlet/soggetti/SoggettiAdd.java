@@ -589,7 +589,7 @@ public final class SoggettiAdd extends Action {
 			if(ServletUtils.isEditModeInProgress(strutsBean.editMode) || checkWizard){
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();
@@ -673,7 +673,7 @@ public final class SoggettiAdd extends Action {
 			if (!isOk) {
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();

@@ -176,7 +176,7 @@ public final class RuoliChange extends Action {
 			if (ruoliHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, RuoliCostanti.LABEL_RUOLI, 
+				ServletUtils.setPageDataTitleServletChange(pd, RuoliCostanti.LABEL_RUOLI, 
 						RuoliCostanti.SERVLET_NAME_RUOLI_LIST, ruolo.getNome());
 				
 
@@ -216,7 +216,7 @@ public final class RuoliChange extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, RuoliCostanti.LABEL_RUOLI, 
+				ServletUtils.setPageDataTitleServletChange(pd, RuoliCostanti.LABEL_RUOLI, 
 						RuoliCostanti.SERVLET_NAME_RUOLI_LIST, ruolo.getNome());
 
 				// preparo i campi

@@ -2003,7 +2003,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			if(accessDaChange) {
-				ServletUtils.setPageDataTitle_ServletFirst(this.pd, SoggettiCostanti.LABEL_SOGGETTI, 
+				ServletUtils.setPageDataTitleServletFirst(this.pd, SoggettiCostanti.LABEL_SOGGETTI, 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
 				ServletUtils.appendPageDataTitle(this.pd, 
 						new Parameter(tmpTitle, 
@@ -2013,7 +2013,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(RuoliCostanti.LABEL_RUOLI, null));
 			}
 			else {
-				ServletUtils.setPageDataTitle_ServletChange(this.pd, SoggettiCostanti.LABEL_SOGGETTI, 
+				ServletUtils.setPageDataTitleServletChange(this.pd, SoggettiCostanti.LABEL_SOGGETTI, 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Ruoli di " + tmpTitle);
 			}
 

@@ -61,14 +61,22 @@ public class Validatore {
 	}
 	
 	public String validate(String oggetto, String valore, boolean nullable, String... pattern) throws ValidationException {
-		return validate(oggetto, valore, Integer.valueOf(0), null, nullable, pattern);
+		return validate(oggetto, valore, nullable, true, pattern);
 	}
-
+	
+	public String validate(String oggetto, String valore, boolean nullable, boolean checkSqlInjection, String... pattern) throws ValidationException {
+		return validate(oggetto, valore, Integer.valueOf(0), null, nullable, checkSqlInjection, pattern);
+	}
+	
 	public String validate(String oggetto, String valore, Integer maxLength, boolean nullable, String... pattern) throws ValidationException {
-		return validate(oggetto, valore, Integer.valueOf(0), maxLength, nullable, pattern);
+		return validate(oggetto, valore, maxLength, nullable, true, pattern);
 	}
 
-	public String validate(String oggetto, String valore, Integer minLength, Integer maxLength, boolean nullable, String... pattern) throws ValidationException {
+	public String validate(String oggetto, String valore, Integer maxLength, boolean nullable, boolean checkSqlInjection, String... pattern) throws ValidationException {
+		return validate(oggetto, valore, Integer.valueOf(0), maxLength, nullable, checkSqlInjection, pattern);
+	}
+
+	public String validate(String oggetto, String valore, Integer minLength, Integer maxLength, boolean nullable, boolean checkSqlInjection, String... pattern) throws ValidationException {
 		
 		List<Pattern> patternsToCheck = new ArrayList<>();
 		
@@ -92,6 +100,11 @@ public class Validatore {
 		// check regexpr
 		checkPatterns(oggetto, valore, patternsToCheck);
 		
+		// check sqlInjection
+		if(checkSqlInjection) {
+			checkSqlInjection(oggetto, valore, this.sc.getValidationPattern(Costanti.PATTERN_SQL_INJECTION));
+		}
+		
 		return valore;
 	}
 	
@@ -106,7 +119,7 @@ public class Validatore {
 	private String validateTabId(String oggetto, String idTab) {
 		if(idTab != null) {
 			try {
-				return this.validate(oggetto, idTab, Integer.valueOf(36), false, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TAB); 
+				return this.validate(oggetto, idTab, Integer.valueOf(36), false, true, org.openspcoop2.web.lib.mvc.security.Costanti.PATTERN_ID_TAB); 
 			} catch(ValidationException e) {
 				log.warn("Valore ["+idTab+"] ricevuto per il parametro ["+oggetto+"] non valido: " + e.getMessage(),e);
 			}
@@ -177,6 +190,24 @@ public class Validatore {
 			if ( !p.matcher(valore).matches() ) {
 				throw new ValidationException( oggetto + " non rispetta il pattern di validazione previsto [" + p.pattern() +  "].");
 			}
+		}
+
+		return valore;
+	}
+	
+	/***
+	 * Validazione dell'input secondo i pattern previsti.
+	 * 
+	 * @param oggetto
+	 * @param valore
+	 * @param pattern
+	 * @return
+	 * @throws ValidationException
+	 */
+	private String checkSqlInjection(String oggetto, String valore, Pattern pattern) throws ValidationException
+	{
+		if (pattern.matcher(valore).find()) {
+			throw new ValidationException( oggetto + " non rispetta il pattern di validazione previsto [" + pattern.pattern() +  "].");
 		}
 
 		return valore;

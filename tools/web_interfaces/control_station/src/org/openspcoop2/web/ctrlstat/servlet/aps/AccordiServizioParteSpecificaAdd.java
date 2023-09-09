@@ -1183,7 +1183,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
 			if(ServletUtils.isEditModeInProgress(strutsBean.editMode)){
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, labelList,servletList);
+				ServletUtils.setPageDataTitleServletAdd(pd, labelList,servletList);
 				
 
 				if(apsHelper.isShowGestioneWorkflowStatoDocumenti()){
@@ -1668,7 +1668,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			if (!isOk) {
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, labelList, servletList);
+				ServletUtils.setPageDataTitleServletAdd(pd, labelList, servletList);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();
@@ -1930,7 +1930,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					pd.setMessage(validazione.toString());
 
 					// setto la barra del titolo
-					ServletUtils.setPageDataTitle_ServletAdd(pd, labelList,servletList);
+					ServletUtils.setPageDataTitleServletAdd(pd, labelList,servletList);
 
 					// preparo i campi
 					List<DataElement> dati = new ArrayList<>();

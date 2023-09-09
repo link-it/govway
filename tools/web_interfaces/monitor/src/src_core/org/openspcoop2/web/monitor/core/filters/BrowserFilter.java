@@ -24,10 +24,20 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.web.monitor.core.core.Utils;
+import org.openspcoop2.web.monitor.core.listener.IEFilter;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
+import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
+import org.openspcoop2.web.monitor.core.utils.ContentAuthorizationManager;
+import org.openspcoop2.web.monitor.core.utils.Costanti;
+import org.slf4j.Logger;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -38,21 +48,6 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
-import org.openspcoop2.web.monitor.core.bean.LoginBean;
-import org.openspcoop2.web.monitor.core.core.Utility;
-import org.openspcoop2.web.monitor.core.core.Utils;
-import org.openspcoop2.web.monitor.core.listener.IEFilter;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
-import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
-import org.openspcoop2.web.monitor.core.utils.ContentAuthorizationManager;
-import org.openspcoop2.web.monitor.core.utils.Costanti;
-import org.slf4j.Logger;
 
 /**
  * BrowserFilter
@@ -74,24 +69,19 @@ public class BrowserFilter implements Filter {
 	@SuppressWarnings("unused")
 	private FilterConfig filterConfig = null;
 
-//	private List<String> excludedPaths = null;
-	
-	private static final String parametroSVG = "usaSVG";
-	private static final String parametroSVG_FORM_STATS = "sf_usaSVG";
-	private static final String parametroSVG_FORM_MENU = "tf_usaSVG";
-	private static final String parametroSVG_POLL_STATO = "ps_usaSVG";
-	private static final String parametroGeneraReport = "generaReport";
-	private static final String parametroEsitiLive = "esiti_live";
-	private static final String parametroTipoReport = "tipoReportCombo";
-	private static final String parametroTipoReportTabella = "Tabella";
+	public static final String PARAMETRO_SVG = "usaSVG";
+	private static final String PARAMETRO_SVG_FORM_STATS = "sf_usaSVG";
+	private static final String PARAMETRO_SVG_FORM_MENU = "tf_usaSVG";
+	private static final String PARAMETRO_SVG_POLL_STATO = "ps_usaSVG";
+	private static final String PARAMETRO_GENERA_REPORT = "generaReport";
+	private static final String PARAMETRO_ESITI_LIVE = "esiti_live";
+	private static final String PARAMETRO_TIPO_REPORT = "tipoReportCombo";
+	private static final String PARAMETRO_TIPO_REPORT_TABELLA = "Tabella";
 	private List<String> listaPagineNoIE8 = null;
 	
-	// messaggio da visualizzare per l'utente
-	private static final String msgErroreAuth = "Autorizzazione negata";
-
 	private static synchronized void loadMappaBrowser(){
 		if(mappaAbilitazioneGraficiSVG == null)
-			mappaAbilitazioneGraficiSVG = new HashMap<BrowserInfo.BrowserFamily, Double>();
+			mappaAbilitazioneGraficiSVG = new EnumMap<>(BrowserInfo.BrowserFamily.class);
 
 		mappaAbilitazioneGraficiSVG.put(BrowserFamily.CHROME, 4D);
 		mappaAbilitazioneGraficiSVG.put(BrowserFamily.FIREFOX, 3D);
@@ -100,7 +90,7 @@ public class BrowserFilter implements Filter {
 		mappaAbilitazioneGraficiSVG.put(BrowserFamily.SAFARI, 3.2D);
 		
 		if(mappaAbilitazioneVistaTransazioniCustom == null)
-			mappaAbilitazioneVistaTransazioniCustom = new HashMap<BrowserInfo.BrowserFamily, Double>();
+			mappaAbilitazioneVistaTransazioniCustom = new EnumMap<>(BrowserInfo.BrowserFamily.class);
 
 		mappaAbilitazioneVistaTransazioniCustom.put(BrowserFamily.CHROME, 29D);
 		mappaAbilitazioneVistaTransazioniCustom.put(BrowserFamily.FIREFOX, 28D);
@@ -147,24 +137,22 @@ public class BrowserFilter implements Filter {
 
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-		HttpSession session = request.getSession();
 		// Analisi dello user agent
 		String userAgent = request.getHeader(Costanti.USER_AGENT_HEADER_NAME);
-		boolean utenteLoggato = isUtenteLoggato(session);
 		
 		if(userAgent != null) {
 
 			try{
 
-				log.debug("Decodifica Browser da Header UserAgent ["+userAgent+"]");
-				String urlRichiesta = ((HttpServletRequest) request).getServletPath(); 
-				log.debug("Richiesta Risorsa ["+urlRichiesta+"]");
+				log.debug("Decodifica Browser da Header UserAgent [{}]", userAgent);
+				String urlRichiesta = request.getServletPath(); 
+				log.debug("Richiesta Risorsa [{}]", urlRichiesta);
 				BrowserInfo browserInfo = BrowserInfo.getBrowserInfo(userAgent);
 
 				String browsername = browserInfo.getBrowserName();
 				Double browserversion = browserInfo.getVersion();
 
-				log.debug("Browser Riconosciuto: Name ["+browsername+"] Version ["+browserversion+"].");
+				log.debug("Browser Riconosciuto: Name [{}] Version [{}].", browsername, browserversion);
 
 				//controllo se e' presente il parametro usaSVG
 				boolean usaSVG = usaSVG(request);
@@ -177,13 +165,10 @@ public class BrowserFilter implements Filter {
 						abilitaModalitaIE8 = disabilitaGraficiSVG(browserInfo);
 					}
 
-					log.debug("La risorsa richiesta "+(abilitaModalitaIE8 ? "" : "non ")+"verra' visualizzata in modalita compatibilita IE8.");
+					log.debug("La risorsa richiesta {}verra' visualizzata in modalita compatibilita IE8.", (abilitaModalitaIE8 ? "" : "non "));
 					//Imposto l'header http necessario per forzare la visualizzazione.
-//					if(abilitaModalitaIE8)
-//						((HttpServletResponse) response).setHeader("X-UA-Compatible", "IE=EmulateIE8");
-
 					// per tutte le versioni
-					((HttpServletResponse) response).setHeader("X-UA-Compatible", "IE=edge");
+					response.setHeader("X-UA-Compatible", "IE=edge");
 
 					// Risolvo anche il problema di ie9 che non visualizza il contenuto dei file css della libreria Richfaces.
 					// Esso invia solo "text/css" all'interno dell' Accept header.
@@ -224,25 +209,7 @@ public class BrowserFilter implements Filter {
 				} else {
 					chain.doFilter(request, response);
 				}
-			}catch(ValidationException e){
-				log.error("Errore di validazione dei parametri: " + e.getMessage() + ", redirect verso pagina di errore: "	+ request.getContextPath() + ContentAuthorizationFilter.jspErrore, e);
-				
-				if(utenteLoggato){
-					// setto gli attributi che riguardano il
-					// messaggio da visualizzare all'utente
-					session.setAttribute(ContentAuthorizationFilter.msgErroreKey, msgErroreAuth);
-					session.setAttribute(ContentAuthorizationFilter.accLimKey, true);
-					// redirect
-					response.sendRedirect(request.getContextPath()+ ContentAuthorizationFilter.jspErrore);
-				} else {
-					// utente non loggato va alla pagina di login
-					// redirect
-					response.sendRedirect(request.getContextPath()+ ContentAuthorizationFilter.jspLogin);
-				}
-
-				// blocco la catena di filtri
-				return;
-			}catch(Exception e){
+			} catch(Exception e){
 				log.debug("Browser non riconosciuto.");
 				chain.doFilter(request, response);
 			}
@@ -270,20 +237,15 @@ public class BrowserFilter implements Filter {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-//		this.excludedPaths = new ArrayList<>();
-//		this.excludedPaths.addAll(Arrays.asList(ContentAuthorizationCostanti.listaPathConsentiti));
-		// welcome contiene un grafico che puo' essere visualizzato in modalita' ie>8
-//		this.excludedPaths.remove("/pages/welcome.jList<String> listaPagineNoIE8 =sf");
 	}
 	
 	
 	/**
 	 * Controlla che la pagina richiesta sia tra quelle che non necessitano di filtro sui contenuti,
 	 * sono "libere" le pagine di login e timeout, e i path delle risorse richiesta dinamicamente dal framework 
-	 * @throws ValidationException Il parametro *_svg non e' un boolean valido
 	 *	
 	 */
-	public boolean usaSVG(HttpServletRequest httpServletRequest) throws ValidationException {
+	public boolean usaSVG(HttpServletRequest httpServletRequest) {
 		int svgLength = 0;
 		String svg = null;
 		
@@ -291,46 +253,42 @@ public class BrowserFilter implements Filter {
 		Enumeration<String> parameterNames = httpServletRequest.getParameterNames(); 
 		
 		while (parameterNames.hasMoreElements()) {
-			String parName = (String) parameterNames.nextElement();
-			log.trace("Parametro ["+parName+"] con Valore ["+httpServletRequest.getParameter(parName)+"].");
-			if(parName!= null && parName.endsWith(parametroSVG)){
-				svg = httpServletRequest.getParameter(parName);
-				// validazione del parametro di tipo boolean
-				boolean isSvgValid = ServletUtils.checkBooleanParameter(httpServletRequest, parName);
-				if(!isSvgValid) {
-					throw new ValidationException("Il parametro [" + parName + "] contiene un valore non valido.");
-				}
+			String parName = parameterNames.nextElement();
+			String parValue = httpServletRequest.getParameter(parName);
+			log.trace("Parametro [{}] con Valore [{}].", parName, parValue);
+			if(parName!= null && parName.endsWith(PARAMETRO_SVG)){
+				svg = parValue;
 				
-				log.trace("Parametro ["+parName+"] con Valore ["+httpServletRequest.getParameter(parName)+"] Utilizzato per pilotare il disegno dei grafici.");
+				log.trace("Parametro [{}] con Valore [{}] Utilizzato per pilotare il disegno dei grafici.", parName, parValue);
 				
 				// controllo solo nei form delle statistiche se sto nella schermata form non devo fare cambio di modalita' se navigo si.
-				if(parName.endsWith(parametroSVG_FORM_STATS)){
-					 String paramGeneraReport = getParamValue(httpServletRequest, parametroGeneraReport);
-					 String paramTipoReport = getParamValue(httpServletRequest, parametroTipoReport);
-					 log.trace("Caso speciale Form Statistiche: Parametro ["+parametroGeneraReport+"] con Valore ["+paramGeneraReport+"] Utilizzato per pilotare il disegno dei grafici.");
+				if(parName.endsWith(PARAMETRO_SVG_FORM_STATS)){
+					 String paramGeneraReport = getParamValue(httpServletRequest, PARAMETRO_GENERA_REPORT);
+					 String paramTipoReport = getParamValue(httpServletRequest, PARAMETRO_TIPO_REPORT);
+					 log.trace("Caso speciale Form Statistiche: Parametro [{}] con Valore [{}] Utilizzato per pilotare il disegno dei grafici.", PARAMETRO_GENERA_REPORT, paramGeneraReport);
 					 if(StringUtils.isEmpty(paramGeneraReport))
 						 svg = null;
 					 else {
-						 if(StringUtils.isNotEmpty(paramTipoReport) && paramTipoReport.equals(parametroTipoReportTabella)){
-							 log.trace("Caso speciale Form Statistiche: Parametro ["+parametroTipoReport+"] con Valore ["+paramTipoReport+"] Visualizzazione del report in forma di tabella.");
+						 if(StringUtils.isNotEmpty(paramTipoReport) && paramTipoReport.equals(PARAMETRO_TIPO_REPORT_TABELLA)){
+							 log.trace("Caso speciale Form Statistiche: Parametro [{}] con Valore [{}] Visualizzazione del report in forma di tabella.", PARAMETRO_TIPO_REPORT, paramTipoReport);
 							 svg = null;
 						 }
 					 }
 				}
 				
 				// attivo il controllo SVG solo se ho cliccato nel menu' esitiLive
-				if(parName.endsWith(parametroSVG_FORM_MENU)){
-					 String paramEsitiLive =  getParamValue(httpServletRequest, parametroEsitiLive);
-					 log.trace("Caso speciale Menu': Parametro ["+parametroEsitiLive+"] con Valore ["+paramEsitiLive+"] Utilizzato per pilotare il disegno dei grafici.");
+				if(parName.endsWith(PARAMETRO_SVG_FORM_MENU)){
+					 String paramEsitiLive =  getParamValue(httpServletRequest, PARAMETRO_ESITI_LIVE);
+					 log.trace("Caso speciale Menu': Parametro [{}] con Valore [{}] Utilizzato per pilotare il disegno dei grafici.", PARAMETRO_ESITI_LIVE, paramEsitiLive);
 					 if(StringUtils.isEmpty(paramEsitiLive))
 						 svg = null;
 				}
 				
 				// attivo il controllo SVG quando il polling dello stato si refresha 
-				if(parName.endsWith(parametroSVG_POLL_STATO)){
+				if(parName.endsWith(PARAMETRO_SVG_POLL_STATO)){
 					boolean thisResource = !Utils.isContentAuthorizationRequiredForThisResource(httpServletRequest, this.listaPagineNoIE8);
 					
-					log.trace("Caso speciale Menu': Parametro ["+parametroSVG_POLL_STATO+"] con Valore ["+thisResource+"] Utilizzato per pilotare il disegno dei grafici.");
+					log.trace("Caso speciale Menu': Parametro [{}] con Valore [{}] Utilizzato per pilotare il disegno dei grafici.", PARAMETRO_SVG_POLL_STATO, thisResource);
 					if(!thisResource)
 						 svg = null;
 				}
@@ -343,7 +301,7 @@ public class BrowserFilter implements Filter {
 			svgLength = svg.length();
 		} 
 		
-		log.trace("Attivo controllo SVG ["+(svgLength > 0 ? "SI" : "NO" )+"]");
+		log.trace("Attivo controllo SVG [{}]", (svgLength > 0 ? "SI" : "NO" ));
 		
 		return svgLength > 0;
 	}
@@ -352,24 +310,14 @@ public class BrowserFilter implements Filter {
 		Enumeration<String> parameterNames = httpServletRequest.getParameterNames(); 
 		
 		while (parameterNames.hasMoreElements()) {
-			String parName = (String) parameterNames.nextElement();
-//			if(parName!= null && parName.endsWith(paramName)){
+			String parName = parameterNames.nextElement();
 			if(parName!= null && parName.contains(paramName)){
 				String parameterValue = httpServletRequest.getParameter(parName);
-				log.debug("Trovato Parametro ["+parName+"] con Valore ["+parameterValue+"].");
+				log.debug("Trovato Parametro [{}] con Valore [{}].", parName, parameterValue);
 				return parameterValue;
 			}
 		}
 		return null;
 			
-	}
-
-	private boolean isUtenteLoggato(HttpSession session) {
-		LoginBean lb =  Utility.getLoginBeanFromSession(session);
-		if (lb != null) {
-			return lb.getLoggedUser() != null;
-		}
-
-		return false;
 	}
 }

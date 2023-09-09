@@ -1077,4 +1077,22 @@ public class Utility {
 		
 		return false;
 	}
+	
+	public static boolean isUtenteLoggato(HttpSession session) {
+		LoginBean lb =  Utility.getLoginBeanFromSession(session);
+		if (lb != null) {
+			return lb.getLoggedUser() != null;
+		}
+
+		return false;
+	}
+	
+	public static void setLoginBeanErrorMessage(HttpSession session, String message, Integer statusCode) {
+		LoginBean lb =  Utility.getLoginBeanFromSession(session);
+
+		if(lb!= null){
+			lb.setErrorStatus(statusCode);
+			lb.setMsgException(message);
+		}
+	}
 }

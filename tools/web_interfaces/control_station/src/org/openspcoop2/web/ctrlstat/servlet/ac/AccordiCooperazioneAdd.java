@@ -231,7 +231,7 @@ public final class AccordiCooperazioneAdd extends Action {
 				// setto la barra del titolo
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE,
+				ServletUtils.setPageDataTitleServletAdd(pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE,
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 
 				// preparo i campi
@@ -317,7 +317,7 @@ public final class AccordiCooperazioneAdd extends Action {
 
 			if (!isOk) {
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE,
+				ServletUtils.setPageDataTitleServletAdd(pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE,
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 
 				// preparo i campi
@@ -385,7 +385,7 @@ public final class AccordiCooperazioneAdd extends Action {
 					pd.setMessage(validazioneException.toString());
 
 					// setto la barra del titolo
-					ServletUtils.setPageDataTitle_ServletAdd(pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE,
+					ServletUtils.setPageDataTitleServletAdd(pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE,
 							AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 
 					// preparo i campi
