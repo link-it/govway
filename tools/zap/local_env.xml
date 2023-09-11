@@ -9,7 +9,7 @@
 	<property name="required_lib" value="${openspcoop2.lib}"/>
 
 	<!-- Parametri connessione GovWay -->
-	<property name="govway.endpoint" value="http://127.0.0.1:8080"/>
+	<property name="govway.endpoint" value="http://127.0.0.1:6666"/>
 	<property name="govway.ente" value="ENTE"/>
 	<!-- Parametri connessione GovWay Console -->
 	<property name="govway.console.config.username" value="amministratore"/>
@@ -23,7 +23,7 @@
 	<property name="govway.console.monitor.password" value="123456"/>
 	<property name="govway.console.monitor.scanUrls" location="config/govwayMonitor"/>
 	<property name="govway.console.monitor.scanUrls.templates" location="template/govwayMonitor"/>
-	<property name="govway.console.monitor.scanType.ajaxSpider" value="true"/>
+	<property name="govway.console.monitor.scanType.ajaxSpider" value="false"/>
 	<property name="govway.console.monitor.scanType.active" value="true"/>
 
 	<!-- https://www.zaproxy.org/ -->

@@ -658,7 +658,6 @@
 	<target name="analizeGovWayConsoles" depends="analizeGovWayConsoleGestione,analizeGovWayConsoleMonitoraggio"/>
 	<!-- govwayConsole -->
 	<target name="analizeGovWayConsoleGestione">
-		<delete dir="${zaproxy.report.dir}/console-configurazione" />
 		<if>
 			<not>
 				<or>
@@ -879,7 +878,7 @@
 		<delete dir="${zaproxy.report.dir}/console-monitoraggio" />
 		<foreach param="file" target="-analizeGovWayConsoleMonitoraggioReadConfig">
 			<path>
-				<dirset dir="${govway.monitor.config.scanUrls}">
+				<dirset dir="${govway.console.monitor.scanUrls}">
 					<filename name="*" />
 				</dirset>
 			</path>
@@ -893,13 +892,13 @@
 
 		<var name="scanTypeGovwayMonitor" value="spider"/>   
 		<if>
-                        <equals arg1="${govway.monitor.config.scanType.ajaxSpider}" arg2="true"/>
+                        <equals arg1="${govway.console.monitor.scanType.ajaxSpider}" arg2="true"/>
                         <then>
 				<var name="scanTypeGovwayMonitor" value="${scanTypeGovwayMonitor}|ajaxspider"/>                                
                         </then>
 		</if>
 		<if>
-                        <equals arg1="${govway.monitor.config.scanType.active}" arg2="true"/>
+                        <equals arg1="${govway.console.monitor.scanType.active}" arg2="true"/>
                         <then>
 				<var name="scanTypeGovwayMonitor" value="${scanTypeGovwayMonitor}|active"/>                                
                         </then>
@@ -911,7 +910,7 @@
 			<param name="analyzeTargetUrl" value="${govway.endpoint}/govwayMonitor"/>
 			<param name="analyzeUsername" value="${govway.console.monitor.username}"/>
 			<param name="analyzePassword" value="${govway.console.monitor.password}"/>
-			<param name="analyzeScanTypes" value="${scanTypeGovwayMonitor}"/>>
+			<param name="analyzeScanTypes" value="${scanTypeGovwayMonitor}"/>
 			<param name="analyzeScanUrls" value="${file}/scanUrls.txt"/>
 			<param name="analyzeFalsePositives" value="${file}/falsePositives.txt"/>
 			<param name="analyzeTitle" value="GovWay Console di Monitoraggio"/>
