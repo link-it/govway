@@ -1,0 +1,3 @@
+# Indicare solo i contesti dopo http://.../govwayMonitor/
+storicoTransazioni=transazioni/pages/list/transazioni.jsf
+liveTransazioni=transazioni/pages/form/transazioni.jsf
