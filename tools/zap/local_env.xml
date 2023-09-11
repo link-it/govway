@@ -11,10 +11,20 @@
 	<!-- Parametri connessione GovWay -->
 	<property name="govway.endpoint" value="http://127.0.0.1:8080"/>
 	<property name="govway.ente" value="ENTE"/>
+	<!-- Parametri connessione GovWay Console -->
 	<property name="govway.console.config.username" value="amministratore"/>
 	<property name="govway.console.config.password" value="123456"/>
+        <property name="govway.console.config.scanUrls" location="config/govwayConsole"/>
+	<property name="govway.console.config.scanUrls.templates" location="template/govwayConsole"/>
+	<property name="govway.console.config.scanType.ajaxSpider" value="false"/>
+	<property name="govway.console.config.scanType.active" value="true"/>
+	<!-- Parametri connessione GovWay Monitor -->
 	<property name="govway.console.monitor.username" value="operatore"/>
 	<property name="govway.console.monitor.password" value="123456"/>
+	<property name="govway.console.monitor.scanUrls" location="config/govwayMonitor"/>
+	<property name="govway.console.monitor.scanUrls.templates" location="template/govwayMonitor"/>
+	<property name="govway.console.monitor.scanType.ajaxSpider" value="true"/>
+	<property name="govway.console.monitor.scanType.active" value="true"/>
 
 	<!-- https://www.zaproxy.org/ -->
 	<!-- https://github.com/zaproxy/zap-api-java -->
@@ -43,12 +53,23 @@
 	<property name="zaproxy.govwayConsole.username" value=""/>
 	<property name="zaproxy.govwayConsole.password" value=""/>
 	<property name="zaproxy.govwayConsole.scanTypes" value=""/>
+	<property name="zaproxy.govwayConsole.scanUrls" value=""/>
+	<property name="zaproxy.govwayConsole.falsePositives" value=""/>
 
 	<!-- Parametri verifica govwayMonitor -->
 	<property name="zaproxy.govwayMonitor.url" value=""/>
 	<property name="zaproxy.govwayMonitor.username" value=""/>
 	<property name="zaproxy.govwayMonitor.password" value=""/>
 	<property name="zaproxy.govwayMonitor.scanTypes" value=""/>
+	<property name="zaproxy.govwayMonitor.scanUrls" value=""/>
+	<property name="zaproxy.govwayMonitor.falsePositives" value=""/>
+
+	<!-- Parametri di connessione al database delle configurazioni -->
+	<property name="zaproxy.jdbc.driver.className" value="JDBC_DRIVER_CLASS_NAME"/>
+	<property name="zaproxy.jdbc.driver.jarPath" value="JDBC_DRIVER_PATH"/>
+	<property name="zaproxy.jdbc.connectionUrl" value="JDBC_CONNECTION_URL"/>
+	<property name="zaproxy.jdbc.username" value="JDBC_USERNAME"/>
+	<property name="zaproxy.jdbc.password" value="JDBC_PASSWORD"/>
 
 	<!-- Parametri generazione Reports (https://www.zaproxy.org/docs/desktop/addons/report-generation/api/) -->
 	<property name="zaproxy.report.title" value="GovWay" />

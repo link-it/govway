@@ -1,0 +1,3 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+# select id from accordi where nome='api-config';
+apiRest=accordiServizioParteComuneApiChange.do?id=ID_API_REST&tipoAccordo=apc

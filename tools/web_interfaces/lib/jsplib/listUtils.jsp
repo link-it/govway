@@ -200,7 +200,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     		$('#iconaPanelListaSpan').prop('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
     	}
     	
-    	// reinit select del filtro
+    	// reinit del filtro
     	inizializzaSelectFiltro();
     } else {
     	$("#searchForm").removeClass('searchFormOn');

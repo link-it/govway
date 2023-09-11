@@ -1,0 +1,4 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+# select s.id as id, sog.id as idSoggErogatore from servizi s, soggetti sog where s.id_soggetto=sog.id AND s.nome_servizio = 'api-soap-status' AND sog.nome_soggetto='ENTE'; 
+erogazioneSoap=aspsErogazioniChange.do?id=ID_EROGAZIONE_SOAP
+erogazioneSoapConfigurazione=accordiServizioParteSpecificaPorteApplicativeList.do?id=ID_EROGAZIONE_SOAP&idSoggErogatore=ID_EROGATORE_SOAP&gestioneConfigurazioni=true&gestioneGruppi=false

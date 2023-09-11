@@ -791,8 +791,7 @@ for (int i = 0; i < dati.size(); i++) {
 								      						%>
 								      					
 								      					 /**
-									      				   * Initialize tagsinput behaviour on inputs and selects which have
-									      				   * data-role=tagsinput
+									      				   * Initialize tagsinput which have data-role tagsinput
 									      				   */
 									      				  $(function() {
 									      				    $("input[data-role=tagsinput][name='<%= deName %>']").tagsinput(
@@ -1221,8 +1220,7 @@ for (int i = 0; i < dati.size(); i++) {
 															      				%>
 															      					<script type="text/javascript" nonce="<%= randomNonce %>">
 															      					 /**
-																      				   * Initialize tagsinput behaviour on inputs and selects which have
-																      				   * data-role=tagsinput
+																      				   * Initialize tagsinput which have data-role tagsinput
 																      				   */
 																      				  $(function() {
 																      				    $("select[multiple][data-role=tagsinput][name='<%= deName %>']").tagsinput(

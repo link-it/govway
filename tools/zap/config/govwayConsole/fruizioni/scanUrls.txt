@@ -1,0 +1,2 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+fruizioni=aspsErogazioniList.do?_tabKey_tipologiaErogazione=fruizione

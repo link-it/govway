@@ -7,7 +7,7 @@
     <cookie-config>
         <name>JSESSIONID_GW_CONSOLE</name>
         <http-only>true</http-only>
-        <secure>true</secure>
+        <secure>false</secure>
     </cookie-config>
     <session-timeout>120</session-timeout>
   </session-config>

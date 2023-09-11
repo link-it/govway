@@ -1,0 +1,4 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+# select s.id as id, fru.id as idsogg, f.id as myId from servizi_fruitori f, servizi s, soggetti ero, soggetti fru where f.id_soggetto=fru.id AND f.id_servizio=s.id AND s.id_soggetto=ero.id AND s.nome_servizio = 'api-pdnd' AND fru.nome_soggetto='ENTE' AND ero.nome_soggetto='PDND';
+fruizioneRest=id=ID_FRUIZIONE_REST&tipoSoggFru=modipa&nomeSoggFru=NOME_ENTE
+fruizioneRestConfigurazione=accordiServizioParteSpecificaFruitoriPorteDelegateList.do?id=ID_FRUIZIONE_REST&idsogg=ID_FRUITORE_REST&myId=MY_FRUIZIONE_REST&gestioneConfigurazioni=true&gestioneGruppi=false

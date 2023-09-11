@@ -481,6 +481,32 @@
                         </then>
                 </if>
 
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.scanUrls}" arg2="$${zaproxy.govwayConsole.scanUrls}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.scanUrls' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.scanUrls}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.scanUrls' non definito"/>
+                        </then>
+                </if>
+
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.falsePositives}" arg2="$${zaproxy.govwayConsole.falsePositives}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.falsePositives' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayConsole.falsePositives}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayConsole.falsePositives' non definito"/>
+                        </then>
+                </if>
+
 		<antcall target="-executeZap">
 			<param name="zap_target" value="-analizeGovWayConsole"/>
 		</antcall>
@@ -497,6 +523,8 @@
 			<arg value="${zaproxy.govwayConsole.username}" />
 			<arg value="${zaproxy.govwayConsole.password}" />
 			<arg value="${zaproxy.govwayConsole.scanTypes}" />
+			<arg value="${zaproxy.govwayConsole.scanUrls}" />
+			<arg value="${zaproxy.govwayConsole.falsePositives}" />
 			<arg value="${zaproxy.report.title}" />
 			<arg value="${zaproxy.report.description}" />
 			<arg value="${zaproxy.report.includedConfidences}" />
@@ -567,6 +595,32 @@
                         </then>
                 </if>
 
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.scanUrls}" arg2="$${zaproxy.govwayMonitor.scanUrls}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.scanUrls' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.scanUrls}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.scanUrls' non definito"/>
+                        </then>
+                </if>
+
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.falsePositives}" arg2="$${zaproxy.govwayMonitor.falsePositives}"/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.falsePositives' non fornito"/>
+                        </then>
+                </if>
+                <if>
+                        <equals arg1="${zaproxy.govwayMonitor.falsePositives}" arg2=""/>
+                        <then>
+                                <fail message="Parametro 'zaproxy.govwayMonitor.falsePositives' non definito"/>
+                        </then>
+                </if>
+
 		<antcall target="-executeZap">
 			<param name="zap_target" value="-analizeGovWayMonitor"/>
 		</antcall>
@@ -583,6 +637,8 @@
 			<arg value="${zaproxy.govwayMonitor.username}" />
 			<arg value="${zaproxy.govwayMonitor.password}" />
 			<arg value="${zaproxy.govwayMonitor.scanTypes}" />
+			<arg value="${zaproxy.govwayMonitor.scanUrls}" />
+			<arg value="${zaproxy.govwayMonitor.falsePositives}" />
 			<arg value="${zaproxy.report.title}" />
 			<arg value="${zaproxy.report.description}" />
 			<arg value="${zaproxy.report.includedConfidences}" />
@@ -599,33 +655,272 @@
 	</target>
 
 	<!-- GovWay Consoles -->
-	<target name="analizeGovWayConsoles">
+	<target name="analizeGovWayConsoles" depends="analizeGovWayConsoleGestione,analizeGovWayConsoleMonitoraggio"/>
+	<!-- govwayConsole -->
+	<target name="analizeGovWayConsoleGestione">
+		<delete dir="${zaproxy.report.dir}/console-configurazione" />
+		<if>
+			<not>
+				<or>
+					<or>
+				                <equals arg1="${zaproxy.jdbc.driver.className}" arg2="$${zaproxy.jdbc.connectionUrl}"/>
+						<equals arg1="${zaproxy.jdbc.driver.className}" arg2="JDBC_DRIVER_CLASS_NAME"/>
+					</or>
+					<or>
+				                <equals arg1="${zaproxy.jdbc.driver.jarPath}" arg2="$${zaproxy.jdbc.connectionUrl}"/>
+						<equals arg1="${zaproxy.jdbc.driver.jarPath}" arg2="JDBC_DRIVER_PATH"/>
+					</or>
+					<or>
+				                <equals arg1="${zaproxy.jdbc.connectionUrl}" arg2="$${zaproxy.jdbc.connectionUrl}"/>
+						<equals arg1="${zaproxy.jdbc.connectionUrl}" arg2="JDBC_CONNECTION_URL"/>
+					</or>
+					<or>
+				                <equals arg1="${zaproxy.jdbc.username}" arg2="$${zaproxy.jdbc.username}"/>
+						<equals arg1="${zaproxy.jdbc.username}" arg2="JDBC_USERNAME"/>
+					</or>
+					<or>
+				                <equals arg1="${zaproxy.jdbc.password}" arg2="$${zaproxy.jdbc.password}"/>
+						<equals arg1="${zaproxy.jdbc.password}" arg2="JDBC_PASSWORD"/>
+					</or>
+				</or>
+			</not>
+                        <then>
+				<runtarget target="-analizeGovWayConsoleGestioneInitTemplateVariable"/>
+				<foreach param="file" target="-analizeGovWayConsoleGestioneInizialiteConfigTemplate" inheritall="true" inheritrefs="true">
+					<path>
+						<dirset dir="${govway.console.config.scanUrls.templates}">
+							<filename name="*" />
+						</dirset>
+					</path>
+				</foreach>
+                        </then>
+			<else>
+				<echo message="WARN: Istanziazione template config non abilitata; verificare che tutte le variabili zaproxy.jdbc.* siano state configurate"/>
+			</else>
+                </if>
+		<foreach param="file" target="-analizeGovWayConsoleGestioneReadConfig">
+			<path>
+				<dirset dir="${govway.console.config.scanUrls}">
+					<filename name="*" />
+				</dirset>
+			</path>
+		</foreach>
+	</target>
+	<target name="-analizeGovWayConsoleGestioneInitTemplateVariable">
+		<!-- ID API SOAP -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="idApiSoap"/>
+			<param name="templatePropertyQuery" value="select id from accordi where nome='api-soap-status'"/>
+		</antcall>
+		<loadfile property="idApiSoap" srcFile="idApiSoap.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="idApiSoap: ${idApiSoap}" />
+		<delete file="idApiSoap.properties"/>
+		<!-- ID API REST -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="idApiRest"/>
+			<param name="templatePropertyQuery" value="select id from accordi where nome='api-config'"/>
+		</antcall>
+		<loadfile property="idApiRest" srcFile="idApiRest.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="idApiRest: ${idApiRest}" />
+		<delete file="idApiRest.properties"/>
+		<!-- ID EROGAZIONE SOAP -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="idErogazioneSoap"/>
+			<param name="templatePropertyQuery" value="select s.id as id from servizi s, soggetti sog where s.id_soggetto=sog.id AND s.nome_servizio = 'api-soap-status' AND sog.nome_soggetto='${govway.ente}'"/>
+		</antcall>
+		<loadfile property="idErogazioneSoap" srcFile="idErogazioneSoap.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="idErogazioneSoap: ${idErogazioneSoap}" />
+		<delete file="idErogazioneSoap.properties"/>
+		<!-- ID EROGATORE SOAP -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="idErogatoreSoap"/>
+			<param name="templatePropertyQuery" value="select sog.id as idSoggErogatore from servizi s, soggetti sog where s.id_soggetto=sog.id AND s.nome_servizio = 'api-soap-status' AND sog.nome_soggetto='${govway.ente}'"/>
+		</antcall>
+		<loadfile property="idErogatoreSoap" srcFile="idErogatoreSoap.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="idErogatoreSoap: ${idErogatoreSoap}" />
+		<delete file="idErogatoreSoap.properties"/>
+		<!-- ID EROGAZIONE REST -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="idErogazioneRest"/>
+			<param name="templatePropertyQuery" value="select s.id as id from servizi s, soggetti sog where s.id_soggetto=sog.id AND s.nome_servizio = 'api-config' AND sog.nome_soggetto='${govway.ente}'"/>
+		</antcall>
+		<loadfile property="idErogazioneRest" srcFile="idErogazioneRest.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="idErogazioneRest: ${idErogazioneRest}" />
+		<delete file="idErogazioneRest.properties"/>
+		<!-- ID EROGATORE REST -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="idErogatoreRest"/>
+			<param name="templatePropertyQuery" value="select sog.id as idSoggErogatore from servizi s, soggetti sog where s.id_soggetto=sog.id AND s.nome_servizio = 'api-config' AND sog.nome_soggetto='${govway.ente}'"/>
+		</antcall>
+		<loadfile property="idErogatoreRest" srcFile="idErogatoreRest.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="idErogatoreRest: ${idErogatoreRest}" />
+		<delete file="idErogatoreRest.properties"/>
+		<!-- ID FRUIZIONE REST -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="idFruizioneRest"/>
+			<param name="templatePropertyQuery" value="select s.id as id from servizi_fruitori f, servizi s, soggetti ero, soggetti fru where f.id_soggetto=fru.id AND f.id_servizio=s.id AND s.id_soggetto=ero.id AND s.nome_servizio = 'api-pdnd' AND fru.nome_soggetto='${govway.ente}' AND ero.nome_soggetto='PDND'"/>
+		</antcall>
+		<loadfile property="idFruizioneRest" srcFile="idFruizioneRest.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="idFruizioneRest: ${idFruizioneRest}" />
+		<delete file="idFruizioneRest.properties"/>
+		<!-- ID FRUITORE REST -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="idFruitoreRest"/>
+			<param name="templatePropertyQuery" value="select fru.id as idsogg from servizi_fruitori f, servizi s, soggetti ero, soggetti fru where f.id_soggetto=fru.id AND f.id_servizio=s.id AND s.id_soggetto=ero.id AND s.nome_servizio = 'api-pdnd' AND fru.nome_soggetto='${govway.ente}' AND ero.nome_soggetto='PDND'"/>
+		</antcall>
+		<loadfile property="idFruitoreRest" srcFile="idFruitoreRest.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="idFruitoreRest: ${idFruitoreRest}" />
+		<delete file="idFruitoreRest.properties"/>
+		<!-- ID FRUITORE REST -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="idFruitoreRest"/>
+			<param name="templatePropertyQuery" value="select fru.id as idsogg from servizi_fruitori f, servizi s, soggetti ero, soggetti fru where f.id_soggetto=fru.id AND f.id_servizio=s.id AND s.id_soggetto=ero.id AND s.nome_servizio = 'api-pdnd' AND fru.nome_soggetto='${govway.ente}' AND ero.nome_soggetto='PDND'"/>
+		</antcall>
+		<loadfile property="idFruitoreRest" srcFile="idFruitoreRest.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="idFruitoreRest: ${idFruitoreRest}" />
+		<delete file="idFruitoreRest.properties"/>
+		<!-- MYID FRUITORE REST -->
+		<antcall target="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+			<param name="templatePropertyName" value="myidFruizioneRest"/>
+			<param name="templatePropertyQuery" value="select f.id as myId from servizi_fruitori f, servizi s, soggetti ero, soggetti fru where f.id_soggetto=fru.id AND f.id_servizio=s.id AND s.id_soggetto=ero.id AND s.nome_servizio = 'api-pdnd' AND fru.nome_soggetto='${govway.ente}' AND ero.nome_soggetto='PDND'"/>
+		</antcall>
+		<loadfile property="myidFruizioneRest" srcFile="myidFruizioneRest.properties">
+			<filterchain><striplinebreaks/></filterchain>
+		</loadfile>
+		<echo message="myidFruizioneRest: ${myidFruizioneRest}" />
+		<delete file="myidFruizioneRest.properties"/>
+	</target>
+	<target name="-analizeGovWayConsoleGestioneInitTemplateVariableBySql">
+		<sql driver="${zaproxy.jdbc.driver.className}"
+		 url="${zaproxy.jdbc.connectionUrl}"
+		 userid="${zaproxy.jdbc.username}"
+		 password="${zaproxy.jdbc.password}"
+		 classpath="${zaproxy.jdbc.driver.jarPath}"
+		 print="true" 
+		 output="${templatePropertyName}.properties"
+		 showheaders="false" showtrailers="false" delimitertype="row">
+		${templatePropertyQuery}
+		</sql>
+	</target>
+	<target name="-analizeGovWayConsoleGestioneInizialiteConfigTemplate">
+		<basename property="configBaseName" file="${file}"/>
+		<echo message="Istanziazione template govwayConsole per il pacchetto di url '${configBaseName}' ..."/>
+		<delete dir="${govway.console.config.scanUrls}/${configBaseName}" />
+		<copy todir="${govway.console.config.scanUrls}/${configBaseName}">
+			<fileset dir="${govway.console.config.scanUrls.templates}/${configBaseName}"/>
+		</copy>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="NOME_ENTE" value="${govway.ente}"/>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="ID_API_SOAP" value="${idApiSoap}"/>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="ID_API_REST" value="${idApiRest}"/>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="ID_EROGAZIONE_SOAP" value="${idErogazioneSoap}"/>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="ID_EROGATORE_SOAP" value="${idErogatoreSoap}"/>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="ID_EROGAZIONE_REST" value="${idErogazioneRest}"/>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="ID_EROGATORE_REST" value="${idErogatoreRest}"/>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="ID_FRUIZIONE_REST" value="${idFruizioneRest}"/>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="ID_FRUITORE_REST" value="${idFruitoreRest}"/>
+		<replace dir="${govway.console.config.scanUrls}/${configBaseName}" token="MY_FRUIZIONE_REST" value="${myidFruizioneRest}"/>
+		<echo message="Istanziazione template govwayConsole per il pacchetto di url '${configBaseName}' completata"/>
+	</target>
+	<target name="-analizeGovWayConsoleGestioneReadConfig">
+		<basename property="configBaseName" file="${file}"/>
+		<echo message="Avvio analisi govwayConsole per il pacchetto di url '${configBaseName}' ..."/>
+		<echo message="ScanUrls: ${file}/scanUrls.txt"/>
+		<echo message="FalsePositives: ${file}/falsePositives.txt"/>
 
-		<!-- govwayConsole -->
+		<var name="scanTypeGovwayConsole" value="spider"/>   
+		<if>
+                        <equals arg1="${govway.console.config.scanType.ajaxSpider}" arg2="true"/>
+                        <then>
+				<var name="scanTypeGovwayConsole" value="${scanTypeGovwayConsole}|ajaxspider"/>                                
+                        </then>
+		</if>
+		<if>
+                        <equals arg1="${govway.console.config.scanType.active}" arg2="true"/>
+                        <then>
+				<var name="scanTypeGovwayConsole" value="${scanTypeGovwayConsole}|active"/>                                
+                        </then>
+		</if>
+
 		<antcall target="-analizeGovWayConsoles">
 			<param name="analyzeTarget" value="analizeGovWayConsole"/>
 			<param name="analyzeType" value="console-configurazione"/>
 			<param name="analyzeTargetUrl" value="${govway.endpoint}/govwayConsole"/>
 			<param name="analyzeUsername" value="${govway.console.config.username}"/>
 			<param name="analyzePassword" value="${govway.console.config.password}"/>
-			<param name="analyzeScanTypes" value="spider"/> <!--ajaxspider|active"/>-->
+			<param name="analyzeScanTypes" value="${scanTypeGovwayConsole}"/>
+			<param name="analyzeScanUrls" value="${file}/scanUrls.txt"/>
+			<param name="analyzeFalsePositives" value="${file}/falsePositives.txt"/>
 			<param name="analyzeTitle" value="GovWay Console di Configurazione"/>
 			<param name="analyzeDescription" value="Analisi per la console di configurazione di GovWay"/>
 		</antcall>
 
-		<!-- govwayMonitor -->
+		<echo message="Analisi govwayConsole per il pacchetto di url '${configBaseName}' completata"/>
+	</target>
+	<!-- govwayMonitor -->
+	<target name="analizeGovWayConsoleMonitoraggio">
+		<delete dir="${zaproxy.report.dir}/console-monitoraggio" />
+		<foreach param="file" target="-analizeGovWayConsoleMonitoraggioReadConfig">
+			<path>
+				<dirset dir="${govway.monitor.config.scanUrls}">
+					<filename name="*" />
+				</dirset>
+			</path>
+		</foreach>
+	</target>
+	<target name="-analizeGovWayConsoleMonitoraggioReadConfig">
+		<basename property="configBaseName" file="${file}"/>
+		<echo message="Avvio analisi govwayMonitor per il pacchetto di url '${configBaseName}' ..."/>
+		<echo message="ScanUrls: ${file}/scanUrls.txt"/>
+		<echo message="FalsePositives: ${file}/falsePositives.txt"/>
+
+		<var name="scanTypeGovwayMonitor" value="spider"/>   
+		<if>
+                        <equals arg1="${govway.monitor.config.scanType.ajaxSpider}" arg2="true"/>
+                        <then>
+				<var name="scanTypeGovwayMonitor" value="${scanTypeGovwayMonitor}|ajaxspider"/>                                
+                        </then>
+		</if>
+		<if>
+                        <equals arg1="${govway.monitor.config.scanType.active}" arg2="true"/>
+                        <then>
+				<var name="scanTypeGovwayMonitor" value="${scanTypeGovwayMonitor}|active"/>                                
+                        </then>
+		</if>
+
 		<antcall target="-analizeGovWayConsoles">
 			<param name="analyzeTarget" value="analizeGovWayMonitor"/>
 			<param name="analyzeType" value="console-monitoraggio"/>
 			<param name="analyzeTargetUrl" value="${govway.endpoint}/govwayMonitor"/>
 			<param name="analyzeUsername" value="${govway.console.monitor.username}"/>
 			<param name="analyzePassword" value="${govway.console.monitor.password}"/>
-			<param name="analyzeScanTypes" value="spider"/> <!--ajaxspider|active"/>-->
+			<param name="analyzeScanTypes" value="${scanTypeGovwayMonitor}"/>>
+			<param name="analyzeScanUrls" value="${file}/scanUrls.txt"/>
+			<param name="analyzeFalsePositives" value="${file}/falsePositives.txt"/>
 			<param name="analyzeTitle" value="GovWay Console di Monitoraggio"/>
 			<param name="analyzeDescription" value="Analisi per la console di monitoraggio di GovWay"/>
 		</antcall>
 
+		<echo message="Analisi govwayMonitor per il pacchetto di url '${configBaseName}' completata"/>
 	</target>
+	<!-- engine-->
 	<target name="-analizeGovWayConsoles">
                 <if>
                         <equals arg1="${zaproxy.skipTests}" arg2="$${zaproxy.skipTests}"/>
@@ -642,7 +937,6 @@
                         <equals arg1="${_zaproxyExecute}" arg2="true"/>
                         <then>
 
-				<delete dir="${zaproxy.report.dir}/${analyzeType}" />
 				<mkdir dir="${zaproxy.report.dir}/${analyzeType}" />
                 
 				<if>
@@ -653,6 +947,8 @@
 							<param name="zaproxy.govwayConsole.username" value="${analyzeUsername}"/>
 							<param name="zaproxy.govwayConsole.password" value="${analyzePassword}"/>
 							<param name="zaproxy.govwayConsole.scanTypes" value="${analyzeScanTypes}"/>
+							<param name="zaproxy.govwayConsole.scanUrls" value="${analyzeScanUrls}"/>
+							<param name="zaproxy.govwayConsole.falsePositives" value="${analyzeFalsePositives}"/>
 							<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/${analyzeType}" />
 							<param name="zaproxy.report.fileNamePattern" value="zap_report_SCAN_TYPE_${analyzeType}.ext" />
 							<param name="zaproxy.report.title" value="${analyzeTitle}" />
@@ -668,6 +964,8 @@
 							<param name="zaproxy.govwayMonitor.username" value="${analyzeUsername}"/>
 							<param name="zaproxy.govwayMonitor.password" value="${analyzePassword}"/>
 							<param name="zaproxy.govwayMonitor.scanTypes" value="${analyzeScanTypes}"/>
+							<param name="zaproxy.govwayMonitor.scanUrls" value="${analyzeScanUrls}"/>
+							<param name="zaproxy.govwayMonitor.falsePositives" value="${analyzeFalsePositives}"/>
 							<param name="zaproxy.report.dir" value="${zaproxy.report.dir}/${analyzeType}" />
 							<param name="zaproxy.report.fileNamePattern" value="zap_report_SCAN_TYPE_${analyzeType}.ext" />
 							<param name="zaproxy.report.title" value="${analyzeTitle}" />

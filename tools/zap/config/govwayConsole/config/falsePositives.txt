@@ -1,0 +1,15 @@
+#<nome>.enabled=true
+#<nome>.description=xxxx
+#<nome>.id=
+#<nome>.urlRegExp
+
+internalServerError_ApplicationErrorDisclosure.enabled=true
+internalServerError_ApplicationErrorDisclosure.description=La pagina presenta una voce di selezione con la label 'Http 500 (Internal Server Error)', che viene erroneamente interpretata come una pagina HTTP 500 Internal Server Error
+internalServerError_ApplicationErrorDisclosure.id=90022
+internalServerError_ApplicationErrorDisclosure.urlRegExp=http://127.0.0.1:8080/govwayConsole/configurazioneControlloTraffico.do.*
+
+internalServerError_InformationDisclosure.enabled=true
+internalServerError_InformationDisclosure.description=La pagina presenta una voce di selezione con la label 'Http 500 (Internal Server Error)', che viene erroneamente interpretata come una pagina HTTP 500 Internal Server Error
+internalServerError_InformationDisclosure.id=10023
+internalServerError_InformationDisclosure.urlRegExp=http://127.0.0.1:8080/govwayConsole/configurazioneControlloTraffico.do.*
+

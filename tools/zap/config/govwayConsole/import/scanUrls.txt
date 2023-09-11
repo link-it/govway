@@ -1,0 +1,4 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+importa=import.do
+esporta=export.do?tipoExport=CONFIGURAZIONE
+elimina=import.do?modalita=elimina

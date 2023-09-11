@@ -1,0 +1,3 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+tokenPolicy=configurazionePolicyGestioneTokenList.do
+attributeAuthority=configurazionePolicyGestioneTokenList.do?_tabKey_infoType=aa

@@ -1,0 +1,6 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+api=accordiServizioParteComuneApiList.do?tipoAccordo=apc
+soggetti=soggettiList.do
+applicativi=serviziApplicativiList.do
+ruoli=ruoliList.do
+scope=scopeList.do

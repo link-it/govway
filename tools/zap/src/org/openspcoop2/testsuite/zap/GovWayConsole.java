@@ -19,13 +19,13 @@
  */
 package org.openspcoop2.testsuite.zap;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
@@ -44,95 +44,113 @@ import org.zaproxy.clientapi.core.ClientApiException;
  */
 public class GovWayConsole {
 	
-	public static void main(String[] args) throws UtilsException, ClientApiException, UnsupportedEncodingException {
+	public static void main(String[] args) throws UtilsException, ClientApiException, IOException {
 				
-		String consoleUsage = "url username password scanTypes";
-		int consoleArgs = 4;
-		ZAPContext context = new ZAPContext(args, GovWayConsole.class.getName(), consoleUsage+ZAPReport.SUFFIX);
+		ZAPContext context = new ZAPContext(args, GovWayConsole.class.getName(), ConsoleParams.CONSOLE_USAGE+ZAPReport.SUFFIX, false);
 		
-		String usageMsg = ZAPContext.PREFIX+consoleUsage+ZAPReport.SUFFIX;
+		ConsoleParams consoleParams = new ConsoleParams(args);
 		
-		String urlArg = null;
-		int index = ZAPContext.START_ARGS;
-		if(args.length>(index)) {
-			urlArg = args[index+0];
-		}
-		if(urlArg==null || StringUtils.isEmpty(urlArg)) {
-			throw new UtilsException("ERROR: argument 'url' undefined"+usageMsg);
-		}
-		String url = urlArg;
-		if(!url.endsWith("/")) {
-			url=url+"/";
-		}
+		String baseUrl = consoleParams.getBaseUrl();
+		String username = consoleParams.getUsername();
+		String password = consoleParams.getPassword();
+		ConsoleScanTypes scanTypes = consoleParams.getScanTypes();
+		SortedMap<String> targetUrls = consoleParams.getScanUrls();
 		
-		String username = null;
-		if(args.length>(index+1)) {
-			username = args[index+1];
-		}
-		if(username==null || StringUtils.isEmpty(username)) {
-			throw new UtilsException("ERROR: argument 'username' undefined"+usageMsg);
-		}
+		int scanNum = 1;
 		
-		String password = null;
-		if(args.length>(index+2)) {
-			password = args[index+2];
-		}
-		if(password==null || StringUtils.isEmpty(password)) {
-			throw new UtilsException("ERROR: argument 'password' undefined"+usageMsg);
-		}
-
-		String scanTypes = null;
-		if(args.length>(index+3)) {
-			scanTypes = args[index+3];
-		}
-		if(scanTypes==null || StringUtils.isEmpty(scanTypes)) {
-			throw new UtilsException("ERROR: argument 'scanTypes' undefined"+usageMsg);
-		}
-		List<String> scanTypesSupported = getAllScanTypes();
-		/**LoggerManager.info("scanTypes: "+scanTypes);*/
-		String [] split = scanTypes.split("\\|");
+		List<String> urlVisitateSpiderScan = new ArrayList<>();
+		List<String> urlVisitateActiveScan = new ArrayList<>();
+		String reportDir = null;
 		
-		boolean spider = false;
-		boolean ajaxspider = false;
-		boolean active = false;
-		if(split!=null && split.length>0) {
-			for (String s : split) {
-				if(!scanTypesSupported.contains(s)) {
-					throw new UtilsException("ERROR: argument 'scanTypes'='"+scanTypes+"' unknown confidence '"+s+"' ; usable: "+scanTypesSupported+usageMsg);
-				}
-				LoggerManager.info("Scan '"+s+"' enabled");
-				if(SCAN_TYPE_SPIDER.equalsIgnoreCase(s)) {
-					spider=true;
-				}
-				else if(SCAN_TYPE_ACTIVE.equalsIgnoreCase(s)) {
-					active=true;
-				}
-				if(SCAN_TYPE_AJAXSPIDER.equalsIgnoreCase(s)) {
-					ajaxspider=true;
-				}
+		ConsolePathParams pathParams = new ConsolePathParams(consoleParams.getBaseConfigDirName());
+		
+		boolean debug = false;
+		
+		for (String tipoTestUrl : targetUrls.keys()) {
+			
+			Utilities.sleep(3000);
+			
+			String url = baseUrl + targetUrls.get(tipoTestUrl);
+			pathParams.setTipoTestUrl(tipoTestUrl);
+			pathParams.setUrl(url);
+			
+			LoggerManager.info("Avvio analisi "+scanNum+"/"+targetUrls.size()+" '"+tipoTestUrl+"': " + url);
+			
+			ZAPClienApi zapClientApi = context.newClienApi(); 
+			
+			ClientApi api = zapClientApi.getClientApi();
+			String contextName = zapClientApi.getContextName();
+			String contextId = zapClientApi.getContextId();
+			
+			if(consoleParams.getFalsePositives()!=null && !consoleParams.getFalsePositives().isEmpty()) {
+				ConsoleFalsePositive.addFalsePositives(consoleParams.getFalsePositives(), api, contextId);
 			}
+			
+			ZAPReport report = new ZAPReport(args, GovWayConsole.class.getName(), ZAPContext.PREFIX+" "+ConsoleParams.CONSOLE_USAGE, ZAPContext.START_ARGS+consoleParams.getConsoleArgs(), api);
+			if(reportDir==null) {
+				reportDir = report.getDir();
+			}	
+			
+			String loginUrl = baseUrl+"login.do";
+			String logoutUrl = baseUrl+"logout.do";
+			
+			setIncludeAndExcludeInContext(api, contextName, baseUrl, logoutUrl);
+			
+			StringBuilder cookieValueHolder = new StringBuilder();
+			String userId = setFormBasedAuthentication(api, loginUrl, contextId, 
+					username, password, cookieValueHolder);
+	      
+			if(debug) {
+				ConsoleUtils.printAllScannerActives(zapClientApi.getClientApi());
+			}
+			
+			List<String> urlVisitateIterazioneInCorso = new ArrayList<>();
+	        if(scanTypes.isSpider()) {
+	        	ConsoleUtils.spider(zapClientApi, userId, 
+	        			report, pathParams,
+	        			urlVisitateIterazioneInCorso);
+	        	ConsoleUtils.addVisitedUrls(urlVisitateIterazioneInCorso, urlVisitateSpiderScan);
+	        }
+			
+	        if(scanTypes.isAjaxspider() && !urlVisitateIterazioneInCorso.isEmpty()) {
+	        	ConsoleUtils.ajaxSpider(baseUrl, zapClientApi, username,
+	        			report, pathParams,
+	        			urlVisitateIterazioneInCorso);
+	        }
+	        
+	        if(scanTypes.isActive()) {
+	        	ConsoleUtils.active(baseUrl, zapClientApi, userId, 
+	        			report, pathParams,
+	        			urlVisitateActiveScan);
+	        }
+	        
+			LoggerManager.info("Analisi "+scanNum+"/"+targetUrls.size()+" '"+tipoTestUrl+"' (url:"+url+") terminata");
+			
+			scanNum++;
 		}
 		
-		
-		
-		ClientApi api = context.getClientApi();
-		String contextName = context.getContextName();
-		String contextId = context.getContextId();
-		
-		ZAPReport report = new ZAPReport(args, GovWayConsole.class.getName(), ZAPContext.PREFIX+" "+consoleUsage, ZAPContext.START_ARGS+consoleArgs, api);
-		
-		String loginUrl = url+"login.do";
-		String logoutUrl = url+"logout.do";
-		/**String logoutUrl = url+"log.*.do";*/
-		
-		api.context.includeInContext(contextName, url.substring(0, (url.length()-1))+".*");
+		ConsoleUtils.writeVisitedUrlsFile(reportDir, ConsoleScanTypes.SCAN_TYPE_SPIDER, urlVisitateSpiderScan);
+		if(!urlVisitateActiveScan.isEmpty()) {
+			ConsoleUtils.writeVisitedUrlsFile(reportDir, ConsoleScanTypes.SCAN_TYPE_ACTIVE, urlVisitateActiveScan);
+		}
+	
+		LoggerManager.info("Analisi complessiva terminata");
+
+	}
+	
+	private static void setIncludeAndExcludeInContext(ClientApi api, String contextName, String prefixUrl, String logoutUrl) throws ClientApiException {
+		String include = prefixUrl.substring(0, (prefixUrl.length()-1))+".*";
+		api.context.includeInContext(contextName, include);
 		api.context.excludeFromContext(contextName, logoutUrl);
 		api.context.setContextInScope(contextName, "true");
+		LoggerManager.info("Include["+include+"] Exclude["+logoutUrl+"]");
+	}
+	
+	private static String setFormBasedAuthentication(ClientApi api, String loginUrl, String contextId, 
+			String username, String password, StringBuilder tokenHolder) throws UnsupportedEncodingException, ClientApiException {
 		
-		
-        // Prepare the configuration in a format similar to how URL parameters are formed. This
+		// Prepare the configuration in a format similar to how URL parameters are formed. This
         // means that any value we add for the configuration values has to be URL encoded.
-		
 		String loginRequestData = "login={%username%}&password={%password%}";
 			
         StringBuilder formBasedConfig = new StringBuilder();
@@ -146,11 +164,19 @@ public class GovWayConsole {
                         + formBasedConfig.toString());
         api.authentication.setAuthenticationMethod(
         		contextId, "formBasedAuthentication", formBasedConfig.toString());
-        api.authentication.setLoggedInIndicator(contextId, "\\QProfilo:\\E");
-        LoggerManager.info(
+		LoggerManager.info(
                 "Authentication config: "
                         + api.authentication.getAuthenticationMethod(contextId).toString(0));
         
+        // Indicazione di login/logout avvenuto
+		String loggedInIndicator = "Profilo:";
+		String loggedOutIndicator = ".*Effettuare il login.*";
+		api.authentication.setLoggedInIndicator(contextId, java.util.regex.Pattern.quote(loggedInIndicator));
+		api.authentication.setLoggedOutIndicator(contextId, java.util.regex.Pattern.quote(loggedOutIndicator));
+		LoggerManager.info("Configured logged in indicator regex: "
+				+ ((ApiResponseElement) api.authentication.getLoggedInIndicator(contextId)).getValue());
+		LoggerManager.info("Configured logged out indicator regex: "
+				+ ((ApiResponseElement) api.authentication.getLoggedOutIndicator(contextId)).getValue());
         
         // Make sure we have at least one user
         ApiResponse  response = api.users.newUser(contextId, username);
@@ -165,6 +191,9 @@ public class GovWayConsole {
         LoggerManager.info(
                 "Setting user authentication configuration as: " + userAuthConfig.toString());
         api.users.setAuthenticationCredentials(contextId, userId, userAuthConfig.toString());
+        api.users.setUserEnabled(contextId, userId, "true");
+        api.forcedUser.setForcedUser(contextId, userId);
+        api.forcedUser.setForcedUserModeEnabled(true);
         LoggerManager.info(
                 "Authentication credentials: "
                         + api.users.getUserById(contextId, userId).toString(0));
@@ -173,220 +202,51 @@ public class GovWayConsole {
                 "Session Management: "
                         + api.sessionManagement.getSessionManagementMethod(contextId).toString(0));
         
+        // Effettuo login e registro avvenuto login
+        ApiResponse resp =  api.users.authenticateAsUser(contextId, userId);
+        /**LoggerManager.info(
+				"RESPONSE: "+resp.getClass().getName());
+        LoggerManager.info("keys: " + ((org.zaproxy.clientapi.core.ApiResponseSet)resp).getKeys());
+    	LoggerManager.info("values: " + ((org.zaproxy.clientapi.core.ApiResponseSet)resp).getValues());*/
+        // note, rtt, responseBody, cookieParams, requestBody, responseHeader, authSuccessful, requestHeader, id, type, timestamp, tags
         
-        String recurse = "True";
-       
-        if(spider) {
-	        LoggerManager.info("Spider scan: " + url);
-	        
-	        api.spider.setOptionParseRobotsTxt(false);
-	        /**
-	        //api.spider.setOptionPostForm(true);
-	        //api.spider.setOptionProcessForm(true);
-	        //api.spider.setOptionParseSitemapXml(true);
-	        //api.spider.enableAllDomainsAlwaysInScope();
-	        //api.spider.setOptionAcceptCookies(true);
-	        //api.spider.setOptionMaxDepth(100);
-
-	        //api.spider.setOptionSkipURLString(logoutUrl);*/
-	        
-	        // IGNORE_COMPLETELY, IGNORE_VALUE, USE_ALL
-	        /*
-	         * https://www.zaproxy.org/docs/desktop/addons/spider/options/#query-parameters-handling
-	         * Ignore parameters completely - if www.example.org/?bar=456 is visited, then www.example.org/?foo=123 will not be visited
-	         * Consider only parameter’s name (ignore parameter’s value) - if www.example.org/?foo=123 is visited, then www.example.org/?foo=456 will not be visited, but www.example.org/?bar=789 or www.example.org/?foo=456&bar=123 will be visited
-	         * Consider both parameter’s name and value - if www.example.org/?123 is visited, any other uri that is different (including, for example, www.example.org/?foo=456 or www.example.org/?bar=abc) will be visited
-	         */
-	        api.spider.setOptionHandleODataParametersVisited(true);
-	        ApiResponse resp = api.spider.optionHandleODataParametersVisited();
-	        ApiResponseElement re = (ApiResponseElement) resp;
-	        LoggerManager.info(re.getName()+"="+re.getValue());
-	        
-	        api.spider.setOptionHandleParameters("IGNORE_VALUE");
-	        api.spider.optionHandleParameters();
-	        LoggerManager.info(re.getName()+"="+re.getValue());
-	       
-	        
-	        api.forcedUser.setForcedUser(contextId, userId);
-	        api.forcedUser.setForcedUserModeEnabled(true);
-		       
-	        /**ApiResponse resp = api.spider.scan(url, "100000", recurse, contextName, "False");*/
-	        resp = api.spider.scanAsUser(contextId, userId, url, "100000", recurse, "False");
-	        
-	        int progress;
-	
-	        // The scan now returns a scan id to support concurrent scanning
-	        String scanid = ((ApiResponseElement) resp).getValue();
-	
-	        // Poll the status until it completes
-	        while (true) {
-	        	Utilities.sleep(1000);
-	            progress =
-	                    Integer.parseInt(
-	                            ((ApiResponseElement) api.spider.status(scanid)).getValue());
-	            LoggerManager.info("Spider progress : " + progress + "%");
-	            if (progress >= 100) {
-	                break;
-	            }
-	        }
-	        
-            // Poll the number of records the passive scanner still has to scan until it completes
-            while (true) {
-            	Utilities.sleep(1000);
-                progress =
-                        Integer.parseInt(
-                                ((ApiResponseElement) api.pscan.recordsToScan()).getValue());
-                LoggerManager.info("Passive Scan progress : " + progress + " records left");
-                if (progress < 1) {
-                    break;
-                }
-            }
-	        
-            List<ApiResponse> spiderResults = ((ApiResponseList) api.spider.results(scanid)).getItems();
-			List<String> urls = new ArrayList<>();
-            for (ApiResponse apiResponse : spiderResults) {
-				/**LoggerManager.info("Spider result: "+apiResponse.getName()+" classe:"+apiResponse.getClass().getName());*/
-				if(apiResponse instanceof org.zaproxy.clientapi.core.ApiResponseElement apiresponseelement) {
-					re = apiresponseelement;
-					String urlSpider = re.getValue();
-					if("url".equals(re.getName())) {
-						urls.add(urlSpider);
-					}
-				}
-			}
-            if(ajaxspider && !urls.isEmpty()) {
-            	int indexUrl = 0;
-            	api.ajaxSpider.setOptionClickDefaultElems(true);
-            	api.ajaxSpider.setOptionClickElemsOnce(true);
-            	for (String urlSpider : urls) {
-			        indexUrl++;
-            		LoggerManager.info("("+indexUrl+"/"+urls.size()+") Analizy url '"+urlSpider+"' con AjaxSpider ...");
-					api.ajaxSpider.scanAsUser(contextName, username, urlSpider, "True");
-			        // Poll the status until it completes
-		            long startTime = System.currentTimeMillis();
-		            long timeout = TimeUnit.SECONDS.toMillis(5); // 5 seconds in milli seconds
-			        String status = null;
-			        while (true) {
-			        	Utilities.sleep(1000);
-			            status = (((ApiResponseElement) api.ajaxSpider.status()).getValue());
-			            LoggerManager.info("("+indexUrl+"/"+urls.size()+") Analizy url '"+urlSpider+"' con AjaxSpider status : " + status);
-			            if ( "stopped".equals(status)) {
-			            	LoggerManager.info("("+indexUrl+"/"+urls.size()+") Analizy url '"+urlSpider+"' con AjaxSpider complete (STOP)");
-		                    break;
-		                }
-			            LoggerManager.info("("+indexUrl+"/"+urls.size()+") TIMEOUT ("+(System.currentTimeMillis() - startTime)+") < "+timeout+"_timeout ??? ");
-			            if ( (System.currentTimeMillis() - startTime) > timeout) {
-			            	ApiResponse aaa = api.ajaxSpider.stop();
-			            	LoggerManager.info(aaa.getName()+"="+aaa.getClass().getName());
-			            	re = (org.zaproxy.clientapi.core.ApiResponseElement) aaa;
-			            	LoggerManager.info(re.getName()+"="+re.getValue());
-			            	LoggerManager.info("("+indexUrl+"/"+urls.size()+") Analizy url '"+urlSpider+"' con AjaxSpider complete (TIMEOUT)");
-			            	Utilities.sleep(5000);
-			            	break;
-		                }
-			        }
-				}
-    	        LoggerManager.info("AjaxSpider complete");
-			}
-	        
-
-	        LoggerManager.info("Spider generate report ...");
-	        
-			for (ZAPReportTemplate rt : report.getTemplates()) {
-				
-				String fileScanTypeName = rt.fileName.replace(SCAN_TYPE, SCAN_TYPE_ACTIVE);
-				
-				api.reports.generate(report.getTitle(), 
-						rt.template, 
-						rt.theme,
-						report.getDescription(),
-						contextName, 
-						url, 
-						rt.sections,
-						report.getIncludedConfidences(),
-						report.getIncludedRisks(),
-		        		null, 
-		        		fileScanTypeName, 
-		        		report.getDir(), 
-		        		report.isDisplay()+"");
-			}
-			
-			LoggerManager.info("Spider generate report finished");
-			
-		}
+        LoggerManager.info(
+ 				"authSuccessful: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("authSuccessful"));
+        LoggerManager.info(
+ 				"cookieParams: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("cookieParams"));
+        LoggerManager.info(
+  				"type: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("type"));
+        LoggerManager.info(
+   			"note: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("note"));
+        LoggerManager.info(
+   			"rtt: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("rtt"));
+        /**LoggerManager.info(
+   			"responseBody: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("responseBody"));*/
         
+        // Recupero token session value
+        resp =  api.users.getAuthenticationSession(contextId, userId);
+        /** LoggerManager.info(
+ 				"SESSIONE: "+resp.getClass().getName());*/
+        List<ApiResponse> r = ((ApiResponseList) resp).getItems();
+        String tokenValue = null;
+        for (ApiResponse item : r) {
+       	 
+        	List<ApiResponse> r2 = ((ApiResponseList) item).getItems();
+       	 	for (ApiResponse item2 : r2) {
+       	 		/**LoggerManager.info("keys: " + ((org.zaproxy.clientapi.core.ApiResponseSet)item2).getKeys());
+       		 	LoggerManager.info("values: " + ((org.zaproxy.clientapi.core.ApiResponseSet)item2).getValues());*/
+       	 		for (String key : ((org.zaproxy.clientapi.core.ApiResponseSet)item2).getKeys()) {
+       	 			if("value".equals(key)) {
+       	 				tokenValue = ((org.zaproxy.clientapi.core.ApiResponseSet)item2).getStringValue("value");
+       	 			}
+       	 		}
+       	 	}
+        }
+        LoggerManager.info("TOKEN = "+tokenValue);
+        tokenHolder.append(tokenValue);
         
-        if(active) {
-	        LoggerManager.info("Active scan: " + url);
-	        
-
-	        api.forcedUser.setForcedUser(contextId, userId);
-	        api.forcedUser.setForcedUserModeEnabled(true);
-	        
-	        /** //api.ascan.setOptionRescanInAttackMode(false);
-	        
-	        //api.ascan.addExcludedParam("__prevTabKey__", "Any", "*");
-	        //api.ascan.addExcludedParam("__tabKey__", "Any", "*");
-	        
-	        //String inscopeonly = "True"; 
-	        //ApiResponse resp = api.ascan.scan(url, recurse, inscopeonly, null, null, null);**/
-	        ApiResponse resp =  api.ascan.scanAsUser(url, contextId, userId, recurse, null, null, null);
-	        
-	        
-	        int progress;
-	
-	        // The scan now returns a scan id to support concurrent scanning
-	        String scanid = ((ApiResponseElement) resp).getValue();
-	
-	        // Poll the status until it completes
-	        while (true) {
-	        	Utilities.sleep(1000);
-	            progress =
-	                    Integer.parseInt(
-	                            ((ApiResponseElement) api.ascan.status(scanid)).getValue());
-	            LoggerManager.info("Active progress : " + progress + "%");
-	            if (progress >= 100) {
-	                break;
-	            }
-	        }
-	        LoggerManager.info("Active complete");
-
-	        LoggerManager.info("Active generate report ...");
-	        
-	        for (ZAPReportTemplate rt : report.getTemplates()) {
-	        	
-	        	String fileScanTypeName = rt.fileName.replace(SCAN_TYPE, SCAN_TYPE_ACTIVE);
-	  	       	        	
-				api.reports.generate(report.getTitle(), 
-						rt.template, 
-						rt.theme,
-						report.getDescription(),
-						contextName, 
-						url, 
-						rt.sections,
-						report.getIncludedConfidences(),
-						report.getIncludedRisks(),
-		        		null, 
-		        		fileScanTypeName, 
-		        		report.getDir(), 
-		        		report.isDisplay()+"");
-			}
-			
-			LoggerManager.info("Active generate report finished");
-			
-		}
-		
+        return userId;
 	}
 	
-	private static final String SCAN_TYPE = "SCAN_TYPE";
-	private static final String SCAN_TYPE_SPIDER = "spider";
-	private static final String SCAN_TYPE_ACTIVE = "active";
-	public static final String SCAN_TYPE_AJAXSPIDER = "ajaxspider";
-	public static List<String> getAllScanTypes(){
-		List<String> l = new ArrayList<>();
-		l.add(SCAN_TYPE_SPIDER);
-		l.add(SCAN_TYPE_ACTIVE);
-		l.add(SCAN_TYPE_AJAXSPIDER);
-		return l;
-	}
+	
 }

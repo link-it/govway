@@ -46,9 +46,9 @@ public class GovWayMonitor {
 	
 	public static void main(String[] args) throws UtilsException, ClientApiException, UnsupportedEncodingException {
 				
-		String consoleUsage = "url username password scanTypes";
-		int consoleArgs = 4;
-		ZAPContext context = new ZAPContext(args, GovWayMonitor.class.getName(), consoleUsage+ZAPReport.SUFFIX);
+		String consoleUsage = "url username password scanTypes scanUrls";
+		int consoleArgs = 5;
+		ZAPContext context = new ZAPContext(args, GovWayMonitor.class.getName(), consoleUsage+ZAPReport.SUFFIX, false);
 		
 		String usageMsg = ZAPContext.PREFIX+consoleUsage+ZAPReport.SUFFIX;
 		
@@ -81,37 +81,7 @@ public class GovWayMonitor {
 			throw new UtilsException("ERROR: argument 'password' undefined"+usageMsg);
 		}
 
-		String scanTypes = null;
-		if(args.length>(index+3)) {
-			scanTypes = args[index+3];
-		}
-		if(scanTypes==null || StringUtils.isEmpty(scanTypes)) {
-			throw new UtilsException("ERROR: argument 'scanTypes' undefined"+usageMsg);
-		}
-		List<String> scanTypesSupported = getAllScanTypes();
-		/**LoggerManager.info("scanTypes: "+scanTypes);*/
-		String [] split = scanTypes.split("\\|");
-		
-		boolean spider = false;
-		boolean ajaxspider = false;
-		boolean active = false;
-		if(split!=null && split.length>0) {
-			for (String s : split) {
-				if(!scanTypesSupported.contains(s)) {
-					throw new UtilsException("ERROR: argument 'scanTypes'='"+scanTypes+"' unknown confidence '"+s+"' ; usable: "+scanTypesSupported+usageMsg);
-				}
-				LoggerManager.info("Scan '"+s+"' enabled");
-				if(SCAN_TYPE_SPIDER.equalsIgnoreCase(s)) {
-					spider=true;
-				}
-				else if(SCAN_TYPE_ACTIVE.equalsIgnoreCase(s)) {
-					active=true;
-				}
-				if(SCAN_TYPE_AJAXSPIDER.equalsIgnoreCase(s)) {
-					ajaxspider=true;
-				}
-			}
-		}
+		ConsoleScanTypes scanTypes = new ConsoleScanTypes(args, usageMsg, index);
 		
 		
 		
@@ -176,7 +146,7 @@ public class GovWayMonitor {
         
         String recurse = "True";
        
-        if(spider) {
+        if(scanTypes.isSpider()) {
 	        LoggerManager.info("Spider scan: " + url);
 	        
 	        api.spider.setOptionParseRobotsTxt(false);
@@ -254,7 +224,7 @@ public class GovWayMonitor {
 					}
 				}
 			}
-            if(ajaxspider && !urls.isEmpty()) {
+            if(scanTypes.isAjaxspider() && !urls.isEmpty()) {
             	int indexUrl = 0;
             	api.ajaxSpider.setOptionClickDefaultElems(true);
             	api.ajaxSpider.setOptionClickElemsOnce(true);
@@ -294,7 +264,7 @@ public class GovWayMonitor {
 	        
 			for (ZAPReportTemplate rt : report.getTemplates()) {
 				
-				String fileScanTypeName = rt.fileName.replace(SCAN_TYPE, SCAN_TYPE_ACTIVE);
+				String fileScanTypeName = rt.fileName.replace(ConsoleScanTypes.SCAN_TYPE, ConsoleScanTypes.SCAN_TYPE_ACTIVE);
 				
 				api.reports.generate(report.getTitle(), 
 						rt.template, 
@@ -316,7 +286,7 @@ public class GovWayMonitor {
 		}
         
         
-        if(active) {
+        if(scanTypes.isActive()) {
 	        LoggerManager.info("Active scan: " + url);
 	        
 
@@ -355,7 +325,7 @@ public class GovWayMonitor {
 	        
 	        for (ZAPReportTemplate rt : report.getTemplates()) {
 	        	
-	        	String fileScanTypeName = rt.fileName.replace(SCAN_TYPE, SCAN_TYPE_ACTIVE);
+	        	String fileScanTypeName = rt.fileName.replace(ConsoleScanTypes.SCAN_TYPE, ConsoleScanTypes.SCAN_TYPE_ACTIVE);
 	  	       	        	
 				api.reports.generate(report.getTitle(), 
 						rt.template, 
@@ -378,15 +348,4 @@ public class GovWayMonitor {
 		
 	}
 	
-	private static final String SCAN_TYPE = "SCAN_TYPE";
-	private static final String SCAN_TYPE_SPIDER = "spider";
-	private static final String SCAN_TYPE_ACTIVE = "active";
-	public static final String SCAN_TYPE_AJAXSPIDER = "ajaxspider";
-	public static List<String> getAllScanTypes(){
-		List<String> l = new ArrayList<>();
-		l.add(SCAN_TYPE_SPIDER);
-		l.add(SCAN_TYPE_ACTIVE);
-		l.add(SCAN_TYPE_AJAXSPIDER);
-		return l;
-	}
 }

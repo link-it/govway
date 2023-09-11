@@ -23,11 +23,7 @@ import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.random.RandomUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
-import org.zaproxy.clientapi.core.ApiResponse;
-import org.zaproxy.clientapi.core.ApiResponseElement;
-import org.zaproxy.clientapi.core.ApiResponseSet;
 import org.zaproxy.clientapi.core.ClientApi;
 import org.zaproxy.clientapi.core.ClientApiException;
 
@@ -50,11 +46,12 @@ public class ZAPContext {
 	private String apiKey;
 	private boolean debug;
 	
-	private ClientApi clientApi;
-	private String contextName;
-	private String contextId;
+	private ZAPClienApi zapClientApi;
 	
 	public ZAPContext(String[] args, String mainClass, String usage) throws UtilsException, ClientApiException {
+		this(args, mainClass, usage, true);
+	}
+	public ZAPContext(String[] args, String mainClass, String usage, boolean uniqueClientApi) throws UtilsException, ClientApiException {
 		String usageMsg = "\nUsage: "+mainClass+PREFIX+usage;
 		if(args==null || args.length<=0) {
 			throw new UtilsException("ERROR: arguments undefined"+usageMsg);
@@ -96,7 +93,9 @@ public class ZAPContext {
 		}
 		initDebugMode(sDebug, usageMsg);
 		
-		init();
+		if(uniqueClientApi) {
+			init();
+		}
 	}
 	
 	private void initSession(String usageMsg) throws UtilsException {
@@ -135,18 +134,11 @@ public class ZAPContext {
 		}
 	}
 	
-	private void init() throws ClientApiException {
-		this.clientApi = new ClientApi(this.address, this.port, this.apiKey, this.debug);
-		
-		this.contextName = this.apiKey+RandomUtilities.getRandom().nextInt();
-		this.clientApi.context.newContext(this.contextName);
-		ApiResponse response = this.clientApi.context.context(this.contextName);
-		ApiResponseSet responseSet = (ApiResponseSet) response;
-		this.contextId = ((ApiResponseElement) responseSet.getValue("id")).getValue();
-		if(this.debug) {
-			LoggerManager.info("ContextName: "+this.contextName);
-			LoggerManager.info("ContextId: "+this.contextId);
-		}
+	private void init() throws ClientApiException, UtilsException {
+		this.zapClientApi = newClienApi();
+	}
+	public ZAPClienApi newClienApi() throws ClientApiException, UtilsException {
+		return new ZAPClienApi(this.address, this.port, this.apiKey, this.debug);
 	}
 	
 	public String getAddress() {
@@ -180,13 +172,22 @@ public class ZAPContext {
 		this.debug = debug;
 	}
 	
-	public ClientApi getClientApi() {
-		return this.clientApi;
+	public ClientApi getClientApi() throws UtilsException {
+		if(this.zapClientApi!=null) {
+			return this.zapClientApi.getClientApi();
+		}
+		throw new UtilsException("Use 'newClienApi().getClientApi()'");
 	}
-	public String getContextName() {
-		return this.contextName;
+	public String getContextName() throws UtilsException {
+		if(this.zapClientApi!=null) {
+			return this.zapClientApi.getContextName();
+		}
+		throw new UtilsException("Use 'newClienApi().getContextName()'");
 	}
-	public String getContextId() {
-		return this.contextId;
+	public String getContextId() throws UtilsException {
+		if(this.zapClientApi!=null) {
+			return this.zapClientApi.getContextId();
+		}
+		throw new UtilsException("Use 'newClienApi().getContextId()'");
 	}
 }

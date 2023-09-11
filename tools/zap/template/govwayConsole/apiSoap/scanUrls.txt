@@ -1,0 +1,3 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+# select id from accordi where nome='api-soap-status';
+apiSoap=accordiServizioParteComuneApiChange.do?id=ID_API_SOAP&tipoAccordo=apc

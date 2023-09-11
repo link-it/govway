@@ -1,0 +1,3 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+runtime=configurazioneSistemaAdd.do
+auditing=auditing.do

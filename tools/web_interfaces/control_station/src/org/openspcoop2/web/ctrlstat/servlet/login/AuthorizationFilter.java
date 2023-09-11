@@ -186,7 +186,7 @@ public final class AuthorizationFilter implements Filter {
 							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP,null, this.filterConfig, null);
 						}
 						else{
-							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, null);
+							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, HttpStatus.UNAUTHORIZED);
 						}
 						
 						// return so that we do not chain to other filters
@@ -297,7 +297,7 @@ public final class AuthorizationFilter implements Filter {
 								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1 
 								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) == -1) {
 	
-							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, null);
+							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, HttpStatus.UNAUTHORIZED);
 							// return so that we do not chain to other filters
 							return;
 						}
@@ -637,7 +637,7 @@ public final class AuthorizationFilter implements Filter {
 								&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1 
 								&& urlRichiesta.indexOf("/"+UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO) == -1) {
 	
-							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, null);
+							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, HttpStatus.UNAUTHORIZED);
 							// return so that we do not chain to other filters
 							return;
 						}

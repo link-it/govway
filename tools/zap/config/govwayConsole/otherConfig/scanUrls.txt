@@ -1,0 +1,4 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+tags=gruppiList.do
+utenti=utentiList.do
+configurazioneAuditing=configurazioneAuditing.do

@@ -1,0 +1,5 @@
+# Indicare solo i contesti dopo http://.../govwayConsole/
+base=configurazioneGenerale.do
+cache=configurazioneGenerale.do?configCaches=yes
+tracciamento=configurazioneTracciamentoTransazioni.do
+controlloTraffico=configurazioneControlloTraffico.do
