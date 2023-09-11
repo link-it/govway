@@ -29,6 +29,8 @@ package org.openspcoop2.web.lib.mvc.security;
  */
 public class Costanti {
 	
+	private Costanti() {}
+	
 	public static final String PATTERN_VALIDAZIONE_PREFIX = "patternValidazione.";
 	
 	public static final String PATTERN_REQUEST_HTTP_HEADER_NAME = "RequestHTTPHeaderName";
@@ -41,6 +43,7 @@ public class Costanti {
 	public static final String PATTERN_HTTP_COOKIE_VALUE = "HTTPCookieValue";
 	public static final String PATTERN_ID_TAB = "IDTab";
 	public static final String PATTERN_ID_TEXT_AREA = "IdTextArea";
+	public static final String PATTERN_SQL_INJECTION = "SQLInjection";
 	
 	public static final String REQUEST_HEADER_NAME_MAX_LENGTH= "request.headerNameMaxLength";
 	public static final String REQUEST_QUERY_PARAM_NAME_MAX_LENGTH= "request.queryParamNameMaxLength";

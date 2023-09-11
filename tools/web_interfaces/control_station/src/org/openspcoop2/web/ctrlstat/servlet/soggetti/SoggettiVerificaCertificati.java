@@ -393,7 +393,7 @@ public class SoggettiVerificaCertificati extends Action {
 				else { 
 
 					// setto la barra del titolo
-					ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
+					ServletUtils.setPageDataTitleServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
 							SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, 
 							soggettiHelper.getLabelNomeSoggetto(protocollo, tipoprov , nomeprov));
 

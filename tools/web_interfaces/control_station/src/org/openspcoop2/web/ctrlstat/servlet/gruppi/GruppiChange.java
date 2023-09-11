@@ -93,7 +93,7 @@ public final class GruppiChange extends Action {
 			if (gruppiHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, GruppiCostanti.LABEL_GRUPPI, 
+				ServletUtils.setPageDataTitleServletChange(pd, GruppiCostanti.LABEL_GRUPPI, 
 						GruppiCostanti.SERVLET_NAME_GRUPPI_LIST, gruppo.getNome());
 				
 
@@ -131,7 +131,7 @@ public final class GruppiChange extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, GruppiCostanti.LABEL_GRUPPI, 
+				ServletUtils.setPageDataTitleServletChange(pd, GruppiCostanti.LABEL_GRUPPI, 
 						GruppiCostanti.SERVLET_NAME_GRUPPI_LIST, gruppo.getNome());
 
 				// preparo i campi

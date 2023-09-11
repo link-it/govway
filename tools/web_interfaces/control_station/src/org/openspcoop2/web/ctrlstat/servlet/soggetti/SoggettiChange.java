@@ -862,7 +862,7 @@ public final class SoggettiChange extends Action {
 			if(ServletUtils.isEditModeInProgress(strutsBean.editMode) || checkWizard){
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
+				ServletUtils.setPageDataTitleServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, 
 						soggettiHelper.getLabelNomeSoggetto(strutsBean.protocollo, oldtipoprov , oldnomeprov));
 
@@ -1099,7 +1099,7 @@ public final class SoggettiChange extends Action {
 			if (!isOk) {
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
+				ServletUtils.setPageDataTitleServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, 
 						soggettiHelper.getLabelNomeSoggetto(strutsBean.protocollo, oldtipoprov , oldnomeprov));
 

@@ -798,7 +798,7 @@ public final class ServiziApplicativiAdd extends Action {
 									ServletUtils.getParameterAggiungi()
 							);
 				}else {
-					ServletUtils.setPageDataTitle_ServletAdd(pd, labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST);
+					ServletUtils.setPageDataTitleServletAdd(pd, labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST);
 				}
 
 				if(ruoloFruitore==null || "".equals(ruoloFruitore)){
@@ -973,7 +973,7 @@ public final class ServiziApplicativiAdd extends Action {
 									ServletUtils.getParameterAggiungi()
 							);
 				}else {
-					ServletUtils.setPageDataTitle_ServletAdd(pd, labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST);
+					ServletUtils.setPageDataTitleServletAdd(pd, labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST);
 				}
 
 				// preparo i campi

@@ -78,7 +78,7 @@ public class ServletUtils {
 		pd.disableEditMode();
 		pd.setMessage(message);
 		pd.setMostraLinkHome(true); 
-		ServletUtils.setErrorStatusCodeInRequestAttribute(request, session, ServletUtils.getErrorStatusCodeFromException(e));
+		ServletUtils.setErrorStatusCodeInRequestAttribute(request, ServletUtils.getErrorStatusCodeFromException(e));
 		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 		return ServletUtils.getStrutsForwardGeneralError(mapping, objectName, forwardType);
 	}
@@ -211,16 +211,16 @@ public class ServletUtils {
 		return new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null);
 	}
 	
-	public static void setPageDataTitle_ServletFirst(PageData pd,String t1Label, String t1Url){
+	public static void setPageDataTitleServletFirst(PageData pd,String t1Label, String t1Url){
 		setPageDataTitle(pd, 
 				new Parameter(t1Label,t1Url));
 	}
-	public static void setPageDataTitle_ServletAdd(PageData pd,String t1Label, String t1Url){
+	public static void setPageDataTitleServletAdd(PageData pd,String t1Label, String t1Url){
 		setPageDataTitle(pd, 
 				new Parameter(t1Label,t1Url), 
 				new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI,null));
 	}	
-	public static void setPageDataTitle_ServletChange(PageData pd,String t1Label, String t1Url, String t2Label){
+	public static void setPageDataTitleServletChange(PageData pd,String t1Label, String t1Url, String t2Label){
 		setPageDataTitle(pd, 
 				new Parameter(t1Label,t1Url),
 				new Parameter(t2Label,null));
@@ -410,8 +410,7 @@ public class ServletUtils {
 	}
 
 	public static String getSearchFromSession(ISearch ricerca, int idLista){
-		String search = (Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-		return search;
+		return (Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 	}
 
 	private static String getKeyRisultatiRicerca(int idLista) {
@@ -433,8 +432,7 @@ public class ServletUtils {
 	}
 	
 	public static String getUserLoginFromSession(HttpSession session){
-		String userLogin = (String) session.getAttribute(Costanti.SESSION_ATTRIBUTE_LOGIN);
-		return userLogin;
+		return (String) session.getAttribute(Costanti.SESSION_ATTRIBUTE_LOGIN);
 	}
 	public static void setUserLoginIntoSession(HttpSession session,String userLogin){
 		session.setAttribute(Costanti.SESSION_ATTRIBUTE_LOGIN, userLogin);
@@ -454,8 +452,7 @@ public class ServletUtils {
 	}
 
 	public static Boolean getContaListeFromSession(HttpSession session){
-		Boolean contaListe = (Boolean) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CONTA_LISTE);
-		return contaListe;
+		return (Boolean) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CONTA_LISTE);
 	}
 	public static void setContaListeIntoSession(HttpSession session,Boolean contaListe){
 		session.setAttribute(Costanti.SESSION_ATTRIBUTE_CONTA_LISTE, contaListe);
@@ -498,7 +495,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<>(); 
 			}
 			
 			Map<String, Object> mapTabId = null;
@@ -540,7 +537,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<>(); 
 			}
 			
 			Map<String, Object> mapTabId = null;
@@ -591,7 +588,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<>(); 
 			}
 			
 			Map<String, Object> mapTabId = null;
@@ -624,9 +621,7 @@ public class ServletUtils {
 		}
 		
 		// comportamento normale
-		Object obj = session.getAttribute(objectName);
-
-		return obj;
+		return session.getAttribute(objectName);
 	}
 	
 	public static String getStringAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request) {
@@ -642,14 +637,14 @@ public class ServletUtils {
 		Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 		
 		if(sessionMap == null) {
-			sessionMap = new ConcurrentHashMap<String, Map<String,Object>>();
+			sessionMap = new ConcurrentHashMap<>();
 		}
 		
 		Map<String, Object> mapDest = null;
 		if(StringUtils.isNotBlank(idSessioneTabSrc) && sessionMap.containsKey(idSessioneTabSrc)) { // identificativo del tab sorgente definito
 			// cerco una sessione da cui copiare altrimenti creo una sessione vuota 
 			Map<String, Object> mapSrc = sessionMap.get(idSessioneTabSrc);
-			mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
+			mapDest = SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
 		} else { // se non ricevo un id tab provo a cercare l'ultima sessione creata altrimenti creo una sessione vuota
 			Date date = new Date(0l); // imposto una data molto vecchia
 			String idSessionTab = null;
@@ -671,7 +666,7 @@ public class ServletUtils {
 			
 			if(idSessionTab != null) {
 				Map<String, Object> mapSrc = sessionMap.get(idSessionTab);
-				mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
+				mapDest = SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
 			} else {
 				mapDest = new HashMap<>();
 			}
@@ -843,14 +838,13 @@ public class ServletUtils {
 	
 	public static void generaESalvaTokenCSRF(HttpServletRequest request, HttpSession session) {
 //		String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
-		String uuId = UUID.randomUUID().toString().replace("-", ""); 
+		String uuId = UUID.randomUUID().toString(); //.replace("-", ""); 
 		String nuovoToken = generaTokenCSRF(uuId);
 		setObjectIntoSession(request, session, nuovoToken, Costanti.SESSION_ATTRIBUTE_CSRF_TOKEN);
 	}
 
 	public static String generaTokenCSRF(String sessionTabID) {
-		String nuovoToken = sessionTabID + "_" + System.currentTimeMillis();
-		return nuovoToken;
+		return  sessionTabID + "_" + System.currentTimeMillis();
 	}
 	
 	public static String leggiTokenCSRF(HttpServletRequest request, HttpSession session) {
@@ -866,6 +860,9 @@ public class ServletUtils {
 		// non ho trovato il token nella request non passo il controllo
 		if(tokenToCheck == null) return false;
 		
+		// verifica sintassi token
+		if(!verificaSintassiTokenCsrf(tokenToCheck)) return false;
+		
 		// controllo che il token coincida per intero con quello salvato in sessione
 		if(!tokenToCheck.equals(csfrTokenFromSession)) return false;
 		
@@ -879,6 +876,58 @@ public class ServletUtils {
 			long rif = sogliaMS + Long.parseLong(millisSToCheck);
 			
 			return now < rif;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Validazione del parametro per il controllo delle sessioni nei tab.
+	 * I valori ammessi sono uuid senza caratteri non alfanumerici
+	 * 
+	 * @param request
+	 * @param parameterToCheck
+	 * @return
+	 */
+	public static boolean checkCsrfParameter(HttpServletRequest request, String parameterToCheck) {
+		String parameterValueFiltrato = request.getParameter(parameterToCheck);
+		String parameterValueOriginale = Validatore.getInstance().getParametroOriginale(request, parameterToCheck);
+		
+		// parametro originale e' vuoto o null allora e' valido
+		if(StringUtils.isEmpty(parameterValueOriginale)) {
+			return true;
+		}
+		
+		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
+		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
+			return false;
+		}
+		
+		return verificaSintassiTokenCsrf(parameterValueFiltrato);
+	}
+
+
+	private static boolean verificaSintassiTokenCsrf(String token) {
+		// il parametro e' formato da un UUID + '_' + System.currentTimeMillis()
+		String[] split = token.split("_");
+		
+		// split deve avere due parti altrimenti non e' valido
+		if(split == null || split.length != 2) {
+			return false;
+		}
+		
+		// validazione  parte UUID
+		try {
+			UUID.fromString(split[0]);
+		}catch (IllegalArgumentException | NullPointerException e) {
+			return false;
+		}
+
+		// validazione parte millis
+		try {
+			Long.parseLong(split[1]);
+		}catch(IllegalArgumentException | NullPointerException e) {
+			return false;
 		}
 		
 		return true;
@@ -1022,11 +1071,7 @@ public class ServletUtils {
 		}
 		
 		// parametro filtrato vuoto o null perche' e' stato filtrato dall'utility di sicurezza, quindi non valido
-		if(StringUtils.isEmpty(parameterValueFiltrato)) { 
-			return false;
-		}
-		
-		return true;
+		return !StringUtils.isEmpty(parameterValueFiltrato);
 	}
 	
 	/***
@@ -1165,7 +1210,7 @@ public class ServletUtils {
 		return sb.length() > 0 ? sb.toString() : null;
 	}
 	
-	public static void setErrorStatusCodeInRequestAttribute(HttpServletRequest request, HttpSession session, HttpStatus httpStatus){
+	public static void setErrorStatusCodeInRequestAttribute(HttpServletRequest request, HttpStatus httpStatus){
 		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_SET_ERROR_CODE, httpStatus);
 	}
 }

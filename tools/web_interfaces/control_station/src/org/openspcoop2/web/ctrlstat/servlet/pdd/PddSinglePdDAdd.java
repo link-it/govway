@@ -91,7 +91,7 @@ public final class PddSinglePdDAdd extends Action {
 			if(pddHelper.isEditModeInProgress()){
 			
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST);
 	
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();
@@ -115,7 +115,7 @@ public final class PddSinglePdDAdd extends Action {
 			boolean isOk = pddHelper.pddCheckData(TipoOperazione.ADD);
 			if (!isOk) {
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST);
 					
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();

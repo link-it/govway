@@ -100,7 +100,7 @@ public   class Auditing extends Action {
 			// Se datainizio == null, devo visualizzare la pagina con il pulsante
 			if (auditingHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING);
+				ServletUtils.setPageDataTitleServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING);
 
 				// preparo i campi
 				List<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(
@@ -126,7 +126,7 @@ public   class Auditing extends Action {
 				pd.setMessage(msg);
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING);
+				ServletUtils.setPageDataTitleServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING);
 
 				// preparo i campi
 				List<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(

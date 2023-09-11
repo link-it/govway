@@ -97,7 +97,7 @@ public final class RuoliAdd extends Action {
 			if (ruoliHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();
@@ -121,7 +121,7 @@ public final class RuoliAdd extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();

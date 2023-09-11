@@ -97,7 +97,7 @@ public final class ScopeAdd extends Action {
 			if (scopeHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, ScopeCostanti.LABEL_SCOPE, ScopeCostanti.SERVLET_NAME_SCOPE_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, ScopeCostanti.LABEL_SCOPE, ScopeCostanti.SERVLET_NAME_SCOPE_LIST);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();
@@ -121,7 +121,7 @@ public final class ScopeAdd extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, ScopeCostanti.LABEL_SCOPE, ScopeCostanti.SERVLET_NAME_SCOPE_LIST);
+				ServletUtils.setPageDataTitleServletAdd(pd, ScopeCostanti.LABEL_SCOPE, ScopeCostanti.SERVLET_NAME_SCOPE_LIST);
 
 				// preparo i campi
 				List<DataElement> dati = new ArrayList<>();

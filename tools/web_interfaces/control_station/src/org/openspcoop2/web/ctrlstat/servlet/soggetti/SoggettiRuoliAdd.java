@@ -114,7 +114,7 @@ public final class SoggettiRuoliAdd extends Action {
 				
 				// setto la barra del titolo
 				if(accessDaChange) {
-					ServletUtils.setPageDataTitle_ServletFirst(pd, SoggettiCostanti.LABEL_SOGGETTI, 
+					ServletUtils.setPageDataTitleServletFirst(pd, SoggettiCostanti.LABEL_SOGGETTI, 
 							SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
 					ServletUtils.appendPageDataTitle(pd, 
 							new Parameter(tmpTitle, 

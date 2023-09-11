@@ -215,7 +215,7 @@ public final class SoggettiEndPoint extends Action {
 			if(soggettiHelper.isEditModeInProgress()){
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
+				ServletUtils.setPageDataTitleServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Connettore di " + tmpTitle);
 			
 				if (endpointtype == null) {
@@ -544,7 +544,7 @@ public final class SoggettiEndPoint extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
+				ServletUtils.setPageDataTitleServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Connettore di " + tmpTitle);
 
 				// preparo i campi

@@ -359,7 +359,7 @@ public final class ConfigurazioneGenerale extends Action {
 			if(isAllHiddenConfigurazione) {
 				title = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE;
 			}
-			ServletUtils.setPageDataTitle_ServletFirst(pd, title, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE);
+			ServletUtils.setPageDataTitleServletFirst(pd, title, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE);
 
 			// Se idhid != null, modifico i dati della porta di dominio nel
 			// db

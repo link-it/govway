@@ -91,7 +91,7 @@ public final class ConfigurazioneAuditing extends Action {
 			Configurazione c = auditingCore.getConfigurazioneAudit();
 
 			// setto la barra del titolo
-			ServletUtils.setPageDataTitle_ServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDIT);
+			ServletUtils.setPageDataTitleServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDIT);
 
 			// Se idhid != null, modifico i dati dell'audit nel db
 			if (!confHelper.isEditModeInProgress()) {
