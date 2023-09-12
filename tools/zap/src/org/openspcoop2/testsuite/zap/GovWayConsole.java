@@ -63,4 +63,8 @@ public class GovWayConsole extends AbstractConsoleScan {
 		return ".*Effettuare il login.*";
 	}
 	
+	@Override
+	protected boolean isDebug() {
+		return false;
+	}
 }

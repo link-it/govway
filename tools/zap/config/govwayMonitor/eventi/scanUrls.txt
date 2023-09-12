@@ -1,0 +1,2 @@
+# Indicare solo i contesti dopo http://.../govwayMonitor/
+eventi=eventi/pages/list/eventi.jsf

@@ -134,10 +134,10 @@ public class ZAPContext {
 		}
 	}
 	
-	private void init() throws ClientApiException, UtilsException {
+	private void init() throws ClientApiException {
 		this.zapClientApi = newClienApi();
 	}
-	public ZAPClienApi newClienApi() throws ClientApiException, UtilsException {
+	public ZAPClienApi newClienApi() throws ClientApiException {
 		return new ZAPClienApi(this.address, this.port, this.apiKey, this.debug);
 	}
 	

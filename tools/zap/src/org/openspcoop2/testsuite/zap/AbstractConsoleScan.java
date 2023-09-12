@@ -64,6 +64,7 @@ public abstract class AbstractConsoleScan {
 		}
 	
 		LoggerManager.info("Analisi complessiva terminata");
+
 	}
 	
 	protected abstract String getLoginUrl(String baseUrl);
@@ -71,6 +72,8 @@ public abstract class AbstractConsoleScan {
 	protected abstract String getLoginRequestData();
 	protected abstract String getLoggedInIndicator();
 	protected abstract String getLoggedOutIndicator();
+	
+	protected abstract boolean isDebug();
 	
 	private void scan(String[] args, ZAPContext context, ConsoleParams consoleParams,
 			List<String> urlVisitateSpiderScan, List<String> urlVisitateActiveScan) throws UtilsException, ClientApiException, IOException {
@@ -84,9 +87,7 @@ public abstract class AbstractConsoleScan {
 		int scanNum = 1;
 				
 		ConsolePathParams pathParams = new ConsolePathParams(consoleParams.getBaseConfigDirName());
-		
-		boolean debug = false;
-		
+				
 		for (String tipoTestUrl : targetUrls.keys()) {
 			
 			Utilities.sleep(3000);
@@ -121,7 +122,7 @@ public abstract class AbstractConsoleScan {
 			String userId = setFormBasedAuthentication(api, loginUrl, contextId, 
 					username, password, cookieValueHolder);
 	      
-			if(debug) {
+			if(this.isDebug()) {
 				ConsoleUtils.printAllScannerActives(zapClientApi.getClientApi());
 			}
 			
@@ -227,8 +228,9 @@ public abstract class AbstractConsoleScan {
     	LoggerManager.info("values: " + ((org.zaproxy.clientapi.core.ApiResponseSet)resp).getValues());*/
         // note, rtt, responseBody, cookieParams, requestBody, responseHeader, authSuccessful, requestHeader, id, type, timestamp, tags
         
+        String authSuccessful = ((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("authSuccessful");
         LoggerManager.info(
- 				"authSuccessful: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("authSuccessful"));
+ 				"authSuccessful: "+authSuccessful);
         LoggerManager.info(
  				"cookieParams: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("cookieParams"));
         LoggerManager.info(
@@ -237,8 +239,13 @@ public abstract class AbstractConsoleScan {
    			"note: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("note"));
         LoggerManager.info(
    			"rtt: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("rtt"));
-        LoggerManager.info(
-   			"responseBody: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("responseBody"));
+        if(this.isDebug()) {
+	        LoggerManager.info(
+	   			"responseBody: "+((org.zaproxy.clientapi.core.ApiResponseSet)resp).getStringValue("responseBody"));
+        }
+        if(!"true".equals(authSuccessful)) {
+        	throw new ClientApiException("Autenticazione fallita");
+        }
         
         // Recupero token session value
         resp =  api.users.getAuthenticationSession(contextId, userId);

@@ -1,0 +1,5 @@
+# Indicare solo i contesti dopo http://.../govwayMonitor/
+stats=stat/pages/form/analisiStatistica.jsf
+statsForm=stat/pages/form/analisiStatisticaFiltriRicerca.jsf
+statsConfig=stat/pages/list/configurazioniGenerali.jsf
+

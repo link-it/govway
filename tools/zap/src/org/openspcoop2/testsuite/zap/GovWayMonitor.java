@@ -63,4 +63,8 @@ public class GovWayMonitor extends AbstractConsoleScan {
 		return null;
 	}
 	
+	@Override
+	protected boolean isDebug() {
+		return false;
+	}
 }
