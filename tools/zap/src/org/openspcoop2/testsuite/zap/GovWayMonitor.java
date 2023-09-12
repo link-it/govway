@@ -67,4 +67,10 @@ public class GovWayMonitor extends AbstractConsoleScan {
 	protected boolean isDebug() {
 		return false;
 	}
+	
+	@Override
+	protected boolean isUniqueClientApi() {
+		return false;
+	}
+	
 }

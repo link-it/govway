@@ -44,29 +44,6 @@ import org.zaproxy.clientapi.core.ClientApiException;
  */
 public abstract class AbstractConsoleScan {
 	
-	private String reportDir = null;
-	
-	public void scan(String[] args) throws UtilsException, ClientApiException, IOException {
-				
-		ZAPContext context = new ZAPContext(args, AbstractConsoleScan.class.getName(), ConsoleParams.CONSOLE_USAGE+ZAPReport.SUFFIX, false);
-		
-		ConsoleParams consoleParams = new ConsoleParams(args);
-		
-		List<String> urlVisitateSpiderScan = new ArrayList<>();
-		List<String> urlVisitateActiveScan = new ArrayList<>();
-		
-		scan(args, context, consoleParams,
-				urlVisitateSpiderScan, urlVisitateActiveScan);
-		
-		ConsoleUtils.writeVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_SPIDER, urlVisitateSpiderScan);
-		if(!urlVisitateActiveScan.isEmpty()) {
-			ConsoleUtils.writeVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_ACTIVE, urlVisitateActiveScan);
-		}
-	
-		LoggerManager.info("Analisi complessiva terminata");
-
-	}
-	
 	protected abstract String getLoginUrl(String baseUrl);
 	protected abstract String getLogoutUrl(String baseUrl);
 	protected abstract String getLoginRequestData();
@@ -75,6 +52,37 @@ public abstract class AbstractConsoleScan {
 	
 	protected abstract boolean isDebug();
 	
+	protected abstract boolean isUniqueClientApi();
+	
+	private String reportDir = null;
+	
+	public void scan(String[] args) throws UtilsException, ClientApiException, IOException {
+				
+		ZAPContext context = new ZAPContext(args, AbstractConsoleScan.class.getName(), ConsoleParams.CONSOLE_USAGE+ZAPReport.SUFFIX, isUniqueClientApi());
+		
+		ConsoleParams consoleParams = new ConsoleParams(args);
+		
+		List<String> urlVisitateSpiderScan = new ArrayList<>();
+		List<String> urlVisitateActiveScan = new ArrayList<>();
+		
+		try {
+			scan(args, context, consoleParams,
+					urlVisitateSpiderScan, urlVisitateActiveScan);
+			
+			ConsoleUtils.writeVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_SPIDER, urlVisitateSpiderScan);
+			if(!urlVisitateActiveScan.isEmpty()) {
+				ConsoleUtils.writeVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_ACTIVE, urlVisitateActiveScan);
+			}
+		
+			LoggerManager.info("Analisi complessiva terminata");
+		}finally {
+			if(isUniqueClientApi()) {
+				context.shutdown();
+			}
+		}
+
+	}
+		
 	private void scan(String[] args, ZAPContext context, ConsoleParams consoleParams,
 			List<String> urlVisitateSpiderScan, List<String> urlVisitateActiveScan) throws UtilsException, ClientApiException, IOException {
 		
@@ -98,7 +106,7 @@ public abstract class AbstractConsoleScan {
 			
 			LoggerManager.info("Avvio analisi "+scanNum+"/"+targetUrls.size()+" '"+tipoTestUrl+"': " + url);
 			
-			ZAPClienApi zapClientApi = context.newClienApi(); 
+			ZAPClienApi zapClientApi = isUniqueClientApi() ? context.getZapClientApi() : context.newClienApi(); 
 			
 			ClientApi api = zapClientApi.getClientApi();
 			String contextName = zapClientApi.getContextName();

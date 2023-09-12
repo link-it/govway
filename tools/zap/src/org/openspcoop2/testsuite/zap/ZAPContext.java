@@ -141,6 +141,14 @@ public class ZAPContext {
 		return new ZAPClienApi(this.address, this.port, this.apiKey, this.debug);
 	}
 	
+	public void shutdown() throws ClientApiException {
+		// chiude non solo i processi di Firefox aperti tramite ZAP Proxy, ma interrompe anche completamente l'istanza di ZAP Proxy stessa, inclusa la sua interfaccia e qualsiasi altra attività in corso.
+		if(this.zapClientApi!=null) {
+			this.zapClientApi.getClientApi().core.shutdown();
+			LoggerManager.info("Shutdown effettuato");
+		}
+	}
+	
 	public String getAddress() {
 		return this.address;
 	}
@@ -172,6 +180,9 @@ public class ZAPContext {
 		this.debug = debug;
 	}
 	
+	public ZAPClienApi getZapClientApi() {
+		return this.zapClientApi;
+	}
 	public ClientApi getClientApi() throws UtilsException {
 		if(this.zapClientApi!=null) {
 			return this.zapClientApi.getClientApi();
