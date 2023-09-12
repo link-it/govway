@@ -70,6 +70,10 @@ Le tabelle tracciamento e messaggi diagnostici sono definiti in:
 Deve essere attivata la registrazione delle tracce e dei msg diagnostici per mezzo degli 'OpenSPCoopAppender'.
 Un esempio lo si puo' trovare in ./protocolli/trasparente/testsuite/deploy/config_file/configurazioneDefault.xml
 
+Requisito per wildfly
+Installare il modulo prodotto sotto dist:
+cp -r dist/modules/org/govway/testsuite/ WILDFLY/modules/system/layers/base/org/govway/
+
 
 
 

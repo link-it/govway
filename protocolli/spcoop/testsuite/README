@@ -70,6 +70,11 @@ Le tabelle tracciamento e messaggi diagnostici sono definiti in:
 Deve essere attivata la registrazione delle tracce e dei msg diagnostici per mezzo degli 'OpenSPCoopAppender'.
 Un esempio lo si puo' trovare in ./protocolli/spcoop/testsuite/deploy/config_file/configurazioneDefault.xml
 
+Requisito per wildfly
+Installare il modulo prodotto sotto dist:
+cp -r dist/modules/org/govway/testsuite/ WILDFLY/modules/system/layers/base/org/govway/
+
+
 
 
 
@@ -194,7 +199,6 @@ Batterie di test che verificano funzionalita' di sicurezza della Porta.
    (NOTA2: Provarlo anche con MultipartParsing abilitato + DumpBinarioBinarioAbilitato:soloSuFile)
    (NOTA3: Su Tomcat se si installano due war differenti, govwar.war e govwaySec.ear con la signature degli attachments si ottiene un errore simile al seguente:
 	java.security.InvalidAlgorithmParameterException: Expected AttachmentTransformParameterSpec)
-- 'WSSecuritySoapBox' vengono provate alcune funzionalità di WSSecurity tramite libreria 'soapbox', in particolar modo firma e cifratura degli attachments
 !! Pre-requisiti!!
 Il test richiede l'installazione di diversi keystore in /etc/govway/keys:
    - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pd.jks
@@ -205,18 +209,7 @@ Il test richiede l'installazione di diversi keystore in /etc/govway/keys:
    - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pa.p12
    - protocolli/spcoop/testsuite/deploy/wss_examples/jks/testsuiteClient.jks
    - protocolli/spcoop/testsuite/deploy/wss_examples/jks/testsuiteServer.jks
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_encrypt.jceks
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pa_signature_keystore.jks
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pa_signature_truststore.jks
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pd_signature_keystore.jks
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pd_signature_truststore.jks
-Il test inoltre richiede l'installazione dei seguenti file di properties in /etc/govway/properties:
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_encrypt.properties
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pa_signature_keystore.properties
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pa_signature_truststore.properties
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pd_signature_keystore.properties
-   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pd_signature_truststore.properties
-Infine il test richiede l'installazione delle configurazioni relative a SAML:
+Il test richiede inoltre l'installazione delle configurazioni relative a SAML:
    - copia in /etc/govway/properties dei files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/saml20
    - copia all'interno dell'archivio della PdD dei files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/saml11
    - copia in /etc/govway/xacmlPolicy i files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/xacmlPolicy

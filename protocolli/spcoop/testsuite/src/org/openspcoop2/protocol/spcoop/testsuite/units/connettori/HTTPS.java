@@ -154,6 +154,7 @@ public class HTTPS extends GestioneViaJmx {
 	private static final String BAD_CERTIFICATE_3 = "Connection reset by peer";
 	private static final String BAD_CERTIFICATE_4 = "readHandshakeRecord";
 	private static final String BAD_CERTIFICATE_5 = "Broken pipe (Write failed)";
+	private static final String BAD_CERTIFICATE_6 = "Broken pipe";
 	private static final String CA_NON_PRESENTE = "unable to find valid certification path to requested target";
 	private static final String HOST_VERIFY = "No subject alternative names present";
 	private static final String HOST_VERIFY_2 = "HTTPS hostname wrong:  should be <127.0.0.1>";
@@ -501,7 +502,8 @@ public class HTTPS extends GestioneViaJmx {
 				boolean badCertificate3 = dataMsg.isTracedMessaggioWithLike(id,BAD_CERTIFICATE_3); // java11 e wildfly
 				boolean badCertificate4 = dataMsg.isTracedMessaggioWithLike(id,BAD_CERTIFICATE_4); // java11 e wildfly
 				boolean badCertificate5 = dataMsg.isTracedMessaggioWithLike(id,BAD_CERTIFICATE_5); // java11 e wildfly
-				Assert.assertTrue(badCertificate || badCertificate2 || badCertificate3 || badCertificate4 || badCertificate5);
+				boolean badCertificate6 = dataMsg.isTracedMessaggioWithLike(id,BAD_CERTIFICATE_6); // java17 e wildfly27
+				Assert.assertTrue(badCertificate || badCertificate2 || badCertificate3 || badCertificate4 || badCertificate5 || badCertificate6);
 			}
 			
 		}catch(Exception e){

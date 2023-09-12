@@ -2521,10 +2521,10 @@ public class WSSecurity extends GestioneViaJmx {
 		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(azione);
 		client.connectToSoapEngine(MessageType.SOAP_11);
-		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
-		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
-		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");
-		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/pdf");
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibile(), false,addIDUnivoco);
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibileAllegatoXml(),"text/xml");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibileAllegatoBinario(),"application/octet-stream");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibileAllegatoBinario(),"application/pdf");
 		client.run();
 
 		// Test uguaglianza Body (e attachments)
@@ -2598,10 +2598,10 @@ public class WSSecurity extends GestioneViaJmx {
 		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(azione);
 		client.connectToSoapEngine(MessageType.SOAP_11);
-		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
-		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
-		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");
-		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/pdf");
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibile(), false,addIDUnivoco);
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibileAllegatoXml(),"text/xml");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibileAllegatoBinario(),"application/octet-stream");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibileAllegatoBinario(),"application/pdf");
 		client.run();
 
 		// Test uguaglianza Body (e attachments)
@@ -2664,10 +2664,10 @@ public class WSSecurity extends GestioneViaJmx {
 		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(azione);
 		client.connectToSoapEngine(MessageType.SOAP_11);
-		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
-		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
-		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");
-		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/pdf");
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibile(), false,addIDUnivoco);
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibileAllegatoXml(),"text/xml");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibileAllegatoBinario(),"application/octet-stream");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecurityDatoSensibileAllegatoBinario(),"application/pdf");
 		client.run();
 
 		// Test uguaglianza Body (e attachments)

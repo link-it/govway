@@ -497,29 +497,29 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
-	public String getSoapTestWSSecuritySoapBox(){
+	public String getSoapTestWSSecurityDatoSensibile(){
 		try{
-			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecuritySoapBox").trim();
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecurityDatoSensibile").trim();
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecuritySoapBox':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecurityDatoSensibile':"+e.getMessage();
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}
 	}
-	public String getSoapTestWSSecuritySoapBoxAllegatoXml(){
+	public String getSoapTestWSSecurityDatoSensibileAllegatoXml(){
 		try{
-			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecuritySoapBox.allegatoXml").trim();
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecurityDatoSensibile.allegatoXml").trim();
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecuritySoapBox.allegatoXml':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecurityDatoSensibile.allegatoXml':"+e.getMessage();
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}
 	}
-	public String getSoapTestWSSecuritySoapBoxAllegatoBinario(){
+	public String getSoapTestWSSecurityDatoSensibileAllegatoBinario(){
 		try{
-			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecuritySoapBox.allegatoBin").trim();
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecurityDatoSensibile.allegatoBin").trim();
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecuritySoapBox.allegatoBin':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecurityDatoSensibile.allegatoBin':"+e.getMessage();
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}

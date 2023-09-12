@@ -349,28 +349,7 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_WSS_Actor_SIGNATURE="WSSSignature_MustUnderstand0_ActorOpenSPCoop";
 	/** Porte Delegate per WS-Security: WSS Annidato*/
 	public static final String PORTA_DELEGATA_WSS_Annidamento="CooperazioneAsincronaSimmetricaWSSAnnidamento";
-	
-	/** Porte Delegate per WS-Security: SOAPBOX_CifrataFirmata */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_ENCRYPT_SIGNATURE="SOAPBOX_CifrataFirmata";
-	/** Porte Delegate per WS-Security: SOAPBOX_FirmataCifrata */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_SIGNATURE_ENCRYPT="SOAPBOX_FirmataCifrata";
-	/** Porte Delegate per WS-Security: SOAPBOX_Cifrata */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_ENCRYPT="SOAPBOX_Cifrata";
-	/** Porte Delegate per WS-Security: SOAPBOX_Firmata */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_SIGNATURE="SOAPBOX_Firmata";
-	
-	/** Porte Delegate per WS-Security: SOAPBOX_CifrataFirmataAttachments */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_ENCRYPT_SIGNATURE_ATTACHMENTS="SOAPBOX_CifrataFirmataAttachments";
-	/** Porte Delegate per WS-Security: SOAPBOX_FirmataCifrataAttachments */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_SIGNATURE_ENCRYPT_ATTACHMENTS="SOAPBOX_FirmataCifrataAttachments";
-	/** Porte Delegate per WS-Security: SOAPBOX_CifrataAttachments */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_ENCRYPT_ATTACHMENTS="SOAPBOX_CifrataAttachments";
-	/** Porte Delegate per WS-Security: SOAPBOX_FirmataAttachments */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_SIGNATURE_ATTACHMENTS="SOAPBOX_FirmataAttachments";
-
-	/** Porte Delegate per WS-Security: SOAPBOX_FirmataAttachments SignatureEngineXmlSec */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_SIGNATURE_ATTACHMENTS_ENGINE_XMLSEC="SOAPBOX_FirmataAttachments_SignatureEngineXmlSec";
-	
+		
 	/** Porte Delegate per Performance test: ConnettoreNULL con OneWay */
 	public static final String PORTA_DELEGATA_PD_ONEWAY_CONNETTORE_NULL = "ConnettorePDOneWayNULL";
 	/** Porte Delegate per Performance test: ConnettoreNULL con Sincrono */
@@ -907,26 +886,6 @@ public class CostantiTestSuite {
 	/** ENTITA SPCOOP: IDSoggetto */
 	public static final IDSoggetto SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11 = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE_LINEE_GUIDA_11, 
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE_LINEE_GUIDA_11, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_EROGATORE_LINEE_GUIDA_11);
-	
-	/** ENTITA SPCOOP: Tipo Soggetto Fruitore */
-	public static final String SPCOOP_TIPO_SOGGETTO_FRUITORE_SOAPBOX="spc";
-	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
-	public static final String SPCOOP_NOME_SOGGETTO_FRUITORE_SOAPBOX="SoggettoEsempioSoapBoxFruitore";
-	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
-	public static final String SPCOOP_IDPORTA_SOGGETTO_FRUITORE_SOAPBOX="SoggettoEsempioSoapBoxFruitoreSPCoopIT";
-	/** ENTITA SPCOOP: IDSoggetto */
-	public static final IDSoggetto SPCOOP_SOGGETTO_FRUITORE_SOAPBOX = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_FRUITORE_SOAPBOX, 
-			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_SOAPBOX, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE_SOAPBOX);
-	
-	/** ENTITA SPCOOP: Tipo Soggetto Erogatore */
-	public static final String SPCOOP_TIPO_SOGGETTO_EROGATORE_SOAPBOX="spc";
-	/** ENTITA SPCOOP: Nome Soggetto Erogatore */
-	public static final String SPCOOP_NOME_SOGGETTO_EROGATORE_SOAPBOX="SoggettoEsempioSoapBoxErogatore";
-	/** ENTITA SPCOOP: IdPorta Soggetto Erogatore */
-	public static final String SPCOOP_IDPORTA_SOGGETTO_EROGATORE_SOAPBOX="SoggettoEsempioSoapBoxErogatoreSPCoopIT";
-	/** ENTITA SPCOOP: IDSoggetto */
-	public static final IDSoggetto SPCOOP_SOGGETTO_EROGATORE_SOAPBOX = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE_SOAPBOX, 
-			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE_SOAPBOX, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_EROGATORE_SOAPBOX);
 
 	/** ENTITA SPCOOP: Tipo Soggetto TMP */
 	public static final String SPCOOP_TIPO_SOGGETTO_TMP="spc";
@@ -1410,26 +1369,6 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_NO_PASSWORD="WSSUsernameTokenNoPassword";
     /** ENTITA SPCOOP: Nome Azione WSSUsernameTokenSignature del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_SIGNATURE="WSSUsernameTokenSignature";   
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxCifrataFirmata del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_ENCRYPT_SIGNATURE="WSSSoapBoxCifrataFirmata";
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxFirmataCifrata del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_SIGNATURE_ENCRYPT="WSSSoapBoxFirmataCifrata";
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxCifrata del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_ENCRYPT="WSSSoapBoxCifrata";
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxFirmata del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_SIGNATURE="WSSSoapBoxFirmata";    
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxCifrataFirmataAttachments del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_ENCRYPT_SIGNATURE_ATTACHMENTS="WSSSoapBoxCifrataFirmataAttachments";
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxFirmataCifrataAttachments del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_SIGNATURE_ENCRYPT_ATTACHMENTS="WSSSoapBoxFirmataCifrataAttachments";
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxCifrataAttachments del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_ENCRYPT_ATTACHMENTS="WSSSoapBoxCifrataAttachments";
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxFirmataAttachments del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_SIGNATURE_ATTACHMENTS="WSSSoapBoxFirmataAttachments";    
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxFirmataAttachmentsSignatureEngineSun del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_SIGNATURE_ATTACHMENTS_SIGNATURE_ENGINE_SUN="WSSSoapBoxFirmataAttachmentsSignatureEngineSun";
-    /** ENTITA SPCOOP: Nome Azione WSSSoapBoxFirmataAttachmentsSignatureEngineXmlSec del Servizio RichiestaStatoAvanzamento */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_SIGNATURE_ATTACHMENTS_SIGNATURE_ENGINE_XMLSEC="WSSSoapBoxFirmataAttachmentsSignatureEngineXmlSec";
     /** ENTITA SPCOOP: Nome Azione del Servizio sincrono per SoapFault */
 	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_SA="testSoapFaultApplicativo";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per connettore errato SA */

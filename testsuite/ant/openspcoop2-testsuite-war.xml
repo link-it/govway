@@ -170,7 +170,21 @@
 			</classes>
 		</war>
 		<delete dir="${build_testsuite}/tmp" />
-		
+	
+
+		<!-- jboss module -->
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<copy todir="${dist_testsuite}/modules/org/govway/">
+					<fileset dir="${deploy_testsuite}/modules"/>
+				</copy>
+				<copy todir="${dist_testsuite}/modules/org/govway/testsuite/activation/main/">
+					<fileset file="${required_lib}/axis14/jakarta.activation-1.2.2.jar"/>
+				</copy>
+			</then>
+		</if>
+	
 	</target>
 	
 </project>

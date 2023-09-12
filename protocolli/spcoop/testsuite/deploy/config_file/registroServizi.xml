@@ -173,17 +173,6 @@
         <azione nome="WSSSignature_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop"/> <!-- Test 6 Invertito -->
 	<!-- Test di annidamento WSS -->
         <azione nome="WSSAnnidamento"/>
-        <!-- Test SoapBox -->
-	<azione nome="WSSSoapBoxCifrataFirmata"/>
-	<azione nome="WSSSoapBoxFirmataCifrata"/>
-	<azione nome="WSSSoapBoxCifrata"/>
-	<azione nome="WSSSoapBoxFirmata"/>
-	<azione nome="WSSSoapBoxCifrataFirmataAttachments"/>
-	<azione nome="WSSSoapBoxFirmataCifrataAttachments"/>
-	<azione nome="WSSSoapBoxCifrataAttachments"/>
-	<azione nome="WSSSoapBoxFirmataAttachments"/>
-	<azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineXmlSec"/>
-	<azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineSun"/>
         <!-- Test Bug #18 -->
         <azione nome="stateful"/>
         <azione nome="testConnettoreErratoApplicativoStateless"/>
@@ -767,12 +756,6 @@
         subject="CN=sil1,OU=test,O=openspcoop.org,L=Pisa,ST=Italy,C=IT,emailaddress=apoli@link.it"
         client-auth="disabilitato"/>
 
-    <porta-dominio nome="PdDEsempioSoapBoxErogatore" descrizione="PdD per EsempioSoapBox"
-        client-auth="disabilitato"/>
-
-    <porta-dominio nome="PdDEsempioSoapBoxFruitore" descrizione="PdD per EsempioSoapBox"
-        client-auth="disabilitato"/>
-
 
     <!-- Soggetti SPCoop in  supporto per l'autorizzazione anti-spoofing -->
 
@@ -822,26 +805,6 @@
         <connettore tipo="http" nome="Soggetto2SenzaCredenziali">
             <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
-    </soggetto>
-
-
-    <!-- Soggetto per esempio SoapBox -->
-
-    <soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore" porta-dominio="PdDEsempioSoapBoxFruitore">
-        <connettore tipo="http" nome="PdDEsempioSoapbox">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
-        </connettore>
-    </soggetto>
-
-    <soggetto tipo="spc" nome="SoggettoEsempioSoapBoxErogatore" porta-dominio="PdDEsempioSoapBoxErogatore">
-        <connettore tipo="http" nome="PdDEsempioSoapbox">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
-        </connettore>
-
-        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento" accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/> -->
-        </accordo-servizio-parte-specifica>
-
     </soggetto>
 
 

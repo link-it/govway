@@ -18,6 +18,7 @@
 	<property name="dist_testsuite" location="dist" />
 	<property name="doc_testsuite" location="doc" />
 	<property name="cfg_testsuite" location="${basedir}/deploy/properties" />
+	<property name="deploy_testsuite" location="deploy" />
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />
