@@ -1087,12 +1087,11 @@ public class Utility {
 		return false;
 	}
 	
-	public static void setLoginBeanErrorMessage(HttpSession session, String message, Integer statusCode) {
+	public static void setLoginBeanErrorMessage(HttpSession session, String filterName, String message, Integer statusCode) {
 		LoginBean lb =  Utility.getLoginBeanFromSession(session);
 
 		if(lb!= null){
-			lb.setErrorStatus(statusCode);
-			lb.setMsgException(message);
+			lb.setFilterResult(filterName, message, statusCode);
 		}
 	}
 }

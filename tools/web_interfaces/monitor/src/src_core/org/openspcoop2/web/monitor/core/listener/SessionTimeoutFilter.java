@@ -79,7 +79,7 @@ public class SessionTimeoutFilter implements Filter {
 					//se la pagina richiesta e' quella di login allora redirigo direttamente a quella, altrimenti a quella di timeout
 					//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage();
 					redirPageUrl += getRedirPage(httpServletRequest);
-					SessionTimeoutFilter.log.info("session is invalid! redirecting to page : " + redirPageUrl);
+					SessionTimeoutFilter.log.info("session is invalid! redirecting to page : {}", redirPageUrl);
 					httpServletResponse.sendRedirect(redirPageUrl);
 					return;
 				}

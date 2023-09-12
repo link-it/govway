@@ -127,7 +127,7 @@ public class CsrfFilter implements Filter {
 			if(rootCause != null){
 				if (rootCause instanceof ViewExpiredException) { // This is true for any FacesException.
 
-					Utility.setLoginBeanErrorMessage(session, null, HttpStatus.BAD_REQUEST.value());
+					Utility.setLoginBeanErrorMessage(session, CsrfFilter.class.getName(), null, HttpStatus.BAD_REQUEST.value());
 					CsrfFilter.log.debug("Rilevata ViewExpiredException: [{}]", rootCause.getMessage()); 
 					String redirPageUrl = request.getContextPath() + "/"+ "public/timeoutPage.jsf";
 					response.sendRedirect(redirPageUrl);

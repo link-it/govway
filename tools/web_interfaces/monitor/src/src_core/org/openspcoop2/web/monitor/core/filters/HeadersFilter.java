@@ -122,7 +122,7 @@ public class HeadersFilter implements Filter {
 		String urlRichiesta = request.getServletPath();
 		
 		boolean utenteLoggato = Utility.isUtenteLoggato(session);
-		Utility.setLoginBeanErrorMessage(session, null, null);
+		Utility.setLoginBeanErrorMessage(session, HeadersFilter.class.getName(), null, null);
 		
 		try {
 			// set versione jQuery
@@ -145,7 +145,7 @@ public class HeadersFilter implements Filter {
 				// redirect
 				// indico che ho usato la informazione.
 				if (used) {
-					Utility.setLoginBeanErrorMessage(session, MSG_AUTH_ERRORE, HttpStatus.BAD_REQUEST.value());
+					Utility.setLoginBeanErrorMessage(session, HeadersFilter.class.getName(), MSG_AUTH_ERRORE, HttpStatus.BAD_REQUEST.value());
 					session.setAttribute(ACCLIM_KEY, false);
 				} else {
 					// non visualizzo il messaggio
@@ -175,7 +175,7 @@ public class HeadersFilter implements Filter {
 			if(rootCause != null){
 				if (rootCause instanceof ViewExpiredException) { // This is true for any FacesException.
 
-					Utility.setLoginBeanErrorMessage(session, null, HttpStatus.BAD_REQUEST.value());
+					Utility.setLoginBeanErrorMessage(session, HeadersFilter.class.getName(), null, HttpStatus.BAD_REQUEST.value());
 					log.debug("Rilevata ViewExpiredException: [{}]", rootCause.getMessage()); 
 					String redirPageUrl = request.getContextPath() + "/"+ "public/timeoutPage.jsf";
 					response.sendRedirect(redirPageUrl);

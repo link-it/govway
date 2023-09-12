@@ -46,6 +46,7 @@ import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.ContentAuthorizationManager;
 import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
 
 /**
  * ContentAuthorizationFilter
@@ -68,6 +69,8 @@ public class ContentAuthorizationFilter implements Filter {
 	private static final String msgErrorePre = "L'utente ";
 
 	private static final String msgErrorePost = " non dispone delle autorizzazioni necessarie per visualizzare la pagina richiesta";
+	
+	public static final String MSG_AUTH_ERRORE = "Autenticazione richiesta.";
 
 	// pagina da mostrare all'utente al posto di quella richiesta
 	public static final String jspErrore = "/commons/pages/welcome.jsf";
@@ -111,6 +114,8 @@ public class ContentAuthorizationFilter implements Filter {
 
 			//			String pathInfo = request.getServletPath();
 			//			log.debug("Richiesta ServletPath ["+pathInfo+"]");
+			
+			Utility.setLoginBeanErrorMessage(session, ContentAuthorizationFilter.class.getName(), null, null);
 
 			boolean controlloAccessoRichiesto = Utils.isContentAuthorizationRequiredForThisResource(request,this.excludedPaths); 
 
@@ -190,18 +195,21 @@ public class ContentAuthorizationFilter implements Filter {
 				sb.append(msgErrorePre).append(userName).append(msgErrorePost);
 
 				String msgErrore = sb.toString();
-				// redirect verso una pagina alternativa
-				log.debug("Redirect: "	+ request.getContextPath() + jspErrore);
-
+				
+				session.setAttribute(accLimKey, true);
 				if(utenteLoggato){
+					// redirect verso una pagina alternativa
+					log.debug("Redirect: "	+ request.getContextPath() + jspErrore);
 					// setto gli attributi che riguardano il
 					// messaggio da visualizzare all'utente
 					session.setAttribute(msgErroreKey, msgErrore);
-					session.setAttribute(accLimKey, true);
+
 					// redirect
 					response.sendRedirect(request.getContextPath()+ jspErrore);
 				} else {
-					// utente non loggato va alla pagina di login
+					// redirect verso pagina di login per utente non loggato
+					log.debug("Redirect: "	+ request.getContextPath() + jspLogin);
+
 					// redirect
 					response.sendRedirect(request.getContextPath()+ jspLogin);
 				}
@@ -224,13 +232,15 @@ public class ContentAuthorizationFilter implements Filter {
 			// + session.getAttribute(accLimKey));
 
 			// all'interno della pagina chiamata nel redirect mostro il messaggio di info.
-			if (urlRichiesta.indexOf("/pages/welcome.jsf") != -1) {
+			if (urlRichiesta.indexOf("/pages/welcome.jsf") != -1 || urlRichiesta.indexOf(jspLogin) != -1) {
 				boolean used = session.getAttribute(accLimKey) != null ? ((Boolean) session.getAttribute(accLimKey)).booleanValue()	: false;
 
-				// prima volta che viene richiamata la pagina welcome dopo la
-				// redirect
+				// prima volta che viene richiamata la pagina welcome o login dopo la redirect
 				// indico che ho usato la informazione.
 				if (used) {
+					if(urlRichiesta.indexOf(jspLogin) != -1) { // nella pagina di login devo far impostare il messaggio di errore e lo status code 401
+						Utility.setLoginBeanErrorMessage(session, ContentAuthorizationFilter.class.getName(), MSG_AUTH_ERRORE, HttpStatus.UNAUTHORIZED.value());
+					}
 					session.setAttribute(accLimKey, false);
 				} else {
 					// non visualizzo il messaggio

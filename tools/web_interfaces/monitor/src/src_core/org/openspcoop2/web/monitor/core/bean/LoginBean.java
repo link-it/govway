@@ -57,11 +57,14 @@ import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
+import org.openspcoop2.web.monitor.core.filters.ContentAuthorizationFilter;
 import org.openspcoop2.web.monitor.core.filters.CsrfFilter;
+import org.openspcoop2.web.monitor.core.filters.HeadersFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -123,6 +126,9 @@ public class LoginBean extends AbstractLoginBean {
 	
 	private boolean salvaModificheProfiloSuDB = false;
 	
+	private Map<String, String> filtersErrorMsg;
+	private Map<String, Integer> filtersErrorStatus;
+	
 	public LoginBean(boolean initDao){
 		super(initDao);
 		this.caricaProperties();
@@ -174,6 +180,9 @@ public class LoginBean extends AbstractLoginBean {
 		if(this.isInitDao()){
 			this.setLoginDao(new DBLoginDAO());
 		}
+		
+		this.filtersErrorMsg = new HashMap<>();
+		this.filtersErrorStatus = new HashMap<>();
 	}
 
 	@Override
@@ -1203,11 +1212,22 @@ public class LoginBean extends AbstractLoginBean {
 	public void setCsrf(String csrf) {}
 	
 	// dati per impostare messaggi di errore e return code custom
-	private Integer errorStatus;
-	private String msgException;
+	public void setFilterResult(String filterName, String message, Integer statusCode) {
+		if(statusCode != null) {
+			this.filtersErrorStatus.put(filterName, statusCode);
+		} else {
+			this.filtersErrorStatus.remove(filterName);
+		}
+		
+		if(message != null) {
+			this.filtersErrorMsg.put(filterName, message);	
+		} else {
+			this.filtersErrorMsg.remove(filterName);
+		}
+	}
 	
 	public void setMsgException(String msg) {
-		this.msgException = msg;
+		// donothing
 	}
 	
     public String getMsgException() {
@@ -1215,33 +1235,44 @@ public class LoginBean extends AbstractLoginBean {
         ExternalContext externalContext = facesContext.getExternalContext();
     	HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
     	String urlRichiesta = request.getServletPath();
+
+    	Integer errorStatus = null;
+    	String msgException = null;
     	
     	// all'interno della pagina chiamata nel redirect mostro il messaggio di info.
 		if (urlRichiesta.indexOf("/pages/welcome.jsf") != -1) {
-			if(this.msgException != null && this.errorStatus != null) {
-				HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-	            response.setStatus(this.errorStatus);
-			}
-			return this.msgException;
+			errorStatus = this.filtersErrorStatus.get(HeadersFilter.class.getName());
+	    	msgException = this.filtersErrorMsg.get(HeadersFilter.class.getName());
+		}
+		
+		// redirect alla pagina di login.
+		if (urlRichiesta.indexOf("/public/login.jsf") != -1) {
+			errorStatus = this.filtersErrorStatus.get(ContentAuthorizationFilter.class.getName());
+        	msgException = this.filtersErrorMsg.get(ContentAuthorizationFilter.class.getName());
 		}
 		
 		// redirect alla pagina di timeout.
 		if (urlRichiesta.indexOf("/public/timeoutPage.jsf") != -1) {
-			if(this.errorStatus != null) {
-				HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-	            response.setStatus(this.errorStatus);
-			}
-			return this.msgException;
+			// view non valida rilevata nel CsrfFilter
+			errorStatus = this.filtersErrorStatus.get(CsrfFilter.class.getName());
+	    	msgException = this.filtersErrorMsg.get(CsrfFilter.class.getName());
+	    	
+	    	// in alternativa questa pagina e' sempre una pagina di sessione scaduta forzo il 401
+	    	if(errorStatus == null) {
+	    		errorStatus = HttpStatus.UNAUTHORIZED.value();
+//		    	msgException = ContentAuthorizationFilter.MSG_AUTH_ERRORE;
+	    	}
 		}
     	
-    	return null;
+    	if(errorStatus != null) {
+    		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+            response.setStatus(errorStatus);
+    	}
+		
+    	return msgException;
     }
 
-	public Integer getErrorStatus() {
-		return this.errorStatus;
-	}
-
 	public void setErrorStatus(Integer errorStatus) {
-		this.errorStatus = errorStatus;
+		// donothing
 	}
 }
