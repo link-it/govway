@@ -1,0 +1,13 @@
+<module xmlns="urn:jboss:module:1.0" name="org.govway.testsuite.activation">
+
+  <!-- per risolvere il problema:  [io.undertow.request] (default task-5) UT005023: Exception handling request to /govwayTestSuite/verificaFunzionalitaScartaBody: java.lang.IllegalAccessError: failed to access class com.sun.activation.registries.LogSupport from class javax.activation.MailcapCommandMap (com.sun.activation.registries.LogSupport is in unnamed module of loader 'org.eclipse.angus.activation' @449a4f23; javax.activation.MailcapCommandMap is in unnamed module of loader 'deployment.govwayTestSuite.war' @7080120)
+   scaturito ad esempio tramite il test: ant run_test -Dgroup=VerificaTimeoutGestioneContentLength.SCARTA_BODY
+ -->
+
+
+  <resources>
+    <resource-root path="jakarta.activation-1.2.2.jar"/>
+  </resources>
+  <dependencies>
+  </dependencies>
+</module>

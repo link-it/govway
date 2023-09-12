@@ -2,6 +2,7 @@
 	<deployment>
     	<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
     	<dependencies>
+	    <module name="org.govway.testsuite.activation" />
             <module name="deployment.custom" />
         </dependencies>
 	<exclude-subsystems>
@@ -21,6 +22,8 @@
 		<module name="org.apache.commons.logging"/>
 		<module name="org.apache.logging.log4j.api"/>
 		-->
+		<module name="org.eclipse.angus.mail"/>
+		<module name="org.eclipse.angus.activation"/>
     	</exclusions>
     </deployment>
     <module name="deployment.custom">
