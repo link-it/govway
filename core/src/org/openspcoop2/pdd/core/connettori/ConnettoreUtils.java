@@ -43,6 +43,7 @@ import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -69,12 +70,18 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ConnettoreUtils {
+	
+	private ConnettoreUtils() {}
 
 	public static String formatLocation(HttpRequestMethod httpMethod, String location){
 		if(httpMethod!=null)
 			return location+" http-method:"+httpMethod;
 		else
 			return location;
+	}
+	
+	private static String getErrorMessageBuildLocation(Exception e) {
+		return "Errore durante la costruzione della location: "+e.getMessage();
 	}
 	
 	public static String getAndReplaceLocationWithBustaValues(IConnettore connector, ConnettoreMsg connettoreMsg,Busta busta,PdDContext pddContext,IProtocolFactory<?> protocolFactory,Logger log) throws ConnettoreException{
@@ -96,7 +103,7 @@ public class ConnettoreUtils {
 				location = ((ConnettoreFILE)connector).buildLocation(connettoreMsg);
 				//dynamicLocation = true; la dinamicita viene gia gestita nel metodo buildLocation
 			}catch(Exception e){
-				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+				log.error(getErrorMessageBuildLocation(e),e);
 				location = "N.D.";
 			}
 		}
@@ -107,7 +114,7 @@ public class ConnettoreUtils {
 				location = connector.getLocation();
 				dynamicLocation = true;
 			}catch(Exception e){
-				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+				log.error(getErrorMessageBuildLocation(e),e);
 				location = "N.D.";
 			}
 		}
@@ -118,7 +125,7 @@ public class ConnettoreUtils {
 				location = connector.getLocation();
 				dynamicLocation = true;
 			}catch(Exception e){
-				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+				log.error(getErrorMessageBuildLocation(e),e);
 				location = "N.D.";
 			}
 		}
@@ -129,7 +136,7 @@ public class ConnettoreUtils {
 				location = connector.getLocation();
 				dynamicLocation = true;
 			}catch(Exception e){
-				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+				log.error(getErrorMessageBuildLocation(e),e);
 				location = "N.D.";
 			}
 		}
@@ -140,7 +147,7 @@ public class ConnettoreUtils {
 			}
 		}
 		
-		if(location !=null && (location.equals("")==false) ){
+		if(location !=null && (!location.equals("")) ){
 			
 			// Keyword old
 			location = location.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_TIPO_SERVIZIO,busta.getTipoServizio());
@@ -171,6 +178,7 @@ public class ConnettoreUtils {
 		
 		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
 				TipiConnettore.HTTPS.toString().equals(tipoConnettore) ||
+				ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnettore)  ||
 				ConnettoreSAAJ.ENDPOINT_TYPE.equals(tipoConnettore)  ||
 				ConnettoreStresstest.ENDPOINT_TYPE.equals(tipoConnettore)){
 	
@@ -191,7 +199,7 @@ public class ConnettoreUtils {
 					}
 					Iterator<String> keys = forwardParameter.getKeys();
 					while (keys.hasNext()) {
-						String key = (String) keys.next();
+						String key = keys.next();
 						List<String> values = forwardParameter.getPropertyValues(key);
 						if(values!=null && !values.isEmpty()){
 							if(p.containsKey(key)){
@@ -225,8 +233,8 @@ public class ConnettoreUtils {
 	public static String normalizeInterfaceName(OpenSPCoop2Message msg, String idModulo, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
 		String nomePortaInvocata = null;
-		if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
-			nomePortaInvocata = (String) nomePortaInvocataObject;
+		if(nomePortaInvocataObject instanceof String nomePortaInvocataS) {
+			nomePortaInvocata = nomePortaInvocataS;
 		}
 		else if(msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()!=null) {
 			nomePortaInvocata = msg.getTransportRequestContext().getInterfaceName();
@@ -263,8 +271,7 @@ public class ConnettoreUtils {
 	}
 	
 	public static String addGovWayProxyInfoToLocationForHTTPConnector(ForwardProxy forwardProxy, IConnettore connectorSender, String location) throws ConnettoreException {
-		if(forwardProxy!=null && connectorSender instanceof ConnettoreBaseHTTP) {
-			ConnettoreBaseHTTP http = (ConnettoreBaseHTTP) connectorSender;
+		if(forwardProxy!=null && connectorSender instanceof ConnettoreBaseHTTP http) {
 			http.updateForwardProxy(forwardProxy);
 			if(http.updateLocation_forwardProxy(location)) {
 				return http.getLocation();
@@ -346,10 +353,10 @@ public class ConnettoreUtils {
 			endpoint = getProperty(CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE, connettore.getPropertyList());
 		}
 		else if(TipiConnettore.NULL.getNome().equals(connettore.getTipo())){
-			//endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreNULL.LOCATION;
+			/**endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreNULL.LOCATION;*/
 		}
 		else if(TipiConnettore.NULLECHO.getNome().equals(connettore.getTipo())){
-			//endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho.LOCATION;
+			/**endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho.LOCATION;*/
 		}
 		else {
 			String endpointV = getProperty(CostantiConnettori.CONNETTORE_LOCATION, connettore.getPropertyList());
@@ -374,26 +381,30 @@ public class ConnettoreUtils {
 		String connectionTimeout = getProperty(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT, connettore.getPropertyList());
 		if(connectionTimeout!=null) {
 			try {
-				long l = Long.valueOf(connectionTimeout);
+				long l = Long.parseLong(connectionTimeout);
 				if(l>0) {
 					sb.append(newLine);
 					sb.append(CostantiLabel.LABEL_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
 					sb.append(separator);
 					sb.append(Utilities.convertSystemTimeIntoStringMillisecondi(l, true, false, " "," ",""));
 				}
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		String readConnectionTimeout = getProperty(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT, connettore.getPropertyList());
 		if(readConnectionTimeout!=null) {
 			try {
-				long l = Long.valueOf(readConnectionTimeout);
+				long l = Long.parseLong(readConnectionTimeout);
 				if(l>0) {
 					sb.append(newLine);
 					sb.append(CostantiLabel.LABEL_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
 					sb.append(separator);
 					sb.append(Utilities.convertSystemTimeIntoStringMillisecondi(l, true, false, " "," ",""));
 				}
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 		}
 		
 		if(TipiConnettore.HTTP.getNome().equals(connettore.getTipo()) || TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
@@ -488,7 +499,7 @@ public class ConnettoreUtils {
 					try {
 						String label = OCSPManager.getInstance().getOCSPConfig(trustOCSP).getLabel();
 						sb.append((label!=null && StringUtils.isNotEmpty(label)) ? label : trustOCSP);
-					}catch(Throwable t) {
+					}catch(Exception t) {
 						sb.append(trustOCSP);	
 					}
 				}
@@ -587,10 +598,10 @@ public class ConnettoreUtils {
 			return null; // non visualizzo nulla
 		}
 		
-		TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
+		/**TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
 		if(tipo==null) {
 			tipo = TipiConnettore.CUSTOM;
-		}
+		}*/
 		
 		String endpoint = null;
 		if(TipiConnettore.HTTP.getNome().equals(connettore.getTipo()) || TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
@@ -636,7 +647,7 @@ public class ConnettoreUtils {
 	}
 	
 	private static String getProperty(String nome,List<org.openspcoop2.core.config.Property> list){
-		if(list!=null && list.size()>0){
+		if(list!=null && !list.isEmpty()){
 			for (org.openspcoop2.core.config.Property property : list) {
 				if(property.getNome().equals(nome)){
 					return property.getValore();

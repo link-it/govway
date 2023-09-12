@@ -157,6 +157,7 @@
 			<include name="jakarta.activation-api-2.1.2.jar"/>
 			<include name="jakarta.annotation-api-2.1.1.jar"/>
 			<include name="jakarta.jws-api-3.0.0.jar"/>
+			<include name="jakarta.servlet-api-5.0.0.jar"/>
 		</fileset>
 
 	</path>

@@ -54,6 +54,7 @@ import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ConnectionReuseStrategy;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.config.Registry;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
@@ -638,10 +639,10 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			if(this.debug)
 				this.logger.debug("Spedizione byte...");
 			// Eseguo la richiesta e prendo la risposta
-			CustomResponseHandler httpResponseHandler = new CustomResponseHandler();
-			httpClient.execute(this.httpRequest, httpResponseHandler);
-			ClassicHttpResponse httpResponse = httpResponseHandler.response;
-			//ClassicHttpResponse httpResponse = (ClassicHttpResponse) httpClient.execute(this.httpRequest);
+			HttpHost httpHost = HttpHost.create(this.httpRequest.getUri());
+			/** DEPRECATO: ClassicHttpResponse httpResponse = (ClassicHttpResponse) httpClient.execute(this.httpRequest); */
+			ClassicHttpResponse httpResponse = httpClient.executeOpen(httpHost, this.httpRequest, 
+					null); //new BasicHttpContext()); the context to use for the execution, or {@code null} to use the default context
 			this.httpEntityResponse = httpResponse.getEntity();
 			
 			
