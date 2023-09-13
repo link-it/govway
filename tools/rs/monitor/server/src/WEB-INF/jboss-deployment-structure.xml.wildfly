@@ -12,12 +12,8 @@
 			<subsystem name="microprofile-opentracing-smallrye"/>
 		</exclude-subsystems>
 		<exclusions>
-			<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
-			<module name="org.slf4j" />
-			<module name="org.apache.log4j" />
-			<module name="org.apache.commons.logging"/>
-			<module name="org.apache.logging.log4j.api"/>
-			-->
+			<module name="org.eclipse.angus.mail"/>
+			<module name="org.eclipse.angus.activation"/>
 			<!--
 				WARN  [org.hibernate.validator.internal.properties.javabean.JavaBeanExecutable] 
 				HV000254: Missing parameter metadata for ModalitaAccessoEnum(String, int, String), which declares implicit or synthetic parameters. Automatic resolution of generic type information for method parameters may yield incorrect results if multiple parameters have the same erasure. To solve this, compile your code with the '-parameters' flag
