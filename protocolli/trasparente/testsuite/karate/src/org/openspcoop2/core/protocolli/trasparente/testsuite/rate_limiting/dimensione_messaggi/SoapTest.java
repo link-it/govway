@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPFault;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
@@ -344,7 +344,7 @@ public class SoapTest extends ConfigLoader {
 				"sendRegistrazioneAbilitata.client", "small", null,
 				"Risposta", false, false);
 	}
-	private static final Boolean semaphore = true; // risolve problema di tempistische sul controllo degli eventi per questo caso, che faceva andare in errore uno dei 4 test
+	private static final String semaphore = "true"; // risolve problema di tempistische sul controllo degli eventi per questo caso, che faceva andare in errore uno dei 4 test
 	@Test
 	public void erogazione_registrazioneAbilitata_client_50kb_responsePolicy() throws Exception {
 		synchronized (semaphore) {

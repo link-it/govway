@@ -314,7 +314,7 @@ public class RestTest extends ConfigLoader {
 				"sendRegistrazioneAbilitata/client", "small", null,
 				"Risposta", false, false);
 	}
-	private static final Boolean semaphore = true; // risolve problema di tempistische sul controllo degli eventi per questo caso, che faceva andare in errore uno dei 4 test
+	private static final String semaphore = "true"; // risolve problema di tempistische sul controllo degli eventi per questo caso, che faceva andare in errore uno dei 4 test
 	@Test
 	public void erogazione_registrazioneAbilitata_client_50kb_responsePolicy() throws Exception {
 		synchronized (semaphore) {

@@ -22,11 +22,11 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite;
 
 import java.io.ByteArrayOutputStream;
 
-import javax.activation.DataHandler;
-import javax.mail.BodyPart;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.util.ByteArrayDataSource;
-import javax.xml.soap.AttachmentPart;
+import jakarta.activation.DataHandler;
+import jakarta.mail.BodyPart;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.util.ByteArrayDataSource;
+import jakarta.xml.soap.AttachmentPart;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.encoding.charset.CharsetUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;

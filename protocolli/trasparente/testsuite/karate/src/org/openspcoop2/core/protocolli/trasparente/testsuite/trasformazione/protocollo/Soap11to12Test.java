@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 
-import javax.mail.internet.ContentType;
+import jakarta.mail.internet.ContentType;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;

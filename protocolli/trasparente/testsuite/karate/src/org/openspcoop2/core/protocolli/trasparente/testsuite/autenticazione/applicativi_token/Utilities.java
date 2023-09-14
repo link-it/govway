@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPFault;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDServizioApplicativo;
