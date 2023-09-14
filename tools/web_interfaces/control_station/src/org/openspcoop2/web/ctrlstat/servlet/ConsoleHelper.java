@@ -721,9 +721,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			// inizializzo l'id tab
-			if(!ControlStationCore.isAPIMode()) {
-				this.getTabId();
-			}
+			this.getTabId();
+			
 		} catch (Exception e) {
 			this.logError("Exception ctrlstatHelper: " + e.getMessage(), e);
 			this.errorInit = true;

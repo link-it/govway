@@ -26,9 +26,6 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Properties;
 
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
@@ -42,11 +39,16 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.slf4j.Logger;
+
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
  * 
@@ -84,35 +86,28 @@ public class Startup implements ServletContextListener {
 	
 	// LOG
 	
-	public static boolean initializedLog = false;
+	private static boolean initializedLog = false;
+	public static boolean isInitializedLog() {
+		return initializedLog;
+	}
 	
 	public static synchronized String initLog(){
 		
 		String confDir = null;
-		try{
-			InputStream is = Startup.class.getResourceAsStream("/rs-api-monitor.properties");
-			try{
-				if(is!=null){
-					Properties p = new Properties();
-					p.load(is);
-					confDir = p.getProperty("confDirectory");
-					if(confDir!=null){
-						confDir = confDir.trim();
-					}
-				}
-			}finally{
-				try{
-					if(is!=null){
-						is.close();
-					}
-				}catch(Exception eClose){
-					// close
+		try(InputStream is = Startup.class.getResourceAsStream("/rs-api-monitor.properties");){
+			if(is!=null){
+				Properties p = new Properties();
+				p.load(is);
+				confDir = p.getProperty("confDirectory");
+				if(confDir!=null){
+					confDir = confDir.trim();
 				}
 			}
-
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		
-		if(Startup.initializedLog==false){
+		if(!Startup.initializedLog){
 			
 			try{
 				Startup.log = LoggerWrapperFactory.getLogger(Startup.class);
@@ -121,7 +116,7 @@ public class Startup implements ServletContextListener {
 				Startup.log = LoggerProperties.getLoggerCore();
 				
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 		}
 		
@@ -131,20 +126,23 @@ public class Startup implements ServletContextListener {
 	
 	// RESOURCES
 	
-	public static boolean initializedResources = false;
+	private static boolean initializedResources = false;
+	public static boolean isInitializedResources() {
+		return initializedResources;
+	}
 	
 	public static synchronized void initResources(){
-		if(Startup.initializedResources==false){
+		if(!Startup.initializedResources){
 			
 			String confDir = Startup.initLog();
 			
 			Startup.log.info("Inizializzazione rs api monitor in corso...");
 			
-			if(ServerProperties.initialize(confDir,Startup.log)==false){
+			if(!ServerProperties.initialize(confDir,Startup.log)){
 				return;
 			}
 			
-			if(DatasourceProperties.initialize(confDir,Startup.log)==false){
+			if(!DatasourceProperties.initialize(confDir,Startup.log)){
 				return;
 			}
 			
@@ -156,7 +154,7 @@ public class Startup implements ServletContextListener {
 						dbProperties.getStatisticheDataSource(), dbProperties.getStatisticheDataSourceContext(), dbProperties.getStatisticheTipoDatabase(),
 						dbProperties.isShowSql());
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione DBManager effettuata con successo");
 			
@@ -164,7 +162,7 @@ public class Startup implements ServletContextListener {
 			try{
 				ExtendedInfoManager.initialize(new Loader(), null, null, null);
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
 			
@@ -180,25 +178,13 @@ public class Startup implements ServletContextListener {
 				ProtocolFactoryManager.initialize(Startup.log, configPdD,
 						properties.getProtocolloDefault());
 			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("ProtocolFactoryManager DBManager effettuata con successo");
 			
-			Startup.log.info("Inizializzazione Risorse Statiche Console in corso...");
-			try {
-				initResourceConsole();
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-			Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
+			initResourceConsole(properties);
 			
-			Startup.log.info("Inizializzazione Soglia per Dimensione Messaggi in corso...");
-			try {
-				DumpUtils.setThreshold_readInMemory(properties.getTransazioniDettaglioVisualizzazioneMessaggiThreshold());
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-			Startup.log.info("Inizializzazione Soglia per Dimensione Messaggi effettuata con successo");
+			initSogliaDimensioneMessaggi(properties);
 						
 			Startup.initializedResources = true;
 			
@@ -207,7 +193,8 @@ public class Startup implements ServletContextListener {
 	}
 
 	
-	private static void initResourceConsole() throws UtilsException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	private static void initResourceConsole(ServerProperties properties) {
+		Startup.log.info("Inizializzazione Risorse Statiche Console in corso...");
 		DBManager dbManager = DBManager.getInstance();
 		Connection connection = null;
 		try {
@@ -221,32 +208,14 @@ public class Startup implements ServletContextListener {
 			Utility.setStaticConfigurazioneGenerale(lb.getConfigurazioneGenerale());
 			
 			boolean multitenantAbilitato = Utility.isMultitenantAbilitato();
-			
-			if(multitenantAbilitato) {
-				Utility.setStaticFiltroDominioAbilitato(true); // TODO: logiche piu' complesse vanno viste come realizzarle.
-			}
-			else {
-				Utility.setStaticFiltroDominioAbilitato(false);
-			}
+			Utility.setStaticFiltroDominioAbilitato(multitenantAbilitato);
 			
 			DriverRegistroServiziDB driverDB = new DriverRegistroServiziDB(connection, logSql, DatasourceProperties.getInstance().getConfigTipoDatabase());
 			
-			FiltroRicerca filtroRicercaPdd = new FiltroRicerca();
-			filtroRicercaPdd.setTipo(PddTipologia.OPERATIVO.toString());
-			List<String> idsPdd = null;
-			try {
-				idsPdd = driverDB.getAllIdPorteDominio(filtroRicercaPdd);
-			}catch(DriverRegistroServiziNotFound notFound) {		
-			}
+			List<String> idsPdd = getAllIdPorteDominioTipoOperativo(driverDB);
 			if(idsPdd!=null && !idsPdd.isEmpty()) {
 				for (String idPdd : idsPdd) {
-					FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
-					filtroSoggetti.setNomePdd(idPdd);
-					List<IDSoggetto> idsSoggetti = null;
-					try {
-						idsSoggetti = driverDB.getAllIdSoggetti(filtroSoggetti);
-					}catch(DriverRegistroServiziNotFound notFound) {		
-					}
+					List<IDSoggetto> idsSoggetti = getAllSoggettiByPdd(driverDB, idPdd);
 					if(idsSoggetti!=null && !idsSoggetti.isEmpty()) {
 						for (IDSoggetto idSoggetto : idsSoggetti) {
 							Utility.putIdentificativoPorta(idSoggetto.getTipo(), idSoggetto.getNome(), driverDB.getSoggetto(idSoggetto).getIdentificativoPorta());
@@ -254,9 +223,50 @@ public class Startup implements ServletContextListener {
 					}
 				}
 			}
+		
+			Properties consoleSecurityConfiguration = properties.getConsoleSecurityConfiguration();
+			SecurityProperties.init(consoleSecurityConfiguration, log);
+			Validatore.init(SecurityProperties.getInstance(), log);
 			
-		} finally {
+			Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
+		} 
+		catch (Exception e) {
+			throw new UtilsRuntimeException(e.getMessage(),e);
+		}
+		finally {
 			dbManager.releaseConnectionConfig(connection);
 		}
+	}
+	private static List<String> getAllIdPorteDominioTipoOperativo(DriverRegistroServiziDB driverDB) throws DriverRegistroServiziException{
+		FiltroRicerca filtroRicercaPdd = new FiltroRicerca();
+		filtroRicercaPdd.setTipo(PddTipologia.OPERATIVO.toString());
+		List<String> idsPdd = null;
+		try {
+			idsPdd = driverDB.getAllIdPorteDominio(filtroRicercaPdd);
+		}catch(DriverRegistroServiziNotFound notFound) {	
+			// ignore
+		}
+		return idsPdd;
+	}
+	private static List<IDSoggetto> getAllSoggettiByPdd(DriverRegistroServiziDB driverDB, String idPdd) throws DriverRegistroServiziException{
+		FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+		filtroSoggetti.setNomePdd(idPdd);
+		List<IDSoggetto> idsSoggetti = null;
+		try {
+			idsSoggetti = driverDB.getAllIdSoggetti(filtroSoggetti);
+		}catch(DriverRegistroServiziNotFound notFound) {		
+			// ignore
+		}
+		return idsSoggetti;
+	}
+	
+	private static void initSogliaDimensioneMessaggi(ServerProperties properties) {
+		Startup.log.info("Inizializzazione Soglia per Dimensione Messaggi in corso...");
+		try {
+			DumpUtils.setThreshold_readInMemory(properties.getTransazioniDettaglioVisualizzazioneMessaggiThreshold());
+		} catch (Exception e) {
+			throw new UtilsRuntimeException(e.getMessage(),e);
+		}
+		Startup.log.info("Inizializzazione Soglia per Dimensione Messaggi effettuata con successo");
 	}
 }

@@ -25,9 +25,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -35,6 +32,7 @@ import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
@@ -42,8 +40,13 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
+import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.slf4j.Logger;
+
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
  * 
@@ -81,35 +84,28 @@ public class Startup implements ServletContextListener {
 	
 	// LOG
 	
-	public static boolean initializedLog = false;
-	
+	private static boolean initializedLog = false;
+	public static boolean isInitializedLog() {
+		return initializedLog;
+	}
+
 	public static synchronized String initLog(){
 		
 		String confDir = null;
-		try{
-			InputStream is = Startup.class.getResourceAsStream("/rs-api-config.properties");
-			try{
-				if(is!=null){
-					Properties p = new Properties();
-					p.load(is);
-					confDir = p.getProperty("confDirectory");
-					if(confDir!=null){
-						confDir = confDir.trim();
-					}
-				}
-			}finally{
-				try{
-					if(is!=null){
-						is.close();
-					}
-				}catch(Exception eClose){
-					// close
+		try(InputStream is = Startup.class.getResourceAsStream("/rs-api-config.properties");){
+			if(is!=null){
+				Properties p = new Properties();
+				p.load(is);
+				confDir = p.getProperty("confDirectory");
+				if(confDir!=null){
+					confDir = confDir.trim();
 				}
 			}
-
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		
-		if(Startup.initializedLog==false){
+		if(!Startup.initializedLog){
 			
 			try{
 				Startup.log = LoggerWrapperFactory.getLogger(Startup.class);
@@ -118,7 +114,7 @@ public class Startup implements ServletContextListener {
 				Startup.log = LoggerProperties.getLoggerCore();
 				
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 		}
 		
@@ -128,24 +124,27 @@ public class Startup implements ServletContextListener {
 	
 	// RESOURCES
 	
-	public static boolean initializedResources = false;
-	
+	private static boolean initializedResources = false;
+	public static boolean isInitializedResources() {
+		return initializedResources;
+	}
+
 	public static synchronized void initResources(){
-		if(Startup.initializedResources==false){
+		if(!Startup.initializedResources){
 			
 			String confDir = Startup.initLog();
 			
 			Startup.log.info("Inizializzazione rs api config in corso...");
 			
-			if(ServerProperties.initialize(confDir,Startup.log)==false){
+			if(!ServerProperties.initialize(confDir,Startup.log)){
 				return;
 			}
 			
-			if(DatasourceProperties.initialize(confDir,Startup.log)==false){
+			if(!DatasourceProperties.initialize(confDir,Startup.log)){
 				return;
 			}
 			try {
-				if(org.openspcoop2.web.ctrlstat.config.DatasourceProperties.initialize(DatasourceProperties.getInstance().getPropertiesConsole(),Startup.log)==false){
+				if(!org.openspcoop2.web.ctrlstat.config.DatasourceProperties.initialize(DatasourceProperties.getInstance().getPropertiesConsole(),Startup.log)){
 					return;
 				}
 			}catch(Exception e) {
@@ -156,109 +155,126 @@ public class Startup implements ServletContextListener {
 			try{
 				ExtendedInfoManager.initialize(new Loader(), null, null, null);
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				logAndThrow(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
 						
-			Startup.log.info("Inizializzazione Risorse Statiche Console in corso...");
-			try {
-				ServerProperties serverProperties = ServerProperties.getInstance();
-				
-				ConsoleHelper.setTipoInterfacciaAPI(InterfaceType.STANDARD);
-				
-				ControlStationCore.setUtenzePasswordEncryptEngine_apiMode(serverProperties.getUtenzeCryptConfig());
-				
-				ControlStationCore.setApplicativiPasswordEncryptEngine_apiMode(serverProperties.getApplicativiCryptConfig());
-				ControlStationCore.setApplicativiApiKeyPasswordGeneratedLength_apiMode(serverProperties.getApplicativiApiKeyPasswordGeneratedLength());
-				if(serverProperties.isApplicativiBasicPasswordEnableConstraints()) {
-					ControlStationCore.setApplicativiPasswordVerifierEngine_apiMode(serverProperties.getApplicativiPasswordVerifier());
-				}
-				
-				ControlStationCore.setSoggettiPasswordEncryptEngine_apiMode(serverProperties.getSoggettiCryptConfig());
-				ControlStationCore.setSoggettiApiKeyPasswordGeneratedLength_apiMode(serverProperties.getSoggettiApiKeyPasswordGeneratedLength());
-				if(serverProperties.isSoggettiBasicPasswordEnableConstraints()) {
-					ControlStationCore.setSoggettiPasswordVerifierEngine_apiMode(serverProperties.getSoggettiPasswordVerifier());
-				}
-				
-				Properties yamlSnakeLimits = serverProperties.getApiYamlSnakeLimits();
-				if(yamlSnakeLimits!=null && !yamlSnakeLimits.isEmpty()) {
-					YamlSnakeLimits.initialize(Startup.log, yamlSnakeLimits);
-				}
-				
-				ControlStationCore.setIsSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials());
-				ControlStationCore.setIsSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials());
-				ControlStationCore.setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials());
-				
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-			Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
+			initConsoleResources();
 			
-			Startup.log.info("Inizializzazione Connettori in corso...");
-			try{
-				Connettori.initialize(log, true, confDir, ServerProperties.getInstance().getProtocolloDefault());
-			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
-			}
-			Startup.log.info("Inizializzazione Connettori effettuata con successo");
+			initConnettori(confDir);
 			
-			try {
-				if(ServerProperties.getInstance().isConfigurazioneAllarmiEnabled()) {
-					Startup.log.info("Inizializzazione Allarmi in corso...");
-					AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, ServerProperties.getInstance().getAllarmiConfigurazione(), ServerProperties.getInstance().getConfDirectory());
-					AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
-					CostantiDB.setAllarmiEnabled(true);
-					Startup.log.info("Inizializzazione Allarmi effettuata con successo");
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione degli allarmi: " + e.getMessage();
-				Startup.log.error(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
-			}
+			initAllarmi();
 			
-			Startup.log.info("Inizializzazione HSM in corso...");
-			try {
-				ServerProperties serverProperties = ServerProperties.getInstance();
-				
-				String hsmConfig = serverProperties.getHSMConfigurazione();
-				if(StringUtils.isNotEmpty(hsmConfig)) {
-					File f = new File(hsmConfig);
-					HSMManager.init(f, serverProperties.isHSMRequired(), log, false);
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
-				Startup.log.error(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
-			}
-			Startup.log.info("Inizializzazione HSM effettuata con successo");
+			initHSM();
 			
+			initOCSP();
 			
-			Startup.log.info("Inizializzazione OCSP in corso...");
-			try {
-				ServerProperties serverProperties = ServerProperties.getInstance();
-				
-				String ocspConfig = serverProperties.getOCSPConfigurazione();
-				if(StringUtils.isNotEmpty(ocspConfig)) {
-					File f = new File(ocspConfig);
-					OCSPManager.init(f, serverProperties.isOCSPRequired(), serverProperties.isOCSPLoadDefault(), log);
-				}
-			} catch (Exception e) {
-				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
-				Startup.log.error(
-						//					throw new ServletException(
-						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
-			}
-			Startup.log.info("Inizializzazione OCSP effettuata con successo");
 			
 			Startup.initializedResources = true;
 			
 			Startup.log.info("Inizializzazione rs api config effettuata con successo.");
 		}
+	}
+	private static void initConsoleResources() {
+		
+		Startup.log.info("Inizializzazione Risorse Statiche Console in corso...");
+		try {
+						
+			ServerProperties serverProperties = ServerProperties.getInstance();
+			
+			ConsoleHelper.setTipoInterfacciaAPI(InterfaceType.STANDARD);
+			
+			ControlStationCore.setUtenzePasswordEncryptEngine_apiMode(serverProperties.getUtenzeCryptConfig());
+			
+			ControlStationCore.setApplicativiPasswordEncryptEngine_apiMode(serverProperties.getApplicativiCryptConfig());
+			ControlStationCore.setApplicativiApiKeyPasswordGeneratedLength_apiMode(serverProperties.getApplicativiApiKeyPasswordGeneratedLength());
+			if(serverProperties.isApplicativiBasicPasswordEnableConstraints()) {
+				ControlStationCore.setApplicativiPasswordVerifierEngine_apiMode(serverProperties.getApplicativiPasswordVerifier());
+			}
+			
+			ControlStationCore.setSoggettiPasswordEncryptEngine_apiMode(serverProperties.getSoggettiCryptConfig());
+			ControlStationCore.setSoggettiApiKeyPasswordGeneratedLength_apiMode(serverProperties.getSoggettiApiKeyPasswordGeneratedLength());
+			if(serverProperties.isSoggettiBasicPasswordEnableConstraints()) {
+				ControlStationCore.setSoggettiPasswordVerifierEngine_apiMode(serverProperties.getSoggettiPasswordVerifier());
+			}
+			
+			Properties yamlSnakeLimits = serverProperties.getApiYamlSnakeLimits();
+			if(yamlSnakeLimits!=null && !yamlSnakeLimits.isEmpty()) {
+				YamlSnakeLimits.initialize(Startup.log, yamlSnakeLimits);
+			}
+			
+			ControlStationCore.setIsSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials());
+			ControlStationCore.setIsSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials());
+			ControlStationCore.setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials());
+			
+			Properties consoleSecurityConfiguration = serverProperties.getConsoleSecurityConfiguration();
+			SecurityProperties.init(consoleSecurityConfiguration, log);
+			Validatore.init(SecurityProperties.getInstance(), log);
+			
+		} catch (Exception e) {
+			logAndThrow(e.getMessage(),e);
+		}
+		Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
+	}
+	private static void initConnettori(String confDir) {
+		Startup.log.info("Inizializzazione Connettori in corso...");
+		try{
+			Connettori.initialize(log, true, confDir, ServerProperties.getInstance().getProtocolloDefault());
+		}catch(Exception e){
+			logAndThrow(e.getMessage(),e);
+		}
+		Startup.log.info("Inizializzazione Connettori effettuata con successo");
+	}
+	private static void initAllarmi() {
+		try {
+			if(ServerProperties.getInstance().isConfigurazioneAllarmiEnabled()) {
+				Startup.log.info("Inizializzazione Allarmi in corso...");
+				AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, ServerProperties.getInstance().getAllarmiConfigurazione(), ServerProperties.getInstance().getConfDirectory());
+				AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
+				CostantiDB.setAllarmiEnabled(true);
+				Startup.log.info("Inizializzazione Allarmi effettuata con successo");
+			}
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione degli allarmi: " + e.getMessage();
+			logAndThrow(msgErrore,e);
+		}
+	}
+	private static void initHSM() {
+		Startup.log.info("Inizializzazione HSM in corso...");
+		try {
+			ServerProperties serverProperties = ServerProperties.getInstance();
+			
+			String hsmConfig = serverProperties.getHSMConfigurazione();
+			if(StringUtils.isNotEmpty(hsmConfig)) {
+				File f = new File(hsmConfig);
+				HSMManager.init(f, serverProperties.isHSMRequired(), log, false);
+			}
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
+			logAndThrow(msgErrore,e);
+		}
+		Startup.log.info("Inizializzazione HSM effettuata con successo");
+	}
+	private static void initOCSP() {
+		Startup.log.info("Inizializzazione OCSP in corso...");
+		try {
+			ServerProperties serverProperties = ServerProperties.getInstance();
+			
+			String ocspConfig = serverProperties.getOCSPConfigurazione();
+			if(StringUtils.isNotEmpty(ocspConfig)) {
+				File f = new File(ocspConfig);
+				OCSPManager.init(f, serverProperties.isOCSPRequired(), serverProperties.isOCSPLoadDefault(), log);
+			}
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
+			logAndThrow(msgErrore,e);
+		}
+		Startup.log.info("Inizializzazione OCSP effettuata con successo");
+	}
+	
+	private static void logAndThrow(String msgErrore, Exception e) {
+		Startup.log.error(msgErrore,e);
+		throw new UtilsRuntimeException(msgErrore,e);
 	}
 
 }

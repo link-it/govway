@@ -130,6 +130,9 @@ public class ServletUtils {
 		return mapping.findForward(getStrutsForwardName(objectName, forwardParams)+Costanti.STRUTS_FORWARD_CHECK_ERROR);
 	}
 	public static ActionForward getStrutsForwardGeneralError(ActionMapping mapping,String objectName,ForwardParams forwardParams){
+		if(forwardParams!=null) {
+			// nop
+		}
 		return mapping.findForward(objectName+Costanti.STRUTS_FORWARD_ERRORE_GENERALE);
 	}
 	public static ActionForward getStrutsForward(ActionMapping mapping,String objectName,ForwardParams forwardParams){
@@ -199,8 +202,10 @@ public class ServletUtils {
 	public static boolean isSearchDone(IConsoleHelper consoleHelper){
 		try {
 			String v = consoleHelper.getParameter(Costanti.PARAMETER_NAME_SEARCH_LIST_DONE);
-			return "true".equals(v); // listElement.jsp:   addHidden(form, '_searchDone' , true);
-		}catch(Exception e) {}
+			return "true".equals(v); /** listElement.jsp:   addHidden(form, '_searchDone' , true);*/
+		}catch(Exception e) {
+			// ignore
+		}
 		return false;
 	}
 
@@ -365,23 +370,23 @@ public class ServletUtils {
 	}
 	public static void setGeneralAndPageDataIntoSession(HttpServletRequest request, HttpSession session,GeneralData gd,PageData pd,boolean readOnlyDisabled){
 
-		//		if(readOnlyDisabled==false){
-		//			/*
-		//			CON UN UNICO INTERVENTO SI OTTIENE IL READ ONLY
-		//			
-		//			IN PRATICA RECUPERO L'UTENZA DALLA SESSIONE
-		//			SE POSSIEDE IL PERMESSO READ-ONLY ('R' indica che tutte le maschere visualizzate tramite gli altri permessi sono in read-only mode)
-		//			DEVE POI ESSERE GESTITA NEL FILTRO DI AUTORIZZAZIONE IL CONTROLLO CHE UN UNTENTE IN READ ONLY NON RICHIEDA UNA ELIMINAZIONE, UNA ADD O UNA MODIFICA
-		//			*/ 
-		//			pd.disableEditMode();
-		//			pd.setAddButton(false);
-		//			pd.setRemoveButton(false);
-		//			pd.setSelect(false);
-		//			pd.setAreaBottoni(null);
-		//			pd.setBottoni(null);
-		//			pd.setInserisciBottoni(false);
-		//		}
-		//		
+		if(!readOnlyDisabled){
+			/**					
+					//CON UN UNICO INTERVENTO SI OTTIENE IL READ ONLY
+					
+					//IN PRATICA RECUPERO L'UTENZA DALLA SESSIONE
+					//SE POSSIEDE IL PERMESSO READ-ONLY ('R' indica che tutte le maschere visualizzate tramite gli altri permessi sono in read-only mode)
+					//DEVE POI ESSERE GESTITA NEL FILTRO DI AUTORIZZAZIONE IL CONTROLLO CHE UN UNTENTE IN READ ONLY NON RICHIEDA UNA ELIMINAZIONE, UNA ADD O UNA MODIFICA
+					
+					pd.disableEditMode();
+					pd.setAddButton(false);
+					pd.setRemoveButton(false);
+					pd.setSelect(false);
+					pd.setAreaBottoni(null);
+					pd.setBottoni(null);
+					pd.setInserisciBottoni(false);
+			*/	
+		}
 		setObjectIntoSession(request, session, gd, Costanti.SESSION_ATTRIBUTE_GENERAL_DATA);
 		setObjectIntoSession(request, session, pd, Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
 	}
@@ -421,14 +426,18 @@ public class ServletUtils {
 	}
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> getRisultatiRicercaFromSession(HttpServletRequest request, HttpSession session, int idLista, Class<T> classType){
+		if(classType!=null) {
+			// nop
+		}
 		return getObjectFromSession(request, session, List.class, getKeyRisultatiRicerca(idLista));
 	}
 	public static List<?> removeRisultatiRicercaFromSession(HttpServletRequest request, HttpSession session, int idLista){
+		List<?> returnNull = null;
 		Object o = removeObjectFromSession(request, session, List.class, getKeyRisultatiRicerca(idLista));
 		if(o!=null) {
 			return (List<?>) o;
 		}
-		return null;
+		return returnNull;
 	}
 	
 	public static String getUserLoginFromSession(HttpSession session){
@@ -471,7 +480,6 @@ public class ServletUtils {
 	}
 	public static BooleanNullable getBooleanAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request, Boolean defaultValue) {
 		Boolean obj = getObjectFromSession(request, session, Boolean.class, attributeName);
-//		Object obj = session.getAttribute(attributeName);
 
 		if(obj == null) {
 			if(defaultValue==null) {
@@ -560,13 +568,13 @@ public class ServletUtils {
 				return objectClass.cast(mapTabId.get(objectName));
 			
 			// leggi dall request
-//			if(request != null) {
-//				String parameterValue = request.getParameter(objectName);
-//				
-//				if(parameterValue != null) {
-//					return objectClass.cast(parameterValue);
-//				}
-//			}
+			/**if(request != null) {
+				String parameterValue = request.getParameter(objectName);
+				
+				if(parameterValue != null) {
+					return objectClass.cast(parameterValue);
+				}
+			}*/
 		}
 		
 		// comportamento normale
@@ -611,13 +619,13 @@ public class ServletUtils {
 				return mapTabId.get(objectName);
 			
 			// leggi dall request
-//			if(request != null) {
-//				String parameterValue = request.getParameter(objectName);
-//				
-//				if(parameterValue != null) {
-//					return objectClass.cast(parameterValue);
-//				}
-//			}
+			/**if(request != null) {
+				String parameterValue = request.getParameter(objectName);
+				
+				if(parameterValue != null) {
+					return objectClass.cast(parameterValue);
+				}
+			}*/
 		}
 		
 		// comportamento normale
@@ -695,7 +703,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<>(); 
 			}
 			
 			List<String> keys = new ArrayList<>();
@@ -760,9 +768,9 @@ public class ServletUtils {
 			for(int i = 0; i< cookies.length ; ++i){
 				
 				if(cookies[i].getName().equalsIgnoreCase(cookieName)){
-//					Cookie cookie = new Cookie(cookies[i].getName(), cookies[i].getValue());
-//					cookie.setMaxAge(0);
-//					response.addCookie(cookie);
+					/**Cookie cookie = new Cookie(cookies[i].getName(), cookies[i].getValue());
+					cookie.setMaxAge(0);
+					response.addCookie(cookie);*/
 					String contextPath = request.getContextPath(); 
 					cookies[i].setPath(contextPath);
 					cookies[i].setMaxAge(0);
@@ -837,8 +845,7 @@ public class ServletUtils {
 	}
 	
 	public static void generaESalvaTokenCSRF(HttpServletRequest request, HttpSession session) {
-//		String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
-		String uuId = UUID.randomUUID().toString(); //.replace("-", ""); 
+		String uuId = UUID.randomUUID().toString(); 
 		String nuovoToken = generaTokenCSRF(uuId);
 		setObjectIntoSession(request, session, nuovoToken, Costanti.SESSION_ATTRIBUTE_CSRF_TOKEN);
 	}

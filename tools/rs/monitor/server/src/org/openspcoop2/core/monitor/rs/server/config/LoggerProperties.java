@@ -46,6 +46,8 @@ import org.openspcoop2.utils.properties.PropertiesUtilities;
  * @version $Rev$, $Date$
  */
 public class LoggerProperties {
+	
+	private LoggerProperties() {}
 
 	public static void initialize(Logger logConsole,String rootDirectory,Properties objectProperties) throws IOException, UtilsException{
 
@@ -56,7 +58,7 @@ public class LoggerProperties {
 			loggerFile = new java.io.File(rootDirectory+"rs-api-monitor.log4j2.properties");
 		else
 			loggerFile = new java.io.File("rs-api-monitor.log4j2.properties");
-		if(loggerFile .exists() == false ){
+		if(!loggerFile .exists() ){
 			loggerProperties.load(LoggerProperties.class.getResourceAsStream("/rs-api-monitor.log4j2.properties"));
 		}else{
 			FileInputStream fin = null;
@@ -87,7 +89,6 @@ public class LoggerProperties {
 					loggerProperties.remove(key);
 				}
 				loggerProperties.put(key, value);
-				//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
 			}
 		}
 
@@ -102,7 +103,6 @@ public class LoggerProperties {
 					loggerProperties.remove(key);
 				}
 				loggerProperties.put(key, value);
-				//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
 			}
 		}
 
@@ -121,20 +121,20 @@ public class LoggerProperties {
 		
 		mConfig.setDiagnosticConfig(diagnosticConfig);
 				
-		//mConfig.setDiagnosticSeverityFilter(Severity.DEBUG_HIGH);
-		//mConfig.setEventSeverityFilter(Severity.INFO);
+		/**mConfig.setDiagnosticSeverityFilter(Severity.DEBUG_HIGH);
+		mConfig.setEventSeverityFilter(Severity.INFO);*/
 				
 		mConfig.setLog4jLoggerEnabled(true);
 		mConfig.setLog4jConfig(log4jConfig);
 				
 		mConfig.setDbLoggerEnabled(false);
-		//mConfig.setDatabaseConfig(dbConfig);
+		/**mConfig.setDatabaseConfig(dbConfig);*/
 			
 		try {
 			LoggerFactory.initialize(Log4jLoggerWithApplicationContext.class.getName(),
 					mConfig);
 			
-			//LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+			/**LoggerWrapperFactory.setLogConfiguration(loggerProperties);*/
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -143,7 +143,7 @@ public class LoggerProperties {
 
 	
 	public static Logger getLoggerCore(){
-		if(Startup.initializedLog==false){
+		if(!Startup.isInitializedLog()){
 			Startup.initLog();
 		}
 		return LoggerWrapperFactory.getLogger("monitor.core");

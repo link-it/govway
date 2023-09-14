@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
@@ -49,7 +50,7 @@ public class ServerProperties  {
 	private static ServerProperties serverProperties = null;
 	
 	
-	public ServerProperties(String confDir,Logger log) throws Exception {
+	public ServerProperties(String confDir,Logger log) throws UtilsException {
 
 		if(log!=null)
 			this.log = log;
@@ -62,17 +63,16 @@ public class ServerProperties  {
 		try{  
 			properties = DatasourceProperties.class.getResourceAsStream("/rs-api-monitor.properties");
 			if(properties==null){
-				throw new Exception("File '/rs-api-monitor.properties' not found");
+				throw new UtilsException("File '/rs-api-monitor.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'rs-api-monitor.properties': \n\n"+e.getMessage());
-		    throw new Exception("RS Api MonitorProperties initialize error: "+e.getMessage());
+			logAndThrow("Riscontrato errore durante la lettura del file 'rs-api-monitor.properties': "+e.getMessage(),e);
 		}finally{
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Throwable er){
+		    }catch(Exception er){
 		    	// close
 		    }
 		}
@@ -83,9 +83,14 @@ public class ServerProperties  {
 		try{
 			ApplicationProperties.initialize(log, "/rs-api-monitor.properties", ConstantsEnv.OPENSPCOOP2_RS_API_MONITOR_PROPERTIES, ConstantsEnv.OPENSPCOOP2_RS_API_MONITOR_LOCAL_PATH);
 		}catch(Exception e){
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 		this.log.info("Inizializzazione ApplicationProperties effettuata con successo");
+	}
+	
+	private void logAndThrow(String msg, Exception e) throws UtilsException {
+		this.log.error(msg,e);
+	    throw new UtilsException(msg,e);
 	}
 
 
@@ -233,7 +238,11 @@ public class ServerProperties  {
 	}
 	
 	
-	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws Exception{
+	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws UtilsException{
 		return Integer.valueOf(this.readProperty(true, "transazioni.dettaglio.visualizzazioneMessaggi.threshold"));
+	}
+	
+	public Properties getConsoleSecurityConfiguration() throws UtilsException{
+		return this.reader.readPropertiesConvertEnvProperties("console.security.");
 	}
 }

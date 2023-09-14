@@ -52,7 +52,7 @@ public class ServerProperties  {
 	private static ServerProperties serverProperties = null;
 	
 	
-	public ServerProperties(String confDir,Logger log) throws Exception {
+	public ServerProperties(String confDir,Logger log) throws UtilsException {
 
 		if(log!=null)
 			this.log = log;
@@ -65,22 +65,26 @@ public class ServerProperties  {
 		try{  
 			properties = DatasourceProperties.class.getResourceAsStream("/rs-api-config.properties");
 			if(properties==null){
-				throw new Exception("File '/rs-api-config.properties' not found");
+				throw new UtilsException("File '/rs-api-config.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'rs-api-config.properties': \n\n"+e.getMessage());
-		    throw new Exception("RS Api ConfigProperties initialize error: "+e.getMessage());
+			logAndThrow("Riscontrato errore durante la lettura del file 'rs-api-config.properties': "+e.getMessage(),e);
 		}finally{
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Throwable er){
+		    }catch(Exception er){
 		    	// close
 		    }
 		}
 
 		this.reader = new ServerInstanceProperties(propertiesReader, this.log, confDir);
+	}
+	
+	private void logAndThrow(String msg, Exception e) throws UtilsException {
+		this.log.error(msg,e);
+	    throw new UtilsException(msg,e);
 	}
 
 
@@ -185,11 +189,11 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "validazioneDocumenti"));
 	}
 	
-	public boolean isUpdateInterfacciaApi_updateIfExists() throws UtilsException {
+	public boolean isUpdateInterfacciaApiUpdateIfExists() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.updateIfExists"));
 	}
 	
-	public boolean isUpdateInterfacciaApi_deleteIfNotFound() throws UtilsException {
+	public boolean isUpdateInterfacciaApiDeleteIfNotFound() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.deleteIfNotFound"));
 	}
 	
@@ -208,27 +212,29 @@ public class ServerProperties  {
 		String pName = "api.yaml.snakeLimits";
 		
 		try{  
+			Properties pNull = null;
+			
 			String file = this.readProperty(false, pName);
 			if(file!=null && StringUtils.isNotEmpty(file)) {
 				File f = new File(file);
 				if(f.exists()) {
 					if(!f.isFile()) {
-						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
+						throw new UtilsException("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
 					}
 					if(!f.canRead()) {
-						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
+						throw new UtilsException("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
 					}
 					try(InputStream is = new FileInputStream(f)){
 						Properties p = new Properties();
 						p.load(is);
-						if (p != null && !p.isEmpty()){
+						if (!p.isEmpty()){
 							return p;
 						}
 					}
 				}
 			}
 		
-			return null;
+			return pNull;
 			
 		}catch(java.lang.Exception e) {
 			throw new UtilsException("Proprieta' '"+pName+"' non impostate, errore:"+e.getMessage(),e);
@@ -243,10 +249,11 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "findall_404"));
 	}
 	
-	public Boolean isConfigurazioneAllarmiEnabled() throws UtilsException{
-		return Boolean.parseBoolean(this.readProperty(true, "allarmi.enabled"));
+	public boolean isConfigurazioneAllarmiEnabled() throws UtilsException{
+		Boolean b = Boolean.parseBoolean(this.readProperty(true, "allarmi.enabled"));
+		return b!=null && b.booleanValue();
 	}
-	public String getAllarmiConfigurazione() throws Exception{
+	public String getAllarmiConfigurazione() throws UtilsException{
 		return this.readProperty(true, "allarmi.configurazione");
 	}
 	
@@ -296,11 +303,11 @@ public class ServerProperties  {
 	}
 	
 	
-	public Properties getConsolePasswordCryptConfig() throws Exception{
+	public Properties getConsolePasswordCryptConfig() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("console.password.");
 	}
 	
-	public boolean isConsolePasswordCrypt_backwardCompatibility() throws Exception{
+	public boolean isConsolePasswordCryptBackwardCompatibility() throws UtilsException{
 		return "true".equalsIgnoreCase(this.readProperty(true, "console.password.crypt.backwardCompatibility"));
 	}
 
@@ -399,6 +406,10 @@ public class ServerProperties  {
 			initSoggettiPasswordVerifier(getSoggettiPassword());
 		}
 		return soggettiPasswordVerifier;
+	}
+	
+	public Properties getConsoleSecurityConfiguration() throws UtilsException{
+		return this.reader.readPropertiesConvertEnvProperties("console.security.");
 	}
 	
 }
