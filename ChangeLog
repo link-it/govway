@@ -1,3 +1,10 @@
+2023-09-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2023-4759: aggiornata libreria 'org.eclipse.jgit:org.eclipse.jgit' alla versione 6.7.0.202309050840-r
+	- CVE-2023-40167: aggiornata libreria 'org.eclipse.jetty:*' alla versione 10.0.16
+
 2023-09-06  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.13.p1
