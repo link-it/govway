@@ -17,5 +17,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://openspcoop2.org/ValidazioneContenutiWS/Service/types", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://openspcoop2.org/ValidazioneContenutiWS/Service/types", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.openspcoop2.example.server.rpc.literal.stub;

@@ -86,6 +86,7 @@
 			<include name="jakarta.activation-api-2.1.2.jar"/>
 			<include name="jakarta.xml.ws-api-3.0.1.jar"/>
 			<include name="jakarta.xml.bind-api-3.0.1.jar"/>
+			<include name="jakarta.jws-api-3.0.0.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/jaxb">
 			<include name="*.jar"/>

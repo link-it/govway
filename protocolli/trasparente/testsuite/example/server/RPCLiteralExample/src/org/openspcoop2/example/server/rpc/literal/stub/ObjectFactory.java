@@ -20,18 +20,18 @@
 
 package org.openspcoop2.example.server.rpc.literal.stub;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
  * generated in the org.openspcoop2.example.server.rpc.literal.stub package. 
- * <p>An ObjectFactory allows you to programatically 
+ * <p>An ObjectFactory allows you to programmatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
  * content can consist of schema derived interfaces 
@@ -59,6 +59,8 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link NominativoType }
      * 
+     * @return
+     *     the new instance of {@link NominativoType }
      */
     public NominativoType createNominativoType() {
         return new NominativoType();
@@ -67,6 +69,8 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link EsitoType }
      * 
+     * @return
+     *     the new instance of {@link EsitoType }
      */
     public EsitoType createEsitoType() {
         return new EsitoType();
@@ -75,6 +79,8 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link MessaggioType }
      * 
+     * @return
+     *     the new instance of {@link MessaggioType }
      */
     public MessaggioType createMessaggioType() {
         return new MessaggioType();
@@ -83,6 +89,8 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link FixedMessaggioType }
      * 
+     * @return
+     *     the new instance of {@link FixedMessaggioType }
      */
     public FixedMessaggioType createFixedMessaggioType() {
         return new FixedMessaggioType();
@@ -91,6 +99,8 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link Fixed2MessaggioType }
      * 
+     * @return
+     *     the new instance of {@link Fixed2MessaggioType }
      */
     public Fixed2MessaggioType createFixed2MessaggioType() {
         return new Fixed2MessaggioType();
@@ -106,7 +116,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://openspcoop2.org/ValidazioneContenutiWS/Service/types", name = "nominativo")
     public JAXBElement<NominativoType> createNominativo(NominativoType value) {
-        return new JAXBElement<NominativoType>(_Nominativo_QNAME, NominativoType.class, null, value);
+        return new JAXBElement<>(ObjectFactory._Nominativo_QNAME, NominativoType.class, null, value);
     }
 
     /**
@@ -119,7 +129,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://openspcoop2.org/ValidazioneContenutiWS/Service/types", name = "indirizzo")
     public JAXBElement<String> createIndirizzo(String value) {
-        return new JAXBElement<String>(_Indirizzo_QNAME, String.class, null, value);
+        return new JAXBElement<>(ObjectFactory._Indirizzo_QNAME, String.class, null, value);
     }
 
     /**
@@ -132,7 +142,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://openspcoop2.org/ValidazioneContenutiWS/Service/types", name = "ora-registrazione")
     public JAXBElement<XMLGregorianCalendar> createOraRegistrazione(XMLGregorianCalendar value) {
-        return new JAXBElement<XMLGregorianCalendar>(_OraRegistrazione_QNAME, XMLGregorianCalendar.class, null, value);
+        return new JAXBElement<>(ObjectFactory._OraRegistrazione_QNAME, XMLGregorianCalendar.class, null, value);
     }
 
     /**
@@ -145,7 +155,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://openspcoop2.org/ValidazioneContenutiWS/Service/types", name = "esito")
     public JAXBElement<EsitoType> createEsito(EsitoType value) {
-        return new JAXBElement<EsitoType>(_Esito_QNAME, EsitoType.class, null, value);
+        return new JAXBElement<>(ObjectFactory._Esito_QNAME, EsitoType.class, null, value);
     }
 
 }

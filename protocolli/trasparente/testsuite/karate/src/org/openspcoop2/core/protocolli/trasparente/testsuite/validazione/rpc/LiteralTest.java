@@ -26,10 +26,10 @@ import java.net.URL;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -831,8 +831,8 @@ public class LiteralTest extends ConfigLoader {
 			//System.out.println("Invoking rpclXsitype...");
 			org.openspcoop2.example.server.rpc.literal.stub.FixedMessaggioType _rpclXsitype_richiestaEsempioXSI = new org.openspcoop2.example.server.rpc.literal.stub.FixedMessaggioType();
 			_rpclXsitype_richiestaEsempioXSI.setDati("test");
-			javax.xml.ws.Holder<org.openspcoop2.example.server.rpc.literal.stub.FixedMessaggioType> _rpclXsitype_rispostaEsempioXSI = new javax.xml.ws.Holder<org.openspcoop2.example.server.rpc.literal.stub.FixedMessaggioType>();
-			javax.xml.ws.Holder<java.lang.String> _rpclXsitype_esito = new javax.xml.ws.Holder<java.lang.String>();
+			jakarta.xml.ws.Holder<org.openspcoop2.example.server.rpc.literal.stub.FixedMessaggioType> _rpclXsitype_rispostaEsempioXSI = new jakarta.xml.ws.Holder<org.openspcoop2.example.server.rpc.literal.stub.FixedMessaggioType>();
+			jakarta.xml.ws.Holder<java.lang.String> _rpclXsitype_esito = new jakarta.xml.ws.Holder<java.lang.String>();
 			String errore = null;
 			try {
 				port.rpclXsitype(_rpclXsitype_richiestaEsempioXSI, _rpclXsitype_rispostaEsempioXSI, _rpclXsitype_esito);
@@ -955,8 +955,8 @@ public class LiteralTest extends ConfigLoader {
 			//System.out.println("Invoking rpclXsitype...");
 			org.openspcoop2.example.server.rpc.literal.stub_namespace_ridefinito.FixedMessaggioType _rpclXsitype_richiestaEsempioXSI = new org.openspcoop2.example.server.rpc.literal.stub_namespace_ridefinito.FixedMessaggioType();
 			_rpclXsitype_richiestaEsempioXSI.setDati("test");
-			javax.xml.ws.Holder<org.openspcoop2.example.server.rpc.literal.stub_namespace_ridefinito.FixedMessaggioType> _rpclXsitype_rispostaEsempioXSI = new javax.xml.ws.Holder<org.openspcoop2.example.server.rpc.literal.stub_namespace_ridefinito.FixedMessaggioType>();
-			javax.xml.ws.Holder<java.lang.String> _rpclXsitype_esito = new javax.xml.ws.Holder<java.lang.String>();
+			jakarta.xml.ws.Holder<org.openspcoop2.example.server.rpc.literal.stub_namespace_ridefinito.FixedMessaggioType> _rpclXsitype_rispostaEsempioXSI = new jakarta.xml.ws.Holder<org.openspcoop2.example.server.rpc.literal.stub_namespace_ridefinito.FixedMessaggioType>();
+			jakarta.xml.ws.Holder<java.lang.String> _rpclXsitype_esito = new jakarta.xml.ws.Holder<java.lang.String>();
 			String errore = null;
 			try {
 				port.rpclXsitype(_rpclXsitype_richiestaEsempioXSI, _rpclXsitype_rispostaEsempioXSI, _rpclXsitype_esito);

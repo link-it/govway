@@ -22,7 +22,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.validazione.rpc;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 import org.openspcoop2.utils.threads.BaseThread;
 

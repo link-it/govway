@@ -34,11 +34,11 @@ import java.util.logging.Logger;
  *
  */
 
-@javax.jws.WebService(
+@jakarta.jws.WebService(
                       serviceName = "ServiceRPCLiteral",
                       portName = "ServiceRPCLiteral",
                       targetNamespace = "http://openspcoop2.org/ValidazioneContenutiWS/Service",
-                      wsdlLocation = "classpath:config/rpcLiteralExample.wsdl",
+                      wsdlLocation = "/config/rpcLiteralExample.wsdl",
                       endpointInterface = "org.openspcoop2.example.server.rpc.literal.skeleton.ServiceRPCLiteral")
 
 public class ServiceRPCLiteralImpl implements ServiceRPCLiteral {
@@ -99,7 +99,7 @@ public class ServiceRPCLiteralImpl implements ServiceRPCLiteral {
      * @see org.openspcoop2.example.server.rpc.literal.skeleton.ServiceRPCLiteral#rpclXsitype(org.openspcoop2.example.server.rpc.literal.skeleton.FixedMessaggioType richiestaEsempioXSI, org.openspcoop2.example.server.rpc.literal.skeleton.FixedMessaggioType rispostaEsempioXSI, java.lang.String esito)*
      */
     @Override
-	public void rpclXsitype(FixedMessaggioType richiestaEsempioXSI, javax.xml.ws.Holder<FixedMessaggioType> rispostaEsempioXSI, javax.xml.ws.Holder<java.lang.String> esito) {
+	public void rpclXsitype(FixedMessaggioType richiestaEsempioXSI, jakarta.xml.ws.Holder<FixedMessaggioType> rispostaEsempioXSI, jakarta.xml.ws.Holder<java.lang.String> esito) {
     	if(debug) {
     		LOG.info("Executing operation rpclXsitype");
     		System.out.println("richiestaEsempioXSI:"+richiestaEsempioXSI.dati);

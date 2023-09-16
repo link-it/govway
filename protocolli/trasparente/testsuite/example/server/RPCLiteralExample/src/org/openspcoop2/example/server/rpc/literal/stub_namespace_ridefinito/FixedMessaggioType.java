@@ -20,9 +20,9 @@
 
 package org.openspcoop2.example.server.rpc.literal.stub_namespace_ridefinito;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
@@ -30,17 +30,17 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
- * <pre>
- * &lt;complexType name="FixedMessaggioType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://openspcoop2.org/ValidazioneContenutiWS/Service/types}MessaggioType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="dati" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
- * </pre>
+ * <pre>{@code
+ * <complexType name="FixedMessaggioType">
+ *   <complexContent>
+ *     <restriction base="{http://openspcoop2.org/ValidazioneContenutiWS/Service/types}MessaggioType">
+ *       <sequence>
+ *         <element name="dati" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *       </sequence>
+ *     </restriction>
+ *   </complexContent>
+ * </complexType>
+ * }</pre>
  * 
  * 
  */
