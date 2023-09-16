@@ -1760,7 +1760,7 @@ public class RicezioneBuste {
 				
 				setSOAPFault_processamento(integrationFunctinError,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_403_AZIONE_NON_IDENTIFICATA.getErroreIntegrazione(),e,
-						"identificazioneDinamicaAzionePortaAplicativa");
+						"identificazioneDinamicaAzionePortaApplicativa");
 				openspcoopstate.releaseResource();
 				return;
 				
