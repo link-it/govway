@@ -59,7 +59,7 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 	
 	public static Boolean sequentialForced = false;
 	
-	public static Boolean initializedSemaphore = true;
+	public static final String initializedSemaphore = "semaphore";
 	public static Boolean initialized = false;
 	
 	private void _transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass, @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod){

@@ -29,11 +29,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.MessageContext;
 
 import org.apache.axis.Message;
 import org.apache.commons.io.input.ReaderInputStream;
@@ -75,6 +71,9 @@ import org.testng.Assert;
 import org.testng.Reporter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.MessageContext;
 
 /**
  * MTOMUtilities
@@ -155,27 +154,27 @@ public class MTOMUtilities {
     	}
     	javax.xml.transform.Source _echo_imageData = new DOMSource(d.getDocumentElement());
     	
-    	java.util.List<javax.activation.DataHandler> _echo_other = new ArrayList<javax.activation.DataHandler>();
+    	java.util.List<jakarta.activation.DataHandler> _echo_other = new ArrayList<jakarta.activation.DataHandler>();
     	File f_other1 = null;
     	File f_other2 = null;
     	if(addOtherAttachments){
 	    	f_other1 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getPDFFileName());
 	    	if(f_other1!=null){
-	    		FileDataSource fDS = new FileDataSource(f_other1);
-	    		javax.activation.DataHandler dh = new DataHandler(fDS);
+	    		jakarta.activation.FileDataSource fDS = new jakarta.activation.FileDataSource(f_other1);
+	    		jakarta.activation.DataHandler dh = new jakarta.activation.DataHandler(fDS);
 	    		_echo_other.add(dh);
 	    	}
 	    	f_other2 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getZIPFileName());
 	    	if(f_other2!=null){
-	    		FileDataSource fDS = new FileDataSource(f_other2);
-	    		javax.activation.DataHandler dh = new DataHandler(fDS);
+	    		jakarta.activation.FileDataSource fDS = new jakarta.activation.FileDataSource(f_other2);
+	    		jakarta.activation.DataHandler dh = new jakarta.activation.DataHandler(fDS);
 	    		_echo_other.add(dh);
 	    	}
     	}
     	
-        javax.xml.ws.Holder<java.lang.String> _echo_risposta = new javax.xml.ws.Holder<java.lang.String>();
-        javax.xml.ws.Holder<javax.xml.transform.Source> _echo_imageDataResponse = new javax.xml.ws.Holder<javax.xml.transform.Source>();
-        javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>> _echo_otherResponse = new javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>>();
+    	jakarta.xml.ws.Holder<java.lang.String> _echo_risposta = new jakarta.xml.ws.Holder<java.lang.String>();
+    	jakarta.xml.ws.Holder<javax.xml.transform.Source> _echo_imageDataResponse = new jakarta.xml.ws.Holder<javax.xml.transform.Source>();
+    	jakarta.xml.ws.Holder<java.util.List<jakarta.activation.DataHandler>> _echo_otherResponse = new jakarta.xml.ws.Holder<java.util.List<jakarta.activation.DataHandler>>();
         
         try{
 	        port.echo(file, _echo_imageData, _echo_other,
@@ -192,7 +191,7 @@ public class MTOMUtilities {
 	            javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) _echo_imageDataResponse.value;
 	            Document dResponse = null;
 	            if(ssi.getReader()!=null){
-	    	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
+	            	ReaderInputStream ris = ReaderInputStream.builder().setCharset(StandardCharsets.UTF_8).setReader(ssi.getReader()).get();
 	    	        dResponse = XMLUtils.getInstance().newDocument(ris);
 	            }
 	            else{
@@ -210,9 +209,9 @@ public class MTOMUtilities {
 	    		Reporter.log("echo._echo_other.size=" +_echo_otherResponse.value.size());
 	    		Assert.assertEquals(_echo_other.size(),_echo_otherResponse.value.size());
 	    		
-	    		java.util.List<javax.activation.DataHandler> other = _echo_otherResponse.value;
+	    		java.util.List<jakarta.activation.DataHandler> other = _echo_otherResponse.value;
 	    		for (int i = 0; i < other.size(); i++) {
-	        		javax.activation.DataHandler dh = other.get(i);
+	    			jakarta.activation.DataHandler dh = other.get(i);
 	        		//System.out.println("richiesta.other.size[i] received: "+dh.getContent().getClass().getName());
 	        		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 	        		InputStream is = dh.getInputStream();
@@ -279,7 +278,7 @@ public class MTOMUtilities {
         		Reporter.log("Exception ["+e.getClass().getName()+"]");
         		Throwable e2 = e.getCause();
         		Reporter.log("Exception2 ["+e2.getClass().getName()+"]");
-				Assert.assertTrue((e instanceof javax.xml.ws.soap.SOAPFaultException) || (e2 instanceof org.apache.cxf.binding.soap.SoapFault));
+				Assert.assertTrue((e instanceof jakarta.xml.ws.soap.SOAPFaultException) || (e2 instanceof org.apache.cxf.binding.soap.SoapFault));
 				
 				String codiceErrore = null;
 				String msgErrore = "Sistema non disponibile";
@@ -335,8 +334,8 @@ public class MTOMUtilities {
 				Reporter.log("Cerco codice di errore ["+codiceErrore+"]");
 				Reporter.log("Cerco messaggio di errore ["+msgErrore+"]");
 				
-				if(e instanceof javax.xml.ws.soap.SOAPFaultException) {
-					javax.xml.ws.soap.SOAPFaultException fault = (javax.xml.ws.soap.SOAPFaultException) e;
+				if(e instanceof jakarta.xml.ws.soap.SOAPFaultException) {
+					jakarta.xml.ws.soap.SOAPFaultException fault = (jakarta.xml.ws.soap.SOAPFaultException) e;
 					Reporter.log("FaultCode ["+fault.getFault().getFaultCode()+"]");
 					Reporter.log("FaultCodeLocalPart ["+fault.getFault().getFaultCodeAsName().getLocalName()+"]");
 					String sub = null;
@@ -533,20 +532,20 @@ public class MTOMUtilities {
     	javax.xml.transform.Source _echo_imageData = new DOMSource(d.getDocumentElement());
     	echoRequest.setImageData(_echo_imageData);
     	
-    	java.util.List<javax.activation.DataHandler> _echo_other = new ArrayList<javax.activation.DataHandler>();
+    	java.util.List<jakarta.activation.DataHandler> _echo_other = new ArrayList<jakarta.activation.DataHandler>();
     	File f_other1 = null;
     	File f_other2 = null;
     	if(addOtherAttachments){
 	    	f_other1 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getPDFFileName());
 	    	if(f_other1!=null){
-	    		FileDataSource fDS = new FileDataSource(f_other1);
-	    		javax.activation.DataHandler dh = new DataHandler(fDS);
+	    		jakarta.activation.FileDataSource fDS = new jakarta.activation.FileDataSource(f_other1);
+	    		jakarta.activation.DataHandler dh = new jakarta.activation.DataHandler(fDS);
 	    		_echo_other.add(dh);
 	    	}
 	    	f_other2 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getZIPFileName());
 	    	if(f_other2!=null){
-	    		FileDataSource fDS = new FileDataSource(f_other2);
-	    		javax.activation.DataHandler dh = new DataHandler(fDS);
+	    		jakarta.activation.FileDataSource fDS = new jakarta.activation.FileDataSource(f_other2);
+	    		jakarta.activation.DataHandler dh = new jakarta.activation.DataHandler(fDS);
 	    		_echo_other.add(dh);
 	    	}
     	}
@@ -583,7 +582,7 @@ public class MTOMUtilities {
         javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) echoRespone.getImageDataResponse();
         Document dResponse = null;
         if(ssi.getReader()!=null){
-	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
+        	ReaderInputStream ris = ReaderInputStream.builder().setCharset(StandardCharsets.UTF_8).setReader(ssi.getReader()).get();
 	        dResponse = XMLUtils.getInstance().newDocument(ris);
         }
         else{
@@ -601,9 +600,9 @@ public class MTOMUtilities {
 		Reporter.log("echo._echo_other.size=" +echoRespone.getOtherResponse().size());
 		Assert.assertEquals(_echo_other.size(),echoRespone.getOtherResponse().size());
 		
-		java.util.List<javax.activation.DataHandler> other = echoRespone.getOtherResponse();
+		java.util.List<jakarta.activation.DataHandler> other = echoRespone.getOtherResponse();
 		for (int i = 0; i < other.size(); i++) {
-    		javax.activation.DataHandler dh = other.get(i);
+			jakarta.activation.DataHandler dh = other.get(i);
     		//System.out.println("richiesta.other.size[i] received: "+dh.getContent().getClass().getName());
     		bout = new ByteArrayOutputStream();
     		InputStream is = dh.getInputStream();

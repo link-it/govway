@@ -116,9 +116,6 @@
 			<include name="*.jar"/>
 			<exclude name="neethi-2.0.4.jar"/> <!-- Includendolo causa un errore "org.apache.cxf.bus.extension.ExtensionException  java.lang.IncompatibleClassChangeError: Implementing class" usando gli stub di cxf -->
 		</fileset>
-		<fileset dir="${openspcoop2_lib}/javax" >
-			<include name="*.jar"/>
-		</fileset>
 		<fileset dir="${openspcoop2_lib}/log" >
 			<include name="*.jar"/>
 		</fileset>
@@ -158,11 +155,6 @@
 			<include name="*.jar"/>
 			<exclude name="jakarta.xml.soap-api-3.0.0.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
-		<fileset dir="${openspcoop2_lib}/jax" >
-			<include name="jaxb*.jar"/>
-			<include name="jaxws-api-2.3.1.jar"/>
-			<include name="jaxws-jsr181-api-2.3.1.jar"/>
-		</fileset>
 		<fileset dir="${openspcoop2_lib}/jetty" >
 			<include name="*.jar"/>
 		</fileset>
@@ -174,6 +166,20 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/jackson" >
 			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/jaxb" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/angus" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/jakarta" >
+			<include name="jakarta.xml.bind-api-3.0.1.jar"/>
+			<include name="jakarta.xml.ws-api-3.0.1.jar"/>
+			<include name="jakarta.activation-api-2.1.2.jar"/>
+			<include name="jakarta.annotation-api-2.1.1.jar"/>
+			<include name="jakarta.jws-api-3.0.0.jar"/>
+			<include name="jakarta.servlet-api-5.0.0.jar"/>
 		</fileset>
 
 	</path>

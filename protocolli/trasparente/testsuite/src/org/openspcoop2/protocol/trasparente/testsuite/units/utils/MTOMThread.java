@@ -22,7 +22,7 @@
 
 package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 import org.openspcoop2.example.server.mtom.ws.MTOMServiceExampleSOAP11Impl;
 import org.openspcoop2.example.server.mtom.ws.MTOMServiceExampleSOAP12Impl;
