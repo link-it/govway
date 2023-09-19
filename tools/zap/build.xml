@@ -23,6 +23,7 @@
 	<property name="zap_dir" location="." />
 	<property name="src_zap" value="${zap_dir}/src" />
 	<property name="build_zap" value="${zap_dir}/build" />
+	<property name="tmp_zap" value="${zap_dir}/tmp" />
 	<property name="scripts_zap" value="${zap_dir}/scripts" />
 
 	<property name="run_zap" value="${scripts_zap}/runZAProxy.sh" />
@@ -840,9 +841,27 @@
 	</target>
 	<target name="-analizeGovWayConsoleGestioneReadConfig">
 		<basename property="configBaseName" file="${file}"/>
+		<dirname property="configDirName" file="${file}"/>
+
 		<echo message="Avvio analisi govwayConsole per il pacchetto di url '${configBaseName}' ..."/>
 		<echo message="ScanUrls: ${file}/scanUrls.txt"/>
 		<echo message="FalsePositives: ${file}/falsePositives.txt"/>
+
+		<delete file="${tmp_zap}/falsePositive.txt"/>
+		<concat destfile="${tmp_zap}/falsePositive.txt" append="no">
+			<filelist dir="${configDirName}" files="${configBaseName}/falsePositives.txt"/>
+ 		</concat>
+		<concat destfile="${tmp_zap}/falsePositive.txt" append="yes">
+
+# Global False Positives
+		  		
+</concat>
+		<basename property="configBaseNameGlobalFP" file="${govway.console.config.globalFalsePositives}"/>
+		<dirname property="configDirNameGlobalFP" file="${govway.console.config.globalFalsePositives}"/>
+		<concat destfile="${tmp_zap}/falsePositive.txt" append="yes">
+			<filelist dir="${configDirNameGlobalFP}" files="${configBaseNameGlobalFP}"/>
+ 		</concat>
+		<echo message="FalsePositives file: '${tmp_zap}/falsePositive.txt'"/>
 
 		<var name="scanTypeGovwayConsole" value="spider"/>   
 		<if>
@@ -866,7 +885,7 @@
 			<param name="analyzePassword" value="${govway.console.config.password}"/>
 			<param name="analyzeScanTypes" value="${scanTypeGovwayConsole}"/>
 			<param name="analyzeScanUrls" value="${file}/scanUrls.txt"/>
-			<param name="analyzeFalsePositives" value="${file}/falsePositives.txt"/>
+			<param name="analyzeFalsePositives" value="${tmp_zap}/falsePositive.txt"/>
 			<param name="analyzeTitle" value="GovWay Console di Configurazione"/>
 			<param name="analyzeDescription" value="Analisi per la console di configurazione di GovWay"/>
 		</antcall>
@@ -886,9 +905,27 @@
 	</target>
 	<target name="-analizeGovWayConsoleMonitoraggioReadConfig">
 		<basename property="configBaseName" file="${file}"/>
+		<dirname property="configDirName" file="${file}"/>
+
 		<echo message="Avvio analisi govwayMonitor per il pacchetto di url '${configBaseName}' ..."/>
 		<echo message="ScanUrls: ${file}/scanUrls.txt"/>
 		<echo message="FalsePositives: ${file}/falsePositives.txt"/>
+
+		<delete file="${tmp_zap}/falsePositive.txt"/>
+		<concat destfile="${tmp_zap}/falsePositive.txt" append="no">
+			<filelist dir="${configDirName}" files="${configBaseName}/falsePositives.txt"/>
+ 		</concat>
+		<concat destfile="${tmp_zap}/falsePositive.txt" append="yes">
+
+# Global False Positives
+		  		
+</concat>
+		<basename property="configBaseNameGlobalFP" file="${govway.console.monitor.globalFalsePositives}"/>
+		<dirname property="configDirNameGlobalFP" file="${govway.console.monitor.globalFalsePositives}"/>
+		<concat destfile="${tmp_zap}/falsePositive.txt" append="yes">
+			<filelist dir="${configDirNameGlobalFP}" files="${configBaseNameGlobalFP}"/>
+ 		</concat>
+		<echo message="FalsePositives file: '${tmp_zap}/falsePositive.txt'"/>
 
 		<var name="scanTypeGovwayMonitor" value="spider"/>   
 		<if>
@@ -912,7 +949,7 @@
 			<param name="analyzePassword" value="${govway.console.monitor.password}"/>
 			<param name="analyzeScanTypes" value="${scanTypeGovwayMonitor}"/>
 			<param name="analyzeScanUrls" value="${file}/scanUrls.txt"/>
-			<param name="analyzeFalsePositives" value="${file}/falsePositives.txt"/>
+			<param name="analyzeFalsePositives" value="${tmp_zap}/falsePositive.txt"/>
 			<param name="analyzeTitle" value="GovWay Console di Monitoraggio"/>
 			<param name="analyzeDescription" value="Analisi per la console di monitoraggio di GovWay"/>
 		</antcall>

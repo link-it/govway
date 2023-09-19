@@ -34,6 +34,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.zaproxy.clientapi.core.ApiResponse;
 import org.zaproxy.clientapi.core.ApiResponseElement;
 import org.zaproxy.clientapi.core.ApiResponseList;
+import org.zaproxy.clientapi.core.ApiResponseSet;
 import org.zaproxy.clientapi.core.ClientApi;
 import org.zaproxy.clientapi.core.ClientApiException;
 
@@ -150,9 +151,43 @@ public class ConsoleUtils {
 		String contextName = zapClientApi.getContextName();
 		
 		int indexUrl = 0;
-    	api.ajaxSpider.setOptionClickDefaultElems(true);
-    	api.ajaxSpider.setOptionClickElemsOnce(true);
+		
+		api.ajaxSpider.setOptionClickDefaultElems(true); // valore di default
+		ApiResponse resp = api.ajaxSpider.optionClickDefaultElems();
+        ApiResponseElement re2 = (ApiResponseElement) resp;
+        LoggerManager.info("optionClickDefaultElems:"+re2.getName()+"="+re2.getValue());
+        
+    	api.ajaxSpider.setOptionClickElemsOnce(true); // valore di default
+    	resp = api.ajaxSpider.optionClickElemsOnce();
+        re2 = (ApiResponseElement) resp;
+        LoggerManager.info("optionClickElemsOnce:"+re2.getName()+"="+re2.getValue());
+        
+    	api.ajaxSpider.setOptionRandomInputs(true); // valore di default
+		resp = api.ajaxSpider.optionRandomInputs();
+        re2 = (ApiResponseElement) resp;
+        LoggerManager.info("optionRandomInputs:"+re2.getName()+"="+re2.getValue());
+        
+    	api.ajaxSpider.setOptionMaxCrawlStates(10); // il default è 0, cioè infinito https://www.zaproxy.org/docs/desktop/addons/ajax-spider/options/
+    	resp = api.ajaxSpider.optionMaxCrawlStates();
+        re2 = (ApiResponseElement) resp;
+        LoggerManager.info("optionMaxCrawlStates:"+re2.getName()+"="+re2.getValue());
+        
+        api.ajaxSpider.setOptionMaxCrawlDepth(10); // valore di default
+		resp = api.ajaxSpider.optionMaxCrawlDepth();
+        re2 = (ApiResponseElement) resp;
+        LoggerManager.info("optionMaxCrawlDepth:"+re2.getName()+"="+re2.getValue());
+        
+        api.ajaxSpider.setOptionMaxDuration(2); // minuti, il default è 60 minuti
+		resp = api.ajaxSpider.optionMaxDuration();
+        re2 = (ApiResponseElement) resp;
+        LoggerManager.info("optionMaxDuration:"+re2.getName()+"="+re2.getValue());
+		
+        resp = api.ajaxSpider.excludedElements(contextName);
+        LoggerManager.info("excludedElements");
+        print(resp);
+		                 
     	int urls = urlVisitateIterazioneInCorso.size();
+    	    	
     	for (String urlSpider : urlVisitateIterazioneInCorso) {
 	        indexUrl++;
 	        
@@ -166,17 +201,18 @@ public class ConsoleUtils {
     		}
     		            		
 			api.ajaxSpider.scanAsUser(contextName, username, urlSpider, ConsoleParams.SUBTREE_ONLY_ENABLED);
+    		/**api.ajaxSpider.scan(urlSpider, ConsoleParams.INSCOPE_ONLY_ENABLED, contextName, ConsoleParams.SUBTREE_ONLY_ENABLED);*/
 			
 	        // Poll the status until it completes
             long startTime = System.currentTimeMillis();
-            long timeout = 120000;
+            long timeout = 60000;
 	        String status = null;
 	        boolean run = true;
 	        while (run) {
 	        	Utilities.sleep(1000);
 	            status = (((ApiResponseElement) api.ajaxSpider.status()).getValue());
 	            LoggerManager.info(logPrefix+"status : " + status);
-	            if ( "stopped".equals(status)) {
+	            if ( "stopped".equals(status) ) {
 	            	LoggerManager.info(logPrefix+"complete (STOP)");
 	            	run = false;
 	            	continue;
@@ -191,9 +227,20 @@ public class ConsoleUtils {
 	            	Utilities.sleep(5000);
 	            	run = false;
                 }
+	            
+	            ApiResponseSet rSet = (ApiResponseSet) api.ajaxSpider.fullResults();
+	            LoggerManager.info("inScope ---------");
+	            print(rSet.getValue("inScope"));
+	            LoggerManager.info("outOfScope ---------");
+	            print(rSet.getValue("outOfScope"));
+	            LoggerManager.info("ERROR ---------");
+	            print(rSet.getValue("errors"));
+
 	        }
 		}
         LoggerManager.info("AjaxSpider complete");
+        
+        
         
         ConsoleUtils.generateReport(ConsoleScanTypes.SCAN_TYPE_AJAXSPIDER, api, contextName, report, pathParams);
 	}
@@ -435,6 +482,11 @@ public class ConsoleUtils {
 		}
 		else if(res instanceof ApiResponseElement reselement) {
 			LoggerManager.info("ApiResponseElement; name:"+reselement.getName()+"  value:"+reselement.getValue());
+		}
+		else if(res instanceof ApiResponseSet resset) {
+			LoggerManager.info("ApiResponseSet; name:"+resset.getName());
+			LoggerManager.info("keys: "+resset.getKeys());
+			LoggerManager.info("values: "+resset.getValues());
 		}
 		else {
 			LoggerManager.info("Unknown response: "+res.getClass().getName());

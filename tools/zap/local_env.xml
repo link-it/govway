@@ -18,6 +18,7 @@
 	<property name="govway.console.config.scanUrls.templates" location="template/govwayConsole"/>
 	<property name="govway.console.config.scanType.ajaxSpider" value="false"/>
 	<property name="govway.console.config.scanType.active" value="true"/>
+        <property name="govway.console.config.globalFalsePositives" location="config/govwayConsole_globalFalsePositive.txt"/>
 	<!-- Parametri connessione GovWay Monitor -->
 	<property name="govway.console.monitor.username" value="operatore"/>
 	<property name="govway.console.monitor.password" value="123456"/>
@@ -25,6 +26,7 @@
 	<property name="govway.console.monitor.scanUrls.templates" location="template/govwayMonitor"/>
 	<property name="govway.console.monitor.scanType.ajaxSpider" value="false"/>
 	<property name="govway.console.monitor.scanType.active" value="true"/>
+        <property name="govway.console.monitor.globalFalsePositives" location="config/govwayMonitor_globalFalsePositive.txt"/>
 
 	<!-- https://www.zaproxy.org/ -->
 	<!-- https://github.com/zaproxy/zap-api-java -->

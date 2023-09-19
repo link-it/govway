@@ -1,0 +1,9 @@
+#<nome>.enabled=true
+#<nome>.description=xxxx
+#<nome>.id=
+#<nome>.urlRegExp
+
+ModernWebApplication.enabled=true
+ModernWebApplication.description=Come indicato in 'https://www.zaproxy.org/docs/alerts/10109/': This is an informational alert and so no changes are required.
+ModernWebApplication.id=10109
+ModernWebApplication.urlRegExp=.*/govwayMonitor.*

@@ -6,4 +6,4 @@
 jdbcDriver.enabled=true
 jdbcDriver.description=La pagina fornisce informazioni sulla versione del driver JDBC volutamente
 jdbcDriver.id=90022
-jdbcDriver.urlRegExp=http://127.0.0.1:8080/govwayConsole/configurazioneSistemaAdd.do.*
+jdbcDriver.urlRegExp=.*/govwayConsole/configurazioneSistemaAdd.do.*
