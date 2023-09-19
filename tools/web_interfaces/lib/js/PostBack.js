@@ -9,12 +9,13 @@ function postBack() {
 	postBack(null);
 }
 function postBack(dataElementName) {
+	var theForm = document.form;
     // document.form.action vale http://localhost:8080/govwayConsole/servlet.do
     // A me serve solo il pezzo /govwayConsole/servlet.do
-    var firstSlash = document.form.action.indexOf("/");
-    var secondSlash = document.form.action.indexOf("/", firstSlash+1);
-    var thirdSlash = document.form.action.indexOf("/", secondSlash+1);
-    var location = document.form.action.substr(thirdSlash);
+    var firstSlash = theForm.action.indexOf("/");
+    var secondSlash = theForm.action.indexOf("/", firstSlash+1);
+    var thirdSlash = theForm.action.indexOf("/", secondSlash+1);
+    var location = theForm.action.substr(thirdSlash);
     
     var navigationAnchor = null;
     //aggiungo parametro per indicare che si tratta di postback e azzero idhid
@@ -24,35 +25,38 @@ function postBack(dataElementName) {
     	navigationAnchor = '#'+ dataElementName;
     }
     
-    for (var k=0; k<document.form.elements.length; k++) {
-		var nome = document.form.elements[k].name;
+    // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+	eliminaElementiHidden(theForm);
+    
+    for (var k=0; k<theForm.elements.length; k++) {
+		var nome = theForm.elements[k].name;
 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
 		if (nome && nome.length > 0 && nome != "idhid" && nome != "edit-mode" && hiddenInfo == -1) {
-		    var tipo = document.form.elements[k].type;
+		    var tipo = theForm.elements[k].type;
 		    var valore = "";
 		    // elimino codice html dall'input testuale
 		    if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-				var valoreTmp = document.form.elements[k].value;
-				document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valoreTmp);
+				var valoreTmp = theForm.elements[k].value;
+				theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valoreTmp);
 			}
 		    
 		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea"|| tipo == "number")
-		    	valore = document.form.elements[k].value;
+		    	valore = theForm.elements[k].value;
 		    if (tipo == "select-one") {
-		    	for (var j=0; j<document.form.elements[k].options.length; j++)
-		    		if (document.form.elements[k].options[j].selected == true)
-		    			valore = document.form.elements[k].options[j].value;
+		    	for (var j=0; j<theForm.elements[k].options.length; j++)
+		    		if (theForm.elements[k].options[j].selected == true)
+		    			valore = theForm.elements[k].options[j].value;
 		    }
 		    if (tipo == "select-multiple") {
-				for (var j=0; j<document.form.elements[k].options.length; j++) {
-				    if (document.form.elements[k].options[j].selected == true) {
-				    	valore = document.form.elements[k].options[j].value;
+				for (var j=0; j<theForm.elements[k].options.length; j++) {
+				    if (theForm.elements[k].options[j].selected == true) {
+				    	valore = theForm.elements[k].options[j].value;
 				    	location += "&" + nome + "=" + encodeURIComponent(valore);
 				    }
 			    }
 		    }
 		    if (tipo == "checkbox") {
-		    	if (document.form.elements[k].checked)
+		    	if (theForm.elements[k].checked)
 		    		valore = "yes";
 		    	else
 		    		valore = "no";
@@ -75,53 +79,57 @@ function postBack(dataElementName) {
 
 function postVersion_postBack(dataElementName) {
         
+    var theForm = document.form;
     //aggiungo parametro per indicare che si tratta di postback e azzero idhid
-    addHidden(document.form, 'isPostBack' , true);
-//    addHidden(document.form, 'edit-mode' , 'in_progress_postback');
+    addHidden(theForm, 'isPostBack' , true);
+//    addHidden(theForm, 'edit-mode' , 'in_progress_postback');
     var navigationAnchor = null;
     if(dataElementName!=null){
-    	addHidden(document.form, 'postBackElementName' , dataElementName);
+    	addHidden(theForm, 'postBackElementName' , dataElementName);
     	navigationAnchor = '#'+ dataElementName;
     }
+    
+    // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+	eliminaElementiHidden(theForm);
     
     // dump 
     var dump = false;
     
    
-	for (var k=0; k<document.form.elements.length; k++) {
-		var nome = document.form.elements[k].name;
+	for (var k=0; k<theForm.elements.length; k++) {
+		var nome = theForm.elements[k].name;
 		
 		if(nome == "edit-mode")
-			document.form.elements[k].value = 'in_progress_postback';
+			theForm.elements[k].value = 'in_progress_postback';
 			
 		// elimino codice html dall'input testuale
-		var tipo = document.form.elements[k].type;
+		var tipo = theForm.elements[k].type;
 		if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-			var valore = document.form.elements[k].value;
-			document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
+			var valore = theForm.elements[k].value;
+			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
 		}
 		
 		if(dump) { 
 		    var valore = "";
 		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea" || tipo == "number")
-			valore = document.form.elements[k].value;
+			valore = theForm.elements[k].value;
 		    if (tipo == "select-one") {
-			for (var j=0; j<document.form.elements[k].options.length; j++)
-			    if (document.form.elements[k].options[j].selected == true)
-				valore = document.form.elements[k].options[j].value;
+			for (var j=0; j<theForm.elements[k].options.length; j++)
+			    if (theForm.elements[k].options[j].selected == true)
+				valore = theForm.elements[k].options[j].value;
 		    }
 		    if (tipo == "select-multiple") {
-				for (var j=0; j<document.form.elements[k].options.length; j++) {
-				    if (document.form.elements[k].options[j].selected == true) {
+				for (var j=0; j<theForm.elements[k].options.length; j++) {
+				    if (theForm.elements[k].options[j].selected == true) {
 				    	if(valore.length > 0)
 				    		valore += ", ";
 				    	
-				    	valore += document.form.elements[k].options[j].value;
+				    	valore += theForm.elements[k].options[j].value;
 				    }
 			    }
 		    }
 		    if (tipo == "checkbox") {
-			if (document.form.elements[k].checked)
+			if (theForm.elements[k].checked)
 			    valore = "yes";
 			else
 			    valore = "no";
@@ -132,27 +140,17 @@ function postVersion_postBack(dataElementName) {
     }
     
     if(navigationAnchor!=null){
-    	 document.form.action=navigationAnchor;
+    	 theForm.action=navigationAnchor;
     }
     
-    // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-	for (var k=0; k<document.form.elements.length; k++) {
-		var nome = document.form.elements[k].name;
-		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-		if(hiddenInfo > -1) {
-			document.form.elements[k].value = '';
-		}
-	}
-	
 	// aggiungo parametro idTab
   if(tabValue != ''){
-  	addHidden(document.form, tabSessionKey , tabValue);
-  	addHidden(document.form, prevTabSessionKey , tabValue);
+  	addHidden(theForm, tabSessionKey , tabValue);
+  	addHidden(theForm, prevTabSessionKey , tabValue);
   }
 	
     // form submit
-    document.form.submit();
+    theForm.submit();
 }
 
 function scrollToPostBackElement(destElement) {

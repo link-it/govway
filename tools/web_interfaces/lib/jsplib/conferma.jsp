@@ -76,34 +76,28 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 		var params;
 		
 		function EseguiOp() {
-			console.log('Esegui ' + document.form.elements['actionConfirm'].value);
+			var theForm = document.form;
+			console.log('Esegui ' + theForm.elements['actionConfirm'].value);
 			params = generaUrl();
 			
-			if(document.form.elements['actionConfirm']) {
+			if(theForm.elements['actionConfirm']) {
 				// evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-				  for (var k=0; k<document.form.elements.length; k++) {
-						var nome = document.form.elements[k].name;
-						var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-						if(hiddenInfo > -1) {
-							document.form.elements[k].value = '';
-						}
-				  }
+				eliminaElementiHidden(theForm);
 				
 				// aggiungo parametro idTab
 			  if(tabValue != ''){
-			  	addHidden(document.form, tabSessionKey , tabValue);
-			  	addHidden(document.form, prevTabSessionKey , tabValue);
+			  	addHidden(theForm, tabSessionKey , tabValue);
+			  	addHidden(theForm, prevTabSessionKey , tabValue);
 			  }
 				
-			  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_CONFERMA %>');
+			  addHidden(theForm, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_CONFERMA %>');
 			  
 			  //aggiungo parametro csfr
 			  //if(csrfToken != ''){
-			  //	addHidden(document.form, csrfTokenKey , csrfToken);
+			  //	addHidden(theForm, csrfTokenKey , csrfToken);
 			  //}
 				
-				document.form.submit();
+				theForm.submit();
 			} else {
 				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_Ok +params;
 				//addTabID
@@ -120,34 +114,28 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 		};
 		
 		function Annulla() {
-			console.log('Annulla ' + document.form.elements['actionConfirm'].value);
+			var theForm = document.form;
+			console.log('Annulla ' + theForm.elements['actionConfirm'].value);
 			params = generaUrl();
 			
-			if(document.form.elements['actionConfirm']) {
+			if(theForm.elements['actionConfirm']) {
 				// evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-				  for (var k=0; k<document.form.elements.length; k++) {
-						var nome = document.form.elements[k].name;
-						var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-						if(hiddenInfo > -1) {
-							document.form.elements[k].value = '';
-						}
-				  }
+				eliminaElementiHidden(theForm);
 				
 				// aggiungo parametro idTab
 				  if(tabValue != ''){
-				  	addHidden(document.form, tabSessionKey , tabValue);
-				  	addHidden(document.form, prevTabSessionKey , tabValue);
+				  	addHidden(theForm, tabSessionKey , tabValue);
+				  	addHidden(theForm, prevTabSessionKey , tabValue);
 				  }
 				
-				  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA %>');
+				  addHidden(theForm, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_ANNULLA %>');
 				  
 				  //aggiungo parametro csfr
 				  //if(csrfToken != ''){
-				  //	addHidden(document.form, csrfTokenKey , csrfToken);
+				  //	addHidden(theForm, csrfTokenKey , csrfToken);
 				  //}
 				
-				document.form.submit();
+				theForm.submit();
 			} else {
 				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_No +params;
 				//addTabID

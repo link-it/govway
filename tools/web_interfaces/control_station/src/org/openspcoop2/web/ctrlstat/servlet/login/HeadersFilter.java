@@ -120,7 +120,7 @@ public class HeadersFilter implements Filter {
 		// Per abilitare l'esecuzione solo degli script che vogliamo far eseguire, si genera un UUID random e si assegna ai tag script con attributo src e a gli script inline nelle pagine
 		// L'id degli script abilitati e' indicato all'interno del campo script-src
 
-		String uuId = UUID.randomUUID().toString().replace("-", "");
+		String uuId = UUID.randomUUID().toString();
 		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, uuId);
 
 		if(StringUtils.isNoneBlank(this.core.getCspHeaderValue())) {

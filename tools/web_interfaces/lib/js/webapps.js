@@ -1,6 +1,6 @@
 /**
- * Funzioni di utilita' 
- * 
+ * Funzioni di utilita'
+ *
  * @author Giuliano Pintori <pintori@link.it>
  */
 
@@ -12,7 +12,7 @@ function generaUrl() {
 
 function convertFormAsURL(theForm) {
     var params = '';
-    
+
     for (var k=0; k<theForm.elements.length; k++) {
 		var nome = theForm.elements[k].name;
 		if (nome && nome.length > 0 && nome != "idhid") {
@@ -24,8 +24,8 @@ function convertFormAsURL(theForm) {
 	    	}
 	    }
     }
-    
-	return params;   
+
+	return params;
 }
 
 function formHasParam(theForm, name){
@@ -37,7 +37,7 @@ function formHasParam(theForm, name){
 	    	}
 	    }
     }
-	
+
 	return false;
 }
 
@@ -55,24 +55,24 @@ function addHidden(theForm, name, value) {
 
 function addTabIdParamToHref(element, event){
 	var urlDest = element.prop('href');
-	
+
     if(event.which == 3) {
     	// console.log("right click: " + urlDest);
-    } else 
+    } else
     if(event.which == 2) {
     	// console.log("center click: " + urlDest);
-    } else 
+    } else
     if(event.which == 1) {
     	// aggiungi tab id a tutti i link cliccati col tasto sinistro
     	if(urlDest) {
 	    	// console.log("left click: " + urlDest);
-	    	
+
 	    	var targetDest = element.prop('target');
-	    	
+
 	    	if(targetDest && targetDest == '_blank') {
 	    		return;
 	    	}
-	    	
+
 	    	var newUrlDest = addTabIdParam(urlDest);
 	    	element.prop('href',newUrlDest);
     	} else {
@@ -120,7 +120,7 @@ function URLEncode(url) {
 }
 
 function customInputNumberChangeEventHandler(e){
-		
+
 	if (e.target.value == '') {
     	// do nothing
     } else {
@@ -129,7 +129,7 @@ function customInputNumberChangeEventHandler(e){
     			e.target.value = e.target.min;
     		}
     	}
-    	
+
     	if(e.target.max){
     		if(parseInt(e.target.max) < parseInt(e.target.value)){
     			e.target.value = e.target.max;
@@ -151,7 +151,7 @@ function inputNumberChangeEventHandler(e){
     			e.target.value = e.target.min;
     		}
     	}
-    	
+
     	if(e.target.max){
     		if(parseInt(e.target.max) < parseInt(e.target.value)){
     			e.target.value = e.target.max;
@@ -165,10 +165,10 @@ function urlHasParam(href, name){
 }
 
 function addTabIdParam(href, addPrevTabParam){
-	
+
 	if(tabValue != '' && !urlHasParam(href,tabSessionKey)){
 		var param = (tabSessionKey + "="+tabValue);
-		
+
 		if((href != '#' && href.indexOf('#tabs-') == -1)){
 	        if (href.charAt(href.length - 1) === '?') //Very unlikely
 	            href = href + param;
@@ -176,7 +176,7 @@ function addTabIdParam(href, addPrevTabParam){
 	        	href = href + '&' + param;
 	        else
 	        	href = href + '?' + param;
-	        
+
 	        if(addPrevTabParam && !urlHasParam(href,prevTabSessionKey)) {
 				var paramPrevTab = (prevTabSessionKey + "="+tabValue);
 				return href + '&' + paramPrevTab;
@@ -187,10 +187,10 @@ function addTabIdParam(href, addPrevTabParam){
 }
 
 function addParamToURL(href, paramKey, paramValue){
-	
+
 	if(paramValue != '' && !urlHasParam(href,paramKey)){
 		var param = (paramKey + "="+paramValue);
-		
+
 		if((href != '#' && href.indexOf('#tabs-') == -1)){
 	        if (href.charAt(href.length - 1) === '?') //Very unlikely
 	            href = href + param;
@@ -198,7 +198,7 @@ function addParamToURL(href, paramKey, paramValue){
 	        	href = href + '&' + param;
 	        else
 	        	href = href + '?' + param;
-	        
+
 	    }
 	}
     return href;
@@ -234,10 +234,10 @@ function mostraDataElementInfoModal(title,body){
 }
 
 /* Funzioni di utilita' per le pagine form */
-	
+
 function inizializzaSelectSezione(idDiv){
 	var divElem = $('#'+ idDiv + '');
-	
+
 	if(divElem.length > 0){
     	if(divElem.find("select" ).length > 0){
     		// elimino eventuali plugin gia' applicati
@@ -251,14 +251,14 @@ function inizializzaSelectSezione(idDiv){
     				$( this ).css('width','');
     				$( this ).css('height','');
     			}
-    			
+
     			var checkID = $( this ).prop('id') + '_hidden_chk';
     			if($( '#' + checkID ).length > 0) {
     				var val = $( '#' + checkID ).prop('value');
     				if(val && val == 'true'){
-    					$( this ).searchable({disableInput : false});	
+    					$( this ).searchable({disableInput : false});
     				} else {
-    					$( this ).searchable({disableInput : true});	
+    					$( this ).searchable({disableInput : true});
     				}
     			} else {
     				$( this ).searchable({disableInput : true});
@@ -281,14 +281,14 @@ function inizializzaSelectFiltro(){
 				$( this ).css('width','');
 				$( this ).css('height','');
 			}
-			
+
 			var checkID = $( this ).prop('id') + '_hidden_chk';
 			if($( '#' + checkID ).length > 0) {
 				var val = $( '#' + checkID ).prop('value');
 				if(val && val == 'true'){
-					$( this ).searchable({disableInput : false});	
+					$( this ).searchable({disableInput : false});
 				} else {
-					$( this ).searchable({disableInput : true});	
+					$( this ).searchable({disableInput : true});
 				}
 			} else {
 				$( this ).searchable({disableInput : true});
@@ -309,7 +309,7 @@ function isModificaUrlRicerca(formAction, urlToCheck){
 	if(formAction.indexOf('?') > 0) {
 		formAction = formAction.substring(0, formAction.indexOf('?'));
 	}
-	
+
 	return ieEndsWith(formAction, urlToCheck);
 }
 
@@ -317,235 +317,231 @@ function ieEndsWith(str, suffix){
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
-function Change(form,dataElementName) {
-	Change(form,dataElementName,false);
+function Change(theForm,dataElementName) {
+	Change(theForm,dataElementName,false);
 }
-function Change(form,dataElementName,fromFilters) {
-    
+function Change(theForm,dataElementName,fromFilters) {
+
 	if( fromFilters ){
-		var formAction = form.action;
-		
+		var formAction = theForm.action;
+
 		// hack actionvuota
 		if(formAction == ''){
 			formAction = document.location.href;
 		}
-		
+
 		if(isModificaUrlRicerca(formAction,'Add.do')){
-			form.action=formAction.replace('Add.do','List.do');
+			theForm.action=formAction.replace('Add.do','List.do');
 		}
 		if(isModificaUrlRicerca(formAction,'Change.do')){
-			form.action=formAction.replace('Change.do','List.do');
+			theForm.action=formAction.replace('Change.do','List.do');
 		}
 		if(isModificaUrlRicerca(formAction,'Del.do')){
-			form.action=formAction.replace('Del.do','List.do');
+			theForm.action=formAction.replace('Del.do','List.do');
 		}
 	}
-	
+
     //aggiungo parametro per indicare che si tratta di postback e azzero idhid
-    addHidden(form, 'isPostBack' , true);
+    addHidden(theForm, 'isPostBack' , true);
     if(dataElementName!=null)
-    	addHidden(document.form, 'postBackElementName' , dataElementName);
-    addHidden(form, 'index' , 0);
-    addHidden(form, 'iddati' , iddati);
-  
+    	addHidden(theForm, 'postBackElementName' , dataElementName);
+    addHidden(theForm, 'index' , 0);
+    addHidden(theForm, 'iddati' , iddati);
+
     // formatParams
-    
+
      if (formatPar != null && formatPar != ""){
     	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
     	for (var i = 0; i < pairs.length; i++) {
         	var pair = pairs[i].split('=');
-        	addHidden(form, pair[0] , pair[1]);
+        	addHidden(theForm, pair[0] , pair[1]);
     	}
      }
      if (params != null && params != ""){
 	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
 	   for (var i = 0; i < pairs.length; i++) {
 	       var pair = pairs[i].split('=');
-	       addHidden(form, pair[0] , pair[1]);
+	       addHidden(theForm, pair[0] , pair[1]);
 	   }
      }
-     
-     // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-     for (var k=0; k<document.form.elements.length; k++) {
-   		var nome = document.form.elements[k].name;
-   		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
 
-   		if(hiddenInfo > -1) {
-   			document.form.elements[k].value = '';
-   		}
-   		
+	// evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+	 eliminaElementiHidden(theForm);
+
+	// elimino codice html dall'input testuale
+     for (var k=0; k<theForm.elements.length; k++) {
    		// elimino codice html dall'input testuale
-   		 var tipo = document.form.elements[k].type;
+   		 var tipo = theForm.elements[k].type;
 		 if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-			var valore = document.form.elements[k].value;
-			document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
+			var valore = theForm.elements[k].value;
+			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
 		}
      }
-        
+
   // aggiungo parametro idTab
   	  if(tabValue != ''){
-  	  	addHidden(document.form, tabSessionKey , tabValue);
-  	    addHidden(document.form, prevTabSessionKey , tabValue);
+  	  	addHidden(theForm, tabSessionKey , tabValue);
+  	    addHidden(theForm, prevTabSessionKey , tabValue);
   	  }
     // form submit
-    document.form.submit();
+    theForm.submit();
 }
 
-function Reset(form) {
+function Reset(theForm) {
   if (nr != 0) {
     return false;
   }
   nr = 1;
-  
-  document.form.reset();
-  for (var k=0; k<document.form.elements.length; k++) {
-	var name = document.form.elements[k].name;
+
+  theForm.reset();
+  for (var k=0; k< theForm.elements.length; k++) {
+	var name = theForm.elements[k].name;
 	if (name == "search"){
-		document.form.elements[k].value="";
+		theForm.elements[k].value="";
 	} else {
-		var tipo = document.form.elements[k].type;
+		var tipo = theForm.elements[k].type;
 		if (tipo == "select-one" || tipo == "select-multiple") {
-			document.form.elements[k].selectedIndex = 0;
+			theForm.elements[k].selectedIndex = 0;
 		} else if (tipo == "text" || tipo == "textarea"|| tipo == "number") {
-			document.form.elements[k].value="";
+			theForm.elements[k].value="";
 		} else if (tipo == "checkbox") {
-			document.form.elements[k].checked=false;
+			theForm.elements[k].checked=false;
 		}
 	}
   }
 
-  addHidden(form, 'index' , 0);
-  addHidden(form, 'iddati' , iddati);
-  addHidden(form, 'pageSize' , pageSize);
-  addHidden(form, '_searchDone' , true);
+  addHidden(theForm, 'index' , 0);
+  addHidden(theForm, 'iddati' , iddati);
+  addHidden(theForm, 'pageSize' , pageSize);
+  addHidden(theForm, '_searchDone' , true);
 
   // formatParams
-  
+
    if (formatPar != null && formatPar != ""){
   	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
   	for (var i = 0; i < pairs.length; i++) {
       	var pair = pairs[i].split('=');
-      	addHidden(form, pair[0] , pair[1]);
+      	addHidden(theForm, pair[0] , pair[1]);
   	}
    }
    if (params != null && params != ""){
 	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
 	   for (var i = 0; i < pairs.length; i++) {
 	       var pair = pairs[i].split('=');
-	       addHidden(form, pair[0] , pair[1]);
+	       addHidden(theForm, pair[0] , pair[1]);
 	   }
   }
-  
-   // imposto la destinazione
-   document.form.action = nomeServletList;
-   
-   // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-   for (var k=0; k<document.form.elements.length; k++) {
- 		var nome = document.form.elements[k].name;
- 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
 
- 		if(hiddenInfo > -1) {
- 			document.form.elements[k].value = '';
- 		}
-   }
-   
+   // imposto la destinazione
+   theForm.action = nomeServletList;
+
+   // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+   eliminaElementiHidden(theForm);
+
    // aggiungo parametro idTab
    if(tabValue != ''){
-   	addHidden(document.form, tabSessionKey , tabValue);
-   	addHidden(document.form, prevTabSessionKey , tabValue);
+   	addHidden(theForm, tabSessionKey , tabValue);
+   	addHidden(theForm, prevTabSessionKey , tabValue);
    }
   // form submit
-  document.form.submit();
- 
+  theForm.submit();
+
 };
 
-function Search(form) {
+function Search(theForm) {
   if (nr != 0) {
     return false;
   }
   nr = 1;
 
-  addHidden(form, 'index' , 0);
-  addHidden(form, 'iddati' , iddati);
-  addHidden(form, 'pageSize' , pageSize);
-  addHidden(form, '_searchDone' , true);
+  addHidden(theForm, 'index' , 0);
+  addHidden(theForm, 'iddati' , iddati);
+  addHidden(theForm, 'pageSize' , pageSize);
+  addHidden(theForm, '_searchDone' , true);
 
   // formatParams
-  
+
    if (formatPar != null && formatPar != ""){
   	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
   	for (var i = 0; i < pairs.length; i++) {
       	var pair = pairs[i].split('=');
-      	addHidden(form, pair[0] , pair[1]);
+      	addHidden(theForm, pair[0] , pair[1]);
   	}
    }
    if (params != null && params != ""){
 	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
 	   for (var i = 0; i < pairs.length; i++) {
 	       var pair = pairs[i].split('=');
-	       addHidden(form, pair[0] , pair[1]);
+	       addHidden(theForm, pair[0] , pair[1]);
 	   }
    }
 
   // imposto la destinazione
-  document.form.action = nomeServletList;
-  
-  //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-  for (var k=0; k<document.form.elements.length; k++) {
-		var nome = document.form.elements[k].name;
-		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+  theForm.action = nomeServletList;
 
-		if(hiddenInfo > -1) {
-			document.form.elements[k].value = '';
-		}
-		
-		// elimino codice html dall'input testuale
-		 var tipo = document.form.elements[k].type;
+	// evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+	eliminaElementiHidden(theForm);
+	
+	// elimino codice html dall'input testuale
+  	for (var k=0; k<theForm.elements.length; k++) {
+		 var tipo = theForm.elements[k].type;
 		 if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-			var valore = document.form.elements[k].value;
-			document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
+			var valore = theForm.elements[k].value;
+			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
 		}
-  }
-      
+	}
+
   // aggiungo parametro idTab
   if(tabValue != ''){
-  	addHidden(document.form, tabSessionKey , tabValue);
-  	addHidden(document.form, prevTabSessionKey , tabValue);
+  	addHidden(theForm, tabSessionKey , tabValue);
+  	addHidden(theForm, prevTabSessionKey , tabValue);
   }
   // form submit
-  document.form.submit();
- 
+  theForm.submit();
+
 };
 
 function checkAll(){
 	if(n > 0){
 		var chkAll = $("#chkAll:checked").length;
-		
+
 		if(chkAll > 0) {
-			SelectAll();
+			SelectAll(document.form);
 		} else {
-			DeselectAll();
+			DeselectAll(document.form);
 		}
 	}
 }
 
-function SelectAll() {
+function SelectAll(theForm) {
   if (n > 1) {
-    for (var c = 0; c < document.form.selectcheckbox.length; c++)
-      document.form.selectcheckbox[c].checked = true;
+    for (var c = 0; c < theForm.selectcheckbox.length; c++)
+      theForm.selectcheckbox[c].checked = true;
   } else {
-    document.form.selectcheckbox.checked = true;
+    theForm.selectcheckbox.checked = true;
   }
 };
 
-function DeselectAll() {
+function DeselectAll(theForm) {
   if (n > 1) {
-    for (var c = 0; c < document.form.selectcheckbox.length; c++)
-      document.form.selectcheckbox[c].checked = false;
+    for (var c = 0; c < theForm.selectcheckbox.length; c++)
+      theForm.selectcheckbox[c].checked = false;
   } else {
-    document.form.selectcheckbox.checked = false;
+    theForm.selectcheckbox.checked = false;
   }
 };
 
+function eliminaElementiHidden(theForm){
+	//evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+  	for (var k=0; k<theForm.elements.length; k++) {
+		var nome = theForm.elements[k].name;
 
+		if(nome != null){
+			if(nome.indexOf("__i_hidden") > -1
+				|| nome.indexOf("url_entry_") > -1){
+				theForm.elements[k].value = '';
+			}
+		}
+	}	
+}
 

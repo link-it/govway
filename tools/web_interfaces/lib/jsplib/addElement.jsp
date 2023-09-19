@@ -88,32 +88,29 @@ function CheckDati() {
   //I controlli si fanno direttamente nei .java
   nr = 1;
 
-  // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
-  for (var k=0; k<document.form.elements.length; k++) {
-		var nome = document.form.elements[k].name;
-		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
-
-		if(hiddenInfo > -1) {
-			document.form.elements[k].value = '';
-		}
-		
-		// elimino codice html dall'input testuale
-		var tipo = document.form.elements[k].type;
+  var theForm = document.form;
+  
+  //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+  eliminaElementiHidden(theForm);
+  
+  //elimino codice html dall'input testuale
+  for (var k=0; k<theForm.elements.length; k++) {
+		var tipo = theForm.elements[k].type;
 		if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-			var valore = document.form.elements[k].value;
-			document.form.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
+			var valore = theForm.elements[k].value;
+			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
 		}
   }
   
   // aggiungo parametro idTab
   if(tabValue != ''){
-  	addHidden(document.form, tabSessionKey , tabValue);
-  	addHidden(document.form, prevTabSessionKey , tabValue);
+  	addHidden(theForm, tabSessionKey , tabValue);
+  	addHidden(theForm, prevTabSessionKey , tabValue);
   }
 
-  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_SALVA %>');
+  addHidden(theForm, '<%=Costanti.PARAMETRO_AZIONE %>' , '<%=Costanti.VALUE_PARAMETRO_AZIONE_SALVA %>');
 
-  document.form.submit();
+  theForm.submit();
 };
 
 $(document).ready(function(){

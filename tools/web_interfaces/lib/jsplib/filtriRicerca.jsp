@@ -358,7 +358,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 														<div class="prop">
 															<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 															<label><%= filtro.getLabel() %></label>
-														  	<select id="<%= filterId  %>" name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
+														  	<select id="<%= filterId  %>" name="<%= filterName %>" class="<%= classInput %>">
 															  	<%
 															  	for (int i = 0; i < values.length; i++) {
 															  		String optionSel = values[i].equals(selezionato) ? " selected " : " ";
