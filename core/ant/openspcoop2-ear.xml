@@ -70,7 +70,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.3.27.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.3.27.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.3.27.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.8.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.8.7.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	

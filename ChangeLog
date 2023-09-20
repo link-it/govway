@@ -1,3 +1,11 @@
+2023-09-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-34042: aggiornata libreria 'org.springframework.security:*' alla versione 5.8.7
+	Registrata come falso positivo la vulnerabilità:
+	- CVE-2023-4759: libreria 'org.eclipse.jgit:org.eclipse.jgit', versione 6.7.0.202309050840-r
+
 2023-09-19  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

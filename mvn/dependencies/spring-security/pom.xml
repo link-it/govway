@@ -17,7 +17,7 @@
 
 		<jar.group.name>spring-security</jar.group.name>
 		
-		<spring-security.version>5.8.5</spring-security.version>
+		<spring-security.version>5.8.7</spring-security.version>
 
 	</properties>
 
