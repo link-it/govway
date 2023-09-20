@@ -65,7 +65,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-6.0.11.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-6.0.11.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-6.0.11.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-6.1.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-6.1.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.0.jar"/>	

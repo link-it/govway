@@ -225,10 +225,10 @@
 	<archive path="/op2_3.4.dev/lib/spring/spring-aspects-6.0.11.jar"/>
         <archive path="/op2_3.4.dev/lib/spring/spring-orm-6.0.11.jar"/>
 	<!-- spring-security -->
-	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-core-6.1.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-web-6.1.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-crypto-6.1.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-config-6.1.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-core-6.1.4.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-web-6.1.4.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-crypto-6.1.4.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-config-6.1.4.jar"/>
 	<!-- swagger -->
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-annotations-2.2.15.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-2.2.15.jar"/>
