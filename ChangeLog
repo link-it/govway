@@ -1,6 +1,11 @@
 2023-09-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]
+	La pagina "Informazioni Generali" di un allarme rimaneva bloccata.
+
+2023-09-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
 	Risolto Bug OP-1635
 	La visualizzazione dei contenuti dei messaggi su SQLServer fallisce se la dimensione dei messaggi è superiore a '250Kb'.
 

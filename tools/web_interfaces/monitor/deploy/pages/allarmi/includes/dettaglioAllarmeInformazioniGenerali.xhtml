@@ -28,12 +28,12 @@
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelDescrizione" value="Descrizione" rendered="#{not empty allarmiBean.descrizione}"/>
 			<h:outputText id="outDescrizione" value="#{allarmiBean.descrizione}" rendered="#{not empty allarmiBean.descrizione}"/>
 		
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelModalita" value="Modalità" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme}"/>
-			<h:outputText id="outModalitaAttiva" value="Attiva" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and allarmiBean.allarme._value_tipoAllarme == 'ATTIVO'}"/>
-			<h:outputText id="outModalitaPassiva" value="Passiva" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and allarmiBean.allarme._value_tipoAllarme == 'PASSIVO'}"/>
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelModalita" value="Modalità" rendered="#{not empty allarmiBean.allarme.tipoAllarmeRawEnumValue}"/>
+			<h:outputText id="outModalitaAttiva" value="Attiva" rendered="#{not empty allarmiBean.allarme.tipoAllarmeRawEnumValue and allarmiBean.allarme.tipoAllarmeRawEnumValue == 'ATTIVO'}"/>
+			<h:outputText id="outModalitaPassiva" value="Passiva" rendered="#{not empty allarmiBean.allarme.tipoAllarmeRawEnumValue and allarmiBean.allarme.tipoAllarmeRawEnumValue == 'PASSIVO'}"/>
 			
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFrequenza" value="Frequenza" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and (allarmiBean.allarme._value_tipoAllarme=='ATTIVO' or allarmiBean.allarme._value_tipoAllarme=='ATTIVO_PASSIVO')}"/>
-			<h:panelGrid columns="3" id="outPnlFrequenza" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and (allarmiBean.allarme._value_tipoAllarme=='ATTIVO' or allarmiBean.allarme._value_tipoAllarme=='ATTIVO_PASSIVO')}">
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFrequenza" value="Frequenza" rendered="#{not empty allarmiBean.allarme.tipoAllarmeRawEnumValue and (allarmiBean.allarme.tipoAllarmeRawEnumValue=='ATTIVO' or allarmiBean.allarme.tipoAllarmeRawEnumValue=='ATTIVO_PASSIVO')}"/>
+			<h:panelGrid columns="3" id="outPnlFrequenza" rendered="#{not empty allarmiBean.allarme.tipoAllarmeRawEnumValue and (allarmiBean.allarme.tipoAllarmeRawEnumValue=='ATTIVO' or allarmiBean.allarme.tipoAllarmeRawEnumValue=='ATTIVO_PASSIVO')}">
 				<h:outputText id="periodo" value="#{allarmiBean.allarme.periodo}" styleClass="margin-left-0"/>
 				<rich:spacer width="1"/>
 				<h:outputText id="tipoPeriodoCombo" value="#{allarmiBean.tipoPeriodo}" styleClass="margin-left-0 width-152"/>
