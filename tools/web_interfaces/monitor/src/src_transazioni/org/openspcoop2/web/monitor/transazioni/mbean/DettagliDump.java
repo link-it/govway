@@ -39,6 +39,7 @@ import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCDumpMessaggioStream;
 import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.utils.CopyStream;
@@ -493,39 +494,54 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			HttpUtilities.setOutputFile(response, true, fileName, contentType);
 
 			// Streams we will use to read, write the file bytes to our response
+			JDBCDumpMessaggioStream dumpStream = null;
 			InputStream is = null;
 			OutputStream os = null;
-
-			// First we load the file in our InputStream
-			//			if(this.base64Decode){
-			//				contenutoBody = ((DumpAllegatoBean)this.dumpMessaggio).decodeBase64();
-			//			}
-			if(this.dumpMessaggio.getBody()!=null) {
-				byte[] contenutoBody = this.dumpMessaggio.getBody();
-				is = new ByteArrayInputStream(contenutoBody);
-			}
-			else {
+			try {
+			
+				// First we load the file in our InputStream
+				//			if(this.base64Decode){
+				//				contenutoBody = ((DumpAllegatoBean)this.dumpMessaggio).decodeBase64();
+				//			}
+				if(this.dumpMessaggio.getBody()!=null) {
+					byte[] contenutoBody = this.dumpMessaggio.getBody();
+					is = new ByteArrayInputStream(contenutoBody);
+				}
+				else {
+					try {
+						if(this.ultimaConsegna == null)
+							dumpStream = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
+						else 
+							dumpStream = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
+						is = dumpStream.getIs();
+					} catch (Exception e) {
+						this.log.error(e.getMessage(), e);
+					}
+				}
+				os = response.getOutputStream();
+	
+				CopyStream.copy(is, os);
+	
+				// Clean resources
+				os.flush();
+				os.close();
+				
+			}finally {
 				try {
-					if(this.ultimaConsegna == null)
-						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
-					else 
-						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
-				} catch (Exception e) {
-					this.log.error(e.getMessage(), e);
+					if(is!=null) {
+						is.close();
+					}
+				}catch(Exception e) {
+					// ignore
+				}
+				try {
+					if(dumpStream!=null) {
+						dumpStream.closeJdbcResources();
+					}
+				}catch(Exception e) {
+					// ignore
 				}
 			}
-			os = response.getOutputStream();
-
-			// While there are still bytes in the file, read them and write them to
-			// our OutputStream
-//			while ((read = bis.read(bytes)) != -1) {
-//				os.write(bytes, 0, read);
-//			}
-			CopyStream.copy(is, os);
-
-			// Clean resources
-			os.flush();
-			os.close();
 
 			FacesContext.getCurrentInstance().responseComplete();
 

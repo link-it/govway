@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.web.monitor.transazioni.dao;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,6 +55,7 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService;
 import org.openspcoop2.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCDumpMessaggioStream;
 import org.openspcoop2.core.transazioni.model.TransazioneModel;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.TransazioniIndexUtils;
@@ -1740,7 +1740,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public InputStream getContentInputStream(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception {
+	public JDBCDumpMessaggioStream getContentInputStream(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws ServiceException {
 
 		try {
 			this.log.debug("Get Dump Messaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
@@ -1766,7 +1766,7 @@ public class TransazioniService implements ITransazioniService {
 
 		} catch (Exception e) {
 			this.log.error("Impossibile recuperare DumpMessaggio con idTransazione: "+ idTransazione + ", SA Erogatore: " + saErogatore + " e tipo: "	+ tipoMessaggio.toString(), e);
-			throw new Exception("Impossibile recuperare DumpMessaggio con idTransazione: "	+ idTransazione + ", SA Erogatore: " + saErogatore + " e tipo: " + tipoMessaggio.toString(), e);
+			throw new ServiceException("Impossibile recuperare DumpMessaggio con idTransazione: "	+ idTransazione + ", SA Erogatore: " + saErogatore + " e tipo: " + tipoMessaggio.toString(), e);
 		}
 		
 	}

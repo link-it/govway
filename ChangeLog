@@ -1,3 +1,9 @@
+2023-09-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug OP-1635
+	La visualizzazione dei contenuti dei messaggi su SQLServer fallisce se la dimensione dei messaggi è superiore a '250Kb'.
+
 2023-09-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
@@ -25,7 +31,7 @@
 2023-09-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
-	Risolto OP-1631
+	Risolto Bug OP-1631
 	Modificando la configurazione di una fruizione o di una erogazione (es. sicurezza messaggio) 
 	era necessario effettuare due volte l'operazione 'Rimuovi dalla Cache' per far sì che la modifica venisse effettivamente vista dal runtime.
 

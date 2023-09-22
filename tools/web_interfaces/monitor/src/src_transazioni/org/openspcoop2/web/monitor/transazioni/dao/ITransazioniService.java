@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.web.monitor.transazioni.dao;
 
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +28,8 @@ import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCDumpMessaggioStream;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
@@ -88,7 +89,7 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 
 	public DumpMessaggio getDumpMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception;
 	
-	public InputStream getContentInputStream(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception;
+	public JDBCDumpMessaggioStream getContentInputStream(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws ServiceException;
 	
 	public int countDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore);
 	

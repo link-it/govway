@@ -19,16 +19,29 @@
  */
 package org.openspcoop2.core.transazioni.dao.jdbc;
 
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.util.List;
+import java.util.Map;
+
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.IdDumpMessaggio;
+import org.openspcoop2.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
+import org.openspcoop2.core.transazioni.utils.ProjectInfo;
+import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
 import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
-import org.openspcoop2.core.transazioni.IdDumpMessaggio;
-import org.openspcoop2.generic_project.beans.InUse;
-import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.UnionExpression;
-import org.openspcoop2.generic_project.beans.Union;
-import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCProperties;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
+import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
+import org.openspcoop2.generic_project.dao.jdbc.utils.JDBC_SQLObjectFactory;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -38,24 +51,8 @@ import org.openspcoop2.generic_project.exception.ValidationException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCProperties;
-import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBC_SQLObjectFactory;
-
-import org.openspcoop2.core.transazioni.DumpMessaggio;
-import org.openspcoop2.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
-import org.openspcoop2.core.transazioni.utils.ProjectInfo;
-
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.slf4j.Logger;
 
 /**     
  * Service can be used to search for the backend objects of type {@link org.openspcoop2.core.transazioni.DumpMessaggio} 
@@ -527,7 +524,7 @@ public class JDBCDumpMessaggioServiceSearch implements IDBDumpMessaggioServiceSe
 	}
 
 	@Override
-	public InputStream getContentInputStream(IExpression expression) 
+	public JDBCDumpMessaggioStream getContentInputStream(IExpression expression) 
 			throws ServiceException {
 		
 		Connection connection = null;
@@ -551,62 +548,24 @@ public class JDBCDumpMessaggioServiceSearch implements IDBDumpMessaggioServiceSe
 
 			Method method = this.serviceSearch.getClass().getMethod("getContentInputStream", 
 					JDBCServiceManagerProperties.class, Logger.class, 
-					Connection.class, ISQLQueryObject.class, JDBCExpression.class, 
-					org.openspcoop2.generic_project.beans.IDMappingBehaviour.class);
-			return (InputStream) method.invoke(this.serviceSearch, this.jdbcProperties,this.log,connection,sqlQueryObject,jdbcExpression,null);			
+					Connection.class, JDBCServiceManager.class, 
+					ISQLQueryObject.class, JDBCExpression.class);
+			return (JDBCDumpMessaggioStream) method.invoke(this.serviceSearch, 
+					this.jdbcProperties,this.log, 
+					connection, this.jdbcServiceManager, 
+					sqlQueryObject,jdbcExpression);			
 
 		}catch(ServiceException e){
 			this.logError(e); throw e;
 		}catch(Exception e){
 			this.logError(e); throw new ServiceException("Find not completed: "+e.getMessage(),e);
 		}finally{
+			/**
+			 * OP-1635
 			if(connection!=null){
 				this.jdbcServiceManager.closeConnection(connection);
 			}
-		}
-		
-	}
-	
-	@Override
-	public InputStream getContentInputStream(IExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) 
-			throws ServiceException {
-		
-		Connection connection = null;
-		try{
-			
-			// check parameters
-			if(idMappingResolutionBehaviour==null){
-				throw newServiceExceptionParameterIdMappingResolutionBehaviourIsNull();
-			}
-			if(expression==null){
-				throw newServiceExceptionParameterPaginatedExpressionIsNull();
-			}
-			if( ! (expression instanceof JDBCExpression) ){
-				throw newServiceExceptionParameterExpressionWrongType(expression);
-			}
-			JDBCExpression jdbcExpression = (JDBCExpression) expression;
-			logJDBCExpression(jdbcExpression);
-
-			// ISQLQueryObject
-			ISQLQueryObject sqlQueryObject = this.jdbcSqlObjectFactory.createSQLQueryObject(this.jdbcProperties.getDatabase());
-			sqlQueryObject.setANDLogicOperator(true);
-			// Connection sql
-			connection = this.jdbcServiceManager.getConnection();
-
-			Method method = this.serviceSearch.getClass().getMethod("getContentInputStream", 
-					JDBCServiceManagerProperties.class, Logger.class, 
-					Connection.class, ISQLQueryObject.class, JDBCExpression.class, 
-					org.openspcoop2.generic_project.beans.IDMappingBehaviour.class);
-			return (InputStream) method.invoke(this.serviceSearch, this.jdbcProperties,this.log,connection,sqlQueryObject,jdbcExpression,idMappingResolutionBehaviour);			
-
-		}catch(ServiceException e){
-			this.logError(e); throw e;
-		}catch(Exception e){
-			this.logError(e); throw new ServiceException("Find not completed: "+e.getMessage(),e);
-		}finally{
-			if(connection!=null){
-				this.jdbcServiceManager.closeConnection(connection);
-			}
+			*/
 		}
 		
 	}

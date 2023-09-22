@@ -26,12 +26,15 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.slf4j.Logger;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
+import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
-
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
@@ -46,6 +49,7 @@ import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UnionExpression;
 import org.openspcoop2.generic_project.beans.Union;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
@@ -216,47 +220,77 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		
 	}
 	
-	public InputStream getContentInputStream(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) 
-			throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
+	public JDBCDumpMessaggioStream getContentInputStream(JDBCServiceManagerProperties jdbcProperties, Logger log, 
+			Connection connection, JDBCServiceManager jdbcServiceManager, 
+			ISQLQueryObject sqlQueryObject, JDBCExpression expression) 
+			throws NotFoundException, ServiceException {
 
-        long id = this.findTableId(jdbcProperties, log, connection, sqlQueryObject, expression);
+		long id = -1;
+		try {
+			id = this.findTableId(jdbcProperties, log, connection, sqlQueryObject, expression);
+		}catch(Exception e) {
+			throw new ServiceException(e.getMessage(),e);
+		}
         if(id>0){
-        	
-            IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.getDumpMessaggioFieldConverter().getDatabaseType());
-            ISQLQueryObject sqlQueryObjectGet_dumpMessaggio = sqlQueryObject.newSQLQueryObject();
-            sqlQueryObjectGet_dumpMessaggio.setANDLogicOperator(true);
-    		sqlQueryObjectGet_dumpMessaggio.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()));
-    		sqlQueryObjectGet_dumpMessaggio.addSelectAliasField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().BODY,true),"contentBodyStream");
-    		sqlQueryObjectGet_dumpMessaggio.addWhereCondition("id=?");
-            ResultSet rs = null;
-            PreparedStatement pstmt = null;
-            try {
-            	String query = sqlQueryObjectGet_dumpMessaggio.createSQLQuery();
-            	pstmt = connection.prepareStatement(query);
-            	pstmt.setLong(1, id);
-            	rs = pstmt.executeQuery();
-            	if(rs.next()) {
-            		return jdbcAdapter.getBinaryStream(rs, "contentBodyStream");
-            	}
-            	return null;
-            }finally {
-            	try {
-            		if(rs!=null) {
-            			rs.close();
-            		}
-            	}catch(Throwable eClose) {}
-            	try {
-            		if(pstmt!=null) {
-            			pstmt.close();
-            		}
-            	}catch(Throwable eClose) {}
-            }
-        	
+        	try {
+	        	return getContentInputStream(connection, jdbcServiceManager, 
+	        			sqlQueryObject,
+	        			id);
+        	}catch(Exception e) {
+    			throw new ServiceException(e.getMessage(),e);
+    		}
         }else{
         	throw new NotFoundException("Entry with id["+id+"] not found");
         }
         
-
+	}
+	private JDBCDumpMessaggioStream getContentInputStream(Connection connection, JDBCServiceManager jdbcServiceManager, 
+			ISQLQueryObject sqlQueryObject,
+			long id) 
+			throws JDBCAdapterException, ExpressionException, SQLQueryObjectException, SQLException, UtilsException {
+		IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.getDumpMessaggioFieldConverter().getDatabaseType());
+		ISQLQueryObject sqlQueryObjectGetDumpMessaggio = buildSQLQueryObjectGetContentInputStream(sqlQueryObject);
+		ResultSet rs = null;
+		PreparedStatement pstmt = null;
+		try {
+			String query = sqlQueryObjectGetDumpMessaggio.createSQLQuery();
+          	pstmt = connection.prepareStatement(query);
+          	pstmt.setLong(1, id);
+          	rs = pstmt.executeQuery();
+          	if(rs.next()) {
+          		InputStream is = jdbcAdapter.getBinaryStream(rs, "contentBodyStream");
+          		return new JDBCDumpMessaggioStream(is,
+          				rs,pstmt,
+          				connection,jdbcServiceManager);
+          	}
+          	return null;
+		}finally {
+			/** OP-1635
+				try {
+					if(rs!=null) {
+						rs.close();
+					}
+				}catch(Exception eClose) {
+					// ignore
+				}
+				try {
+					if(pstmt!=null) {
+						pstmt.close();
+					}
+				}catch(Exception eClose)  {
+					// ignore
+				}
+			}
+			*/
+		}
+	}
+	private ISQLQueryObject buildSQLQueryObjectGetContentInputStream(ISQLQueryObject sqlQueryObject) throws SQLQueryObjectException, ExpressionException {
+		ISQLQueryObject sqlQueryObjectGetDumpMessaggio = sqlQueryObject.newSQLQueryObject();
+         sqlQueryObjectGetDumpMessaggio.setANDLogicOperator(true);
+         sqlQueryObjectGetDumpMessaggio.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()));
+         sqlQueryObjectGetDumpMessaggio.addSelectAliasField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().BODY,true),"contentBodyStream");
+         sqlQueryObjectGetDumpMessaggio.addWhereCondition("id=?");
+         return sqlQueryObjectGetDumpMessaggio;
 	}
 	
 	@Override

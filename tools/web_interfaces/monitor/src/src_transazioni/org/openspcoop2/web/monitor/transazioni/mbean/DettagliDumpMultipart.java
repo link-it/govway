@@ -39,6 +39,7 @@ import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCDumpMessaggioStream;
 import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.utils.DumpAttachment;
@@ -374,24 +375,46 @@ public class DettagliDumpMultipart extends PdDBaseBean<Transazione, String, ITra
 	
 			}
 			
+			JDBCDumpMessaggioStream dumpStream = null;
 			InputStream is = null;
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			if(tmp!=null && tmp.getBody()!=null) {
-				byte[] contenutoBody = tmp.getBody();
-				is = new ByteArrayInputStream(contenutoBody);
-			}
-			else {
+			try {
+				if(tmp!=null && tmp.getBody()!=null) {
+					byte[] contenutoBody = tmp.getBody();
+					is = new ByteArrayInputStream(contenutoBody);
+				}
+				else {
+					try {
+						if(this.ultimaConsegna == null)
+							dumpStream = this.service.getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
+						else 
+							dumpStream = this.service.getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
+						is = dumpStream.getIs();
+					} catch (Exception e) {
+						this.log.error(e.getMessage(), e);
+					}
+				}
+			
+				CopyStream.copy(is, baos);
+				baos.flush();
+				baos.close();
+				
+			}finally {
 				try {
-					if(this.ultimaConsegna == null)
-						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
-					else 
-						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
-				} catch (Exception e) {
-					this.log.error(e.getMessage(), e);
+					if(is!=null) {
+						is.close();
+					}
+				}catch(Exception e) {
+					// ignore
+				}
+				try {
+					if(dumpStream!=null) {
+						dumpStream.closeJdbcResources();
+					}
+				}catch(Exception e) {
+					// ignore
 				}
 			}
-		
-			CopyStream.copy(is, baos);
 			
 			byte [] content = baos.toByteArray();
 			String contentType = tmp!=null ? tmp.getContentType() : null;
