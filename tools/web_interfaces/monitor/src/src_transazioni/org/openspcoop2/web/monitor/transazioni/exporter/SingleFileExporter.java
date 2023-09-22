@@ -52,6 +52,7 @@ import org.openspcoop2.core.transazioni.TransazioneExport;
 import org.openspcoop2.core.transazioni.constants.DeleteState;
 import org.openspcoop2.core.transazioni.constants.ExportState;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCDumpMessaggioStream;
 import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggioMultipartInfo;
 import org.openspcoop2.protocol.basic.archive.ZIPUtils;
@@ -890,8 +891,29 @@ public class SingleFileExporter implements IExporter{
 						zip.write(dump.getBody());
 					}
 					else {
-						InputStream is = service.getContentInputStream(idTransazione, saErogatore, dataConsegnaErogatore, tipo);
-						CopyStream.copy(is, zip);
+						InputStream is = null;
+						JDBCDumpMessaggioStream dumpStream = null;
+						try {
+							dumpStream = service.getContentInputStream(idTransazione, saErogatore, dataConsegnaErogatore, tipo);
+							is = dumpStream.getIs();
+							
+							CopyStream.copy(is, zip);
+						}finally {
+							try {
+								if(is!=null) {
+									is.close();
+								}
+							}catch(Exception e) {
+								// ignore
+							}
+							try {
+								if(dumpStream!=null) {
+									dumpStream.closeJdbcResources();
+								}
+							}catch(Exception e) {
+								// ignore
+							}
+						}
 					}
 					zip.flush();
 					zip.closeEntry();
@@ -1161,16 +1183,37 @@ public class SingleFileExporter implements IExporter{
 					}
 					
 					InputStream is = null;
+					JDBCDumpMessaggioStream dumpStream = null;
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					if(dumpDB.getBody()!=null) {
-						byte[] contenutoBody = dumpDB.getBody();
-						is = new ByteArrayInputStream(contenutoBody);
+					try {
+						if(dumpDB.getBody()!=null) {
+							byte[] contenutoBody = dumpDB.getBody();
+							is = new ByteArrayInputStream(contenutoBody);
+						}
+						else {
+							dumpStream = service.getContentInputStream(idTransazione, saErogatore, dataConsegnaErogatore, tipo);
+							is = dumpStream.getIs();
+						}
+						
+						CopyStream.copy(is, baos);
+						baos.flush();
+						baos.close();
+					}finally {
+						try {
+							if(is!=null) {
+								is.close();
+							}
+						}catch(Exception e) {
+							// ignore
+						}
+						try {
+							if(dumpStream!=null) {
+								dumpStream.closeJdbcResources();
+							}
+						}catch(Exception e) {
+							// ignore
+						}
 					}
-					else {
-						is = service.getContentInputStream(idTransazione, saErogatore, dataConsegnaErogatore, tipo);
-					}
-					
-					CopyStream.copy(is, baos);
 					
 					byte [] content = baos.toByteArray();
 					String contentType = dumpDB.getContentType();

@@ -439,8 +439,10 @@ public class JDBCAdapterTest {
 	    	if(rsQuery.next()){
 	    		
 	    		// per nome
-	    		InputStream isRead = jdbcAdapter.getBinaryStream(rsQuery, "contenuto");
-	    		byte[] read = Utilities.getAsByteArray(isRead);
+	    		byte[] read = null;
+	    		try(InputStream isRead = jdbcAdapter.getBinaryStream(rsQuery, "contenuto");){
+	    			read = Utilities.getAsByteArray(isRead);
+	    		}
 	    		for (int i = 0; i < data.length; i++) {
 					if(data[i]!=read[i]){
 						File fTmpOriginale = File.createTempFile("orig", "tmp");
@@ -464,8 +466,10 @@ public class JDBCAdapterTest {
 	    	if(rsQuery.next()){
 	    		
 	    		// per posizione
-	    		InputStream isRead = jdbcAdapter.getBinaryStream(rsQuery, 2);
-	    		byte[] read = Utilities.getAsByteArray(isRead);
+	    		byte[] read = null;
+	    		try(InputStream isRead = jdbcAdapter.getBinaryStream(rsQuery, 2);){
+	    			read = Utilities.getAsByteArray(isRead);
+	    		}
 	    		for (int i = 0; i < data.length; i++) {
 					if(data[i]!=read[i]){
 						File fTmpOriginale = File.createTempFile("orig", "tmp");
