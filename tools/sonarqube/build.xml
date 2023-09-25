@@ -228,6 +228,8 @@
 				<var name="govway.tests" value="${govway.tests},**/org/openspcoop2/core/registry/driver/test/*.java"/>
 
 				<!-- Falsi positivi -->
+				<property file="${sonar.falsePositivesDir}/runtime/core/core.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.core.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/runtime/core/enum.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${runtime.core.enum.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/runtime/core/security_hotspots.properties"/>
