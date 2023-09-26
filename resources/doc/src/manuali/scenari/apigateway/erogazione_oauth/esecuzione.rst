@@ -18,7 +18,7 @@ Passi da eseguire:
 2. Successivamente si passa alla chiamata della "POST /pet" seguendo il flusso OAuth2 richiesto per l'approvvigionamento del token di autorizzazione. Posizionarsi sulla request "IN token-auth (postPet) OK":
 
   - Nella sezione "Authorization" selezionare il Type "OAuth 2.0" e premere il pulsante "Get New Access Token"
-  - La maschera fornita (:numref:`postman_newAccessToken_fig`) deve essere compilata con i parametri necessari ad richiedere un token all'authorization server. Utilizzare i seguenti parametri che permettono di richiedere un token all'authorization server preconfigurato per lo scenario:
+  - La maschera fornita deve essere compilata con i parametri necessari ad richiedere un token all'authorization server (sono forniti esempi a seconda della versione utilizzata di Postman in :numref:`postman_newAccessToken_2_fig` e :numref:`postman_newAccessToken_fig`). Utilizzare i seguenti parametri che permettono di richiedere un token all'authorization server preconfigurato per lo scenario:
 
       ::
 
@@ -27,6 +27,13 @@ Passi da eseguire:
 	  Access Token URL: {{keycloak-url-token}}
 	  Client ID: {{keycloak-client-id}}
 	  Client Secret: {{keycloak-client-secret}}
+
+   .. figure:: ../../_figure_scenari/postman_newAccessToken_2.png
+    :scale: 70%
+    :align: center
+    :name: postman_newAccessToken_2_fig
+
+    Ottenimento nuovo token (versioni di Postman più recenti)
 
    .. figure:: ../../_figure_scenari/postman_newAccessToken.png
     :scale: 70%

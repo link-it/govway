@@ -28,7 +28,14 @@ Una volta effettuato il caricamento della collezione, modificare i parametri del
 
  Configurazione Hostname nella Collection Postman
 
-Infine accedere alla configurazione generale di Postman (:numref:`postman_settings_fig`) ed assicurarsi che la voce '*SSL Certificate Verification*' nella maschera '*General*' sia disabilitata (:numref:`postman_ssl_fig`) e che non vi sia impostato un proxy nella maschera '*Proxy*' (:numref:`postman_proxy_fig`).
+Infine accedere alla configurazione generale di Postman (alcuni esempi a seconda della versione utilizzata in :numref:`postman_settings_2_fig` e :numref:`postman_settings_fig`) ed assicurarsi che la voce '*SSL Certificate Verification*' nella maschera '*General*' sia disabilitata (:numref:`postman_ssl_2_fig`, :numref:`postman_ssl_fig`) e che non vi sia impostato un proxy nella maschera '*Proxy*' (:numref:`postman_proxy_2_fig`, :numref:`postman_proxy_fig`).
+
+.. figure:: ../_figure_scenari/postman_settings_2.png
+ :scale: 80%
+ :align: center
+ :name: postman_settings_2_fig
+
+ Configurazione Generale Postman (versioni più recenti)
 
 .. figure:: ../_figure_scenari/postman_settings.png
  :scale: 80%
@@ -37,12 +44,26 @@ Infine accedere alla configurazione generale di Postman (:numref:`postman_settin
 
  Configurazione Generale Postman
 
+.. figure:: ../_figure_scenari/postman_ssl_2.png
+ :scale: 80%
+ :align: center
+ :name: postman_ssl_2_fig
+
+ Configurazione SSL Postman (versioni più recenti)
+
 .. figure:: ../_figure_scenari/postman_ssl.png
  :scale: 80%
  :align: center
  :name: postman_ssl_fig
 
  Configurazione SSL Postman
+
+.. figure:: ../_figure_scenari/postman_proxy_2.png
+ :scale: 80%
+ :align: center
+ :name: postman_proxy_2_fig
+
+ Configurazione Proxy Postman (versioni più recenti)
 
 .. figure:: ../_figure_scenari/postman_proxy.png
  :scale: 80%
