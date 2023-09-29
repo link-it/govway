@@ -1,3 +1,9 @@
+2023-09-29  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio]
+	Risolto Bug OP-1637
+	La distribuzione temporale non consentiva di ottenere report contenenti informazioni sull'occupazione della banda e sul tempo medio di risposta dei servizi.
+
 2023-09-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]
