@@ -676,6 +676,7 @@ public class ReportisticaHelper {
 			}
 		}
 		
+		wrap.overrideParameter(CostantiExporter.TIPO_INFORMAZIONE_VISUALIZZATA, Enums.toTipoVisualizzazione.get(body.getTipoInformazione().getTipo()).toString());
 		switch (body.getTipoInformazione().getTipo()) {
 		case NUMERO_TRANSAZIONI:
 			break;
