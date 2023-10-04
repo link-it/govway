@@ -794,13 +794,44 @@ Scenario: isTest('audit-rest-jwk-criteri-autorizzativi-ok-01')
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
-Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
+Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ||
+		isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-optionalaudit')
 
     * match requestHeaders['Authorization'] == '#notpresent'
     * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
     * match requestHeaders['GovWay-Audit-UserID'] == '#notpresent'
     * match requestHeaders['GovWay-Audit-UserLocation'] == '#notpresent'
     * match requestHeaders['GovWay-Audit-LoA'] == '#notpresent'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-token-custom-01')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-TypeINT'][0] == '23'
+    * match requestHeaders['GovWay-Audit-TypeBoolean'][0] == 'true'
+    * match requestHeaders['GovWay-Audit-TypeStringRegExp'][0] == 'ABCDE'
+    * match requestHeaders['GovWay-Audit-TypeINTRegExp'][0] == '12'
+    * match requestHeaders['GovWay-Audit-TypeListString'][0] == 'Valore2'
+    * match requestHeaders['GovWay-Audit-TypeListInt'][0] == '10.3'
+    * match requestHeaders['GovWay-Audit-TypeMixed1'][0] == 'ZZ'
+    * match requestHeaders['GovWay-Audit-TypeMixed2'][0] == '23456'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-token-custom-02')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-TypeINT'][0] == '99147483647'
+    * match requestHeaders['GovWay-Audit-TypeBoolean'][0] == 'false'
+    * match requestHeaders['GovWay-Audit-TypeStringRegExp'][0] == 'A'
+    * match requestHeaders['GovWay-Audit-TypeINTRegExp'][0] == '1'
+    * match requestHeaders['GovWay-Audit-TypeListString'][0] == 'Valore4'
+    * match requestHeaders['GovWay-Audit-TypeListInt'][0] == '45'
+    * match requestHeaders['GovWay-Audit-TypeMixed1'][0] == 'AA'
+    * match requestHeaders['GovWay-Audit-TypeMixed2'][0] == '22'
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 

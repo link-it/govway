@@ -1,3 +1,11 @@
+2023-10-04  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto Bug OP-1639
+	Attivando una configurazione opzionale per il token di audit, l'impostazione veniva ignorata e il token veniva obbligatoriamente richiesto.
+	È stata inoltre aggiunta la possibilità di definire dei criteri di validazioni sui claim definiti all'interno del token di audit.
+	I criteri associabili ad ogni claim sono la validazione rispetto ad una lista di valori, tramite una espressione regolare, e l'indicazione della lunghezza minima o massima di caratteri.
+
 2023-09-29  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio]

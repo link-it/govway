@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.modipa.constants.ModIHeaderType;
 import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
+import org.openspcoop2.protocol.modipa.validator.ModIValidazioneAuditClaimValue;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -1455,22 +1456,21 @@ public class ModIImbustamentoRest {
 			ObjectNode payloadToken, Busta busta,
 			ModIAuditClaimConfig modIAuditClaimConfig,
 			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
+		
+		String headerTokenAudit = this.modiProperties.getSecurityTokenHeaderModIAudit();
+		String prefix = "[Token '"+headerTokenAudit+"'] ";
+		
 		String claimName = modIAuditClaimConfig.getNome();
-		String valore = null;
+		ModIValidazioneAuditClaimValue valoreIntegrazione = null;
 		try {
 			List<String> claimRules = modIAuditClaimConfig.getRules();
 			if(claimRules==null || claimRules.isEmpty()) {
 				throw new ProtocolException("Rules not available for claim '"+claimName+"'");
 			}
 			
-			valore = addCorniceSicurezzaSchemaPayload(dynamicMap, context,
-					payloadToken, 
+			valoreIntegrazione = readCorniceSicurezzaSchemaPayloadValue(dynamicMap, context,
 					modIAuditClaimConfig, claimName, claimRules,
-					modiTokenClaims);
-			
-			if(modIAuditClaimConfig.isTrace()) {
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, valore);
-			}
+					prefix);
 			
 		}catch(Exception e) {
 			if(modIAuditClaimConfig.isRequired()) {
@@ -1483,30 +1483,82 @@ public class ModIImbustamentoRest {
 				this.log.debug(e.getMessage(),e);
 			}
 		}
+		
+		// Valido il valore
+		try {
+			if(valoreIntegrazione!=null) {
+				valoreIntegrazione.validate(prefix);
+			}
+		}catch(Exception e) {
+			this.log.error(e.getMessage(),e);
+			ProtocolException pe = new ProtocolException(e.getMessage());
+			pe.setInteroperabilityError(true);
+			throw pe;
+		}
+		
+		// Aggiungo (non dovrebbero succedere errori)
+		try {
+		
+			if(valoreIntegrazione!=null) {
+				String valore = addCorniceSicurezzaSchemaPayload(payloadToken, 
+						claimName, valoreIntegrazione,
+						modiTokenClaims);
+				
+				if(modIAuditClaimConfig.isTrace()) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, valore);
+				}
+			}
+			
+		}catch(Exception e) {
+			if(this.log!=null) {
+				this.log.error(e.getMessage(),e);
+			}
+			throw new ProtocolException(e.getMessage());
+		}
+			
 	}
-	private String addCorniceSicurezzaSchemaPayload(Map<String, Object> dynamicMap, Context context,
-			ObjectNode payloadToken, 
+	
+	private ModIValidazioneAuditClaimValue readCorniceSicurezzaSchemaPayloadValue(Map<String, Object> dynamicMap, Context context,
 			ModIAuditClaimConfig modIAuditClaimConfig, String claimName, List<String> rules,
-			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
+			String prefix) throws ProtocolException {
 		String valore = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL+" - "+modIAuditClaimConfig.getLabel(), 
 				rules, dynamicMap, context);
-		if(modIAuditClaimConfig.isStringType()) {
+		
+		return new ModIValidazioneAuditClaimValue(claimName, valore, modIAuditClaimConfig, prefix);
+	}
+	private String addCorniceSicurezzaSchemaPayload(ObjectNode payloadToken, 
+			String claimName, ModIValidazioneAuditClaimValue value,
+			ModIJWTTokenClaims modiTokenClaims) {
+
+		if(value.getRawObject() instanceof String) {
+			String valore = (String) value.getRawObject();
 			payloadToken.put(claimName, valore);
 		}
 		else {
-			if("true".equals(valore)) {
-				payloadToken.put(claimName, true);
+			if(value.getRawObject() instanceof Boolean) {
+				boolean valore = (Boolean) value.getRawObject();
+				payloadToken.put(claimName, valore);
 			}
-			else if("false".equals(valore)) {
-				payloadToken.put(claimName, false);
+			else if(value.getRawObject() instanceof Double) {
+				double valore = (Double) value.getRawObject();
+				payloadToken.put(claimName, valore);
 			}
-			else {
-				long l = Long.parseLong(valore);
-				payloadToken.put(claimName, l);
+			else if(value.getRawObject() instanceof Float) {
+				float valore = (Float) value.getRawObject();
+				payloadToken.put(claimName, valore);
+			}
+			else if(value.getRawObject() instanceof Long) {
+				long valore = (Long) value.getRawObject();
+				payloadToken.put(claimName, valore);
+			}
+			else if(value.getRawObject() instanceof Integer) {
+				int valore = (Integer) value.getRawObject();
+				payloadToken.put(claimName, valore);
 			}
 		}
-		modiTokenClaims.addCorniceSicurezzaAudit(claimName, valore);
-		return valore;
+		modiTokenClaims.addCorniceSicurezzaAudit(claimName, value.getValore());
+		
+		return value.getValore();
 	}
 	
 	private boolean addCorniceSicurezzaLegacyCodiceEnte(ModISecurityConfig securityConfig,

@@ -39,6 +39,10 @@ public class ModIAuditClaimConfig {
 	public static final String PROPERTY_LABEL = "label";
 	public static final String PROPERTY_REQUIRED = "required";
 	public static final String PROPERTY_STRING_TYPE = "stringType";
+	public static final String PROPERTY_REGEXP = "regexp";
+	public static final String PROPERTY_ENUM = "enum";
+	public static final String PROPERTY_MIN_LENGTH = "minLength";
+	public static final String PROPERTY_MAX_LENGTH = "maxLength";
 	public static final String PROPERTY_INFO = "info";
 	public static final String PROPERTY_DEFAULT_RULE = "rule";
 	public static final String PROPERTY_DEFAULT_RULE_INFO = "rule.info";
@@ -54,9 +58,21 @@ public class ModIAuditClaimConfig {
 		this.label = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_LABEL, true);
 		this.required = ModIAuditConfig.getBooleanProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_REQUIRED, true, true);
 		this.stringType = ModIAuditConfig.getBooleanProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_STRING_TYPE, true, true);
+		
+		this.regexp = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_REGEXP, false);
+		
+		String tmp = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_ENUM, false);
+		if(tmp!=null && StringUtils.isNotEmpty(tmp)) {
+			this.values = new ArrayList<>();
+			setList(tmp, this.values);
+		}
+		
+		this.minLength = ModIAuditConfig.getIntProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_MIN_LENGTH, false, -1);
+		this.maxLength = ModIAuditConfig.getIntProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_MAX_LENGTH, false, -1);
+		
 		this.info = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_INFO, true);
 		
-		String tmp = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_DEFAULT_RULE, true);
+		tmp = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_DEFAULT_RULE, true);
 		this.rules = new ArrayList<>();
 		setList(tmp, this.rules);
 			
@@ -89,6 +105,10 @@ public class ModIAuditClaimConfig {
 	private String label;
 	private boolean required;
 	private boolean stringType;
+	private String regexp;
+	private List<String> values;
+	private int minLength;
+	private int maxLength;
 	private String info;
 	private List<String> rules;
 	private List<String> rulesInfo;
@@ -102,6 +122,16 @@ public class ModIAuditClaimConfig {
 		newInstance.label = this.label;
 		newInstance.required = this.required;
 		newInstance.stringType = this.stringType;
+		newInstance.regexp = this.regexp;
+		
+		newInstance.values = new ArrayList<>();
+		if(this.values!=null && !this.values.isEmpty()) {
+			newInstance.values.addAll(this.values);
+		}
+		
+		newInstance.minLength = this.minLength;
+		newInstance.maxLength = this.maxLength;
+		
 		newInstance.info = this.info;
 		
 		newInstance.rules = new ArrayList<>();
@@ -139,6 +169,21 @@ public class ModIAuditClaimConfig {
 		return this.stringType;
 	}
 
+	public String getRegexp() {
+		return this.regexp;
+	}
+	
+	public List<String> getValues() {
+		return this.values;
+	}
+	
+	public int getMinLength() {
+		return this.minLength;
+	}
+	public int getMaxLength() {
+		return this.maxLength;
+	}
+	
 	public String getInfo() {
 		return this.info;
 	}

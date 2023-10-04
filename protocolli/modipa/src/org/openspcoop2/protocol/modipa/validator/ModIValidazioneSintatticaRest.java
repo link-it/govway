@@ -174,10 +174,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		return getErrorHeaderHttpPrefix(hdr)+" presente più volte";
 	}
 	
-	private String getErroreTokenSenzaClaim(String c) {
+	static String getErroreTokenSenzaClaim(String c) {
 		return "Token senza claim '"+c+"'";
 	} 
-	private String getErroreTokenClaimNonValido(String c, Exception e) {
+	static String getErroreTokenClaimNonValido(String c, Exception e) {
 		return "Token con claim '"+c+"' non valido: "+e.getMessage();
 	}
 	
@@ -1490,6 +1490,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					Object o = objectNode.get(claimName);
 					if(o!=null) {
 						processCorniceSicurezzaSchemaClaimValue(msg, modIAuditClaimConfig, busta,
+								erroriValidazione, prefix,
 								claimName, o);
 					}
 				}
@@ -1502,18 +1503,27 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		
 	}
 	private void processCorniceSicurezzaSchemaClaimValue(OpenSPCoop2Message msg, ModIAuditClaimConfig modIAuditClaimConfig, Busta busta,
-			String claimName, Object o) {
+			List<Eccezione> erroriValidazione, String prefix,
+			String claimName, Object o) throws ProtocolException {
+		
 		String v = toString(o);
 		
+		
+		// Trace
 		if(modIAuditClaimConfig.isTrace()) {
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, v);
 		}
 		
+		// Validazione
+		ModIValidazioneAuditClaimValue validator = new ModIValidazioneAuditClaimValue(claimName, v, o, modIAuditClaimConfig);
+		validator.validate(this.validazioneUtils, erroriValidazione, prefix);
+		
+		// Forward
 		String header = modIAuditClaimConfig.getForwardBackend();
 		if(header!=null && StringUtils.isNotEmpty(header)) {
 			msg.forceTransportHeader(header, v);
 		}
-	}
+	}	
 	
 	private boolean readCorniceSicurezzaCodiceEnteLegacy(ObjectNode objectNode, Busta busta,
 			List<Eccezione> erroriValidazione, String prefix) throws ProtocolException {

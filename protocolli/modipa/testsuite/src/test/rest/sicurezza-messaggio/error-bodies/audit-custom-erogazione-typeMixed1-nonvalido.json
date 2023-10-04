@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "[Header 'Agid-JWT-TrackingEvidence'] Token con claim 'typeMixed1' non valido: Invalid value 'Z'; min length requirement '2' not met",
+    "govway_id": "#string"
+}

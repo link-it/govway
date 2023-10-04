@@ -135,52 +135,7 @@ Prerequisiti:
 
 		# ================================================
 		# ----- AUDIT_REST_XX
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern=default,optional
-
-		# . Pattern di default con info opzionali.
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.nome=Linee-Guida-ModI-Optional
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.label=Linee Guida ModI Optional
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims=userID,userLocation,loa
-		# Indicazione se deve essere prodotto il claim 'iss' valorizzato con il clientId
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.iss.locale=false
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.iss.oauth=true
-		# Indicazione se deve essere prodotto il claim 'sub' valorizzato con il clientId
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.sub.locale=false
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.sub.oauth=false
-		# Indicazione se deve essere prodotto il claim 'client_id' valorizzato con il clientId
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.client_id.locale=false
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.client_id.oauth=false
-		# userID:  un identificativo univoco dell'utente interno al dominio del fruitore che ha determinato l'esigenza della request di accesso all'e-service dell'erogatore
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.nome=userID
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.label=UserID
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.required=false
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.stringType=true
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.info= Identificativo univoco dell'utente interno al dominio del fruitore che ha determinato l'esigenza della richiesta di accesso all'e-service dell'erogatore
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.rule=${header:GovWay-Audit-User},${query:govway_audit_user}
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.rule.info=Header http 'GovWay-Audit-User',Parametro della url 'govway_audit_user'
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.forwardBackend=
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.trace=false
-		# userLocation: un identificativo univoco della postazione interna al dominio del fruitore da cui è avviata l'esigenza della request di accesso all'e-service dell'erogatore
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.nome=userLocation
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.label=Identificativo Postazione
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.required=false
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.stringType=true
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.info= Identificativo univoco della postazione interna al dominio del fruitore che ha determinato l'esigenza della richiesta di accesso all'e-service dell'erogatore
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.rule=${header:GovWay-Audit-UserLocation},${query:govway_audit_user_location}
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.rule.info=Header http 'GovWay-Audit-UserLocation',Parametro della url 'govway_audit_user_location'
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.forwardBackend=
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.trace=false
-		# LoA: livello di sicurezza o di garanzia adottato nel processo di autenticazione informatica nel dominio del fruitore.
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.nome=LoA
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.label=Livello di Sicurezza
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.required=false
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.stringType=true
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.info= Livello di sicurezza o di garanzia adottato nel processo di autenticazione informatica nel dominio del fruitore
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.rule=${header:GovWay-Audit-LoA},${query:govway_audit_loa}
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.rule.info=Header http 'GovWay-Audit-LoA',Parametro della url 'govway_audit_loa'
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.forwardBackend=
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.trace=false
-
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern=default,optional,custom,custom_no_validation,custom_type_string,custom_type_not_string
 
 		# ================================================
 		# --------- Codifica Digest -----
@@ -188,6 +143,8 @@ Prerequisiti:
 
 		# Nel token di integrity viene aggiunto il kid del certificato anche se si usa la modalità 'X509' (x5c/x5u/x5t)
 		org.openspcoop2.protocol.modipa.rest.securityToken.x509.kid=true
+
+	- Appendere in fondo al file </etc/govway/modipa_local.properties> il contenuto del file 'protocolli/modipa/testsuite/audit/modipa_local.adjunct'
 
 + Nel file /etc/govway/govway_local.properties abilitare le seguenti proprietà:
 

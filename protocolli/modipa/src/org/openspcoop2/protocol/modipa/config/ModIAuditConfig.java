@@ -72,7 +72,7 @@ public class ModIAuditConfig {
 		config.label = this.label;
 		
 		config.claims = new ArrayList<>();
-		if(this.claims!=null && !this.claims.isEmpty()) {
+		if(this.claims!=null && !this.claims.isEmpty()) {			
 			for (ModIAuditClaimConfig modIAuditClaimConfig : this.claims) {
 				config.claims.add(modIAuditClaimConfig.copyNewInstance());
 			}
@@ -109,6 +109,22 @@ public class ModIAuditConfig {
 			this.claims.add(new ModIAuditClaimConfig(prefix, c, p));
 		}
 		
+		// Verifico univocita
+		if(this.claims!=null && !this.claims.isEmpty()) {
+			for (ModIAuditClaimConfig modIAuditClaimConfig : this.claims) {
+				String name = modIAuditClaimConfig.getNome();
+				int count = 0;
+				for (ModIAuditClaimConfig modIAuditClaimConfigCheck : this.claims) {
+					if(name.equals(modIAuditClaimConfigCheck.getNome())) {
+						count++;
+					}
+				}
+				if(count>1) {
+					throw new ProtocolException("Property "+PROPERTY_CLAIMS+".xx."+ModIAuditClaimConfig.PROPERTY_NOME+"="+name+" defined more then one time ("+count+")");
+				}
+			}
+		}
+		
 		this.issLocale = getBooleanProperty(prefix, p, PROPERTY_ISS_LOCALE, false, false);
 		this.issOAuth = getBooleanProperty(prefix, p, PROPERTY_ISS_OAUTH, false, true);
 		
@@ -140,6 +156,17 @@ public class ModIAuditConfig {
 				return Boolean.valueOf(tmp);
 			}catch(Exception t) {
 				throw new ProtocolException("Boolean property '"+prefixProperty+"."+name+"' invalid (found value:["+tmp+"]): "+t.getMessage(),t);
+			}
+		}
+		return defaultValue;
+	}
+	static int getIntProperty(String prefixProperty, Properties p, String name, boolean required, int defaultValue) throws ProtocolException {
+		String tmp = getProperty(prefixProperty, p, name, required);
+		if(tmp!=null && StringUtils.isNotEmpty(tmp)) {
+			try {
+				return Integer.valueOf(tmp);
+			}catch(Exception t) {
+				throw new ProtocolException("Int property '"+prefixProperty+"."+name+"' invalid (found value:["+tmp+"]): "+t.getMessage(),t);
 			}
 		}
 		return defaultValue;
