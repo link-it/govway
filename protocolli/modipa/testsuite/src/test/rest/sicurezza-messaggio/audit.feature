@@ -1443,7 +1443,8 @@ And match header Authorization == '#notpresent'
 
 Examples:
 | tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
-| JWK | jwk-token-optional-non-fornito-erogazione-01 | RestBlockingAuditRest01TokenAuditOptional | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+| JWK | jwk-token-optional-non-fornito-erogazione-01-noaudit | RestBlockingAuditRest01TokenAuditOptional | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk. Nell'API il token di audit non viene richiesto per l'operazione oauth-noaudit | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+| JWK | jwk-token-optional-non-fornito-erogazione-01-optionalaudit | RestBlockingAuditRest01TokenAuditOptional | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk. Nell'API il token di audit è configurato come opzionale | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
 
 
 
@@ -1579,3 +1580,366 @@ And match header Agid-JWT-TrackingEvidence == '#notpresent'
 Examples:
 | tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
 | JWK-RecuperoInfoClient | jwk-purpose-id-non-presente-audit | RestBlockingAuditRest01 | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+
+
+
+
+
+@informazioni-utente-token-custom-valido
+Scenario Outline: Giro Ok con informazioni utente passate negli header http (token configurato come custom) <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path 'custom'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-TypeINT = "<TypeINT>"
+And header GovWay-Audit-TypeBoolean = "<TypeBoolean>"
+And header GovWay-Audit-TypeStringRegExp = "<TypeStringRegExp>"
+And header GovWay-Audit-TypeINTRegExp = "<TypeINTRegExp>"
+And header GovWay-Audit-TypeListString = "<TypeListString>"
+And header GovWay-Audit-TypeListInt = "<TypeListInt>"
+And header GovWay-Audit-TypeMixed1 = "<TypeMixed1>"
+And header GovWay-Audit-TypeMixed2 = "<TypeMixed2>"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-TrackingEvidence == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+
+* def clientIdExpected = '<clientId>'
+* def subExpected = '<username>'
+* def issExpected = '<clientId>'
+
+* def other_checks_authorization_richiesta = 
+"""
+([
+])
+"""
+
+* def audExpected = '<nome-api-impl>-<tipo-test>/v1'
+
+* def kidRequest = '<kid>'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Subject', value: client_audit_token.payload.sub },
+    { name: 'ProfiloSicurezzaMessaggioAudit-ClientId', value: client_audit_token.payload.client_id },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeINT', value: '<TypeINT>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeBoolean', value: '<TypeBoolean>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeStringRegexp', value: '<TypeStringRegExp>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeINTRegexp', value: '<TypeINTRegExp>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeListString', value: '<TypeListString>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeListInt', value: '<TypeListInt>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeMixed1', value: '<TypeMixed1>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeMixed2', value: '<TypeMixed2>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Audience', value: audExpected },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Kid', value: kidRequest }
+])
+"""
+
+* def auditPattern = '<auditPattern>'
+
+* def sicurezzaPattern = '<sicurezzaPattern>'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri di validazione custom', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri di validazione custom', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId | TypeINT | TypeBoolean | TypeStringRegExp | TypeINTRegExp | TypeListString | TypeListInt | TypeMixed1 | TypeMixed2 |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | Valore2 | 10.3 | ZZ | 23456 |
+| JWK | jwk-token-custom-02 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 99147483647 | false | A | 1 | Valore4 | 45 | AA | 22 |
+
+
+
+@informazioni-utente-token-custom-nonvalido-fruizione
+Scenario Outline: Giro Ko sulla fruizione, con informazioni utente passate negli header http (token configurato come custom) <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path 'custom'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-TypeINT = "<TypeINT>"
+And header GovWay-Audit-TypeBoolean = "<TypeBoolean>"
+And header GovWay-Audit-TypeStringRegExp = "<TypeStringRegExp>"
+And header GovWay-Audit-TypeINTRegExp = "<TypeINTRegExp>"
+And header GovWay-Audit-TypeListString = "<TypeListString>"
+And header GovWay-Audit-TypeListInt = "<TypeListInt>"
+And header GovWay-Audit-TypeMixed1 = "<TypeMixed1>"
+And header GovWay-Audit-TypeMixed2 = "<TypeMixed2>"
+When method post
+Then status 400
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<errore>')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-TrackingEvidence == '#notpresent'
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId | TypeINT | TypeBoolean | TypeStringRegExp | TypeINTRegExp | TypeListString | TypeListInt | TypeMixed1 | TypeMixed2 | errore |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeInt errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | errore23 | true | ABCDE | 12 | Valore2 | 10.3 | ZZ | 23456 | audit-custom-fruizione-typeINT-nonvalido.json |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeStringRegExp errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE3a | 12 | Valore2 | 10.3 | ZZ | 23456 | audit-custom-fruizione-typeStringRegExp-nonvalido.json |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeIntRegExp errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 0 | Valore2 | 10.3 | ZZ | 23456 | audit-custom-fruizione-typeINTRegExp-nonvalido.json |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeIntRegExp errato2 | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | -12 | Valore2 | 10.3 | ZZ | 23456 | audit-custom-fruizione-typeINTRegExp-nonvalido2.json |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeListString errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | ValoreInesistente2 | 10.3 | ZZ | 23456 | audit-custom-fruizione-typeListString-nonvalido.json |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeListInt errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | Valore2 | 123 | ZZ | 23456 | audit-custom-fruizione-typeListInt-nonvalido.json |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeMixed1 errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | Valore2 | 10.3 | Z | 23456 | audit-custom-fruizione-typeMixed1-nonvalido.json |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeMixed2 errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | Valore2 | 10.3 | ZZ | 2 | audit-custom-fruizione-typeMixed2min-nonvalido.json |
+| JWK | jwk-token-custom-01 | RestBlockingAuditRest01TokenAuditCustom | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeMixed2 errato 2 | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | Valore2 | 10.3 | ZZ | 234567 | audit-custom-fruizione-typeMixed2max-nonvalido.json |
+
+
+
+
+@informazioni-utente-token-custom-nonvalido-erogazione
+Scenario Outline: Giro Ko sull'erogazione, con informazioni utente passate negli header http (token configurato come custom) <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path 'custom'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-TypeINT = "<TypeINT>"
+And header GovWay-Audit-TypeBoolean = "<TypeBoolean>"
+And header GovWay-Audit-TypeStringRegExp = "<TypeStringRegExp>"
+And header GovWay-Audit-TypeINTRegExp = "<TypeINTRegExp>"
+And header GovWay-Audit-TypeListString = "<TypeListString>"
+And header GovWay-Audit-TypeListInt = "<TypeListInt>"
+And header GovWay-Audit-TypeMixed1 = "<TypeMixed1>"
+And header GovWay-Audit-TypeMixed2 = "<TypeMixed2>"
+When method post
+Then status 400
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<errore>')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-TrackingEvidence == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+
+* def clientIdExpected = '<clientId>'
+* def subExpected = '<username>'
+* def issExpected = '<clientId>'
+
+* def other_checks_authorization_richiesta = 
+"""
+([
+])
+"""
+
+* def audExpected = '<nome-api-impl>-<tipo-test>/v1'
+
+* def kidRequest = '<kid>'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Subject', value: client_audit_token.payload.sub },
+    { name: 'ProfiloSicurezzaMessaggioAudit-ClientId', value: client_audit_token.payload.client_id },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeINT', value: '<TypeINT>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeBoolean', value: '<TypeBoolean>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeStringRegexp', value: '<TypeStringRegExp>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeINTRegexp', value: '<TypeINTRegExp>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeListString', value: '<TypeListString>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeListInt', value: '<TypeListInt>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeMixed1', value: '<TypeMixed1>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-typeMixed2', value: '<TypeMixed2>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Audience', value: audExpected },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Kid', value: kidRequest }
+])
+"""
+
+* def auditPattern = '<auditPattern>'
+
+* def sicurezzaPattern = '<sicurezzaPattern>'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri di validazione custom (senza validazione, per TEST)', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri di validazione custom', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId | TypeINT | TypeBoolean | TypeStringRegExp | TypeINTRegExp | TypeListString | TypeListInt | TypeMixed1 | TypeMixed2 | errore |
+| JWK | jwk-token-custom-validazione-fallita-01 | RestBlockingAuditRest01TokenAuditCustomSenzaValidazione | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeStringRegExp errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE3a | 12 | Valore2 | 10.3 | ZZ | 23456 | audit-custom-erogazione-typeStringRegExp-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-02 | RestBlockingAuditRest01TokenAuditCustomSenzaValidazione | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeIntRegExp errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 0 | Valore2 | 10.3 | ZZ | 23456 | audit-custom-erogazione-typeINTRegExp-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-03 | RestBlockingAuditRest01TokenAuditCustomSenzaValidazione | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeIntRegExp errato2 | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | -12 | Valore2 | 10.3 | ZZ | 23456 | audit-custom-erogazione-typeINTRegExp-nonvalido2.json |
+| JWK | jwk-token-custom-validazione-fallita-04 | RestBlockingAuditRest01TokenAuditCustomSenzaValidazione | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeListString errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | ValoreInesistente2 | 10.3 | ZZ | 23456 | audit-custom-erogazione-typeListString-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-05 | RestBlockingAuditRest01TokenAuditCustomSenzaValidazione | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeListInt errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | Valore2 | 123 | ZZ | 23456 | audit-custom-erogazione-typeListInt-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-06 | RestBlockingAuditRest01TokenAuditCustomSenzaValidazione | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeMixed1 errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | Valore2 | 10.3 | Z | 23456 | audit-custom-erogazione-typeMixed1-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-07 | RestBlockingAuditRest01TokenAuditCustomSenzaValidazione | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeMixed2 errato | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | Valore2 | 10.3 | ZZ | 2 | audit-custom-erogazione-typeMixed2min-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-08 | RestBlockingAuditRest01TokenAuditCustomSenzaValidazione | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim typeMixed2 errato 2 | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 23 | true | ABCDE | 12 | Valore2 | 10.3 | ZZ | 234567 | audit-custom-erogazione-typeMixed2max-nonvalido.json |
+
+
+
+
+
+@informazioni-utente-token-custom-nonvalido-erogazione-typestring
+Scenario Outline: Giro Ko sull'erogazione, con tipo spedito come primitivo e atteso come stringa, con informazioni utente passate negli header http (token configurato come custom) <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path 'custom'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Type = "<Type>"
+When method post
+Then status 400
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<errore>')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-TrackingEvidence == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+
+* def clientIdExpected = '<clientId>'
+* def subExpected = '<username>'
+* def issExpected = '<clientId>'
+
+* def other_checks_authorization_richiesta = 
+"""
+([
+])
+"""
+
+* def audExpected = '<nome-api-impl>-<tipo-test>/v1'
+
+* def kidRequest = '<kid>'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Subject', value: client_audit_token.payload.sub },
+    { name: 'ProfiloSicurezzaMessaggioAudit-ClientId', value: client_audit_token.payload.client_id },
+    { name: 'ProfiloSicurezzaMessaggioAudit-type', value: '<Type>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Audience', value: audExpected },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Kid', value: kidRequest }
+])
+"""
+
+* def auditPattern = '<auditPattern>'
+
+* def sicurezzaPattern = '<sicurezzaPattern>'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri custom; type not string', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri custom; type string', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId | Type | errore |
+| JWK | jwk-token-custom-validazione-fallita-typenotstring-01 | RestBlockingAuditRest01TokenAuditCustomTypeNotString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato primitivo atteso stringa | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 22 | audit-custom-erogazione-typeCustomNotString-long-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-typenotstring-02 | RestBlockingAuditRest01TokenAuditCustomTypeNotString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato primitivo atteso stringa | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 2.3 | audit-custom-erogazione-typeCustomNotString-double-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-typenotstring-03 | RestBlockingAuditRest01TokenAuditCustomTypeNotString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato primitivo atteso stringa | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | true | audit-custom-erogazione-typeCustomNotString-boolean-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-typenotstring-04 | RestBlockingAuditRest01TokenAuditCustomTypeNotString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato primitivo atteso stringa | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | false | audit-custom-erogazione-typeCustomNotString-boolean-nonvalido2.json |
+
+
+
+
+
+@informazioni-utente-token-custom-nonvalido-erogazione-typenotstring
+Scenario Outline: Giro Ko sull'erogazione, con tipo spedito come stringa e atteso come tipo primitivo, con informazioni utente passate negli header http (token configurato come custom) <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path 'custom'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Type = "<Type>"
+When method post
+Then status 400
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<errore>')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-TrackingEvidence == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_audit_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0], "AGID")
+
+* def clientIdExpected = '<clientId>'
+* def subExpected = '<username>'
+* def issExpected = '<clientId>'
+
+* def other_checks_authorization_richiesta = 
+"""
+([
+])
+"""
+
+* def audExpected = '<nome-api-impl>-<tipo-test>/v1'
+
+* def kidRequest = '<kid>'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Subject', value: client_audit_token.payload.sub },
+    { name: 'ProfiloSicurezzaMessaggioAudit-ClientId', value: client_audit_token.payload.client_id },
+    { name: 'ProfiloSicurezzaMessaggioAudit-type', value: '<Type>' },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Audience', value: audExpected },
+    { name: 'ProfiloSicurezzaMessaggioAudit-Kid', value: kidRequest }
+])
+"""
+
+* def auditPattern = '<auditPattern>'
+
+* def sicurezzaPattern = '<sicurezzaPattern>'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri custom; type string', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: sicurezzaPattern, other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_audit ({ tid: tid, tipo: 'Richiesta', token: client_audit_token, profilo_sicurezza: sicurezzaPattern, profilo_audit: auditPattern, profilo_audit_schema: 'Criteri custom; type not string', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId | Type | errore |
+| JWK | jwk-token-custom-validazione-fallita-typestring-01 | RestBlockingAuditRest01TokenAuditCustomTypeString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato stringa atteso primitivo | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 22 | audit-custom-erogazione-typeCustomString-long-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-typestring-02 | RestBlockingAuditRest01TokenAuditCustomTypeString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato stringa atteso primitivo | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 2.3 | audit-custom-erogazione-typeCustomString-double-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-typestring-03 | RestBlockingAuditRest01TokenAuditCustomTypeString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato stringa atteso primitivo | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | true | audit-custom-erogazione-typeCustomString-boolean-nonvalido.json |
+| JWK | jwk-token-custom-validazione-fallita-typestring-04 | RestBlockingAuditRest01TokenAuditCustomTypeString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato stringa atteso primitivo | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | false | audit-custom-erogazione-typeCustomString-boolean-nonvalido2.json |
+

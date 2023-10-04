@@ -8410,12 +8410,14 @@ Scenario: isTest('audit-rest-jwk-criteri-autorizzativi-ko-01')
 
 
 
-Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
+Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ||
+		isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-optionalaudit')
 
     * def tipoTest = 'N.D.'
     * eval
     """
-    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01') ) {
+    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ||
+		isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-optionalaudit') ) {
       tipoTest = 'JWK'
     }
     """
@@ -8423,7 +8425,8 @@ Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
     * def audExpected = 'N.D.'
     * eval
     """
-    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')) {
+    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ||
+		isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-optionalaudit')) {
       audExpected = 'RestBlockingAuditRest01TokenAuditOptional-'+tipoTest+'/v1'
     }
     """
@@ -8435,7 +8438,8 @@ Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
     * def kidExpected = 'N.D.'
     * eval
     """
-    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')) {
+    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ||
+		isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-optionalaudit')) {
       kidExpected = 'KID-ApplicativoBlockingIDA01'
       clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
     }
@@ -8444,7 +8448,8 @@ Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
     * def subExpected = 'N.D.'
     * eval
     """
-    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')) {
+    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ||
+		isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-optionalaudit')) {
       subExpected = 'ApplicativoBlockingIDA01'
     }
     """
@@ -8453,7 +8458,8 @@ Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
     * def purposeIdExpected = 'N.D.'
     * eval
     """
-    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')) {
+    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ||
+		isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-optionalaudit')) {
       purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
     }
     """
@@ -8461,7 +8467,8 @@ Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
     * def digestExpected = '#notpresent'
     * eval
     """
-    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')) {
+    if (isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ||
+		isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-optionalaudit')) {
       digestExpected = '#notpresent'
     }
     """
@@ -8485,6 +8492,8 @@ Scenario: isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01')
     * karate.log("Ret: ", requestHeaders)
 
     * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * def requestUri = isTest('audit-rest-jwk-token-optional-non-fornito-erogazione-01-noaudit') ? '/idar01/oauth-noaudit' : '/idar01/oauth'
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
     
@@ -8615,6 +8624,818 @@ Scenario: isTest('audit-rest-jwk-purpose-id-uguali') ||
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+Scenario: isTest('audit-rest-jwk-token-custom-01') ||
+		isTest('audit-rest-jwk-token-custom-02') 
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-01') ||
+		isTest('audit-rest-jwk-token-custom-02') ) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-01') ||
+		isTest('audit-rest-jwk-token-custom-02') ) {
+      audExpected = 'RestBlockingAuditRest01TokenAuditCustom-'+tipoTest+'/v1'
+    }
+    """
+
+
+    * def clientIdExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-01') ||
+		isTest('audit-rest-jwk-token-custom-02')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-01') ||
+		isTest('audit-rest-jwk-token-custom-02')) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def clientIdSubAuditExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-01') ||
+		isTest('audit-rest-jwk-token-custom-02')) {
+      clientIdSubAuditExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-01') ||
+		isTest('audit-rest-jwk-token-custom-02')) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def typeINT = 'N.D.'
+    * def typeBoolean = 'N.D.'
+    * def typeStringRegexp = 'N.D.'
+    * def typeINTRegexp = 'N.D.'
+    * def typeListString = 'N.D.'
+    * def typeListInt = 'N.D.'
+    * def typeMixed1 = 'N.D.'
+    * def typeMixed2 = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-01')) {
+      typeINT = 23
+      typeBoolean = true
+      typeStringRegexp = 'ABCDE'
+      typeINTRegexp = 12
+      typeListString = 'Valore2'
+      typeListInt = 10.3
+      typeMixed1 = 'ZZ'
+      typeMixed2 = 23456
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-02')) {
+      typeINT = 99147483647
+      typeBoolean = false
+      typeStringRegexp = 'A'
+      typeINTRegexp = 1
+      typeListString = 'Valore4'
+      typeListInt = 45
+      typeMixed1 = 'AA'
+      typeMixed2 = 22
+    }
+    """
+
+    * def dnonceExpected = '#notpresent'
+    * def digestExpected = '#notpresent'
+    
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-01') ||
+		isTest('audit-rest-jwk-token-custom-02') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdSubAuditExpected,
+            iss: '#notpresent',
+            sub: clientIdSubAuditExpected,
+	    typeINT: typeINT, 
+            typeBoolean: typeBoolean, 
+            typeStringRegexp: typeStringRegexp,
+            typeINTRegexp: typeINTRegexp, 
+            typeListString: typeListString, 
+            typeListInt: typeListInt, 
+            typeMixed1: typeMixed1, 
+            typeMixed2: typeMixed2, 
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+Scenario: isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-08')  
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-08')   ) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def forwardContextUrl = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-08')   ) {
+      forwardContextUrl = 'RestBlockingAuditRest01TokenAuditCustom-'+tipoTest+'/v1'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-08')   ) {
+      audExpected = 'RestBlockingAuditRest01TokenAuditCustomSenzaValidazione-'+tipoTest+'/v1'
+    }
+    """
+
+
+    * def clientIdExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-08')  ) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-08')  ) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def clientIdSubAuditExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-08')  ) {
+      clientIdSubAuditExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-08')  ) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def typeINT = 'N.D.'
+    * def typeBoolean = 'N.D.'
+    * def typeStringRegexp = 'N.D.'
+    * def typeINTRegexp = 'N.D.'
+    * def typeListString = 'N.D.'
+    * def typeListInt = 'N.D.'
+    * def typeMixed1 = 'N.D.'
+    * def typeMixed2 = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ) {
+      typeINT = 23
+      typeBoolean = true
+      typeStringRegexp = 'ABCDE3a'
+      typeINTRegexp = 12
+      typeListString = 'Valore2'
+      typeListInt = 10.3
+      typeMixed1 = 'ZZ'
+      typeMixed2 = 23456
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ) {
+      typeINT = 23
+      typeBoolean = true
+      typeStringRegexp = 'ABCDE'
+      typeINTRegexp = 0
+      typeListString = 'Valore2'
+      typeListInt = 10.3
+      typeMixed1 = 'ZZ'
+      typeMixed2 = 23456
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ) {
+      typeINT = 23
+      typeBoolean = true
+      typeStringRegexp = 'ABCDE'
+      typeINTRegexp = -12
+      typeListString = 'Valore2'
+      typeListInt = 10.3
+      typeMixed1 = 'ZZ'
+      typeMixed2 = 23456
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ) {
+      typeINT = 23
+      typeBoolean = true
+      typeStringRegexp = 'ABCDE'
+      typeINTRegexp = 12
+      typeListString = 'ValoreInesistente2'
+      typeListInt = 10.3
+      typeMixed1 = 'ZZ'
+      typeMixed2 = 23456
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ) {
+      typeINT = 23
+      typeBoolean = true
+      typeStringRegexp = 'ABCDE'
+      typeINTRegexp = 12
+      typeListString = 'Valore2'
+      typeListInt = 123
+      typeMixed1 = 'ZZ'
+      typeMixed2 = 23456
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ) {
+      typeINT = 23
+      typeBoolean = true
+      typeStringRegexp = 'ABCDE'
+      typeINTRegexp = 12
+      typeListString = 'Valore2'
+      typeListInt = 10.3
+      typeMixed1 = 'Z'
+      typeMixed2 = 23456
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ) {
+      typeINT = 23
+      typeBoolean = true
+      typeStringRegexp = 'ABCDE'
+      typeINTRegexp = 12
+      typeListString = 'Valore2'
+      typeListInt = 10.3
+      typeMixed1 = 'ZZ'
+      typeMixed2 = 2
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-08') ) {
+      typeINT = 23
+      typeBoolean = true
+      typeStringRegexp = 'ABCDE'
+      typeINTRegexp = 12
+      typeListString = 'Valore2'
+      typeListInt = 10.3
+      typeMixed1 = 'ZZ'
+      typeMixed2 = 234567
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * def digestExpected = '#notpresent'
+    
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-04') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-05') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-06') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-07') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-08')   ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdSubAuditExpected,
+            iss: '#notpresent',
+            sub: clientIdSubAuditExpected,
+	    typeINT: typeINT, 
+            typeBoolean: typeBoolean, 
+            typeStringRegexp: typeStringRegexp,
+            typeINTRegexp: typeINTRegexp, 
+            typeListString: typeListString, 
+            typeListInt: typeListInt, 
+            typeMixed1: typeMixed1, 
+            typeMixed2: typeMixed2, 
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+forwardContextUrl)
+    
+    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0],
+        'GovWay-TestSuite-GovWay-Transaction-ID': tid
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
+
+Scenario: isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04')  
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04')  ) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def forwardContextUrl = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04')  ) {
+      forwardContextUrl = 'RestBlockingAuditRest01TokenAuditCustomTypeString-'+tipoTest+'/v1'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04')  ) {
+      audExpected = 'RestBlockingAuditRest01TokenAuditCustomTypeNotString-'+tipoTest+'/v1'
+    }
+    """
+
+
+    * def clientIdExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04')  ) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04')  ) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def clientIdSubAuditExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04')  ) {
+      clientIdSubAuditExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04')  ) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def type = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ) {
+      type = 22
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ) {
+      type = 2.3
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ) {
+      type = true
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04') ) {
+      type = false
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * def digestExpected = '#notpresent'
+    
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typenotstring-04')  ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdSubAuditExpected,
+            iss: '#notpresent',
+            sub: clientIdSubAuditExpected,
+	    type: type, 
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+forwardContextUrl)
+    
+    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0],
+        'GovWay-TestSuite-GovWay-Transaction-ID': tid
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+Scenario: isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04')  
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04')  ) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def forwardContextUrl = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04')  ) {
+      forwardContextUrl = 'RestBlockingAuditRest01TokenAuditCustomTypeNotString-'+tipoTest+'/v1'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04')  ) {
+      audExpected = 'RestBlockingAuditRest01TokenAuditCustomTypeString-'+tipoTest+'/v1'
+    }
+    """
+
+
+    * def clientIdExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04')  ) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04')  ) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def clientIdSubAuditExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04')  ) {
+      clientIdSubAuditExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04')  ) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def type = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ) {
+      type = '22'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ) {
+      type = '2.3'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ) {
+      type = 'true'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04') ) {
+      type = 'false'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * def digestExpected = '#notpresent'
+    
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-02') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-03') ||
+		isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-04')  ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdSubAuditExpected,
+            iss: '#notpresent',
+            sub: clientIdSubAuditExpected,
+	    type: type, 
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+forwardContextUrl)
+    
+    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0],
+        'GovWay-TestSuite-GovWay-Transaction-ID': tid
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
 
 
 

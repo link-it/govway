@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "[Header 'Agid-JWT-TrackingEvidence'] Token con claim 'type' non valido: Invalid format value 'false'; expected string type, found 'com.fasterxml.jackson.databind.node.BooleanNode'",
+    "govway_id": "#string"
+}

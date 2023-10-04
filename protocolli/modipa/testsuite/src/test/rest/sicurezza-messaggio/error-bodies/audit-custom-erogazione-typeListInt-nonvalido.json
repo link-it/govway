@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "[Header 'Agid-JWT-TrackingEvidence'] Token con claim 'typeListInt' non valido: Validation by enum-list failed: value '123' unknown",
+    "govway_id": "#string"
+}

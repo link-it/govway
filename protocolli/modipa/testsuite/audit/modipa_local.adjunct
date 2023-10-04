@@ -1,0 +1,313 @@
+# =================================
+# Aggiunta degli insieme custom per il token di audit
+
+# . Pattern di default con info opzionali.
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.nome=Linee-Guida-ModI-Optional
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.label=Linee Guida ModI Optional
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims=userID,userLocation,loa
+# Indicazione se deve essere prodotto il claim 'iss' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.iss.locale=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.iss.oauth=true
+# Indicazione se deve essere prodotto il claim 'sub' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.sub.locale=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.sub.oauth=false
+# Indicazione se deve essere prodotto il claim 'client_id' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.client_id.locale=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.client_id.oauth=false
+# userID:  un identificativo univoco dell'utente interno al dominio del fruitore che ha determinato l'esigenza della request di accesso all'e-service dell'erogatore
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.nome=userID
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.label=UserID
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.required=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.info= Identificativo univoco dell'utente interno al dominio del fruitore che ha determinato l'esigenza della richiesta di accesso all'e-service dell'erogatore
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.rule=${header:GovWay-Audit-User},${query:govway_audit_user}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.rule.info=Header http 'GovWay-Audit-User',Parametro della url 'govway_audit_user'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.forwardBackend=
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userID.trace=false
+# userLocation: un identificativo univoco della postazione interna al dominio del fruitore da cui è avviata l'esigenza della request di accesso all'e-service dell'erogatore
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.nome=userLocation
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.label=Identificativo Postazione
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.required=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.info= Identificativo univoco della postazione interna al dominio del fruitore che ha determinato l'esigenza della richiesta di accesso all'e-service dell'erogatore
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.rule=${header:GovWay-Audit-UserLocation},${query:govway_audit_user_location}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.rule.info=Header http 'GovWay-Audit-UserLocation',Parametro della url 'govway_audit_user_location'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.forwardBackend=
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.userLocation.trace=false
+# LoA: livello di sicurezza o di garanzia adottato nel processo di autenticazione informatica nel dominio del fruitore.
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.nome=LoA
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.label=Livello di Sicurezza
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.required=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.info= Livello di sicurezza o di garanzia adottato nel processo di autenticazione informatica nel dominio del fruitore
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.rule=${header:GovWay-Audit-LoA},${query:govway_audit_loa}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.rule.info=Header http 'GovWay-Audit-LoA',Parametro della url 'govway_audit_loa'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.forwardBackend=
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optional.claims.loa.trace=false
+
+# . Pattern custom con criteri di validazione.
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.nome=Criteri-Validazione-Custom
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.label=Criteri di validazione custom
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims=type_int,type_boolean,type_string_regexp,type_int_regexp,type_list_string,type_list_int,type_mixed1,type_mixed2
+# Indicazione se deve essere prodotto il claim 'iss' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.iss.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.iss.oauth=false
+# Indicazione se deve essere prodotto il claim 'sub' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.sub.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.sub.oauth=true
+# Indicazione se deve essere prodotto il claim 'client_id' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.client_id.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.client_id.oauth=true
+#
+# type_int:  un dato che rappresenta un intero
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int.nome=typeINT
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int.label=typeINT
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int.info=Rappresenta un numero intero
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int.rule=${header:GovWay-Audit-TypeINT}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int.rule.info=Header http 'GovWay-Audit-TypeINT'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int.forwardBackend=GovWay-Audit-TypeINT
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int.trace=true
+#
+# type_boolean:  un dato che rappresenta un intero
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_boolean.nome=typeBoolean
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_boolean.label=typeBoolean
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_boolean.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_boolean.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_boolean.info=Rappresenta un boolean
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_boolean.rule=${header:GovWay-Audit-TypeBoolean}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_boolean.rule.info=Header http 'GovWay-Audit-TypeBoolean'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_boolean.forwardBackend=GovWay-Audit-TypeBoolean
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_boolean.trace=true
+#
+# type_string_regexp:  un dato che rappresenta una stringa definita tramite espressione regolare con caratteri maiuscoli
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.nome=typeStringRegexp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.label=typeStringRegexp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.regexp=^[A-Z]+$
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.info=Rappresenta una informazione definita tramite una espressione regolare
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.rule=${header:GovWay-Audit-TypeStringRegExp}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.rule.info=Header http 'GovWay-Audit-TypeStringRegExp'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.forwardBackend=GovWay-Audit-TypeStringRegExp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_string_regexp.trace=true
+#
+# type_int_regexp:  un dato che rappresenta un numero validato anche tramite espressione regolare, in modo che sia positivo
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.nome=typeINTRegexp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.label=typeINTRegexp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.regexp=^[1-9][0-9]*$
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.info=Rappresenta una numero intero maggiore di zero
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.rule=${header:GovWay-Audit-TypeINTRegExp}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.rule.info=Header http 'GovWay-Audit-TypeINTRegExp'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.forwardBackend=GovWay-Audit-TypeINTRegExp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_int_regexp.trace=true
+#
+# type_list_string:  un dato che rappresenta una stringa definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.nome=typeListString
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.label=typeListString
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.enum=Valore1,Valore2, Valore3 , Valore4 
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.info=Rappresenta una informazione definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.rule=${header:GovWay-Audit-TypeListString}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.rule.info=Header http 'GovWay-Audit-TypeListString'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.forwardBackend=GovWay-Audit-TypeListString
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_string.trace=true
+#
+# type_list_int:  un dato che rappresenta un numero definito tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.nome=typeListInt
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.label=typeListInt
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.enum=3,6,10.3,45
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.info=Rappresenta una informazione definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.rule=${header:GovWay-Audit-TypeListInt}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.rule.info=Header http 'GovWay-Audit-TypeListInt'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.forwardBackend=GovWay-Audit-TypeListInt
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_list_int.trace=true
+#
+# type_mixed1:  un dato che rappresenta una stringa definita tramite un'espressione regolare e una dimensione massima uguale alla minima
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.nome=typeMixed1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.label=typeMixed1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.regexp=^[A-Z]+$
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.minLength=2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.maxLength=2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.info=Rappresenta una informazione definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.rule=${header:GovWay-Audit-TypeMixed1}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.rule.info=Header http 'GovWay-Audit-TypeMixed1'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.forwardBackend=GovWay-Audit-TypeMixed1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed1.trace=true
+#
+# type_mixed2:  un dato che rappresenta una stringa definita tramite un'espressione regolare, una dimensione minima e una massima di cifre
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.nome=typeMixed2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.label=typeMixed2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.regexp=^[1-9][0-9]*$
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.minLength=2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.maxLength=5
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.info=Rappresenta una informazione intera definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.rule=${header:GovWay-Audit-TypeMixed2}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.rule.info=Header http 'GovWay-Audit-TypeMixed2'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.forwardBackend=GovWay-Audit-TypeMixed2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom.claims.type_mixed2.trace=true
+
+
+# . Pattern custom senza criteri di validazione.
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.nome=Criteri-Validazione-Custom-NoValidation
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.label=Criteri di validazione custom (senza validazione, per TEST)
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims=type_int,type_boolean,type_string_regexp,type_int_regexp,type_list_string,type_list_int,type_mixed1,type_mixed2
+# Indicazione se deve essere prodotto il claim 'iss' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.iss.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.iss.oauth=false
+# Indicazione se deve essere prodotto il claim 'sub' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.sub.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.sub.oauth=true
+# Indicazione se deve essere prodotto il claim 'client_id' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.client_id.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.client_id.oauth=true
+#
+# type_int:  un dato che rappresenta un intero
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int.nome=typeINT
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int.label=typeINT
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int.info=Rappresenta un numero intero
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int.rule=${header:GovWay-Audit-TypeINT}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int.rule.info=Header http 'GovWay-Audit-TypeINT'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int.forwardBackend=GovWay-Audit-TypeINT
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int.trace=true
+#
+# type_boolean:  un dato che rappresenta un intero
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_boolean.nome=typeBoolean
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_boolean.label=typeBoolean
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_boolean.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_boolean.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_boolean.info=Rappresenta un boolean
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_boolean.rule=${header:GovWay-Audit-TypeBoolean}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_boolean.rule.info=Header http 'GovWay-Audit-TypeBoolean'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_boolean.forwardBackend=GovWay-Audit-TypeBoolean
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_boolean.trace=true
+#
+# type_string_regexp:  un dato che rappresenta una stringa definita tramite espressione regolare con caratteri maiuscoli
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_string_regexp.nome=typeStringRegexp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_string_regexp.label=typeStringRegexp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_string_regexp.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_string_regexp.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_string_regexp.info=Rappresenta una informazione definita tramite una espressione regolare
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_string_regexp.rule=${header:GovWay-Audit-TypeStringRegExp}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_string_regexp.rule.info=Header http 'GovWay-Audit-TypeStringRegExp'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_string_regexp.forwardBackend=GovWay-Audit-TypeStringRegExp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_string_regexp.trace=true
+#
+# type_int_regexp:  un dato che rappresenta un numero validato anche tramite espressione regolare, in modo che sia positivo
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int_regexp.nome=typeINTRegexp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int_regexp.label=typeINTRegexp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int_regexp.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int_regexp.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int_regexp.info=Rappresenta una numero intero maggiore di zero
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int_regexp.rule=${header:GovWay-Audit-TypeINTRegExp}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int_regexp.rule.info=Header http 'GovWay-Audit-TypeINTRegExp'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int_regexp.forwardBackend=GovWay-Audit-TypeINTRegExp
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_int_regexp.trace=true
+#
+# type_list_string:  un dato che rappresenta una stringa definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_string.nome=typeListString
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_string.label=typeListString
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_string.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_string.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_string.info=Rappresenta una informazione definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_string.rule=${header:GovWay-Audit-TypeListString}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_string.rule.info=Header http 'GovWay-Audit-TypeListString'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_string.forwardBackend=GovWay-Audit-TypeListString
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_string.trace=true
+#
+# type_list_int:  un dato che rappresenta un numero definito tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_int.nome=typeListInt
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_int.label=typeListInt
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_int.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_int.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_int.info=Rappresenta una informazione definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_int.rule=${header:GovWay-Audit-TypeListInt}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_int.rule.info=Header http 'GovWay-Audit-TypeListInt'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_int.forwardBackend=GovWay-Audit-TypeListInt
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_list_int.trace=true
+#
+# type_mixed1:  un dato che rappresenta una stringa definita tramite un'espressione regolare e una dimensione massima uguale alla minima
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed1.nome=typeMixed1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed1.label=typeMixed1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed1.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed1.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed1.info=Rappresenta una informazione definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed1.rule=${header:GovWay-Audit-TypeMixed1}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed1.rule.info=Header http 'GovWay-Audit-TypeMixed1'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed1.forwardBackend=GovWay-Audit-TypeMixed1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed1.trace=true
+#
+# type_mixed2:  un dato che rappresenta una stringa definita tramite un'espressione regolare, una dimensione minima e una massima di cifre
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed2.nome=typeMixed2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed2.label=typeMixed2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed2.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed2.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed2.info=Rappresenta una informazione intera definita tramite una enumeration
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed2.rule=${header:GovWay-Audit-TypeMixed2}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed2.rule.info=Header http 'GovWay-Audit-TypeMixed2'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed2.forwardBackend=GovWay-Audit-TypeMixed2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_no_validation.claims.type_mixed2.trace=true
+
+
+# . Pattern custom con tipo string
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.nome=Criteri-Custom-Type-String
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.label=Criteri custom; type string
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims=type
+# Indicazione se deve essere prodotto il claim 'iss' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.iss.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.iss.oauth=false
+# Indicazione se deve essere prodotto il claim 'sub' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.sub.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.sub.oauth=true
+# Indicazione se deve essere prodotto il claim 'client_id' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.client_id.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.client_id.oauth=true
+#
+# type: un dato che rappresenta una stringa
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims.type.nome=type
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims.type.label=type
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims.type.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims.type.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims.type.info=Rappresenta una rappresentazione del dato come string
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims.type.rule=${header:GovWay-Audit-Type}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims.type.rule.info=Header http 'GovWay-Audit-Type'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims.type.forwardBackend=GovWay-Audit-Type
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_string.claims.type.trace=true
+
+
+# . Pattern custom con tipo not string
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.nome=Criteri-Custom-Type-NotString
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.label=Criteri custom; type not string
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims=type
+# Indicazione se deve essere prodotto il claim 'iss' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.iss.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.iss.oauth=false
+# Indicazione se deve essere prodotto il claim 'sub' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.sub.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.sub.oauth=true
+# Indicazione se deve essere prodotto il claim 'client_id' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.client_id.locale=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.client_id.oauth=true
+#
+# type: un dato che rappresenta una stringa
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.nome=type
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.label=type
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.stringType=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.info=Rappresenta una rappresentazione del dato primitivo, non stringa
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.rule=${header:GovWay-Audit-Type}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.rule.info=Header http 'GovWay-Audit-Type'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.forwardBackend=GovWay-Audit-Type
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.trace=true

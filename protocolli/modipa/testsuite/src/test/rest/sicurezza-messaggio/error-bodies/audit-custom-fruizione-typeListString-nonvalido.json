@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/BadRequest.html",
+    "title": "BadRequest",
+    "status": 400,
+    "detail": "Il servizio richiede una funzionalità non supportata dal protocollo modipa: [Token 'Agid-JWT-TrackingEvidence'] Token con claim 'typeListString' non valido: Validation by enum-list failed: value 'ValoreInesistente2' unknown",
+    "govway_id": "#string"
+}

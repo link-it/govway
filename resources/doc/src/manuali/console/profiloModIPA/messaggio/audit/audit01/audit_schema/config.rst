@@ -54,6 +54,13 @@ Ogni singolo claim è personalizzabile nei seguenti aspetti:
 
 - Il valore di un claim di audit viene aggiunto alla traccia ModI se abilito nella proprietà '*org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.<IDPROP>.claims.<IDCLAIM-X>.trace*').
 
+- Opzionalmente è inoltre possibile definire per ogni claim le seguenti proprietà che definiscono dei criteri di validazione del valore:
+
+	- espressione regolare (proprietà '*org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.<IDPROP>.claims.<IDCLAIM-X>.regexp*')
+	- lista di valori ammessi (proprietà '*org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.<IDPROP>.claims.<IDCLAIM-X>.enum*')
+	- lunghezza minima di caratteri (proprietà '*org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.<IDPROP>.claims.<IDCLAIM-X>.minLength*')
+	- lunghezza massima di caratteri (proprietà '*org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.<IDPROP>.claims.<IDCLAIM-X>.maxLength*')
+
 Di seguito viene fornito un esempio di configurazione in cui i valori riportati sono quelli utilizzati per la definizine del claim 'userID' descritto dalle Linee Guida.
 
    ::
@@ -66,5 +73,37 @@ Di seguito viene fornito un esempio di configurazione in cui i valori riportati 
       org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.rule=${header:GovWay-Audit-User},${query:govway_audit_user}
       org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.rule.info=Header http 'GovWay-Audit-User',Parametro della url 'govway_audit_user'
       org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.forwardBackend=GovWay-Audit-UserID
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.trace=true
+
+Un altro esempio mostra l'utilizzo dei criteri di validazione per definire un claim il cui valore deve essere composto solamente da lettere e numeri e formato esattamente da 3 caratteri. 
+
+   ::
+
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.nome=esempioValidazione
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.label=EsempioValidazione
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.required=true
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.stringType=true
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.regexp=^[A-Za-z0-9]+$
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.minLength=3
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.maxLength=3
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.info=Un esempio di validazione tramite regexp e min/max length
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.rule=${header:GovWay-Audit-Esempio}
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.rule.info=Header http 'GovWay-Audit-Esempio'
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.forwardBackend=GovWay-Audit-Esempio
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.trace=true
+
+Infine l'ultimo esempio mostra l'utilizzo dei criteri di validazione per definire un claim i cui valori vengono definiti da una enumeration.
+
+   ::
+
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.nome=esempioValidazioneByEnum
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.label=EsempioValidazioneByEnum
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.required=true
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.stringType=true
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.enum=CREATE,UPDATE,DELETE
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.info=Un esempio di validazione tramite enum
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.rule=${header:GovWay-Audit-Esempio}
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.rule.info=Header http 'GovWay-Audit-Esempio'
+      org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.forwardBackend=GovWay-Audit-Esempio
       org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.default.claims.<IDCLAIM-X>.trace=true
 
