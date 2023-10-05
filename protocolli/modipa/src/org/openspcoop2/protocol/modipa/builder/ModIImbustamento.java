@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.xml.soap.SOAPEnvelope;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -419,7 +420,22 @@ public class ModIImbustamento {
 						keystoreDefinitoInFruizione = ModIKeystoreConfig.isKeystoreDefinitoInFruizione(idSoggettoMittente, asps);
 						
 						if((!keystoreDefinitoInFruizione) && sa==null) {
-							ProtocolException pe = new ProtocolException("Il profilo di sicurezza richiesto '"+securityMessageProfile+"' richiede l'identificazione di un applicativo");
+							boolean auditMsg = addAudit && patternCorniceSicurezza!=null && StringUtils.isNotEmpty(patternCorniceSicurezza);
+							StringBuilder sb = new StringBuilder("'");
+							if(securityMessageProfile!=null && StringUtils.isNotEmpty(securityMessageProfile)) {
+								sb.append(securityMessageProfile);
+								if(auditMsg) {
+									sb.append("' + '").append(patternCorniceSicurezza);
+								}
+							}
+							else if(auditMsg) {
+								sb.append(patternCorniceSicurezza);
+							}
+							else {
+								sb.append("-");
+							}
+							sb.append("'");
+							ProtocolException pe = new ProtocolException("Il profilo di sicurezza richiesto "+sb.toString()+" richiede l'identificazione di un applicativo");
 							pe.setInteroperabilityError(true);
 							throw pe;
 						}

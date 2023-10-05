@@ -1,3 +1,11 @@
+2023-10-05  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto Bug OP-1641
+	In una fruizione ModI di una API definita tramite i pattern ID_AUTH_REST via PDND e AUDIT_REST_01, 
+	se la fruizione risulta configurata per utilizzare un keystore definito nell'applicativo e quest'ultimo non viene identificato durante la gestione della richiesta, 
+	GovWay emetteva un diagnostico malformato: "Il profilo di sicurezza richiesto 'null' richiede l'identificazione di un applicativo"
+
 2023-10-04  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
