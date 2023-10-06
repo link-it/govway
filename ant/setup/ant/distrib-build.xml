@@ -514,7 +514,7 @@
 			<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
 			<then>
 				<replaceregexp file="${dist}/cfg/${govway_local_properties_name}"
-					       match="# Identificativo univoco [a-zA-Z].*\s#[a-zA-Z0-9_=\.].*\s\s# [a-zA-Z0-9_\.].*\s# NOTA[a-zA-Z:0-9>&lt;=].*\s#org[a-z0-9_\.].*=NUMERO"
+					       match="# Identificativo univoco [a-zA-Z].*\s#[a-zA-Z0-9_=\.].*\s\s# [a-zA-Z0-9_\.].*\s# NOTA[a-zA-Z:0-9>&lt;=].*\s#org[a-z0-9_\.].*=NUMERO\s#\s#.*\s#.*\s#.*\s#.*\s#.*\s#org[a-z0-9_\.].*=NUMEROCIFRE"
 					       replace="COMMENTOCLUSTERDINAMICO"
 					       byline="false"/>
 				<replace file="${dist}/cfg/${govway_local_properties_name}">

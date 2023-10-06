@@ -1,3 +1,9 @@
+2023-10-06  Andrea Poli <apoli@link.it>
+
+	* [Documentazione]
+	Migliorata documentazione della proprietà 'org.openspcoop2.pdd.cluster_id.numeric.dinamico.cifre' nel file 'govway_local.properties'
+	che consente di indicare le cifre utilizzate per l’utilizzo dell'identificativo univoco numerico come prefisso di un numero seriale (es. identificativo eGov).
+
 2023-10-05  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
