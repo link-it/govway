@@ -440,13 +440,16 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								}
 							}
 							integritaCustom = ModIPropertiesUtils.isPropertySecurityMessageHeaderCustom(aspc, nomePortType, azione, request);
-							if(integritaCustom) {
+							/**
+							 * Lo registro nella busta solamente se lo aggiungo davvero dentro il metodo ModIValidazioneSintatticaRest
+							 * 
+							 * if(integritaCustom) {
 								String hdrCustom = headerTokenRest;
 								if(multipleHeaderAuthorizationConfig!=null && multipleHeaderAuthorizationConfig && headerTokenRestIntegrity!=null) {
 									hdrCustom = headerTokenRestIntegrity;
 								}
 								bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER,hdrCustom);
-							}
+							}*/
 						}
 						
 						// security config
@@ -532,9 +535,12 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								try {
 									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 									
-									// Nel caso di 1 solo header da generare localmente, l'integrity, e l'authorization prodotto tramite token policy, l'integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
+									// Nel caso di 1 solo header da generare localmente, l'integrity, e l'authorization prodotto tramite token policy, 
+									//    l'integrity è obbligatorio solo se c'è un payload o se atteso per un integrity cystom. 
+									//    Nel caso non sia atteso se presente viene validato, altrimenti non da errore.
 									if(!sorgenteLocale) {
-										securityHeaderObbligatorio = msg.castAsRest().hasContent();
+										securityHeaderObbligatorio = msg.castAsRest().hasContent() || 
+												(integritaCustom && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(ModIPropertiesUtils.getPropertySecurityMessageHeaderCustomMode(aspc, nomePortType, azione, request)));
 									}
 									token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, false, headerTokenRest, 
 											corniceSicurezza, patternCorniceSicurezza, 
@@ -666,8 +672,11 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								try {
 									msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 									
-									// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
-									boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent();
+									// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload o se atteso per un integrity cystom. 
+									//                          Nel caso non sia atteso se presente viene validato, altrimenti non da errore.
+									boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent() || 
+											(integritaCustom && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(ModIPropertiesUtils.getPropertySecurityMessageHeaderCustomMode(aspc, nomePortType, azione, request)));
+											
 									boolean keystoreKidModeIntegrity = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
 											||
 											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);

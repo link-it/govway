@@ -405,13 +405,16 @@ public class ModIImbustamento {
 							}
 						}
 						integritaCustom = ModIPropertiesUtils.isPropertySecurityMessageHeaderCustom(aspc, nomePortType, azione, isRichiesta);
-						if(integritaCustom) {
+						/**
+						 * Lo registro nella busta solamente se lo aggiungo davvero dentro il metodo ModIImbustamentoRest
+						 * 
+						 * if(integritaCustom) {
 							String hdrCustom = headerTokenRest;
 							if(multipleHeaderAuthorizationConfig!=null && multipleHeaderAuthorizationConfig && headerTokenRestIntegrity!=null) {
 								hdrCustom = headerTokenRestIntegrity;
 							}
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER,hdrCustom);
-						}
+						}*/
 					}
 					
 					// modalita Keystore
@@ -531,6 +534,9 @@ public class ModIImbustamento {
 						}
 						if(msg.castAsRest().hasContent() || signedHeaders) {
 							addIntegrity = true;
+						}
+						else if(integritaCustom) {
+							addIntegrity = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(ModIPropertiesUtils.getPropertySecurityMessageHeaderCustomMode(aspc, nomePortType, azione, isRichiesta));
 						}
 						
 						

@@ -3,6 +3,7 @@ Feature: Testing Sicurezza Messaggio ModiPA IDAR03 (Custom)
 Background:
     * def basic = read('classpath:utils/basic-auth.js')
     * def check_traccia = read('check-tracce/check-traccia.feature')
+    * def check_traccia_message_id_authorization = read('check-tracce/check-traccia-msgid-authorization.feature')
     * def decode_token = read('classpath:utils/decode-token.js')
     * def get_traccia = read('classpath:utils/get_traccia.js')
     * def get_info_transazione = read('classpath:utils/get_info_transazione.js')
@@ -23,6 +24,9 @@ Background:
 
     * def integration_header = karate.readAsString('integration_info.json')
     * def integration_header_base64 = encode_base64(integration_header);
+
+    * def integration_header_2 = karate.readAsString('integration_info_2.json')
+    * def integration_header_2_base64 = encode_base64(integration_header_2);
 
 
 @single-header
@@ -69,6 +73,39 @@ And match header CustomTestSuite-JWT-Signature == '#notpresent'
 
 
 
+
+
+
+@single-header-assenza-header-integrity-richiesta
+Scenario: Il proxy rimuove lo header integrity per far arrabbiare l'erogazione
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03Custom/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-single-header-assenza-header-integrity-richiesta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_base64
+When method post
+Then status 400
+
+
+@single-header-assenza-header-integrity-risposta
+Scenario: Il proxy rimuove lo header Digest per far arrabbiare la fruizione
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03Custom/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-single-header-assenza-header-integrity-risposta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_base64
+When method post
+Then status 502
+And match response == read('error-bodies/idar03-custom-single-header-assenza-header-integrity-risposta.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+
+
 @doppi-header
 Scenario: Test con presenza sia dell'header Authorization che Custom-JWT-Signature
 
@@ -84,6 +121,7 @@ And match response == read('response.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
@@ -130,6 +168,8 @@ And match response == read('response.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
@@ -175,6 +215,8 @@ And match response == read('response.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
 
 
 * def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
@@ -219,6 +261,8 @@ And match response == read('response.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
@@ -265,6 +309,8 @@ And match response == read('response.json')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
@@ -295,6 +341,168 @@ And match header CustomTestSuite-JWT-Signature == '#notpresent'
 
 
 
+@assenza-header-integrity-richiesta
+Scenario: Il proxy rimuove lo header integrity per far arrabbiare l'erogazione
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-assenza-header-integrity-richiesta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_base64
+When method post
+Then status 400
+
+
+@assenza-header-integrity-risposta
+Scenario: Il proxy rimuove lo header Digest per far arrabbiare la fruizione
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-assenza-header-integrity-risposta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_base64
+When method post
+Then status 502
+And match response == read('error-bodies/idar03-custom-doppi-header-assenza-header-integrity-risposta.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+
+@assenza-header-integrity-richiesta-metodo-get-senza-payload
+Scenario: la risorsa GET non genera un token di integrita custom per default
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M'
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-assenza-header-integrity-richiesta-metodo-get-senza-payload'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_base64
+When method get
+Then status 400
+
+
+@assenza-header-integrity-richiesta-metodo-delete-senza-payload
+Scenario: la risorsa DELETE non genera un token di integrita custom per default
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M'
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-assenza-header-integrity-richiesta-metodo-delete-senza-payload'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_base64
+When method delete
+Then status 400
+
+
+@assenza-header-integrity-risposta-metodo-get-senza-payload
+Scenario: la risorsa GET è configurata per generare un token di integrita custom sempre, mentre nella risposta non arriva
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M', 'customAlways'
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-assenza-header-integrity-risposta-metodo-get-senza-payload'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_base64
+When method get
+Then status 502
+And match response == read('error-bodies/idar03-custom-doppi-header-assenza-header-integrity-risposta.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+@assenza-header-integrity-risposta-metodo-delete-senza-payload
+Scenario: la risorsa DELETE è configurata per generare un token di integrita custom sempre, mentre nella risposta non arriva
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M', 'customAlways'
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-assenza-header-integrity-risposta-metodo-get-senza-payload'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_base64
+When method delete
+Then status 502
+And match response == read('error-bodies/idar03-custom-doppi-header-assenza-header-integrity-risposta.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+
+
+@doppi-header-get-with-custom
+Scenario: Test con presenza sia dell'header Authorization che Custom-JWT-Signature per una risorsa GET senza payload
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M', 'customAlways'
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-get-with-custom'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_2_base64
+When method get
+Then status 200
+And match response == ''
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
+* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
+* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Custom-JWT-Signature', value: 'CustomTestSuiteDoppi-JWT-Signature' }
+])
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Custom-JWT-Signature', value: 'CustomTestSuiteDoppi-JWT-Signature' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+
+
+
+
+
+@doppi-header-get-without-custom
+Scenario: Test con presenza solo dell'header Authorization, poichè il Custom-JWT-Signature per una risorsa GET senza payload non viene prodotto
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M', 'testOk'
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-get-without-custom'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_base64
+When method get
+Then status 200
+And match response == ''
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', profilo_interazione: 'crud' })
+* call check_traccia_message_id_authorization ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_message_id_authorization ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', profilo_interazione: 'crud' })
+
+
+
+
+
 @doppi-header-multipart
 Scenario: Test con presenza sia dell'header Authorization che Custom-JWT-Signature su una richiesta Multipart
 
@@ -310,6 +518,8 @@ Then status 200
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppiSoloRichiesta-JWT-Signature == '#notpresent'
 #And match response == read('richiestaConAllegati.bin')
 #Non e' possibile verificare l'uguaglianza in un multipart structure
 

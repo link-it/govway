@@ -4739,8 +4739,39 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar0302-custom-singl
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
+Scenario: isTest('idar03-custom-single-header-assenza-header-integrity-richiesta')
 
-Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-header')
+    * remove requestHeaders['CustomTestSuite-JWT-Signature']
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03Custom/v1')
+    
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/idar03-custom-single-header-assenza-header-integrity-richiesta.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+Scenario: isTest('idar03-custom-single-header-assenza-header-integrity-risposta')
+    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03Custom/v1')
+    * remove responseHeaders['CustomTestSuite-JWT-Signature']
+
+
+Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-header') || 
+		isTest('idar03-custom-doppi-header-get-with-custom')
+
+    * def integrationInfoStringCheckValue =
+    * eval
+    """
+    if (isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-header')  ) {
+    integrationInfoStringCheckValue = 'valoreClientString'
+    }
+    """
+    * eval
+    """
+    if (isTest('idar03-custom-doppi-header-get-with-custom')  ) {
+    integrationInfoStringCheckValue = 'valoreClientString2'
+    }
+    """
+
 
     * def client_token_authorization_match = 
     """
@@ -4751,12 +4782,12 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
             client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             iss: 'DemoSoggettoFruitore',
             sub: 'ApplicativoBlockingIDA01',
-            integrationInfoString: 'valoreClientString',
+            integrationInfoString: integrationInfoStringCheckValue,
             level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
             integrationInfoAuthorizationBoolean: true,
             integrationInfoAuthorizationList0: 'val1',
             integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
-            optional_integrationInfoAuthorizationString: 'valoreClientString',
+            optional_integrationInfoAuthorizationString: integrationInfoStringCheckValue,
             optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
             optional_complex_integrationInfoAuthorization: {
                clientClaimLeve3String: 'valoreClientLeve3String', 
@@ -4783,7 +4814,7 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
             client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
             iss: 'DemoSoggettoFruitore',
             sub: 'ApplicativoBlockingIDA01',
-            integrationInfoString: 'valoreClientString',
+            integrationInfoString: integrationInfoStringCheckValue,
             level2_integrationInfoIntegrityString: 'valoreClientLeve2String',
             complex_integrationInfoIntegrityListTest1: [ '666' , '999' ],
             complex_integrationInfoIntegrityListTest2: [ '666' , '999' ],
@@ -4844,12 +4875,12 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
             client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
             iss: 'DemoSoggettoErogatore',
             sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
-            integrationInfoString: 'valoreClientString',
+            integrationInfoString: integrationInfoStringCheckValue,
             level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
             integrationInfoAuthorizationBoolean: true,
             integrationInfoAuthorizationList0: 'val1',
             integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
-            optional_integrationInfoAuthorizationString: 'valoreClientString',
+            optional_integrationInfoAuthorizationString: integrationInfoStringCheckValue,
             optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
             optional_complex_integrationInfoAuthorization: {
                clientClaimLeve3String: 'valoreClientLeve3String', 
@@ -4876,7 +4907,7 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
             client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
             iss: 'DemoSoggettoErogatore',
             sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
-            integrationInfoString: 'valoreClientString',
+            integrationInfoString: integrationInfoStringCheckValue,
             level2_integrationInfoIntegrityString: 'valoreClientLeve2String',
             complex_integrationInfoIntegrityListTest1: [ '666' , '999' ],
             complex_integrationInfoIntegrityListTest2: [ '666' , '999' ],
@@ -5066,7 +5097,137 @@ Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar030
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
+Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-richiesta')
 
+    * remove requestHeaders['CustomTestSuiteDoppi-JWT-Signature']
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/idar03-custom-doppi-header-assenza-header-integrity-richiesta.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta')
+    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    * remove responseHeaders['CustomTestSuiteDoppi-JWT-Signature']
+
+
+Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-richiesta-metodo-get-senza-payload') ||
+		isTest('idar03-custom-doppi-header-assenza-header-integrity-richiesta-metodo-delete-senza-payload')
+
+    * def requestUri = '/resources/22/M/customAlways'
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/idar03-custom-doppi-header-assenza-header-integrity-richiesta.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+Scenario: isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta-metodo-get-senza-payload') ||
+		isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta-metodo-delete-senza-payload')
+    
+    * def requestUri = '/resources/22/M'
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+
+Scenario: isTest('idar03-custom-doppi-header-get-without-custom')
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            integrationInfoString: 'valoreClientString',
+            level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
+            integrationInfoAuthorizationBoolean: true,
+            integrationInfoAuthorizationList0: 'val1',
+            integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
+            optional_integrationInfoAuthorizationString: 'valoreClientString',
+            optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
+            optional_complex_integrationInfoAuthorization: {
+               clientClaimLeve3String: 'valoreClientLeve3String', 
+               clientClaimLeve3Boolean: false, 
+               clientClaimLeve3Int: 12467, 
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: 'valoreClientLeve4String', 
+                  clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                  clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                  clientClaimLeve4ListString: [ 'val1' , 'val2']
+               }
+           }
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    
+    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def client_token_authorization = decodeToken(requestHeaders['Authorization'][0], "Bearer")
+    
+    * match client_token_authorization.payload.signed_headers == "#notpresent"
+
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    
+
+
+    * def server_token_authorization_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            integrationInfoString: 'valoreClientString',
+            level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
+            integrationInfoAuthorizationBoolean: true,
+            integrationInfoAuthorizationList0: 'val1',
+            integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
+            optional_integrationInfoAuthorizationString: 'valoreClientString',
+            optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
+            optional_complex_integrationInfoAuthorization: {
+               clientClaimLeve3String: 'valoreClientLeve3String', 
+               clientClaimLeve3Boolean: false, 
+               clientClaimLeve3Int: 12467, 
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: 'valoreClientLeve4String', 
+                  clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                  clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                  clientClaimLeve4ListString: [ 'val1' , 'val2']
+               }
+           }
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['Authorization'][0], match_to: server_token_authorization_match, kind: "Bearer"  })
+    
+    * def server_token_authorization = decodeToken(responseHeaders['Authorization'][0], "Bearer")
+    
+    * match server_token_authorization.payload.signed_headers == "#notpresent"
+    
+    * match responseHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
+
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Server-Authorization-Token': responseHeaders['Authorization'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 Scenario: isTest('idar03-custom-doppi-header-multipart')
 
@@ -6840,12 +7001,14 @@ Scenario: isTest('riutilizzo-token-risposta-idar0402-pdnd') ||
 #       IDAR04 (CUSTOM)#
 ########################
 
-Scenario: isTest('idar04-custom-header-pdnd')
+Scenario: isTest('idar04-custom-header-pdnd') ||
+		isTest('idar04-custom-header-pdnd-get-with-custom')
 
     * def tipoTest = 'N.D.'
     * eval
     """
-    if (isTest('idar04-custom-header-pdnd')) {
+    if (isTest('idar04-custom-header-pdnd') ||
+		isTest('idar04-custom-header-pdnd-get-with-custom')) {
       tipoTest = 'PDND'
     }
     """
@@ -6857,7 +7020,8 @@ Scenario: isTest('idar04-custom-header-pdnd')
 
     * eval
     """
-    if (isTest('idar04-custom-header-pdnd')) {
+    if (isTest('idar04-custom-header-pdnd') ||
+		isTest('idar04-custom-header-pdnd-get-with-custom')) {
       kidExpected = 'KID-ApplicativoBlockingIDA01'
       clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
       subExpected = 'ApplicativoBlockingIDA01'
@@ -7042,7 +7206,106 @@ Scenario: isTest('idar04-custom-header-pdnd')
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
+Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-richiesta')
 
+    * remove requestHeaders['CustomTestSuite-JWT-Signature']
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1')
+    
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/idar03-custom-single-header-assenza-header-integrity-richiesta.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta')
+    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1')
+    * remove responseHeaders['CustomTestSuite-JWT-Signature']
+
+
+Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-richiesta-metodo-get-senza-payload')
+
+    * def requestUri = '/resources/22/M/customAlways'
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1')
+    
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/idar03-custom-single-header-assenza-header-integrity-richiesta.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta-metodo-get-senza-payload')
+    
+    * def requestUri = '/resources/22/M'
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-PDND/v1')
+
+
+Scenario: isTest('idar04-custom-header-pdnd-get-without-custom')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('idar04-custom-header-pdnd-get-without-custom')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04Custom-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('idar04-custom-header-pdnd-get-without-custom')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: 'purposeId-'+subExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+       
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#present'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['GovWay-Integration'] == '#notpresent'
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-'+tipoTest+'/v1')
+
+    * karate.log("Ret: ", responseHeaders)
+
+    * match responseHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+   
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Authorization'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match responseHeaders['GovWay-Integration'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
 

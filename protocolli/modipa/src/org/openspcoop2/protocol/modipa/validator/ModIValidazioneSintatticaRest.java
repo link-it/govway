@@ -421,7 +421,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		if(msg==null) {
 			throw new ProtocolException("Param msg is null");
 		}
-		
+				
 		boolean bufferMessageReadOnly = this.modiProperties.isReadByPathBufferEnabled();
 		String idTransazione = null;
 		if(this.context!=null) {
@@ -466,6 +466,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						getErrorHeaderHttpPresentePiuVolte(securityTokenHeader)));
 			}
 			return null;
+		}
+		
+		if(busta!=null && integritaCustom) {
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER,headerTokenRest);
 		}
 		
 		String token = securityToken;

@@ -519,8 +519,11 @@ Scenario: isTest('multipart-request-mixed-idar0302')
 #       IDAR03 (CUSTOM)                  #
 ##########################################
 
-Scenario: isTest('idar03-custom-single-header') || isTest('idar03-custom-doppi-header') || isTest('idar03-custom-doppi-header-solo-richiesta') ||
-          isTest('idar0302-custom-single-header') || isTest('idar0302-custom-doppi-header') || isTest('idar0302-custom-doppi-header-solo-richiesta')
+Scenario: isTest('idar03-custom-single-header') || isTest('idar03-custom-doppi-header') || 
+	  isTest('idar03-custom-doppi-header-solo-richiesta') ||
+          isTest('idar0302-custom-single-header') || isTest('idar0302-custom-doppi-header') || isTest('idar0302-custom-doppi-header-solo-richiesta') ||
+	  isTest('idar03-custom-single-header-assenza-header-integrity-risposta') ||
+	  isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta')
 
     * def integration_header = karate.readAsString('classpath:test/rest/sicurezza-messaggio/integration_info.json')
     * def integration_header_base64 = encode_base64(integration_header);
@@ -528,6 +531,7 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar03-custom-doppi-h
     * karate.log("Response: ", integration_header_base64)
 
     * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * match requestHeaders['Authorization'] == '#notpresent'
     * match requestHeaders['Digest'] == '#notpresent'
@@ -542,6 +546,55 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar03-custom-doppi-h
     * configure responseHeaders = newHeaders
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
+Scenario: isTest('idar03-custom-doppi-header-get-without-custom') || 
+	  isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta-metodo-get-senza-payload') ||
+	  isTest('idar03-custom-doppi-header-assenza-header-integrity-risposta-metodo-delete-senza-payload')
+
+    * def integration_header = karate.readAsString('classpath:test/rest/sicurezza-messaggio/integration_info.json')
+    * def integration_header_base64 = encode_base64(integration_header);
+
+    * karate.log("Response: ", integration_header_base64)
+
+    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Digest'] == '#notpresent'
+    * def responseStatus = 200
+    * def newHeaders = 
+    """
+    ({
+       'Content-Type': null, 
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-Integration': integration_header_base64
+    })
+    """
+    * configure responseHeaders = newHeaders
+    * def response = ''
+
+Scenario: isTest('idar03-custom-doppi-header-get-with-custom')
+
+    * def integration_header_2 = karate.readAsString('classpath:test/rest/sicurezza-messaggio/integration_info_2.json')
+    * def integration_header_2_base64 = encode_base64(integration_header_2);
+
+    * karate.log("Response: ", integration_header_2_base64)
+
+    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Digest'] == '#notpresent'
+    * def responseStatus = 200
+    * def newHeaders = 
+    """
+    ({
+       'Content-Type': null, 
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-Integration': integration_header_2_base64
+    })
+    """
+    * configure responseHeaders = newHeaders
+    * def response = ''
 
 Scenario: isTest('idar03-custom-doppi-header-multipart')
 
@@ -551,6 +604,7 @@ Scenario: isTest('idar03-custom-doppi-header-multipart')
     * karate.log("Response: ", integration_header_base64)
 
     * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * match requestHeaders['Authorization'] == '#notpresent'
     * match requestHeaders['Digest'] == '#notpresent'
@@ -695,7 +749,52 @@ Scenario: isTest('idar04-custom-header-pdnd')
     * configure responseHeaders = newHeaders
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
+Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta')
 
+    * def integration_header = karate.readAsString('classpath:test/rest/sicurezza-messaggio/integration_info.json')
+    * def integration_header_base64 = encode_base64(integration_header);
+
+    * karate.log("Response: ", integration_header_base64)
+
+    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Digest'] == '#notpresent'
+    * def responseStatus = 200
+    * def newHeaders = 
+    """
+    ({
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-Integration': integration_header_base64
+    })
+    """
+    * configure responseHeaders = newHeaders
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('idar04-custom-header-pdnd-get-with-custom') ||
+            isTest('idar04-custom-header-pdnd-get-without-custom') ||
+            isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta-metodo-get-senza-payload')
+
+    * def integration_header = karate.readAsString('classpath:test/rest/sicurezza-messaggio/integration_info.json')
+    * def integration_header_base64 = encode_base64(integration_header);
+
+    * karate.log("Response: ", integration_header_base64)
+
+    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Digest'] == '#notpresent'
+    * def responseStatus = 200
+    * def newHeaders = 
+    """
+    ({
+       'Content-Type': null, 
+       'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]"),
+       'GovWay-Integration': integration_header_base64
+    })
+    """
+    * configure responseHeaders = newHeaders
+    * def response = null
 
 
 ##########################################
