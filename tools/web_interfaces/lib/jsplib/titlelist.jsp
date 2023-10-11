@@ -177,5 +177,10 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 		  <%
 		}
 		%>
+		<tr>
+			<td colspan="2">
+			<jsp:include page="/jsplib/status.jsp" flush="true" />
+			</td>
+		</tr>
 	</tbody>
 </table>

@@ -41,6 +41,7 @@ else {
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 %>
 
 <td class="td1PageBody" valign='top'>
@@ -60,28 +61,36 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 				<%
 			  		String [][] entries = m.getEntries();
 			  		for (int j = 0; j < entries.length; j++) {
-			  			String deVoceMenuName = "url_entry_"+j;
 			  			String cssClass = "voceMenuRC";
+			  			String divId = "voceMenu_"+i+"_"+j;
+			  			String hrefId = "voceMenuAnchor_"+i+"_"+j;
 			  			
-			    		if (entries[j].length == 2) {
-			    			
-			      		%><div class="voceMenuRC" id="voceMenu_<%=j %>">
-		      				<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'>
-		      					<p class='<%= cssClass %>'><%= entries[j][0] %></p>
+			  			%><div class="voceMenuRC" id="<%=divId %>"><%
+		  					if (entries[j].length == 2) {
+		  						%>
+		  						<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>' id="<%=hrefId %>">
+		      						<p class='<%= cssClass %>'><%= entries[j][0] %></p>
 		      					</a>
+		  						<%
+		  					} else if (entries[j].length == 3) {
+								%>
+		  						<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>' id="<%=hrefId %>">
+				      				<p class='<%= cssClass %>'><%= entries[j][0] %></p>
+				      			</a>
+		  						<%
+		  					}
+	  					%>
+			  				<script type="text/javascript" nonce="<%= randomNonce %>">
+						      	 $(document).ready(function(){
+										$('#<%=hrefId %>').click(function() {
+											<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;
+										});
+									});
+							</script>
 			      			</div>
 			      		<%
-			    		} else if (entries[j].length == 3) {
-			      		%><div class="voceMenuRC" id="voceMenu_<%=j %>">
-			      			<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'>
-			      				<p class='<%= cssClass %>'><%= entries[j][0] %></p>
-			      			</a>
-			      			</div>
-			      		<%
-			    		}
 			 	 }
 	  		 %>
-				
 			</div>
 		<% } %>
 	</div>
