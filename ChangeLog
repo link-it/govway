@@ -1,3 +1,9 @@
+2023-10-11  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1645
+	La produzione e la validazione dell'header di integrità 'Custom-JWT-Signature' è adesso attivabile anche per metodi senza payload.
+
 2023-10-06  Andrea Poli <apoli@link.it>
 
 	* [Documentazione]

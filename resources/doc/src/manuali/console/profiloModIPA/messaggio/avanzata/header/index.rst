@@ -32,7 +32,7 @@ Sono inoltre disponibili ulteriori opzioni che hanno il medesimo comportamento d
 - 'Custom-JWT-Signature + Authorization Bearer anche nella risposta'
 - 'Custom-JWT-Signature'
 
-Se viene selezionata una gestione personalizzata, tutta la parte relativa alla gestione dell'integrità (calcolo/verifica Digest, gestione claim 'signed_header') non viene effettuata built-in e viene delegata a livello applicativo. In fase di fruizione è possibile aggiungere all'interno del token personalizzato i claim ricevuti dall'applicativo client (dettagli forniti nella sezione :ref:`modipa_sicurezza_avanzate_claims`). In fase di erogazione è possibile far arrivare all'applicativo il token completo (sezione :ref:`modipa_sicurezza_avanzate_sbustamento`) o i singoli claim (securityToken descritto in :ref:`valoriDinamici`) in modo da consentirgli di attuare il processo di validazione personalizzato. 
+Se viene selezionata una gestione personalizzata, tutta la parte relativa alla gestione dell'integrità (calcolo/verifica Digest, gestione claim 'signed_header') non viene effettuata built-in e viene delegata a livello applicativo. Maggiori dettagli vengono forniti nella sezione :ref:`modipa_sicurezza_avanzate_custom_signature`.
 
 
 

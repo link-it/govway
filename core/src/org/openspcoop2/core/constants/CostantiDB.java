@@ -774,6 +774,10 @@ public final class CostantiDB {
    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM = "modipaSecurityMessageHeaderCustomName";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE = "modipaSecurityMessageHeaderCustomMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_PAYLOAD_HTTP = "payload";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS = "always";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_AGID_SIGNATURE = "modipaSecurityMessageHeaderSignatureMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_AGID_SIGNATURE_VALUE_STANDARD = "standard";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_AGID_SIGNATURE_VALUE_CUSTOM = "custom";

@@ -219,6 +219,20 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 			profiloSicurezzaMessaggioHeaderCustomItem.setType(ConsoleItemType.HIDDEN);
 			configuration.addConsoleItem(profiloSicurezzaMessaggioHeaderCustomItem);
 			
+			
+			StringConsoleItem profiloSicurezzaMessaggioHeaderCustomModeItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ID, 
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL);
+			profiloSicurezzaMessaggioHeaderCustomModeItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_PAYLOAD_HTTP,
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_PAYLOAD_HTTP);
+			profiloSicurezzaMessaggioHeaderCustomModeItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_ALWAYS,
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS);
+			profiloSicurezzaMessaggioHeaderCustomModeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_DEFAULT_VALUE);
+			profiloSicurezzaMessaggioHeaderCustomModeItem.setType(ConsoleItemType.HIDDEN);
+			configuration.addConsoleItem(profiloSicurezzaMessaggioHeaderCustomModeItem);
+			
 		}
 		
 		StringConsoleItem profiloSicurezzaMessaggioConfigurazioneItem = (StringConsoleItem) 
@@ -660,6 +674,8 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID);
 			AbstractConsoleItem<?> profiloSicurezzaMessaggioHeaderCustomItem = 	
 					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_ID);
+			AbstractConsoleItem<?> profiloSicurezzaMessaggioHeaderCustomModeItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ID);
 			if(isSicurezza01 || isSicurezza02 || isSicurezza03 || isSicurezza04) {
 				profiloSicurezzaMessaggioHeaderItem.setType(ConsoleItemType.SELECT);
 				
@@ -800,6 +816,9 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 							}
 						}
 					}
+					if(profiloSicurezzaMessaggioHeaderCustomModeItem!=null) {
+						profiloSicurezzaMessaggioHeaderCustomModeItem.setType(ConsoleItemType.SELECT);
+					}
 				}
 				else {
 					if(profiloSicurezzaMessaggioHeaderCustomItem!=null) {
@@ -808,6 +827,13 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 						StringProperty profiloSicurezzaMessaggioHeaderCustomItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_ID);
 						if(profiloSicurezzaMessaggioHeaderCustomItemValue!=null) {
 							profiloSicurezzaMessaggioHeaderCustomItemValue.setValue(null);
+						}
+					}
+					if(profiloSicurezzaMessaggioHeaderCustomModeItem!=null) {
+						profiloSicurezzaMessaggioHeaderCustomModeItem.setType(ConsoleItemType.HIDDEN);
+						StringProperty profiloSicurezzaMessaggioHeaderCustomModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ID);
+						if(profiloSicurezzaMessaggioHeaderCustomModeItemValue!=null) {
+							profiloSicurezzaMessaggioHeaderCustomModeItemValue.setValue(null);
 						}
 					}
 				}
@@ -826,6 +852,14 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					StringProperty profiloSicurezzaMessaggioHeaderCustomItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_ID);
 					if(profiloSicurezzaMessaggioHeaderCustomItemValue!=null) {
 						profiloSicurezzaMessaggioHeaderCustomItemValue.setValue(null);
+					}
+				}
+				
+				if(profiloSicurezzaMessaggioHeaderCustomModeItem!=null) {
+					profiloSicurezzaMessaggioHeaderCustomModeItem.setType(ConsoleItemType.HIDDEN);
+					StringProperty profiloSicurezzaMessaggioHeaderCustomModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ID);
+					if(profiloSicurezzaMessaggioHeaderCustomModeItemValue!=null) {
+						profiloSicurezzaMessaggioHeaderCustomModeItemValue.setValue(null);
 					}
 				}
 			}
