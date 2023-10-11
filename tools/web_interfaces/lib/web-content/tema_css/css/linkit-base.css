@@ -852,7 +852,7 @@ span.tableNoData {
 }
 
 #ajax_status_div {
-	display: none;
+/* 	display: none; */
 }
 
 /* BreadCrumbs */

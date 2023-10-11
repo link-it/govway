@@ -45,7 +45,6 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 				<img src="images/tema_link/logo_link_footer.png" alt="link.it" />
 			</a>
 		</div>
-		<jsp:include page="/jsplib/status.jsp" flush="true" />
 	</td>
 </tr>
 <script type="text/javascript" nonce="<%= randomNonce %>">
@@ -55,3 +54,11 @@ $(document).ready(function(){
 	});
 });
 </script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
+function onPageLoad() {
+    <%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+}
+window.onload = onPageLoad;
+</script>
+
+

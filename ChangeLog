@@ -1,3 +1,10 @@
+2023-10-11  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1643
+	Durante la visualizzazione di una pagina, il componente "loading" che inibisce l'utilizzo della pagina stessa, 
+	terminava la sua funzione prima che il caricamento della pagina fosse completo.
+
 2023-10-11  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
