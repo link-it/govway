@@ -23,6 +23,9 @@ Background:
 		} 
 		"""
 
+    * def get_diagnostici_create_token_audit = read('classpath:utils/get_diagnostici_create_token_audit.js')
+    * def get_diagnostici_create_token_authorization = read('classpath:utils/get_diagnostici_create_token_authorization.js')
+    * def get_diagnostici_create_token_integrity = read('classpath:utils/get_diagnostici_create_token_integrity.js')
 
 
 @informazioni-utente-header
@@ -460,7 +463,7 @@ Scenario Outline: Il token di authorization viene manomesso in modo da non far c
 # Prima faccio un giro ok e mi tengo l'audit
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
-And path 'idar01', 'oauth'
+And path 'idar01', 'oauth-no-filtro-duplicati'
 And request read('request.json')
 And header GovWay-TestSuite-Test-ID = 'audit-rest-jwk-02'
 And header Authorization = call basic ({ username: '<username>', password: '<password>' })
@@ -483,7 +486,7 @@ And match header Authorization == '#notpresent'
 # Creo una nuova richiesta modificando i valori di audit (altrimenti viene usato quello della cache) e fornendo il precedente authorization da utilizzare nel proxy
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
-And path 'idar01', 'oauth'
+And path 'idar01', 'oauth-no-filtro-duplicati'
 And request read('request.json')
 And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>'
 And header Authorization = call basic ({ username: '<username>', password: '<password>' })
@@ -492,7 +495,7 @@ And header simulazionepdnd-password = '<password>'
 And header simulazionepdnd-purposeId = '<purposeId>'
 And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
 And header simulazionepdnd-digest-mode = 'proxy'
-And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-User = "utente-token-differente-per-test-manomissione"
 And header GovWay-Audit-UserLocation = "ip-utente-token"
 And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 And header old-authorization = authorization_token_giro_ok
@@ -1133,7 +1136,7 @@ And header simulazionepdnd-password = '<password>'
 And header simulazionepdnd-purposeId = '<purposeId>'
 And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
 And header simulazionepdnd-digest-mode = 'proxy'
-And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-User = "utente-token-modificato-tempo-scaduto"
 And header GovWay-Audit-UserLocation = "ip-utente-token"
 And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 And header old-audit = audit_token_giro_ok
@@ -1193,7 +1196,7 @@ And header simulazionepdnd-password = '<password>'
 And header simulazionepdnd-purposeId = '<purposeId>'
 And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
 And header simulazionepdnd-digest-mode = 'proxy'
-And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-User = "utente-token-differente-test-iat"
 And header GovWay-Audit-UserLocation = "ip-utente-token"
 And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
 And header old-audit = audit_token_giro_ok
@@ -1942,4 +1945,1359 @@ Examples:
 | JWK | jwk-token-custom-validazione-fallita-typestring-02 | RestBlockingAuditRest01TokenAuditCustomTypeString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato stringa atteso primitivo | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | 2.3 | audit-custom-erogazione-typeCustomString-double-nonvalido.json |
 | JWK | jwk-token-custom-validazione-fallita-typestring-03 | RestBlockingAuditRest01TokenAuditCustomTypeString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato stringa atteso primitivo | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | true | audit-custom-erogazione-typeCustomString-boolean-nonvalido.json |
 | JWK | jwk-token-custom-validazione-fallita-typestring-04 | RestBlockingAuditRest01TokenAuditCustomTypeString | AUDIT_REST_01 | IDAR01 | viene generato un token audit custom con un claim type errato come tipo, generato stringa atteso primitivo | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 | false | audit-custom-erogazione-typeCustomString-boolean-nonvalido2.json |
+
+
+
+
+
+
+@token-verifica-cache
+Scenario Outline: Il token di audit risulta riutilizzato grazie alla cache; erogazione <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+# Prima giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# terzo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro, invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+
+# Verifiche incrociate
+
+* match audit_token_primo_giro == audit_token_secondo_giro
+* match audit_token_primo_giro == audit_token_terzo_giro
+
+* match audit_token_diverso_primo_giro == audit_token_diverso_secondo_giro
+
+* match audit_token_primo_giro != audit_token_diverso_primo_giro
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | path1 | path2 | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk-01-verifica-cache | RestBlockingAuditRest01 | idar01 | oauth | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+| JWK | jwk-02-verifica-cache | RestBlockingAuditRest02 | idar01 | oauth-no-filtro-duplicati | AUDIT_REST_02 | IDAR02 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK |
+
+
+
+
+
+@token-verifica-cache-integrity
+Scenario Outline: Il token di audit risulta riutilizzato grazie alla cache mentre il token di integrity è univoco; erogazione <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+# Prima giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# terzo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro, invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+
+# Verifiche incrociate
+
+* match audit_token_primo_giro == audit_token_secondo_giro
+* match audit_token_primo_giro == audit_token_terzo_giro
+
+* match audit_token_diverso_primo_giro == audit_token_diverso_secondo_giro
+
+* match audit_token_primo_giro != audit_token_diverso_primo_giro
+
+
+# Verifiche incrociate INTEGRITY
+
+* match integrity_token_primo_giro != integrity_token_secondo_giro
+* match integrity_token_primo_giro != integrity_token_terzo_giro
+
+* match integrity_token_diverso_primo_giro != integrity_token_diverso_secondo_giro
+
+* match integrity_token_primo_giro != integrity_token_diverso_primo_giro
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | path1 | path2 | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk-01-verifica-cache-integrity | RestBlockingAuditRest01 | idar04 | oauth | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+| JWK | jwk-02-verifica-cache-integrity | RestBlockingAuditRest02 | idar04 | oauth-no-filtro-duplicati | AUDIT_REST_02 | IDAR02 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | jwk | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK | KID-ApplicativoBlockingJWK | DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK |
+
+
+
+
+
+
+
+@token-verifica-cache-locale
+Scenario Outline: Sia il token di audit che quello authorization risulta riutilizzato grazie alla cache; erogazione <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+# Prima giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
+
+* def authorization_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
+
+* def authorization_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
+
+* def authorization_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# terzo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
+
+* def authorization_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro, invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
+
+* def authorization_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+
+# Verifiche incrociate AUDIT
+
+* match audit_token_primo_giro == audit_token_secondo_giro
+* match audit_token_primo_giro == audit_token_terzo_giro
+
+* match audit_token_diverso_primo_giro == audit_token_diverso_secondo_giro
+
+* match audit_token_primo_giro != audit_token_diverso_primo_giro
+
+
+# Verifiche incrociate ID_AUTH
+
+* match authorization_token_primo_giro == authorization_token_secondo_giro
+* match authorization_token_primo_giro == authorization_token_terzo_giro
+
+* match authorization_token_diverso_primo_giro == authorization_token_diverso_secondo_giro
+
+* match authorization_token_primo_giro == authorization_token_diverso_primo_giro
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | path1 | path2 | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| X509-TestCache | jwk-01-verifica-cache-locale | RestBlockingAuditRest01 | idar01 | locale | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+
+
+
+
+
+
+@token-verifica-cache-locale-id-auth-filtro-duplicati
+Scenario Outline: Solo il token di audit risulta riutilizzato grazie alla cache; erogazione <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+# Prima giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
+
+* def authorization_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
+
+* def authorization_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
+
+* def authorization_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# terzo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
+
+* def authorization_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro, invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
+
+* def authorization_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+
+
+# Verifiche incrociate AUDIT
+
+* match audit_token_primo_giro == audit_token_secondo_giro
+* match audit_token_primo_giro == audit_token_terzo_giro
+
+* match audit_token_diverso_primo_giro == audit_token_diverso_secondo_giro
+
+* match audit_token_primo_giro != audit_token_diverso_primo_giro
+
+
+# Verifiche incrociate ID_AUTH
+
+* match authorization_token_primo_giro != authorization_token_secondo_giro
+* match authorization_token_primo_giro != authorization_token_terzo_giro
+
+* match authorization_token_diverso_primo_giro != authorization_token_diverso_secondo_giro
+
+* match authorization_token_primo_giro != authorization_token_diverso_primo_giro
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | path1 | path2 | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| X509-TestCache | jwk-01-verifica-cache-locale-id-auth-filtro-duplicati | RestBlockingAuditRest01 | idar01 | locale-con-filtro-duplicati | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+
+
+
+
+
+@token-verifica-cache-locale-integrity
+Scenario Outline: Sia il token di audit che quello authorization risulta riutilizzato grazie alla cache, mentre il token di integrity è sempre univoco; erogazione <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+# Prima giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo'
+
+* def authorization_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
+
+* def authorization_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
+
+* def authorization_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# terzo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
+
+* def authorization_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro, invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-User = "utente-token-differente-test-cache"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+* def result = get_diagnostici_create_token_authorization(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'ID_AUTH\' della richiesta effettuata con successo (in cache)'
+
+* def authorization_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0]
+
+* def result = get_diagnostici_create_token_integrity(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'INTEGRITY\' della richiesta effettuata con successo'
+
+* def integrity_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0]
+
+
+
+# Verifiche incrociate AUDIT
+
+* match audit_token_primo_giro == audit_token_secondo_giro
+* match audit_token_primo_giro == audit_token_terzo_giro
+
+* match audit_token_diverso_primo_giro == audit_token_diverso_secondo_giro
+
+* match audit_token_primo_giro != audit_token_diverso_primo_giro
+
+
+# Verifiche incrociate ID_AUTH
+
+* match authorization_token_primo_giro == authorization_token_secondo_giro
+* match authorization_token_primo_giro == authorization_token_terzo_giro
+
+* match authorization_token_diverso_primo_giro == authorization_token_diverso_secondo_giro
+
+* match authorization_token_primo_giro == authorization_token_diverso_primo_giro
+
+
+# Verifiche incrociate INTEGRITY
+
+* match integrity_token_primo_giro != integrity_token_secondo_giro
+* match integrity_token_primo_giro != integrity_token_terzo_giro
+
+* match integrity_token_diverso_primo_giro != integrity_token_diverso_secondo_giro
+
+* match integrity_token_primo_giro != integrity_token_diverso_primo_giro
+
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | path1 | path2 | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| X509-TestCache | jwk-01-verifica-cache-locale-integrity | RestBlockingAuditRest01 | idar03 | locale | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+
+
+
+
+
+
+
+
+@token-verifica-cache-elemento-not-cacheable
+Scenario Outline: Il token di audit non risulta riutilizzato poichè l'elemento è dichiarato not cacheable; erogazione <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+# Prima giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim1 = "valore-claim1-required-test-cache"
+And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim1 = "valore-claim1-required-test-cache"
+And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim1 = "valore-claim1-differente-required-test-cache"
+And header GovWay-Audit-Claim2 = "valore-claim2-differente-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# terzo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim1 = "valore-claim1-required-test-cache"
+And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro, invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim1 = "valore-claim1-differente-required-test-cache"
+And header GovWay-Audit-Claim2 = "valore-claim2-differente-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+
+# Verifiche incrociate
+
+* match audit_token_primo_giro != audit_token_secondo_giro
+* match audit_token_primo_giro != audit_token_terzo_giro
+
+* match audit_token_diverso_primo_giro != audit_token_diverso_secondo_giro
+
+* match audit_token_primo_giro != audit_token_diverso_primo_giro
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | path1 | path2 | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk-01-verifica-cache-elemento-not-cacheable | RestBlockingAuditRest01TokenAuditClaimNotCacheable | idar01 | oauth | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+| JWK | jwk-01-verifica-cache-elemento-optional-not-cacheable | RestBlockingAuditRest01TokenAuditClaimOptionalNotCacheable | idar01 | oauth | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
+
+
+
+
+
+
+@token-verifica-cache-elemento-optional-not-cacheable-non-usato
+Scenario Outline: Il token di audit risulta riutilizzato poichè l'elemento opzionale dichiarato not cacheable non viene usato; erogazione <tipo-test> pattern:<sicurezzaPattern> audit:<auditPattern> (<descrizione>)
+
+# Prima giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim2 = "valore-claim2-differente-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo'
+
+* def audit_token_diverso_primo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# terzo giro
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente1'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim2 = "valore-claim2-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_terzo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+* java.lang.Thread.sleep(1000)
+
+
+# Secondo giro, invocazione con parametri diversi (nell'idUser)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/<nome-api-impl>-<tipo-test>/v1"
+And path '<path1>', '<path2>'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'audit-rest-<tipo-test-minuscolo>-utente2'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = '<nome-api-impl>-<tipo-test>/v1'
+And header simulazionepdnd-digest-mode = 'proxy'
+And header GovWay-Audit-Claim2 = "valore-claim2-differente-required-test-cache"
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici_create_token_audit(tid) 
+* match result[0].MESSAGGIO == 'Creazione security token ModI \'AUDIT\' della richiesta effettuata con successo (in cache)'
+
+* def audit_token_diverso_secondo_giro = responseHeaders['GovWay-TestSuite-GovWay-Client-Audit-Token'][0]
+
+
+
+# Verifiche incrociate
+
+* match audit_token_primo_giro == audit_token_secondo_giro
+* match audit_token_primo_giro == audit_token_terzo_giro
+
+* match audit_token_diverso_primo_giro == audit_token_diverso_secondo_giro
+
+* match audit_token_primo_giro != audit_token_diverso_primo_giro
+
+
+Examples:
+| tipo-test | tipo-test-minuscolo | nome-api-impl | path1 | path2 | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
+| JWK | jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato | RestBlockingAuditRest01TokenAuditClaimOptionalNotCacheable | idar01 | oauth | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
 

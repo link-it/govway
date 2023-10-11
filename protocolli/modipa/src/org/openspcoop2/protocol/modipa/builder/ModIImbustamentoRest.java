@@ -465,7 +465,13 @@ public class ModIImbustamentoRest {
 		
 		boolean apiSoap = ServiceBinding.SOAP.equals(msg.getServiceBinding());
 		
-		boolean cacheble = !integrita && !filtroDuplicati;
+		boolean cacheable = false;
+		if(tokenAudit) {
+			cacheable = true; // verrà perfezionato sotto rispetto ai claim
+		}
+		else {
+			cacheable = !integrita && !filtroDuplicati; 
+		}
 		
 		String idTransazione = msg.getTransactionId();
 		if(idTransazione==null &&
@@ -739,9 +745,9 @@ public class ModIImbustamentoRest {
 						payloadToken, busta,
 						modiTokenClaims);
 			}
-			else {
+			else if(tokenAudit){
 				
-				addCorniceSicurezzaSchema(securityConfig,
+				cacheable = addCorniceSicurezzaSchema(securityConfig,
 						dynamicMap, context,
 						payloadToken, busta,
 						corniceSicurezzaSchema,
@@ -1214,7 +1220,7 @@ public class ModIImbustamentoRest {
 					busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_X509_ISSUER : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER, 
 							x509.getIssuerX500Principal().toString());
 				}
-				if(cacheble) {
+				if(cacheable) {
 					try {
 						String pem = CertificateUtils.toPEM(x509);
 						modiTokenClaims.setPem(pem);
@@ -1227,7 +1233,7 @@ public class ModIImbustamentoRest {
 		if(jwkSet!=null) {
 			busta.addProperty(tokenAudit ? ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_KID : ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_KID,
 					kid);
-			if(cacheble) {
+			if(cacheable) {
 				try {
 					modiTokenClaims.setJwk(jwkSet.getJson());
 				}catch(Exception e) {
@@ -1246,7 +1252,7 @@ public class ModIImbustamentoRest {
 		String funzioneCache = "ModI-"+(tokenAudit?"Audit":"Authorization");
 		String keyCache = null;
 		Date nowCacheDate = null;
-		if(cacheble) {
+		if(cacheable) {
 			
 			keyCache = modiTokenClaims.toCacheKey();
 			
@@ -1334,7 +1340,7 @@ public class ModIImbustamentoRest {
 			
 			
 			
-			if(cacheble) {
+			if(cacheable) {
 				GestoreToken.putTokenCacheItem(modiToken, keyCache, funzioneCache, nowCacheDate); 
 			}
 		}
@@ -1429,34 +1435,41 @@ public class ModIImbustamentoRest {
 		return values;
 	}
 	
-	private void addCorniceSicurezzaSchema(ModISecurityConfig securityConfig,
+	private boolean addCorniceSicurezzaSchema(ModISecurityConfig securityConfig,
 			Map<String, Object> dynamicMap, Context context,
 			ObjectNode payloadToken, Busta busta,
 			String corniceSicurezzaSchema,
 			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
 		if(corniceSicurezzaSchema!=null && StringUtils.isNotEmpty(corniceSicurezzaSchema)) {
-			addCorniceSicurezzaSchema(
+			return addCorniceSicurezzaSchema(
 					dynamicMap, context,
 					payloadToken, busta,
 					securityConfig.getCorniceSicurezzaSchemaConfig()!=null ? securityConfig.getCorniceSicurezzaSchemaConfig().getClaims() : null,
 					modiTokenClaims);
 		}
+		return false;
 	}
-	private void addCorniceSicurezzaSchema(
+	private boolean addCorniceSicurezzaSchema(
 			Map<String, Object> dynamicMap, Context context,
 			ObjectNode payloadToken, Busta busta,
 			List<ModIAuditClaimConfig> schemas,
 			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
 		if(schemas!=null && !schemas.isEmpty()) {
+			boolean cacheable = true;
 			for (ModIAuditClaimConfig modIAuditClaimConfig : schemas) {
-				addCorniceSicurezzaSchemaRule(dynamicMap, context,
+				boolean claimCacheable = addCorniceSicurezzaSchemaRule(dynamicMap, context,
 						payloadToken, busta,
 						modIAuditClaimConfig,
 						modiTokenClaims);
+				if(!claimCacheable) {
+					cacheable = false; // ne basta uno
+				}
 			}
+			return cacheable;
 		}
+		return false;
 	}
-	private void addCorniceSicurezzaSchemaRule(Map<String, Object> dynamicMap, Context context,
+	private boolean addCorniceSicurezzaSchemaRule(Map<String, Object> dynamicMap, Context context,
 			ObjectNode payloadToken, Busta busta,
 			ModIAuditClaimConfig modIAuditClaimConfig,
 			ModIJWTTokenClaims modiTokenClaims) throws ProtocolException {
@@ -1511,6 +1524,11 @@ public class ModIImbustamentoRest {
 				if(modIAuditClaimConfig.isTrace()) {
 					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PREFIX+claimName, valore);
 				}
+				
+				return modIAuditClaimConfig.isCacheable();
+			}
+			else {
+				return !modIAuditClaimConfig.isRequired(); // sarà considerato cacheable se non trovato, poichè essendo l'elemento opzionale non verrà serializzato nel token
 			}
 			
 		}catch(Exception e) {
@@ -1519,7 +1537,7 @@ public class ModIImbustamentoRest {
 			}
 			throw new ProtocolException(e.getMessage());
 		}
-			
+
 	}
 	
 	private ModIValidazioneAuditClaimValue readCorniceSicurezzaSchemaPayloadValue(Map<String, Object> dynamicMap, Context context,

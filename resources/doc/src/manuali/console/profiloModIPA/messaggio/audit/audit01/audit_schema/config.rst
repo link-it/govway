@@ -42,6 +42,12 @@ Ogni singolo claim è personalizzabile nei seguenti aspetti:
 
 - L'indicazione se il claim è obbligatorio all'interno del token di audit tramite la proprietà '*org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.<IDPROP>.claims.<IDCLAIM-X>.required*'.
 
+- L'indicazione se il claim veicola un valore riutilizzabile su differenti chiamate tramite la proprietà '*org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.<IDPROP>.claims.<IDCLAIM-X>.cacheable*'. In caso di proprietà non definita per default il valore del claim sarà processato come riutilizzabile.
+
+  .. note::
+	
+       L'intero token di audit verrà salvato in cache e riutilizzato su differenti chiamate solo se tutti i claim inseriti all'interno del token risultano configurati come riutilizzabili.
+
 - L'indicazione se il claim è una stringa json o un tipo primitivo attraverso la proprietà '*org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.<IDPROP>.claims.<IDCLAIM-X>.stringType*'.
 
 - Una descrizione sintetica dell'informazione rappresentata dal claim che verrà fornita tra i criteri informativi dello schema nella maschera di configurazione dell'API (proprietà '*org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.<IDPROP>.claims.<IDCLAIM-X>.info*').

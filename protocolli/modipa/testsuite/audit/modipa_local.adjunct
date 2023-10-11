@@ -311,3 +311,78 @@ org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not
 org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.rule.info=Header http 'GovWay-Audit-Type'
 org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.forwardBackend=GovWay-Audit-Type
 org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.custom_type_not_string.claims.type.trace=true
+
+
+
+# . Pattern con elementi required non cachable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.nome=Claim-Required-Not-Cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.label=Claim Required Not Cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims=claim1,claim2
+# Indicazione se deve essere prodotto il claim 'iss' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.iss.locale=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.iss.oauth=true
+# Indicazione se deve essere prodotto il claim 'sub' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.sub.locale=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.sub.oauth=false
+# Indicazione se deve essere prodotto il claim 'client_id' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.client_id.locale=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.client_id.oauth=false
+# Claim1: identificativo required e not cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.nome=claim1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.label=Claim1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.cacheable=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.info=Elemento required not cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.rule=${header:GovWay-Audit-Claim1}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.rule.info=Header http 'GovWay-Audit-Claim1'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.forwardBackend=GovWay-Audit-Claim1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim1.trace=false
+# userLocation: un identificativo univoco della postazione interna al dominio del fruitore da cui è avviata l'esigenza della request di accesso all'e-service dell'erogatore
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.nome=claim2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.label=Claim2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.cacheable=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.info=Elemento required cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.rule=${header:GovWay-Audit-Claim2}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.rule.info=Header http 'GovWay-Audit-Claim2'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.forwardBackend=GovWay-Audit-Claim2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.requiredNotCacheable.claims.claim2.trace=false
+
+
+# . Pattern con elementi optional non cachable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.nome=Claim-Optional-Not-Cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.label=Claim Optional Not Cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims=claim1,claim2
+# Indicazione se deve essere prodotto il claim 'iss' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.iss.locale=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.iss.oauth=true
+# Indicazione se deve essere prodotto il claim 'sub' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.sub.locale=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.sub.oauth=false
+# Indicazione se deve essere prodotto il claim 'client_id' valorizzato con il clientId
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.client_id.locale=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.client_id.oauth=false
+# Claim1: identificativo required e not cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.nome=claim1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.label=Claim1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.required=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.cacheable=false
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.info=Elemento required not cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.rule=${header:GovWay-Audit-Claim1}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.rule.info=Header http 'GovWay-Audit-Claim1'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.forwardBackend=GovWay-Audit-Claim1
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim1.trace=false
+# userLocation: un identificativo univoco della postazione interna al dominio del fruitore da cui è avviata l'esigenza della request di accesso all'e-service dell'erogatore
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.nome=claim2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.label=Claim2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.required=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.cacheable=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.stringType=true
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.info=Elemento required cacheable
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.rule=${header:GovWay-Audit-Claim2}
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.rule.info=Header http 'GovWay-Audit-Claim2'
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.forwardBackend=GovWay-Audit-Claim2
+org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern.optionalNotCacheable.claims.claim2.trace=false
