@@ -38,6 +38,7 @@ public class ModIAuditClaimConfig {
 	public static final String PROPERTY_NOME = "nome";
 	public static final String PROPERTY_LABEL = "label";
 	public static final String PROPERTY_REQUIRED = "required";
+	public static final String PROPERTY_CACHEABLE = "cacheable";
 	public static final String PROPERTY_STRING_TYPE = "stringType";
 	public static final String PROPERTY_REGEXP = "regexp";
 	public static final String PROPERTY_ENUM = "enum";
@@ -57,6 +58,7 @@ public class ModIAuditClaimConfig {
 		this.nome = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_NOME, true);
 		this.label = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_LABEL, true);
 		this.required = ModIAuditConfig.getBooleanProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_REQUIRED, true, true);
+		this.cacheable = ModIAuditConfig.getBooleanProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_CACHEABLE, false, true);
 		this.stringType = ModIAuditConfig.getBooleanProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_STRING_TYPE, true, true);
 		
 		this.regexp = ModIAuditConfig.getProperty(prefix, p, ModIAuditConfig.PROPERTY_CLAIMS+"."+propertyId+"."+PROPERTY_REGEXP, false);
@@ -104,6 +106,7 @@ public class ModIAuditClaimConfig {
 	private String nome;
 	private String label;
 	private boolean required;
+	private boolean cacheable;
 	private boolean stringType;
 	private String regexp;
 	private List<String> values;
@@ -121,6 +124,7 @@ public class ModIAuditClaimConfig {
 		newInstance.nome = this.nome;
 		newInstance.label = this.label;
 		newInstance.required = this.required;
+		newInstance.cacheable = this.cacheable;
 		newInstance.stringType = this.stringType;
 		newInstance.regexp = this.regexp;
 		
@@ -163,6 +167,10 @@ public class ModIAuditClaimConfig {
 
 	public boolean isRequired() {
 		return this.required;
+	}
+	
+	public boolean isCacheable() {
+		return this.cacheable;
 	}
 
 	public boolean isStringType() {

@@ -135,7 +135,7 @@ Prerequisiti:
 
 		# ================================================
 		# ----- AUDIT_REST_XX
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern=default,optional,custom,custom_no_validation,custom_type_string,custom_type_not_string
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern=default,optional,custom,custom_no_validation,custom_type_string,custom_type_not_string,requiredNotCacheable,optionalNotCacheable
 
 		# ================================================
 		# --------- Codifica Digest -----

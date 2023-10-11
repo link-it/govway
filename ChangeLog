@@ -1,3 +1,10 @@
+2023-10-11  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1647
+	La registrazione delle informazioni personalizzate da includere nel token di AUDIT_REST_01 consente adesso di definire se ogni singolo claim veicola un valore riutilizzabile su differenti chiamate.
+        L'intero token di audit verrà salvato in cache e riutilizzato su differenti chiamate solo se tutti i claim inseriti all'interno del token risultano configurati come riutilizzabili.
+
 2023-10-11  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

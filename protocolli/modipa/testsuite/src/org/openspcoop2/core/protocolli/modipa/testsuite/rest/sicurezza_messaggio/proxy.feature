@@ -7329,7 +7329,17 @@ Scenario: isTest('audit-rest-jwk-01') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-02') ||
 		isTest('audit-rest-jwk-customtrace-customforward-01') || 
-		isTest('audit-rest-jwk-token-optional-01')
+		isTest('audit-rest-jwk-token-optional-01') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2')
 
     * def tipoTest = 'N.D.'
     * eval
@@ -7341,7 +7351,17 @@ Scenario: isTest('audit-rest-jwk-01') ||
 		isTest('audit-rest-jwk-custom-01') || 
 		isTest('audit-rest-jwk-custom-02') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
-		isTest('audit-rest-jwk-token-optional-01') ) {
+		isTest('audit-rest-jwk-token-optional-01') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2') ) {
       tipoTest = 'JWK'
     }
     """
@@ -7358,7 +7378,9 @@ Scenario: isTest('audit-rest-jwk-01') ||
     if (isTest('audit-rest-jwk-01') ||
 		isTest('audit-rest-jwk-mixed-01') ||
 		isTest('audit-rest-jwk-custom-01') ||
-		isTest('audit-rest-jwk-customtrace-customforward-01') ) {
+		isTest('audit-rest-jwk-customtrace-customforward-01') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente2') ) {
       audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
     }
     """
@@ -7372,7 +7394,9 @@ Scenario: isTest('audit-rest-jwk-01') ||
     """
     if (isTest('audit-rest-jwk-02') || 
 		isTest('audit-rest-jwk-mixed-02') ||
-		isTest('audit-rest-jwk-custom-02') ) {
+		isTest('audit-rest-jwk-custom-02') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente2') ) {
       audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
     }
     """
@@ -7388,6 +7412,22 @@ Scenario: isTest('audit-rest-jwk-01') ||
       audExpected = 'RestBlockingAuditRest01TokenAuditOptional-'+tipoTest+'/v1'
     }
     """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ) {
+      audExpected = 'RestBlockingAuditRest01TokenAuditClaimNotCacheable-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2') ) {
+      audExpected = 'RestBlockingAuditRest01TokenAuditClaimOptionalNotCacheable-'+tipoTest+'/v1'
+    }
+    """
 
 
     * def clientIdExpected = 'N.D.'
@@ -7400,7 +7440,15 @@ Scenario: isTest('audit-rest-jwk-01') ||
 		isTest('audit-rest-jwk-custom-01') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
 		isTest('audit-rest-jwk-customtrace-customforward-01') ||
-		isTest('audit-rest-jwk-token-optional-01')) {
+		isTest('audit-rest-jwk-token-optional-01') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2')  ) {
       kidExpected = 'KID-ApplicativoBlockingIDA01'
       clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
       issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
@@ -7411,7 +7459,9 @@ Scenario: isTest('audit-rest-jwk-01') ||
     if (isTest('audit-rest-jwk-02') || 
 		isTest('audit-rest-jwk-mixed-02') ||
 		isTest('audit-rest-jwk-custom-02') ||
-		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+		isTest('audit-rest-jwk-notrace-noforward-default-02') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente2')) {
       kidExpected = 'KID-ApplicativoBlockingJWK'
       clientIdExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
       issExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
@@ -7426,7 +7476,15 @@ Scenario: isTest('audit-rest-jwk-01') ||
 		isTest('audit-rest-jwk-custom-01') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
 		isTest('audit-rest-jwk-customtrace-customforward-01') ||
-		isTest('audit-rest-jwk-token-optional-01')) {
+		isTest('audit-rest-jwk-token-optional-01') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2')  ) {
       subExpected = 'ApplicativoBlockingIDA01'
     }
     """
@@ -7435,7 +7493,9 @@ Scenario: isTest('audit-rest-jwk-01') ||
     if (isTest('audit-rest-jwk-02') || 
 		isTest('audit-rest-jwk-mixed-02') ||
 		isTest('audit-rest-jwk-custom-02') ||
-		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+		isTest('audit-rest-jwk-notrace-noforward-default-02') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente2')) {
       subExpected = 'ApplicativoBlockingJWK-CredenzialePrincipal'
     }
     """
@@ -7449,7 +7509,15 @@ Scenario: isTest('audit-rest-jwk-01') ||
 		isTest('audit-rest-jwk-custom-01') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
 		isTest('audit-rest-jwk-customtrace-customforward-01') ||
-		isTest('audit-rest-jwk-token-optional-01')) {
+		isTest('audit-rest-jwk-token-optional-01') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2') ) {
       purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
     }
     """
@@ -7458,7 +7526,9 @@ Scenario: isTest('audit-rest-jwk-01') ||
     if (isTest('audit-rest-jwk-02') || 
 		isTest('audit-rest-jwk-mixed-02') ||
 		isTest('audit-rest-jwk-custom-02') ||
-		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+		isTest('audit-rest-jwk-notrace-noforward-default-02') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente2')) {
       purposeIdExpected = 'purposeId-ApplicativoBlockingJWK'
     }
     """
@@ -7472,7 +7542,15 @@ Scenario: isTest('audit-rest-jwk-01') ||
 		isTest('audit-rest-jwk-custom-01') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
 		isTest('audit-rest-jwk-customtrace-customforward-01') ||
-		isTest('audit-rest-jwk-token-optional-01')) {
+		isTest('audit-rest-jwk-token-optional-01') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2')  ) {
       dnonceExpected = '#notpresent'
     }
     """
@@ -7481,7 +7559,9 @@ Scenario: isTest('audit-rest-jwk-01') ||
     if (isTest('audit-rest-jwk-02') || 
 		isTest('audit-rest-jwk-mixed-02') ||
 		isTest('audit-rest-jwk-custom-02') ||
-		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+		isTest('audit-rest-jwk-notrace-noforward-default-02') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente2')) {
       dnonceExpected = '#number'
     }
     """
@@ -7494,7 +7574,15 @@ Scenario: isTest('audit-rest-jwk-01') ||
 		isTest('audit-rest-jwk-custom-01') ||
 		isTest('audit-rest-jwk-notrace-noforward-default-01') ||
 		isTest('audit-rest-jwk-customtrace-customforward-01') ||
-		isTest('audit-rest-jwk-token-optional-01')) {
+		isTest('audit-rest-jwk-token-optional-01') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2')  ) {
       digestExpected = '#notpresent'
     }
     """
@@ -7503,8 +7591,39 @@ Scenario: isTest('audit-rest-jwk-01') ||
     if (isTest('audit-rest-jwk-02') || 
 		isTest('audit-rest-jwk-mixed-02') ||
 		isTest('audit-rest-jwk-custom-02') ||
-		isTest('audit-rest-jwk-notrace-noforward-default-02')) {
+		isTest('audit-rest-jwk-notrace-noforward-default-02') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente2')) {
       digestExpected = { alg: 'SHA256', value: '#string' }
+    }
+    """
+
+    * def userIdToken = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01') || 
+	isTest('audit-rest-jwk-02') ||
+	isTest('audit-rest-jwk-custom-01') || 
+	isTest('audit-rest-jwk-custom-02') ||
+	isTest('audit-rest-jwk-notrace-noforward-default-01') ||
+	isTest('audit-rest-jwk-notrace-noforward-default-02') ||
+	isTest('audit-rest-jwk-customtrace-customforward-01') ||
+	isTest('audit-rest-jwk-token-optional-01')  ) {
+      userIdToken = 'utente-token'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+	isTest('audit-rest-jwk-02-verifica-cache-utente1')  ) {
+      userIdToken = 'utente-token-test-cache'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+	isTest('audit-rest-jwk-02-verifica-cache-utente2')  ) {
+      userIdToken = 'utente-token-differente-test-cache'
     }
     """
 
@@ -7518,7 +7637,11 @@ Scenario: isTest('audit-rest-jwk-01') ||
 	isTest('audit-rest-jwk-notrace-noforward-default-01') ||
 	isTest('audit-rest-jwk-notrace-noforward-default-02') ||
 	isTest('audit-rest-jwk-customtrace-customforward-01') ||
-	isTest('audit-rest-jwk-token-optional-01') ) {
+	isTest('audit-rest-jwk-token-optional-01') ||
+	isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+	isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+	isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+	isTest('audit-rest-jwk-02-verifica-cache-utente2')  ) {
     client_token_audit_match = ({
         header: { kid: kidExpected },
         payload: { 
@@ -7526,7 +7649,7 @@ Scenario: isTest('audit-rest-jwk-01') ||
             client_id: '#notpresent',
             iss: issExpected,
             sub: '#notpresent',
-	    userID: 'utente-token', 
+	    userID: userIdToken, 
             userLocation: 'ip-utente-token', 
             LoA: 'livello-autenticazione-utente-token',
 	    dnonce: dnonceExpected
@@ -7534,6 +7657,77 @@ Scenario: isTest('audit-rest-jwk-01') ||
     })
     }
     """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    claim1: 'valore-claim1-required-test-cache', 
+            claim2: 'valore-claim2-required-test-cache',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    claim1: 'valore-claim1-differente-required-test-cache', 
+            claim2: 'valore-claim2-differente-required-test-cache',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    claim1: '#notpresent', 
+            claim2: 'valore-claim2-required-test-cache',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    claim1: '#notpresent', 
+            claim2: 'valore-claim2-differente-required-test-cache',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
     * eval
     """
     if (isTest('audit-rest-jwk-mixed-01') || 
@@ -7582,6 +7776,552 @@ Scenario: isTest('audit-rest-jwk-01') ||
     ({
 	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
         'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+Scenario: isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2') ) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2') ) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2') ) {
+      audExpected = 'RestBlockingAuditRest02-'+tipoTest+'/v1'
+    }
+    """
+
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2')  ) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2')) {
+      kidExpected = 'KID-ApplicativoBlockingJWK'
+      clientIdExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+      issExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2')  ) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2')) {
+      subExpected = 'ApplicativoBlockingJWK-CredenzialePrincipal'
+    }
+    """
+
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2') ) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2')) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingJWK'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2')  ) {
+      dnonceExpected = '#notpresent'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2')) {
+      dnonceExpected = '#number'
+    }
+    """
+
+    * def digestExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2')  ) {
+      digestExpected = '#notpresent'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2')) {
+      digestExpected = { alg: 'SHA256', value: '#string' }
+    }
+    """
+
+    * def userIdToken = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+	isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1')  ) {
+      userIdToken = 'utente-token-test-cache'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2') ||
+	isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2')  ) {
+      userIdToken = 'utente-token-differente-test-cache'
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+	isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+	isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2') ||
+	isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2')  ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: userIdToken, 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0],
+        'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['Agid-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+Scenario: isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2') ) {
+      tipoTest = 'X509'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2') ) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * def audAuditExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2') ) {
+      audAuditExpected = 'RestBlockingAuditRest01-'+tipoTest+'-AUDIT/v1'
+    }
+    """
+
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2')  ) {
+      kidExpected = 'ExampleClient1'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = '#notpresent'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2')  ) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2')  ) {
+      purposeIdExpected = '#notpresent'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2')  ) {
+      dnonceExpected = '#notpresent'
+    }
+    """
+
+    * def digestExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2')  ) {
+      digestExpected = '#notpresent'
+    }
+    """
+
+    * def userIdToken = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1')  ) {
+      userIdToken = 'utente-token-test-cache'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2')  ) {
+      userIdToken = 'utente-token-differente-test-cache'
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2')  ) {
+    client_token_audit_match = ({
+        header: { 
+		kid: '#notpresent',
+	        x5c: '#present',
+                x5u: '#notpresent',
+               'x5t#S256': '#present'
+	},
+        payload: { 
+            aud: audAuditExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: userIdToken, 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+    
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { 
+		kid: kidExpected,
+	        x5c: '#present',
+                x5u: '#notpresent',
+               'x5t#S256': '#present'
+	},
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkToken ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+
+Scenario: isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2') ) {
+      tipoTest = 'X509'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2') ) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+    * def audAuditExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2') ) {
+      audAuditExpected = 'RestBlockingAuditRest01-'+tipoTest+'-AUDIT/v1'
+    }
+    """
+
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')  ) {
+      kidExpected = 'ExampleClient1'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = '#notpresent'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')  ) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')  ) {
+      purposeIdExpected = '#notpresent'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')  ) {
+      dnonceExpected = '#notpresent'
+    }
+    """
+
+    * def digestExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')  ) {
+      digestExpected = '#notpresent'
+    }
+    """
+
+   * def userIdToken = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1')  ) {
+      userIdToken = 'utente-token-test-cache'
+    }
+    """
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')  ) {
+      userIdToken = 'utente-token-differente-test-cache'
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1') ||
+	  isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')  ) {
+    client_token_audit_match = ({
+        header: { 
+		kid: '#notpresent',
+	        x5c: '#present',
+                x5u: '#notpresent',
+               'x5t#S256': '#present'
+	},
+        payload: { 
+            aud: audAuditExpected,
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: userIdToken, 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+    
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { 
+		kid: kidExpected,
+	        x5c: '#present',
+                x5u: '#notpresent',
+               'x5t#S256': '#present'
+	},
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkToken ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/'+audExpected)
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0],
+        'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['Agid-JWT-Signature'][0]
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)

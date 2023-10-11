@@ -816,6 +816,76 @@ Scenario: isTest('audit-rest-jwk-01')  ||
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
+Scenario: isTest('audit-rest-jwk-01-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente1')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-test-cache'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-01-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-02-verifica-cache-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-integrity-utente2') ||
+		isTest('audit-rest-jwk-02-verifica-cache-integrity-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-id-auth-filtro-duplicati-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-locale-integrity-utente2')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-UserID'][0] == 'utente-token-differente-test-cache'
+    * match requestHeaders['GovWay-Audit-UserLocation'][0] == 'ip-utente-token'
+    * match requestHeaders['GovWay-Audit-LoA'][0] == 'livello-autenticazione-utente-token'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente1') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente1')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-Claim1'][0] == 'valore-claim1-required-test-cache'
+    * match requestHeaders['GovWay-Audit-Claim2'][0] == 'valore-claim2-required-test-cache'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-01-verifica-cache-elemento-not-cacheable-utente2') ||
+		isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-utente2')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-Claim1'][0] == 'valore-claim1-differente-required-test-cache'
+    * match requestHeaders['GovWay-Audit-Claim2'][0] == 'valore-claim2-differente-required-test-cache'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente1')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-Claim1'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-Claim2'][0] == 'valore-claim2-required-test-cache'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+Scenario: isTest('audit-rest-jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato-utente2')
+
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-Claim1'] == '#notpresent'
+    * match requestHeaders['GovWay-Audit-Claim2'][0] == 'valore-claim2-differente-required-test-cache'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
 Scenario: isTest('audit-rest-jwk-mixed-01')  || 
 		isTest('audit-rest-jwk-mixed-02')
 
