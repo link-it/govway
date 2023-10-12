@@ -1,3 +1,13 @@
+2023-10-12  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA, GovWayConsole]
+	Risolto Bug OP-1649
+	- In un contesto in cui risultava già attiva una erogazione definita senza pattern di sicurezza messaggio o con un pattern con generazione token 'Authorization ModI', 
+	  se veniva modificata l'API per utilizzare un pattern con token 'Authorization PDND', 
+	  la sezione controllo degli accessi dell'erogazione non consentiva di abilitare la token policy di validazione dei voucher PDND.
+	- In un API definita con un pattern di sicurezza messaggio con generazione token 'Authorization ModI' e con voce 'Header HTTP del Token' impostata a 'Custom-JWT-Signature', 
+	  se veniva modificata la voce di generazione token in 'Authorization PDND' rimanevano inconsistenti le successive voci che consentono la configurazione dell'header custom.
+
 2023-10-11  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
