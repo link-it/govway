@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -645,6 +646,27 @@ public class PorteApplicativeControlloAccessi extends Action {
 					}
 				}
 
+				if( forceGestioneToken && (gestioneTokenPolicy == null || gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO))) {
+					// Si arriva in una configurazione in cui l'API è stata modificata successivamente
+					forceGestioneToken = false;
+					
+					if(policyLabels!=null && policyLabels.length>0 && policyValues!=null && policyValues.length>0) {
+					
+						List<String> newPolicyLabels = new ArrayList<>();
+						List<String> newPolicyValues = new ArrayList<>();
+						
+						newPolicyLabels.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+						newPolicyValues.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+						newPolicyLabels.addAll(Arrays.asList(policyLabels));
+						newPolicyValues.addAll(Arrays.asList(policyValues));
+						
+						policyLabels = newPolicyLabels.toArray(new String[1]);
+						policyValues = newPolicyValues.toArray(new String[1]);
+						
+					}
+					
+				}
+				
 				if(autorizzazioneScope == null) {
 					if(pa.getScope() != null) {
 						autorizzazioneScope =  pa.getScope().getStato().equals(StatoFunzionalita.ABILITATO) ? Costanti.CHECK_BOX_ENABLED : ""; 

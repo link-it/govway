@@ -796,11 +796,11 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					StringUtils.isNotEmpty(profiloSicurezzaMessaggioHeaderItemValue.getValue())
 						) {
 					custom =
-							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM.equals(profiloSicurezzaMessaggioHeaderItemValue.getValue())
+							(sorgenteTokenLocale && ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM.equals(profiloSicurezzaMessaggioHeaderItemValue.getValue()))
 							||
 							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM.equals(profiloSicurezzaMessaggioHeaderItemValue.getValue())
 							||
-							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(profiloSicurezzaMessaggioHeaderItemValue.getValue());
+							(sorgenteTokenLocale && ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(profiloSicurezzaMessaggioHeaderItemValue.getValue()));
 				}
 				if(custom) {
 					if(profiloSicurezzaMessaggioHeaderCustomItem!=null) {
