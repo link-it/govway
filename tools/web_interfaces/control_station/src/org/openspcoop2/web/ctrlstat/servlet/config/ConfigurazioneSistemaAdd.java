@@ -187,7 +187,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_SELECTED_CACHES.equals(nomeCache) &&
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_SELECTED_NODES.equals(nomeMetodo)) {
 						aliasesForResetAllCaches = new ArrayList<>();
-						for (int i = 0; i < aliasNodi.length; i++) {
+						if(aliasNodi!=null && aliasNodi.length>0) {
 							aliasesForResetAllCaches.addAll(Arrays.asList(aliasNodi));
 						}
 						aliasNodi = null; // svuoto

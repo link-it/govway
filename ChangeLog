@@ -1,5 +1,11 @@
 2023-10-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug OP-1651
+	L'operazione "Svuota le Cache dei nodi '<nomeGruppo>'" veniva ripetuta erroneamente più volte per ogni nodo.
+
+2023-10-12  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloModIPA, GovWayConsole]
 	Risolto Bug OP-1649
 	- In un contesto in cui risultava già attiva una erogazione definita senza pattern di sicurezza messaggio o con un pattern con generazione token 'Authorization ModI', 
