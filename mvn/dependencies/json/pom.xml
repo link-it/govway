@@ -17,7 +17,7 @@
 
 		<jar.group.name>json</jar.group.name>
 		
-		<org.json.json.version>20230618</org.json.json.version>
+		<org.json.json.version>20231013</org.json.json.version>
 
 		<networknt_json-schema-validator.version>1.0.86</networknt_json-schema-validator.version>
 		<com-ethlo-time.version>1.7.3</com-ethlo-time.version>

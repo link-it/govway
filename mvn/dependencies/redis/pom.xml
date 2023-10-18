@@ -17,9 +17,9 @@
 
 		<jar.group.name>redis</jar.group.name>
 		
-		<redisson.version>3.23.2</redisson.version>
-		<netty.version>4.1.96.Final</netty.version>
-		<jboss-marshalling.version>2.1.1.Final</jboss-marshalling.version>
+		<redisson.version>3.23.5</redisson.version>
+		<netty.version>4.1.100.Final</netty.version>
+		<jboss-marshalling.version>2.1.3.SP1</jboss-marshalling.version>
 		<objenesis.version>3.3</objenesis.version>
 		<esotericsoftware.kryo.version>5.5.0</esotericsoftware.kryo.version>
 
