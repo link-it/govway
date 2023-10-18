@@ -49,7 +49,71 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
  * @version $Rev$, $Date$
  */
 public class ConnettoreUtilities {
+	
+	private ConnettoreUtilities() {}
 
+	public static DatiTempiRisposta readDatiGlobaliTimeout(ConfigurazionePdDManager configPdDManager, TipoPdD tipoPdD, RequestInfo requestInfo, OpenSPCoop2Properties properties) throws DriverConfigurazioneException {
+		// Prelevo la configurazione del Controllo del Traffico
+		ConfigurazioneGenerale configurazioneGenerale = null;
+		try {
+			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico(requestInfo);
+		}catch(DriverConfigurazioneNotFound notFound) {
+			// ignore
+		}
+		
+		if(TipoPdD.DELEGATA.equals(tipoPdD)){
+			return readDatiGlobaliTimeoutFruizione(configurazioneGenerale, properties);
+		}
+		else{
+			return readDatiGlobaliTimeoutErogazione(configurazioneGenerale, properties);
+		}
+	
+	}
+	private static DatiTempiRisposta readDatiGlobaliTimeoutFruizione(ConfigurazioneGenerale configurazioneGenerale, OpenSPCoop2Properties properties) {
+		DatiTempiRisposta datiTempiRisposta = new DatiTempiRisposta();
+		if(configurazioneGenerale!=null && configurazioneGenerale.getTempiRispostaFruizione()!=null) {
+			if(configurazioneGenerale.getTempiRispostaFruizione().getConnectionTimeout()!=null) {
+				datiTempiRisposta.setConnectionTimeout(configurazioneGenerale.getTempiRispostaFruizione().getConnectionTimeout());
+			}
+			else {
+				datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeout_inoltroBuste());
+			}
+			if(configurazioneGenerale.getTempiRispostaFruizione().getReadTimeout()!=null) {
+				datiTempiRisposta.setReadConnectionTimeout(configurazioneGenerale.getTempiRispostaFruizione().getReadTimeout());
+			}
+			else {
+				datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeout_inoltroBuste());
+			}
+		}
+		else {
+			datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeout_inoltroBuste());
+			datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeout_inoltroBuste());
+		}
+		return datiTempiRisposta;
+	}
+	private static DatiTempiRisposta readDatiGlobaliTimeoutErogazione(ConfigurazioneGenerale configurazioneGenerale, OpenSPCoop2Properties properties) {
+		DatiTempiRisposta datiTempiRisposta = new DatiTempiRisposta();
+		if(configurazioneGenerale!=null && configurazioneGenerale.getTempiRispostaErogazione()!=null) {
+			if(configurazioneGenerale.getTempiRispostaErogazione().getConnectionTimeout()!=null) {
+				datiTempiRisposta.setConnectionTimeout(configurazioneGenerale.getTempiRispostaErogazione().getConnectionTimeout());
+			}
+			else {
+				datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeout_consegnaContenutiApplicativi());
+			}
+			if(configurazioneGenerale.getTempiRispostaErogazione().getReadTimeout()!=null) {
+				datiTempiRisposta.setReadConnectionTimeout(configurazioneGenerale.getTempiRispostaErogazione().getReadTimeout());
+			}
+			else {
+				datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeout_consegnaContenutiApplicativi());
+			}
+		}
+		else {
+			datiTempiRisposta.setConnectionTimeout(properties.getConnectionTimeout_consegnaContenutiApplicativi());
+			datiTempiRisposta.setReadConnectionTimeout(properties.getReadConnectionTimeout_consegnaContenutiApplicativi());
+		}
+		return datiTempiRisposta;
+	}
+	
 	public static DatiTempiRisposta readDatiTempiRisposta(TipoPdD tipoPdD, RequestInfo requestInfo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		// Prelevo la configurazione del Controllo del Traffico
 		ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
@@ -81,7 +145,7 @@ public class ConnettoreUtilities {
 			Integer avgResponseTime = null; 
 			Iterator<String> keys = properties.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String) keys.next();
+				String key = keys.next();
 				if(key.equals(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)){
 					connectionTimeout = Integer.parseInt(properties.get(key));
 				}
@@ -113,67 +177,84 @@ public class ConnettoreUtilities {
 		
 		if(TipoPdD.DELEGATA.equals(context.getTipoPorta())){
 			
-			try{
-				Connettore connettore = configPdDManager.getForwardRoute(datiTransazione.getSoggettoFruitore(),datiTransazione.getIdServizio(),false, requestInfo);
-				mergeTempiRisposta(datiTempiRisposta, connettore.getProperties());
-			}catch(Exception e){
-				// registro solamente l'errore su log.
-				// sicuramente avverrà un errore durante la gestione del messaggio
-				try{
-					OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug()).error(e.getMessage(),e);
-				}catch(Exception eLogger){
-					context.getLogCore().error(e.getMessage(),e);
-				}
-			}
+			setDatiTempiRispostaFruizione(configPdDManager, datiTempiRisposta,
+					context, datiTransazione, requestInfo);
 			
 		}
 		else{
 			
-			try{
-				if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
-					IDPortaApplicativa idPA = context.getIntegrazione().getIdPA();
-					PortaApplicativa pa = configPdDManager.getPortaApplicativa(idPA, requestInfo);
-					if(pa.sizeServizioApplicativoList()>0) {
-						IDServizioApplicativo idSA = new IDServizioApplicativo();
-						idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
-						idSA.setNome(pa.getServizioApplicativo(0).getNome()); // uso il primo
-								
-						ServizioApplicativo sa = configPdDManager.getServizioApplicativo(idSA, requestInfo);
-						Connettore connettore = null;
-						
-						String scenarioCooperazione = context.getProtocollo().getScenarioCooperazione();
-						if(scenarioCooperazione!=null){
-							if(org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
-									org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ||
-									org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione) ){
-								if(sa.getRispostaAsincrona()!=null){
-									connettore = sa.getRispostaAsincrona().getConnettore();
-								}
-							}else{
-								if(sa.getInvocazioneServizio()!=null){
-									connettore = sa.getInvocazioneServizio().getConnettore();
-								}
-							}
-						}
-						
-						if(connettore!=null){
-							mergeTempiRisposta(datiTempiRisposta, connettore.getProperties());
-						}
-					}
-				}
-			}catch(Exception e){
-				// registro solamente l'errore su log.
-				// sicuramente avverrà un errore durante la gestione del messaggio
-				try{
-					OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug()).error(e.getMessage(),e);
-				}catch(Exception eLogger){
-					context.getLogCore().error(e.getMessage(),e);
-				}
-			}
+			setDatiTempiRispostaErogazione(configPdDManager, datiTempiRisposta,
+					context, requestInfo);
+			
 		}
 		
 		return datiTempiRisposta;
 		
 	}
 	
+	private static void setDatiTempiRispostaFruizione(ConfigurazionePdDManager configPdDManager, DatiTempiRisposta datiTempiRisposta,
+			InRequestProtocolContext context, DatiTransazione datiTransazione, RequestInfo requestInfo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try{
+			Connettore connettore = configPdDManager.getForwardRoute(datiTransazione.getSoggettoFruitore(),datiTransazione.getIdServizio(),false, requestInfo);
+			mergeTempiRisposta(datiTempiRisposta, connettore.getProperties());
+		}catch(Exception e){
+			// registro solamente l'errore su log.
+			// sicuramente avverrà un errore durante la gestione del messaggio
+			try{
+				OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug()).error(e.getMessage(),e);
+			}catch(Exception eLogger){
+				context.getLogCore().error(e.getMessage(),e);
+			}
+		}
+	}
+	
+	private static void setDatiTempiRispostaErogazione(ConfigurazionePdDManager configPdDManager, DatiTempiRisposta datiTempiRisposta,
+			InRequestProtocolContext context, RequestInfo requestInfo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try{
+			if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
+				IDPortaApplicativa idPA = context.getIntegrazione().getIdPA();
+				PortaApplicativa pa = configPdDManager.getPortaApplicativa(idPA, requestInfo);
+				if(pa.sizeServizioApplicativoList()>0) {
+					IDServizioApplicativo idSA = new IDServizioApplicativo();
+					idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+					idSA.setNome(pa.getServizioApplicativo(0).getNome()); // uso il primo
+							
+					ServizioApplicativo sa = configPdDManager.getServizioApplicativo(idSA, requestInfo);
+					setConnettoreDatiTempiRispostaErogazione(context, sa, datiTempiRisposta);
+				}
+			}
+		}catch(Exception e){
+			// registro solamente l'errore su log.
+			// sicuramente avverrà un errore durante la gestione del messaggio
+			try{
+				OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug()).error(e.getMessage(),e);
+			}catch(Exception eLogger){
+				context.getLogCore().error(e.getMessage(),e);
+			}
+		}
+	}
+	private static void setConnettoreDatiTempiRispostaErogazione(InRequestProtocolContext context, ServizioApplicativo sa, DatiTempiRisposta datiTempiRisposta) {
+		
+		Connettore connettore = null;
+		
+		String scenarioCooperazione = context.getProtocollo().getScenarioCooperazione();
+		if(scenarioCooperazione!=null){
+			if(org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
+					org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ||
+					org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione) ){
+				if(sa.getRispostaAsincrona()!=null){
+					connettore = sa.getRispostaAsincrona().getConnettore();
+				}
+			}else{
+				if(sa.getInvocazioneServizio()!=null){
+					connettore = sa.getInvocazioneServizio().getConnettore();
+				}
+			}
+		}
+		
+		if(connettore!=null){
+			mergeTempiRisposta(datiTempiRisposta, connettore.getProperties());
+		}
+		
+	}
 }

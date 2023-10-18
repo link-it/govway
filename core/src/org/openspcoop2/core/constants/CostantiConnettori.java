@@ -40,7 +40,9 @@ public class CostantiConnettori {
     public static final String CONNETTORE_PASSWORD = "password";
     public static final String CONNETTORE_BEARER_TOKEN = "bearerToken";
     public static final String CONNETTORE_CONNECTION_TIMEOUT = "connectionTimeout";
+    public static final String CONNETTORE_CONNECTION_TIMEOUT_GLOBALE = "connectionTimeoutGlobale";
     public static final String CONNETTORE_READ_CONNECTION_TIMEOUT = "readConnectionTimeout";
+    public static final String CONNETTORE_READ_CONNECTION_TIMEOUT_GLOBALE = "readConnectionTimeoutGlobale";
     public static final String CONNETTORE_TEMPO_MEDIO_RISPOSTA = "avgResponseTime";
     public static final String CONNETTORE_TOKEN_POLICY = "tokenPolicy";
 	

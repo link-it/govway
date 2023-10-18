@@ -123,15 +123,18 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 	 * 
 	 */
 	private boolean sendSAAJ(){
+		int connectionTimeout = -1;
+		boolean connectionTimeoutConfigurazioneGlobale = true;
+		int readConnectionTimeout = -1;
+		boolean readConnectionTimeoutConfigurazioneGlobale = true;
 		try{
 			// Impostazione timeout
 			if(this.debug)
 				this.logger.debug("Impostazione timeout...");
-			int connectionTimeout = -1;
-			int readConnectionTimeout = -1;
 			if(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
 				try{
 					connectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
+					connectionTimeoutConfigurazioneGlobale = this.properties.containsKey(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT_GLOBALE);
 				}catch(Exception e){
 					this.logger.error("Parametro '"+CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT+"' errato",e);
 				}
@@ -142,6 +145,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 			if(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
 				try{
 					readConnectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
+					readConnectionTimeoutConfigurazioneGlobale = this.properties.containsKey(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT_GLOBALE);
 				}catch(Exception e){
 					this.logger.error("Parametro '"+CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT+"' errato",e);
 				}
@@ -564,6 +568,11 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				this.errore = msgErrore;
 			}
 			this.logger.error("Errore avvenuto durante la consegna SOAP: "+msgErrore,e);
+			
+			this.processConnectionTimeoutException(connectionTimeout, connectionTimeoutConfigurazioneGlobale, e, msgErrore);
+			
+			this.processReadTimeoutException(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale, e, msgErrore);
+			
 			return false;
 		}
 	}

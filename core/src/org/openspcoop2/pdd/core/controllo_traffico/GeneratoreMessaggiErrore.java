@@ -150,7 +150,7 @@ public class GeneratoreMessaggiErrore {
 	
 	/* ***** EVENTI UTILI PER RICONOSCERE L'ESITO DELLA TRANSAZIONE ****** */
 	
-	public static final MapKey<String> PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE = Map.newMapKey("controlloTrafficoViolazione");
+	public static final MapKey<String> PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE = org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE;
 	
 	private static final String PDD_CONTEXT_VALUE_GENERIC_ERROR = "controlloTrafficoGenericError";
 	public static void addPddContextInfo_ControlloTrafficoGenericError(PdDContext pddContext){
@@ -195,6 +195,75 @@ public class GeneratoreMessaggiErrore {
 	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY_VIOLATE_WARNING_ONLY = Map.newMapKey("CT_VIOLATED_WARNING_ONLY_POLICIES"); // numero di policy violate in warning only mode
 	public static final MapKey<String> PDD_CONTEXT_NUMERO_POLICY_IN_ERRORE = Map.newMapKey("CT_ERROR_POLICIES"); // numero di policy la cui verifica ha provocato un errore
 	
+	private static final String PDD_CONTEXT_VALUE_CONNECTION_TIMEOUT = org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_CONNECTION_TIMEOUT;
+	private static final String PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT = org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT;
+	private static final String PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT = org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT;
+	private static final String PDD_CONTEXT_VALUE_READ_TIMEOUT = org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_READ_TIMEOUT;
+	public static boolean addPddContextInfoControlloTrafficoConnectionTimeout(Context pddContext){
+		if(alreadyExistsPddContextInfoControlloTrafficoTimeout(pddContext, PDD_CONTEXT_VALUE_CONNECTION_TIMEOUT)) {
+			return false;
+		}
+		pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_CONNECTION_TIMEOUT);
+		return true;
+	}
+	public static boolean addPddContextInfoControlloTrafficoReadRequestTimeout(Context pddContext, boolean checkAll){
+		if(checkAll) {
+			if(alreadyExistsPddContextInfoControlloTrafficoTimeout(pddContext, 
+					PDD_CONTEXT_VALUE_READ_TIMEOUT, PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT, PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT)) {
+				return false;
+			}
+		}
+		else if(alreadyExistsPddContextInfoControlloTrafficoTimeout(pddContext, PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT)) {
+			return false;
+		}
+		pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT);
+		return true;
+	}
+	public static boolean addPddContextInfoControlloTrafficoReadResponseTimeout(Context pddContext, boolean checkAll){
+		if(checkAll) {
+			if(alreadyExistsPddContextInfoControlloTrafficoTimeout(pddContext, 
+					PDD_CONTEXT_VALUE_READ_TIMEOUT, PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT, PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT)) {
+				return false;
+			}
+		}
+		else if(alreadyExistsPddContextInfoControlloTrafficoTimeout(pddContext, PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT)) {
+			return false;
+		}
+		pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT);
+		return true;
+	}
+	public static boolean addPddContextInfoControlloTrafficoReadTimeout(Context pddContext, boolean checkAll){
+		if(checkAll) {
+			if(alreadyExistsPddContextInfoControlloTrafficoTimeout(pddContext, 
+					PDD_CONTEXT_VALUE_READ_TIMEOUT, PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT, PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT)) {
+				return false;
+			}
+		}
+		else if(alreadyExistsPddContextInfoControlloTrafficoTimeout(pddContext, PDD_CONTEXT_VALUE_READ_TIMEOUT)) {
+			return false;
+		}
+		pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_READ_TIMEOUT);
+		return true;
+	}
+	private static boolean alreadyExistsPddContextInfoControlloTrafficoTimeout(Context pddContext, String ... valore) {
+		if(valore!=null && valore.length>0) {
+			for (String v : valore) {
+				if(alreadyExistsPddContextInfoControlloTrafficoTimeout(pddContext, v)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	private static boolean alreadyExistsPddContextInfoControlloTrafficoTimeout(Context pddContext, String valore) {
+		if(pddContext.containsKey(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE)) {
+			String tipo = (String) pddContext.get(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE);
+			if(tipo!=null) {
+				return valore.equals(tipo);
+			}
+		}
+		return false;
+	}
 	
 	/* ***** FAULT ****** */
 	

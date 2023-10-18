@@ -358,6 +358,9 @@ public class CostantiProprieta {
 	public static int getConnettoriRequestTimeout(List<Proprieta> proprieta, int defaultValue) {
 		return readIntValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT, defaultValue);
 	}
+	public static boolean existsConnettoriRequestTimeout(List<Proprieta> proprieta) {
+		return readIntValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT, -1) > 0;
+	}
 	
 	
 	

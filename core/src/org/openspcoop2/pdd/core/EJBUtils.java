@@ -2415,7 +2415,7 @@ public class EJBUtils {
 				if(transazioneApplicativoServer!=null) {
 					
 					try {
-						GestoreConsegnaMultipla.getInstance().safeCreate(transazioneApplicativoServer, richiestaApplicativa.getIdPortaApplicativa(), state, requestInfo);
+						GestoreConsegnaMultipla.getInstance().safeCreate(transazioneApplicativoServer, richiestaApplicativa.getIdPortaApplicativa(), state, requestInfo, pddContext);
 					}catch(Throwable t) {
 						log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}

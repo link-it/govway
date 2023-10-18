@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateDBManager;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
@@ -242,70 +243,70 @@ public class GestoreConsegnaMultipla {
 
 	// *** SAFE ***
 
-	public void safeCreate(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state, RequestInfo requestInfo) {
+	public void safeCreate(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state, RequestInfo requestInfo, Context context) {
 
 		// cluster id
 		transazioneApplicativoServer.setClusterIdPresaInCarico(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), false, false, idPA, state, null, requestInfo, "create",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), false, false, idPA, state, null, requestInfo, context, "create",
 				OpenSPCoopStateDBManager.runtime);
 
 	}
 	
-	public void safeUpdateConsegna(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state, RequestInfo requestInfo) {
+	public void safeUpdateConsegna(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state, RequestInfo requestInfo, Context context) {
 
 		// cluster id
 		transazioneApplicativoServer.setClusterIdConsegna(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, true, idPA, state, null, requestInfo, "updateDeliveredMessage",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, true, idPA, state, null, requestInfo, context, "updateDeliveredMessage",
 				OpenSPCoopStateDBManager.consegnePreseInCarico); // l'informazione dovrebbe esistere!
 
 	}
 	
-	public void safeUpdatePrelievoIM(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state) {
+	public void safeUpdatePrelievoIM(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state, Context context) {
 
 		// cluster id
 		transazioneApplicativoServer.setClusterIdPrelievoIm(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, null, "updateRetrieveMessageByMessageBox",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, null, context, "updateRetrieveMessageByMessageBox",
 				OpenSPCoopStateDBManager.messageBox);
 
 	}
 	
-	public void safeUpdateEliminazioneIM(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state) {
+	public void safeUpdateEliminazioneIM(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state, Context context) {
 
 		// cluster id
 		transazioneApplicativoServer.setClusterIdEliminazioneIm(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, null, "updateDeletedMessageByMessageBox",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, null, context, "updateDeletedMessageByMessageBox",
 				OpenSPCoopStateDBManager.messageBox);
 
 	}
 	
 	public void safeUpdateMessaggioScaduto(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state) {
 
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, null, "updateExpiredMessage",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, null, null, "updateExpiredMessage",
 				OpenSPCoopStateDBManager.runtime);
 
 	}
 
 	
-	public void safeSave(org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico diagnostico, IDPortaApplicativa idPA, IState state, RequestInfo requestInfo) {
+	public void safeSave(org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico diagnostico, IDPortaApplicativa idPA, IState state, RequestInfo requestInfo, Context context) {
 
-		getConnectionAndSave(diagnostico, diagnostico.getProtocollo(), false, false, idPA, null, state, requestInfo, "saveDiagnostic",
+		getConnectionAndSave(diagnostico, diagnostico.getProtocollo(), false, false, idPA, null, state, requestInfo, context, "saveDiagnostic",
 				OpenSPCoopStateDBManager.consegnePreseInCarico);
 
 	}
 
-	public void safeSave(Messaggio dumpMessaggio, IDPortaApplicativa idPA, IState state, RequestInfo requestInfo) {
+	public void safeSave(Messaggio dumpMessaggio, IDPortaApplicativa idPA, IState state, RequestInfo requestInfo, Context context) {
 
-		getConnectionAndSave(dumpMessaggio, dumpMessaggio.getProtocollo(), false, false, idPA, null, state, requestInfo, "saveContent",
+		getConnectionAndSave(dumpMessaggio, dumpMessaggio.getProtocollo(), false, false, idPA, null, state, requestInfo, context, "saveContent",
 				OpenSPCoopStateDBManager.consegnePreseInCarico);
 
 	}
 
 	private void getConnectionAndSave(Object o, String protocol, boolean update, boolean throwNotFoundIfNotExists, IDPortaApplicativa idPA, 
-			IOpenSPCoopState openspcoopState, IState state, RequestInfo requestInfo,
+			IOpenSPCoopState openspcoopState, IState state, RequestInfo requestInfo, Context context,
 			String tipoOperazione,
 			OpenSPCoopStateDBManager dbManagerSource) {
 		TransazioniSAProcessTimes times = null;
@@ -320,7 +321,7 @@ public class GestoreConsegnaMultipla {
 		}
 		try {
 			getConnectionAndSave(o, protocol, update, throwNotFoundIfNotExists, idPA, 
-					openspcoopState, state, requestInfo,
+					openspcoopState, state, requestInfo, context,
 					tipoOperazione, times, buildDetailsSA,  buildDetailsUpdateTransaction,
 					dbManagerSource);
 		}finally {
@@ -345,7 +346,7 @@ public class GestoreConsegnaMultipla {
 	}
 	@SuppressWarnings("resource")
 	private void getConnectionAndSave(Object o, String protocol, boolean update, boolean throwNotFoundIfNotExists, IDPortaApplicativa idPA, 
-			IOpenSPCoopState openspcoopState, IState state, RequestInfo requestInfo,
+			IOpenSPCoopState openspcoopState, IState state, RequestInfo requestInfo, Context context,
 			String tipoOperazione, TransazioniSAProcessTimes times, boolean buildDetailsSA, boolean buildDetailsUpdateTransaction,
 			OpenSPCoopStateDBManager dbManagerSource) {
 
@@ -542,7 +543,7 @@ public class GestoreConsegnaMultipla {
 					transazioneApplicativoServer = (TransazioneApplicativoServer) o;
 	
 					// dettaglio esito
-					this.setDettaglioEsito(transazioneApplicativoServer, esitiProperties);
+					this.setDettaglioEsito(transazioneApplicativoServer, esitiProperties, context);
 					
 					// consegna terminata
 					if(transazioneApplicativoServer.isConsegnaTerminata()) {
@@ -860,7 +861,7 @@ public class GestoreConsegnaMultipla {
 
 	}
 
-	private void setDettaglioEsito(TransazioneApplicativoServer transazioneApplicativoServer, EsitiProperties esitiProperties) throws ProtocolException {
+	private void setDettaglioEsito(TransazioneApplicativoServer transazioneApplicativoServer, EsitiProperties esitiProperties, Context context) throws ProtocolException {
 		
 		if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
 			return; // non devo aggiornare l'esito
@@ -901,7 +902,7 @@ public class GestoreConsegnaMultipla {
 							
 						}
 						else {
-							transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE));
+							setErroreInvocazione(transazioneApplicativoServer, esitiProperties, context);
 						}
 					}
 					else {
@@ -910,7 +911,7 @@ public class GestoreConsegnaMultipla {
 							transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.OK));
 						}
 						else {
-							transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE));
+							setErroreInvocazione(transazioneApplicativoServer, esitiProperties, context);
 						}
 					}
 				}
@@ -920,12 +921,38 @@ public class GestoreConsegnaMultipla {
 						transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.OK));
 					}
 					else {
-						transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE));
+						setErroreInvocazione(transazioneApplicativoServer, esitiProperties, context);
 					}
 				}
 			}
 		}
 		
+	}
+	
+	private void setErroreInvocazione(TransazioneApplicativoServer transazioneApplicativoServer, EsitiProperties esitiProperties, Context context) throws ProtocolException {
+		EsitoTransazioneName name = EsitoTransazioneName.ERRORE_INVOCAZIONE;
+		if(context!=null &&
+				context.containsKey(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE)
+			){
+
+			String timeoutExceededMessage = null;
+			if(context.containsKey(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE)) {
+				timeoutExceededMessage = (String) context.get(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE);
+				if(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_CONNECTION_TIMEOUT.equals(timeoutExceededMessage)) {
+					name = EsitoTransazioneName.ERRORE_CONNECTION_TIMEOUT;
+				}
+				else if(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT.equals(timeoutExceededMessage)) {
+					name = EsitoTransazioneName.ERRORE_REQUEST_TIMEOUT;
+				}
+				else if(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT.equals(timeoutExceededMessage) ||
+						org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_READ_TIMEOUT.equals(timeoutExceededMessage)) {
+					name = EsitoTransazioneName.ERRORE_RESPONSE_TIMEOUT;
+				}
+			}
+			
+		}
+		
+		transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(name));
 	}
 
 	private static boolean _debug = true;

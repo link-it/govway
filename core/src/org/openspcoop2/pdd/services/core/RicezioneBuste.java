@@ -3111,6 +3111,7 @@ public class RicezioneBuste {
 				org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa datiInvocazione = new org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa();
 				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
 				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setIdModulo(inRequestContext.getIdModulo());
 				datiInvocazione.setMessage(requestMessage);
 				datiInvocazione.setBusta(bustaRichiesta);
 				datiInvocazione.setRequestInfo(requestInfo);

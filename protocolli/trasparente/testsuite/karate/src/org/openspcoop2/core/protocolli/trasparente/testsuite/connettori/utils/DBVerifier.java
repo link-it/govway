@@ -25,14 +25,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.openspcoop2.core.eventi.constants.TipoEvento;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.DbUtils;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils;
+import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
+import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutConfigurationUtils;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDati;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.slf4j.Logger;
 
 /**
@@ -370,5 +379,125 @@ public class DBVerifier {
 		
 		return idCorrelazione;
 
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void checkEventiConViolazioneTimeout(String idServizio, TipoEvento tipoEvento, Optional<String> gruppo, Optional<String> connettore, PolicyTimeoutConfig config, 
+			PolicyDati dati,
+			String descrizioneEvento, LocalDateTime dataSpedizione,
+			HttpResponse response, Logger log) {
+				
+		EventiUtils.waitForDbEvents();
+		
+		//  Devo trovare tra le transazioni generate dalle richieste, almeno una transazione che abbia entrambe le violazioni
+		
+		log.debug("======== VERIFICA checkEventiConViolazioneTimeout ========");
+		
+		if(response!=null) {
+			boolean found = EventiUtils.testCredenzialiMittenteTransazione(
+					response.getHeaderFirstValue(Headers.TransactionId),
+								evento -> {						
+									log().info(evento.toString());
+									String credenziale = (String) evento.get("credenziale");
+									StringBuilder sb = new StringBuilder();
+									sb.append("##"+tipoEvento.toString()+"_Violazione_"+idServizio);
+									if(gruppo.isPresent()) {
+										sb.append(" (gruppo '"+gruppo.get()+"')");
+									}
+									if(connettore.isPresent()) {
+										sb.append(" (connettore '"+connettore.get()+"')");
+									}
+									if(config!=null) {
+										ReadTimeoutConfigurationUtils.addPolicyInfo(sb, config);
+									}
+									sb.append("##");
+									String check = sb.toString();
+									boolean match = credenziale.contains(check);
+									
+									log.debug("credenziale='"+credenziale+"'"+
+											"\n\tverifica contains("+check+")="+match);
+									
+									return match;
+								});
+			assertEquals(found, true);
+		}
+	
+		// 		Verifico che gli eventi di violazione e risoluzione siano stati scritti sul db
+		
+		try {
+			checkEventTimeout(dataSpedizione, idServizio, tipoEvento, gruppo, connettore, config, 
+					dati,
+					descrizioneEvento, log);
+		}catch(Throwable t) {
+			throw new RuntimeException(t.getMessage(),t);
+		}
+	}
+	
+	private static void checkEventTimeout(LocalDateTime dataSpedizione, String idServizio, TipoEvento tipoEvento, Optional<String> gruppo, Optional<String> connettore, PolicyTimeoutConfig config, 
+			PolicyDati dati,
+			String descrizioneEvento, Logger log) throws Throwable  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);
+			if(events!=null) {
+				log().info(events.toString());
+			}
+			else {
+				log().info("events empty");
+			}
+
+			assertEquals(true, org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.EventiUtils.findEventTimeoutViolato(events, idServizio, tipoEvento, gruppo, connettore, config, dati, descrizioneEvento, log));
+			assertEquals(true, org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.EventiUtils.findEventTimeoutViolazioneRisolta(events, idServizio,tipoEvento, gruppo, connettore, config, dati, descrizioneEvento, log));	
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);		
+				if(events!=null) {
+					log().info(events.toString());
+				}
+				else {
+					log().info("events empty");
+				}
+
+				assertEquals(true, org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.EventiUtils.findEventTimeoutViolato(events, idServizio, tipoEvento, gruppo, connettore, config, dati, descrizioneEvento, log));
+				assertEquals(true, org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.EventiUtils.findEventTimeoutViolazioneRisolta(events, idServizio,tipoEvento, gruppo, connettore, config, dati, descrizioneEvento, log));	
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);		
+					if(events!=null) {
+						log().info(events.toString());
+					}
+					else {
+						log().info("events empty");
+					}
+
+					assertEquals(true, org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.EventiUtils.findEventTimeoutViolato(events, idServizio, tipoEvento, gruppo, connettore, config, dati, descrizioneEvento, log));
+					assertEquals(true, org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.EventiUtils.findEventTimeoutViolazioneRisolta(events, idServizio,tipoEvento, gruppo, connettore, config, dati, descrizioneEvento, log));	
+				}catch(Throwable t3) {
+					Utilities.sleep(10000);
+					List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);		
+					if(events!=null) {
+						log().info(events.toString());
+					}
+					else {
+						log().info("events empty");
+					}
+
+					assertEquals(true, org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.EventiUtils.findEventTimeoutViolato(events, idServizio, tipoEvento, gruppo, connettore, config, dati, descrizioneEvento, log));
+					assertEquals(true, org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.EventiUtils.findEventTimeoutViolazioneRisolta(events, idServizio,tipoEvento, gruppo, connettore, config, dati, descrizioneEvento, log));	
+				}
+			}
+		}
 	}
 }

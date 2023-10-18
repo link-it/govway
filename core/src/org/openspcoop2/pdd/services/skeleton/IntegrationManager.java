@@ -1223,7 +1223,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(nomePorta);
 					try {
-						GestoreConsegnaMultipla.getInstance().safeUpdatePrelievoIM(transazioneApplicativoServer, idPA, stato);
+						GestoreConsegnaMultipla.getInstance().safeUpdatePrelievoIM(transazioneApplicativoServer, idPA, stato, pddContext);
 					}catch(Throwable t) {
 						logError(logCore, "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}
@@ -1555,7 +1555,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(nomePorta);
 					try {
-						GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA, stato);
+						GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA, stato, pddContext);
 					}catch(Throwable t) {
 						logError(logCore, "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}
@@ -1887,7 +1887,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						idPA.setNome(nomePorta);
 						try {
-							GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA, stato);
+							GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA, stato, pddContext);
 						}catch(Throwable t) {
 							logError(logCore, "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 						}

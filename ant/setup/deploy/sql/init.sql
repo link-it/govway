@@ -105,3 +105,9 @@ INSERT INTO pdd_sys_props (nome, valore) VALUES ('http.maxConnections','200');
 -- Configurazione ControlloTraffico
 UPDATE ct_config set max_threads_tipo_errore='http429';
 UPDATE ct_config set rt_tipo_errore='http429';
+
+-- Configurazione timeout globali
+UPDATE ct_config set pd_connection_timeout=5000;
+UPDATE ct_config set pa_connection_timeout=5000;
+UPDATE ct_config set pd_read_timeout=65000;
+UPDATE ct_config set pa_read_timeout=60000;

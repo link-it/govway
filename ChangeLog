@@ -1,3 +1,21 @@
+2023-10-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1653
+	La classificazione degli esiti è stata estesa per individuare i seguenti casi:
+	- 'Read Timeout': Risposta non ricevuta entro il timeout specificato
+        - 'Request Read Timeout': Richiesta non ricevuta entro il timeout specificato
+        - 'Connection Timeout': Connessione non stabilita entro il timeout specificato
+        - 'Negoziazione Token Fallita': Sono emersi degli errori durante la negoziazione del token
+	Sono inoltre state riviste le classi di appartenenza di ogni esito in modo da far rientrare il nuovo esito 'Request Read Timeout' e l'esito 'Connessione Client Interrotta' in una nuova classe 'Errore Client Indisponibile'.
+        I nuovi esiti relativi a timeout concorrono inoltre alla generazione di eventi 
+	che consentono all'operatore di indivuare l'occorrenza di errori di timeout senza dove effettuare ricerche puntuali nello storico delle transazioni.
+	Durante l'intervento è stato risolta anche l'anomalia relativa al fatto che non venivano utilizzati i tempi di connection e read timeout impostati a livello globale.
+	Infine sono stati modificati i tempi a livello globale relativi ad una nuova installazione:
+	- connection timeout: modificato da 10 a 5 secondi
+	- read timeout sulle erogazioni: modificato da 120 a 60 secondi
+	- read timeout sulle fruizioni: modificato da 150 a 65 secondi
+ 
 2023-10-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

@@ -52,6 +52,7 @@ import org.openspcoop2.protocol.utils.EsitoIdentificationModeSoapFault;
 import org.openspcoop2.protocol.utils.EsitoTransportContextIdentification;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
@@ -256,7 +257,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			EsitoTransazione esitoErrore5xx = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 			
 			// Una richiesta o risposta malformata deve essere immediatamente riconosciuta prima di analizzare il contesto
-			// Ancora prima però deve essere riconosciuto un caso di LimitedStream che altrimeni rientra in un contenuto malformato
+			// Ancora prima però deve essere riconosciuto un caso di LimitedStream e il caso di ReadTimeout che altrimeni rientra in un contenuto malformato
 			if(context!=null){
 				if(context.containsKey(LimitedInputStream.ERROR_MSG_KEY)){
 					String limitedExceededMessage = (String) context.get(LimitedInputStream.ERROR_MSG_KEY);
@@ -265,6 +266,30 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					}
 					else if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_RESPONSE)) {
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA, tipoContext);
+					}
+				}
+				else if(context.containsKey(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE) || context.containsKey(TimeoutInputStream.ERROR_MSG_KEY)){
+
+					String timeoutExceededMessage = null;
+					if(context.containsKey(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE)) {
+						timeoutExceededMessage = (String) context.get(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE);
+						if(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_CONNECTION_TIMEOUT.equals(timeoutExceededMessage)) {
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_CONNECTION_TIMEOUT, tipoContext);
+						}
+						else if(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT.equals(timeoutExceededMessage)) {
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_REQUEST_TIMEOUT, tipoContext);
+						}
+						else if(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT.equals(timeoutExceededMessage) ||
+								org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_READ_TIMEOUT.equals(timeoutExceededMessage)) {
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_RESPONSE_TIMEOUT, tipoContext);
+						}
+					}
+					timeoutExceededMessage = (String) context.get(LimitedInputStream.ERROR_MSG_KEY);
+					if(timeoutExceededMessage!=null && timeoutExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_TIMEOUT_REQUEST)) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_REQUEST_TIMEOUT, tipoContext);
+					}
+					else if(timeoutExceededMessage!=null && timeoutExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_TIMEOUT_RESPONSE)) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_RESPONSE_TIMEOUT, tipoContext);
 					}
 				}
 			}

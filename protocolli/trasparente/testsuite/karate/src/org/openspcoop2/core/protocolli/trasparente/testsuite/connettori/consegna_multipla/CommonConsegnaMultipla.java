@@ -107,6 +107,8 @@ public class CommonConsegnaMultipla {
 	public static final int ESITO_ERRORE_INVOCAZIONE = 10;
 	public static final int ESITO_ERRORE_APPLICATIVO = 2;
 	public static final int ESITO_OK_PRESENZA_ANOMALIE = 12;
+	public static final int ESITO_ERRORE_CONNECTION_TIMEOUT = 51;
+	public static final int ESITO_ERRORE_READ_TIMEOUT = 49;
 	
 	public static final String FAULT_REST = "{\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
 	public static final String FORMATO_FAULT_REST = "JSON";

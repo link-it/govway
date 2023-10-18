@@ -46,5 +46,8 @@ public interface INotify {
 	
 	public void updateStatoRilevamentoViolazionePolicy(Logger logCore, boolean debug, TipoEvento tipoEvento, CodiceEventoControlloTraffico codiceEvento, String idConfigurazionePolicy, String configurazionePolicy);
 	
-
+	public default void updateStatoRilevamentoRequestReadTimeout(Logger logCore, boolean debug, TipoEvento tipoEvento, CodiceEventoControlloTraffico codiceEvento, String idConfigurazionePolicy, String configurazionePolicy) {}
+	
+	public default void updateStatoRilevamentoReadTimeout(Logger logCore, boolean debug, TipoEvento tipoEvento, CodiceEventoControlloTraffico codiceEvento, String idConfigurazionePolicy, String configurazionePolicy) {}
+	
 }

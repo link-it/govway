@@ -57,6 +57,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -178,7 +179,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					req.setRequestLimitedStream(soglia);
 				}
 				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
-					req.setRequestReadTimeout(openSPCoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi());
+					SogliaReadTimeout soglia = new SogliaReadTimeout();
+					soglia.setSogliaMs(openSPCoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi());
+					soglia.setConfigurazioneGlobale(true);
+					soglia.setIdConfigurazione("GovWayCore");
+					req.setRequestReadTimeout(soglia);
 				}
 				req.setThresholdContext(null, 
 					openSPCoopProperties.getDumpBinarioInMemoryThreshold(), openSPCoopProperties.getDumpBinarioRepository());
@@ -409,8 +414,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			}
 			boolean useTimeoutInputStream = configPdDManager.isConnettoriUseTimeoutInputStream(pd);
 			if(useTimeoutInputStream) {
-				int timeout = configPdDManager.getRequestReadTimeout(pd);
-				if(timeout>0) {
+				SogliaReadTimeout timeout = configPdDManager.getRequestReadTimeout(pd,
+						requestInfo,
+						protocolFactory, 
+						context!=null ? context.getPddContext() : null,
+								null);
+				if(timeout!=null && timeout.getSogliaMs()>0) {
 					req.setRequestReadTimeout(timeout);
 				}
 				else {

@@ -109,6 +109,8 @@ import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
+import org.openspcoop2.pdd.core.controllo_traffico.ConnettoreUtilities;
+import org.openspcoop2.pdd.core.controllo_traffico.DatiTempiRisposta;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InResponseContext;
@@ -414,13 +416,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			try {
 				RequestInfo requestInfo = null;
+				Context context = null;
 				if(consegnaContenutiApplicativiMsg!=null) {
-					PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
-					if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
-						requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+					context = consegnaContenutiApplicativiMsg.getPddContext();
+					if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+						requestInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 					}
 				}
-				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(transazioneApplicativoServer, idApplicativa, openspcoopstate, requestInfo);
+				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(transazioneApplicativoServer, idApplicativa, openspcoopstate, requestInfo, context);
 			}catch(Throwable t) {
 				this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 			}
@@ -2074,11 +2077,19 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				java.util.Map<String,String> propCon = new java.util.HashMap<>();
 				connettoreMsg.setConnectorProperties(propCon);
 			}
-			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
-				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,""+this.propertiesReader.getConnectionTimeout_consegnaContenutiApplicativi());
-			}
-			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)==null){
-				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT,""+this.propertiesReader.getReadConnectionTimeout_consegnaContenutiApplicativi());
+			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null ||
+					connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)==null){
+				DatiTempiRisposta datiTempiRisposta = ConnettoreUtilities.readDatiGlobaliTimeout(configurazionePdDManager, TipoPdD.APPLICATIVA, requestInfo, this.propertiesReader);
+				if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
+					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,
+							"" + ((datiTempiRisposta!=null && datiTempiRisposta.getConnectionTimeout()!=null) ? datiTempiRisposta.getConnectionTimeout().intValue() : this.propertiesReader.getConnectionTimeout_consegnaContenutiApplicativi()));
+					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT_GLOBALE, "true" );
+				}
+				if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)==null){
+					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT,
+							"" + ((datiTempiRisposta!=null && datiTempiRisposta.getReadConnectionTimeout()!=null) ? datiTempiRisposta.getReadConnectionTimeout().intValue() : this.propertiesReader.getReadConnectionTimeout_consegnaContenutiApplicativi()));
+					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT_GLOBALE, "true" );
+				}
 			}
 
 			// behaviourForwardToConfiguration

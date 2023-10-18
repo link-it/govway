@@ -163,6 +163,9 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.controllo_traffico.DimensioneMessaggiConfigurationUtils;
+import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutConfigurationUtils;
+import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutContextParam;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.InterceptorPolicyUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
@@ -2662,15 +2665,25 @@ public class ConfigurazionePdDReader {
 		}
 
 	}
-	protected int getRequestReadTimeout(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
+	protected SogliaReadTimeout getRequestReadTimeout(PortaDelegata pd,
+			RequestInfo requestInfo, 
+			IProtocolFactory<?> protocolFactory,
+			Context context,
+			IState state) throws DriverConfigurazioneException{
 
 		int defaultValue = this.openspcoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi();
 		if(pd==null){
 			//configurazione di default
-			return defaultValue;
+			return ReadTimeoutConfigurationUtils.buildSogliaRequestTimeout(defaultValue, true, protocolFactory);
 		}
 		try {
-			return CostantiProprieta.getConnettoriRequestTimeout(pd.getProprietaList(), defaultValue);
+			boolean configurazioneGlobale = !CostantiProprieta.existsConnettoriRequestTimeout(pd.getProprietaList());
+			int sogliaMs = defaultValue;
+			if(!configurazioneGlobale) {
+				sogliaMs = CostantiProprieta.getConnettoriRequestTimeout(pd.getProprietaList(), defaultValue);
+			}
+			return ReadTimeoutConfigurationUtils.buildSogliaRequestTimeout(sogliaMs, configurazioneGlobale, pd, 
+					new ReadTimeoutContextParam(requestInfo, protocolFactory, context, state));
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -3935,15 +3948,25 @@ public class ConfigurazionePdDReader {
 		}
 
 	}
-	protected int getRequestReadTimeout(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
+	protected SogliaReadTimeout getRequestReadTimeout(PortaApplicativa pa,
+			RequestInfo requestInfo, 
+			IProtocolFactory<?> protocolFactory,
+			Context context,
+			IState state) throws DriverConfigurazioneException{
 
 		int defaultValue = this.openspcoopProperties.getReadConnectionTimeout_ricezioneBuste();
 		if(pa==null){
 			//configurazione di default
-			return defaultValue;
+			return ReadTimeoutConfigurationUtils.buildSogliaRequestTimeout(defaultValue, false, protocolFactory);
 		}
 		try {
-			return CostantiProprieta.getConnettoriRequestTimeout(pa.getProprietaList(), defaultValue);
+			boolean configurazioneGlobale = !CostantiProprieta.existsConnettoriRequestTimeout(pa.getProprietaList());
+			int sogliaMs = defaultValue;
+			if(!configurazioneGlobale) {
+				sogliaMs = CostantiProprieta.getConnettoriRequestTimeout(pa.getProprietaList(), defaultValue);
+			}
+			return ReadTimeoutConfigurationUtils.buildSogliaRequestTimeout(sogliaMs, configurazioneGlobale, pa, 
+					new ReadTimeoutContextParam(requestInfo, protocolFactory, context, state));
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

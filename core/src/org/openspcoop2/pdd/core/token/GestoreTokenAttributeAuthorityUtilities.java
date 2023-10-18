@@ -40,6 +40,8 @@ import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -64,6 +66,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
@@ -135,7 +138,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	static EsitoRecuperoAttributi readAttributes(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
 			IProtocolFactory<?> protocolFactory,
 			AttributeAuthorityDynamicParameters dynamicParameters,
-			String request, boolean portaDelegata,
+			String request, boolean portaDelegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IState state,
 			IDSoggetto idDominio, IDServizio idServizio,
 			RequestInfo requestInfo) {
@@ -164,7 +167,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 						protocolFactory,
 						dynamicParameters,
 						request,
-						state, portaDelegata,
+						state, portaDelegata, idModulo, pa, pd,
 						idDominio, idServizio,
 						requestInfo);
 				risposta = httpResponse.getContent();
@@ -709,7 +712,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			IProtocolFactory<?> protocolFactory,
 			AttributeAuthorityDynamicParameters dynamicParameters,
 			String request,
-			IState state, boolean delegata,
+			IState state, boolean delegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IDSoggetto idDominio, IDServizio idServizio,
 			RequestInfo requestInfo) throws Exception {
 		
@@ -762,6 +765,11 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		connettoreMsg.setIdModulo(idModulo);
+		connettoreMsg.setState(state);
+		PolicyTimeoutConfig policyConfig = new PolicyTimeoutConfig();
+		policyConfig.setAttributeAuthority(policyAttributeAuthority.getName());
+		connettoreMsg.setPolicyTimeoutConfig(policyConfig);
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
@@ -864,6 +872,8 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		connettoreMsg.setRequestMessage(msg);
 		connettoreMsg.setGenerateErrorWithConnectorPrefix(false);
 		connettore.setHttpMethod(msg);
+		connettore.setPa(pa);
+		connettore.setPd(pd);
 		
 		ResponseCachingConfigurazione responseCachingConfigurazione = new ResponseCachingConfigurazione();
 		responseCachingConfigurazione.setStato(StatoFunzionalita.DISABILITATO);

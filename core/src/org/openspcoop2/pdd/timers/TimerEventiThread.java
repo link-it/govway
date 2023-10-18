@@ -27,17 +27,14 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
-import org.openspcoop2.core.eventi.dao.IEventoService;
-import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
@@ -69,13 +66,6 @@ public class TimerEventiThread extends BaseThread{
 	/** Indicazione se deve essere effettuato il log delle query */
 	private boolean debug = false;	
 	
-	/** Database */
-//	private DataSource dsRuntime = null;
-//	private String datasourceRuntime = null;
-	private String tipoDatabaseRuntime = null; //tipoDatabase
-	private DAOFactory daoFactory = null;
-    private Logger daoFactoryLogger = null;
-	private ServiceManagerProperties daoFactoryServiceManagerPropertiesPlugins = null;
 	
 	private OpenSPCoop2Properties properties;
 	
@@ -85,7 +75,22 @@ public class TimerEventiThread extends BaseThread{
 	/** LastInterval */
 	private Date lastInterval;
 	
+	/** ConnectionTimeout */
+	private int checkConnectionTimeoutEveryXTimes = 1;
+	private int offsetConnectionTimeoutEveryXTimes = 0;
+	private Date lastIntervalConnectionTimeout;
+	
+	/** RequestReadTimeout */
+	private int checkRequestReadTimeoutEveryXTimes = 1;
+	private int offsetRequestReadTimeoutEveryXTimes = 0;
+	private Date lastIntervalRequestReadTimeout;
+	
+	private int checkReadTimeoutEveryXTimes = 1;
+	private int offsetReadTimeoutEveryXTimes = 0;
+	private Date lastIntervalReadTimeout;
+	
 	/** Immagine */
+	@SuppressWarnings("unused")
 	private boolean forceCheckPrimoAvvio = false;
 	
 	private static boolean inizializzazioneAttiva = false;
@@ -104,6 +109,10 @@ public class TimerEventiThread extends BaseThread{
 	
 		this.properties = OpenSPCoop2Properties.getInstance();
 		this.setTimeout(this.properties.getEventiTimerIntervalSeconds());
+		
+		this.checkConnectionTimeoutEveryXTimes = this.properties.getEventiTimerIntervalConnectionTimeoutEveryXTimes();
+		this.checkRequestReadTimeoutEveryXTimes = this.properties.getEventiTimerIntervalRequestReadTimeoutEveryXTimes();
+		this.checkReadTimeoutEveryXTimes = this.properties.getEventiTimerIntervalReadTimeoutEveryXTimes();
 		
 		// Eventi per Controllo Traffico
 		if(this.properties.isControlloTrafficoEnabled()){
@@ -159,29 +168,12 @@ public class TimerEventiThread extends BaseThread{
 		}
 		
 		this.lastInterval = DateManager.getDate();
+		this.lastIntervalConnectionTimeout = DateManager.getDate();
+		this.lastIntervalRequestReadTimeout = DateManager.getDate();
+		this.lastIntervalReadTimeout = DateManager.getDate();
 		
 		this.debug = this.properties.isEventiDebug();
-		
-		try{
-			
-			this.tipoDatabaseRuntime = this.properties.getDatabaseType();		
-			if(this.tipoDatabaseRuntime==null){
-				throw new Exception("Tipo Database non definito");
-			}
-			
-			// DAOFactory
-			DAOFactoryProperties daoFactoryProperties = null;
-			this.daoFactoryLogger = this.log;
-			this.daoFactory = DAOFactory.getInstance(this.daoFactoryLogger);
-			daoFactoryProperties = DAOFactoryProperties.getInstance(this.daoFactoryLogger);
-			
-			this.daoFactoryServiceManagerPropertiesPlugins = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance());
-			this.daoFactoryServiceManagerPropertiesPlugins.setShowSql(this.debug);	
-			this.daoFactoryServiceManagerPropertiesPlugins.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
-			
-		}catch(Exception e){
-			throw new Exception("Errore durante l'inizializzazione del datasource: "+e.getMessage(),e);
-		}
+
 	}
 	
 	
@@ -196,21 +188,61 @@ public class TimerEventiThread extends BaseThread{
 	    		dbManager = DBTransazioniManager.getInstance();
 				r = dbManager.getResource(this.properties.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null);
 				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
+					throw new UtilsException("Risorsa al database non disponibile");
 				}
 				Connection con = (Connection) r.getResource();
 				if(con == null)
-					throw new Exception("Connessione non disponibile");	
-	
-				org.openspcoop2.core.eventi.dao.IServiceManager pluginsSM = 
-						(org.openspcoop2.core.eventi.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(), con,
-								this.daoFactoryServiceManagerPropertiesPlugins, this.daoFactoryLogger);
-				IEventoService eventoService = pluginsSM.getEventoService();
+					throw new UtilsException("Connessione non disponibile");	
 				
 				if(this.properties.isControlloTrafficoEnabled()){
-					this.lastInterval = this.notificatoreEventi.process(this.log,eventoService, this.getTimeout(), this.lastInterval, con, this.debug, this.forceCheckPrimoAvvio);
+					
+					try{
+						this.lastInterval = this.notificatoreEventi.process(this.log, this.getTimeout(), this.lastInterval, con, this.debug);
+					}catch(Exception e){
+						this.log.error("Errore durante la generazione degli eventi per il controllo del traffico: "+e.getMessage(),e);
+					}
+					
+					// Comprensione offset per analisi connection timeout events
+					try{
+						boolean analyzeConnectionTimeout = isAnalyzeConnectionTimeout();
+						if(analyzeConnectionTimeout) {
+							this.lastIntervalConnectionTimeout = this.notificatoreEventi.processConnectionTimeout(this.log, (this.getTimeout()*this.checkConnectionTimeoutEveryXTimes), this.lastIntervalConnectionTimeout, con, this.debug);
+						}
+						else {
+							this.notificatoreEventi.emitProcessConnectionTimeoutSkip(this.log, this.debug, this.offsetConnectionTimeoutEveryXTimes, this.checkConnectionTimeoutEveryXTimes);
+						}
+					}catch(Exception e){
+						this.log.error("Errore durante la generazione degli eventi di connection timeout: "+e.getMessage(),e);
+					}
+					
+					// Comprensione offset per analisi request read timeout events
+					try {
+						boolean analyzeRequestReadTimeout = isAnalyzeRequestReadTimeout();
+						if(analyzeRequestReadTimeout) {
+							this.lastIntervalRequestReadTimeout = this.notificatoreEventi.processRequestReadTimeout(this.log, (this.getTimeout()*this.checkRequestReadTimeoutEveryXTimes), this.lastIntervalRequestReadTimeout, con, this.debug);
+						}
+						else {
+							this.notificatoreEventi.emitProcessRequestReadTimeoutSkip(this.log, this.debug, this.offsetRequestReadTimeoutEveryXTimes, this.checkRequestReadTimeoutEveryXTimes);
+						}
+					}catch(Exception e){
+						this.log.error("Errore durante la generazione degli eventi di request read timeout: "+e.getMessage(),e);
+					}
+					
+					// Comprensione offset per analisi read timeout events
+					try {
+						boolean analyzeReadTimeout = isAnalyzeReadTimeout();
+						if(analyzeReadTimeout) {
+							this.lastIntervalReadTimeout = this.notificatoreEventi.processReadTimeout(this.log, (this.getTimeout()*this.checkReadTimeoutEveryXTimes), this.lastIntervalReadTimeout, con, this.debug);
+						}
+						else {
+							this.notificatoreEventi.emitProcessReadTimeoutSkip(this.log, this.debug, this.offsetReadTimeoutEveryXTimes, this.checkReadTimeoutEveryXTimes);
+						}
+					}catch(Exception e){
+						this.log.error("Errore durante la generazione degli eventi di request read timeout: "+e.getMessage(),e);
+					}
+					
 				}
-				
+								
 				// Aggiungere in futuro altre gestione degli eventi
 				
 			}catch(Exception e){
@@ -235,5 +267,44 @@ public class TimerEventiThread extends BaseThread{
 	public void close(){
 		this.log.info("Thread per la generazione degli eventi terminato");
 	}
-		
+			
+	private boolean isAnalyzeConnectionTimeout() {
+		this.offsetConnectionTimeoutEveryXTimes++;
+		boolean esito = false;
+		if(this.offsetConnectionTimeoutEveryXTimes==this.checkConnectionTimeoutEveryXTimes) {
+			/**System.out.println("CONNECTION TIMEOUT CHECK '"+this.offsetConnectionTimeoutEveryXTimes+"'=='"+this.checkConnectionTimeoutEveryXTimes+"' TRUE");*/
+			esito = true;
+			this.offsetConnectionTimeoutEveryXTimes = 0;
+		}
+		/**else {
+			System.out.println("CONNECTION TIMEOUT CHECK '"+this.offsetConnectionTimeoutEveryXTimes+"'<>'"+this.checkConnectionTimeoutEveryXTimes+"' FALSE");
+		}*/
+		return esito;
+	}
+	private boolean isAnalyzeRequestReadTimeout() {
+		this.offsetRequestReadTimeoutEveryXTimes++;
+		boolean esito = false;
+		if(this.offsetRequestReadTimeoutEveryXTimes==this.checkRequestReadTimeoutEveryXTimes) {
+			/**System.out.println("REQUEST READ TIMEOUT CHECK '"+this.offsetRequestReadTimeoutEveryXTimes+"'=='"+this.checkRequestReadTimeoutEveryXTimes+"' TRUE");*/
+			esito = true;
+			this.offsetRequestReadTimeoutEveryXTimes = 0;
+		}
+		/**else {
+			System.out.println("REQUEST READ TIMEOUT CHECK '"+this.offsetRequestReadTimeoutEveryXTimes+"'<>'"+this.checkRequestReadTimeoutEveryXTimes+"' FALSE");
+		}*/
+		return esito;
+	}
+	private boolean isAnalyzeReadTimeout() {
+		this.offsetReadTimeoutEveryXTimes++;
+		boolean esito = false;
+		if(this.offsetReadTimeoutEveryXTimes==this.checkReadTimeoutEveryXTimes) {
+			/**System.out.println("READ TIMEOUT CHECK '"+this.offsetReadTimeoutEveryXTimes+"'=='"+this.checkReadTimeoutEveryXTimes+"' TRUE");*/
+			esito = true;
+			this.offsetReadTimeoutEveryXTimes = 0;
+		}
+		else {
+			/**System.out.println("READ TIMEOUT CHECK '"+this.offsetReadTimeoutEveryXTimes+"'<>'"+this.checkReadTimeoutEveryXTimes+"' FALSE");*/
+		}
+		return esito;
+	}
 }

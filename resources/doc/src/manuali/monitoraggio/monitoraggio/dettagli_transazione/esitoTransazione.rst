@@ -62,6 +62,10 @@ La tabella che segue riporta tutti gli esiti associabili ad una transazione gest
   Risposta già elaborata                        46        La risposta risulta essere già stata elaborata                                                                                              RISPOSTA_DUPLICATA
   Disponibile in MessageBox                     47        Messaggio gestibile tramite servizio IntegrationManager                                                                                     MESSAGE_BOX
   Consegna Asincrona in Corso                   48        Alcune consegne verso i connettori associati all'API risultano ancora non completate                                                        CONSEGNA_MULTIPLA_IN_CORSO
+  Read Timeout                                  49        Risposta non ricevuta entro il timeout specificato                                                                                          ERRORE_RESPONSE_TIMEOUT
+  Request Read Timeout                          50        Richiesta non ricevuta entro il timeout specificato                                                                                         ERRORE_REQUEST_TIMEOUT
+  Connection Timeout                            51        Connessione non stabilita entro il timeout specificato                                                                                      ERRORE_CONNECTION_TIMEOUT
+  Negoziazione Token Fallita                    52        Sono emersi degli errori durante la negoziazione del token                                                                                  ERRORE_NEGOZIAZIONE_TOKEN
  ============================================= ========= =========================================================================================================================================== ================================================= 
 
 Ciascun esito riportato nella tabella precedente è riconducibile ad una tra le seguenti casistiche:
@@ -77,12 +81,13 @@ Ciascun esito riportato nella tabella precedente è riconducibile ad una tra le 
  Completata con Successo           0,12,38,48,39,47,2,28,19,21,8,34,35   
  Fault Applicativo                 2
  Richiesta Scartata                16,41,42,15,43,44,13,4,33
- Errore di Consegna                10,11,29,30,40
+ Errore di Consegna                10,49,51,52,11,29,30,40
  Autorizzazione Negata             17
  Policy Controllo Traffico Violate 18,20
  Errori Servizio I.M. MessageBox   6,7,8,9
  Errori Processamento Richiesta    13,22,24,26,31,36,45
  Errori Processamento Risposta     14,23,25,27,32,37,46
- Altri Codici di Errore            1,3,5
+ Errore Client Indisponibile       3,50
+ Altri Codici di Errore            1,5
  ================================= ======================================================================= 
 

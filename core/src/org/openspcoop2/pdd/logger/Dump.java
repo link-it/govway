@@ -1188,7 +1188,7 @@ public class Dump {
 					messaggio.setIdTransazione(this.transazioneApplicativoServer.getIdTransazione());
 					messaggio.setServizioApplicativoErogatore(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
 					messaggio.setDataConsegna(this.dataConsegnaTransazioneApplicativoServer);
-					GestoreConsegnaMultipla.getInstance().safeSave(messaggio, this.idPortaApplicativa, this.statoRichiesta!=null ? this.statoRichiesta : this.statoRisposta, this.requestInfo);
+					GestoreConsegnaMultipla.getInstance().safeSave(messaggio, this.idPortaApplicativa, this.statoRichiesta!=null ? this.statoRichiesta : this.statoRisposta, this.requestInfo, this.pddContext);
 				}catch(Exception t) {
 					String msgError = "Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage();
 					this.loggerDumpError(msgError,t);

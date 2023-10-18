@@ -1,3 +1,8 @@
+2023-10-18  Andrea Poli <apoli@link.it>
+
+	Aggiunti nuovi esiti
+	update configurazione set tracciamento_esiti = CONCAT(tracciamento_esiti, ',49,50,51,52') where tracciamento_esiti is not null;
+
 2023-06-16  Andrea Poli <apoli@link.it>
 
 	Aggiunta tabella che consente di registrare le operazioni da richiedere ai nodi 'run' in un ambiente dinamico: nodi_runtime_operations

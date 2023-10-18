@@ -187,6 +187,7 @@ public class EsitiProperties {
 				esitiPropertiesByProtocol.initEsitiCodeServizioIntegrationManager();
 				esitiPropertiesByProtocol.initEsitiCodeErroriProcessamentoRichiesta();
 				esitiPropertiesByProtocol.initEsitiCodeErroriProcessamentoRisposta();
+				esitiPropertiesByProtocol.initEsitiCodeErroriClientNonDisponibile();
 				esitiPropertiesByProtocol.initEsitiCodeErroriGenerici();
 				esitiPropertiesByProtocol.initEsitiCodeForSoapFaultIdentificationMode();
 				esitiPropertiesByProtocol.initEsitiCodeForContextPropertyIdentificationMode();
@@ -814,6 +815,20 @@ public class EsitiProperties {
 	private synchronized void initEsitiCodeErroriProcessamentoRisposta() throws ProtocolException {
 		if(this.esitiCodeErroriProcessamentoRisposta == null){
 			this.esitiCodeErroriProcessamentoRisposta = filterByProtocol(getListaInteger("esiti.codes.erroriProcessamentoRisposta")); 	   
+		}
+	}
+	
+	private List<Integer> esitiCodeErroriClientNonDisponibile = null;
+	public List<Integer> getEsitiCodeErroriClientNonDisponibile() throws ProtocolException {
+		if(this.esitiCodeErroriClientNonDisponibile == null){
+			this.initEsitiCodeErroriClientNonDisponibile();
+		}
+
+		return this.esitiCodeErroriClientNonDisponibile;
+	}
+	private synchronized void initEsitiCodeErroriClientNonDisponibile() throws ProtocolException {
+		if(this.esitiCodeErroriClientNonDisponibile == null){
+			this.esitiCodeErroriClientNonDisponibile = filterByProtocol(getListaInteger("esiti.codes.erroriClientIndisponibile")); 	   
 		}
 	}
 	

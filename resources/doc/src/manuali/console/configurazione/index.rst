@@ -11,6 +11,7 @@ per modificare i parametri di configurazione del gateway.
     :maxdepth: 2
 
     generale/index
+    cache
     tracciamento
     controlloTraffico/index
     rateLimiting/index

@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/oracle/archiviComunicazioni/2023-10-18-patch.sql

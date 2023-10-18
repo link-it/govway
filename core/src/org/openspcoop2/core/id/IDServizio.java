@@ -125,8 +125,8 @@ public class IDServizio implements java.io.Serializable, Cloneable {
 			bf.append(this.soggettoErogatore.getTipo());
 			bf.append("/");
 			bf.append(this.soggettoErogatore.getNome());
+			bf.append(":");
 		}
-		bf.append(":");
 		bf.append(this.tipo);
 		bf.append("/");
 		bf.append(this.nome);

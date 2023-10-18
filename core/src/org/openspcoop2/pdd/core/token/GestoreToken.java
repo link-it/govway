@@ -32,6 +32,8 @@ import java.util.Properties;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.core.config.AttributeAuthority;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDGenericProperties;
@@ -53,10 +55,9 @@ import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityProv
 import org.openspcoop2.pdd.core.token.attribute_authority.EsitoRecuperoAttributi;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
-import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
+import org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa;
+import org.openspcoop2.pdd.core.token.attribute_authority.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
-import org.openspcoop2.pdd.core.token.parser.ITokenParser;
-import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoPresenzaTokenPortaDelegata;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
@@ -79,7 +80,6 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.slf4j.Logger;
 
 /**     
@@ -1026,7 +1026,7 @@ public class GestoreToken {
 		String token = esitoPresenzaToken.getToken();
 		
 		if(GestoreToken.cacheToken==null){
-			esitoGestioneToken = introspectionTokenEngine(log, datiInvocazione, 
+			esitoGestioneToken = GestoreTokenValidazioneUtilities.introspectionTokenEngine(log, datiInvocazione, 
 					pddContext, protocolFactory,
 					token, portaDelegata,
 					idDominio, idServizio);
@@ -1078,7 +1078,7 @@ public class GestoreToken {
 					if(esitoGestioneToken==null) {
 						// Effettuo la query
 						GestoreToken.loggerDebug(getPrefixOggettoConChiave(keyCache)+getSuffixEseguiOperazione(funzione));
-						esitoGestioneToken = introspectionTokenEngine(log, datiInvocazione, 
+						esitoGestioneToken = GestoreTokenValidazioneUtilities.introspectionTokenEngine(log, datiInvocazione, 
 								pddContext, protocolFactory,
 								token, portaDelegata,
 								idDominio, idServizio);
@@ -1110,96 +1110,6 @@ public class GestoreToken {
 			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
 					datiInvocazione.getPolicyGestioneToken().isIntrospection_saveErrorInCache());
 		}
-		
-		return esitoGestioneToken;
-	}
-	
-	private static EsitoGestioneToken introspectionTokenEngine(Logger log, AbstractDatiInvocazione datiInvocazione, 
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata,
-			IDSoggetto idDominio, IDServizio idServizio) {
-		EsitoGestioneToken esitoGestioneToken = null;
-		if(portaDelegata) {
-			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
-		}
-		else {
-			esitoGestioneToken = new EsitoGestioneTokenPortaApplicativa();
-		}
-		
-		esitoGestioneToken.setTokenInternalError();
-		esitoGestioneToken.setToken(token);
-		
-		try{
-			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
-    		
-    		String detailsError = null;
-			InformazioniToken informazioniToken = null;
-			Exception eProcess = null;
-			
-			ITokenParser tokenParser = policyGestioneToken.getIntrospection_TokenParser();
-			
-			HttpResponse httpResponse = null;
-			Integer httpResponseCode = null;
-			byte[] risposta = null;
-			try {
-				httpResponse = GestoreTokenValidazioneUtilities.http(log, policyGestioneToken, GestoreTokenValidazioneUtilities.INTROSPECTION, token,
-						pddContext, protocolFactory,
-						datiInvocazione.getState(), portaDelegata,
-						idDominio, idServizio,
-						datiInvocazione.getRequestInfo());
-				risposta = httpResponse.getContent();
-				httpResponseCode = httpResponse.getResultHTTPOperation();
-			}catch(Exception e) {
-				detailsError = "(Errore di Connessione) "+ e.getMessage();
-				eProcess = e;
-			}
-			
-			if(detailsError==null) {
-				try {
-					informazioniToken = new InformazioniToken(httpResponseCode, SorgenteInformazioniToken.INTROSPECTION, new String(risposta),tokenParser);
-				}catch(Exception e) {
-					detailsError = "Risposta del servizio di Introspection non valida: "+e.getMessage();
-					eProcess = e;
-				}
-			}
-    		  		
-    		if(informazioniToken!=null && informazioniToken.isValid()) {
-    			esitoGestioneToken.setTokenValido();
-    			esitoGestioneToken.setInformazioniToken(informazioniToken);
-    			esitoGestioneToken.setNoCache(false);
-			}
-    		else {
-    			esitoGestioneToken.setTokenValidazioneFallita();
-    			esitoGestioneToken.setNoCache(!policyGestioneToken.isIntrospection_saveErrorInCache());
-    			esitoGestioneToken.setEccezioneProcessamento(eProcess);
-    			if(detailsError!=null) {
-    				esitoGestioneToken.setDetails(detailsError);	
-				}
-				else {
-					esitoGestioneToken.setDetails(TOKEN_NON_VALIDO);	
-				}
-    			
-    			// comunque lo aggiungo per essere consultabile nei casi di errore se una connessione http è terminata
-    			if(OpenSPCoop2Properties.getInstance().isGestioneToken_saveSourceTokenInfo() && httpResponseCode!=null) {
-    				informazioniToken = new InformazioniToken(esitoGestioneToken.getDetails(), httpResponseCode, risposta, SorgenteInformazioniToken.INTROSPECTION, token);
-    				esitoGestioneToken.setInformazioniToken(informazioniToken);
-    			}
-    			
-    			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
-    				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));   			
-    			}
-    			else {
-    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));
-    			} 	
-    		}
-    		
-		}catch(Exception e){
-			esitoGestioneToken.setTokenInternalError();
-			esitoGestioneToken.setDetails(e.getMessage());
-			esitoGestioneToken.setEccezioneProcessamento(e);
-    	}
 		
 		return esitoGestioneToken;
 	}
@@ -1514,16 +1424,16 @@ public class GestoreToken {
 	public static final String RETRIEVE_FUNCTION = "Negoziazione";
 		
 	public static EsitoNegoziazioneToken endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken, 
-			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
+			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
 		return endpointTokenEngine(debug, log, policyNegoziazioneToken, 
-				busta, requestInfo, tipoPdD,
+				busta, requestInfo, tipoPdD, idModulo, pa, pd,
 				pddContext,  protocolFactory,
 				false, null,
 				null);
 	}
 	private static EsitoNegoziazioneToken endpointTokenEngine(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken, 
-			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
+			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			boolean rinegozia, InformazioniNegoziazioneToken previousToken,
 			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) throws Exception {
@@ -1574,7 +1484,7 @@ public class GestoreToken {
 			esitoNegoziazioneToken = GestoreTokenNegoziazioneUtilities.endpointTokenEngine(debug, log, policyNegoziazioneToken, 
 					busta, requestInfo, tipoPdD,
 					dynamicParameters, protocolFactory, 
-					state, delegata,
+					state, delegata, idModulo, pa, pd,
 					idDominio, idServizio,
 					previousToken,
 					datiRichiesta);
@@ -1635,7 +1545,7 @@ public class GestoreToken {
 						esitoNegoziazioneToken = GestoreTokenNegoziazioneUtilities.endpointTokenEngine(debug, log, policyNegoziazioneToken, 
 								busta, requestInfo, tipoPdD,
 								dynamicParameters, protocolFactory, 
-								state, delegata,
+								state, delegata, idModulo, pa, pd,
 								idDominio, idServizio,
 								previousToken,
 								datiRichiesta);
@@ -1721,7 +1631,7 @@ public class GestoreToken {
 		
 		if(riavviaNegoziazione) {
 			return endpointTokenEngine(debug, log, policyNegoziazioneToken, 
-					busta, requestInfo, tipoPdD,
+					busta, requestInfo, tipoPdD, idModulo, pa, pd,
 					pddContext, protocolFactory,
 					riavviaNegoziazione, esitoNegoziazioneToken.getInformazioniNegoziazioneToken(),// refresh
 					datiRichiesta); 
@@ -1783,6 +1693,15 @@ public class GestoreToken {
 		
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
 		
+		PortaApplicativa pa = null;
+		PortaDelegata pd = null;
+		if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
+			pa = ((DatiInvocazionePortaApplicativa)datiInvocazione).getPa();
+		}
+		else if(datiInvocazione instanceof DatiInvocazionePortaDelegata) {
+			pd = ((DatiInvocazionePortaDelegata)datiInvocazione).getPd();
+		}
+		
 		if(GestoreToken.cacheToken==null){
 						
 			boolean addIdAndDate = true;
@@ -1793,7 +1712,7 @@ public class GestoreToken {
 			esitoRecuperoAttributi = GestoreTokenAttributeAuthorityUtilities.readAttributes(log, policyAttributeAuthority, 
 					protocolFactory,
 					dynamicParameters,
-					request, portaDelegata,
+					request, portaDelegata, datiInvocazione.getIdModulo(), pa, pd,
 					datiInvocazione.getState(),
 					idDominio, idServizio,
 					requestInfo);
@@ -1877,7 +1796,7 @@ public class GestoreToken {
 						esitoRecuperoAttributi = GestoreTokenAttributeAuthorityUtilities.readAttributes(log, policyAttributeAuthority, 
 								protocolFactory,
 								dynamicParameters,
-								request, portaDelegata,
+								request, portaDelegata, datiInvocazione.getIdModulo(), pa, pd,
 								datiInvocazione.getState(),
 								idDominio, idServizio,
 								requestInfo);

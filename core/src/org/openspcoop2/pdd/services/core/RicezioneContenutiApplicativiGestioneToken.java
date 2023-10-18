@@ -187,6 +187,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 					org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata datiInvocazione = new org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata();
 					datiInvocazione.setInfoConnettoreIngresso(this.inRequestContext.getConnettore());
 					datiInvocazione.setState(this.openspcoopstate.getStatoRichiesta());
+					datiInvocazione.setIdModulo(this.msgContext.getIdModulo());
 					datiInvocazione.setMessage(this.requestMessage);
 					datiInvocazione.setIdPD(this.identificativoPortaDelegata);
 					datiInvocazione.setPd(this.portaDelegata);		

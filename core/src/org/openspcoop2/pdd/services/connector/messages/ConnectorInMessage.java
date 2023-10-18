@@ -27,6 +27,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.Context;
@@ -55,7 +56,7 @@ public interface ConnectorInMessage {
 	
 	public void setDiagnosticProducer(Context context, MsgDiagnostico msgDiag);
 	
-	public void setRequestReadTimeout(int timeout);
+	public void setRequestReadTimeout(SogliaReadTimeout timeout);
 	public void disableReadTimeout();
 	
 	public void setRequestLimitedStream(SogliaDimensioneMessaggio requestLimitSize);

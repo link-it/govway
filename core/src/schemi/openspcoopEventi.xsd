@@ -58,6 +58,9 @@
 			<xsd:enumeration value="ControlloTraffico_SogliaCongestione"/>
 			<xsd:enumeration value="RateLimiting_PolicyGlobale"/>
 			<xsd:enumeration value="RateLimiting_PolicyAPI"/>
+			<xsd:enumeration value="ControlloTraffico_ConnectionTimeout"/>
+			<xsd:enumeration value="ControlloTraffico_RequestReadTimeout"/>
+			<xsd:enumeration value="ControlloTraffico_ReadTimeout"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

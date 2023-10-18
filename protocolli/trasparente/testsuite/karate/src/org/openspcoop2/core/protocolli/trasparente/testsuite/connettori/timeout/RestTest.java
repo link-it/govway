@@ -23,12 +23,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.junit.Test;
+import org.openspcoop2.core.constants.CostantiLabel;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.eventi.constants.TipoEvento;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDati;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -40,6 +51,7 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.slf4j.Logger;
 
 import net.minidev.json.JSONObject;
 
@@ -52,32 +64,113 @@ import net.minidev.json.JSONObject;
 */
 public class RestTest extends ConfigLoader {
 
+	public static final String SOGLIA = "SOGLIA"; 
+	public static final String MESSAGGIO_CONNECTION_TIMEOUT = "Connessione non stabilita entro il timeout specificato. (soglia:"+SOGLIA+" ms)";
+	public static final String MESSAGGIO_READ_TIMEOUT = "Risposta non ricevuta entro il timeout specificato (soglia:"+SOGLIA+" ms)";
+	public static final String MESSAGGIO_REQUEST_READ_TIMEOUT = "Richiesta non ricevuta entro il timeout specificato (soglia:"+SOGLIA+" ms)";
+	
+	public static final String DIAGNOSTICO_CONNECTION_TIMEOUT = "connect timed out";
+	public static final String DIAGNOSTICO_READ_TIMEOUT = "Read timed out";
+	public static final String DIAGNOSTICO_REQUEST_READ_TIMEOUT = "Request Read timed out";
+	public static final String DIAGNOSTICO_RESPONSE_READ_TIMEOUT = "Response Read timed out";
+
+	
+	// connectTimeout globale
+	@Test
+	public void erogazione_connectTimeout_globale() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"connectionTimeoutGlobale", "connectionTimeoutGlobale",
+				Optional.of("Predefinito"), // gruppo
+				Optional.of("connectionTimeoutGlobale"), // connettore 
+				DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				MESSAGGIO_CONNECTION_TIMEOUT.replace(SOGLIA, "9000"));
+	}
+	@Test
+	public void fruizione_connectTimeout_globale() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
+				"connectionTimeoutGlobale", "connectionTimeoutGlobale",
+				Optional.of("connectionTimeoutGlobale"), // gruppo
+				Optional.empty(), // connettore 
+				DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				MESSAGGIO_CONNECTION_TIMEOUT.replace(SOGLIA, "8000"));
+	}
+	
+	// readTimeout globale
+	@Test
+	public void erogazione_readTimeout_globale() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
+				"readTimeoutGlobale", "readTimeoutGlobale",
+				Optional.of("Predefinito"), // gruppo
+				Optional.of("readTimeoutGlobale"), // connettore      
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "16000"));
+	}
+	@Test
+	public void fruizione_readTimeout_globale() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
+				"readTimeoutGlobale", "readTimeoutGlobale",
+				Optional.of("readTimeoutGlobale"), // gruppo
+				Optional.empty(), // connettore       
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "15000"));
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 	// connectTimeout registrazioneAbilitata
 	@Test
 	public void erogazione_connectTimeout_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
-				"sendRegistrazioneAbilitata", "connectionTimeout", "connect timed out",
-				true);
+				"sendRegistrazioneAbilitata", "connectionTimeout",
+				Optional.of("sendRegistrazioneAbilitata"), // gruppo
+				Optional.of("connectionTimeout"), // connettore  
+				DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				MESSAGGIO_CONNECTION_TIMEOUT.replace(SOGLIA, "10"));
 	}
 	@Test
 	public void fruizione_connectTimeout_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
-				"sendRegistrazioneAbilitata", "connectionTimeout", "connect timed out",
-				true);
+				"sendRegistrazioneAbilitata", "connectionTimeout",
+				Optional.of("sendRegistrazioneAbilitata.connectionTimeout"), // gruppo
+				Optional.empty(), // connettore  
+				DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				MESSAGGIO_CONNECTION_TIMEOUT.replace(SOGLIA, "10"));
 	}
 	
 	// connectTimeout registrazioneDisabilitata
 	@Test
 	public void erogazione_connectTimeout_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
-				"sendRegistrazioneDisabilitata", "connectionTimeout", "connect timed out",
-				true);
+				"sendRegistrazioneDisabilitata", "connectionTimeout",
+				Optional.of("Predefinito"), // gruppo
+				Optional.of("connectionTimeout"), // connettore  
+				DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				MESSAGGIO_CONNECTION_TIMEOUT.replace(SOGLIA, "10"));
 	}
 	@Test
 	public void fruizione_connectTimeout_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE).getBytes(),
-				"sendRegistrazioneDisabilitata", "connectionTimeout", "connect timed out",
-				true);
+				"sendRegistrazioneDisabilitata", "connectionTimeout",
+				Optional.of("sendRegistrazioneDisabilitata.connectionTimeout"), // gruppo
+				Optional.empty(), // connettore   
+				DIAGNOSTICO_CONNECTION_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
+				MESSAGGIO_CONNECTION_TIMEOUT.replace(SOGLIA, "10"));
 	}
 	
 	
@@ -85,14 +178,22 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_echoReceiveRequestSlow_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneAbilitata", "echoReceiveRequestSlow", "Read timed out",
-				false);
+				"sendRegistrazioneAbilitata", "echoReceiveRequestSlow",
+				Optional.of("sendRegistrazioneAbilitata"), // gruppo
+				Optional.of("echoReceiveRequestSlow"), // connettore    
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	@Test
 	public void fruizione_echoReceiveRequestSlow_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneAbilitata", "echoReceiveRequestSlow", "Read timed out",
-				false);
+				"sendRegistrazioneAbilitata", "echoReceiveRequestSlow",
+				Optional.of("sendRegistrazioneAbilitata.echoReceiveRequestSlow"), // gruppo
+				Optional.empty(), // connettore    
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	
 	
@@ -100,14 +201,22 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_echoReceiveRequestSlow_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneDisabilitata", "echoReceiveRequestSlow", "Read timed out",
-				false);
+				"sendRegistrazioneDisabilitata", "echoReceiveRequestSlow",
+				Optional.of("Predefinito"), // gruppo
+				Optional.of("echoReceiveRequestSlow"), // connettore     
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	@Test
 	public void fruizione_echoReceiveRequestSlow_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneDisabilitata", "echoReceiveRequestSlow", "Read timed out",
-				false);
+				"sendRegistrazioneDisabilitata", "echoReceiveRequestSlow",
+				Optional.of("sendRegistrazioneDisabilitata.echoReceiveRequestSlow"), // gruppo
+				Optional.empty(), // connettore     
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	
 	
@@ -115,28 +224,44 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_echoSleepBeforeResponse_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneAbilitata", "echoSleepBeforeResponse", "Read timed out",
-				false);
+				"sendRegistrazioneAbilitata", "echoSleepBeforeResponse",
+				Optional.of("sendRegistrazioneAbilitata"), // gruppo
+				Optional.of("echoSleepBeforeResponse"), // connettore      
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	@Test
 	public void fruizione_echoSleepBeforeResponse_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneAbilitata", "echoSleepBeforeResponse", "Read timed out",
-				false);
+				"sendRegistrazioneAbilitata", "echoSleepBeforeResponse",
+				Optional.of("sendRegistrazioneAbilitata.echoSleepBeforeResponse"), // gruppo
+				Optional.empty(), // connettore      
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	
 	// echoSleepBeforeResponse registrazioneDisabilitata
 	@Test
 	public void erogazione_echoSleepBeforeResponse_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneDisabilitata", "echoSleepBeforeResponse", "Read timed out",
-				false);
+				"sendRegistrazioneDisabilitata", "echoSleepBeforeResponse",
+				Optional.of("Predefinito"), // gruppo
+				Optional.of("echoSleepBeforeResponse"), // connettore      
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	@Test
 	public void fruizione_echoSleepBeforeResponse_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneDisabilitata", "echoSleepBeforeResponse", "Read timed out",
-				false);
+				"sendRegistrazioneDisabilitata", "echoSleepBeforeResponse",
+				Optional.of("sendRegistrazioneDisabilitata.echoSleepBeforeResponse"), // gruppo
+				Optional.empty(), // connettore       
+				RestTest.DIAGNOSTICO_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	
 	
@@ -145,14 +270,22 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_echoSendResponseSlow_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneAbilitata", "echoSendResponseSlow", "Response Read timed out",
-				false);
+				"sendRegistrazioneAbilitata", "echoSendResponseSlow",
+				Optional.of("sendRegistrazioneAbilitata"), // gruppo
+				Optional.of("echoSendResponseSlow"), // connettore       
+				RestTest.DIAGNOSTICO_RESPONSE_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	@Test
 	public void fruizione_echoSendResponseSlow_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-			"sendRegistrazioneAbilitata", "echoSendResponseSlow", "Response Read timed out",
-			false);
+			"sendRegistrazioneAbilitata", "echoSendResponseSlow",
+			Optional.of("sendRegistrazioneAbilitata.echoSendResponseSlow"), // gruppo
+			Optional.empty(), // connettore        
+			RestTest.DIAGNOSTICO_RESPONSE_READ_TIMEOUT,
+			TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+			MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	
 	
@@ -161,14 +294,22 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_echoSendResponseSlow_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendRegistrazioneDisabilitata", "echoSendResponseSlow", "Response Read timed out",
-				false);
+				"sendRegistrazioneDisabilitata", "echoSendResponseSlow",
+				Optional.of("Predefinito"), // gruppo
+				Optional.of("echoSendResponseSlow"), // connettore    
+				RestTest.DIAGNOSTICO_RESPONSE_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	@Test
 	public void fruizione_echoSendResponseSlow_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-			"sendRegistrazioneDisabilitata", "echoSendResponseSlow", "Response Read timed out",
-			false);
+			"sendRegistrazioneDisabilitata", "echoSendResponseSlow",
+			Optional.of("sendRegistrazioneDisabilitata.echoSendResponseSlow"), // gruppo
+			Optional.empty(), // connettore         
+			RestTest.DIAGNOSTICO_RESPONSE_READ_TIMEOUT,
+			TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+			MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	
 	
@@ -177,15 +318,24 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_echoSendResponseSlow_correlazioneApplicativa() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-				"sendCorrelazioneApplicativa", "EchoSendResponseSlow", "Response Read timed out",
-				false);
+				"sendCorrelazioneApplicativa", "EchoSendResponseSlow",
+				Optional.of("sendCorrelazioneApplicativa"), // gruppo
+				Optional.of("EchoSendResponseSlow"), // connettore     
+				RestTest.DIAGNOSTICO_RESPONSE_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+				MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
 	@Test
 	public void fruizione_echoSendResponseSlow_correlazioneApplicativa() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_500K).getBytes(),
-			"sendCorrelazioneApplicativa", "EchoSendResponseSlow", "Response Read timed out",
-			false);
+			"sendCorrelazioneApplicativa", "EchoSendResponseSlow",
+			Optional.of("sendCorrelazioneApplicativa.EchoSendResponseSlow"), // gruppo
+			Optional.empty(), // connettore          
+			RestTest.DIAGNOSTICO_RESPONSE_READ_TIMEOUT,
+			TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
+			MESSAGGIO_READ_TIMEOUT.replace(SOGLIA, "2000"));
 	}
+	
 	
 	
 	
@@ -193,15 +343,23 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_clientSendRequestSlow_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_50K).getBytes(),
-				"sendRegistrazioneAbilitataClientSendSlow", "default", "Request Read timed out",
-				false,
+				"sendRegistrazioneAbilitataClientSendSlow", "default",
+				Optional.of("sendRegistrazioneAbilitataClientSendSlow"), // gruppo
+				Optional.empty(), // connettore     
+				RestTest.DIAGNOSTICO_REQUEST_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT,
+				MESSAGGIO_REQUEST_READ_TIMEOUT.replace(SOGLIA, "2000"),
 				1000, 100, true);
 	}
 	@Test
 	public void fruizione_clientSendRequestSlow_registrazioneAbilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_50K).getBytes(),
-				"sendRegistrazioneAbilitataClientSendSlow", "default", "Request Read timed out",
-				false,
+				"sendRegistrazioneAbilitataClientSendSlow", "default",
+				Optional.of("sendRegistrazioneAbilitataClientSendSlow"), // gruppo
+				Optional.empty(), // connettore           
+				RestTest.DIAGNOSTICO_REQUEST_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT,
+				MESSAGGIO_REQUEST_READ_TIMEOUT.replace(SOGLIA, "2000"),
 				1000, 100, true);
 	}
 	
@@ -210,15 +368,23 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_clientSendRequestSlow_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_50K).getBytes(),
-				"sendRegistrazioneDisabilitataClientSendSlow", "default", "Request Read timed out",
-				false,
+				"sendRegistrazioneDisabilitataClientSendSlow", "default",
+				Optional.of("sendRegistrazioneDisabilitataClientSendSlow"), // gruppo
+				Optional.empty(), // connettore      
+				RestTest.DIAGNOSTICO_REQUEST_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT,
+				MESSAGGIO_REQUEST_READ_TIMEOUT.replace(SOGLIA, "2000"),
 				1000, 100, true);
 	}
 	@Test
 	public void fruizione_clientSendRequestSlow_registrazioneDisabilitata() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_50K).getBytes(),
-				"sendRegistrazioneDisabilitataClientSendSlow", "default", "Request Read timed out",
-				false,
+				"sendRegistrazioneDisabilitataClientSendSlow", "default",
+				Optional.of("sendRegistrazioneDisabilitataClientSendSlow"), // gruppo
+				Optional.empty(), // connettore            
+				RestTest.DIAGNOSTICO_REQUEST_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT,
+				MESSAGGIO_REQUEST_READ_TIMEOUT.replace(SOGLIA, "2000"),
 				1000, 100, true);
 	}
 	
@@ -228,18 +394,33 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void erogazione_clientSendRequestSlow_correlazioneApplicativa() throws Exception {
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_50K).getBytes(),
-				"sendCorrelazioneApplicativa", "ClientSendRequestSlow", "Request Read timed out",
-				false,
+				"sendCorrelazioneApplicativa", "ClientSendRequestSlow",
+				Optional.of("sendCorrelazioneApplicativa"), // gruppo
+				Optional.empty(), // connettore       
+				RestTest.DIAGNOSTICO_REQUEST_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT,
+				MESSAGGIO_REQUEST_READ_TIMEOUT.replace(SOGLIA, "2000"),
 				1000, 100, true);
 	}
 	@Test
 	public void fruizione_clientSendRequestSlow_correlazioneApplicativa() throws Exception {
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SIZE_50K).getBytes(),
-				"sendCorrelazioneApplicativa", "ClientSendRequestSlow", "Request Read timed out",
-				false,
+				"sendCorrelazioneApplicativa", "ClientSendRequestSlow",
+				Optional.of("sendCorrelazioneApplicativa.ClientSendRequestSlow"), // gruppo
+				Optional.empty(), // connettore             
+				RestTest.DIAGNOSTICO_REQUEST_READ_TIMEOUT,
+				TipoEvento.CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT,
+				MESSAGGIO_REQUEST_READ_TIMEOUT.replace(SOGLIA, "2000"),
 				1000, 100, true);
 	}
 	
+	
+	
+	
+	
+	
+	
+
 	
 	// connessioneCLientInterrotta
 	@Test
@@ -248,12 +429,15 @@ public class RestTest extends ConfigLoader {
 		String idApplicativoClaim = "\"identificativoApplicativo\":\""+idApplicativo+"\"";
 		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, 
 				Bodies.getJson(
-						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat10 non vale piu' socketBuffer=-1 
+						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat9 non vale piu' socketBuffer=-1 
 						// Per adesso si usa un messaggio maggiore della dimensione di 8k in modo da andare "fuori" buffer
 						Bodies.SIZE_50K, 
 						idApplicativoClaim).getBytes(),
-				"connessioneClientInterrotta", "connessioneClientInterrotta", "Broken pipe",
-				false,
+				"connessioneClientInterrotta", "connessioneClientInterrotta",
+				null, // gruppo
+				null, // connettore               
+				"Broken pipe",
+				null, null,
 				idApplicativo);
 	}
 	@Test
@@ -262,12 +446,15 @@ public class RestTest extends ConfigLoader {
 		String idApplicativoClaim = "\"identificativoApplicativo\":\""+idApplicativo+"\"";
 		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, 
 				Bodies.getJson(
-						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat10 non vale piu' socketBuffer=-1 
+						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat9 non vale piu' socketBuffer=-1 
 						// Per adesso si usa un messaggio maggiore della dimensione di 8k in modo da andare "fuori" buffer
 						Bodies.SIZE_50K, 
 						idApplicativoClaim).getBytes(),
-				"connessioneClientInterrotta", "connessioneClientInterrotta", "Broken pipe",
-				false,
+				"connessioneClientInterrotta", "connessioneClientInterrotta",
+				null, // gruppo
+				null, // connettore              
+				"Broken pipe",
+				null ,null,
 				idApplicativo);
 	}
 	
@@ -275,52 +462,113 @@ public class RestTest extends ConfigLoader {
 	
 	private static HttpResponse _test(
 			TipoServizio tipoServizio, String contentType, byte[]content,
-			String operazione, String tipoTest, String msgErrore,
-			boolean connectTimeout) throws Exception {
+			String operazione, String tipoTest, Optional<String> gruppo, Optional<String> connettore, String msgErrore,
+			TipoEvento tipoEvento, String descrizioneEvento) throws Exception {
 		return _test(
 				tipoServizio, contentType, content,
-				operazione, tipoTest, msgErrore,
-				connectTimeout,
+				operazione, tipoTest, gruppo, connettore, msgErrore,
+				tipoEvento, descrizioneEvento,
 				null, null, false, 
 				null);
 	}
 	private static HttpResponse _test(
 			TipoServizio tipoServizio, String contentType, byte[]content,
-			String operazione, String tipoTest, String msgErrore,
-			boolean connectTimeout,
+			String operazione, String tipoTest, Optional<String> gruppo, Optional<String> connettore, String msgErrore,
+			TipoEvento tipoEvento, String descrizioneEvento,
 			String applicativeId) throws Exception {
 		return _test(
 				tipoServizio, contentType, content,
-				operazione, tipoTest, msgErrore,
-				connectTimeout,
+				operazione, tipoTest, gruppo, connettore, msgErrore,
+				tipoEvento, descrizioneEvento,
 				null, null, false, 
 				applicativeId);
 	}
 	private static HttpResponse _test(
 			TipoServizio tipoServizio, String contentType, byte[]content,
-			String operazione, String tipoTest, String msgErrore,
-			boolean connectTimeout,
+			String operazione, String tipoTest, Optional<String> gruppo, Optional<String> connettore, String msgErrore,
+			TipoEvento tipoEvento, String descrizioneEvento,
 			Integer throttlingByte, Integer throttlingMs, boolean throttlingSend) throws Exception {
 		return _test(
 				tipoServizio, contentType, content,
-				operazione, tipoTest, msgErrore,
-				connectTimeout,
+				operazione, tipoTest, gruppo, connettore, msgErrore,
+				tipoEvento, descrizioneEvento,
 				throttlingByte, throttlingMs, throttlingSend,
 				null);
 	}
 	private static HttpResponse _test(
 			TipoServizio tipoServizio, String contentType, byte[]content,
-			String operazione, String tipoTest, String msgErrore,
-			boolean connectTimeout,
+			String operazione, String tipoTest, Optional<String> gruppo, Optional<String> connettore, String msgErrore,
+			TipoEvento tipoEvento, String descrizioneEvento,
 			Integer throttlingByte, Integer throttlingMs, boolean throttlingSend,
 			String applicativeId) throws Exception {
-		
+		return _testRest(
+				tipoServizio, contentType, content,
+				operazione, tipoTest, gruppo, connettore, msgErrore,
+				tipoEvento, descrizioneEvento,
+				throttlingByte, throttlingMs, throttlingSend,
+				applicativeId,
+				null,
+				logCore);
+	}
+	
+	public static HttpResponse _testRest(
+			TipoServizio tipoServizio, String contentType, byte[]content,
+			String operazione, String tipoTest, Optional<String> gruppo, Optional<String> connettore, String msgErrore,
+			TipoEvento tipoEvento, String descrizioneEvento,
+			Integer throttlingByte, Integer throttlingMs, boolean throttlingSend,
+			String applicativeId,
+			String policyName,
+			Logger logCore) throws Exception {
 
-		String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempiRispostaREST/v1/"+operazione
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempiRispostaREST/v1/"+operazione;
+		LocalDateTime dataSpedizione = LocalDateTime.now();
+
+		PolicyTimeoutConfig config = null;
+		
+		IDSoggetto idFruitore = null;
 		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
-			if(!"connessioneClientInterrotta".equals(operazione) && 
+			idFruitore = new IDSoggetto("gw", "SoggettoInternoTestFruitore");
+		}
+		
+		IDSoggetto idErogatore = new IDSoggetto("gw", "SoggettoInternoTest");
+		IDServizio idServizioObject = null;
+		
+		String idServizio = "SoggettoInternoTest/TempiRispostaREST/v1";
+		if(operazione.startsWith("negoziazione/") || operazione.startsWith("validazione/") || operazione.startsWith("attributeAuthority/") ) {
+			idServizio = "SoggettoInternoTest/TempiRispostaPolicy/v1";
+			config = new PolicyTimeoutConfig();
+			if(operazione.startsWith("negoziazione/") ) {
+				config.setPolicyNegoziazione(policyName);
+			}
+			if(operazione.startsWith("validazione/introspection/")) {
+				config.setPolicyValidazioneIntrospection(policyName);
+			}
+			if(operazione.startsWith("validazione/userInfo/")) {
+				config.setPolicyValidazioneUserInfo(policyName);
+			}
+			if(operazione.startsWith("attributeAuthority/") ) {
+				config.setAttributeAuthority(policyName);
+			}
+			idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues("gw", "TempiRispostaPolicy", idErogatore, 1);
+		}
+		else {
+			idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues("gw", "TempiRispostaREST", idErogatore, 1);
+		}
+		
+		String idEventoServizio = idServizio;
+		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+			idEventoServizio = "SoggettoInternoTestFruitore/"+idServizio;
+		}
+		
+		String url = tipoServizio == TipoServizio.EROGAZIONE
+				? System.getProperty("govway_base_path") + "/"+idServizio+"/"+operazione
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/"+idServizio+"/"+operazione;
+		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+			if(!operazione.startsWith("negoziazione/") && 
+					!operazione.startsWith("validazione/") && 
+					!operazione.startsWith("attributeAuthority/") && 
+					!"connectionTimeoutGlobale".equals(operazione) && 
+					!"readTimeoutGlobale".equals(operazione) && 
+					!"connessioneClientInterrotta".equals(operazione) && 
 					!"sendRegistrazioneAbilitataClientSendSlow".equals(operazione) && 
 					!"sendRegistrazioneDisabilitataClientSendSlow".equals(operazione)) {
 				url=url+"/"+tipoTest;
@@ -351,6 +599,10 @@ public class RestTest extends ConfigLoader {
 		
 		request.setUrl(url);
 		
+		if(operazione.startsWith("validazione/")) {
+			request.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+"token_opaco");
+		}
+		
 		HttpResponse response = null;
 		try {
 			response = HttpUtilities.httpInvoke(request);
@@ -374,43 +626,117 @@ public class RestTest extends ConfigLoader {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
-		if(connectTimeout) {
-			verifyKo(response, API_UNAVAILABLE, 503, API_UNAVAILABLE_MESSAGE);
-		}
-		else {
-			if(operazione.equals("sendCorrelazioneApplicativa")) {
-				if(throttlingSend) {
-					esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
-					verifyKo(response, REQUEST_TIMED_OUT, 400, REQUEST_TIMED_OUT_MESSAGE);
+		EsitoTransazioneName esitoTransazioneName = null;
+		String errorKo = null;
+		String errorKoMessage = null;
+		int returnCodeKo = -1;
+		if(tipoEvento!=null) {
+			switch (tipoEvento) {
+			case CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT:
+				esitoTransazioneName = EsitoTransazioneName.ERRORE_CONNECTION_TIMEOUT;
+				errorKo = API_UNAVAILABLE;
+				errorKoMessage = API_UNAVAILABLE_MESSAGE;
+				returnCodeKo = 503;
+				break;
+			case CONTROLLO_TRAFFICO_READ_TIMEOUT:
+				esitoTransazioneName = EsitoTransazioneName.ERRORE_RESPONSE_TIMEOUT;
+				if("sendRegistrazioneDisabilitata".equals(operazione) && "echoSendResponseSlow".equals(tipoTest)) {
+					verifyOk(response, 200); // il codice http e' gia' stato impostato e si ottiene l'errore in streaming durante la consegna al client
 				}
 				else {
-					esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);	
-					verifyKo(response, ENDPOINT_READ_TIMEOUT, 504, ENDPOINT_READ_TIMEOUT_MESSAGE);
+					errorKo = ENDPOINT_READ_TIMEOUT;
+					errorKoMessage = ENDPOINT_READ_TIMEOUT_MESSAGE;
+					returnCodeKo = 504;
 				}
+				break;
+			case CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT:
+				esitoTransazioneName = EsitoTransazioneName.ERRORE_REQUEST_TIMEOUT;
+				errorKo = REQUEST_TIMED_OUT;
+				errorKoMessage = REQUEST_TIMED_OUT_MESSAGE;
+				returnCodeKo = 400;
+				break;
+			default:
+				esitoTransazioneName = EsitoTransazioneName.ERRORE_INVOCAZIONE;
+				errorKo = API_UNAVAILABLE;
+				errorKoMessage = API_UNAVAILABLE_MESSAGE;
+				returnCodeKo = 503;
+				break;
 			}
-			else if(throttlingSend && operazione.contains("SendSlow") ) {
-				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
-				verifyKo(response, REQUEST_TIMED_OUT, 400, REQUEST_TIMED_OUT_MESSAGE);
-			}
-			else if("sendRegistrazioneDisabilitata".equals(operazione) && "echoSendResponseSlow".equals(tipoTest)) {
-				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE);
-				verifyOk(response, 200); // il codice http e' gia' stato impostato
-			}
-			else if("connessioneClientInterrotta".equals(operazione)) {
-				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE);
+		}	
+		else {
+			if("connessioneClientInterrotta".equals(operazione)) {
+				esitoTransazioneName = EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE;
 				verifyOk(response, 200); // il codice http e' gia' stato impostato
 			}
 			else {
-				verifyKo(response, ENDPOINT_READ_TIMEOUT, 504, ENDPOINT_READ_TIMEOUT_MESSAGE);
+				errorKo = API_UNAVAILABLE;
+				errorKoMessage = API_UNAVAILABLE_MESSAGE;
+				returnCodeKo = 503;
 			}
 		}
 		
+		if(operazione.startsWith("validazione/")) {
+			errorKo = TOKEN_AUTHENTICATION_FAILED;
+			errorKoMessage = TOKEN_AUTHENTICATION_FAILED_MESSAGE;
+			returnCodeKo = 401;
+		}
+		else if(operazione.startsWith("attributeAuthority/")) {
+			esitoTransazioneName = EsitoTransazioneName.OK_PRESENZA_ANOMALIE;
+			verifyOk(response, 200); // non è bloccante un errore nell'attribute authority
+			errorKo = null;
+		}
+		
+		if(errorKo!=null) {
+			logCore.info("Verifico risposta ko con codice '"+errorKo+"' ["+returnCodeKo+"/"+errorKoMessage+"] ...");
+			verifyKo(response, errorKo, returnCodeKo, errorKoMessage);
+			logCore.info("Verifico risposta ko con codice '"+errorKo+"' ["+returnCodeKo+"/"+errorKoMessage+"] ok");
+		}
+		
+		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(esitoTransazioneName);
+		logCore.info("Verifico transazione con stato '"+esitoExpected+"' ("+esitoTransazioneName.toString()+") [msgErrore:"+msgErrore+"] ...");
 		DBVerifier.verify(idTransazione, esitoExpected, msgErrore);
+		logCore.info("Verifico transazione con stato '"+esitoExpected+"' ("+esitoTransazioneName.toString()+") [msgErrore:"+msgErrore+"] ok");
+		
+		if(tipoEvento!=null) {
+			
+			PolicyDati dati = new PolicyDati();
+			dati.setProfilo(CostantiLabel.TRASPARENTE_PROTOCOL_NAME);
+			if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+				dati.setRuoloPorta(RuoloPolicy.DELEGATA);
+			}
+			else {
+				dati.setRuoloPorta(RuoloPolicy.APPLICATIVA);
+			}
+			
+			dati.setIdServizio(idServizioObject);
+			dati.setIdFruitore(idFruitore);
+			
+			if(gruppo.isPresent()) {
+				dati.setGruppo(gruppo.get());
+			}
+			if(connettore.isPresent()) {
+				dati.setConnettore(connettore.get());
+			}
+			
+			if(config!=null) {
+				dati.setTokenPolicyNegoziazione(config.getPolicyNegoziazione());
+				dati.setTokenPolicyValidazioneIntrospection(config.getPolicyValidazioneIntrospection());
+				dati.setTokenPolicyValidazioneUserInfo(config.getPolicyValidazioneUserInfo());
+				dati.setAttributeAuthority(config.getAttributeAuthority());
+			}
+			
+			DBVerifier.checkEventiConViolazioneTimeout(idEventoServizio, tipoEvento, gruppo, connettore, config, 
+					dati,
+					descrizioneEvento, dataSpedizione,
+					response, logCore);
+		}
 		
 		return response;
 		
 	}
+	
+	public static final String TOKEN_AUTHENTICATION_FAILED = "TokenAuthenticationFailed";
+	public static final String TOKEN_AUTHENTICATION_FAILED_MESSAGE = "Invalid token";
 	
 	public static final String API_UNAVAILABLE = "APIUnavailable";
 	public static final String API_UNAVAILABLE_MESSAGE = "The API Implementation is temporary unavailable";

@@ -38,6 +38,8 @@ public abstract class AbstractDatiInvocazione {
 	
 	private IState state;
 	
+	private String idModulo;
+	
 	private RequestInfo requestInfo;
 	
 	private OpenSPCoop2Message message;
@@ -69,6 +71,13 @@ public abstract class AbstractDatiInvocazione {
 	}
 	public void setState(IState state) {
 		this.state = state;
+	}
+	
+	public String getIdModulo() {
+		return this.idModulo;
+	}
+	public void setIdModulo(String idModulo) {
+		this.idModulo = idModulo;
 	}
 	
 	public RequestInfo getRequestInfo() {

@@ -61,6 +61,8 @@ public class Common {
 	public static final String CONNETTORE_DISABILITATO = "ConnettoreDisabilitato";
 	public static String CONNETTORE_ID_FALLITA = "ConnettoreIdentificazioneFallita";
 	public static String CONNETTORE_ID_NON_TROVATO = "ConnettoreNessunConnettoreTrovato";
+	public static final String CONNETTORE_CONNECTION_TIMEOUT = "ConnettoreConnectionTimeout";
+	public static final String CONNETTORE_READ_TIMEOUT = "ConnettoreReadTimeout";
 
 	public static final String POOL_0 = "Pool0";
 	public static final String POOL_1 = "Pool1";

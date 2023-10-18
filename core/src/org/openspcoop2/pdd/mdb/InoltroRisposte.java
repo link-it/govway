@@ -62,6 +62,8 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
+import org.openspcoop2.pdd.core.controllo_traffico.ConnettoreUtilities;
+import org.openspcoop2.pdd.core.controllo_traffico.DatiTempiRisposta;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutResponseContext;
@@ -1114,11 +1116,19 @@ public class InoltroRisposte extends GenericLib{
 				java.util.Map<String,String> propCon = new java.util.HashMap<>();
 				connettoreMsg.setConnectorProperties(propCon);
 			}
-			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
-				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,""+this.propertiesReader.getConnectionTimeout_inoltroBuste());
-			}
-			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)==null){
-				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT,""+this.propertiesReader.getReadConnectionTimeout_inoltroBuste());
+			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null ||
+					connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)==null){
+				DatiTempiRisposta datiTempiRisposta = ConnettoreUtilities.readDatiGlobaliTimeout(configurazionePdDManager, TipoPdD.DELEGATA, requestInfo, this.propertiesReader);
+				if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
+					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,
+							"" + ((datiTempiRisposta!=null && datiTempiRisposta.getConnectionTimeout()!=null) ? datiTempiRisposta.getConnectionTimeout().intValue() : this.propertiesReader.getConnectionTimeout_inoltroBuste()));
+					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT_GLOBALE, "true" );
+				}
+				if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)==null){
+					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT,
+							"" + ((datiTempiRisposta!=null && datiTempiRisposta.getReadConnectionTimeout()!=null) ? datiTempiRisposta.getReadConnectionTimeout().intValue() : this.propertiesReader.getReadConnectionTimeout_inoltroBuste()));
+					connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT_GLOBALE, "true" );
+				}
 			}
 			
 			// User-Agent e X-* header
