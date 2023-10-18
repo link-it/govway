@@ -118,7 +118,7 @@
 	<archive path="/op2_3.3.dev/lib/json/btf-1.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-schema-validator-2.2.10.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/handy-uri-templates-2.1.8.jar"/>
-	<archive path="/op2_3.3.dev/lib/json/json-20230227.jar"/>
+	<archive path="/op2_3.3.dev/lib/json/json-20231013.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-schema-core-1.2.8.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/libphonenumber-8.12.57.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/failureaccess-1.0.1.jar"/>
@@ -176,16 +176,16 @@
 	<archive path="/op2_3.3.dev/lib/pdf/fontbox-2.0.27.jar"/>
 	<archive path="/op2_3.3.dev/lib/pdf/boxable-1.7.0.jar"/>
 	<!-- redis -->
-	<archive path="/op2_3.3.dev/lib/redis/redisson-3.22.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-4.1.94.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-dns-4.1.94.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-2.1.1.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-river-2.1.1.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-buffer-4.1.94.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-common-4.1.94.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-transport-4.1.94.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-codec-4.1.94.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-codec-dns-4.1.94.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/redisson-3.23.5.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-4.1.100.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-dns-4.1.100.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-2.1.3.SP1.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-river-2.1.3.SP1.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-buffer-4.1.100.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-common-4.1.100.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-transport-4.1.100.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-codec-4.1.100.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-codec-dns-4.1.100.Final.jar"/>
 	<!-- reports -->
 	<archive path="/op2_3.3.dev/lib/reports/dynamicreports-core-6.12.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/reports/jasperreports-6.20.0.jar"/>

@@ -1,5 +1,14 @@
 2023-10-18  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2023-5072: aggiornata libreria 'org.json:json' alla versione 20231013
+	- CVE-2023-4586: aggiornata libreria 'io.netty:*' alla versione 4.1.100.Final
+                         aggiornata libreria 'org.redisson:redisson' alla versione 3.23.5
+                         aggiornata libreria 'org.jboss.marshalling:*' alla versione 2.1.3.SP1
+
+2023-10-18  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole, GovWayMonitor]
 	Aggiunta funzionalità OP-1653
 	La classificazione degli esiti è stata estesa per individuare i seguenti casi:
