@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.input.CountingInputStream;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
@@ -37,10 +38,16 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
+import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutConfigurationUtils;
+import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutContextParam;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
+import org.openspcoop2.pdd.core.controllo_traffico.TimeoutNotifier;
+import org.openspcoop2.pdd.core.controllo_traffico.TimeoutNotifierType;
 import org.openspcoop2.pdd.logger.DiagnosticInputStream;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.TimeoutInputStream;
@@ -84,7 +91,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	/** acceptOnlyReturnCode_202_200 SOAP */
 	protected boolean acceptOnlyReturnCode_202_200 = true;
 			
-	protected void normalizeInputStreamResponse(int timeout) throws Exception{
+	protected void normalizeInputStreamResponse(int timeout, boolean configurazioneGlobale) throws Exception{
 		//Se non e' null, controllo che non sia vuoto.
 		if(this.isResponse!=null){
 			this.isResponse = Utilities.normalizeStream(this.isResponse, false);
@@ -105,9 +112,11 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 		if(this.isResponse!=null && this.useTimeoutInputStream) {
 			if(timeout>0) {
+				TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.RECEIVE_RESPONSE);
 				this.isResponse = new TimeoutInputStream(this.isResponse, timeout, 
 						CostantiPdD.PREFIX_TIMEOUT_RESPONSE,
-						this.getPddContext());
+						this.getPddContext(),
+						notifier);
 			}
 		}
 		if(this.isResponse!=null && this.useDiagnosticInputStream && this.msgDiagnostico!=null) {
@@ -119,6 +128,51 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 					this.getPddContext());
 		}
 	}
+	
+	protected TimeoutNotifier getTimeoutNotifier(int timeout, boolean configurazioneGlobale, TimeoutNotifierType type) throws DriverConfigurazioneException, ProtocolException {
+		SogliaReadTimeout soglia = null;
+		if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) || this.pa!=null) {
+			soglia = (this.pa!=null) ? 
+					ReadTimeoutConfigurationUtils.buildSogliaResponseTimeout(timeout, configurazioneGlobale, this.pa, this.nomeConnettoreAsincrono, this.policyTimeoutConfig,
+							new ReadTimeoutContextParam(this.requestInfo, this.getProtocolFactory(), this.getPddContext(), this.state)) : 
+						ReadTimeoutConfigurationUtils.buildSogliaResponseTimeout(timeout, false, this.getProtocolFactory());
+		}
+		else {
+			soglia = (this.pd!=null) ? 
+					ReadTimeoutConfigurationUtils.buildSogliaResponseTimeout(timeout, configurazioneGlobale, this.pd, this.policyTimeoutConfig,
+							new ReadTimeoutContextParam(this.requestInfo, this.getProtocolFactory(), this.getPddContext(), this.state)) : 
+						ReadTimeoutConfigurationUtils.buildSogliaResponseTimeout(timeout, true, this.getProtocolFactory());
+		}
+		boolean saveInContext = (this.policyTimeoutConfig!=null && this.policyTimeoutConfig.getAttributeAuthority()!=null) ? false : true;
+		return new TimeoutNotifier(this.getPddContext(), this.getProtocolFactory(), 
+				soglia, type, this.logger.getLogger(), saveInContext);
+	}
+	
+    protected void processReadTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
+    	try {
+	    	if(timeout>0 && "Read timed out".equals(message) && (e instanceof java.net.SocketTimeoutException)) {
+	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.WAIT_RESPONSE);
+	    		notifier.notify(timeout);
+	    	}
+    	}catch(Exception error) {
+    		if(this.logger!=null) {
+    			this.logger.error("Errore avvenuto durante la registrazione dell'evento di read timeout: "+error.getMessage(),error);
+    		}
+    	}
+    }
+    
+    protected void processConnectionTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
+    	try {
+	    	if(timeout>0 && "connect timed out".equals(message) && (e instanceof java.net.SocketTimeoutException)) {
+	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.CONNECTION);
+	    		notifier.notify(timeout);
+	    	}
+    	}catch(Exception error) {
+    		if(this.logger!=null) {
+    			this.logger.error("Errore avvenuto durante la registrazione dell'evento di connection timeout: "+error.getMessage(),error);
+    		}
+    	}
+    }
 	
 	protected void initCheckContentTypeConfiguration(){		
 		this.checkContentType = true;

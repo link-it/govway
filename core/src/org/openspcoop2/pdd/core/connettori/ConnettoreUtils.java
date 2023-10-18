@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
@@ -642,6 +643,40 @@ public class ConnettoreUtils {
 				if(property.getNome().equals(nome)){
 					return property.getValore();
 				}
+			}
+		}
+		return null;
+	}
+	
+	
+	public static String getNomeConnettori(Context context) {
+		String connettoriMultipli = null;
+		if(context.containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID)) {
+			Object oConnettori = context.getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID );
+			if (oConnettori instanceof List){
+				List<?> l = (List<?>) oConnettori;
+				String s = getNomeConnettori(l);
+				if(s!=null && s.length()>0) {
+					return s;
+				}
+			}
+		}
+		return connettoriMultipli;
+	}
+	private static String getNomeConnettori(List<?> l) {
+		if(!l.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			for (Object object : l) {
+				if(object instanceof String) {
+					String s = (String) object;
+					if(sb.length()>0) {
+						sb.append(",");
+					}
+					sb.append(s);
+				}
+			}
+			if(sb.length()>0) {
+				return sb.toString();
 			}
 		}
 		return null;

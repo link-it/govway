@@ -40,11 +40,11 @@ public class TimeoutInputStream extends FilterInputStream {
 	public TimeoutInputStream(InputStream is, int timeoutMs) throws IOException {
 		this(is, timeoutMs, null, null);
 	}
-	public TimeoutInputStream(InputStream is, int timeoutMs, Map<Object> ctx) throws IOException {
-		this(is, timeoutMs, null, ctx);
+	public TimeoutInputStream(InputStream is, int timeoutMs, Map<Object> ctx, ITimeoutNotifier notifier) throws IOException {
+		this(is, timeoutMs, null, ctx, notifier);
 	}
-	public TimeoutInputStream(InputStream is, int timeoutMs, String prefixError, Map<Object> ctx) throws IOException {
-		super(new TimeoutInputStreamEngine(is, timeoutMs, prefixError, ctx));
+	public TimeoutInputStream(InputStream is, int timeoutMs, String prefixError, Map<Object> ctx, ITimeoutNotifier notifier) throws IOException {
+		super(new TimeoutInputStreamEngine(is, timeoutMs, prefixError, ctx, notifier));
 	}
 	
 	public InputStream getIsWrapped() {
@@ -71,6 +71,12 @@ public class TimeoutInputStream extends FilterInputStream {
 		InputStream is = super.in;
 		if(is instanceof TimeoutInputStreamEngine) {
 			((TimeoutInputStreamEngine)is).updateContext(ctx);
+		}
+	}
+	public void updateNotifier(ITimeoutNotifier notifier) {
+		InputStream is = super.in;
+		if(is instanceof TimeoutInputStreamEngine) {
+			((TimeoutInputStreamEngine)is).updateNotifier(notifier);
 		}
 	}
 

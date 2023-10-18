@@ -61,6 +61,7 @@ public class EsitiPropertiesSQLInitializer {
 		String erroriRichiesta = "Errori Processamento Richiesta";
 		String erroriRisposta = "Errori Processamento Risposta";
 		String erroreGenerico = "Errore Generico";
+		String erroreClientNonDisponibile = "Errore Client Indisponibile";
 		
 		int completateConSuccesso_code = 1;
 		int faultApplicativo_code = 2;
@@ -72,6 +73,7 @@ public class EsitiPropertiesSQLInitializer {
 		int erroriRichiesta_code = 8;
 		int erroriRisposta_code = 9;
 		int erroreGenerico_code = 10;
+		int erroreClientNonDisponibile_code = 11;
 		
 		sbInit.append("-- classe esiti\n");
 		sbInit.append(buildClassInsert(completateConSuccesso_code, completateConSuccesso));
@@ -93,6 +95,8 @@ public class EsitiPropertiesSQLInitializer {
 		sbInit.append(buildClassInsert(erroriRisposta_code, erroriRisposta));
 		sbInit.append("\n");
 		sbInit.append(buildClassInsert(erroreGenerico_code, erroreGenerico));
+		sbInit.append("\n");
+		sbInit.append(buildClassInsert(erroreClientNonDisponibile_code, erroreClientNonDisponibile));
 		sbInit.append("\n");
 
 		
@@ -128,6 +132,9 @@ public class EsitiPropertiesSQLInitializer {
 			}
 			else if(esitiProperties.getEsitiCodeErroriProcessamentoRisposta().contains(code)) {
 				classCode = erroriRisposta_code; // Errori Processamento Risposta
+			}
+			else if(esitiProperties.getEsitiCodeErroriClientNonDisponibile().contains(code)) {
+				classCode = erroreClientNonDisponibile_code; // Errore Client Indisponibile
 			}
 			else if(esitiProperties.getEsitiCodeErroriGenerici().contains(code)) {
 				classCode = erroreGenerico_code; // Errore Generico

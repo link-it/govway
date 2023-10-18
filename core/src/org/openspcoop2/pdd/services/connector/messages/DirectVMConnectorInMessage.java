@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -89,7 +90,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private File repositoryFile;
 	
 	@SuppressWarnings("unused")
-	private int requestReadTimeout;
+	private SogliaReadTimeout requestReadTimeout;
 	@SuppressWarnings("unused")
 	private SogliaDimensioneMessaggio requestLimitSize;
 	
@@ -206,7 +207,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
-	public void setRequestReadTimeout(int timeout) {
+	public void setRequestReadTimeout(SogliaReadTimeout timeout) {
 		this.requestReadTimeout = timeout;
 	}
 	@Override

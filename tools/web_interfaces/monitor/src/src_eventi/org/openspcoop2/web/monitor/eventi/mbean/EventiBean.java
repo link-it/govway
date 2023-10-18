@@ -75,6 +75,8 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 	private List<String> listCanali;
 	private Map<String,List<String>> mapCanaleToNodi;
 	
+	private boolean visualizzaConfigurazioneEventiTimeout = false;
+	
 	public EventiBean(){
 
 		// inizializzazione
@@ -117,6 +119,8 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 					}
 				}
 			}
+			
+			this.visualizzaConfigurazioneEventiTimeout = govwayMonitorProperties.isAttivoVisualizzazioneConfigurazioneEventiTimeout();
 			
 		} catch (Exception e) {
 			EventiBean.log
@@ -247,5 +251,9 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 	
 	public List<String> getIdClusterByCanale(String canale){
 		return this.mapCanaleToNodi.get(canale);
+	}
+	
+	public boolean isVisualizzaConfigurazioneEventiTimeout() {
+		return this.visualizzaConfigurazioneEventiTimeout;
 	}
 }

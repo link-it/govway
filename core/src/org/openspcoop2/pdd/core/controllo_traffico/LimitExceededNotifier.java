@@ -57,32 +57,7 @@ public class LimitExceededNotifier implements ILimitExceededNotifier{
 		if(this.context!=null) {
 			GeneratoreMessaggiErrore.addContextInfo_ControlloTrafficoPolicyViolated(this.context, false);
 			
-			String idTransazione = (String) this.context.getObject(Costanti.ID_TRANSAZIONE);
-			if(idTransazione!=null) {
-				Transaction tr = null;
-				try {
-					tr = TransactionContext.getTransaction(idTransazione);
-				}catch(TransactionNotExistsException notExists) {}
-				if(tr!=null) {
-					TipoEvento tipoEvento = null;
-					if(this.soglia.isPolicyGlobale()) {
-						tipoEvento = TipoEvento.RATE_LIMITING_POLICY_GLOBALE;
-					}
-					else {
-						tipoEvento = TipoEvento.RATE_LIMITING_POLICY_API;
-					}
-					try {
-						tr.addEventoGestione(tipoEvento.getValue()
-								+"_"+
-								CodiceEventoControlloTraffico.VIOLAZIONE.getValue()
-								+"_"+
-								this.soglia.getNomePolicy()
-								);
-					}catch(Throwable t) {
-						this.log.error("Associazione evento alla transazione non riuscita: "+t.getMessage(),t);
-					}
-				}
-			}
+			registraEvento();
 		}
 		
 		Date dataEventoPolicyViolated = DateManager.getDate();
@@ -101,8 +76,39 @@ public class LimitExceededNotifier implements ILimitExceededNotifier{
 			NotificatoreEventi.getInstance().log(tipoEvento, 
 					this.soglia.getIdPolicyConGruppo(), this.soglia.getConfigurazione(),
 					dataEventoPolicyViolated, descriptionPolicyViolated);
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			this.log.error("Emissione evento non riuscito: "+t.getMessage(),t);
+		}
+	}
+	
+	private void registraEvento() {
+		String idTransazione = (String) this.context.getObject(Costanti.ID_TRANSAZIONE);
+		if(idTransazione!=null) {
+			Transaction tr = null;
+			try {
+				tr = TransactionContext.getTransaction(idTransazione);
+			}catch(TransactionNotExistsException notExists) {
+				// ignore
+			}
+			if(tr!=null) {
+				TipoEvento tipoEvento = null;
+				if(this.soglia.isPolicyGlobale()) {
+					tipoEvento = TipoEvento.RATE_LIMITING_POLICY_GLOBALE;
+				}
+				else {
+					tipoEvento = TipoEvento.RATE_LIMITING_POLICY_API;
+				}
+				try {
+					tr.addEventoGestione(tipoEvento.getValue()
+							+"_"+
+							CodiceEventoControlloTraffico.VIOLAZIONE.getValue()
+							+"_"+
+							this.soglia.getNomePolicy()
+							);
+				}catch(Exception t) {
+					this.log.error("Associazione evento alla transazione non riuscita: "+t.getMessage(),t);
+				}
+			}
 		}
 	}
 

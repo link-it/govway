@@ -60,6 +60,7 @@ import org.openspcoop2.pdd.core.EJBUtilsMessaggioInConsegna;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver;
+import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.handlers.ExtendedTransactionInfo;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -157,29 +158,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		return getConnettoriMultipli(context.getPddContext());
 	}
 	public static String getConnettoriMultipli(Context context) {
-		String connettoriMultipli = null;
-		if(context.containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID)) {
-			Object oConnettori = context.getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID );
-			if (oConnettori!=null && oConnettori instanceof List){
-				List<?> l = (List<?>) oConnettori;
-				if(!l.isEmpty()) {
-					StringBuilder sb = new StringBuilder();
-					for (Object object : l) {
-						if(object!=null && object instanceof String) {
-							String s = (String) object;
-							if(sb.length()>0) {
-								sb.append(",");
-							}
-							sb.append(s);
-						}
-					}
-					if(sb.length()>0) {
-						return sb.toString();
-					}
-				}
-			}
-		}
-		return connettoriMultipli;
+		return ConnettoreUtils.getNomeConnettori(context);
 	}
 	
 	public Transazione fillTransaction(PostOutResponseContext context,

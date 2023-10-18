@@ -322,7 +322,7 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 		}
 		else {
 			
-			long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
+			long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_NEGOZIAZIONE_TOKEN);
 			verifyOk(response, 503, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
 			
 			if(tipoServizio == TipoServizio.EROGAZIONE) {

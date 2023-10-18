@@ -31,6 +31,8 @@ import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -56,9 +58,12 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
+import org.openspcoop2.pdd.core.token.pa.DatiInvocazionePortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
+import org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
@@ -343,6 +348,108 @@ public class GestoreTokenValidazioneUtilities {
 	
 	
 	
+	// ********* [VALIDAZIONE-TOKEN] INTROSPECTION TOKEN ****************** */
+	
+	static EsitoGestioneToken introspectionTokenEngine(Logger log, AbstractDatiInvocazione datiInvocazione, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			String token, boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) {
+		EsitoGestioneToken esitoGestioneToken = null;
+		if(portaDelegata) {
+			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
+		}
+		else {
+			esitoGestioneToken = new EsitoGestioneTokenPortaApplicativa();
+		}
+		
+		esitoGestioneToken.setTokenInternalError();
+		esitoGestioneToken.setToken(token);
+		
+		try{
+			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+    		
+    		String detailsError = null;
+			InformazioniToken informazioniToken = null;
+			Exception eProcess = null;
+			
+			ITokenParser tokenParser = policyGestioneToken.getIntrospection_TokenParser();
+			
+			PortaApplicativa pa = null;
+			PortaDelegata pd = null;
+			if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
+				pa = ((DatiInvocazionePortaApplicativa)datiInvocazione).getPa();
+			}
+			else if(datiInvocazione instanceof DatiInvocazionePortaDelegata) {
+				pd = ((DatiInvocazionePortaDelegata)datiInvocazione).getPd();
+			}
+			
+			HttpResponse httpResponse = null;
+			Integer httpResponseCode = null;
+			byte[] risposta = null;
+			try {
+				httpResponse = GestoreTokenValidazioneUtilities.http(log, policyGestioneToken, GestoreTokenValidazioneUtilities.INTROSPECTION, token,
+						pddContext, protocolFactory,
+						datiInvocazione.getState(), portaDelegata, datiInvocazione.getIdModulo(), pa, pd,
+						idDominio, idServizio,
+						datiInvocazione.getRequestInfo());
+				risposta = httpResponse.getContent();
+				httpResponseCode = httpResponse.getResultHTTPOperation();
+			}catch(Exception e) {
+				detailsError = "(Errore di Connessione) "+ e.getMessage();
+				eProcess = e;
+			}
+			
+			if(detailsError==null) {
+				try {
+					informazioniToken = new InformazioniToken(httpResponseCode, SorgenteInformazioniToken.INTROSPECTION, new String(risposta),tokenParser);
+				}catch(Exception e) {
+					detailsError = "Risposta del servizio di Introspection non valida: "+e.getMessage();
+					eProcess = e;
+				}
+			}
+    		  		
+    		if(informazioniToken!=null && informazioniToken.isValid()) {
+    			esitoGestioneToken.setTokenValido();
+    			esitoGestioneToken.setInformazioniToken(informazioniToken);
+    			esitoGestioneToken.setNoCache(false);
+			}
+    		else {
+    			esitoGestioneToken.setTokenValidazioneFallita();
+    			esitoGestioneToken.setNoCache(!policyGestioneToken.isIntrospection_saveErrorInCache());
+    			esitoGestioneToken.setEccezioneProcessamento(eProcess);
+    			if(detailsError!=null) {
+    				esitoGestioneToken.setDetails(detailsError);	
+				}
+				else {
+					esitoGestioneToken.setDetails(GestoreToken.TOKEN_NON_VALIDO);	
+				}
+    			
+    			// comunque lo aggiungo per essere consultabile nei casi di errore se una connessione http è terminata
+    			if(OpenSPCoop2Properties.getInstance().isGestioneToken_saveSourceTokenInfo() && httpResponseCode!=null) {
+    				informazioniToken = new InformazioniToken(esitoGestioneToken.getDetails(), httpResponseCode, risposta, SorgenteInformazioniToken.INTROSPECTION, token);
+    				esitoGestioneToken.setInformazioniToken(informazioniToken);
+    			}
+    			
+    			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+    				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));   			
+    			}
+    			else {
+    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));
+    			} 	
+    		}
+    		
+		}catch(Exception e){
+			esitoGestioneToken.setTokenInternalError();
+			esitoGestioneToken.setDetails(e.getMessage());
+			esitoGestioneToken.setEccezioneProcessamento(e);
+    	}
+		
+		return esitoGestioneToken;
+	}
+	
+	
 	
 	
 	// ********* [VALIDAZIONE-TOKEN] USER INFO TOKEN ****************** */
@@ -371,13 +478,22 @@ public class GestoreTokenValidazioneUtilities {
 			
 			ITokenParser tokenParser = policyGestioneToken.getUserInfo_TokenParser();
 			
+			PortaApplicativa pa = null;
+			PortaDelegata pd = null;
+			if(datiInvocazione instanceof DatiInvocazionePortaApplicativa) {
+				pa = ((DatiInvocazionePortaApplicativa)datiInvocazione).getPa();
+			}
+			else if(datiInvocazione instanceof DatiInvocazionePortaDelegata) {
+				pd = ((DatiInvocazionePortaDelegata)datiInvocazione).getPd();
+			}
+			
 			HttpResponse httpResponse = null;
 			Integer httpResponseCode = null;
 			byte[] risposta = null;
 			try {
 				httpResponse = http(log, policyGestioneToken, USER_INFO, token,
 						pddContext, protocolFactory,
-						datiInvocazione.getState(), portaDelegata,
+						datiInvocazione.getState(), portaDelegata, datiInvocazione.getIdModulo(), pa, pd,
 						idDominio, idServizio,
 						datiInvocazione.getRequestInfo());
 				risposta = httpResponse.getContent();
@@ -1234,7 +1350,7 @@ public class GestoreTokenValidazioneUtilities {
 	static final boolean USER_INFO = false;
 	static HttpResponse http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory, 
-			IState state, boolean delegata,
+			IState state, boolean delegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IDSoggetto idDominio, IDServizio idServizio,
 			RequestInfo requestInfo) throws Exception {
 		
@@ -1371,6 +1487,16 @@ public class GestoreTokenValidazioneUtilities {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		connettoreMsg.setIdModulo(idModulo);
+		connettoreMsg.setState(state);
+		PolicyTimeoutConfig policyConfig = new PolicyTimeoutConfig();
+		if(introspection) {
+			policyConfig.setPolicyValidazioneIntrospection(policyGestioneToken.getName());
+		}
+		else {
+			policyConfig.setPolicyValidazioneUserInfo(policyGestioneToken.getName());
+		}
+		connettoreMsg.setPolicyTimeoutConfig(policyConfig);
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
@@ -1469,6 +1595,8 @@ public class GestoreTokenValidazioneUtilities {
 		connettoreMsg.setRequestMessage(msg);
 		connettoreMsg.setGenerateErrorWithConnectorPrefix(false);
 		connettore.setHttpMethod(msg);
+		connettore.setPa(pa);
+		connettore.setPd(pd);
 		
 		ResponseCachingConfigurazione responseCachingConfigurazione = new ResponseCachingConfigurazione();
 		responseCachingConfigurazione.setStato(StatoFunzionalita.DISABILITATO);

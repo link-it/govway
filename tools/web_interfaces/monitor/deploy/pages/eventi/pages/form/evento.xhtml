@@ -48,15 +48,17 @@
 					
 					<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdConfigurazione" value="Origine" rendered="#{not empty eventiBean.evento.idConfigurazione}" />
 					<h:outputText id="outIdConfigurazione" value="#{eventiBean.evento.idConfigurazione}" rendered="#{not empty eventiBean.evento.idConfigurazione}" />
-					
-					<h:outputLabel styleClass="outputFieldLabel" id="outLabelConfigurazione" value="Configurazione" rendered="#{not empty eventiBean.evento.configurazione}" />
-					<h:outputText id="outConfigurazione" value="#{eventiBean.evento.configurazione}" rendered="#{not empty eventiBean.evento.configurazione}" />
-					
+										
 					<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdTransazione" value="ID Transazione" rendered="#{not empty eventiBean.evento.idTransazione}" />
 					<h:outputText id="outIdTransazione" value="#{eventiBean.evento.idTransazione}" rendered="#{not empty eventiBean.evento.idTransazione}" />
 					
 					<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdCluster" value="ID Cluster" rendered="#{not empty eventiBean.evento.clusterId}" />
 					<h:outputText id="outIdCluster" value="#{eventiBean.evento.clusterId}" rendered="#{not empty eventiBean.evento.clusterId}" />
+					
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelConfigurazione" value="Configurazione" 
+						rendered="#{not empty eventiBean.evento.configurazioneHTML and ((not eventiBean.evento.eventoTimeout) or (eventiBean.visualizzaConfigurazioneEventiTimeout))}" />
+					<h:outputText id="outConfigurazione" value="#{eventiBean.evento.configurazioneHTML}" escape="false" 
+						rendered="#{not empty eventiBean.evento.configurazioneHTML and ((not eventiBean.evento.eventoTimeout) or (eventiBean.visualizzaConfigurazioneEventiTimeout))}" />
 					
 				</h:panelGrid>
 			</link:fieldset>

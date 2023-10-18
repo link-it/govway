@@ -41,7 +41,9 @@ public class TimeoutInputStreamEngine extends InputStream {
 	private Map<Object> ctx;
 	private boolean checkDisabled = false;
 	
-	protected TimeoutInputStreamEngine(InputStream is, int timeoutMs, String prefixError, Map<Object> ctx) throws IOException {
+	private ITimeoutNotifier notifier;
+	
+	protected TimeoutInputStreamEngine(InputStream is, int timeoutMs, String prefixError, Map<Object> ctx, ITimeoutNotifier notifier) throws IOException {
 		this.createDateMs = System.currentTimeMillis();
 		this.timeoutMs = timeoutMs;
 		this.isWrapped = is;
@@ -52,6 +54,8 @@ public class TimeoutInputStreamEngine extends InputStream {
 		if(this.timeoutMs<=0) {
 			throw new IOException("Invalid timeout");
 		}
+		
+		this.notifier = notifier;
 	}
 	
 	public InputStream getIsWrapped() {
@@ -70,6 +74,9 @@ public class TimeoutInputStreamEngine extends InputStream {
 	protected void updateContext(Map<Object> ctx) {
 		this.ctx = ctx;
 	}
+	protected void updateNotifier(ITimeoutNotifier notifier) {
+		this.notifier = notifier;
+	}
 	
 	private void checkTimeout() throws IOException {
 		if(this.checkDisabled) {
@@ -85,6 +92,11 @@ public class TimeoutInputStreamEngine extends InputStream {
 			if(this.ctx!=null) {
 				this.ctx.put(TimeoutInputStream.EXCEPTION_KEY, exc);
 			}
+			
+			if(this.notifier!=null) {
+				this.notifier.notify(now);
+			}
+			
 			throw exc;
 		}
 	}

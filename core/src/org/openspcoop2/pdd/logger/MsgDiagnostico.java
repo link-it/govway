@@ -2366,7 +2366,7 @@ public class MsgDiagnostico {
 				// forzo
 				msgDiag.setIdTransazione(this.transazioneApplicativoServer.getIdTransazione());
 				msgDiag.setApplicativo(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
-				GestoreConsegnaMultipla.getInstance().safeSave(msgDiag, this.idPortaApplicativa, this.getValidConnectionState(), this.requestInfo);
+				GestoreConsegnaMultipla.getInstance().safeSave(msgDiag, this.idPortaApplicativa, this.getValidConnectionState(), this.requestInfo, this.pddContext);
 			}catch(Throwable t) {
 				logError("Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 				gestioneErroreDiagnostica(t);

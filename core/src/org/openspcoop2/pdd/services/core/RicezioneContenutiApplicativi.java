@@ -2121,6 +2121,7 @@ public class RicezioneContenutiApplicativi {
 				org.openspcoop2.pdd.core.token.attribute_authority.pd.DatiInvocazionePortaDelegata datiInvocazione = new org.openspcoop2.pdd.core.token.attribute_authority.pd.DatiInvocazionePortaDelegata();
 				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
 				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setIdModulo(inRequestContext.getIdModulo());
 				datiInvocazione.setMessage(requestMessage);
 				Busta busta = new Busta(protocolFactory.getProtocol());
 				if(soggettoFruitore!=null) {

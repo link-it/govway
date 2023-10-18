@@ -42,6 +42,9 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
+import org.openspcoop2.pdd.core.controllo_traffico.TimeoutNotifier;
+import org.openspcoop2.pdd.core.controllo_traffico.TimeoutNotifierType;
 import org.openspcoop2.pdd.logger.DiagnosticInputStream;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -94,7 +97,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	private int soglia;
 	private File repositoryFile;
 	
-	private int requestReadTimeout;
+	private SogliaReadTimeout requestReadTimeout;
 	private SogliaDimensioneMessaggio requestLimitSize;
 	
 	private boolean useDiagnosticInputStream;
@@ -155,14 +158,17 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
-	public void setRequestReadTimeout(int timeout) {
+	public void setRequestReadTimeout(SogliaReadTimeout timeout) {
 		this.requestReadTimeout = timeout;
 		if(this._timeoutIS!=null) {
 			try {
-				this._timeoutIS.updateThreshold(this.requestReadTimeout);
+				this._timeoutIS.updateThreshold(this.requestReadTimeout.getSogliaMs());
 			}catch(Exception e) {
 				throw new RuntimeException(e.getMessage(),e); // non dovrebbe mai succedere essendo chiamato il metodo solo se timeout e' maggiore di 0
 			}
+			TimeoutNotifier notifier = new TimeoutNotifier(this.context, this.getProtocolFactory(), 
+					this.requestReadTimeout, TimeoutNotifierType.REQUEST, this.log, true);
+			this._timeoutIS.updateNotifier(notifier);
 		}
 	}
 	@Override
@@ -219,10 +225,13 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 					notifier);
 			this.is = this._limitedIS;
 		}
-		if(this.is!=null && this.requestReadTimeout>0) {
-			this._timeoutIS = new TimeoutInputStream(this.is, this.requestReadTimeout,
+		if(this.is!=null && this.requestReadTimeout!=null && this.requestReadTimeout.getSogliaMs()>0) {
+			TimeoutNotifier notifier = new TimeoutNotifier(this.context, this.getProtocolFactory(), 
+					this.requestReadTimeout, TimeoutNotifierType.REQUEST, this.log, true);
+			this._timeoutIS = new TimeoutInputStream(this.is, this.requestReadTimeout.getSogliaMs(),
 					CostantiPdD.PREFIX_TIMEOUT_REQUEST,
-					this.context);
+					this.context,
+					notifier);
 			this.is = this._timeoutIS;
 		}
 		if(this.is!=null && this.useDiagnosticInputStream && this.msgDiagnostico!=null) {
@@ -284,7 +293,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	}
 
 	@Override
-	public IProtocolFactory<?> getProtocolFactory() throws ConnectorException{
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.requestInfo.getProtocolFactory();
 	}
 	

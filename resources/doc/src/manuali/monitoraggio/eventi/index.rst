@@ -125,6 +125,21 @@ La seguente tabella descrive gli eventi previsti.
                                                             - Violazione\_WarningOnly
                                                             - ViolazioneRisolta\_WarningOnly
                                                                                                     Questo evento segnala la violazione di una policy di rate limiting [1]_ e la successiva risoluzione. Nel caso sia stata configurata, per la policy, la modalità "WarningOnly" l'evento conterrà i due codici appositi.
+
+    ControlloTraffico\_ ConnectionTimeout                   Valori Possibili:
+                                                            - Violazione
+                                                            - ViolazioneRisolta
+                                                                                                    Questo evento segnala una connessione non stabilita entro il timeout specificato.
+
+    ControlloTraffico\_ ReadTimeout                         Valori Possibili:
+                                                            - Violazione
+                                                            - ViolazioneRisolta
+                                                                                                    Questo evento segnala una risposta non ricevuta entro il timeout specificato.
+
+    ControlloTraffico\_ RequestReadTimeout                  Valori Possibili:
+                                                            - Violazione
+                                                            - ViolazioneRisolta
+                                                                                                    Questo evento segnala una richiesta non ricevuta entro il timeout specificato.
    ======================================================= =====================================   =====================================
 
 .. [1]

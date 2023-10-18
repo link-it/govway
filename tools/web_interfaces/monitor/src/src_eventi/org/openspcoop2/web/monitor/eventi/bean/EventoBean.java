@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.eventi.Evento;
+import org.openspcoop2.core.eventi.constants.TipoEvento;
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.utils.beans.BlackListElement;
@@ -73,5 +74,52 @@ public class EventoBean extends Evento {
 		else{
 			return idconfigurazione;
 		}
+	}
+	
+	public String getConfigurazioneHTML(){
+		String tmp = this.getConfigurazione();
+		if(tmp!=null){
+			tmp = tmp.trim();
+			if(tmp.contains("\n")){
+				return formatHTML(tmp);
+			}
+			else{
+				return tmp;
+			}
+		}
+		else{
+			return null;
+		}
+	}
+	private String formatHTML(String tmp) {
+		String [] split = tmp.split("\n");
+		if(split!=null && split.length>0){
+			StringBuilder bf = new StringBuilder();
+			for (int i = 0; i < split.length; i++) {
+				if(bf.length()>0){
+					bf.append("<BR/>");
+				}
+				bf.append(split[i].trim());
+			}
+			return bf.toString();
+		}
+		else{
+			return tmp;
+		}
+	}
+	
+	public boolean isEventoTimeout() {
+		if(this.getTipo()!=null &&
+				(
+					TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT.equals(this.getTipo())
+					||
+					TipoEvento.CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT.equals(this.getTipo())
+					||
+					TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT.equals(this.getTipo())
+				)
+			) {
+			return true;
+		}
+		return false;
 	}
 }

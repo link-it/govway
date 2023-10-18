@@ -2347,6 +2347,9 @@ public class OpenSPCoop2Properties {
 				this.isEventiRegistrazioneStatoPorta();
 				if(this.isEventiTimerEnabled()) {
 					this.getEventiTimerIntervalSeconds();
+					this.getEventiTimerIntervalConnectionTimeoutEveryXTimes();
+					this.getEventiTimerIntervalRequestReadTimeoutEveryXTimes();
+					this.getEventiTimerIntervalReadTimeoutEveryXTimes();
 				}
 			}
 			
@@ -27374,6 +27377,78 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getEventiTimerIntervalSeconds;
+	}
+	
+	private Integer getEventiTimerIntervalConnectionTimeoutEveryXTimes = null;
+	public int getEventiTimerIntervalConnectionTimeoutEveryXTimes() throws CoreException {	
+		if(this.getEventiTimerIntervalConnectionTimeoutEveryXTimes==null){
+			String pName = "org.openspcoop2.pdd.eventi.timer.connectionTimeout.everyXtimes";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.getEventiTimerIntervalConnectionTimeoutEveryXTimes = Integer.valueOf(name);
+				if(this.getEventiTimerIntervalConnectionTimeoutEveryXTimes<=0) {
+					this.getEventiTimerIntervalConnectionTimeoutEveryXTimes = 1;
+				}
+			} catch(java.lang.Exception e) {
+				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=5 : "+e.getMessage(),e);
+				this.getEventiTimerIntervalConnectionTimeoutEveryXTimes = 5;
+			}    
+		}
+
+		return this.getEventiTimerIntervalConnectionTimeoutEveryXTimes;
+	}
+	
+	private Integer getEventiTimerIntervalRequestReadTimeoutEveryXTimes = null;
+	public int getEventiTimerIntervalRequestReadTimeoutEveryXTimes() throws CoreException {	
+		if(this.getEventiTimerIntervalRequestReadTimeoutEveryXTimes==null){
+			String pName = "org.openspcoop2.pdd.eventi.timer.requestReadTimeout.everyXtimes";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.getEventiTimerIntervalRequestReadTimeoutEveryXTimes = Integer.valueOf(name);
+				if(this.getEventiTimerIntervalRequestReadTimeoutEveryXTimes<=0) {
+					this.getEventiTimerIntervalRequestReadTimeoutEveryXTimes = 1;
+				}
+			} catch(java.lang.Exception e) {
+				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=5 : "+e.getMessage(),e);
+				this.getEventiTimerIntervalRequestReadTimeoutEveryXTimes = 5;
+			}    
+		}
+
+		return this.getEventiTimerIntervalRequestReadTimeoutEveryXTimes;
+	}
+	
+	private Integer getEventiTimerIntervalReadTimeoutEveryXTimes = null;
+	public int getEventiTimerIntervalReadTimeoutEveryXTimes() throws CoreException {	
+		if(this.getEventiTimerIntervalReadTimeoutEveryXTimes==null){
+			String pName = "org.openspcoop2.pdd.eventi.timer.readTimeout.everyXtimes";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.getEventiTimerIntervalReadTimeoutEveryXTimes = Integer.valueOf(name);
+				if(this.getEventiTimerIntervalReadTimeoutEveryXTimes<=0) {
+					this.getEventiTimerIntervalReadTimeoutEveryXTimes = 1;
+				}
+			} catch(java.lang.Exception e) {
+				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=5 : "+e.getMessage(),e);
+				this.getEventiTimerIntervalReadTimeoutEveryXTimes = 5;
+			}    
+		}
+
+		return this.getEventiTimerIntervalReadTimeoutEveryXTimes;
 	}
 	
 	

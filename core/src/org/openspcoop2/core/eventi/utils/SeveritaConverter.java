@@ -21,6 +21,7 @@
 package org.openspcoop2.core.eventi.utils;
 
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
+import org.openspcoop2.utils.UtilsException;
 
 /**
  * SeveritaConverter
@@ -30,6 +31,8 @@ import org.openspcoop2.core.eventi.constants.TipoSeverita;
  * @version $Rev$, $Date$
  */
 public class SeveritaConverter {
+	
+	private SeveritaConverter() {}
 
 	private static final int FATAL = 0;
 	private static final int ERROR = 1;
@@ -37,7 +40,7 @@ public class SeveritaConverter {
 	private static final int INFO = 3;
 	private static final int DEBUG = 4;
 	
-	public static TipoSeverita toSeverita(int intValue) throws Exception{
+	public static TipoSeverita toSeverita(int intValue) throws UtilsException{
 		if(intValue==FATAL){
 			return TipoSeverita.FATAL;
 		}
@@ -54,11 +57,11 @@ public class SeveritaConverter {
 			return TipoSeverita.DEBUG;
 		}
 		else{
-			throw new Exception("Value ["+intValue+"] unknown");
+			throw new UtilsException("Value ["+intValue+"] unknown");
 		}
 	}
 	
-	public static int toIntValue(TipoSeverita severita) throws Exception{
+	public static int toIntValue(TipoSeverita severita) throws UtilsException{
 		switch (severita) {
 		case FATAL:
 			return FATAL;
@@ -71,7 +74,7 @@ public class SeveritaConverter {
 		case DEBUG:
 			return DEBUG;
 		}
-		throw new Exception("Enumeration ["+severita+"] non gestita");
+		throw new UtilsException("Enumeration ["+severita+"] non gestita");
 	}
 	
 }

@@ -36,6 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -60,6 +62,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.token.parser.Claims;
@@ -110,7 +113,7 @@ public class GestoreTokenNegoziazioneUtilities {
 	static EsitoNegoziazioneToken endpointTokenEngine(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
 			NegoziazioneTokenDynamicParameters dynamicParameters, IProtocolFactory<?> protocolFactory,
-			IState state, boolean delegata,
+			IState state, boolean delegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IDSoggetto idDominio, IDServizio idServizio,
 			InformazioniNegoziazioneToken previousToken,
 			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) {
@@ -193,7 +196,7 @@ public class GestoreTokenNegoziazioneUtilities {
 					esito = invokeEndpointToken(debug, log, policyNegoziazioneToken,
 							busta, requestInfo, tipoPdD,
 							dynamicParameters, protocolFactory, 
-							state, delegata,
+							state, delegata, idModulo, pa, pd,
 							idDominio, idServizio,
 							refreshModeEnabled, previousToken,
 							datiRichiesta);
@@ -226,7 +229,7 @@ public class GestoreTokenNegoziazioneUtilities {
 		return invokeEndpointToken(debug, log, policyNegoziazioneToken,
 				busta, requestInfo, tipoPdD,
 				dynamicParameters, protocolFactory, 
-				state, delegata,
+				state, delegata, idModulo, pa, pd,
 				idDominio, idServizio,
 				false, null,
 				datiRichiesta);
@@ -237,7 +240,7 @@ public class GestoreTokenNegoziazioneUtilities {
 	private static EsitoNegoziazioneToken invokeEndpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
 			NegoziazioneTokenDynamicParameters dynamicParameters, IProtocolFactory<?> protocolFactory,
-			IState state, boolean delegata,
+			IState state, boolean delegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IDSoggetto idDominio, IDServizio idServizio,
 			boolean refreshModeEnabled, InformazioniNegoziazioneToken previousToken,
 			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) {
@@ -260,7 +263,7 @@ public class GestoreTokenNegoziazioneUtilities {
 				httpResponse = http(debug, log, policyNegoziazioneToken,
 						busta, requestInfo, tipoPdD,
 						dynamicParameters, protocolFactory, 
-						state, delegata,
+						state, delegata, idModulo, pa, pd,
 						idDominio, idServizio,
 						refreshModeEnabled, (refreshModeEnabled && previousToken!=null) ? previousToken.getRefreshToken() : null,
 						datiRichiesta);
@@ -449,7 +452,7 @@ public class GestoreTokenNegoziazioneUtilities {
 	private static HttpResponse http(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
 			NegoziazioneTokenDynamicParameters dynamicParameters, IProtocolFactory<?> protocolFactory,
-			IState state, boolean delegata,
+			IState state, boolean delegata, String idModulo, PortaApplicativa pa, PortaDelegata pd,
 			IDSoggetto idDominio, IDServizio idServizio,
 			boolean refreshModeEnabled, String refreshToken,
 			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) throws TokenException, ProviderException, ProviderValidationException, UtilsException, SecurityException {
@@ -514,6 +517,11 @@ public class GestoreTokenNegoziazioneUtilities {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		connettoreMsg.setIdModulo(idModulo);
+		connettoreMsg.setState(state);
+		PolicyTimeoutConfig policyConfig = new PolicyTimeoutConfig();
+		policyConfig.setPolicyNegoziazione(policyNegoziazioneToken.getName());
+		connettoreMsg.setPolicyTimeoutConfig(policyConfig);
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
@@ -750,7 +758,10 @@ public class GestoreTokenNegoziazioneUtilities {
 			OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 			connettoreMsg.setRequestMessage(msg);
 			connettoreMsg.setGenerateErrorWithConnectorPrefix(false);
+						
 			connettore.setHttpMethod(msg);
+			connettore.setPa(pa);
+			connettore.setPd(pd);
 		}catch(Exception e) {
 			throw new TokenException(e.getMessage(),e);
 		}

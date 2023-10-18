@@ -517,10 +517,10 @@ public class PolicyUtilities {
 		return idPolicyConGruppo;
 	}
 	
-	private static final String GLOBALE_PROPERTY = "globale:";
-	private static final String ID_ACTIVE_POLICY_PROPERTY = "idActivePolicy:";
-	private static final String RUOLO_PORTA_PROPERTY = "ruoloPorta:";
-	private static final String NOME_PORTA_PROPERTY = "nomePorta:";
+	public static final String GLOBALE_PROPERTY = "globale:";
+	public static final String ID_ACTIVE_POLICY_PROPERTY = "idActivePolicy:";
+	public static final String RUOLO_PORTA_PROPERTY = "ruoloPorta:";
+	public static final String NOME_PORTA_PROPERTY = "nomePorta:";
 	
 	public static String buildConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, boolean policyGlobale) {
 		AttivazionePolicy attivazionePolicy = activePolicy.getInstanceConfiguration();

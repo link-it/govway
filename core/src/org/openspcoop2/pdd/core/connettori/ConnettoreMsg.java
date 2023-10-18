@@ -39,6 +39,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -106,6 +107,7 @@ public class ConnettoreMsg  {
 	private RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RICHIESTA;
 	/** Policy Token */
 	private PolicyNegoziazioneToken policyNegoziazioneToken;
+	private PolicyTimeoutConfig policyTimeoutConfig;
 	
 	/** OutRequestContext */
 	private OutRequestContext outRequestContext;
@@ -500,7 +502,7 @@ public class ConnettoreMsg  {
 		if(this.properties!=null && !this.properties.isEmpty()) {
 			Iterator<String> en = this.properties.keySet().iterator();
 			while (en.hasNext()) {
-				String propertyName = (String) en.next();
+				String propertyName = en.next();
 				if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(propertyName)) {
 					String tokenPolicy = this.properties.get(propertyName);
 					if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
@@ -510,6 +512,13 @@ public class ConnettoreMsg  {
 				}
 			}
 		}
+	}
+	
+	public PolicyTimeoutConfig getPolicyTimeoutConfig() {
+		return this.policyTimeoutConfig;
+	}
+	public void setPolicyTimeoutConfig(PolicyTimeoutConfig policyConfig) {
+		this.policyTimeoutConfig = policyConfig;
 	}
 	
 	public TransazioneApplicativoServer getTransazioneApplicativoServer() {

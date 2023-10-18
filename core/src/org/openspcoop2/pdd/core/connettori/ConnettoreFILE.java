@@ -227,6 +227,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 		// Gestione File
+		int readConnectionTimeout = -1;
+		boolean readConnectionTimeoutConfigurazioneGlobale = true;
 		try{
 
 			/* ------------  Request ------------- */
@@ -296,10 +298,10 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			// Impostazione timeout
 			if(this.debug)
 				this.logger.debug("Impostazione timeout...");
-			int readConnectionTimeout = -1;
 			if(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
 				try{
 					readConnectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
+					readConnectionTimeoutConfigurazioneGlobale = this.properties.containsKey(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT_GLOBALE);
 				}catch(Exception e){
 					this.logger.error("Parametro "+CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT+" errato",e);
 				}
@@ -574,7 +576,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				
 				this.isResponse = new FileInputStream(this.inputFile);
 								
-				this.normalizeInputStreamResponse(readConnectionTimeout);
+				this.normalizeInputStreamResponse(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale);
 				
 				this.initCheckContentTypeConfiguration();
 				
@@ -615,6 +617,11 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				this.errore = msgErrore;
 			}
 			this.logger.error("Errore avvenuto durante la consegna su FileSystem: "+msgErrore,e);
+			
+			/**this.processConnectionTimeoutException(connectionTimeout, e, msgErrore);*/
+			
+			this.processReadTimeoutException(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale, e, msgErrore);
+			
 			return false;
 		} 
 	}

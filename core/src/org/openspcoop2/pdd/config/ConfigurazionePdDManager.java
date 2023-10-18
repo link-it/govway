@@ -110,6 +110,7 @@ import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -865,8 +866,10 @@ public class ConfigurazionePdDManager {
 	public boolean isConnettoriUseTimeoutInputStream(PortaDelegata pd) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.isConnettoriUseTimeoutInputStream(this.getConnection(), pd);
 	}
-	public int getRequestReadTimeout(PortaDelegata pd) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getRequestReadTimeout(this.getConnection(), pd);
+	public SogliaReadTimeout getRequestReadTimeout(PortaDelegata pd,
+			RequestInfo requestInfo, IProtocolFactory<?> protocolFactory, Context context, IState state) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getRequestReadTimeout(pd,
+				requestInfo, protocolFactory, context, state);
 	}
 	
 	public Trasformazioni getTrasformazioni(PortaDelegata pd) throws DriverConfigurazioneException{
@@ -1300,8 +1303,10 @@ public class ConfigurazionePdDManager {
 	public boolean isConnettoriUseTimeoutInputStream(PortaApplicativa pa) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.isConnettoriUseTimeoutInputStream(this.getConnection(), pa);
 	}
-	public int getRequestReadTimeout(PortaApplicativa pa) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getRequestReadTimeout(this.getConnection(), pa);
+	public SogliaReadTimeout getRequestReadTimeout(PortaApplicativa pa,
+			RequestInfo requestInfo, IProtocolFactory<?> protocolFactory, Context context, IState state) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getRequestReadTimeout(pa,
+				requestInfo, protocolFactory, context, state);
 	}
 	
 	public Trasformazioni getTrasformazioni(PortaApplicativa pa) throws DriverConfigurazioneException{

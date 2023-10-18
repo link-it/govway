@@ -59,6 +59,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -81,6 +82,7 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.NameValue;
@@ -182,6 +184,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected PostOutRequestContext postOutRequestContext;
 	/** PreInResponseContext */
 	protected PreInResponseContext preInResponseContext;
+	/** State */
+	protected IState state;
 	
 	/** SOAPAction */
 	protected String soapAction = null;
@@ -196,6 +200,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 
 	/** Policy Token */
 	private PolicyNegoziazioneToken policyNegoziazioneToken;
+	protected PolicyTimeoutConfig policyTimeoutConfig;
 	
 	protected Date dataRichiestaInoltrata;
 	@Override
@@ -228,6 +233,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected int dumpBinario_soglia;
 	protected File dumpBinario_repositoryFile;
     
+	protected PortaApplicativa pa;
+	protected String nomeConnettoreAsincrono;
+	protected PortaDelegata pd;
+	
 	protected boolean useTimeoutInputStream = false;
 	
 	protected boolean useLimitedInputStream = false;
@@ -239,6 +248,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
+	}
+	
+	public void setPa(PortaApplicativa pa) {
+		this.pa = pa;
+	}
+
+	public void setPd(PortaDelegata pd) {
+		this.pd = pd;
 	}
 	
 	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired, ResponseCachingConfigurazione responseCachingConfig){
@@ -285,6 +302,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.requestInfo = (RequestInfo) this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		}
 		
+		// State
+		this.state = request.getState();
+		
 		// Raccolta altri parametri
 		try{
 			this.requestMsg =  request.getRequestMessage(this.requestInfo, this.getPddContext());
@@ -314,6 +334,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 
 		// Identificativo modulo
 		this.idModulo = request.getIdModulo();
+		
+		// PolicyConfig
+		this.policyTimeoutConfig = request.getPolicyTimeoutConfig();
 				
 		// Context per invocazioni handler
 		this.outRequestContext = request.getOutRequestContext();
@@ -342,7 +365,26 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		String protocol = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
 		IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(protocol, this.requestInfo);
 		String nomePorta = (this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) ? this.requestInfo.getProtocolContext().getInterfaceName() : null;
-		if(this.idModulo!=null) {
+		if(this.policyTimeoutConfig!=null) {
+			// entro qua tramite la gestione dei token di validazione, negoziazione e attribute authority
+			try {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
+				if(this.pa!=null) {
+					this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pa);
+					this.proprietaPorta = this.pa.getProprietaList();
+				}
+				else if(this.pd!=null) {
+					this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pd);
+					this.proprietaPorta = this.pd.getProprietaList();
+				}
+			}catch(Exception e){
+				this.eccezioneProcessamento = e;
+				this.logger.error("Errore durante l'inizializzazione della configurazione di timeout: "+this.readExceptionMessageFromException(e),e);
+				this.errore = "Errore durante l'inizializzazione della configurazione di timeout: "+this.readExceptionMessageFromException(e);
+				return false;
+			}
+		}
+		else if(this.idModulo!=null) {
 			try {
 				// Soglia Dump
 				this.dumpBinario_soglia = this.openspcoopProperties.getDumpBinarioInMemoryThreshold();
@@ -368,13 +410,16 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled();
 					
 					if(idPA!=null) {
-						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, this.requestInfo);
-						if(pa!=null) {
-							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pa);
-							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pa);
-							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(pa);
-							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(pa);
-							this.proprietaPorta = pa.getProprietaList();
+						this.pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, this.requestInfo);
+						if(this.pa!=null) {
+							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pa);
+							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pa);
+							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.pa);
+							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.pa);
+							this.proprietaPorta = this.pa.getProprietaList();
+							if(request.getTransazioneApplicativoServer()!=null) {
+								this.nomeConnettoreAsincrono = request.getTransazioneApplicativoServer().getConnettoreNome();
+							}
 						}
 					}
 					
@@ -395,13 +440,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled();
 					
 					if(idPD!=null) {
-						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, this.requestInfo);
-						if(pd!=null) {
-							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pd);
-							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pd);
-							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(pd);
-							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(pd);
-							this.proprietaPorta = pd.getProprietaList();
+						this.pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, this.requestInfo);
+						if(this.pd!=null) {
+							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pd);
+							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pd);
+							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.pd);
+							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.pd);
+							this.proprietaPorta = this.pd.getProprietaList();
 						}
 					}
 					
@@ -570,7 +615,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 
 		// Negoziazione Token
 		this.policyNegoziazioneToken = request.getPolicyNegoziazioneToken();
-		
+				
 		// API
 		this.idAccordo = request.getIdAccordo();
 		
@@ -641,7 +686,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				}
 				EsitoNegoziazioneToken esitoNegoziazione = GestoreToken.endpointToken(this.debug, this.logger.getLogger(), this.policyNegoziazioneToken, 
 						this.busta, this.requestInfo, 
-						ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA,
+						ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA, this.idModulo, this.pa, this.pd,
 						this.getPddContext(), this.getProtocolFactory());
 				if(this.debug) {
 					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' terminata");
@@ -695,6 +740,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				return n;
 
 			}catch(Exception e) {
+				if(this.getPddContext()!=null) {
+					this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.ERRORE_NEGOZIAZIONE_TOKEN, "true");
+				}
 				throw new ConnettoreException(e.getMessage(),e);
 			}
 		}
@@ -1072,7 +1120,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	}
     	 	
     }
-    
+        
     protected String readExceptionMessageFromException(Throwable e) {
     	return _readExceptionMessageFromException(e);
     }

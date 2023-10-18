@@ -32,6 +32,9 @@
 		
 		Configurazione->Controllo del Traffico->Limitazione Numero di Richieste Complessive
 
+        Su db si traduce in: 
+	UPDATE ct_config set max_threads=15;
+
 - Editare il file <govway_local.properties> impostando le seguenti proprietà:
 
 		# ====================================================
@@ -68,12 +71,32 @@
   Assicurarsi che la proprietà "soglia_congestione" in <testsuite.properties> abbia
   il valore impostato sopra
 
+        Su db si traduce in: 
+	UPDATE ct_config set cc_enabled='t';
+	UPDATE ct_config set cc_threshold=55;
 
 - Impostare nella console di GovWay:
 		 Controllo Traffico->Tempi Risposta->Tempo MedioRisposta = 3000
 	Sia per Erogazione che per Fruizione
 	Questo per ridurre il tempo necessario ad entrare in situazione di degrado prestazionale
 
+        Su db si traduce in:
+	UPDATE ct_config set pd_avg_time=3000;
+	UPDATE ct_config set pa_avg_time=3000;
+
+- Impostare nella console di GovWay:
+                 Fruizioni
+		 Controllo Traffico->Tempi Risposta->Connection Timeout = 8000
+                 Controllo Traffico->Tempi Risposta->Read Timeout = 15000
+
+                 Erogazioni
+		 Controllo Traffico->Tempi Risposta->Connection Timeout = 9000
+                 Controllo Traffico->Tempi Risposta->Read Timeout = 16000
+
+	Questo per verificare l'impostazione globale
+        Su db si traduce in:   
+        Fruizioni:  UPDATE ct_config set pd_connection_timeout=8000, pd_read_timeout=15000; 
+	Erogazioni: UPDATE ct_config set pa_connection_timeout=9000, pa_read_timeout=16000; 
 
 - Nella console Andare su Tracciamento->Superamento Limite Richieste e impostarlo su <abilitato>
 	 Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale.
@@ -89,6 +112,9 @@
 
 - Inoltre è necessario disabilitare la cache delle informazioni statistiche:
 	Console -> Controllo del Traffico -> Configurazione Cache Controllo del Traffico -> Stato = Disabilitato
+
+	Su db si traduce in:
+	UPDATE ct_config set cache='f';
 
 - Aggiungere nel govway_local.properties la seguente impostazione:
 
@@ -107,9 +133,13 @@
 - Per variare il ritardo con cui vengono scritti gli eventi sul database:
 	In <govway_local.properties>:
 		org.openspcoop2.pdd.eventi.timer.seconds=3
+		org.openspcoop2.pdd.eventi.timer.connectionTimeout.everyXtimes=1
+		org.openspcoop2.pdd.eventi.timer.requestReadTimeout.everyXtimes=1
+		org.openspcoop2.pdd.eventi.timer.readTimeout.everyXtimes=1
 	In <testsuite.properties>:
 		eventi_db_delay=3
-
+	In <monitor_local.properties>:
+		eventi.timeout.viewConfigurazione=true
 - Copiare o linkare sotto /etc/govway/keys il keystore in:
 	/protocolli/spcoop/testsuite/deploy/wss_examples/jks/pa.p12
 

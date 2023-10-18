@@ -45,7 +45,13 @@ public enum TipoEvento implements IEnumeration , Serializable , Cloneable {
 	@javax.xml.bind.annotation.XmlEnumValue("RateLimiting_PolicyGlobale")
 	RATE_LIMITING_POLICY_GLOBALE ("RateLimiting_PolicyGlobale"),
 	@javax.xml.bind.annotation.XmlEnumValue("RateLimiting_PolicyAPI")
-	RATE_LIMITING_POLICY_API ("RateLimiting_PolicyAPI");
+	RATE_LIMITING_POLICY_API ("RateLimiting_PolicyAPI"),
+	@javax.xml.bind.annotation.XmlEnumValue("ControlloTraffico_ConnectionTimeout")
+	CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT ("ControlloTraffico_ConnectionTimeout"),
+	@javax.xml.bind.annotation.XmlEnumValue("ControlloTraffico_RequestReadTimeout")
+	CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT ("ControlloTraffico_RequestReadTimeout"),
+	@javax.xml.bind.annotation.XmlEnumValue("ControlloTraffico_ReadTimeout")
+	CONTROLLO_TRAFFICO_READ_TIMEOUT ("ControlloTraffico_ReadTimeout");
 	
 	
 	/** Value */

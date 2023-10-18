@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 
 /**
  * Costanti 
@@ -34,6 +36,14 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreads
  */
 public class Costanti {
 
+	public static final MapKey<String> PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE = Map.newMapKey("controlloTrafficoViolazione");
+	
+	public static final String PDD_CONTEXT_VALUE_CONNECTION_TIMEOUT = "controlloTrafficoConnectionTimeout";
+	public static final String PDD_CONTEXT_VALUE_REQUEST_READ_TIMEOUT = "controlloTrafficoRequestReadTimeout";
+	public static final String PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT = "controlloTrafficoResponseReadTimeout";
+	public static final String PDD_CONTEXT_VALUE_READ_TIMEOUT = "controlloTrafficoReadTimeout";
+	
+	
 	public static final String SEPARATORE_IDPOLICY_RAGGRUPPAMENTO = " - ";
 	
 	private static String controlloTrafficoImagePrefix = "image";

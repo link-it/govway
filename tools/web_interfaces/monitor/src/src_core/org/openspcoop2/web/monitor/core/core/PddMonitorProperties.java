@@ -1048,6 +1048,11 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.lista.utilizzaCount.enabled", true, false));
 	}
 	
+	public boolean isAttivoVisualizzazioneConfigurazioneEventiTimeout() throws Exception{
+		String p = this.appProperties.getProperty("eventi.timeout.viewConfigurazione", false, true);
+		return "true".equalsIgnoreCase(p);
+	}
+	
 	public boolean isAttivoUtilizzaCountStatisticheListaConfigurazioni() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.configurazioni.lista.utilizzaCount.enabled", true, true));
 	}

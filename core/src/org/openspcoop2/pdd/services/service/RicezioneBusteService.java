@@ -57,6 +57,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -174,7 +175,11 @@ public class RicezioneBusteService  {
 					req.setRequestLimitedStream(soglia);
 				}
 				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
-					req.setRequestReadTimeout(openSPCoopProperties.getReadConnectionTimeout_ricezioneBuste());
+					SogliaReadTimeout soglia = new SogliaReadTimeout();
+					soglia.setSogliaMs(openSPCoopProperties.getReadConnectionTimeout_ricezioneBuste());
+					soglia.setConfigurazioneGlobale(true);
+					soglia.setIdConfigurazione("GovWayCore");
+					req.setRequestReadTimeout(soglia);
 				}
 				req.setThresholdContext(null, 
 					openSPCoopProperties.getDumpBinarioInMemoryThreshold(), openSPCoopProperties.getDumpBinarioRepository());
@@ -401,8 +406,12 @@ public class RicezioneBusteService  {
 			}
 			boolean useTimeoutInputStream = configPdDManager.isConnettoriUseTimeoutInputStream(pa);
 			if(useTimeoutInputStream) {
-				int timeout = configPdDManager.getRequestReadTimeout(pa);
-				if(timeout>0) {
+				SogliaReadTimeout timeout = configPdDManager.getRequestReadTimeout(pa,
+						requestInfo,
+						protocolFactory, 
+						context!=null ? context.getPddContext() : null,
+						null);
+				if(timeout!=null && timeout.getSogliaMs()>0) {
 					req.setRequestReadTimeout(timeout);
 				}
 				else {
@@ -1246,6 +1255,7 @@ public class RicezioneBusteService  {
 		Throwable erroreConsegnaRisposta = null; 	
 		boolean httpEmptyResponse = false;
 		boolean erroreConnessioneClient = false;
+		boolean erroreResponseTimeout = false;
 		boolean erroreResponsePayloadTooLarge = false;
 		boolean sendInvoked = false;
 		try{
@@ -1441,10 +1451,10 @@ public class RicezioneBusteService  {
 			
 			erroreConnessioneClient = ServicesUtils.isConnessioneClientNonDisponibile(e);
 			if(!erroreConnessioneClient && ServicesUtils.isConnessioneServerReadTimeout(e)) {
-				erroreConnessioneClient = true; // non e' stato possibile consegnare tutta la risposta. Il client ha ricevuto 200 ma non ha ricevuto la risposta per intero
+				erroreResponseTimeout = true; // non e' stato possibile consegnare tutta la risposta. Il client ha ricevuto 200 ma non ha ricevuto la risposta per intero
 				erroreConsegnaRisposta = new CoreException("Connessione con il backend dell'API non più disponibile: "+e.getMessage(),e);
 			}
-			if(!erroreConnessioneClient && ServicesUtils.isResponsePayloadTooLarge(e)) {
+			if(!erroreConnessioneClient && !erroreResponseTimeout && ServicesUtils.isResponsePayloadTooLarge(e)) {
 				erroreResponsePayloadTooLarge = true;  // non e' stato possibile consegnare tutta la risposta. Il client ha ricevuto 200 ma non ha ricevuto la risposta per intero
 				erroreConsegnaRisposta = new CoreException("Risposta ricevuta dal backend dell'API non gestibile: "+e.getMessage(),e);
 			}
@@ -1652,6 +1662,14 @@ public class RicezioneBusteService  {
 			// forzo esito errore connessione client
 			try{
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE);
+			}catch(Exception eBuildError){
+				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+			}
+		}
+		else if(erroreResponseTimeout){
+			// forzo esito errore response timeout
+			try{
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),EsitoTransazioneName.ERRORE_RESPONSE_TIMEOUT);
 			}catch(Exception eBuildError){
 				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
 			}

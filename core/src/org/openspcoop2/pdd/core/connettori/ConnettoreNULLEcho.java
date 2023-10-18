@@ -200,9 +200,11 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			if(this.debug)
 				this.logger.debug("Impostazione timeout...");
 			int readConnectionTimeout = -1;
+			boolean readConnectionTimeoutConfigurazioneGlobale = true;
 			if(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
 				try{
 					readConnectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
+					readConnectionTimeoutConfigurazioneGlobale = this.properties.containsKey(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT_GLOBALE);
 				}catch(Exception e){
 					this.logger.error("Parametro "+CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT+" errato",e);
 				}
@@ -330,7 +332,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 				this.isResponse = new java.io.ByteArrayInputStream(this.requestBout.toByteArray());
 			}
 			
-			this.normalizeInputStreamResponse(readConnectionTimeout);
+			this.normalizeInputStreamResponse(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale);
 			
 			this.initCheckContentTypeConfiguration();
 			
