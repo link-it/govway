@@ -1,3 +1,9 @@
+2023-10-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-44483: aggiornata libreria 'org.apache.santuario:xmlsec' alla versione 2.3.4
+
 2023-10-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -49,7 +49,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement path="${openspcoop2_lib}/commons/commons-lang-2.6.jar"/>
-		<pathelement path="${openspcoop2_lib}/security/xmlsec-2.3.0.jar"/>
+		<pathelement path="${openspcoop2_lib}/security/xmlsec-2.3.4.jar"/>
 		<fileset dir="${openspcoop2_dist}" includes="**/*.jar"/>
 		<pathelement path="${jdbc_lib}"/>
 		<pathelement path="${build}"/>

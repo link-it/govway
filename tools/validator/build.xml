@@ -46,7 +46,7 @@
 		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.15.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/wsdl4j-1.6.3.jar"/>
 		<pathelement path="${openspcoop2_lib}/stub/cxf/*"/>
-		<pathelement path="${openspcoop2_lib}/security/xmlsec-2.3.0.jar"/>
+		<pathelement path="${openspcoop2_lib}/security/xmlsec-2.3.4.jar"/>
 		<fileset dir="${openspcoop2_dist}" includes="**/*.jar"/>
 		<pathelement path="${jdbc_lib}"/>
 		<pathelement path="${build}"/>
