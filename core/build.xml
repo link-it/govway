@@ -660,7 +660,7 @@
 		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        		<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3-gov4j-1.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -709,7 +709,7 @@
 		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        		<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3-gov4j-1.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -758,7 +758,7 @@
 		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        		<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3-gov4j-1.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -782,7 +782,7 @@
 	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-	        	<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3-gov4j-1.jar"/>
 	        </classpath>
 		</java>
 	</target>
@@ -804,7 +804,7 @@
 	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-	        	<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3-gov4j-1.jar"/>
 	        </classpath>
 		</java>
 	</target>
@@ -826,7 +826,7 @@
 	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-	        	<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3-gov4j-1.jar"/>
 	        </classpath>
 		</java>
 	</target>
@@ -848,7 +848,7 @@
 	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-	        	<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-3.0.3-gov4j-1.jar"/>
 	        </classpath>
 		</java>
 	</target>

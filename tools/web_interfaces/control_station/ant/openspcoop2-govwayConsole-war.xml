@@ -390,7 +390,7 @@
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="xmlsec-3.0.3.jar"/>
+				<include name="xmlsec-3.0.3-gov4j-1.jar"/>
 				<include name="${neethi_jar}" />
 				<include name="herasaf-xacml-core-3.0.2.jar"/>
 				<include name="bcpkix-jdk18on-1.76.jar"/>
