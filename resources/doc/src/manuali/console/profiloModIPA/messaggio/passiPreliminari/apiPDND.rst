@@ -101,7 +101,9 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, vien
 
 	- *baseUrl* (obbligatorio): definisce la url invocata per ottenere la chiave pubblica rispetto ad un identificativo kid;
 	- *connectTimeout* e *readTimeout* (obbligatorio): consentono di impostare rispettivamente i limiti temporali per l'instaurazione di una connessione e la ricezione di una risposta dalla PDND;
-	- *http.username* e *http.password* (opzionale): se definite GovWay invocherà la fruizione utilizzando le credenziali http basic indicate;
+	- *http.username* e *http.password* (opzionale): se definite GovWay invocherà la fruizione utilizzando le credenziali http basic indicate; la keyword speciale '#none#' è utilizzabile per ridefinire la configurazione allo scopo di disabilitare l'invio delle credenziali.
+	- *http.header.<nome>* (opzionale): consente di inviare http header personalizzati;
+	- *http.queryParameter.<nome>* (opzionale): consente di aggiungere parametri personalizzati alla url invocata;
 	- *https.keyStore*, *keyStore.type*, *keyStore.password*, *key.alias*, *key.password* (opzionale): le seguenti proprietà consentono di specificare un certificato tls client con cui GovWay invocherà la fruizione delle API PDND.
 	- *https.hostnameVerifier* (opzionale): nel caso in cui la baseUrl indicata sia https consente di attivare o meno la verifica dell'hostname rispetto al CN.
 	- *https.trustAllCerts* (opzionale): nel caso in cui la baseUrl indicata sia https disabilta l'autenticazione del certificato server.

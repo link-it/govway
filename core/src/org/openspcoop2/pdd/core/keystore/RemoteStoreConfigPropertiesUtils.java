@@ -19,6 +19,10 @@
  */
 package org.openspcoop2.pdd.core.keystore;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +30,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyIdMode;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
+import org.openspcoop2.utils.properties.PropertiesReader;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
@@ -55,7 +60,12 @@ public class RemoteStoreConfigPropertiesUtils {
 	public static final String PROPERTY_CONNECT_TIMEOUT = "connectTimeout";
 	
 	public static final String PROPERTY_HTTP_BASIC_USERNAME = "http.username";
+	public static final String PROPERTY_HTTP_BASIC_USERNAME_DISABLE_VALUE = "#none#";
 	public static final String PROPERTY_HTTP_BASIC_PASSWORD = "http.password";
+
+	public static final String PROPERTY_HTTP_HEADER_PREFIX = "http.header.";
+	
+	public static final String PROPERTY_HTTP_QUERY_PARAMETER_PREFIX = "http.queryParameter.";
 	
 	public static final String PROPERTY_HTTPS_HOSTNAME_VERIFIER = "https.hostnameVerifier";
 	public static final String PROPERTY_HTTPS_TRUST_ALL_CERTS = "https.trustAllCerts";
@@ -74,6 +84,20 @@ public class RemoteStoreConfigPropertiesUtils {
 	public static final String PROPERTY_FORWARD_PROXY_HEADER = "forwardProxy.header";
 	public static final String PROPERTY_FORWARD_PROXY_QUERY_PARAMETER = "forwardProxy.queryParameter";
 	public static final String PROPERTY_FORWARD_PROXY_BASE64 = "forwardProxy.base64";
+	
+	public static final String PROPERTY_MULTITENANT = "multiTenant";
+	
+	public static final String PROPERTY_MULTITENANT_BASEURL_DEFAULT_STRING = "multiTenant.baseUrl.defaultString";
+	public static final String PROPERTY_MULTITENANT_BASEURL_PLACEHOLDER = "multiTenant.baseUrl.placeholder";
+	public static final String PROPERTY_MULTITENANT_BASEURL_TENANT_STRING = "multiTenant.baseUrl.tenantString";
+	
+	public static final String PROPERTY_MULTITENANT_HTTP_BASIC_USERNAME_PREFIX = "multiTenant.http.username.";
+	public static final String PROPERTY_MULTITENANT_HTTP_BASIC_PASSWORD_PREFIX = "multiTenant.http.password.";
+
+	public static final String PROPERTY_MULTITENANT_HTTP_HEADER_PREFIX = "multiTenant.http.header.";
+	
+	public static final String PROPERTY_MULTITENANT_HTTP_QUERY_PARAMETER_PREFIX = "multiTenant.http.queryParameter.";
+	
 	
 	public static RemoteStoreConfig read(Properties p, RequestInfo requestInfo) throws KeystoreException {
 		
@@ -116,7 +140,7 @@ public class RemoteStoreConfigPropertiesUtils {
 		config.setConnectTimeout(getIntProperty(p, PROPERTY_CONNECT_TIMEOUT, false, HttpUtilities.HTTP_CONNECTION_TIMEOUT));
 		
 		String basicUsername = getProperty(p, PROPERTY_HTTP_BASIC_USERNAME, false);
-		if(basicUsername!=null && StringUtils.isNotEmpty(basicUsername)) {
+		if(basicUsername!=null && StringUtils.isNotEmpty(basicUsername) && !PROPERTY_HTTP_BASIC_USERNAME_DISABLE_VALUE.equals(basicUsername)) {
 			config.setBasicUsername(basicUsername);
 			
 			String basicPassword = getProperty(p, PROPERTY_HTTP_BASIC_PASSWORD, false);
@@ -125,6 +149,12 @@ public class RemoteStoreConfigPropertiesUtils {
 			}
 		}
 		
+		PropertiesReader pReader = new PropertiesReader(p, false);
+		
+		config.setHeaders(read(pReader, PROPERTY_HTTP_HEADER_PREFIX, config.getHeaders()));
+		
+		config.setQueryParameters(read(pReader, PROPERTY_HTTP_QUERY_PARAMETER_PREFIX, config.getQueryParameters()));
+			
 		config.setHostnameVerifier(getBooleanProperty(p, PROPERTY_HTTPS_HOSTNAME_VERIFIER, false, true));	
 		
 		readTrustStoreConfig(config, p, requestInfo);
@@ -133,7 +163,102 @@ public class RemoteStoreConfigPropertiesUtils {
 		
 		readForwardProxyConfig(config, p);
 		
+		List<String> multi = readMultitenant(p);
+		if(multi!=null && !multi.isEmpty()) {
+			setMultitenant(config, multi, p, pReader);
+		}
+		
 		return config;
+	}
+	
+	private static Map<String, String> read(PropertiesReader pReader, String pName, Map<String, String> map) throws KeystoreException {
+		Properties properties = null;
+		try {
+			properties = pReader.readProperties_convertEnvProperties(pName);
+		}catch(Exception e) {
+			throw new KeystoreException("Property '"+pName+".*' read failed: "+e.getMessage(),e);
+		}
+		if(properties!=null && !properties.isEmpty()) {
+			for (Map.Entry<Object,Object> entry : properties.entrySet()) {
+				if(entry.getKey() instanceof String && entry.getValue() instanceof String) {
+					String name = (String) entry.getKey();
+					String value = (String) entry.getValue();
+					if(map==null) {
+						map = new HashMap<>();
+					}
+					map.put(name, value);
+				}
+			}
+		}
+		return map;
+	}
+	
+	private static List<String> readMultitenant(Properties p) throws KeystoreException{
+		List<String> l = new ArrayList<>();
+		String multi = getProperty(p, PROPERTY_MULTITENANT, false);
+		if(multi==null || StringUtils.isEmpty(multi.trim())) {
+			return l;
+		}
+		multi = multi.trim();
+		if(!multi.contains(",")) {
+			l.add(multi);
+			return l;
+		}
+		String [] tmp = multi.split(",");
+		if(tmp!=null && tmp.length>0) {
+			for (String s : tmp) {
+				if(s!=null && StringUtils.isNotEmpty(s.trim())) {
+					l.add(s.trim());
+				}
+			}
+		}
+		return l;
+	}
+	
+	private static void setMultitenant(RemoteStoreConfig config, List<String> multi, Properties p, PropertiesReader pReader) throws KeystoreException {
+		config.setMultitenant(true);
+		config.setBaseUrlMultitenantDefaultString(getProperty(p, PROPERTY_MULTITENANT_BASEURL_DEFAULT_STRING, true));
+		config.setBaseUrlMultitenantPlaceholder(getProperty(p, PROPERTY_MULTITENANT_BASEURL_PLACEHOLDER, true));
+		config.setBaseUrlMultitenantTenantString(getProperty(p, PROPERTY_MULTITENANT_BASEURL_TENANT_STRING, true));
+		
+		for (String tenant : multi) {
+			setMultitenantHttpBasic(config, tenant, p);
+			setMultitenantHttp(config, tenant, pReader);
+		}
+	}
+	private static void setMultitenantHttpBasic(RemoteStoreConfig config, String tenant, Properties p) throws KeystoreException {
+		String username = getProperty(p, PROPERTY_MULTITENANT_HTTP_BASIC_USERNAME_PREFIX+tenant, false);
+		if(username!=null) {
+			if(config.getMultiTenantBasicUsername()==null) {
+				config.setMultiTenantBasicUsername(new HashMap<>());
+			}
+			config.getMultiTenantBasicUsername().put(tenant, username);
+		}
+		
+		String password = getProperty(p, PROPERTY_MULTITENANT_HTTP_BASIC_PASSWORD_PREFIX+tenant, false);
+		if(password!=null) {
+			if(config.getMultiTenantBasicPassword()==null) {
+				config.setMultiTenantBasicPassword(new HashMap<>());
+			}
+			config.getMultiTenantBasicPassword().put(tenant, password);
+		}
+	}
+	private static void setMultitenantHttp(RemoteStoreConfig config, String tenant, PropertiesReader pReader) throws KeystoreException {
+		Map<String, String> header = read(pReader, PROPERTY_MULTITENANT_HTTP_HEADER_PREFIX+tenant+".", config.getMultiTenantHeaders()!=null ? config.getMultiTenantHeaders().get(tenant) : null);
+		if(header!=null && !header.isEmpty()) {
+			if(config.getMultiTenantHeaders()==null) {
+				config.setMultiTenantHeaders(new HashMap<>());
+			}
+			config.getMultiTenantHeaders().put(tenant, header);
+		}
+		
+		Map<String, String> query = read(pReader, PROPERTY_MULTITENANT_HTTP_QUERY_PARAMETER_PREFIX+tenant+".", config.getMultiTenantQueryParameters()!=null ? config.getMultiTenantQueryParameters().get(tenant) : null);
+		if(query!=null && !query.isEmpty()) {
+			if(config.getMultiTenantQueryParameters()==null) {
+				config.setMultiTenantQueryParameters(new HashMap<>());
+			}
+			config.getMultiTenantQueryParameters().put(tenant, query);
+		}
 	}
 	
 	private static void readTrustStoreConfig(RemoteStoreConfig config, Properties p, RequestInfo requestInfo) throws KeystoreException {

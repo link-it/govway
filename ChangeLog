@@ -1,3 +1,12 @@
+2023-10-26  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1655
+	Nell'invocazione delle API PDND:
+	- aggiunta la possibilità di produrre header o parametri della url personalizzati da inoltrare verso la fruizione;
+	- aggiunta la possibilità di disattivare l'invio di credenziali basic;
+	- aggiunta la possibilità di personalizzare le chiamate per tenant in una installazione multi-tenant.
+
 2023-10-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
