@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -416,7 +417,8 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
 			boolean buildSecurityTokenInRequest, ModIHeaderType headerType, boolean integritaCustom, boolean securityHeaderObbligatorio,
-			Map<String, Object> dynamicMapParameter, Busta datiRichiesta) throws ProtocolException {
+			Map<String, Object> dynamicMapParameter, Busta datiRichiesta,
+			IDSoggetto idSoggetto) throws ProtocolException {
 		
 		if(msg==null) {
 			throw new ProtocolException("Param msg is null");
@@ -616,7 +618,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				RemoteKeyType keyType = this.modiProperties.getRemoteKeyType(trustStoreCertificati.getSecurityMessageTruststoreType());
 				secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_PROVIDER, new RemoteStoreProvider(this.requestInfo, keyType));
 				secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_KEY_TYPE, keyType);
-				secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_CONFIG, this.modiProperties.getRemoteStoreConfig(trustStoreCertificati.getSecurityMessageTruststoreType()));
+				secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_REMOTE_STORE_CONFIG, this.modiProperties.getRemoteStoreConfig(trustStoreCertificati.getSecurityMessageTruststoreType(), idSoggetto));
 			}
 			if(securityConfig.isX5u() &&
 				trustStoreSsl!=null && trustStoreSsl.getSecurityMessageTruststorePath()!=null) {

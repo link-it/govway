@@ -548,7 +548,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											includiRequestDigest, bustaRitornata, 
 											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
 											buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
-											dynamicMap, datiRichiesta);
+											dynamicMap, datiRichiesta,
+											idSoggetto);
 									
 									if(erroriValidazione.isEmpty()) {
 										msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
@@ -630,7 +631,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											includiRequestDigest, bustaRitornata, 
 											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
 											buildSecurityTokenInRequest, ModIHeaderType.BOTH_AUTH, integritaCustom, securityHeaderObbligatorio,
-											dynamicMap, datiRichiesta);
+											dynamicMap, datiRichiesta,
+											idSoggetto);
 									
 									String audAuthorization = null;
 									if(tokenAuthorization!=null &&
@@ -691,7 +693,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											includiRequestDigest, bustaRitornata, 
 											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
 											buildSecurityTokenInRequest, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, securityHeaderIntegrityObbligatorio,
-											null, null); // gia' inizializzato sopra
+											null, null,
+											idSoggetto); // gia' inizializzato sopra
 									
 									if(erroriValidazione.isEmpty()) {
 										msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_COMPLETATA);
@@ -861,7 +864,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 									false, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigAudit,
 									buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
-									dynamicMap, datiRichiesta);
+									dynamicMap, datiRichiesta,
+									idSoggetto);
 							
 							if(tokenAudit!=null){
 								String audExpected = securityConfig.getCorniceSicurezzaAudience();

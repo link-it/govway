@@ -306,7 +306,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 							isRichiesta, prefixAuthorization,
 							checkAudienceByModIConfig);
 					
-					rsc = enrichTokenInfo(requestInfo, sicurezzaMessaggio, sicurezzaAudit);
+					rsc = enrichTokenInfo(requestInfo, sicurezzaMessaggio, sicurezzaAudit, idSoggetto);
 				
 				}
 				
@@ -1108,14 +1108,14 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		return digestValue;
 	}
 	
-	private RemoteStoreConfig enrichTokenInfo(RequestInfo requestInfo, boolean sicurezzaMessaggio, boolean sicurezzaAudit) throws ProtocolException {
+	private RemoteStoreConfig enrichTokenInfo(RequestInfo requestInfo, boolean sicurezzaMessaggio, boolean sicurezzaAudit, IDSoggetto idSoggetto) throws ProtocolException {
 	
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		RemoteStoreConfig rsc = null;
 		try {
 			if(op2Properties.isGestoreChiaviPDNDclientInfoEnabled()) {
 			
-				rsc = getRemoteStoreConfig();
+				rsc = getRemoteStoreConfig(idSoggetto);
 				if(rsc==null) {
 					return rsc;
 				}
@@ -1137,17 +1137,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				}
 				
 				// NOTA: il kid DEVE essere preso dall'eventuale token di integrità, poichè il kid nell'access token è sempre uguale ed è quello della PDND
-				String kid = null;
-				if(sicurezzaMessaggio) {
-					kid = readKidFromTokenIntegrity(securityTokenForContext);
-				}
-				if(kid==null && sicurezzaAudit) {
-					kid = readKidFromTokenAudit(securityTokenForContext);
-				}
-				if(kid==null) {
-					// Altrimenti utilizzo la struttura dati per ospitare le informazioni sul clientId
-					kid = "ClientId--"+clientId;
-				}
+				String kid = readKid(sicurezzaMessaggio, sicurezzaAudit, securityTokenForContext, clientId);
 				
 				enrichTokenInfo(securityTokenForContext, informazioniTokenNormalizzate, requestInfo, rsc,
 						kid, clientId);
@@ -1158,7 +1148,22 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		
 		return rsc;
 	}
-	private RemoteStoreConfig getRemoteStoreConfig() throws ProtocolException {
+	private String readKid(boolean sicurezzaMessaggio, boolean sicurezzaAudit, SecurityToken securityTokenForContext, String clientId) throws UtilsException {
+		// NOTA: il kid DEVE essere preso dall'eventuale token di integrità, poichè il kid nell'access token è sempre uguale ed è quello della PDND
+		String kid = null;
+		if(sicurezzaMessaggio) {
+			kid = readKidFromTokenIntegrity(securityTokenForContext);
+		}
+		if(kid==null && sicurezzaAudit) {
+			kid = readKidFromTokenAudit(securityTokenForContext);
+		}
+		if(kid==null) {
+			// Altrimenti utilizzo la struttura dati per ospitare le informazioni sul clientId
+			kid = "ClientId--"+clientId;
+		}
+		return kid;
+	}
+	private RemoteStoreConfig getRemoteStoreConfig(IDSoggetto idSoggetto) throws ProtocolException {
 		Object oTokenPolicy = null;
 		if(this.context!=null) {
 			oTokenPolicy = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_POLICY);
@@ -1171,7 +1176,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			return null;
 		}
 		
-		return this.modiProperties.getRemoteStoreConfigByTokenPolicy(tokenPolicy);
+		return this.modiProperties.getRemoteStoreConfigByTokenPolicy(tokenPolicy, idSoggetto);
 	}
 	private String readKidFromTokenIntegrity(SecurityToken securityTokenForContext) throws UtilsException {
 		String kid = null;

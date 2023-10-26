@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDConfigUtilities;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
+import org.openspcoop2.pdd.timers.TimerException;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDEvent;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
 import org.openspcoop2.utils.UtilsException;
@@ -163,7 +164,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 		return "Chiave con kid '"+keyId+"'";
 	}
 	
-	public Object readKey(RemoteKeyType remoteStoreKeyType, String keyId, ByteArrayOutputStream bout) throws KeystoreException {
+	private Object readKey(RemoteKeyType remoteStoreKeyType, String keyId, ByteArrayOutputStream bout, RemoteStoreConfig remoteConfig) throws KeystoreException {
 		
 		RemoteStoreKey key = null;
 		try {
@@ -199,38 +200,22 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			
 			ByteArrayOutputStream b = bout!=null ? bout : boutInternal;
 			
+			RemoteStoreConfig remoteConfigUse = (remoteConfig!=null && remoteConfig.isMultitenant()) ? remoteConfig : this.remoteStoreConfig;
+			
 			Object objectKey = null;
 			switch (remoteStoreKeyType) {
 			case JWK:
-				objectKey = RemoteStoreUtils.readJWK(keyId, this.remoteStoreConfig, b);
+				objectKey = RemoteStoreUtils.readJWK(keyId, remoteConfigUse, b);
 				break;
 			case PUBLIC_KEY:
-				objectKey = RemoteStoreUtils.readPublicKey(keyId, this.remoteStoreConfig, b);
+				objectKey = RemoteStoreUtils.readPublicKey(keyId, remoteConfigUse, b);
 				break;
 			case X509:
-				objectKey = RemoteStoreUtils.readX509(keyId, this.remoteStoreConfig, b);
+				objectKey = RemoteStoreUtils.readX509(keyId, remoteConfigUse, b);
 				break;
 			}
 			
-			if(updateRequired) {
-				String msg = getPrefixKid(keyId)+" ottenuta da remote store config, aggiornamento entry sul db ...";
-				this.log.debug(msg);
-				int rows = RemoteStoreProviderDriverUtils.updateRemoteStoreKey(this.driverConfigurazioneDB, this.remoteStoreId, keyId, b.toByteArray());
-				msg = getPrefixKid(keyId)+" ottenuta da remote store config, aggiornata entry sul db (updateRows:"+rows+")";
-				this.log.debug(msg);
-			}
-			else {
-				String msg = getPrefixKid(keyId)+" ottenuta da remote store config, registrazione sul db ...";
-				this.log.debug(msg);
-				int rows = RemoteStoreProviderDriverUtils.addRemoteStoreKey(this.driverConfigurazioneDB, this.remoteStoreId, keyId, b.toByteArray());
-				msg = getPrefixKid(keyId)+" ottenuta da remote store config, registrata entry sul db (updateRows:"+rows+")";
-				this.log.debug(msg);
-				
-				if(OpenSPCoop2Properties.getInstance().isGestoreChiaviPDNDEventiAdd()) {
-					Evento evento = TimerGestoreChiaviPDNDLib.buildEvento(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED, keyId, "La chiave è stata aggiunta al repository locale");
-					registerEvent(evento, keyId);
-				}
-			}
+			saveKey(updateRequired, keyId, b);
 			
 			return objectKey;
 			
@@ -240,6 +225,27 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			semaphore.release("readKey");
 		}
 		
+	}
+	private void saveKey(boolean updateRequired, String keyId, ByteArrayOutputStream b) throws KeystoreException, TimerException {
+		if(updateRequired) {
+			String msg = getPrefixKid(keyId)+" ottenuta da remote store config, aggiornamento entry sul db ...";
+			this.log.debug(msg);
+			int rows = RemoteStoreProviderDriverUtils.updateRemoteStoreKey(this.driverConfigurazioneDB, this.remoteStoreId, keyId, b.toByteArray());
+			msg = getPrefixKid(keyId)+" ottenuta da remote store config, aggiornata entry sul db (updateRows:"+rows+")";
+			this.log.debug(msg);
+		}
+		else {
+			String msg = getPrefixKid(keyId)+" ottenuta da remote store config, registrazione sul db ...";
+			this.log.debug(msg);
+			int rows = RemoteStoreProviderDriverUtils.addRemoteStoreKey(this.driverConfigurazioneDB, this.remoteStoreId, keyId, b.toByteArray());
+			msg = getPrefixKid(keyId)+" ottenuta da remote store config, registrata entry sul db (updateRows:"+rows+")";
+			this.log.debug(msg);
+			
+			if(OpenSPCoop2Properties.getInstance().isGestoreChiaviPDNDEventiAdd()) {
+				Evento evento = TimerGestoreChiaviPDNDLib.buildEvento(TimerGestoreChiaviPDNDEvent.EVENT_TYPE_ADDED, keyId, "La chiave è stata aggiunta al repository locale");
+				registerEvent(evento, keyId);
+			}
+		}
 	}
 	private void registerEvent(Evento evento, String keyId) {
 		try {
@@ -271,7 +277,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	@Override
 	public JWK readJWK(String keyId, RemoteStoreConfig remoteConfig) throws UtilsException {
 		try {
-			return (JWK) readKey(RemoteKeyType.JWK, keyId, null);
+			return (JWK) readKey(RemoteKeyType.JWK, keyId, null, remoteConfig);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -279,7 +285,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	@Override
 	public JWK readJWK(String keyId, RemoteStoreConfig remoteConfig, ByteArrayOutputStream bout) throws UtilsException {
 		try {
-			return (JWK) readKey(RemoteKeyType.JWK, keyId, bout);
+			return (JWK) readKey(RemoteKeyType.JWK, keyId, bout, remoteConfig);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -287,7 +293,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	@Override
 	public Certificate readX509(String keyId, RemoteStoreConfig remoteConfig) throws UtilsException {
 		try {
-			return (Certificate) readKey(RemoteKeyType.X509, keyId, null);
+			return (Certificate) readKey(RemoteKeyType.X509, keyId, null, remoteConfig);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -296,7 +302,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	public Certificate readX509(String keyId, RemoteStoreConfig remoteConfig, ByteArrayOutputStream bout)
 			throws UtilsException {
 		try {
-			return (Certificate) readKey(RemoteKeyType.X509, keyId, bout);
+			return (Certificate) readKey(RemoteKeyType.X509, keyId, bout, remoteConfig);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -304,7 +310,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	@Override
 	public PublicKey readPublicKey(String keyId, RemoteStoreConfig remoteConfig) throws UtilsException {
 		try {
-			return (PublicKey) readKey(RemoteKeyType.PUBLIC_KEY, keyId, null);
+			return (PublicKey) readKey(RemoteKeyType.PUBLIC_KEY, keyId, null, remoteConfig);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -313,7 +319,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	public PublicKey readPublicKey(String keyId, RemoteStoreConfig remoteConfig, ByteArrayOutputStream bout)
 			throws UtilsException {
 		try {
-			return (PublicKey) readKey(RemoteKeyType.PUBLIC_KEY, keyId, bout);
+			return (PublicKey) readKey(RemoteKeyType.PUBLIC_KEY, keyId, bout, remoteConfig);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -325,7 +331,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId, RemoteStoreConfig remoteConfig)
 			throws UtilsException {
 		try {
-			return readClientInfo(keyId, clientId);
+			return readClientInfoEngine(keyId, clientId, remoteConfig);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -334,7 +340,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	public static void setCreateEntryIfNotExists(boolean createEntryIfNotExists) {
 		RemoteStoreProviderDriver.createEntryIfNotExists = createEntryIfNotExists;
 	}
-	public RemoteStoreClientInfo readClientInfo(String keyId, String clientId) throws KeystoreException {
+	private RemoteStoreClientInfo readClientInfoEngine(String keyId, String clientId, RemoteStoreConfig remoteConfig) throws KeystoreException {
 		
 		RemoteStoreClientDetails clientDetails = null;
 		try {
@@ -362,13 +368,15 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			
 			OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
 			
-			String clientJson = PDNDConfigUtilities.readClientDetails(this.remoteStoreConfig, propertiesReader, clientId, this.log);
+			RemoteStoreConfig remoteConfigUse = (remoteConfig!=null && remoteConfig.isMultitenant()) ? remoteConfig : this.remoteStoreConfig;
+			
+			String clientJson = PDNDConfigUtilities.readClientDetails(remoteConfigUse, propertiesReader, clientId, this.log);
 			String organizationId = null;
 			String organizationJson = null;
 			if(clientJson!=null) {
 				organizationId = PDNDConfigUtilities.readOrganizationId(propertiesReader, clientJson, this.log);
 				if(organizationId!=null) {
-					organizationJson = PDNDConfigUtilities.readOrganizationDetails(this.remoteStoreConfig, propertiesReader, organizationId, this.log);
+					organizationJson = PDNDConfigUtilities.readOrganizationDetails(remoteConfigUse, propertiesReader, organizationId, this.log);
 				}
 			}
 			

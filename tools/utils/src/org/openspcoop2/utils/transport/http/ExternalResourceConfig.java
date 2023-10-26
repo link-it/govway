@@ -34,36 +34,46 @@ import java.util.Map;
  */
 public class ExternalResourceConfig {
 
-	private int readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
-	private int connectTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+	// !! NOTA !!: se si aggiunge un field, bisogna gestirlo nel metodo in org.openspcoop2.utils.certificate.remote.RemoteStoreConfig.newInstanceMultitenant()
 	
-	private List<Integer> returnCode = new ArrayList<>();
-	{
+	protected int readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+	protected int connectTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+	
+	protected List<Integer> returnCode = new ArrayList<>();
+	public ExternalResourceConfig (){
 		this.returnCode.add(200);
 	}
 
-	private String basicUsername;
-	private String basicPassword;
+	protected String basicUsername;
+	protected String basicPassword;
 	
-	private boolean hostnameVerifier = true;
+	protected boolean hostnameVerifier = true;
 	
-	private boolean trustAllCerts = false;
+	protected boolean trustAllCerts = false;
 
-	private KeyStore trustStore;
+	protected KeyStore trustStore;
 	
-	private CertStore crlStore;
+	protected CertStore crlStore;
 	
-	private KeyStore keyStore;
-	private String keyAlias;
-	private String keyPassword;
+	protected KeyStore keyStore;
+	protected String keyAlias;
+	protected String keyPassword;
 	
-	private String forwardProxyUrl;
-	private String forwardProxyHeader;
-	private String forwardProxyQueryParameter;
-	private boolean forwardProxyBase64;
+	protected String forwardProxyUrl;
+	protected String forwardProxyHeader;
+	protected String forwardProxyQueryParameter;
+	protected boolean forwardProxyBase64;
 
-	private Map<String, String> headers;
-	private Map<String, String> queryParameters;
+	protected Map<String, String> headers;
+	protected Map<String, String> queryParameters;
+	
+	// multi-tenant
+	protected Map<String, String> multiTenantBasicUsername;
+	protected Map<String, String> multiTenantBasicPassword;
+	protected Map<String, Map<String, String>> multiTenantHeaders;
+	protected Map<String, Map<String, String>> multiTenantQueryParameters;
+	
+	// !! NOTA !!: se si aggiunge un field, bisogna gestirlo nel metodo in org.openspcoop2.utils.certificate.remote.RemoteStoreConfig.newInstanceMultitenant()
 	
 	public int getReadTimeout() {
 		return this.readTimeout;
@@ -208,5 +218,37 @@ public class ExternalResourceConfig {
 
 	public void setQueryParameters(Map<String, String> queryParameters) {
 		this.queryParameters = queryParameters;
+	}
+	
+	public Map<String, String> getMultiTenantBasicUsername() {
+		return this.multiTenantBasicUsername;
+	}
+
+	public void setMultiTenantBasicUsername(Map<String, String> multiTenantBasicUsername) {
+		this.multiTenantBasicUsername = multiTenantBasicUsername;
+	}
+
+	public Map<String, String> getMultiTenantBasicPassword() {
+		return this.multiTenantBasicPassword;
+	}
+
+	public void setMultiTenantBasicPassword(Map<String, String> multiTenantBasicPassword) {
+		this.multiTenantBasicPassword = multiTenantBasicPassword;
+	}
+
+	public Map<String, Map<String, String>> getMultiTenantHeaders() {
+		return this.multiTenantHeaders;
+	}
+
+	public void setMultiTenantHeaders(Map<String, Map<String, String>> multiTenantHeaders) {
+		this.multiTenantHeaders = multiTenantHeaders;
+	}
+
+	public Map<String, Map<String, String>> getMultiTenantQueryParameters() {
+		return this.multiTenantQueryParameters;
+	}
+
+	public void setMultiTenantQueryParameters(Map<String, Map<String, String>> multiTenantQueryParameters) {
+		this.multiTenantQueryParameters = multiTenantQueryParameters;
 	}
 }
