@@ -1254,6 +1254,9 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		} else {
 			_type = schema.getType();
 		}
+		if(_type==null && schema.getTypes()!=null && !schema.getTypes().isEmpty()) {
+			_type=schema.getTypes().iterator().next();
+		}
 		ApiSchemaTypeRestriction _schema = this.convertTo(schema, arrayParameter, style, explode);
 		ApiParameterSchema aps = new ApiParameterSchema();
 		aps.addType(_type, _schema);
