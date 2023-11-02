@@ -1,3 +1,10 @@
+2023-11-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, Utils]
+	Risolto Bug OP-1657
+	La creazione di una API tramite un OpenAPI contenente la definizione di un parametro di tipo 'header' falliva. 
+	Dai log si poteva riscontrare il seguente errore: "Trovato parametro header 'Authorization' senza tipo".
+
 2023-10-26  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
