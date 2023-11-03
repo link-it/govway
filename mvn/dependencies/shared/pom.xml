@@ -48,7 +48,7 @@
 		<xom.version>1.2.11</xom.version>
 		<ehcache.version>3.10.2</ehcache.version>
 		<rhino.version>1.7.14</rhino.version>
-		<hazelcast.version>5.3.0</hazelcast.version>
+		<hazelcast.version>5.3.5</hazelcast.version>
 		<hibernate.version>6.1.4.Final</hibernate.version>
 	</properties>
 

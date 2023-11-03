@@ -1,5 +1,11 @@
 2023-11-03  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-45860: aggiornata libreria 'com.hazelcast:hazelcast' alla versione 5.3.5
+
+2023-11-03  Andrea Poli <apoli@link.it>
+
 	* [Utils, GenericProject]
 	Aggiunta funzionalità  OP-1659
 	Le utility della classe 'org.openspcoop2.utils.sql' e le espressioni 'org.openspcoop2.generic_project.expression' 

@@ -242,7 +242,7 @@
 	<archive path="/op2_3.3.dev/lib/shared/ehcache-3.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.14.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/hibernate-core-6.1.4.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.3.0.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.3.5.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
