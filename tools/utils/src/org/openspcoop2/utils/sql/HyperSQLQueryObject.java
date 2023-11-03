@@ -77,7 +77,7 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	
 	@Override
 	public String getUnixTimestampConversion(String column){
-		//return "((datediff('ss',CAST('1970-01-01 00:00:00' AS TIMESTAMP),"+column+")-3600)*1000)";
+		/**return "((datediff('ss',CAST('1970-01-01 00:00:00' AS TIMESTAMP),"+column+")-3600)*1000)";*/
 		return "( "+ 
 				"("+
 				"(UNIX_TIMESTAMP("+column+")*1000) - "+
@@ -99,14 +99,14 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	public ISQLQueryObject addSelectAvgTimestampField(String field, String alias)
 			throws SQLQueryObjectException {
 		if(field==null)
-			throw new SQLQueryObjectException("field avg non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "avg("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			// fieldSQL = fieldSQL + " as "+alias;
+			/** fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL +this.getDefaultAliasFieldKeyword()+alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -115,14 +115,14 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	public ISQLQueryObject addSelectMaxTimestampField(String field, String alias)
 			throws SQLQueryObjectException {
 		if(field==null)
-			throw new SQLQueryObjectException("field avg non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "max("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL +this.getDefaultAliasFieldKeyword()+alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -131,14 +131,14 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	public ISQLQueryObject addSelectMinTimestampField(String field, String alias)
 			throws SQLQueryObjectException {
 		if(field==null)
-			throw new SQLQueryObjectException("field avg non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "min("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL +this.getDefaultAliasFieldKeyword()+alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -147,14 +147,14 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	public ISQLQueryObject addSelectSumTimestampField(String field, String alias)
 			throws SQLQueryObjectException {
 		if(field==null)
-			throw new SQLQueryObjectException("field avg non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "sum("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL +this.getDefaultAliasFieldKeyword()+alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -200,6 +200,33 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	
 	
 	@Override
+	public String getExtractDayFormatFromTimestampFieldPrefix(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		if(dayFormat==null) {
+			throw new SQLQueryObjectException("dayFormat undefined");
+		}
+		if(DayFormatEnum.DAY_OF_WEEK.equals(dayFormat)) {
+			return "DAYOFWEEK(";
+		}
+		else {
+			return super.getExtractDayFormatFromTimestampFieldPrefix(dayFormat);
+		}
+	}
+	@Override
+	public String getExtractDayFormatFromTimestampFieldSuffix(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		if(DayFormatEnum.DAY_OF_WEEK.equals(dayFormat)) {
+			return ")";
+		}
+		else {
+			return super.getExtractDayFormatFromTimestampFieldSuffix(dayFormat);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	@Override
 	public String createSQLQuery() throws SQLQueryObjectException{
 		return this.createSQLQuery(false);
 	}
@@ -212,12 +239,12 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		bf.append("SELECT ");
 		
 		// Limit (senza offset)
-		if(this.offset<0){
-			if(this.limit>0){
-				bf.append(" TOP ");
-				bf.append(this.limit);
-				bf.append(" ");
-			}
+		if(this.offset<0 &&
+			(this.limit>0)
+			){
+			bf.append(" TOP ");
+			bf.append(this.limit);
+			bf.append(" ");
 		}
 		
 		// forzatura di indici
@@ -230,7 +257,7 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 			bf.append(" DISTINCT ");
 		
 		// select field
-		if(this.fields.size()==0){
+		if(this.fields.isEmpty()){
 			bf.append("*");
 		}else{
 			Iterator<String> it = this.fields.iterator();
@@ -246,8 +273,8 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		
 		bf.append(getSQL(false,false,false,union));
 		
-		//if( this.offset>=0 || this.limit>=0)
-		//	System.out.println("SQL ["+bf.toString()+"]");
+		/**if( this.offset>=0 || this.limit>=0)
+		//	System.out.println("SQL ["+bf.toString()+"]");*/
 		
 		return bf.toString();
 	}
@@ -256,7 +283,7 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	
 	
 	@Override
-	public String _createSQLDelete() throws SQLQueryObjectException {
+	public String createSQLDeleteEngine() throws SQLQueryObjectException {
 		StringBuilder bf = new StringBuilder();
 				
 		bf.append("DELETE ");
@@ -281,13 +308,13 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 			this.checkSelectForUpdate(update, delete, union);
 		}
 		
-		if(update==false && conditions==false){
+		if(!update && !conditions){
 			// From
-			bf.append(" FROM ");
+			bf.append(SQLQueryObjectCore.FROM_SEPARATOR);
 			
 			// Table dove effettuare la ricerca 'FromTable'
-			if(this.tables.size()==0){
-				throw new SQLQueryObjectException("Tabella di ricerca (... FROM Table ...) non definita");
+			if(this.tables.isEmpty()){
+				throw new SQLQueryObjectException(SQLQueryObjectCore.TABELLA_RICERCA_FROM_NON_DEFINITA);
 			}else{
 				if(delete && this.tables.size()>2)
 					throw new SQLQueryObjectException("Non e' possibile effettuare una delete con piu' di una tabella alla volta");
@@ -304,10 +331,10 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		}
 		
 		// Condizioni di Where
-		if(this.conditions.size()>0){
+		if(!this.conditions.isEmpty()){
 			
-			if(conditions==false)
-				bf.append(" WHERE ");
+			if(!conditions)
+				bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 			
 			if(this.notBeforeConditions){
 				bf.append("NOT (");
@@ -316,9 +343,9 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 			for(int i=0; i<this.conditions.size(); i++){
 				if(i>0){
 					if(this.andLogicOperator){
-						bf.append(" AND ");
+						bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 					}else{
-						bf.append(" OR ");
+						bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 					}
 				}
 				bf.append(this.conditions.get(i));
@@ -330,8 +357,8 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		}
 		
 		// Condizione GroupBy
-		if((this.getGroupByConditions().size()>0) && (delete==false) && (update==false) && (conditions==false)){
-			bf.append(" GROUP BY ");
+		if((!this.getGroupByConditions().isEmpty()) && (!delete) && (!update) && (!conditions)){
+			bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 			Iterator<String> it = this.getGroupByConditions().iterator();
 			boolean first = true;
 			while(it.hasNext()){
@@ -344,10 +371,10 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		}
 		
 		// Condizione OrderBy
-//		if(union==false){ La condizione di OrderBy DEVE essere generata. In SQLServer e MySQL viene generata durante la condizione di LIMIT/OFFSET
+/**		if(union==false){ La condizione di OrderBy DEVE essere generata. In SQLServer e MySQL viene generata durante la condizione di LIMIT/OFFSET*/
 		// NOTA: L'order by insieme al LIMIT e OFFSET, all'interno di sotto-select come in questo caso della union, funziona solo con HSQL 2.x
-			if((this.orderBy.size()>0) && (delete==false) && (update==false) && (conditions==false) ){
-				bf.append(" ORDER BY ");
+			if((!this.orderBy.isEmpty()) && (!delete) && (!update) && (!conditions) ){
+				bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
 				Iterator<String> it = this.orderBy.iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -362,43 +389,43 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 						sortTypeAsc = this.orderBySortType.get(column);
 					}
 					if(sortTypeAsc){
-						bf.append(" ASC ");
+						bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 					}else{
-						bf.append(" DESC ");
+						bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 					}
 				}
 			}
-//		}
+/**		}*/
 		
 		// Limit e Offset
-		//if(this.limit>0 || this.offset>0){
+		/**if(this.limit>0 || this.offset>0){*/
 		// Rilascio vincolo di order by in caso di limit impostato.
 		// Il vincolo rimane per l'offset, per gestire le select annidate di qualche implementazioni come Oracle,SQLServer ...
-		if(this.offset>=0){
-			if(this.orderBy.size()==0){
-				throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
-			}
+		if(this.offset>=0 &&
+			(this.orderBy.isEmpty())
+			){
+			throw new SQLQueryObjectException(SQLQueryObjectCore.CONDIZIONI_ORDER_BY_RICHESTE);
 		}
 		
 		// Limit (con offset)
-		if(this.offset>=0){
-			if((this.limit>0) && (delete==false) && (update==false) && (conditions==false)){
-				bf.append(" LIMIT ");
-				bf.append(this.limit);
-			}
+		if(this.offset>=0 &&
+			((this.limit>0) && (!delete) && (!update) && (!conditions))
+			){
+			bf.append(SQLQueryObjectCore.LIMIT_SEPARATOR);
+			bf.append(this.limit);
 		}
 		
 		// Offset
-		if((this.offset>=0) && (delete==false) && (update==false) && (conditions==false)){
+		if((this.offset>=0) && (!delete) && (!update) && (!conditions)){
 			bf.append(" OFFSET ");
 			bf.append(this.offset);
 		}
 			
 		// ForUpdate
-		if(conditions==false){
-			if(this.selectForUpdate){
-				bf.append(" FOR UPDATE ");
-			}
+		if(!conditions &&
+			(this.selectForUpdate)
+			){
+			bf.append(" FOR UPDATE ");
 		}
 		
 		return bf.toString();
@@ -422,16 +449,16 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		bf.append("SELECT ");
 		
 		// Non ha senso, la union fa gia la distinct, a meno di usare la unionAll ma in quel caso non si vuole la distinct
-		// if(this.isSelectDistinct())
-		//	bf.append(" DISTINCT ");
+		/** if(this.isSelectDistinct())
+		//	bf.append(" DISTINCT ");*/
 		
 		// Limit (senza offset)
-		if(this.offset<0){
-			if(this.limit>0){
-				bf.append(" TOP ");
-				bf.append(this.limit);
-				bf.append(" ");
-			}
+		if(this.offset<0 &&
+			(this.limit>0)
+			){
+			bf.append(" TOP ");
+			bf.append(this.limit);
+			bf.append(" ");
 		}
 		
 		// forzatura di indici
@@ -441,7 +468,7 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		}
 				
 		// select field
-		if(this.fields.size()==0){
+		if(this.fields.isEmpty()){
 			bf.append("*");
 		}else{
 			Iterator<String> it = this.fields.iterator();
@@ -455,7 +482,7 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 			}
 		}
 		
-		bf.append(" FROM ( ");
+		bf.append(SQLQueryObjectCore.FROM_SEPARATOR_APERTURA);
 		
 		for(int i=0; i<sqlQueryObject.length; i++){
 			
@@ -481,11 +508,11 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 			bf.append(") ");
 		}
 		
-		bf.append(" ) as subquery"+getSerial()+" ");
+		bf.append(SQLQueryObjectCore.AS_SUBQUERY_SUFFIX+getSerial()+" ");
 		
 		// Condizione GroupBy
-		if((this.getGroupByConditions().size()>0) ){
-			bf.append(" GROUP BY ");
+		if((!this.getGroupByConditions().isEmpty()) ){
+			bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 			Iterator<String> it = this.getGroupByConditions().iterator();
 			boolean first = true;
 			while(it.hasNext()){
@@ -498,8 +525,8 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		}
 		
 		// Condizione OrderBy
-		if(this.orderBy.size()>0){
-			bf.append(" ORDER BY ");
+		if(!this.orderBy.isEmpty()){
+			bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
 			Iterator<String> it = this.orderBy.iterator();
 			boolean first = true;
 			while(it.hasNext()){
@@ -514,29 +541,29 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 					sortTypeAsc = this.orderBySortType.get(column);
 				}
 				if(sortTypeAsc){
-					bf.append(" ASC ");
+					bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 				}else{
-					bf.append(" DESC ");
+					bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 				}
 			}
 		}
 		
 		// Limit e Offset
-		//if(this.limit>0 || this.offset>0){
+		/**if(this.limit>0 || this.offset>0){*/
 		// Rilascio vincolo di order by in caso di limit impostato.
 		// Il vincolo rimane per l'offset, per gestire le select annidate di qualche implementazioni come Oracle,SQLServer ...
-		if(this.offset>=0){
-			if(this.orderBy.size()==0){
-				throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
-			}
+		if(this.offset>=0 &&
+			(this.orderBy.isEmpty())
+			){
+			throw new SQLQueryObjectException(SQLQueryObjectCore.CONDIZIONI_ORDER_BY_RICHESTE);
 		}
 		
 		// Limit (con offset)
-		if(this.offset>=0){
-			if(this.limit>0){
-				bf.append(" LIMIT ");
-				bf.append(this.limit);
-			}
+		if(this.offset>=0 &&
+			(this.limit>0)
+			){
+			bf.append(SQLQueryObjectCore.LIMIT_SEPARATOR);
+			bf.append(this.limit);
 		}
 		
 		// Offset
@@ -563,11 +590,11 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		
 		bf.append("SELECT count(*) "+this.getDefaultAliasFieldKeyword()+" ");
 		bf.append(aliasCount);
-		bf.append(" FROM ( ");
+		bf.append(SQLQueryObjectCore.FROM_SEPARATOR_APERTURA);
 		
 		bf.append( this.createSQLUnion(unionAll, sqlQueryObject) );
 		
-		bf.append(" ) as subquery"+getSerial()+" ");
+		bf.append(SQLQueryObjectCore.AS_SUBQUERY_SUFFIX+getSerial()+" ");
 			
 		return bf.toString();
 	}
@@ -576,7 +603,7 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	
 
 	@Override
-	public String _createSQLUpdate() throws SQLQueryObjectException {
+	public String createSQLUpdateEngine() throws SQLQueryObjectException {
 
 		StringBuilder bf = new StringBuilder();
 		bf.append("UPDATE ");
@@ -600,7 +627,7 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	/* ---------------- WHERE CONDITIONS ------------------ */
 	
 	@Override
-	public String _createSQLConditions() throws SQLQueryObjectException {
+	public String createSQLConditionsEngine() throws SQLQueryObjectException {
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append(getSQL(false,false,true,false));

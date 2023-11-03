@@ -457,6 +457,8 @@ public class ClientTest {
 		
 		ClientTest.ilike(author);
 		
+		ClientTest.dateTimePart(author);
+		
 		ClientTest.in(author);
 		
 		ClientTest.and(author);
@@ -2180,6 +2182,69 @@ public class ClientTest {
 		expr.and().equals(Author.model().NAME,"Altro");
 		System.out.println("- test 7 (escape complesso con and): "+ClientTest.toString(expr));
 		
+	}
+	
+	public static void dateTimePart(Author author) throws ExpressionNotImplementedException, ExpressionException{
+		
+		System.out.println("\n **************** DateTimePart ************************* ");
+		
+		IExpression expr = ClientTest.newExpressionImplForAuthor().isYear(Author.model().DATE_OF_BIRTH,"2023");
+		System.out.println("- test 1 (year string): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isYear(Author.model().DATE_OF_BIRTH,2023);
+		System.out.println("- test 1 (year int): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isMonth(Author.model().DATE_OF_BIRTH,"3");
+		System.out.println("- test 2 (month string): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isMonth(Author.model().DATE_OF_BIRTH,3);
+		System.out.println("- test 2 (month int): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isDayOfMonth(Author.model().DATE_OF_BIRTH,"11");
+		System.out.println("- test 3 (dayOfMonth string): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isDayOfMonth(Author.model().DATE_OF_BIRTH,11);
+		System.out.println("- test 3 (dayOfMonth int): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isDayOfWeek(Author.model().DATE_OF_BIRTH,"4");
+		System.out.println("- test 3 (dayOfWeek string): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isDayOfWeek(Author.model().DATE_OF_BIRTH,4);
+		System.out.println("- test 3 (dayOfWeek int): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isDayOfYear(Author.model().DATE_OF_BIRTH,"100");
+		System.out.println("- test 3 (dayOfYear string): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isDayOfYear(Author.model().DATE_OF_BIRTH,100);
+		System.out.println("- test 3 (dayOfYear int): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isHour(Author.model().DATE_OF_BIRTH,"15");
+		System.out.println("- test 4 (hour string): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isHour(Author.model().DATE_OF_BIRTH,15);
+		System.out.println("- test 4 (hour int): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isMinute(Author.model().DATE_OF_BIRTH,"45");
+		System.out.println("- test 5 (minute string): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isMinute(Author.model().DATE_OF_BIRTH,45);
+		System.out.println("- test 5 (minute int): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isSecond(Author.model().DATE_OF_BIRTH,"44");
+		System.out.println("- test 6 (second string): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isSecond(Author.model().DATE_OF_BIRTH,44);
+		System.out.println("- test 6 (second int): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isSecond(Author.model().DATE_OF_BIRTH,44.5d);
+		System.out.println("- test 6 (second double): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isFullDayName(Author.model().DATE_OF_BIRTH,"Friday");
+		System.out.println("- test 7 (fullDayName): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().isShortDayName(Author.model().DATE_OF_BIRTH,"Fri");
+		System.out.println("- test 8 (shortDayName): "+ClientTest.toString(expr));
+
 	}
 	
 	public static void ilike(Author author) throws ExpressionNotImplementedException, ExpressionException{

@@ -33,7 +33,7 @@ import org.openspcoop2.utils.TipiDatabase;
  * @version $Rev$, $Date$
  */
 public class SQLServerQueryObject extends SQLQueryObjectCore {
-	//private boolean sottoselect = false;
+	/**private boolean sottoselect = false;*/
 
 
 	public SQLServerQueryObject(TipiDatabase tipoDatabase) {
@@ -50,7 +50,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 		// Per questo motivo viene quindi prima richiesto al vendor se effettuare o meno la classica normalizzazione del field in base a tali valori
 		// sul field in essere
 		
-		if(normalizeField!=null && 
+		boolean contains = (normalizeField!=null && 
 				// Con differenza su timezone:
 //				normalizeField.contains("(CAST(DATEDIFF(second,{d '1970-01-01'}") 
 //				&& 
@@ -68,11 +68,9 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				&& 
 				normalizeField.contains("as BIGINT)*1000) + (DATEPART(ms") 
 				
-				){
-			return false;
-		}
+				);
 		
-		return true;
+		return !contains;
 		
 	}
 	
@@ -82,16 +80,16 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	@Override
 	public String getUnixTimestampConversion(String column){
 		// Con differenza su timezone:
-//		String format = "yyyy-MM-dd HH:mm:ss";
+/**		String format = "yyyy-MM-dd HH:mm:ss";
 //		java.text.SimpleDateFormat dateformat = new java.text.SimpleDateFormat (format);
 //		return "("+
 //		" (CAST(DATEDIFF(second,{d '1970-01-01'},"+column+") as BIGINT)*1000) + (DATEPART(ms,"+column+"))"+
 //		" - "+
 //		" (CAST(DATEDIFF(HOUR,GETUTCDATE(),convert(datetime, '"+dateformat.format(org.openspcoop2.utils.date.DateManager.getDate())+"', 120)) as BIGINT)*60*60*1000) "+
-//		")";
+//		")";*/
 		
 		// senza differenza su timezone:
-//		return " (CAST(DATEDIFF(second,{d '1970-01-01'},"+column+") as BIGINT)*1000) + (DATEPART(ms,"+column+"))";
+/**		return " (CAST(DATEDIFF(second,{d '1970-01-01'},"+column+") as BIGINT)*1000) + (DATEPART(ms,"+column+"))";*/
 		
 		// altro modo
 		return "(CAST(DATEDIFF(s, '1970-01-01 00:00:00', "+column+") as BIGINT)*1000) + (DATEPART(ms,"+column+"))";
@@ -110,14 +108,14 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	public ISQLQueryObject addSelectAvgTimestampField(String field,
 			String alias) throws SQLQueryObjectException {
 		if(field==null)
-			throw new SQLQueryObjectException("field avg non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "avg("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + this.getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -127,14 +125,14 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	public ISQLQueryObject addSelectMaxTimestampField(String field, String alias)
 			throws SQLQueryObjectException {
 		if(field==null)
-			throw new SQLQueryObjectException("field avg non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "max("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + this.getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -144,14 +142,14 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	public ISQLQueryObject addSelectMinTimestampField(String field, String alias)
 			throws SQLQueryObjectException {
 		if(field==null)
-			throw new SQLQueryObjectException("field avg non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "min("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + this.getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -161,14 +159,14 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	public ISQLQueryObject addSelectSumTimestampField(String field, String alias)
 			throws SQLQueryObjectException {
 		if(field==null)
-			throw new SQLQueryObjectException("field avg non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "sum("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + this.getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -223,7 +221,80 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 
 
+	
+	
+	
+	@Override
+	public String getExtractDateTimePartFromTimestampFieldPrefix(DateTimePartEnum dateTimePart) throws SQLQueryObjectException {
+		if(dateTimePart==null) {
+			throw new SQLQueryObjectException("dateTimePart undefined");
+		}
+		String dateTimePartString = getDateTimePart(dateTimePart);
+		return "DATEPART("+dateTimePartString+FROM_SEPARATOR; 
+	}
 
+	
+	
+	
+	
+	private static final String DAY_FORMAT_FULL_DAY_NAME = "dddd";
+	private static final String DAY_FORMAT_SHORT_DAY_NAME = "ddd";
+	private static final String DAY_FORMAT_DAY_OF_YEAR = "dy";
+	private static final String DAY_FORMAT_DAY_OF_WEEK = "WEEKDAY";
+	
+	private SQLQueryObjectException newSQLQueryObjectExceptionDayFormatEnum(DayFormatEnum dayFormat) {
+		return new SQLQueryObjectException("DayFormatEnum '"+dayFormat+"' unknown");
+	}
+	@Override
+	protected String getDayFormat(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		switch (dayFormat) {
+		case FULL_DAY_NAME:
+			return DAY_FORMAT_FULL_DAY_NAME;
+		case SHORT_DAY_NAME:
+			return DAY_FORMAT_SHORT_DAY_NAME;
+		case DAY_OF_YEAR:
+			return DAY_FORMAT_DAY_OF_YEAR;
+		case DAY_OF_WEEK:
+			return DAY_FORMAT_DAY_OF_WEEK;
+		}
+		throw newSQLQueryObjectExceptionDayFormatEnum(dayFormat);
+	}
+	@Override
+	public String getExtractDayFormatFromTimestampFieldPrefix(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		if(dayFormat==null) {
+			throw new SQLQueryObjectException("dayFormat undefined");
+		}
+		switch (dayFormat) {
+		case FULL_DAY_NAME:
+		case SHORT_DAY_NAME:
+			return "FORMAT("; 
+		case DAY_OF_YEAR:
+			return "DATENAME("+getDayFormat(dayFormat)+" , "; 
+		case DAY_OF_WEEK:
+			return "DATEPART("+getDayFormat(dayFormat)+", "; 
+		}
+		throw newSQLQueryObjectExceptionDayFormatEnum(dayFormat);
+	}
+	@Override
+	public String getExtractDayFormatFromTimestampFieldSuffix(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		if(dayFormat==null) {
+			throw new SQLQueryObjectException("dayFormat undefined");
+		}
+		switch (dayFormat) {
+		case FULL_DAY_NAME:
+		case SHORT_DAY_NAME:
+			String dayFormatString = getDayFormat(dayFormat);
+			return ", '"+dayFormatString+"')"; 
+		case DAY_OF_YEAR:
+		case DAY_OF_WEEK:
+			return ")"; 
+		}
+		throw newSQLQueryObjectExceptionDayFormatEnum(dayFormat);
+	}
+	
+	
+	
+	
 
 
 	@Override
@@ -236,7 +307,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 		StringBuilder bf = new StringBuilder();
 
-//		StringBuilder cursorName = null;
+/**		StringBuilder cursorName = null;
 //		if(this.selectForUpdate){
 //			
 //			cursorName = new StringBuilder();
@@ -251,7 +322,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 //			}
 //			
 //			bf.append("DECLARE "+cursorName+" CURSOR FOR ");
-//		}
+//		}*/
 		
 		bf.append("SELECT ");
 
@@ -271,7 +342,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 		}
 
 		// forzatura di indici
-		if( (this.offset>=0 || this.limit>=0) == false ){
+		if( !(this.offset>=0 || this.limit>=0) ){
 			Iterator<String> itForceIndex = this.forceIndexTableNames.iterator();
 			while(itForceIndex.hasNext()){
 				bf.append(" "+itForceIndex.next()+" ");
@@ -279,7 +350,30 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 		}
 
 		// select field
-		if(this.fields.size()==0){
+		addSQLQuerySelectField(bf);
+
+		bf.append(getSQL(false,false,false,union));
+
+		/**if( this.offset>=0 || this.limit>=0)
+		//	System.out.println("SQL ["+bf.toString()+"]");*/
+		
+/**		if(this.selectForUpdate){
+//			
+//			bf.append("OPEN "+cursorName.toString()+" ");
+//			bf.append("FETCH NEXT FROM "+cursorName.toString()+" ");
+//			bf.append("WHILE @@FETCH_STATUS = 0 ");
+//			bf.append("BEGIN ");
+//			bf.append("FETCH NEXT FROM "+cursorName.toString()+" ");
+//			bf.append("END ");
+//			bf.append("CLOSE "+cursorName.toString()+" ");
+//			bf.append("DEALLOCATE "+cursorName.toString()+" ");
+//			
+//		}*/
+		
+		return bf.toString();
+	}
+	private void addSQLQuerySelectField(StringBuilder bf) {
+		if(this.fields.isEmpty()){
 			bf.append("*");
 		}else{
 			Iterator<String> it = this.fields.iterator();
@@ -299,26 +393,6 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				bf.append(field);
 			}
 		}
-
-		bf.append(getSQL(false,false,false,union));
-
-		//if( this.offset>=0 || this.limit>=0)
-		//	System.out.println("SQL ["+bf.toString()+"]");
-		
-//		if(this.selectForUpdate){
-//			
-//			bf.append("OPEN "+cursorName.toString()+" ");
-//			bf.append("FETCH NEXT FROM "+cursorName.toString()+" ");
-//			bf.append("WHILE @@FETCH_STATUS = 0 ");
-//			bf.append("BEGIN ");
-//			bf.append("FETCH NEXT FROM "+cursorName.toString()+" ");
-//			bf.append("END ");
-//			bf.append("CLOSE "+cursorName.toString()+" ");
-//			bf.append("DEALLOCATE "+cursorName.toString()+" ");
-//			
-//		}
-		
-		return bf.toString();
 	}
 
 
@@ -326,7 +400,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 
 	@Override
-	public String _createSQLDelete() throws SQLQueryObjectException {
+	public String createSQLDeleteEngine() throws SQLQueryObjectException {
 
 		StringBuilder bf = new StringBuilder();
 
@@ -347,28 +421,28 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 			this.checkSelectForUpdate(update, delete, union);
 		}
 		
-		if(update==false && conditions==false){
+		if(!update && !conditions){
 			// From
-			bf.append(" FROM ");
+			bf.append(SQLQueryObjectCore.FROM_SEPARATOR);
 
 
 			// Se e' presente Offset o Limit
-			//if( (this.offset>=0 || this.limit>=0) && (delete==false)) {
+			/**if( (this.offset>=0 || this.limit>=0) && (delete==false)) {*/
 			// Rilascio vincolo di order by in caso di limit impostato.
 			// Il vincolo rimane per l'offset, per gestire le select annidate di qualche implementazioni come Oracle,SQLServer ...
-			if( (this.offset>=0) && (delete==false)){
+			if( (this.offset>=0) && (!delete)){
 
-				//java.util.List<String> aliasOrderByDistinct = new java.util.ArrayList<>();
+				/**java.util.List<String> aliasOrderByDistinct = new java.util.ArrayList<>();*/
 
-				//if(this.isSelectDistinct()==false)			
-				bf.append(" ( SELECT ");
-				//else
-				//	bf.append(" ( SELECT DISTINCT ");
+				/**if(this.isSelectDistinct()==false)*/			
+				bf.append(SQLQueryObjectCore.SELECT_SEPARATOR_CON_INIZIO_APERTURA);
+				/**else
+				//	bf.append(" ( SELECT DISTINCT ");*/
 
 				// Questa istruzione ci vuole altrimenti in presenza di order by, group by si ottiene il seguente errore:
 				// The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
 				// In questo segmento di select forse non server?
-				// bf.append("TOP 100 PERCENT ");
+				/** bf.append("TOP 100 PERCENT ");*/
 
 				Iterator<String> itForceIndex = this.forceIndexTableNames.iterator();
 				while(itForceIndex.hasNext()){
@@ -377,7 +451,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 				if(this.isSelectDistinct()){
 					// select field
-					if(this.fields.size()==0){
+					if(this.fields.isEmpty()){
 						bf.append("*");
 					}else{
 						Iterator<String> it = this.fields.iterator();
@@ -399,7 +473,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 					}
 				}
 				else{			
-					if(this.fields.size()==0){
+					if(this.fields.isEmpty()){
 						bf.append("*");
 					}else{
 						Iterator<String> it = this.fields.iterator();
@@ -419,10 +493,10 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				bf.append(" , ROW_NUMBER() OVER ( ORDER BY ");
 
 				// Condizione OrderBy
-				if(this.orderBy.size()==0){
-					throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
+				if(this.orderBy.isEmpty()){
+					throw new SQLQueryObjectException(SQLQueryObjectCore.CONDIZIONI_ORDER_BY_RICHESTE);
 				}
-				if(this.orderBy.size()>0){
+				if(!this.orderBy.isEmpty()){
 					Iterator<String> it = this.orderBy.iterator();
 					boolean first = true;
 					while(it.hasNext()){
@@ -431,7 +505,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 						else
 							first = false;
 						String condizione = it.next();
-						/*System.out.println("=======================");
+						/**System.out.println("=======================");
 						System.out.println("alias: "+this.alias);
 						System.out.println("condizione: "+condizione);
 						System.out.println("KEY: "+(this.alias.containsKey(condizione)));
@@ -456,9 +530,9 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 							sortTypeAsc = this.orderBySortType.get(condizione);
 						}
 						if(sortTypeAsc){
-							bf.append(" ASC ");
+							bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 						}else{
-							bf.append(" DESC ");
+							bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 						}
 					}
 				}
@@ -466,13 +540,13 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				bf.append(" ) AS rowNumber ");
 
 
-				bf.append(" FROM ");
+				bf.append(SQLQueryObjectCore.FROM_SEPARATOR);
 
 				if(this.isSelectDistinct()){
 
 					bf.append(" ( SELECT DISTINCT TOP 100 PERCENT ");
 
-					if(this.fields.size()==0){
+					if(this.fields.isEmpty()){
 						bf.append("*");
 					}else{
 						Iterator<String> it = this.fields.iterator();
@@ -487,12 +561,12 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 						}
 					}
 
-					bf.append(" FROM ");
+					bf.append(SQLQueryObjectCore.FROM_SEPARATOR);
 				}
 
 				// Table dove effettuare la ricerca 'FromTable'
-				if(this.tables.size()==0){
-					throw new SQLQueryObjectException("Tabella di ricerca (... FROM Table ...) non definita");
+				if(this.tables.isEmpty()){
+					throw new SQLQueryObjectException(SQLQueryObjectCore.TABELLA_RICERCA_FROM_NON_DEFINITA);
 				}else{
 					Iterator<String> it = this.tables.iterator();
 					boolean first = true;
@@ -506,21 +580,21 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				}
 
 				// Condizioni di Where
-				if(this.conditions.size()>0){
+				if(!this.conditions.isEmpty()){
 
-					bf.append(" WHERE ");
+					bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 
 					if(this.notBeforeConditions){
-						bf.append(" NOT ( ");
+						bf.append(SQLQueryObjectCore.NOT_SEPARATOR_APERTURA);
 					}
 
 					for(int i=0; i<this.conditions.size(); i++){
 
 						if(i>0){
 							if(this.andLogicOperator){
-								bf.append(" AND ");
+								bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 							}else{
-								bf.append(" OR ");
+								bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 							}
 						}
 						String cond = this.conditions.get(i);				
@@ -533,8 +607,8 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				}
 
 				// Condizione GroupBy
-				if((this.getGroupByConditions().size()>0) && (delete==false)){
-					bf.append(" GROUP BY ");
+				if((!this.getGroupByConditions().isEmpty()) && (!delete)){
+					bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 					Iterator<String> it = this.getGroupByConditions().iterator();
 					boolean first = true;
 					while(it.hasNext()){
@@ -549,8 +623,8 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				if(this.isSelectDistinct()){
 
 					// Order solo in presenza di select distinct
-					if((this.orderBy.size()>0) && (delete==false)){
-						bf.append(" ORDER BY ");
+					if((!this.orderBy.isEmpty()) && (!delete)){
+						bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
 						Iterator<String> it = this.orderBy.iterator();
 						boolean first = true;
 						while(it.hasNext()){
@@ -565,9 +639,9 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 								sortTypeAsc = this.orderBySortType.get(column);
 							}
 							if(sortTypeAsc){
-								bf.append(" ASC ");
+								bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 							}else{
-								bf.append(" DESC ");
+								bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 							}
 						}
 					}
@@ -620,37 +694,37 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 
 				// ORDER BY FINALE
-				if(union==false){
-					if(this.orderBy.size()>0){
-						bf.append(" ORDER BY ");
-						Iterator<String> it = this.orderBy.iterator();
-						boolean first = true;
-						while(it.hasNext()){
-							if(!first)
-								bf.append(",");
-							else
-								first = false;
-							String originalField = it.next();
+				if(!union &&
+					(!this.orderBy.isEmpty())
+					){
+					bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
+					Iterator<String> it = this.orderBy.iterator();
+					boolean first = true;
+					while(it.hasNext()){
+						if(!first)
+							bf.append(",");
+						else
+							first = false;
+						String originalField = it.next();
 
-							String field = this.normalizeField(originalField);
-							bf.append(field);	
-							boolean sortTypeAsc = this.sortTypeAsc;
-							if(this.orderBySortType.containsKey(originalField)){
-								sortTypeAsc = this.orderBySortType.get(originalField);
-							}
-							if(sortTypeAsc){
-								bf.append(" ASC ");
-							}else{
-								bf.append(" DESC ");
-							}
+						String field = this.normalizeField(originalField);
+						bf.append(field);	
+						boolean sortTypeAsc = this.sortTypeAsc;
+						if(this.orderBySortType.containsKey(originalField)){
+							sortTypeAsc = this.orderBySortType.get(originalField);
+						}
+						if(sortTypeAsc){
+							bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
+						}else{
+							bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 						}
 					}
 				}
 
-				/* 
+				/** 
 				 * OLD ALIAS
 			if(aliasOrderByDistinct.size()>0){
-				bf.append(" ORDER BY ");
+				bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
 				Iterator<String> it = aliasOrderByDistinct.iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -661,25 +735,25 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 					bf.append(it.next());
 				}
 				if(this.sortTypeAsc){
-					bf.append(" ASC ");
+					bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 				}else{
-					bf.append(" DESC ");
+					bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 				}
 			}
 				 */
 
 				// ForUpdate (Non si può utilizzarlo con offset o limit in oracle)
-//				if(this.selectForUpdate){
+/**				if(this.selectForUpdate){
 //					bf.append(" FOR UPDATE ");
-//				}
+//				}*/
 				
 			}else{
 
 				// Offset non presente
 
 				// Table dove effettuare la ricerca 'FromTable'
-				if(this.tables.size()==0){
-					throw new SQLQueryObjectException("Tabella di ricerca (... FROM Table ...) non definita");
+				if(this.tables.isEmpty()){
+					throw new SQLQueryObjectException(SQLQueryObjectCore.TABELLA_RICERCA_FROM_NON_DEFINITA);
 				}else{
 
 					if(delete && this.tables.size()>2)
@@ -702,8 +776,8 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				}
 				
 				// Condizioni di Where
-				if(this.conditions.size()>0){
-					bf.append(" WHERE ");
+				if(!this.conditions.isEmpty()){
+					bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 
 					if(this.notBeforeConditions){
 						bf.append("NOT (");
@@ -712,9 +786,9 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 					for(int i=0; i<this.conditions.size(); i++){
 						if(i>0){
 							if(this.andLogicOperator){
-								bf.append(" AND ");
+								bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 							}else{
-								bf.append(" OR ");
+								bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 							}
 						}
 						bf.append(this.conditions.get(i));
@@ -727,8 +801,8 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				}
 
 				// Condizione GroupBy
-				if((this.getGroupByConditions().size()>0) && (delete==false)){
-					bf.append(" GROUP BY ");
+				if((!this.getGroupByConditions().isEmpty()) && (!delete)){
+					bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 					Iterator<String> it = this.getGroupByConditions().iterator();
 					boolean first = true;
 					while(it.hasNext()){
@@ -741,35 +815,35 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				}
 
 				// Condizione OrderBy
-				if(union==false){
-					if((this.orderBy.size()>0) && (delete==false)){
-						bf.append(" ORDER BY ");
-						Iterator<String> it = this.orderBy.iterator();
-						boolean first = true;
-						while(it.hasNext()){
-							String column = it.next();
-							if(!first)
-								bf.append(",");
-							else
-								first = false;
-							bf.append(column);
-							boolean sortTypeAsc = this.sortTypeAsc;
-							if(this.orderBySortType.containsKey(column)){
-								sortTypeAsc = this.orderBySortType.get(column);
-							}
-							if(sortTypeAsc){
-								bf.append(" ASC ");
-							}else{
-								bf.append(" DESC ");
-							}
+				if(!union &&
+					(!this.orderBy.isEmpty()) && (!delete)
+					){
+					bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
+					Iterator<String> it = this.orderBy.iterator();
+					boolean first = true;
+					while(it.hasNext()){
+						String column = it.next();
+						if(!first)
+							bf.append(",");
+						else
+							first = false;
+						bf.append(column);
+						boolean sortTypeAsc = this.sortTypeAsc;
+						if(this.orderBySortType.containsKey(column)){
+							sortTypeAsc = this.orderBySortType.get(column);
+						}
+						if(sortTypeAsc){
+							bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
+						}else{
+							bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 						}
 					}
 				}
 				
 //				// ForUpdate
-//				if(this.selectForUpdate){
+/**				if(this.selectForUpdate){
 //					bf.append(" FOR UPDATE ");
-//				}
+//				}*/
 			}
 		}else{
 
@@ -777,15 +851,15 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 			// Non genero per le condizioni, per update viene sollevata eccezione prima
 			// For Update
-//			if(this.selectForUpdate){
+/**			if(this.selectForUpdate){
 //				bf.append(" WITH (ROWLOCK) ");
-//			}
+//			}*/
 			
 			// Condizioni di Where
-			if(this.conditions.size()>0){
+			if(!this.conditions.isEmpty()){
 
-				if(conditions==false)
-					bf.append(" WHERE ");
+				if(!conditions)
+					bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 
 				if(this.notBeforeConditions){
 					bf.append("NOT (");
@@ -794,9 +868,9 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				for(int i=0; i<this.conditions.size(); i++){
 					if(i>0){
 						if(this.andLogicOperator){
-							bf.append(" AND ");
+							bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 						}else{
-							bf.append(" OR ");
+							bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 						}
 					}
 					bf.append(this.conditions.get(i));
@@ -809,9 +883,9 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 			}
 			
 //			// ForUpdate
-//			if(this.selectForUpdate){
+/**			if(this.selectForUpdate){
 //				bf.append(" FOR UPDATE ");
-//			}
+//			}*/
 		}
 
 		return bf.toString();
@@ -831,25 +905,25 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 		StringBuilder bf = new StringBuilder();
 
 		// Non ha senso, la union fa gia la distinct, a meno di usare la unionAll ma in quel caso non si vuole la distinct
-		// if(this.isSelectDistinct())
-		//	bf.append(" DISTINCT ");
+		/** if(this.isSelectDistinct())
+		//	bf.append(" DISTINCT ");*/
 
 		// Se e' presente Offset o Limit
 		// Rilascio vincolo di order by in caso di limit impostato.
 		// Il vincolo rimane per l'offset, per gestire le select annidate di qualche implementazioni come Oracle,SQLServer ...
-		//if( (this.offset>=0 || this.limit>=0) ){
+		/**if( (this.offset>=0 || this.limit>=0) ){*/
 		if( this.offset>=0 ){
 
 			bf.append("SELECT TOP 100 PERCENT * from ");
 
-			bf.append(" ( SELECT ");
+			bf.append(SQLQueryObjectCore.SELECT_SEPARATOR_CON_INIZIO_APERTURA);
 
 			// Questa istruzione ci vuole altrimenti in presenza di order by, group by si ottiene il seguente errore:
 			// The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP or FOR XML is also specified.
 			// In questo segmento di select forse non server?
-			// bf.append("TOP 100 PERCENT ");
+			/** bf.append("TOP 100 PERCENT ");*/
 
-			if(this.fields.size()==0){
+			if(this.fields.isEmpty()){
 				bf.append("*");
 			}else{
 				Iterator<String> it = this.fields.iterator();
@@ -867,10 +941,10 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 			bf.append(" , ROW_NUMBER() OVER ( ORDER BY ");
 
 			// Condizione OrderBy
-			if(this.orderBy.size()==0){
-				throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
+			if(this.orderBy.isEmpty()){
+				throw new SQLQueryObjectException(SQLQueryObjectCore.CONDIZIONI_ORDER_BY_RICHESTE);
 			}
-			if(this.orderBy.size()>0){
+			if(!this.orderBy.isEmpty()){
 				Iterator<String> it = this.orderBy.iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -889,9 +963,9 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 						sortTypeAsc = this.orderBySortType.get(condizione);
 					}
 					if(sortTypeAsc){
-						bf.append(" ASC ");
+						bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 					}else{
-						bf.append(" DESC ");
+						bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 					}
 				}
 			}
@@ -899,7 +973,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 			bf.append(" ) AS rowNumber ");
 
 			// Table dove effettuare la ricerca 'FromTable'
-			bf.append(" FROM ( ");
+			bf.append(SQLQueryObjectCore.FROM_SEPARATOR_APERTURA);
 
 			for(int i=0; i<sqlQueryObject.length; i++){
 
@@ -925,24 +999,24 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				bf.append(") ");
 			}
 
-			bf.append(" ) as subquery"+getSerial()+" ");
+			bf.append(SQLQueryObjectCore.AS_SUBQUERY_SUFFIX+getSerial()+" ");
 
 			// Condizioni di Where
-			if(this.conditions.size()>0){
+			if(!this.conditions.isEmpty()){
 
-				bf.append(" WHERE ");
+				bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 
 				if(this.notBeforeConditions){
-					bf.append(" NOT ( ");
+					bf.append(SQLQueryObjectCore.NOT_SEPARATOR_APERTURA);
 				}
 
 				for(int i=0; i<this.conditions.size(); i++){
 
 					if(i>0){
 						if(this.andLogicOperator){
-							bf.append(" AND ");
+							bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 						}else{
-							bf.append(" OR ");
+							bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 						}
 					}
 					String cond = this.conditions.get(i);
@@ -955,8 +1029,8 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 			}
 
 			// Condizione GroupBy
-			if((this.getGroupByConditions().size()>0)){
-				bf.append(" GROUP BY ");
+			if((!this.getGroupByConditions().isEmpty())){
+				bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 				Iterator<String> it = this.getGroupByConditions().iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -968,7 +1042,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				}
 			}
 
-			bf.append(" ) as subquery"+getSerial()+" ");
+			bf.append(SQLQueryObjectCore.AS_SUBQUERY_SUFFIX+getSerial()+" ");
 
 			bf.append(" WHERE ( ");
 			if(this.offset>=0){
@@ -1011,7 +1085,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				bf.append(" "+itForceIndex.next()+" ");
 			}
 
-			if(this.fields.size()==0){
+			if(this.fields.isEmpty()){
 				bf.append("*");
 			}else{
 				Iterator<String> it = this.fields.iterator();
@@ -1026,7 +1100,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				}
 			}
 
-			bf.append(" FROM ( ");
+			bf.append(SQLQueryObjectCore.FROM_SEPARATOR_APERTURA);
 
 			for(int i=0; i<sqlQueryObject.length; i++){
 
@@ -1052,12 +1126,12 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				bf.append(") ");
 			}
 
-			bf.append(" ) as subquery"+getSerial()+" ");
+			bf.append(SQLQueryObjectCore.AS_SUBQUERY_SUFFIX+getSerial()+" ");
 
 
 			// Condizione GroupBy
-			if((this.getGroupByConditions().size()>0)){
-				bf.append(" GROUP BY ");
+			if((!this.getGroupByConditions().isEmpty())){
+				bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 				Iterator<String> it = this.getGroupByConditions().iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -1070,8 +1144,8 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 			}
 
 			// Condizione OrderBy
-			if(this.orderBy.size()>0){
-				bf.append(" ORDER BY ");
+			if(!this.orderBy.isEmpty()){
+				bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
 				Iterator<String> it = this.orderBy.iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -1086,9 +1160,9 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 						sortTypeAsc = this.orderBySortType.get(column);
 					}
 					if(sortTypeAsc){
-						bf.append(" ASC ");
+						bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 					}else{
-						bf.append(" DESC ");
+						bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 					}
 				}
 			}
@@ -1112,17 +1186,17 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 		bf.append("SELECT count(*) "+this.getDefaultAliasFieldKeyword()+" ");
 		bf.append(aliasCount);
-		bf.append(" FROM ( ");
+		bf.append(SQLQueryObjectCore.FROM_SEPARATOR_APERTURA);
 
 		bf.append( this.createSQLUnion(unionAll, sqlQueryObject) );
 
-		bf.append(" ) as subquery"+getSerial()+" ");
+		bf.append(SQLQueryObjectCore.AS_SUBQUERY_SUFFIX+getSerial()+" ");
 
 		return bf.toString();
 	}
 
 	@Override
-	public String _createSQLUpdate() throws SQLQueryObjectException {
+	public String createSQLUpdateEngine() throws SQLQueryObjectException {
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append("UPDATE ");
@@ -1149,7 +1223,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	/* ---------------- WHERE CONDITIONS ------------------ */
 
 	@Override
-	public String _createSQLConditions() throws SQLQueryObjectException {
+	public String createSQLConditionsEngine() throws SQLQueryObjectException {
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append(getSQL(false,false,true,false));

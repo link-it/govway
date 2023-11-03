@@ -57,7 +57,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	}
 	@Override
 	public void setLimit(int limit) throws SQLQueryObjectException{
-		if(this.offset<0 && this.orderBy.size()>0){
+		if(this.offset<0 && !this.orderBy.isEmpty()){
 			this.offset = 0;
 		}
 		super.setLimit(limit);
@@ -85,7 +85,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	
 	@Override
 	public String getUnixTimestampConversion(String column){
-		String timeZone = "Europe/Rome";
+		String timeZone = null;/**"Europe/Rome";*/
 		timeZone = java.util.TimeZone.getDefault().getID(); // fix: uso il timeZone di sistema
 		return "("+
 				"(((cast("+column+" as date) - to_date('19700101','YYYYMMDD')) * 86400 * 1000) + to_number(to_char("+column+",'FF3'))) - "+				
@@ -120,14 +120,14 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	@Override
 	public ISQLQueryObject addSelectAvgTimestampField(String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field avg non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "avg("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + this.getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -143,14 +143,14 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	@Override
 	public ISQLQueryObject addSelectMaxTimestampField(String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "max("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + this.getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -165,14 +165,14 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	@Override
 	public ISQLQueryObject addSelectMinTimestampField(String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "min("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + this.getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -187,14 +187,14 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	@Override
 	public ISQLQueryObject addSelectSumTimestampField(String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field non puo' essere null");
+			throw new SQLQueryObjectException(SQLQueryObjectCore.FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		// Trasformo in UNIX_TIMESTAMP
 		String fieldSQL = "sum("+this.getUnixTimestampConversion(field)+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + this.getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		return this;
 	}
@@ -252,6 +252,37 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 		return this;
 	}
 	
+
+	
+	
+	
+	
+	@Override
+	public String getExtractDayFormatFromTimestampFieldPrefix(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		if(dayFormat==null) {
+			throw new SQLQueryObjectException("dayFormat undefined");
+		}
+		if(DayFormatEnum.FULL_DAY_NAME.equals(dayFormat)) {
+			return "TRIM(BOTH FROM TO_CHAR(";
+		}
+		else {
+			return super.getExtractDayFormatFromTimestampFieldPrefix(dayFormat);
+		}
+	}
+	@Override
+	public String getExtractDayFormatFromTimestampFieldSuffix(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		if(DayFormatEnum.FULL_DAY_NAME.equals(dayFormat)) {
+			return super.getExtractDayFormatFromTimestampFieldSuffix(dayFormat) + ")"; // chiusura trim
+		}
+		else {
+			return super.getExtractDayFormatFromTimestampFieldSuffix(dayFormat);
+		}
+	}
+	
+	
+	
+	
+	
 	
 	
 	
@@ -290,7 +321,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 		bf.append("SELECT ");
 		
 		// forzatura di indici
-		if( (this.offset>=0 || this.limit>=0) == false ){
+		if( !(this.offset>=0 || this.limit>=0) ){
 			Iterator<String> itForceIndex = this.forceIndexTableNames.iterator();
 			while(itForceIndex.hasNext()){
 				bf.append(" "+itForceIndex.next()+" ");
@@ -301,7 +332,17 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			bf.append(" DISTINCT ");
 		
 		// select field
-		if(this.fields.size()==0){
+		addSQLQuerySelectField(bf);
+		
+		bf.append(getSQL(false,false,false,union));
+		
+		/**if( this.offset>=0 || this.limit>=0)
+		//	System.out.println("SQL ["+bf.toString()+"]");*/
+		
+		return bf.toString();
+	}
+	private void addSQLQuerySelectField(StringBuilder bf) {
+		if(this.fields.isEmpty()){
 			bf.append("*");
 		}else{
 			Iterator<String> it = this.fields.iterator();
@@ -313,7 +354,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					first = false;
 
 				String field = it.next();
-				//if( this.offset>=0 || this.limit>=0){
+				/**if( this.offset>=0 || this.limit>=0){*/
 				// Rilascio vincolo di order by in caso di limit impostato.
 				// Il vincolo rimane per l'offset, per gestire le select annidate di qualche implementazioni come Oracle,SQLServer ...
 				if( this.offset>=0 ){
@@ -324,14 +365,8 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 				bf.append(field);
 			}
 		}
-		
-		bf.append(getSQL(false,false,false,union));
-		
-		//if( this.offset>=0 || this.limit>=0)
-		//	System.out.println("SQL ["+bf.toString()+"]");
-		
-		return bf.toString();
 	}
+	
 
 	/**
 	 * Crea una SQL per una operazione di Delete con i dati dell'oggetto
@@ -339,7 +374,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	 * @return SQL per una operazione di Delete
 	 */
 	@Override
-	public String _createSQLDelete() throws SQLQueryObjectException{
+	public String createSQLDeleteEngine() throws SQLQueryObjectException{
 		
 		StringBuilder bf = new StringBuilder();
 				
@@ -361,29 +396,29 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			this.checkSelectForUpdate(update, delete, union);
 		}
 		
-		if(update==false && conditions==false){
+		if(!update && !conditions){
 			// From
-			bf.append(" FROM ");
+			bf.append(SQLQueryObjectCore.FROM_SEPARATOR);
 			
 			
 			// Se e' presente Offset
-			//if( (this.offset>=0 || this.limit>=0) && (delete==false)){
+			/**if( (this.offset>=0 || this.limit>=0) && (delete==false)){*/
 			// Rilascio vincolo di order by in caso di limit impostato.
 			// Il vincolo rimane per l'offset, per gestire le select annidate di qualche implementazioni come Oracle,SQLServer ...
-			if( (this.offset>=0) && (delete==false)){
+			if( (this.offset>=0) && (!delete)){
 				
-				//java.util.List<String> aliasOrderByDistinct = new java.util.ArrayList<>();
+				/**java.util.List<String> aliasOrderByDistinct = new java.util.ArrayList<>();*/
 								
-				if(this.isSelectDistinct()==false){
+				if(!this.isSelectDistinct()){
 				
-					bf.append(" ( SELECT ");
+					bf.append(SQLQueryObjectCore.SELECT_SEPARATOR_CON_INIZIO_APERTURA);
 					
 					Iterator<String> itForceIndex = this.forceIndexTableNames.iterator();
 					while(itForceIndex.hasNext()){
 						bf.append(" "+itForceIndex.next()+" ");
 					}
 									
-					if(this.fields.size()==0){
+					if(this.fields.isEmpty()){
 						Iterator<String> it = this.tableNames.iterator();
 						boolean first = true;
 						while(it.hasNext()){
@@ -411,10 +446,10 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					bf.append(" , ROW_NUMBER() OVER ( ORDER BY ");
 					
 					// Condizione OrderBy
-					if(this.orderBy.size()==0){
-						throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
+					if(this.orderBy.isEmpty()){
+						throw new SQLQueryObjectException(SQLQueryObjectCore.CONDIZIONI_ORDER_BY_RICHESTE);
 					}
-					if(this.orderBy.size()>0){
+					if(!this.orderBy.isEmpty()){
 						Iterator<String> it = this.orderBy.iterator();
 						boolean first = true;
 						while(it.hasNext()){
@@ -433,9 +468,9 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 								sortTypeAsc = this.orderBySortType.get(condizione);
 							}
 							if(sortTypeAsc){
-								bf.append(" ASC ");
+								bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 							}else{
-								bf.append(" DESC ");
+								bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 							}
 						}
 					}
@@ -443,12 +478,12 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					bf.append(" ) AS rowNumber ");
 					
 				
-					bf.append(" FROM ");
+					bf.append(SQLQueryObjectCore.FROM_SEPARATOR);
 				
 								
 					// Table dove effettuare la ricerca 'FromTable'
-					if(this.tables.size()==0){
-						throw new SQLQueryObjectException("Tabella di ricerca (... FROM Table ...) non definita");
+					if(this.tables.isEmpty()){
+						throw new SQLQueryObjectException(SQLQueryObjectCore.TABELLA_RICERCA_FROM_NON_DEFINITA);
 					}else{
 						Iterator<String> it = this.tables.iterator();
 						boolean first = true;
@@ -462,21 +497,21 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					}
 				
 					// Condizioni di Where
-					if(this.conditions.size()>0){
+					if(!this.conditions.isEmpty()){
 					
-						bf.append(" WHERE ");
+						bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 						
 						if(this.notBeforeConditions){
-							bf.append(" NOT ( ");
+							bf.append(SQLQueryObjectCore.NOT_SEPARATOR_APERTURA);
 						}
 						
 						for(int i=0; i<this.conditions.size(); i++){
 							
 							if(i>0){
 								if(this.andLogicOperator){
-									bf.append(" AND ");
+									bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 								}else{
-									bf.append(" OR ");
+									bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 								}
 							}
 							String cond = this.conditions.get(i);				
@@ -489,8 +524,8 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					}
 					
 					// Condizione GroupBy
-					if((this.getGroupByConditions().size()>0) && (delete==false)){
-						bf.append(" GROUP BY ");
+					if((!this.getGroupByConditions().isEmpty()) && (!delete)){
+						bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 						Iterator<String> it = this.getGroupByConditions().iterator();
 						boolean first = true;
 						while(it.hasNext()){
@@ -503,20 +538,20 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					}
 					
 					// ForUpdate (Non si può utilizzarlo con offset o limit in oracle)
-//					if(this.selectForUpdate){
+/**					if(this.selectForUpdate){
 //						bf.append(" FOR UPDATE ");
-//					}
+//					}*/
 				
 				}else{
 					
-					bf.append(" ( SELECT ");
+					bf.append(SQLQueryObjectCore.SELECT_SEPARATOR_CON_INIZIO_APERTURA);
 					
 					Iterator<String> itForceIndex = this.forceIndexTableNames.iterator();
 					while(itForceIndex.hasNext()){
 						bf.append(" "+itForceIndex.next()+" ");
 					}
 					
-					if(this.fields.size()==0){
+					if(this.fields.isEmpty()){
 						Iterator<String> it = this.tableNames.iterator();
 						boolean first = true;
 						while(it.hasNext()){
@@ -544,7 +579,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					}
 					
 					// Cerco inoltre se ci sono delle condizioni di ORDER BY, ed in tal caso le metto come Alias
-					/* NON FUNZIONA
+					/** NON FUNZIONA
 					int contatoreAlias = 0;
 					if(this.orderBy.size()>0){
 						Iterator<String> it = this.orderBy.iterator();
@@ -567,11 +602,11 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					
 					bf.append(" , ROWNUM AS rowNumber");
 				
-					bf.append(" FROM ");
+					bf.append(SQLQueryObjectCore.FROM_SEPARATOR);
 					
 					bf.append(" ( SELECT DISTINCT ");
 					
-						if(this.fields.size()==0){
+						if(this.fields.isEmpty()){
 							bf.append("*");
 						}else{
 							Iterator<String> it = this.fields.iterator();
@@ -586,11 +621,11 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 							}
 						}
 						
-						bf.append(" FROM ");
+						bf.append(SQLQueryObjectCore.FROM_SEPARATOR);
 					
 						// Table dove effettuare la ricerca 'FromTable'
-						if(this.tables.size()==0){
-							throw new SQLQueryObjectException("Tabella di ricerca (... FROM Table ...) non definita");
+						if(this.tables.isEmpty()){
+							throw new SQLQueryObjectException(SQLQueryObjectCore.TABELLA_RICERCA_FROM_NON_DEFINITA);
 						}else{
 							Iterator<String> it = this.tables.iterator();
 							boolean first = true;
@@ -606,21 +641,21 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 						bf.append(" ");
 						
 						// Condizioni di Where
-						if(this.conditions.size()>0){
+						if(!this.conditions.isEmpty()){
 						
-							bf.append(" WHERE ");
+							bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 							
 							if(this.notBeforeConditions){
-								bf.append(" NOT ( ");
+								bf.append(SQLQueryObjectCore.NOT_SEPARATOR_APERTURA);
 							}
 							
 							for(int i=0; i<this.conditions.size(); i++){
 								
 								if(i>0){
 									if(this.andLogicOperator){
-										bf.append(" AND ");
+										bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 									}else{
-										bf.append(" OR ");
+										bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 									}
 								}
 								String cond = this.conditions.get(i);				
@@ -633,8 +668,8 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 						}
 						
 						// Condizione GroupBy
-						if((this.getGroupByConditions().size()>0) && (delete==false)){
-							bf.append(" GROUP BY ");
+						if((!this.getGroupByConditions().isEmpty()) && (!delete)){
+							bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 							Iterator<String> it = this.getGroupByConditions().iterator();
 							boolean first = true;
 							while(it.hasNext()){
@@ -647,11 +682,11 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 						}
 						
 						// Condizione OrderBy
-						if(this.orderBy.size()==0){
-							throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
+						if(this.orderBy.isEmpty()){
+							throw new SQLQueryObjectException(SQLQueryObjectCore.CONDIZIONI_ORDER_BY_RICHESTE);
 						}
-						if(this.orderBy.size()>0){
-							bf.append(" ORDER BY ");
+						if(!this.orderBy.isEmpty()){
+							bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
 							Iterator<String> it = this.orderBy.iterator();
 							boolean first = true;
 							while(it.hasNext()){
@@ -666,9 +701,9 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 									sortTypeAsc = this.orderBySortType.get(column);
 								}
 								if(sortTypeAsc){
-									bf.append(" ASC ");
+									bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 								}else{
-									bf.append(" DESC ");
+									bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 								}
 							}
 						}
@@ -695,39 +730,39 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 				
 				
 				// ORDER BY FINALE
-				if(union==false){
-					if(this.orderBy.size()>0){
-						bf.append(" ORDER BY ");
-						Iterator<String> it = this.orderBy.iterator();
-						boolean first = true;
-						while(it.hasNext()){
-							if(!first)
-								bf.append(",");
-							else
-								first = false;
-							String originalField = it.next();
-							
-							String field = this.normalizeField(originalField);
-							
-							bf.append(field);
-							
-							boolean sortTypeAsc = this.sortTypeAsc;
-							if(this.orderBySortType.containsKey(originalField)){
-								sortTypeAsc = this.orderBySortType.get(originalField);
-							}
-							if(sortTypeAsc){
-								bf.append(" ASC ");
-							}else{
-								bf.append(" DESC ");
-							}
+				if(!union &&
+					(!this.orderBy.isEmpty())
+					){
+					bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
+					Iterator<String> it = this.orderBy.iterator();
+					boolean first = true;
+					while(it.hasNext()){
+						if(!first)
+							bf.append(",");
+						else
+							first = false;
+						String originalField = it.next();
+						
+						String field = this.normalizeField(originalField);
+						
+						bf.append(field);
+						
+						boolean sortTypeAsc = this.sortTypeAsc;
+						if(this.orderBySortType.containsKey(originalField)){
+							sortTypeAsc = this.orderBySortType.get(originalField);
+						}
+						if(sortTypeAsc){
+							bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
+						}else{
+							bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 						}
 					}
 				}
 				
-				/* 
+				/** 
 				 * OLD ALIAS
 				if(aliasOrderByDistinct.size()>0){
-					bf.append(" ORDER BY ");
+					bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
 					Iterator<String> it = aliasOrderByDistinct.iterator();
 					boolean first = true;
 					while(it.hasNext()){
@@ -738,9 +773,9 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 						bf.append(it.next());
 					}
 					if(this.sortTypeAsc){
-						bf.append(" ASC ");
+						bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 					}else{
-						bf.append(" DESC ");
+						bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 					}
 				}
 				*/
@@ -750,8 +785,8 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 				// Offset non presente
 				
 				// Table dove effettuare la ricerca 'FromTable'
-				if(this.tables.size()==0){
-					throw new SQLQueryObjectException("Tabella di ricerca (... FROM Table ...) non definita");
+				if(this.tables.isEmpty()){
+					throw new SQLQueryObjectException(SQLQueryObjectCore.TABELLA_RICERCA_FROM_NON_DEFINITA);
 				}else{
 					
 					if(delete && this.tables.size()>2)
@@ -769,8 +804,8 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 				}
 				
 				// Condizioni di Where
-				if(this.conditions.size()>0){
-					bf.append(" WHERE ");
+				if(!this.conditions.isEmpty()){
+					bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 					
 					if(this.notBeforeConditions){
 						bf.append("NOT (");
@@ -779,9 +814,9 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					for(int i=0; i<this.conditions.size(); i++){
 						if(i>0){
 							if(this.andLogicOperator){
-								bf.append(" AND ");
+								bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 							}else{
-								bf.append(" OR ");
+								bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 							}
 						}
 						bf.append(this.conditions.get(i));
@@ -795,10 +830,10 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 						
 				// LIMIT
 				if(this.limit>=0){
-					if(this.conditions.size()<=0){
-						bf.append(" WHERE ");
+					if(this.conditions.isEmpty()){
+						bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 					}else{
-						bf.append(" AND ");
+						bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 					}
 					bf.append(" ( rownum <= ");
 					bf.append(this.limit);
@@ -806,8 +841,8 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 				}
 				
 				// Condizione GroupBy
-				if((this.getGroupByConditions().size()>0) && (delete==false)){
-					bf.append(" GROUP BY ");
+				if((!this.getGroupByConditions().isEmpty()) && (!delete)){
+					bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 					Iterator<String> it = this.getGroupByConditions().iterator();
 					boolean first = true;
 					while(it.hasNext()){
@@ -820,27 +855,27 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 				}
 			
 				// Condizione OrderBy
-				if(union==false){
-					if((this.orderBy.size()>0) && (delete==false)){
-						bf.append(" ORDER BY ");
-						Iterator<String> it = this.orderBy.iterator();
-						boolean first = true;
-						while(it.hasNext()){
-							String column = it.next();
-							if(!first)
-								bf.append(",");
-							else
-								first = false;
-							bf.append(column);
-							boolean sortTypeAsc = this.sortTypeAsc;
-							if(this.orderBySortType.containsKey(column)){
-								sortTypeAsc = this.orderBySortType.get(column);
-							}
-							if(sortTypeAsc){
-								bf.append(" ASC ");
-							}else{
-								bf.append(" DESC ");
-							}
+				if(!union &&
+					((!this.orderBy.isEmpty()) && (!delete))
+					){
+					bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
+					Iterator<String> it = this.orderBy.iterator();
+					boolean first = true;
+					while(it.hasNext()){
+						String column = it.next();
+						if(!first)
+							bf.append(",");
+						else
+							first = false;
+						bf.append(column);
+						boolean sortTypeAsc = this.sortTypeAsc;
+						if(this.orderBySortType.containsKey(column)){
+							sortTypeAsc = this.orderBySortType.get(column);
+						}
+						if(sortTypeAsc){
+							bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
+						}else{
+							bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 						}
 					}
 				}
@@ -856,10 +891,10 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			// UPDATE, conditions
 			
 			// Condizioni di Where
-			if(this.conditions.size()>0){
+			if(!this.conditions.isEmpty()){
 				
-				if(conditions==false)
-					bf.append(" WHERE ");
+				if(!conditions)
+					bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 				
 				if(this.notBeforeConditions){
 					bf.append("NOT (");
@@ -868,9 +903,9 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 				for(int i=0; i<this.conditions.size(); i++){
 					if(i>0){
 						if(this.andLogicOperator){
-							bf.append(" AND ");
+							bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 						}else{
-							bf.append(" OR ");
+							bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 						}
 					}
 					bf.append(this.conditions.get(i));
@@ -884,9 +919,9 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			
 			// Non genero per le condizioni, per update viene sollevata eccezione prima
 			// ForUpdate
-//			if(this.selectForUpdate){
+/**			if(this.selectForUpdate){
 //				bf.append(" FOR UPDATE ");
-//			}
+//			}*/
 		}
 		
 		return bf.toString();
@@ -933,8 +968,8 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 		bf.append("SELECT ");
 		
 //		// Non ha senso, la union fa gia la distinct, a meno di usare la unionAll ma in quel caso non si vuole la distinct
-//		// if(this.isSelectDistinct())
-//		//	bf.append(" DISTINCT ");
+/**		// if(this.isSelectDistinct())
+//		//	bf.append(" DISTINCT ");*/
 		
 		
 		if( this.offset<0 ){
@@ -944,7 +979,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 				bf.append(" "+itForceIndex.next()+" ");
 			}
 			
-			if(this.fields.size()==0){
+			if(this.fields.isEmpty()){
 				bf.append("* ");
 			}else{
 				Iterator<String> it = this.fields.iterator();
@@ -965,22 +1000,22 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			bf.append("* ");
 		}
 	
-		bf.append(" FROM ");
+		bf.append(SQLQueryObjectCore.FROM_SEPARATOR);
 		
 		// Se e' presente Offset
-		//if( (this.offset>=0 || this.limit>=0) ){
+		/**if( (this.offset>=0 || this.limit>=0) ){*/
 		// Rilascio vincolo di order by in caso di limit impostato.
 		// Il vincolo rimane per l'offset, per gestire le select annidate di qualche implementazioni come Oracle,SQLServer ...
 		if( this.offset>=0 ){
 			
-			bf.append(" ( SELECT ");
+			bf.append(SQLQueryObjectCore.SELECT_SEPARATOR_CON_INIZIO_APERTURA);
 			
 			Iterator<String> itForceIndex = this.forceIndexTableNames.iterator();
 			while(itForceIndex.hasNext()){
 				bf.append(" "+itForceIndex.next()+" ");
 			}
 			
-			if(this.fields.size()==0){
+			if(this.fields.isEmpty()){
 				Iterator<String> it = this.tableNames.iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -1007,10 +1042,10 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			bf.append(" , ROW_NUMBER() OVER ( ORDER BY ");
 			
 			// Condizione OrderBy
-			if(this.orderBy.size()==0){
-				throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
+			if(this.orderBy.isEmpty()){
+				throw new SQLQueryObjectException(SQLQueryObjectCore.CONDIZIONI_ORDER_BY_RICHESTE);
 			}
-			if(this.orderBy.size()>0){
+			if(!this.orderBy.isEmpty()){
 				Iterator<String> it = this.orderBy.iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -1029,9 +1064,9 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 						sortTypeAsc = this.orderBySortType.get(condizione);
 					}
 					if(sortTypeAsc){
-						bf.append(" ASC ");
+						bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 					}else{
-						bf.append(" DESC ");
+						bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 					}
 				}
 			}
@@ -1040,7 +1075,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			
 			
 			// Table dove effettuare la ricerca 'FromTable'
-			bf.append(" FROM ( ");
+			bf.append(SQLQueryObjectCore.FROM_SEPARATOR_APERTURA);
 			
 			for(int i=0; i<sqlQueryObject.length; i++){
 				
@@ -1069,21 +1104,21 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			bf.append(" ) ");
 			
 			// Condizioni di Where
-			if(this.conditions.size()>0){
+			if(!this.conditions.isEmpty()){
 			
-				bf.append(" WHERE ");
+				bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 				
 				if(this.notBeforeConditions){
-					bf.append(" NOT ( ");
+					bf.append(SQLQueryObjectCore.NOT_SEPARATOR_APERTURA);
 				}
 				
 				for(int i=0; i<this.conditions.size(); i++){
 					
 					if(i>0){
 						if(this.andLogicOperator){
-							bf.append(" AND ");
+							bf.append(SQLQueryObjectCore.AND_SEPARATOR);
 						}else{
-							bf.append(" OR ");
+							bf.append(SQLQueryObjectCore.OR_SEPARATOR);
 						}
 					}
 					String cond = this.conditions.get(i);
@@ -1096,8 +1131,8 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			}
 			
 			// Condizione GroupBy
-			if((this.getGroupByConditions().size()>0)){
-				bf.append(" GROUP BY ");
+			if((!this.getGroupByConditions().isEmpty())){
+				bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 				Iterator<String> it = this.getGroupByConditions().iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -1160,15 +1195,15 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 
 			// LIMIT
 			if(this.limit>=0){
-				bf.append(" WHERE ");
+				bf.append(SQLQueryObjectCore.WHERE_SEPARATOR);
 				bf.append(" ( rownum <= ");
 				bf.append(this.limit);
 				bf.append(" ) ");
 			}	
 			
 			// Condizione GroupBy
-			if((this.getGroupByConditions().size()>0)){
-				bf.append(" GROUP BY ");
+			if((!this.getGroupByConditions().isEmpty())){
+				bf.append(SQLQueryObjectCore.GROUP_BY_SEPARATOR);
 				Iterator<String> it = this.getGroupByConditions().iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -1181,8 +1216,8 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			}
 			
 			// Condizione OrderBy
-			if(this.orderBy.size()>0){
-				bf.append(" ORDER BY ");
+			if(!this.orderBy.isEmpty()){
+				bf.append(SQLQueryObjectCore.ORDER_BY_SEPARATOR);
 				Iterator<String> it = this.orderBy.iterator();
 				boolean first = true;
 				while(it.hasNext()){
@@ -1197,15 +1232,15 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 						sortTypeAsc = this.orderBySortType.get(column);
 					}
 					if(sortTypeAsc){
-						bf.append(" ASC ");
+						bf.append(SQLQueryObjectCore.ASC_SEPARATOR);
 					}else{
-						bf.append(" DESC ");
+						bf.append(SQLQueryObjectCore.DESC_SEPARATOR);
 					}
 				}
 			}
 		}
 		
-//		bf.append(" ) ");
+/**		bf.append(" ) ");*/
 		
 		return bf.toString();
 	}
@@ -1244,7 +1279,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 		
 		bf.append("SELECT count(*) "+this.getDefaultAliasFieldKeyword()+" ");
 		bf.append(aliasCount);
-		bf.append(" FROM ( ");
+		bf.append(SQLQueryObjectCore.FROM_SEPARATOR_APERTURA);
 		
 		bf.append( this.createSQLUnion(unionAll, sqlQueryObject) );
 		
@@ -1262,7 +1297,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	 * @return SQL per una operazione di Update
 	 */
 	@Override
-	public String _createSQLUpdate() throws SQLQueryObjectException{
+	public String createSQLUpdateEngine() throws SQLQueryObjectException{
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append("UPDATE ");
@@ -1293,7 +1328,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	 * @return SQL Query
 	 */
 	@Override
-	public String _createSQLConditions() throws SQLQueryObjectException{
+	public String createSQLConditionsEngine() throws SQLQueryObjectException{
 		
 		StringBuilder bf = new StringBuilder();
 		bf.append(getSQL(false,false,true,false));

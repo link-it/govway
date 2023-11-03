@@ -36,8 +36,8 @@ public class EscapeSQLConfiguration {
 	// Alcuni caratteri possono essere 'escaped' tramite un comune carattere di escape (con in aggiunta una eventuale clausola di escape)
 	// Altri devono essere 'escaped' tramite un carattere di escape di default senza la clausola di escape
 	
-	private List<EscapeWithOtherEscapeChar> escapeWithOtherEscapeChar = new ArrayList<EscapeWithOtherEscapeChar>(); 
-	private List<Character> escapeChar = new ArrayList<Character>(); 
+	private List<EscapeWithOtherEscapeChar> escapeWithOtherEscapeChar = new ArrayList<>(); 
+	private List<Character> escapeChar = new ArrayList<>(); 
 	private char escape;
 	private boolean useEscapeClausole = false;
 	
@@ -67,7 +67,7 @@ public class EscapeSQLConfiguration {
 	}
 	
 	public boolean isDefaultEscape(char c){
-		if(this.escapeChar!=null && this.escapeChar.size()>0){
+		if(this.escapeChar!=null && !this.escapeChar.isEmpty()){
 			for (Character check : this.escapeChar) {
 				if(check.charValue() == c){
 					return true;
@@ -77,7 +77,7 @@ public class EscapeSQLConfiguration {
 		return false;
 	}
 	public boolean isOtherEscape(char c){
-		if(this.escapeWithOtherEscapeChar!=null && this.escapeWithOtherEscapeChar.size()>0){
+		if(this.escapeWithOtherEscapeChar!=null && !this.escapeWithOtherEscapeChar.isEmpty()){
 			for (EscapeWithOtherEscapeChar check : this.escapeWithOtherEscapeChar) {
 				if(check.getCharacter() == c){
 					return true;
@@ -87,7 +87,7 @@ public class EscapeSQLConfiguration {
 		return false;
 	}
 	public char getOtherEscapeCharacter(char c) throws SQLQueryObjectException{
-		if(this.escapeWithOtherEscapeChar!=null && this.escapeWithOtherEscapeChar.size()>0){
+		if(this.escapeWithOtherEscapeChar!=null && !this.escapeWithOtherEscapeChar.isEmpty()){
 			for (EscapeWithOtherEscapeChar check : this.escapeWithOtherEscapeChar) {
 				if(check.getCharacter() == c){
 					return check.getEscape();

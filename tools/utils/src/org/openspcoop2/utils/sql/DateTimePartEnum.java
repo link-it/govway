@@ -17,42 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-
-
 package org.openspcoop2.utils.sql;
 
-
-
 /**
- * Contiene la definizione di una eccezione lanciata dalla classe SQLQueryObject
+ * DateTimePartEnum
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
+public enum DateTimePartEnum {
 
-
-public class SQLQueryObjectAlreadyExistsException extends SQLQueryObjectException {
-    
-	 public SQLQueryObjectAlreadyExistsException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
-	public SQLQueryObjectAlreadyExistsException(Throwable cause)
-	{
-		super(cause);
-	}
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
+	YEAR, MONTH, DAY, HOUR, MINUTE, SECOND;
 	
-	public SQLQueryObjectAlreadyExistsException() {
-		super();
-    }
-	public SQLQueryObjectAlreadyExistsException(String msg) {
-        super(msg);
-    }
 }
-

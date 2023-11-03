@@ -20,6 +20,7 @@
 package org.openspcoop2.generic_project.expression.impl;
 
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 
 /**
@@ -48,18 +49,18 @@ public enum Comparator {
 	}
 	public String getOperatore(ISQLFieldConverter sqlFieldConverter) {
 		try {
-			if(sqlFieldConverter!=null && sqlFieldConverter.getDatabaseType()!=null) {
-				if(TipiDatabase.ORACLE.equals(sqlFieldConverter.getDatabaseType())) {
-					if(IS_EMPTY.equals(this)) {
-						return IS_NULL.getOperatore();
-					}
-					else if(IS_NOT_EMPTY.equals(this)) {
-						return IS_NOT_NULL.getOperatore();
-					}
+			if(sqlFieldConverter!=null && sqlFieldConverter.getDatabaseType()!=null &&
+				(TipiDatabase.ORACLE.equals(sqlFieldConverter.getDatabaseType())) 
+				){
+				if(IS_EMPTY.equals(this)) {
+					return IS_NULL.getOperatore();
+				}
+				else if(IS_NOT_EMPTY.equals(this)) {
+					return IS_NOT_NULL.getOperatore();
 				}
 			}
 		}catch(Exception e) {
-			e.printStackTrace(System.err); // log solamente l'errore
+			LoggerWrapperFactory.getLogger(Comparator.class).error(e.getMessage(),e);
 		}
 		return this.operatore;
 	}

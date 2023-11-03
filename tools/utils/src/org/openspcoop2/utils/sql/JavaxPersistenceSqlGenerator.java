@@ -37,6 +37,8 @@ import org.openspcoop2.utils.TipiDatabase;
  * @version $Rev$, $Date$
  */
 public class JavaxPersistenceSqlGenerator {
+	
+	private JavaxPersistenceSqlGenerator() {}
 
 	public static void generate(String persistenceId, String folder) throws IOException {
 		
@@ -56,18 +58,23 @@ public class JavaxPersistenceSqlGenerator {
 
         Map<String, String> map = getMap(persistenceId, create, drop, tipoDatabase);
 		
-		// Persistence.generateSchema(persistenceId, map);
+		/** Persistence.generateSchema(persistenceId, map);*/
 		try {
 			Class<?> cPersistence = Class.forName("javax.persistence.Persistence");
 			Method m = cPersistence.getMethod("generateSchema", persistenceId.getClass(), java.util.Map.class);
 			m.invoke(null, persistenceId, map);
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new IOException(t);
 		}
       
 	}
 
-	private static Map<String, String> getMap(String persistenceId, String create, String drop, TipiDatabase tipoDatabase) throws IOException {
+	private static Map<String, String> getMap(String persistenceId, String create, String drop, TipiDatabase tipoDatabase) {
+		
+		if(persistenceId!=null) {
+			// nop
+		}
+		
 		Map<String, String> map = new HashMap<>();
 
         map.put("javax.persistence.schema-generation.scripts.action", "drop-and-create");
@@ -76,22 +83,25 @@ public class JavaxPersistenceSqlGenerator {
         map.put("hibernate.hbm2ddl.delimiter", ";");
         map.put("hibernate.format_sql", "true");
 		
+        String productName = "javax.persistence.database-product-name";
+        String dialect = "hibernate.dialect";
+        
         switch(tipoDatabase) {
 		case DERBY:
-	        map.put("javax.persistence.database-product-name", "Derby");
-	        map.put("hibernate.dialect","org.hibernate.dialect.DerbyTenSevenDialect");
+	        map.put(productName, "Derby");
+	        map.put(dialect,"org.hibernate.dialect.DerbyTenSevenDialect");
 			break;
 		case MYSQL:
-	        map.put("javax.persistence.database-product-name", "Mysql");
-	        map.put("hibernate.dialect","org.hibernate.dialect.MySQL5InnoDBDialect");
+	        map.put(productName, "Mysql");
+	        map.put(dialect,"org.hibernate.dialect.MySQL5InnoDBDialect");
 			break;
 		case ORACLE:
-	        map.put("javax.persistence.database-product-name", "Oracle");
-	        map.put("hibernate.dialect","org.hibernate.dialect.Oracle10gDialect");
+	        map.put(productName, "Oracle");
+	        map.put(dialect,"org.hibernate.dialect.Oracle10gDialect");
 			break;
 		case POSTGRESQL:
-	        map.put("javax.persistence.database-product-name", "Postgresql");
-	        map.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+	        map.put(productName, "Postgresql");
+	        map.put(dialect, "org.hibernate.dialect.PostgreSQLDialect");
 	        map.put("javax.persistence.database-major-version", "9");
 	        map.put("javax.persistence.database-minor-version", "1");
 			break;

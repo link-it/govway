@@ -80,12 +80,12 @@ public abstract class AbstractSQLFieldConverter implements ISQLFieldConverter {
 		
 		else if(field instanceof AliasField){
 			AliasField af = (AliasField) field;
-//			if(returnAlias){
+/**			if(returnAlias){
 //				return af.getAlias();
 //			}
 //			else{
 //				return this.toColumn(af.getField(), returnAlias, appendTablePrefix); 
-//			}
+//			}*/
 			return af.getAlias(); // un alias deve usare sempre l'alias
 		}
 		

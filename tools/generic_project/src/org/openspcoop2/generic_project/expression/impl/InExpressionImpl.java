@@ -19,12 +19,10 @@
  */
 package org.openspcoop2.generic_project.expression.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.ComplexField;
 import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
@@ -36,24 +34,15 @@ import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatte
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class InExpressionImpl extends AbstractBaseExpressionImpl {
+public class InExpressionImpl extends AbstractCommonFieldBaseExpressionImpl {
 
-	private IField field;
 	private List<Object> objects;
 	
 	public InExpressionImpl(IObjectFormatter objectFormatter,IField field,List<Object> objects){
-		super(objectFormatter);
-		this.field = field;
+		super(objectFormatter, field);
 		this.objects = objects;
 	}
 	
-	public IField getField() {
-		return this.field;
-	}
-	public void setField(IField field) {
-		this.field = field;
-	}
-
 	public List<Object> getObjects() {
 		return this.objects;
 	}
@@ -101,56 +90,19 @@ public class InExpressionImpl extends AbstractBaseExpressionImpl {
 		return bf.toString();
 	}
 	
-	@Override
-	public boolean inUseField(IField field)
-			throws ExpressionNotImplementedException, ExpressionException {
-		if(this.field==null){
-			return false;
-		}
-		return this.field.equals(field);
-	}
+
 
 	@Override
 	public List<Object> getFieldValues(IField field) throws ExpressionNotImplementedException, ExpressionException{
+		List<Object> l = null;
 		if(this.field==null){
-			return null;
+			return l;
 		}
 		if(this.field.equals(field)){
 			return this.objects;
 		}
-		return null;
-	}
-	
-	@Override
-	public boolean inUseModel(IModel<?> model)
-			throws ExpressionNotImplementedException, ExpressionException {
-		if(this.field==null){
-			return false;
-		}
-		if(model.getBaseField()!=null){
-			// Modello di un elemento non radice
-			if(this.field instanceof ComplexField){
-				ComplexField c = (ComplexField) this.field;
-				return c.getFather().equals(model.getBaseField());
-			}else{
-				String modeClassName = model.getModeledClass().getName() + "";
-				return modeClassName.equals(this.field.getClassType().getName());
-			}
-		}
-		else{
-			String modeClassName = model.getModeledClass().getName() + "";
-			return modeClassName.equals(this.field.getClassType().getName());
-		}
+		return l;
 	}
 
-	@Override
-	public List<IField> getFields() throws ExpressionNotImplementedException,
-			ExpressionException {
-		if(this.field==null){
-			return null;
-		}
-		List<IField> lista = new ArrayList<IField>();
-		lista.add(this.field);
-		return lista;
-	}
+
 }
