@@ -19,90 +19,105 @@
  */
 package org.openspcoop2.generic_project.expression.impl.sql;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
-import org.openspcoop2.generic_project.expression.impl.AbstractBaseExpressionImpl;
-import org.openspcoop2.generic_project.expression.impl.ConjunctionExpressionImpl;
+import org.openspcoop2.generic_project.expression.impl.DateTimePartExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.sql.DateTimePartEnum;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectCore;
 
 /**
- * ConjunctionExpressionSQL
+ * DateTimePartExpressionSQL
  * 
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implements ISQLExpression {
+public class DateTimePartExpressionSQL extends DateTimePartExpressionImpl implements ISQLExpression {
 
-	@SuppressWarnings("unused")
 	private ISQLFieldConverter sqlFieldConverter;
 	
-	public ConjunctionExpressionSQL(ISQLFieldConverter sqlFieldConverter,IObjectFormatter objectFormatter) {
-		super(objectFormatter);
+	public DateTimePartExpressionSQL(ISQLFieldConverter sqlFieldConverter,IObjectFormatter objectFormatter, IField field,
+			String value, DateTimePartEnum dateTimePartEnum) {
+		super(objectFormatter, field, value, dateTimePartEnum);
 		this.sqlFieldConverter = sqlFieldConverter;
 	}
 
-	private String toSqlEngine(SQLMode mode,ISQLQueryObject sqlQueryObject, List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
+	private SQLQueryObjectCore getSQLQueryObjectCore(ISQLQueryObject sqlQueryObject) throws ExpressionException {
+		if(sqlQueryObject==null) {
+			try {
+				// uso uno di default
+				if(this.sqlFieldConverter!=null && this.sqlFieldConverter.getDatabaseType()!=null) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.sqlFieldConverter.getDatabaseType());
+				}
+				else {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(TipiDatabase.POSTGRESQL); // uso come default
+				}
+			}catch(Exception e) {
+				throw new ExpressionException(e.getMessage(),e);
+			}
+		}
+		return (SQLQueryObjectCore) sqlQueryObject;
+	}
+	
+	private String toSqlEngine(SQLMode mode,ISQLQueryObject sqlQueryObject,List<?> oggettiPreparedStatement,Map<String, ?> oggettiJPA)throws ExpressionException{
+		
+		if(mode!=null) {
+			// nop
+		}
+		if(oggettiPreparedStatement!=null) {
+			// nop
+		}
+		if(oggettiJPA!=null) {
+			// nop
+		}
+		
 		StringBuilder bf = new StringBuilder();
 		if(isNot()){
 			bf.append("( NOT ");
 		}
 		bf.append("( ");
-		int index = 0;
-		for (Iterator<AbstractBaseExpressionImpl> iterator = this.getLista().iterator(); iterator.hasNext();) {
-			AbstractBaseExpressionImpl exp = iterator.next();
-			if(index>0){
-				if(this.isAndConjunction())
-					bf.append(" AND ");
-				else
-					bf.append(" OR ");
-			}
-			if(exp instanceof ISQLExpression){
-				if(sqlQueryObject!=null){
-					ISQLQueryObject sqlQ = null;
-					try{
-						sqlQ = sqlQueryObject.newSQLQueryObject();
-					
-						switch (mode) {
-						case STANDARD:
-							((ISQLExpression)exp).toSql(sqlQ);
-							bf.append(sqlQ.createSQLConditions());
-							break;
-						case PREPARED_STATEMENT:
-							((ISQLExpression)exp).toSqlPreparedStatement(sqlQ,oggettiPreparedStatement);
-							bf.append(sqlQ.createSQLConditions());
-							break;
-						case JPA:
-							((ISQLExpression)exp).toSqlJPA(sqlQ,oggettiJPA);
-							bf.append(sqlQ.createSQLConditions());
-							break;
-						}
-					}catch(Exception e){
-						throw new ExpressionException("Expression["+index+"] (type:"+exp.getClass().getName()+")  sqlQueryObject error: "+e.getMessage(),e);
-					}
-				}
-				else{
-					switch (mode) {
-					case STANDARD:
-						bf.append(((ISQLExpression)exp).toSql());
-						break;
-					case PREPARED_STATEMENT:
-						bf.append(((ISQLExpression)exp).toSqlPreparedStatement(oggettiPreparedStatement));
-						break;
-					case JPA:
-						bf.append(((ISQLExpression)exp).toSqlJPA(oggettiJPA));
-						break;
-					}
-				}
-			}else{
-				throw new ExpressionException("Expression["+index+"] (type:"+exp.getClass().getName()+") is not as cast with "+ISQLExpression.class.getName());
-			}
-			index++;
+		
+		SQLQueryObjectCore sqlObjectCore = getSQLQueryObjectCore(sqlQueryObject);
+		
+		try {
+			String prefix = sqlObjectCore.getExtractDateTimePartFromTimestampFieldPrefix(this.dateTimePartEnum);
+			bf.append(prefix);
+		}catch(Exception e) {
+			throw new ExpressionException(e.getMessage(),e);
 		}
+		
+		if(this.sqlFieldConverter!=null) {
+			bf.append(this.sqlFieldConverter.toColumn(this.getField(),true));
+		}
+		else {
+			bf.append(this.getField().getFieldName());
+		}
+
+		try {
+			String suffix = sqlObjectCore.getExtractDateTimePartFromTimestampFieldSuffix(this.dateTimePartEnum);
+			bf.append(" ");
+			bf.append(suffix);
+		}catch(Exception e) {
+			throw new ExpressionException(e.getMessage(),e);
+		}
+		
+		bf.append(" = '");
+		String sqlValue = null;
+		try{
+			sqlValue = super.getObjectFormatter().toString(this.getValue());
+		}catch(Exception e){
+			return "ERROR: "+e.getMessage();
+		}
+		bf.append(sqlValue);
+		bf.append("'");
+		
 		bf.append(" )");
 		if(isNot()){
 			bf.append(" )");
@@ -117,7 +132,7 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 			sqlQueryObject.addWhereCondition(s);
 		}catch(Exception e){
 			throw new ExpressionException(e);
-		}	
+		}
 	}
 	
 	@Override
@@ -153,4 +168,5 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 			throws ExpressionException {
 		toSqlEngine(sqlQueryObject,SQLMode.JPA, null, oggetti);
 	}
+	
 }

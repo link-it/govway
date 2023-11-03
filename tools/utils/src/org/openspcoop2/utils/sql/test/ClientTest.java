@@ -28,6 +28,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -577,6 +581,10 @@ public class ClientTest {
 				test_coalesce_case(tipoDatabase, con, selectForUpdate);
 				
 				
+				// Test con extract part date time
+				test_extract_partDateTime(tipoDatabase, con, selectForUpdate);
+				
+				
 				// step6. Test query
 				test0_engine(tipoDatabase, con,selectForUpdate);
 				
@@ -644,7 +652,7 @@ public class ClientTest {
 			}
 		}
 
-
+		info(log, true, "Testsuite completata");
 	}
 
 	
@@ -787,7 +795,7 @@ public class ClientTest {
 					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" [min:"+rs.getLong("unixtimemin")+" max:"+
 							rs.getLong("unixtimemax")+" avg:"+
-							rs.getLong("unixtimeavg")+" sum:"+
+							rs.getDouble("unixtimeavg")+" sum:"+
 							rs.getLong("unixtimesum")+"]");
 				}
 				rs.close();
@@ -2433,6 +2441,566 @@ public class ClientTest {
 		
 		
 	}
+	
+	
+	
+	
+	
+	
+	private static void test_extract_partDateTime(TipiDatabase tipo, Connection con, boolean selectForUpdate) throws Exception {
+
+		Statement stmtQuery = null;
+		ResultSet rs = null;
+		String yearColonnaWhere = null;
+		String monthColonnaWhere = null;
+		String dayColonnaWhere = null;
+		String hourColonnaWhere = null;
+		String minuteColonnaWhere = null;
+		String secondColonnaWhere = null;
+		String fullDayNameColonnaWhere = null;
+		String shortDayNameColonnaWhere = null;
+		String dayOfYearColonnaWhere = null;
+		String dayOfWeekColonnaWhere = null;
+		
+		try{
+			
+			// TEST 1. (Case string)
+			
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso in group by
+
+			sqlQueryObject.addFromTable("msgdiagnostici","aliasMSG");
+
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectAliasField("aliasMSG", "gdo", "data");
+			
+			sqlQueryObject.addSelectYearTimestampField("gdo", "yearColonna");
+			sqlQueryObject.addSelectYearTimestampField("aliasMSG", "gdo", "yearColonnaTabella");
+			
+			sqlQueryObject.addSelectMonthTimestampField("gdo", "monthColonna");
+			sqlQueryObject.addSelectMonthTimestampField("aliasMSG", "gdo", "monthColonnaTabella");
+			
+			sqlQueryObject.addSelectDayTimestampField("gdo", "dayColonna");
+			sqlQueryObject.addSelectDayTimestampField("aliasMSG", "gdo", "dayColonnaTabella");
+			
+			sqlQueryObject.addSelectHourTimestampField("gdo", "hourColonna");
+			sqlQueryObject.addSelectHourTimestampField("aliasMSG", "gdo", "hourColonnaTabella");
+			
+			sqlQueryObject.addSelectMinuteTimestampField("gdo", "minuteColonna");
+			sqlQueryObject.addSelectMinuteTimestampField("aliasMSG", "gdo", "minuteColonnaTabella");
+			
+			sqlQueryObject.addSelectSecondTimestampField("gdo", "secondColonna");
+			sqlQueryObject.addSelectSecondTimestampField("aliasMSG", "gdo", "secondColonnaTabella");
+			
+			sqlQueryObject.addSelectFullDayNameTimestampField("gdo", "fullDayNameColonna");
+			sqlQueryObject.addSelectFullDayNameTimestampField("aliasMSG", "gdo", "fullDayNameColonnaTabella");
+			
+			sqlQueryObject.addSelectShortDayNameTimestampField("gdo", "shortDayNameColonna");
+			sqlQueryObject.addSelectShortDayNameTimestampField("aliasMSG", "gdo", "shortDayNameColonnaTabella");
+			
+			sqlQueryObject.addSelectDayOfYearTimestampField("gdo", "dayOfYearColonna");
+			sqlQueryObject.addSelectDayOfYearTimestampField("aliasMSG", "gdo", "dayOfYearColonnaTabella");
+			
+			sqlQueryObject.addSelectDayOfWeekTimestampField("gdo", "dayOfWeekColonna");
+			sqlQueryObject.addSelectDayOfWeekTimestampField("aliasMSG", "gdo", "dayOfWeekColonnaTabella");
+			
+			
+			info(log,systemOut,"");
+
+			
+			String test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest0_engine:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				try {
+					while(rs.next()){
+						
+						String format = "yyyy-MM-dd HH:mm:ss.SSS";
+						SimpleDateFormat sdf = new SimpleDateFormat(format);
+						
+						Date data = rs.getTimestamp("data");
+						
+						info(log,systemOut,"riga["+(index++)+"]= (data:"+sdf.format(data)+")");
+							
+						Instant instant = data.toInstant();
+				        ZoneId zoneId = ZoneId.systemDefault(); // Imposta il fuso orario appropriato
+				        LocalDateTime ld = instant.atZone(zoneId).toLocalDateTime();
+						
+						String year = ld.getYear()+"";
+						String yearColonna = rs.getString("yearColonna");
+						String yearColonnaTabella = rs.getString("yearColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (yearColonna:"+yearColonna+") (yearColonnaTabella:"+yearColonnaTabella+")");
+						if(!year.equals(yearColonna)) {
+							throw new Exception("Test failed; expected yearColonna '"+year+"', trovato '"+yearColonna+"'"); 
+						}
+						if(!year.equals(yearColonnaTabella)) {
+							throw new Exception("Test failed; expected yearColonnaTabella '"+year+"', trovato '"+yearColonnaTabella+"'"); 
+						}
+						yearColonnaWhere = yearColonna;
+						
+						String month = ld.getMonthValue()+"";
+						String monthColonna = rs.getString("monthColonna");
+						String monthColonnaTabella = rs.getString("monthColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (monthColonna:"+monthColonna+") (monthColonnaTabella:"+monthColonnaTabella+")");
+						if(!month.equals(monthColonna)) {
+							throw new Exception("Test failed; expected monthColonna '"+month+"', trovato '"+monthColonna+"'"); 
+						}
+						if(!month.equals(monthColonnaTabella)) {
+							throw new Exception("Test failed; expected monthColonnaTabella '"+month+"', trovato '"+monthColonnaTabella+"'"); 
+						}
+						monthColonnaWhere = monthColonna;
+						
+						String day = ld.getDayOfMonth()+"";
+						String dayColonna = rs.getString("dayColonna");
+						String dayColonnaTabella = rs.getString("dayColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (dayColonna:"+dayColonna+") (dayColonnaTabella:"+dayColonnaTabella+")");
+						if(!day.equals(dayColonna)) {
+							throw new Exception("Test failed; expected dayColonna '"+day+"', trovato '"+dayColonna+"'"); 
+						}
+						if(!day.equals(dayColonnaTabella)) {
+							throw new Exception("Test failed; expected dayColonnaTabella '"+day+"', trovato '"+dayColonnaTabella+"'"); 
+						}
+						dayColonnaWhere = dayColonna;
+						
+						String hour = ld.getHour()+"";
+						String hourColonna = rs.getString("hourColonna");
+						String hourColonnaTabella = rs.getString("hourColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (hourColonna:"+hourColonna+") (hourColonnaTabella:"+hourColonnaTabella+")");
+						if(!hour.equals(hourColonna)) {
+							throw new Exception("Test failed; expected hourColonna '"+hour+"', trovato '"+hourColonna+"'"); 
+						}
+						if(!hour.equals(hourColonnaTabella)) {
+							throw new Exception("Test failed; expected hourColonnaTabella '"+hour+"', trovato '"+hourColonnaTabella+"'"); 
+						}
+						hourColonnaWhere = hourColonna;
+						
+						String minute = ld.getMinute()+"";
+						String minuteColonna = rs.getString("minuteColonna");
+						String minuteColonnaTabella = rs.getString("minuteColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (minuteColonna:"+minuteColonna+") (minuteColonnaTabella:"+minuteColonnaTabella+")");
+						if(!minute.equals(minuteColonna)) {
+							throw new Exception("Test failed; expected minuteColonna '"+minute+"', trovato '"+minuteColonna+"'"); 
+						}
+						if(!minute.equals(minuteColonnaTabella)) {
+							throw new Exception("Test failed; expected minuteColonnaTabella '"+minute+"', trovato '"+minuteColonnaTabella+"'"); 
+						}
+						minuteColonnaWhere = minuteColonna;
+						
+						String second = ld.getSecond()+"";
+						String secondMillisecond = ld.getSecond()+".";
+						String secondColonna = rs.getString("secondColonna");
+						String secondColonnaTabella = rs.getString("secondColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (secondColonna:"+secondColonna+") (secondColonnaTabella:"+secondColonnaTabella+")");
+						if(!second.equals(secondColonna) && (secondColonna!=null && !secondColonna.startsWith(secondMillisecond))) {
+							throw new Exception("Test failed; expected secondColonna '"+second+"', trovato '"+secondColonna+"'"); 
+						}
+						if(!second.equals(secondColonnaTabella) && (secondColonnaTabella!=null && !secondColonnaTabella.startsWith(secondMillisecond))) {
+							throw new Exception("Test failed; expected secondColonnaTabella '"+second+"', trovato '"+secondColonnaTabella+"'"); 
+						}
+						secondColonnaWhere = secondColonna;
+						
+						SimpleDateFormat sdfFullDayName = new SimpleDateFormat("EEEE");
+						String fullDayName = sdfFullDayName.format(data);
+						String fullDayNameColonna = rs.getString("fullDayNameColonna");
+						String fullDayNameColonnaTabella = rs.getString("fullDayNameColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (fullDayNameColonna:"+fullDayNameColonna+") (fullDayNameColonnaTabella:"+fullDayNameColonnaTabella+")");
+						if(!fullDayName.equalsIgnoreCase(fullDayNameColonna)) {
+							throw new Exception("Test failed; expected fullDayNameColonna '"+fullDayName+"', trovato '"+fullDayNameColonna+"'"); 
+						}
+						if(!fullDayName.equalsIgnoreCase(fullDayNameColonnaTabella)) {
+							throw new Exception("Test failed; expected fullDayNameColonnaTabella '"+fullDayName+"', trovato '"+fullDayNameColonnaTabella+"'"); 
+						}
+						fullDayNameColonnaWhere = fullDayNameColonna;
+						
+						SimpleDateFormat sdfshortDayName = new SimpleDateFormat("E");
+						String shortDayName = sdfshortDayName.format(data);
+						String shortDayNameColonna = rs.getString("shortDayNameColonna");
+						String shortDayNameColonnaTabella = rs.getString("shortDayNameColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (shortDayNameColonna:"+shortDayNameColonna+") (shortDayNameColonnaTabella:"+shortDayNameColonnaTabella+")");
+						if(!shortDayName.equalsIgnoreCase(shortDayNameColonna)) {
+							throw new Exception("Test failed; expected shortDayNameColonna '"+shortDayName+"', trovato '"+shortDayNameColonna+"'"); 
+						}
+						if(!shortDayName.equalsIgnoreCase(shortDayNameColonnaTabella)) {
+							throw new Exception("Test failed; expected shortDayNameColonnaTabella '"+shortDayName+"', trovato '"+shortDayNameColonnaTabella+"'"); 
+						}
+						shortDayNameColonnaWhere = shortDayNameColonna;
+						
+						String dayOfYear = ld.getDayOfYear()+"";
+						String dayOfYearColonna = rs.getString("dayOfYearColonna");
+						String dayOfYearColonnaTabella = rs.getString("dayOfYearColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (dayOfYearColonna:"+dayOfYearColonna+") (dayOfYearColonnaTabella:"+dayOfYearColonnaTabella+")");
+						if(!dayOfYear.equals(dayOfYearColonna)) {
+							throw new Exception("Test failed; expected dayOfYearColonna '"+dayOfYear+"', trovato '"+dayOfYearColonna+"'"); 
+						}
+						if(!dayOfYear.equals(dayOfYearColonnaTabella)) {
+							throw new Exception("Test failed; expected dayOfYearColonnaTabella '"+dayOfYear+"', trovato '"+dayOfYearColonnaTabella+"'"); 
+						}
+						dayOfYearColonnaWhere = dayOfYearColonna;
+						 
+						String dayOfWeek = ""; // adeguao alla logica DB dove 1 rappresenta la domenica e 7 rappresenta il sabato 
+						if(ld.getDayOfWeek().getValue()==7) {
+							dayOfWeek = "1";
+						}
+						else {
+							dayOfWeek = ld.getDayOfWeek().getValue()+1+""; 
+						}
+						String dayOfWeekColonna = rs.getString("dayOfWeekColonna");
+						String dayOfWeekColonnaTabella = rs.getString("dayOfWeekColonnaTabella");
+						info(log,systemOut,"riga["+(index++)+"]= (dayOfWeekColonna:"+dayOfWeekColonna+") (dayOfWeekColonnaTabella:"+dayOfWeekColonnaTabella+")");
+						if(!dayOfWeek.equals(dayOfWeekColonna)) {
+							throw new Exception("Test failed; expected dayOfWeekColonna '"+dayOfWeek+"', trovato '"+dayOfWeekColonna+"'"); 
+						}
+						if(!dayOfWeek.equals(dayOfWeekColonnaTabella)) {
+							throw new Exception("Test failed; expected dayOfWeekColonnaTabella '"+dayOfWeek+"', trovato '"+dayOfWeekColonnaTabella+"'"); 
+						}
+						dayOfWeekColonnaWhere = dayOfWeekColonna;
+						
+					}
+				}finally {
+					rs.close();
+					rs = null;
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+							
+				if(index==0) {
+					throw new Exception("Test failed"); 
+				}
+
+				
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+		}finally{
+			try{
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+			}catch(Exception eClose){}
+			try{
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception eClose){
+				// close
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// TEST 2. (where)
+		
+		int numeroControlli = 6 + 4;
+		
+		for (int i = 0; i < numeroControlli; i++) {
+			
+			
+			stmtQuery = null;
+			rs = null;
+			try{
+								
+				ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso in group by
+
+				sqlQueryObject.addFromTable("msgdiagnostici","aliasMSG");
+
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addSelectAliasField("aliasMSG", "gdo", "data");
+				
+				sqlQueryObject.addSelectYearTimestampField("gdo", "yearColonna");
+				sqlQueryObject.addSelectYearTimestampField("aliasMSG", "gdo", "yearColonnaTabella");
+				
+				sqlQueryObject.addSelectMonthTimestampField("gdo", "monthColonna");
+				sqlQueryObject.addSelectMonthTimestampField("aliasMSG", "gdo", "monthColonnaTabella");
+				
+				sqlQueryObject.addSelectDayTimestampField("gdo", "dayColonna");
+				sqlQueryObject.addSelectDayTimestampField("aliasMSG", "gdo", "dayColonnaTabella");
+				
+				sqlQueryObject.addSelectHourTimestampField("gdo", "hourColonna");
+				sqlQueryObject.addSelectHourTimestampField("aliasMSG", "gdo", "hourColonnaTabella");
+				
+				sqlQueryObject.addSelectMinuteTimestampField("gdo", "minuteColonna");
+				sqlQueryObject.addSelectMinuteTimestampField("aliasMSG", "gdo", "minuteColonnaTabella");
+				
+				sqlQueryObject.addSelectSecondTimestampField("gdo", "secondColonna");
+				sqlQueryObject.addSelectSecondTimestampField("aliasMSG", "gdo", "secondColonnaTabella");
+				
+				sqlQueryObject.addSelectFullDayNameTimestampField("gdo", "fullDayNameColonna");
+				sqlQueryObject.addSelectFullDayNameTimestampField("aliasMSG", "gdo", "fullDayNameColonnaTabella");
+				
+				sqlQueryObject.addSelectShortDayNameTimestampField("gdo", "shortDayNameColonna");
+				sqlQueryObject.addSelectShortDayNameTimestampField("aliasMSG", "gdo", "shortDayNameColonnaTabella");
+				
+				sqlQueryObject.addSelectDayOfYearTimestampField("gdo", "dayOfYearColonna");
+				sqlQueryObject.addSelectDayOfYearTimestampField("aliasMSG", "gdo", "dayOfYearColonnaTabella");
+				
+				sqlQueryObject.addSelectDayOfWeekTimestampField("gdo", "dayOfWeekColonna");
+				sqlQueryObject.addSelectDayOfWeekTimestampField("aliasMSG", "gdo", "dayOfWeekColonnaTabella");
+				
+				// Aggiungo where
+				String whereType = null;
+				if(i==0) {
+					sqlQueryObject.addWhereYearCondition("gdo", yearColonnaWhere);
+					whereType = "YearCondition";
+				}
+				else if(i==1) {
+					sqlQueryObject.addWhereMonthCondition("gdo", monthColonnaWhere);
+					whereType = "MonthCondition";
+				}
+				else if(i==2) {
+					sqlQueryObject.addWhereDayCondition("gdo", dayColonnaWhere);
+					whereType = "DayCondition";
+				}
+				else if(i==3) {
+					sqlQueryObject.addWhereHourCondition("gdo", hourColonnaWhere);
+					whereType = "HourCondition";
+				}
+				else if(i==4) {
+					sqlQueryObject.addWhereMinuteCondition("gdo", minuteColonnaWhere);
+					whereType = "MinuteCondition";
+				}
+				else if(i==5) {
+					sqlQueryObject.addWhereSecondCondition("gdo", secondColonnaWhere);
+					whereType = "SecondCondition";
+				}
+				
+				else if(i==6) {
+					sqlQueryObject.addWhereFullDayNameCondition("gdo", fullDayNameColonnaWhere);
+					whereType = "FullDayNameCondition";
+				}
+				else if(i==7) {
+					sqlQueryObject.addWhereShortDayNameCondition("gdo", shortDayNameColonnaWhere);
+					whereType = "ShortDayNameCondition";
+				}
+				else if(i==8) {
+					sqlQueryObject.addWhereDayOfYearCondition("gdo", dayOfYearColonnaWhere);
+					whereType = "DayOfYearCondition";
+				}
+				else if(i==9) {
+					sqlQueryObject.addWhereDayOfWeekCondition("gdo", dayOfWeekColonnaWhere);
+					whereType = "DayOfWeekCondition";
+				}
+				
+				
+				info(log,systemOut,"");
+
+				
+				String test = sqlQueryObject.createSQLQuery();
+				info(log,systemOut,"\ntest0_engine:\n\t"+test);
+				boolean find = false;
+				try{
+					stmtQuery = con.createStatement();
+					if(stmtQuery==null) {
+						throw new Exception("Statement is null"); 
+					}
+					rs = stmtQuery.executeQuery(test);
+					int index = 0;
+					try {
+						while(rs.next()){
+							
+							find = true;
+							
+							String format = "yyyy-MM-dd HH:mm:ss.SSS";
+							SimpleDateFormat sdf = new SimpleDateFormat(format);
+							
+							Date data = rs.getTimestamp("data");
+							
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (data:"+sdf.format(data)+")");
+								
+							Instant instant = data.toInstant();
+					        ZoneId zoneId = ZoneId.systemDefault(); // Imposta il fuso orario appropriato
+					        LocalDateTime ld = instant.atZone(zoneId).toLocalDateTime();
+							
+							String year = ld.getYear()+"";
+							String yearColonna = rs.getString("yearColonna");
+							String yearColonnaTabella = rs.getString("yearColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (yearColonna:"+yearColonna+") (yearColonnaTabella:"+yearColonnaTabella+")");
+							if(!year.equals(yearColonna)) {
+								throw new Exception("Test failed; expected yearColonna '"+year+"', trovato '"+yearColonna+"'"); 
+							}
+							if(!year.equals(yearColonnaTabella)) {
+								throw new Exception("Test failed; expected yearColonnaTabella '"+year+"', trovato '"+yearColonnaTabella+"'"); 
+							}
+							yearColonnaWhere = yearColonna;
+							
+							String month = ld.getMonthValue()+"";
+							String monthColonna = rs.getString("monthColonna");
+							String monthColonnaTabella = rs.getString("monthColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (monthColonna:"+monthColonna+") (monthColonnaTabella:"+monthColonnaTabella+")");
+							if(!month.equals(monthColonna)) {
+								throw new Exception("Test failed; expected monthColonna '"+month+"', trovato '"+monthColonna+"'"); 
+							}
+							if(!month.equals(monthColonnaTabella)) {
+								throw new Exception("Test failed; expected monthColonnaTabella '"+month+"', trovato '"+monthColonnaTabella+"'"); 
+							}
+							monthColonnaWhere = monthColonna;
+							
+							String day = ld.getDayOfMonth()+"";
+							String dayColonna = rs.getString("dayColonna");
+							String dayColonnaTabella = rs.getString("dayColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (dayColonna:"+dayColonna+") (dayColonnaTabella:"+dayColonnaTabella+")");
+							if(!day.equals(dayColonna)) {
+								throw new Exception("Test failed; expected dayColonna '"+day+"', trovato '"+dayColonna+"'"); 
+							}
+							if(!day.equals(dayColonnaTabella)) {
+								throw new Exception("Test failed; expected dayColonnaTabella '"+day+"', trovato '"+dayColonnaTabella+"'"); 
+							}
+							dayColonnaWhere = dayColonna;
+							
+							String hour = ld.getHour()+"";
+							String hourColonna = rs.getString("hourColonna");
+							String hourColonnaTabella = rs.getString("hourColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (hourColonna:"+hourColonna+") (hourColonnaTabella:"+hourColonnaTabella+")");
+							if(!hour.equals(hourColonna)) {
+								throw new Exception("Test failed; expected hourColonna '"+hour+"', trovato '"+hourColonna+"'"); 
+							}
+							if(!hour.equals(hourColonnaTabella)) {
+								throw new Exception("Test failed; expected hourColonnaTabella '"+hour+"', trovato '"+hourColonnaTabella+"'"); 
+							}
+							hourColonnaWhere = hourColonna;
+							
+							String minute = ld.getMinute()+"";
+							String minuteColonna = rs.getString("minuteColonna");
+							String minuteColonnaTabella = rs.getString("minuteColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (minuteColonna:"+minuteColonna+") (minuteColonnaTabella:"+minuteColonnaTabella+")");
+							if(!minute.equals(minuteColonna)) {
+								throw new Exception("Test failed; expected minuteColonna '"+minute+"', trovato '"+minuteColonna+"'"); 
+							}
+							if(!minute.equals(minuteColonnaTabella)) {
+								throw new Exception("Test failed; expected minuteColonnaTabella '"+minute+"', trovato '"+minuteColonnaTabella+"'"); 
+							}
+							minuteColonnaWhere = minuteColonna;
+							
+							String second = ld.getSecond()+"";
+							String secondMillisecond = ld.getSecond()+".";
+							String secondColonna = rs.getString("secondColonna");
+							String secondColonnaTabella = rs.getString("secondColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (secondColonna:"+secondColonna+") (secondColonnaTabella:"+secondColonnaTabella+")");
+							if(!second.equals(secondColonna) && (secondColonna!=null && !secondColonna.startsWith(secondMillisecond))) {
+								throw new Exception("Test failed; expected secondColonna '"+second+"', trovato '"+secondColonna+"'"); 
+							}
+							if(!second.equals(secondColonnaTabella) && (secondColonnaTabella!=null && !secondColonnaTabella.startsWith(secondMillisecond))) {
+								throw new Exception("Test failed; expected secondColonnaTabella '"+second+"', trovato '"+secondColonnaTabella+"'"); 
+							}
+							secondColonnaWhere = secondColonna;
+							
+							SimpleDateFormat sdfFullDayName = new SimpleDateFormat("EEEE");
+							String fullDayName = sdfFullDayName.format(data);
+							String fullDayNameColonna = rs.getString("fullDayNameColonna");
+							String fullDayNameColonnaTabella = rs.getString("fullDayNameColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (fullDayNameColonna:"+fullDayNameColonna+") (fullDayNameColonnaTabella:"+fullDayNameColonnaTabella+")");
+							if(!fullDayName.equalsIgnoreCase(fullDayNameColonna)) {
+								throw new Exception("Test failed; expected fullDayNameColonna '"+fullDayName+"', trovato '"+fullDayNameColonna+"'"); 
+							}
+							if(!fullDayName.equalsIgnoreCase(fullDayNameColonnaTabella)) {
+								throw new Exception("Test failed; expected fullDayNameColonnaTabella '"+fullDayName+"', trovato '"+fullDayNameColonnaTabella+"'"); 
+							}
+							fullDayNameColonnaWhere = fullDayNameColonna;
+							
+							SimpleDateFormat sdfshortDayName = new SimpleDateFormat("E");
+							String shortDayName = sdfshortDayName.format(data);
+							String shortDayNameColonna = rs.getString("shortDayNameColonna");
+							String shortDayNameColonnaTabella = rs.getString("shortDayNameColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (shortDayNameColonna:"+shortDayNameColonna+") (shortDayNameColonnaTabella:"+shortDayNameColonnaTabella+")");
+							if(!shortDayName.equalsIgnoreCase(shortDayNameColonna)) {
+								throw new Exception("Test failed; expected shortDayNameColonna '"+shortDayName+"', trovato '"+shortDayNameColonna+"'"); 
+							}
+							if(!shortDayName.equalsIgnoreCase(shortDayNameColonnaTabella)) {
+								throw new Exception("Test failed; expected shortDayNameColonnaTabella '"+shortDayName+"', trovato '"+shortDayNameColonnaTabella+"'"); 
+							}
+							shortDayNameColonnaWhere = shortDayNameColonna;
+							
+							String dayOfYear = ld.getDayOfYear()+"";
+							String dayOfYearColonna = rs.getString("dayOfYearColonna");
+							String dayOfYearColonnaTabella = rs.getString("dayOfYearColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (dayOfYearColonna:"+dayOfYearColonna+") (dayOfYearColonnaTabella:"+dayOfYearColonnaTabella+")");
+							if(!dayOfYear.equals(dayOfYearColonna)) {
+								throw new Exception("Test failed; expected dayOfYearColonna '"+dayOfYear+"', trovato '"+dayOfYearColonna+"'"); 
+							}
+							if(!dayOfYear.equals(dayOfYearColonnaTabella)) {
+								throw new Exception("Test failed; expected dayOfYearColonnaTabella '"+dayOfYear+"', trovato '"+dayOfYearColonnaTabella+"'"); 
+							}
+							dayOfYearColonnaWhere = dayOfYearColonna;
+							 
+							String dayOfWeek = ""; // adeguao alla logica DB dove 1 rappresenta la domenica e 7 rappresenta il sabato 
+							if(ld.getDayOfWeek().getValue()==7) {
+								dayOfWeek = "1";
+							}
+							else {
+								dayOfWeek = ld.getDayOfWeek().getValue()+1+""; 
+							}
+							String dayOfWeekColonna = rs.getString("dayOfWeekColonna");
+							String dayOfWeekColonnaTabella = rs.getString("dayOfWeekColonnaTabella");
+							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (dayOfWeekColonna:"+dayOfWeekColonna+") (dayOfWeekColonnaTabella:"+dayOfWeekColonnaTabella+")");
+							if(!dayOfWeek.equals(dayOfWeekColonna)) {
+								throw new Exception("Test failed; expected dayOfWeekColonna '"+dayOfWeek+"', trovato '"+dayOfWeekColonna+"'"); 
+							}
+							if(!dayOfWeek.equals(dayOfWeekColonnaTabella)) {
+								throw new Exception("Test failed; expected dayOfWeekColonnaTabella '"+dayOfWeek+"', trovato '"+dayOfWeekColonnaTabella+"'"); 
+							}
+							dayOfWeekColonnaWhere = dayOfWeekColonna;
+							
+						}
+					}finally {
+						rs.close();
+						rs = null;
+						stmtQuery.close();
+						stmtQuery = null;
+					}
+								
+					if(index==0) {
+						throw new Exception("Test failed"); 
+					}
+
+					
+				}catch(Exception e){
+					
+					throw e;
+				}
+				
+				if(!find) {
+					throw new Exception("Test failed, no record find for test where type '"+whereType+"'"); 
+				}
+								
+			}finally{
+				try{
+					if(rs!=null){
+						rs.close();
+						rs = null;
+					}
+				}catch(Exception eClose){}
+				try{
+					if(stmtQuery!=null){
+						stmtQuery.close();
+						stmtQuery = null;
+					}
+				}catch(Exception eClose){
+					// close
+				}
+			}
+			
+		}
+		
+	}
+	
+	
+	
 	
 	
 

@@ -20,6 +20,7 @@
 package org.openspcoop2.generic_project.expression.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,6 +40,9 @@ import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
 import org.openspcoop2.generic_project.expression.impl.formatter.ObjectFormatter;
+import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.sql.DateTimePartEnum;
+import org.openspcoop2.utils.sql.DayFormatEnum;
 
 /**
  * ExpressionImpl
@@ -49,6 +53,9 @@ import org.openspcoop2.generic_project.expression.impl.formatter.ObjectFormatter
  */
 public class ExpressionImpl implements IExpression {
 
+	private static final String FIELD_IS_NULL = "Field is null";
+	private static final String FIELD_TYPE_CONSTANT_CANNOT_BE_USED = "The field type 'ConstantField' can not be used with this method";
+	
 	private boolean throwExpressionNotInitialized = false;
 	
 	protected IObjectFormatter objectFormatter;
@@ -74,7 +81,7 @@ public class ExpressionImpl implements IExpression {
 		this.notOperator = expr.notOperator;
 		this.objectFormatter = expr.objectFormatter;
 		this.orderedFields = expr.orderedFields;
-		this._sortOrder = expr.getSortOrder();
+		this.sortOrderEngine = expr.getSortOrder();
 		this.groupByFields = expr.groupByFields;
 		this.throwExpressionNotInitialized = expr.throwExpressionNotInitialized;
 		this.forceIndexes = expr.forceIndexes;
@@ -89,12 +96,12 @@ public class ExpressionImpl implements IExpression {
 	
 	protected boolean notOperator = false;
 	
-	private SortOrder _sortOrder = SortOrder.UNSORTED;
-	protected List<OrderedField> orderedFields = new ArrayList<OrderedField>();
+	private SortOrder sortOrderEngine = SortOrder.UNSORTED;
+	protected List<OrderedField> orderedFields = new ArrayList<>();
 	
-	protected List<IField> groupByFields = new ArrayList<IField>();
+	protected List<IField> groupByFields = new ArrayList<>();
 	
-	protected List<Index> forceIndexes = new ArrayList<Index>();
+	protected List<Index> forceIndexes = new ArrayList<>();
 	
 	protected Map<String, Object> properties = new HashMap<>();
 
@@ -112,7 +119,7 @@ public class ExpressionImpl implements IExpression {
 	 */
 	@Override
 	public IExpression not() throws ExpressionNotImplementedException,ExpressionException{
-		/*if(this.expressionEngine==null){
+		/**if(this.expressionEngine==null){
 			throw new ExpressionException("You can not use the NOT operation on an uninitialized expression");
 		}*/
 		this.notOperator = true;
@@ -132,10 +139,8 @@ public class ExpressionImpl implements IExpression {
 	@Override
 	public IExpression and() throws ExpressionNotImplementedException, ExpressionException{
 		this.andLogicOperator = true;
-		if(this.expressionEngine!=null){
-			if(this.expressionEngine instanceof ConjunctionExpressionImpl){
-				((ConjunctionExpressionImpl)this.expressionEngine).setAndConjunction(this.andLogicOperator);
-			}
+		if(this.expressionEngine instanceof ConjunctionExpressionImpl){
+			((ConjunctionExpressionImpl)this.expressionEngine).setAndConjunction(this.andLogicOperator);
 		}
 		return this;
 	}
@@ -150,10 +155,8 @@ public class ExpressionImpl implements IExpression {
 	@Override
 	public IExpression or() throws ExpressionNotImplementedException, ExpressionException{
 		this.andLogicOperator = false;
-		if(this.expressionEngine!=null){
-			if(this.expressionEngine instanceof ConjunctionExpressionImpl){
-				((ConjunctionExpressionImpl)this.expressionEngine).setAndConjunction(this.andLogicOperator);
-			}
+		if(this.expressionEngine instanceof ConjunctionExpressionImpl){
+			((ConjunctionExpressionImpl)this.expressionEngine).setAndConjunction(this.andLogicOperator);
 		}
 		return this;
 	}
@@ -514,6 +517,225 @@ public class ExpressionImpl implements IExpression {
 	
 	
 	
+	/* ************ DATE PART *********** */
+	
+	/**
+	 * Create an expression che verifica l'anno di una data
+	 * Example:  ( EXTRACT(YEAR FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isYear(IField field, int value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value+"", DateTimePartEnum.YEAR);
+		return this;
+	}
+	@Override
+	public IExpression isYear(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value, DateTimePartEnum.YEAR);
+		return this;
+	}
+	
+	/**
+	 * Create an expression che verifica il mese (numerico) di una data
+	 * Example:  ( EXTRACT(MONTH FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isMonth(IField field, int value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value+"", DateTimePartEnum.MONTH);
+		return this;
+	}
+	@Override
+	public IExpression isMonth(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value, DateTimePartEnum.MONTH);
+		return this;
+	}
+	
+	/**
+	 * Create an expression che verifica il giorno del mese di una data
+	 * Example:  ( EXTRACT(DAY FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isDayOfMonth(IField field, int value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value+"", DateTimePartEnum.DAY);
+		return this;
+	}
+	@Override
+	public IExpression isDayOfMonth(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value, DateTimePartEnum.DAY);
+		return this;
+	}
+	
+	/**
+	 * Create an expression che verifica il giorno dell'anno di una data
+	 * Example:  ( TO_CHAR(data_ingresso_richiesta, 'DDD') = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isDayOfYear(IField field, int value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDayFormatExpression(field, value+"", DayFormatEnum.DAY_OF_YEAR);
+		return this;
+	}
+	@Override
+	public IExpression isDayOfYear(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDayFormatExpression(field, value, DayFormatEnum.DAY_OF_YEAR);
+		return this;
+	}
+	
+	/**
+	 * Create an expression che verifica il giorno della settimana di una data
+	 * Example:  ( TO_CHAR(data_ingresso_richiesta, 'D') = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isDayOfWeek(IField field, int value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDayFormatExpression(field, value+"", DayFormatEnum.DAY_OF_WEEK);
+		return this;
+	}
+	@Override
+	public IExpression isDayOfWeek(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDayFormatExpression(field, value, DayFormatEnum.DAY_OF_WEEK);
+		return this;
+	}
+	
+	/**
+	 * Create an expression che verifica l'ora di una data
+	 * Example:  ( EXTRACT(HOUR FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isHour(IField field, int value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value+"", DateTimePartEnum.HOUR);
+		return this;
+	}
+	@Override
+	public IExpression isHour(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value, DateTimePartEnum.HOUR);
+		return this;
+	}
+	
+	/**
+	 * Create an expression che verifica i minuti di una data
+	 * Example:  ( EXTRACT(MINUTE FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isMinute(IField field, int value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value+"", DateTimePartEnum.MINUTE);
+		return this;
+	}
+	@Override
+	public IExpression isMinute(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value, DateTimePartEnum.MINUTE);
+		return this;
+	}
+	
+	/**
+	 * Create an expression che verifica i secondi di una data
+	 * Example:  ( EXTRACT(SECOND FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isSecond(IField field, int value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value+"", DateTimePartEnum.SECOND);
+		return this;
+	}
+	@Override
+	public IExpression isSecond(IField field, double value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value+"", DateTimePartEnum.SECOND);
+		return this;
+	}
+	@Override
+	public IExpression isSecond(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDateTimePartExpression(field, value, DateTimePartEnum.SECOND);
+		return this;
+	}
+	
+	/**
+	 * Create an expression che verifica il giorno di una data, nel formato umano (es. Friday)
+	 * Example:  ( TO_CHAR(data_ingresso_richiesta, 'DAY') = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isFullDayName(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDayFormatExpression(field, value, DayFormatEnum.FULL_DAY_NAME);
+		return this;
+	}
+	
+	/**
+	 * Create an expression che verifica il giorno di una data, nel formato compatto umano (es. Fri)
+	 * Example:  ( TO_CHAR(data_ingresso_richiesta, 'DY') = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	@Override
+	public IExpression isShortDayName(IField field, String value) throws ExpressionNotImplementedException,ExpressionException{
+		checkArgoments(field, value);
+		buildDayFormatExpression(field, value, DayFormatEnum.SHORT_DAY_NAME);
+		return this;
+	}
+
+	
+	
+	
 	
 	
 	/* ************ IN *********** */
@@ -672,7 +894,7 @@ public class ExpressionImpl implements IExpression {
 	@Override
 	public IExpression sortOrder(SortOrder sortOrder)
 			throws ExpressionNotImplementedException, ExpressionException {
-		this._sortOrder = sortOrder;
+		this.sortOrderEngine = sortOrder;
 		return this;
 	}
 
@@ -688,10 +910,10 @@ public class ExpressionImpl implements IExpression {
 	public IExpression addOrder(IField field)
 			throws ExpressionNotImplementedException, ExpressionException {
 		this.checkArgoments(field,false);
-		if(this._sortOrder==null || SortOrder.UNSORTED.equals(this._sortOrder)){
+		if(this.sortOrderEngine==null || SortOrder.UNSORTED.equals(this.sortOrderEngine)){
 			throw new ExpressionException("To add order by conditions must first be defined the sort order (by sortOrder method)"); 
 		}
-		this.orderedFields.add(new OrderedField(field, this._sortOrder));
+		this.orderedFields.add(new OrderedField(field, this.sortOrderEngine));
 		return this;
 	}
 	
@@ -723,14 +945,14 @@ public class ExpressionImpl implements IExpression {
 	
 	public SortOrder getSortOrder(){
 		if(
-			( this._sortOrder==null || SortOrder.UNSORTED.equals(this._sortOrder) ) 
+			( this.sortOrderEngine==null || SortOrder.UNSORTED.equals(this.sortOrderEngine) ) 
 				&& 
-			( this.orderedFields!=null && this.orderedFields.size()>0 )
+			( this.orderedFields!=null && !this.orderedFields.isEmpty() )
 		){
 			// ritorno un sortOrder a caso tra i orderedFields, tanto poi viene usato sempre quello indicato per ogni field.
 			return this.orderedFields.get(0).getSortOrder();
 		}
-		return this._sortOrder;
+		return this.sortOrderEngine;
 	}
 	
 	
@@ -770,26 +992,33 @@ public class ExpressionImpl implements IExpression {
 	 */
 	@Override
 	public boolean inUseField(IField field,boolean checkOnlyWhereCondition) throws ExpressionNotImplementedException, ExpressionException {
-		if(this.expressionEngine==null){
-			if(checkOnlyWhereCondition)
-				return false;
+		if(this.expressionEngine==null &&
+			checkOnlyWhereCondition) {
+			return false;
 		}
 		if( this.expressionEngine!=null && this.expressionEngine.inUseField(field) ){
 			return true;
 		}
-		if(checkOnlyWhereCondition==false){
-			if(this.orderedFields!=null){
-				for (int i = 0; i < this.orderedFields.size(); i++) {
-					if(field.equals(this.orderedFields.get(i).getField())){
-						return true;
-					}
+		if(!checkOnlyWhereCondition){
+			boolean check = checkUseField(field);
+			if(check) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean checkUseField(IField field) {
+		if(this.orderedFields!=null){
+			for (int i = 0; i < this.orderedFields.size(); i++) {
+				if(field.equals(this.orderedFields.get(i).getField())){
+					return true;
 				}
 			}
-			if(this.groupByFields!=null){
-				for (int i = 0; i < this.groupByFields.size(); i++) {
-					if(field.equals(this.groupByFields.get(i))){
-						return true;
-					}
+		}
+		if(this.groupByFields!=null){
+			for (int i = 0; i < this.groupByFields.size(); i++) {
+				if(field.equals(this.groupByFields.get(i))){
+					return true;
 				}
 			}
 		}
@@ -804,14 +1033,14 @@ public class ExpressionImpl implements IExpression {
 	 */
 	@Override
 	public boolean inUseModel(IModel<?> model,boolean checkOnlyWhereCondition) throws ExpressionNotImplementedException, ExpressionException {
-		if(this.expressionEngine==null){
-			if(checkOnlyWhereCondition)
-				return false;
+		if(this.expressionEngine==null &&
+			checkOnlyWhereCondition) {
+			return false;
 		}
 		if( this.expressionEngine!=null && this.expressionEngine.inUseModel(model) ){
 			return true;
 		}
-		if(checkOnlyWhereCondition==false){
+		if(!checkOnlyWhereCondition){
 			if(this.orderedFields!=null){
 				for (int i = 0; i < this.orderedFields.size(); i++) {
 					IField field = this.orderedFields.get(i).getField();
@@ -883,31 +1112,39 @@ public class ExpressionImpl implements IExpression {
 	@Override
 	public List<IField> getFields(boolean onlyWhereCondition) throws ExpressionNotImplementedException, ExpressionException{
 		List<IField> o = this.expressionEngine!=null ? this.expressionEngine.getFields() : null;
-		if(onlyWhereCondition==false){
-			if(this.orderedFields!=null){
-				for (int i = 0; i < this.orderedFields.size(); i++) {
-					IField field = this.orderedFields.get(i).getField();
-					if(o==null){
-						o = new ArrayList<IField>();
-					}
-					if(o.contains(field)==false){
-						o.add(field);
-					}
+		if(!onlyWhereCondition){
+			o = addFieldByOrderBy(o);
+			o = addFieldByGroupBy(o);
+		}
+		return o; 
+	}
+	private List<IField> addFieldByOrderBy(List<IField> o) {
+		if(this.orderedFields!=null){
+			for (int i = 0; i < this.orderedFields.size(); i++) {
+				IField field = this.orderedFields.get(i).getField();
+				if(o==null){
+					o = new ArrayList<>();
 				}
-			}
-			if(this.groupByFields!=null){
-				for (int i = 0; i < this.groupByFields.size(); i++) {
-					IField field = this.groupByFields.get(i);
-					if(o==null){
-						o = new ArrayList<IField>();
-					}
-					if(o.contains(field)==false){
-						o.add(field);
-					}
+				if(!o.contains(field)){
+					o.add(field);
 				}
 			}
 		}
-		return o; 
+		return o;
+	}
+	private List<IField> addFieldByGroupBy(List<IField> o) {
+		if(this.groupByFields!=null){
+			for (int i = 0; i < this.groupByFields.size(); i++) {
+				IField field = this.groupByFields.get(i);
+				if(o==null){
+					o = new ArrayList<>();
+				}
+				if(!o.contains(field)){
+					o.add(field);
+				}
+			}
+		}
+		return o;
 	}
 	
 	/**
@@ -1015,7 +1252,7 @@ public class ExpressionImpl implements IExpression {
 		else{
 			
 			if(this.throwExpressionNotInitialized){
-				throw new RuntimeException("Expression is not initialized");
+				throw new UtilsRuntimeException("Expression is not initialized");
 			}
 			
 			StringBuilder bf = new StringBuilder();
@@ -1026,7 +1263,7 @@ public class ExpressionImpl implements IExpression {
 			}
 			
 			
-			if(this.groupByFields.size()>0){
+			if(!this.groupByFields.isEmpty()){
 				
 				bf.append(" GROUP BY ");
 				
@@ -1056,7 +1293,7 @@ public class ExpressionImpl implements IExpression {
 			if(!SortOrder.UNSORTED.equals(this.getSortOrder())){
 				
 				bf.append(" ORDER BY ");
-				if(this.orderedFields.size()>0){
+				if(!this.orderedFields.isEmpty()){
 					int index = 0;
 					for (Iterator<OrderedField> iterator = this.orderedFields.iterator(); iterator.hasNext();) {
 						OrderedField orderedField = iterator.next();
@@ -1097,7 +1334,7 @@ public class ExpressionImpl implements IExpression {
 		}
 	}
 	protected void printForceIndex(StringBuilder bf){
-		if(this.forceIndexes.size()>0){
+		if(!this.forceIndexes.isEmpty()){
 			for (Iterator<Index> iterator =this.forceIndexes.iterator(); iterator.hasNext();) {
 				Index forceIndex = iterator.next();			
 				String forceIndexSql = "/*+ index("+forceIndex.getModel().getModeledClass().getSimpleName()+" "+forceIndex.getName()+") */";
@@ -1112,32 +1349,36 @@ public class ExpressionImpl implements IExpression {
 	
 	
 	/* ************ OBJECTS ************ */
-	protected ComparatorExpressionImpl getComparatorExpression(IField field, Object value, Comparator c)throws ExpressionException {
+	protected ComparatorExpressionImpl getComparatorExpression(IField field, Object value, Comparator c) {
 		return new ComparatorExpressionImpl(this.objectFormatter,field,value,c);
 	}
-	protected BetweenExpressionImpl getBetweenExpression(IField field, Object lower, Object high)throws ExpressionException {
+	protected BetweenExpressionImpl getBetweenExpression(IField field, Object lower, Object high) {
 		return new BetweenExpressionImpl(this.objectFormatter,field,lower,high);
 	}
-	protected InExpressionImpl getInExpression(IField field, Object... values) throws ExpressionException {
+	protected InExpressionImpl getInExpression(IField field, Object... values) {
 		List<Object> lista = new ArrayList<>();
-		if(values!=null){
-			for (int i = 0; i < values.length; i++) {
-				lista.add(values[i]);
-			}
+		if(values!=null && values.length>0){
+			lista.addAll(Arrays.asList(values));
 		}
 		return new InExpressionImpl(this.objectFormatter,field, lista);
 	}
-	protected LikeExpressionImpl getLikeExpression(IField field, String value, LikeMode mode, boolean caseInsensitive) throws ExpressionException {
+	protected LikeExpressionImpl getLikeExpression(IField field, String value, LikeMode mode, boolean caseInsensitive) {
 		return new LikeExpressionImpl(this.objectFormatter,field, value, mode, caseInsensitive);
 	}
-	protected ConjunctionExpressionImpl getConjunctionExpression() throws ExpressionException {
+	protected DateTimePartExpressionImpl getDateTimePartExpression(IField field, String value, DateTimePartEnum dateTimePartEnum) {
+		return new DateTimePartExpressionImpl(this.objectFormatter,field, value, dateTimePartEnum);
+	}
+	protected DayFormatExpressionImpl getDayFormatExpression(IField field, String value, DayFormatEnum dayFormatEnum) {
+		return new DayFormatExpressionImpl(this.objectFormatter,field, value, dayFormatEnum);
+	}
+	protected ConjunctionExpressionImpl getConjunctionExpression() {
 		return new ConjunctionExpressionImpl(this.objectFormatter);
 	}
 		
 	
 	
 	/* ************ UTILITY - BUILD ************ */
-	protected void buildComparatorExpression(IField field, Object value, Comparator c) throws ExpressionException {
+	protected void buildComparatorExpression(IField field, Object value, Comparator c) {
 		ComparatorExpressionImpl cExp = getComparatorExpression(field,value,c);
 		if(this.expressionEngine==null){
 			this.expressionEngine = cExp;
@@ -1146,7 +1387,7 @@ public class ExpressionImpl implements IExpression {
 		}
 		this.expressionEngine.setNot(this.notOperator);
 	}
-	protected void buildComparatorExpression(Map<IField, Object> propertyNameValues,Comparator c,boolean and) throws ExpressionException {
+	protected void buildComparatorExpression(Map<IField, Object> propertyNameValues,Comparator c,boolean and) {
 		Iterator<IField> fieldsIt = propertyNameValues.keySet().iterator();
 		ConjunctionExpressionImpl newConjunctionExpr = getConjunctionExpression();
 		newConjunctionExpr.setAndConjunction(and);
@@ -1158,7 +1399,7 @@ public class ExpressionImpl implements IExpression {
 		this.conjunctionWithInternalInstance(newConjunctionExpr);
 		this.expressionEngine.setNot(this.notOperator);
 	}
-	protected void buildBeetweenExpression(IField field, Object lower, Object high) throws ExpressionException {
+	protected void buildBeetweenExpression(IField field, Object lower, Object high) {
 		BetweenExpressionImpl cExp = getBetweenExpression(field,lower,high);
 		if(this.expressionEngine==null){
 			this.expressionEngine = cExp;
@@ -1167,7 +1408,7 @@ public class ExpressionImpl implements IExpression {
 		}
 		this.expressionEngine.setNot(this.notOperator);
 	}
-	protected void buildInExpression(IField field, Object... values) throws ExpressionException {
+	protected void buildInExpression(IField field, Object... values) {
 		InExpressionImpl cExp = getInExpression(field, values);
 		if(this.expressionEngine==null){
 			this.expressionEngine = cExp;
@@ -1176,7 +1417,7 @@ public class ExpressionImpl implements IExpression {
 		}
 		this.expressionEngine.setNot(this.notOperator);
 	}
-	protected void buildLikeExpression(IField field, String value, LikeMode mode, boolean caseInsensitive) throws ExpressionException {
+	protected void buildLikeExpression(IField field, String value, LikeMode mode, boolean caseInsensitive) {
 		LikeExpressionImpl cExp = getLikeExpression(field, value, mode, caseInsensitive);
 		if(this.expressionEngine==null){
 			this.expressionEngine = cExp;
@@ -1185,7 +1426,25 @@ public class ExpressionImpl implements IExpression {
 		}
 		this.expressionEngine.setNot(this.notOperator);
 	}
-	protected void buildNotExpression(AbstractBaseExpressionImpl expr) throws ExpressionException {
+	protected void buildDateTimePartExpression(IField field, String value, DateTimePartEnum dateTimePartEnum) {
+		DateTimePartExpressionImpl cExp = getDateTimePartExpression(field, value, dateTimePartEnum);
+		if(this.expressionEngine==null){
+			this.expressionEngine = cExp;
+		}else{
+			conjunctionWithInternalInstance(cExp);
+		}
+		this.expressionEngine.setNot(this.notOperator);
+	}
+	protected void buildDayFormatExpression(IField field, String value, DayFormatEnum dayFormatEnum) {
+		DayFormatExpressionImpl cExp = getDayFormatExpression(field, value, dayFormatEnum);
+		if(this.expressionEngine==null){
+			this.expressionEngine = cExp;
+		}else{
+			conjunctionWithInternalInstance(cExp);
+		}
+		this.expressionEngine.setNot(this.notOperator);
+	}
+	protected void buildNotExpression(AbstractBaseExpressionImpl expr) {
 		expr.setNot(true);
 		if(this.expressionEngine==null){
 			this.expressionEngine = expr;
@@ -1200,7 +1459,7 @@ public class ExpressionImpl implements IExpression {
 			}
 		}
 	}
-	protected void buildConjunctionExpression(boolean and,IExpression... expressions) throws ExpressionException {
+	protected void buildConjunctionExpression(boolean and,IExpression... expressions) {
 		ConjunctionExpressionImpl cExp = getConjunctionExpression();
 		cExp.setAndConjunction(and);
 		boolean add = false;
@@ -1220,7 +1479,7 @@ public class ExpressionImpl implements IExpression {
 			this.expressionEngine.setNot(this.notOperator);
 		}
 	}
-	protected void conjunctionWithInternalInstance(AbstractBaseExpressionImpl newExpr) throws ExpressionException {
+	protected void conjunctionWithInternalInstance(AbstractBaseExpressionImpl newExpr) {
 		ConjunctionExpressionImpl newConjunctionExpr = getConjunctionExpression();
 		newConjunctionExpr.setAndConjunction(this.andLogicOperator);
 		if(this.expressionEngine!=null){
@@ -1271,12 +1530,12 @@ public class ExpressionImpl implements IExpression {
 	}
 	protected void checkArgoments(IField field, boolean constantPermit) throws ExpressionException {
 		if(field==null){
-			throw new ExpressionException("Field is null");
+			throw new ExpressionException(FIELD_IS_NULL);
 		}
-		if(!constantPermit){
-			if(field instanceof ConstantField){
-				throw new ExpressionException("The field type 'ConstantField' can not be used with this method");
-			}
+		if(!constantPermit &&
+			(field instanceof ConstantField)
+			){
+			throw new ExpressionException(FIELD_TYPE_CONSTANT_CANNOT_BE_USED);
 		}
 	}
 	
@@ -1285,7 +1544,7 @@ public class ExpressionImpl implements IExpression {
 	}
 	protected void checkArgoments(IField field, Object value, boolean constantPermit) throws ExpressionException {
 		if(field==null){
-			throw new ExpressionException("Field is null");
+			throw new ExpressionException(FIELD_IS_NULL);
 		}
 		if(value==null){
 			throw new ExpressionException("Value is null for field: "+field.toString());
@@ -1295,10 +1554,10 @@ public class ExpressionImpl implements IExpression {
 		}catch(Exception e){
 			throw new ExpressionException("[Value] "+e.getMessage(),e);
 		}
-		if(!constantPermit){
-			if(field instanceof ConstantField){
-				throw new ExpressionException("The field type 'ConstantField' can not be used with this method");
-			}
+		if(!constantPermit &&
+			(field instanceof ConstantField)
+			){
+			throw new ExpressionException(FIELD_TYPE_CONSTANT_CANNOT_BE_USED);
 		}
 	}
 	
@@ -1307,7 +1566,7 @@ public class ExpressionImpl implements IExpression {
 	}
 	protected void checkArgoments(IField field, Object [] values, boolean constantPermit) throws ExpressionException {
 		if(field==null){
-			throw new ExpressionException("Field is null");
+			throw new ExpressionException(FIELD_IS_NULL);
 		}
 		if(values==null){
 			throw new ExpressionException("Values is null");
@@ -1322,10 +1581,10 @@ public class ExpressionImpl implements IExpression {
 				throw new ExpressionException("[Value["+i+"]] "+e.getMessage(),e);
 			}
 		}
-		if(!constantPermit){
-			if(field instanceof ConstantField){
-				throw new ExpressionException("The field type 'ConstantField' can not be used with this method");
-			}
+		if(!constantPermit &&
+			(field instanceof ConstantField)
+			){
+			throw new ExpressionException(FIELD_TYPE_CONSTANT_CANNOT_BE_USED);
 		}
 	}
 	
@@ -1334,7 +1593,7 @@ public class ExpressionImpl implements IExpression {
 	}
 	protected void checkArgoments(IField field, Object lower, Object high, boolean constantPermit) throws ExpressionException {
 		if(field==null){
-			throw new ExpressionException("Field is null");
+			throw new ExpressionException(FIELD_IS_NULL);
 		}
 		if(lower==null){
 			throw new ExpressionException("Lower is null for field: "+field.toString());
@@ -1352,10 +1611,10 @@ public class ExpressionImpl implements IExpression {
 		}catch(Exception e){
 			throw new ExpressionException("[High] "+e.getMessage(),e);
 		}
-		if(!constantPermit){
-			if(field instanceof ConstantField){
-				throw new ExpressionException("The field type 'ConstantField' can not be used with this method");
-			}
+		if(!constantPermit &&
+			(field instanceof ConstantField)
+			){
+			throw new ExpressionException(FIELD_TYPE_CONSTANT_CANNOT_BE_USED);
 		}
 	}
 	
@@ -1370,7 +1629,7 @@ public class ExpressionImpl implements IExpression {
 		while (fieldsIt.hasNext()) {
 			IField iField = fieldsIt.next();
 			if(iField==null){
-				throw new ExpressionException("Field is null");
+				throw new ExpressionException(FIELD_IS_NULL);
 			}
 			if(propertyNameValues.get(iField)==null){
 				throw new ExpressionException("Value for Field["+iField+"] is null");	
@@ -1380,10 +1639,10 @@ public class ExpressionImpl implements IExpression {
 			}catch(Exception e){
 				throw new ExpressionException("[Value for Field["+iField+"]] "+e.getMessage(),e);
 			}
-			if(!constantPermit){
-				if(iField instanceof ConstantField){
-					throw new ExpressionException("The field type 'ConstantField' can not be used with this method");
-				}
+			if(!constantPermit &&
+				(iField instanceof ConstantField)
+				){
+				throw new ExpressionException(FIELD_TYPE_CONSTANT_CANNOT_BE_USED);
 			}
 		}
 	}

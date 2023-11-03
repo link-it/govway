@@ -356,6 +356,202 @@ public interface ISQLQueryObject {
 	
 	
 	
+	// DATE TIME
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre l'anno dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(YEAR FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectYearTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre l'anno dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(YEAR FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectYearTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il mese dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(MONTH FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectMonthTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il mese dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(MONTH FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectMonthTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(DAY FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectDayTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(DAY FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectDayTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre l'ora dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(HOUR FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectHourTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre l'ora dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(HOUR FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectHourTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre i minuti dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(MINUTE FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectMinuteTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre i minuti dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(MINUTE FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectMinuteTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre i secondi dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(SECOND FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectSecondTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre i secondi dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(SECOND FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectSecondTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+	
+	
+	
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'full day name'
+	 * es: TO_CHAR(field, 'DAY') AS alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectFullDayNameTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'full day name'
+	 * es: TO_CHAR(nomeTabella.field, 'DAY') AS alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectFullDayNameTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'short day name'
+	 * es: TO_CHAR(field, 'DY') AS alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectShortDayNameTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'short day name'
+	 * es: TO_CHAR(nomeTabella.field, 'DY') AS alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectShortDayNameTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'day of year'
+	 * es: TO_CHAR(field, 'DDD') AS alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectDayOfYearTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'day of year'
+	 * es: TO_CHAR(nomeTabella.field, 'DDD') AS alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectDayOfYearTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'day of week'
+	 * es: TO_CHAR(field, 'D') AS alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectDayOfWeekTimestampField(String field,String alias) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'day of week'
+	 * es: TO_CHAR(nomeTabella.field, 'D') AS alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectDayOfWeekTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
+		
+	
 	
 	
 	
@@ -408,7 +604,7 @@ public interface ISQLQueryObject {
 	 * @return nomi dei fields impostati (se e' stato utilizzato un alias ritorna comunque il nome della colonna)
 	 * @throws SQLQueryObjectException
 	 */
-	//public List<String> getFields() throws SQLQueryObjectException;
+	/**public List<String> getFields() throws SQLQueryObjectException;*/
 	
 	/**
 	 * Ritorna i nomi delle tabelle impostate (se e' stato utilizzato un alias ritorna il valore dell'alias)
@@ -424,7 +620,7 @@ public interface ISQLQueryObject {
 	 * @return nomi delle tabelle impostate (se e' stato utilizzato un alias ritorna comunque il nome della tabella)
 	 * @throws SQLQueryObjectException
 	 */
-	//public List<String> getTables() throws SQLQueryObjectException;
+	/**public List<String> getTables() throws SQLQueryObjectException;*/
 	
 	
 	
@@ -660,6 +856,100 @@ public interface ISQLQueryObject {
 	
 	
 	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(YEAR FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereYearCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(MONTH FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereMonthCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(DAY FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereDayCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(HOUR FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereHourCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(MINUTE FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereMinuteCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(SECOND FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereSecondCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (TO_CHAR(field, 'DAY') = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereFullDayNameCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (TO_CHAR(field, 'DY') = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereShortDayNameCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (TO_CHAR(field, 'DDD') = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereDayOfYearCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (TO_CHAR(field, 'D') = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	public ISQLQueryObject addWhereDayOfWeekCondition(String columnName,String searchPattern) throws SQLQueryObjectException;
+	
+	
+	
+	/**
 	 * Aggiunge una condizione di ricerca con EXISTS
 	 * La query su cui viene effettuato il controllo di exists e' definito dal parametro sqlQueryObject
 	 * es. SELECT * from tabella WHERE [NOT] EXISTS ( sqlQueryObject.createSQLQuery() )
@@ -821,7 +1111,7 @@ public interface ISQLQueryObject {
 //	 * @param delete genera una stringa SQL adatta per una delete
 //	 * @return Stringa SQL
 //	 */
-//	public String toString(boolean delete);
+/**	public String toString(boolean delete);*/
 	
 	
 	/**

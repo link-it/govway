@@ -19,16 +19,11 @@
  */
 package org.openspcoop2.generic_project.expression.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openspcoop2.generic_project.beans.ComplexField;
 import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.IModel;
-import org.openspcoop2.generic_project.exception.ExpressionException;
-import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.EscapeSQLPattern;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -41,36 +36,17 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class LikeExpressionImpl extends AbstractBaseExpressionImpl {
+public class LikeExpressionImpl extends AbstractCommonFieldValueBaseExpressionImpl {
 
-	private IField field;
-	private String value;
 	private LikeMode mode;
 	private boolean caseInsensitive;
 	
 	public LikeExpressionImpl(IObjectFormatter objectFormatter,IField field,String value,LikeMode mode,boolean caseInsensitive){
-		super(objectFormatter);
-		this.field = field;
-		this.value = value;
+		super(objectFormatter, field, value);
 		this.mode = mode;
 		this.caseInsensitive = caseInsensitive;
 	}
 	
-	public IField getField() {
-		return this.field;
-	}
-	public void setField(IField field) {
-		this.field = field;
-	}
-
-	public String getValue() {
-		return this.value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
 	public LikeMode getMode() {
 		return this.mode;
 	}
@@ -126,9 +102,21 @@ public class LikeExpressionImpl extends AbstractBaseExpressionImpl {
 			}
 			likeValue = escapePattern.getEscapeValue();
 		}catch(Exception e){
-			e.printStackTrace(System.err);
+			LoggerWrapperFactory.getLogger(LikeExpressionImpl.class).error(e.getMessage(),e);
 		}
 		
+		String likeParam = getLikeParam(likeValue);
+		bf.append(likeParam);
+		bf.append("'");
+		bf.append(escapeClausole);
+		bf.append(" )");
+		if(isNot()){
+			bf.append(" )");
+		}
+		return bf.toString();
+	}
+	
+	private String getLikeParam(String likeValue) {
 		String likeParam = null;
 		switch (this.mode) {
 		case EXACT:
@@ -162,71 +150,9 @@ public class LikeExpressionImpl extends AbstractBaseExpressionImpl {
 		default:
 			break;
 		}
-		bf.append(likeParam);
-		bf.append("'");
-		bf.append(escapeClausole);
-		bf.append(" )");
-		if(isNot()){
-			bf.append(" )");
-		}
-		return bf.toString();
-	}
-	
-	@Override
-	public boolean inUseField(IField field)
-			throws ExpressionNotImplementedException, ExpressionException {
-		if(this.field==null){
-			return false;
-		}
-		return this.field.equals(field);
+		return likeParam;
 	}
 
-	@Override
-	public List<Object> getFieldValues(IField field) throws ExpressionNotImplementedException, ExpressionException{
-		if(this.field==null){
-			return null;
-		}
-		if(this.field.equals(field)){
-			List<Object> lista = new ArrayList<>();
-			lista.add(this.value);
-			return lista;
-		}
-		return null;
-	}
 	
-	@Override
-	public boolean inUseModel(IModel<?> model)
-			throws ExpressionNotImplementedException, ExpressionException {
-		if(this.field==null){
-			return false;
-		}
-		if(model.getBaseField()!=null){
-			// Modello di un elemento non radice
-			if(this.field instanceof ComplexField){
-				ComplexField c = (ComplexField) this.field;
-				return c.getFather().equals(model.getBaseField());
-			}else{
-				String modeClassName = model.getModeledClass().getName() + "";
-				return modeClassName.equals(this.field.getClassType().getName());
-			}
-		}
-		else{
-			String modeClassName = model.getModeledClass().getName() + "";
-			return modeClassName.equals(this.field.getClassType().getName());
-		}
-	}
-	
-	
-	
-	
-	@Override
-	public List<IField> getFields()
-			throws ExpressionNotImplementedException, ExpressionException {
-		if(this.field==null){
-			return null;
-		}
-		List<IField> lista = new ArrayList<IField>();
-		lista.add(this.field);
-		return lista;
-	}
+
 }

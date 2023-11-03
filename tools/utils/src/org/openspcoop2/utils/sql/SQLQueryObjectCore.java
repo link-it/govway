@@ -42,17 +42,53 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
-	private static SecureRandom _rnd = null;
+	private static final String LA_COLONNA_PREFIX = "La colonna ";
+	private static final String TABELLA_PREFIX = "Tabella ";
+	private static final String WHERE_CONDITION_PREFIX = "Where Condition ";
+	private static final String FIELD_NAME_PREFIX = "Field name ";
+	
+	private static final String ALIAS_TABELLA_INDICATO_NON_ESISTE = "L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella";
+	private static final String NESSUN_FIELD_IMPOSTATO = "Nessun field impostato";
+	private static final String GIA_ESISTENTE_TRA_CONDIZIONI_WHERE = " gia' esistente tra le condizioni di where";
+	private static final String FIELD_NAME_IS_NULL_OR_EMPTY = "Field name is null or empty string";
+	protected static final String CONDIZIONI_ORDER_BY_RICHESTE = "Condizioni di OrderBy richieste";
+	protected static final String TABELLA_RICERCA_FROM_NON_DEFINITA = "Tabella di ricerca (... FROM Table ...) non definita";
+	
+	private static final String NOME_TABELLA_DEVE_ESSERE_DIVERSO_NULL = "nomeTabella non puo' essere null";
+	protected static final String FIELD_DEVE_ESSERE_DIVERSO_NULL = "field non puo' essere null";
+	private static final String IS_NULL_CONDITION_DEVE_ESSERE_DIVERSO_NULL = "IsNullCondition field non puo' essere null";
+	
+	private static final String LOWER_PREFIX = "( lower(";
+	private static final String ESCAPE_SEPARATOR = " ESCAPE ";
+	private static final String LIKE_SEPARATOR = " LIKE ";
+	
+	protected static final String FROM_SEPARATOR = " FROM ";
+	protected static final String FROM_SEPARATOR_APERTURA = " FROM ( ";
+	protected static final String WHERE_SEPARATOR = " WHERE ";
+	protected static final String AND_SEPARATOR = " AND ";
+	protected static final String OR_SEPARATOR = " OR ";
+	protected static final String ASC_SEPARATOR = " ASC ";
+	protected static final String DESC_SEPARATOR = " DESC ";
+	protected static final String GROUP_BY_SEPARATOR = " GROUP BY ";
+	protected static final String ORDER_BY_SEPARATOR = " ORDER BY ";
+	protected static final String LIMIT_SEPARATOR = " LIMIT ";
+	protected static final String NOT_SEPARATOR_APERTURA = " NOT ( ";
+	
+	protected static final String SELECT_SEPARATOR_CON_INIZIO_APERTURA = " ( SELECT ";
+	
+	protected static final String AS_SUBQUERY_SUFFIX = " ) as subquery";
+	
+	private static SecureRandom rndEngine = null;
 	private static synchronized void initRandom() {
-		if(_rnd==null) {
-			_rnd = new SecureRandom();
+		if(rndEngine==null) {
+			rndEngine = new SecureRandom();
 		}
 	}
 	protected static java.util.Random getRandom() {
-		if(_rnd==null) {
+		if(rndEngine==null) {
 			initRandom();
 		}
-		return _rnd;
+		return rndEngine;
 	}
 	
 	/** List di Field esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna comunque il nome della colonna) */
@@ -60,7 +96,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	/** List di NomiField esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
 	List<String> fieldNames = new ArrayList<>();
 	/** Mapping tra alias e indicazione se e' una function: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
-	Map<String, Boolean> fieldNameIsFunction = new HashMap<String, Boolean>();
+	Map<String, Boolean> fieldNameIsFunction = new HashMap<>();
 	/** Mapping tra alias (key) e field names (value) (sono presenti i mapping solo per le colonne per cui e' stato definito un alias) */
 	Map<String, String> alias = new HashMap<>();
 	
@@ -89,7 +125,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	
 	/** OrderBy di Field esistenti */
 	List<String> orderBy = new ArrayList<>();
-	Map<String, Boolean> orderBySortType = new HashMap<String, Boolean>();
+	Map<String, Boolean> orderBySortType = new HashMap<>();
 	
 	/** Tipo di ordinamento */
 	boolean sortTypeAsc = true;
@@ -143,7 +179,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
 
 	// COSTRUTTORE
-	public SQLQueryObjectCore(TipiDatabase tipoDatabase){
+	protected SQLQueryObjectCore(TipiDatabase tipoDatabase){
 		this.tipoDatabase = tipoDatabase;
 	}
 	
@@ -156,61 +192,22 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
 	protected void precheckBuildQuery() throws SQLQueryObjectException{
 
-		if(this.precheckQuery==false){
+		if(!this.precheckQuery){
 			return;
 		}
 
 		// Check Offset
-		if(this.offset>=0){
-			if(this.orderBy.size()==0){
-				throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
-			}
+		if(this.offset>=0 &&
+			this.orderBy.isEmpty()){
+			throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
 		}
 		
 		// Check GroupBy
-		if(this.groupBy!=null && this.groupBy.size()>0){
-
-			// verifico che tutte le condizioni di order by siano presente anche nei field di group by
-			if(this.orderBy.size()>0){
-				for (String order : this.orderBy) {
-					boolean exists = false;
-					for (String groupBy : this.groupBy) {
-						if(normalizeField(groupBy).equals(normalizeField(order))){
-							exists = true;
-							break;
-						}
-					}
-					if(!exists){
-						String orderField = normalizeField(order);
-						try{
-							if(this.isFieldNameForFunction(orderField)==false){
-								throw new SQLQueryObjectException("La colonna "+order+" utilizzata nella condizione di ORDER BY deve apparire anche in una condizione di GROUP BY");
-							}
-						}catch(SQLQueryObjectException sqlObject){
-							throw new SQLQueryObjectException("La colonna "+order+" utilizzata nella condizione di ORDER BY deve apparire anche in una condizione di GROUP BY",sqlObject);
-						}
-					}
-				}
-			}
-
-			// verifico che tutte le condizioni di group by siano presenti anche nei field
-			for (String groupBy : this.groupBy) {
-				boolean exists = false;
-				for (String field : this.fields) {
-					if(normalizeField(groupBy).equals(normalizeField(field))){
-						exists = true;
-						break;
-					}
-				}
-				if(!exists){
-					throw new SQLQueryObjectException("La colonna "+groupBy+" utilizzata nella condizione di GROUP BY deve essere anche selezionato come select field");
-				}
-			}
-		}
+		precheckBuildQueryGroupBy();
 		
 		// Check Select For Update
 		if(this.selectForUpdate){
-			if(this.groupBy!=null && this.groupBy.size()>0){
+			if(this.groupBy!=null && !this.groupBy.isEmpty()){
 				throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' se viene utilizzata la condizione di GROUP BY");
 			}
 			else if(this.distinct){
@@ -221,6 +218,53 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			}
 			else if(this.offset>=0){
 				throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' se viene utilizzata la clausola OFFSET");
+			}
+		}
+	}
+	private void precheckBuildQueryGroupBy() throws SQLQueryObjectException{
+		if(this.groupBy!=null && !this.groupBy.isEmpty()){
+
+			// verifico che tutte le condizioni di order by siano presente anche nei field di group by
+			precheckBuildQueryGroupByOrderBy();
+
+			// verifico che tutte le condizioni di group by siano presenti anche nei field
+			for (String groupByCheck : this.groupBy) {
+				boolean exists = false;
+				for (String field : this.fields) {
+					if(normalizeField(groupByCheck).equals(normalizeField(field))){
+						exists = true;
+						break;
+					}
+				}
+				if(!exists){
+					throw new SQLQueryObjectException(LA_COLONNA_PREFIX+groupByCheck+" utilizzata nella condizione di GROUP BY deve essere anche selezionato come select field");
+				}
+			}
+		}
+	}
+	private void precheckBuildQueryGroupByOrderBy() throws SQLQueryObjectException{
+		if(!this.orderBy.isEmpty()){
+			for (String order : this.orderBy) {
+				precheckBuildQueryGroupByOrderBy(order);
+			}
+		}
+	}
+	private void precheckBuildQueryGroupByOrderBy(String order) throws SQLQueryObjectException{
+		boolean exists = false;
+		for (String groupByCheck : this.groupBy) {
+			if(normalizeField(groupByCheck).equals(normalizeField(order))){
+				exists = true;
+				break;
+			}
+		}
+		if(!exists){
+			String orderField = normalizeField(order);
+			try{
+				if(this.isFieldNameForFunction(orderField)==null || (!this.isFieldNameForFunction(orderField).booleanValue())){
+					throw new SQLQueryObjectException(LA_COLONNA_PREFIX+order+" utilizzata nella condizione di ORDER BY deve apparire anche in una condizione di GROUP BY");
+				}
+			}catch(SQLQueryObjectException sqlObject){
+				throw new SQLQueryObjectException(LA_COLONNA_PREFIX+order+" utilizzata nella condizione di ORDER BY deve apparire anche in una condizione di GROUP BY",sqlObject);
 			}
 		}
 	}
@@ -253,10 +297,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 				}
 				if(split==null){
 					List<String> aliases = this.getSupportedAliasesField();
-					if(aliases!=null && aliases.size()>0){
-						for (String alias : aliases) {
-							if(fieldRicercaAliasa.contains(alias)){
-								split = fieldRicercaAliasa.split(alias);
+					if(aliases!=null && !aliases.isEmpty()){
+						for (String aliasCheck : aliases) {
+							if(fieldRicercaAliasa.contains(aliasCheck)){
+								split = fieldRicercaAliasa.split(aliasCheck);
 								break;
 							}
 						}
@@ -276,7 +320,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		// Il problema è che se contengono dei '.' o dei caratteri alias rientrano erroneamnete nei punti 2 e 3 dove invece non dovrebbero rientraci.
 		// Per questo motivo viene quindi prima richiesto al vendor se effettuare o meno la classica normalizzazione del field in base a tali valori
 		// sul field in essere
-		if(this.continueNormalizeField(field)==false){
+		if(!this.continueNormalizeField(field)){
 			return field;
 		}
 		
@@ -293,22 +337,22 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		for (Iterator<?> iterator = this.getSupportedAliasesField().iterator(); iterator.hasNext();) {
 			aliasModeSupportati.add((String)iterator.next());
 		}
-		if(aliasModeSupportati.contains(" ")==false){
+		if(!aliasModeSupportati.contains(" ")){
 			aliasModeSupportati.add(" ");
 		}
-		if(aliasModeSupportati.contains(" as ")==false){
+		if(!aliasModeSupportati.contains(" as ")){
 			aliasModeSupportati.add(" as ");
 		}
 		// itero su tutti gli alias (lastIndexOf utile per i casi di min/max/avg/sum timestamp field dove vengono usato anche altri alias internamente)
 		for (Iterator<?> iterator = aliasModeSupportati.iterator(); iterator.hasNext();) {
-			String alias = (String) iterator.next();
-			int aliasLength = alias.length(); //4;
+			String aliasCheck = (String) iterator.next();
+			int aliasLength = aliasCheck.length(); //4
 			// Inoltre se vi sono alias, devono essere eliminati i field davanti agli alias e lasciati solo gli alias:
 			// Es. SCORRETTO :  SELECT id as IDAlias from (select id as IDAlias...)
 			// Es. CORRETTO :  SELECT IDAlias from (select id as IDAlias...)
 			String fLowerCase = field.toLowerCase();
-			//indexOf = fLowerCase.lastIndexOf(" as ");
-			indexOf = fLowerCase.lastIndexOf(alias);
+			/**indexOf = fLowerCase.lastIndexOf(" as ");*/
+			indexOf = fLowerCase.lastIndexOf(aliasCheck);
 			if( (indexOf!=-1) && ((indexOf+aliasLength)<field.length()) ){
 				field = field.substring(indexOf+aliasLength);
 				field = field.trim();
@@ -327,6 +371,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		
 		// Vedere quali database sovrascrivono questo metodo
 		// Ad esempio SQLServer
+		
+		if(normalizeField!=null) {
+			// nop
+		}
 		
 		return true;
 		
@@ -409,7 +457,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectField(String nomeTabella,String nomeField) throws SQLQueryObjectException{
-		return this._engine_addSelectField(nomeTabella,nomeField,null,true,false);
+		return this.engineAddSelectField(nomeTabella,nomeField,null,true,false);
 	}
 	/**
 	 * Aggiunge un field alla select, se non sono presenti field, viene utilizzato '*'
@@ -419,7 +467,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectAliasField(String nomeField,String alias) throws SQLQueryObjectException{
-		return this._engine_addSelectField(null,nomeField,alias,true,false);
+		return this.engineAddSelectField(null,nomeField,alias,true,false);
 	}
 	/**
 	 * Aggiunge un field alla select, se non sono presenti field, viene utilizzato '*'
@@ -430,7 +478,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectAliasField(String nomeTabella,String nomeField,String alias) throws SQLQueryObjectException{
-		return this._engine_addSelectField(nomeTabella,nomeField,alias,true,false);
+		return this.engineAddSelectField(nomeTabella,nomeField,alias,true,false);
 	}
 
 
@@ -448,7 +496,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectCoalesceField(String nomeField,String alias,String valore) throws SQLQueryObjectException{
-		return _engine_addSelectField(null, nomeField, alias, true, "coalesce(",",'"+escapeStringValue(valore)+"')",true);
+		return engineAddSelectField(null, nomeField, alias, true, "coalesce(",",'"+escapeStringValue(valore)+"')",true);
 	}
 
 	/**
@@ -462,10 +510,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectCoalesceField(String aliasTabella,String nomeField,String alias,String valore) throws SQLQueryObjectException{
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
-		return _engine_addSelectField(aliasTabella, nomeField, alias, true, "coalesce(",",'"+escapeStringValue(valore)+"')",true);
+		return engineAddSelectField(aliasTabella, nomeField, alias, true, "coalesce(",",'"+escapeStringValue(valore)+"')",true);
 	}
 
 	
@@ -512,10 +560,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	public ISQLQueryObject addSelectCountField(String alias) throws SQLQueryObjectException{
 		String fieldSQL = "count(*)";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		this.fieldNameIsFunction.put(alias, true);
 		return this;
@@ -534,10 +582,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			fieldCount = "*";
 		String fieldSQL = "count("+fieldCount+")";
 		if(alias != null){
-			//fieldSQL = fieldSQL + " as "+alias;
+			/**fieldSQL = fieldSQL + " as "+alias;*/
 			fieldSQL = fieldSQL + getDefaultAliasFieldKeyword() + alias;
 		}
-		this._engine_addSelectField(null,fieldSQL,null,false,true);
+		this.engineAddSelectField(null,fieldSQL,null,false,true);
 		this.fieldNames.add(alias);
 		this.fieldNameIsFunction.put(alias, true);
 		return this;
@@ -571,8 +619,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectCountField(String aliasTabella,String fieldCount,String alias) throws SQLQueryObjectException{
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
 		this.addSelectCountField(aliasTabella+"."+fieldCount, alias);
 		return this;
@@ -588,8 +636,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectCountField(String aliasTabella,String fieldCount,String alias,boolean distinct) throws SQLQueryObjectException{
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
 		this.addSelectCountField(aliasTabella+"."+fieldCount, alias, distinct);
 		return this;
@@ -612,7 +660,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	public ISQLQueryObject addSelectAvgField(String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
 			throw new SQLQueryObjectException("field avg non puo' essere null");
-		_engine_addSelectField(null, field, alias, true, "avg(",")",true);
+		engineAddSelectField(null, field, alias, true, "avg(",")",true);
 		return this;
 	}
 
@@ -629,11 +677,11 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(field==null)
 			throw new SQLQueryObjectException("field avg non puo' essere null");
 		if(aliasTabella==null)
-			throw new SQLQueryObjectException("nomeTabella non puo' essere null");
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+			throw new SQLQueryObjectException(NOME_TABELLA_DEVE_ESSERE_DIVERSO_NULL);
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
-		_engine_addSelectField(aliasTabella, field, alias, true, "avg(",")",true);
+		engineAddSelectField(aliasTabella, field, alias, true, "avg(",")",true);
 		return this;
 	}
 
@@ -644,8 +692,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @param field Nome del Field
 	 * @param alias Alias
 	 */
-	@Override
-	public abstract ISQLQueryObject addSelectAvgTimestampField(String field,String alias) throws SQLQueryObjectException;
+	/**@Override
+	public abstract ISQLQueryObject addSelectAvgTimestampField(String field,String alias) throws SQLQueryObjectException;*/
 
 	/**
 	 * Aggiunge un field count alla select, con un alias, del campo <var>fieldAvg</var> (di tipo Timestamp)
@@ -657,8 +705,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectAvgTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
 		addSelectAvgTimestampField(aliasTabella+"."+field, alias);
 		return this;
@@ -682,8 +730,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addSelectMaxField(String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field non puo' essere null");
-		_engine_addSelectField(null, field, alias, true, "max(",")",true);
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
+		engineAddSelectField(null, field, alias, true, "max(",")",true);
 		return this;
 	}
 
@@ -698,13 +746,13 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addSelectMaxField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field non puo' essere null");
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		if(aliasTabella==null)
-			throw new SQLQueryObjectException("nomeTabella non puo' essere null");
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+			throw new SQLQueryObjectException(NOME_TABELLA_DEVE_ESSERE_DIVERSO_NULL);
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
-		_engine_addSelectField(aliasTabella, field, alias, true, "max(",")",true);
+		engineAddSelectField(aliasTabella, field, alias, true, "max(",")",true);
 		return this;
 	}
 
@@ -715,8 +763,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @param field Nome del Field
 	 * @param alias Alias
 	 */
-	@Override
-	public abstract ISQLQueryObject addSelectMaxTimestampField(String field,String alias) throws SQLQueryObjectException;
+	/**@Override
+	public abstract ISQLQueryObject addSelectMaxTimestampField(String field,String alias) throws SQLQueryObjectException;*/
 
 	/**
 	 * Aggiunge un field count alla select, con un alias, del campo <var>field</var> (di tipo Timestamp)
@@ -728,8 +776,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectMaxTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
 		addSelectMaxTimestampField(aliasTabella+"."+field, alias);
 		return this;
@@ -757,8 +805,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addSelectMinField(String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field non puo' essere null");
-		_engine_addSelectField(null, field, alias, true, "min(",")",true);
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
+		engineAddSelectField(null, field, alias, true, "min(",")",true);
 		return this;
 	}
 
@@ -773,13 +821,13 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addSelectMinField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field non puo' essere null");
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		if(aliasTabella==null)
-			throw new SQLQueryObjectException("nomeTabella non puo' essere null");
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+			throw new SQLQueryObjectException(NOME_TABELLA_DEVE_ESSERE_DIVERSO_NULL);
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
-		_engine_addSelectField(aliasTabella, field, alias, true, "min(",")",true);
+		engineAddSelectField(aliasTabella, field, alias, true, "min(",")",true);
 		return this;
 	}
 
@@ -790,8 +838,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @param field Nome del Field
 	 * @param alias
 	 */
-	@Override
-	public abstract ISQLQueryObject addSelectMinTimestampField(String field,String alias) throws SQLQueryObjectException;
+	/**@Override
+	public abstract ISQLQueryObject addSelectMinTimestampField(String field,String alias) throws SQLQueryObjectException;*/
 
 	/**
 	 * Aggiunge un field count alla select, con un alias, del campo <var>field</var> (di tipo Timestamp)
@@ -803,8 +851,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectMinTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
 		addSelectMinTimestampField(aliasTabella+"."+field, alias);
 		return this;
@@ -831,8 +879,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addSelectSumField(String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field non puo' essere null");
-		_engine_addSelectField(null, field, alias, true, "sum(",")",true);
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
+		engineAddSelectField(null, field, alias, true, "sum(",")",true);
 		return this;
 	}
 
@@ -847,13 +895,13 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addSelectSumField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
 		if(field==null)
-			throw new SQLQueryObjectException("field non puo' essere null");
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
 		if(aliasTabella==null)
-			throw new SQLQueryObjectException("nomeTabella non puo' essere null");
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+			throw new SQLQueryObjectException(NOME_TABELLA_DEVE_ESSERE_DIVERSO_NULL);
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
-		_engine_addSelectField(aliasTabella, field, alias, true, "sum(",")",true);
+		engineAddSelectField(aliasTabella, field, alias, true, "sum(",")",true);
 		return this;
 	}
 
@@ -864,8 +912,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @param field Nome del Field
 	 * @param alias
 	 */
-	@Override
-	public abstract ISQLQueryObject addSelectSumTimestampField(String field,String alias) throws SQLQueryObjectException;
+	/**@Override
+	public abstract ISQLQueryObject addSelectSumTimestampField(String field,String alias) throws SQLQueryObjectException;*/
 
 	/**
 	 * Aggiunge un field count alla select, con un alias, del campo <var>field</var> (di tipo Timestamp)
@@ -877,13 +925,393 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectSumTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
-		if(this.tableAlias.contains(aliasTabella)==false){
-			throw new SQLQueryObjectException("L'alias indicato non corrisponde ad un alias effettivo associato ad una tabella");
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
 		}
 		addSelectSumTimestampField(aliasTabella+"."+field, alias);
 		return this;
 	}
 
+	
+	
+	
+	
+	
+	// DATE TIME
+	
+	protected static final String DATE_PART_YEAR = "YEAR";
+	protected static final String DATE_PART_MONTH = "MONTH";
+	protected static final String DATE_PART_DAY = "DAY";
+	
+	protected static final String TIME_PART_HOUR = "HOUR";
+	protected static final String TIME_PART_MINUTE = "MINUTE";
+	protected static final String TIME_PART_SECOND = "SECOND";
+	
+	protected String getDateTimePart(DateTimePartEnum dateTimePart) throws SQLQueryObjectException {
+		switch (dateTimePart) {
+		case YEAR:
+			return DATE_PART_YEAR;
+		case MONTH:
+			return DATE_PART_MONTH;
+		case DAY:
+			return DATE_PART_DAY;
+		case HOUR:
+			return TIME_PART_HOUR;
+		case MINUTE:
+			return TIME_PART_MINUTE;
+		case SECOND:
+			return TIME_PART_SECOND;
+		}
+		throw new SQLQueryObjectException("DateTimePartEnum '"+dateTimePart+"' unknown");
+	}
+	public String getExtractDateTimePartFromTimestampFieldPrefix(DateTimePartEnum dateTimePart) throws SQLQueryObjectException {
+		if(dateTimePart==null) {
+			throw new SQLQueryObjectException("dateTimePart undefined");
+		}
+		String dateTimePartString = getDateTimePart(dateTimePart);
+		return "EXTRACT("+dateTimePartString+FROM_SEPARATOR; 
+	}
+	public String getExtractDateTimePartFromTimestampFieldSuffix(DateTimePartEnum dateTimePart) throws SQLQueryObjectException {
+		if(dateTimePart==null) {
+			throw new SQLQueryObjectException("dateTimePart undefined");
+		}
+		return ")"; 
+	}
+	
+	private ISQLQueryObject addSelectTimestampFieldEngine(String field,String alias, DateTimePartEnum dateTimePart) throws SQLQueryObjectException{
+		if(field==null)
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL); 
+		engineAddSelectField(null, field, alias, true, 
+				getExtractDateTimePartFromTimestampFieldPrefix(dateTimePart),
+				getExtractDateTimePartFromTimestampFieldSuffix(dateTimePart),
+				true);
+		return this;
+	}
+	private ISQLQueryObject addSelectTimestampFieldEngine(String aliasTabella,String field,String alias, DateTimePartEnum dateTimePart) throws SQLQueryObjectException{
+		if(field==null)
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
+		if(aliasTabella==null)
+			throw new SQLQueryObjectException(NOME_TABELLA_DEVE_ESSERE_DIVERSO_NULL);
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
+		}
+		engineAddSelectField(aliasTabella, field, alias, true, 
+				getExtractDateTimePartFromTimestampFieldPrefix(dateTimePart),
+				getExtractDateTimePartFromTimestampFieldSuffix(dateTimePart),
+				true);
+		return this;
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre l'anno dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(YEAR FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectYearTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DateTimePartEnum.YEAR);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre l'anno dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(YEAR FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectYearTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DateTimePartEnum.YEAR);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il mese dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(MONTH FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectMonthTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DateTimePartEnum.MONTH);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il mese dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(MONTH FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectMonthTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DateTimePartEnum.MONTH);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(DAY FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectDayTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DateTimePartEnum.DAY);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(DAY FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectDayTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DateTimePartEnum.DAY);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre l'ora dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(HOUR FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectHourTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DateTimePartEnum.HOUR);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre l'ora dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(HOUR FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectHourTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DateTimePartEnum.HOUR);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre i minuti dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(MINUTE FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectMinuteTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DateTimePartEnum.MINUTE);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre i minuti dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(MINUTE FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectMinuteTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DateTimePartEnum.MINUTE);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre i secondi dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(SECOND FROM field) as alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectSecondTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DateTimePartEnum.SECOND);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre i secondi dal campo <var>field</var> (di tipo Timestamp)
+	 * es: SELECT EXTRACT(SECOND FROM nomeTabella.field) as alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectSecondTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DateTimePartEnum.SECOND);
+	}
+	
+	
+	
+	
+	
+	
+	private static final String DAY_FORMAT_FULL_DAY_NAME = "DAY";
+	private static final String DAY_FORMAT_SHORT_DAY_NAME = "DY";
+	private static final String DAY_FORMAT_DAY_OF_YEAR = "DDD";
+	private static final String DAY_FORMAT_DAY_OF_WEEK = "D";
+	
+	protected String getDayFormat(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		switch (dayFormat) {
+		case FULL_DAY_NAME:
+			return DAY_FORMAT_FULL_DAY_NAME;
+		case SHORT_DAY_NAME:
+			return DAY_FORMAT_SHORT_DAY_NAME;
+		case DAY_OF_YEAR:
+			return DAY_FORMAT_DAY_OF_YEAR;
+		case DAY_OF_WEEK:
+			return DAY_FORMAT_DAY_OF_WEEK;
+		}
+		throw new SQLQueryObjectException("DayFormatEnum '"+dayFormat+"' unknown");
+	}
+	public String getExtractDayFormatFromTimestampFieldPrefix(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		if(dayFormat==null) {
+			throw new SQLQueryObjectException("dayFormat undefined");
+		}
+		return "TO_CHAR("; 
+	}
+	public String getExtractDayFormatFromTimestampFieldSuffix(DayFormatEnum dayFormat) throws SQLQueryObjectException {
+		if(dayFormat==null) {
+			throw new SQLQueryObjectException("dayFormat undefined");
+		}
+		String dayFormatString = getDayFormat(dayFormat);
+		return ", '"+dayFormatString+"')"; 
+	}
+	
+	private ISQLQueryObject addSelectTimestampFieldEngine(String field,String alias, DayFormatEnum dayFormatEnum) throws SQLQueryObjectException{
+		if(field==null)
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL); 
+		engineAddSelectField(null, field, alias, true, 
+				getExtractDayFormatFromTimestampFieldPrefix(dayFormatEnum),
+				getExtractDayFormatFromTimestampFieldSuffix(dayFormatEnum),
+				true);
+		return this;
+	}
+	private ISQLQueryObject addSelectTimestampFieldEngine(String aliasTabella,String field,String alias, DayFormatEnum dayFormatEnum) throws SQLQueryObjectException{
+		if(field==null)
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
+		if(aliasTabella==null)
+			throw new SQLQueryObjectException(NOME_TABELLA_DEVE_ESSERE_DIVERSO_NULL);
+		if(!this.tableAlias.contains(aliasTabella)){
+			throw new SQLQueryObjectException(ALIAS_TABELLA_INDICATO_NON_ESISTE);
+		}
+		engineAddSelectField(aliasTabella, field, alias, true, 
+				getExtractDayFormatFromTimestampFieldPrefix(dayFormatEnum),
+				getExtractDayFormatFromTimestampFieldSuffix(dayFormatEnum),
+				true);
+		return this;
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'full day name'
+	 * es: TO_CHAR(field, 'DAY') AS alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectFullDayNameTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DayFormatEnum.FULL_DAY_NAME);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'full day name'
+	 * es: TO_CHAR(nomeTabella.field, 'DAY') AS alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectFullDayNameTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DayFormatEnum.FULL_DAY_NAME);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'short day name'
+	 * es: TO_CHAR(field, 'DY') AS alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectShortDayNameTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DayFormatEnum.SHORT_DAY_NAME);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'short day name'
+	 * es: TO_CHAR(nomeTabella.field, 'DY') AS alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectShortDayNameTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DayFormatEnum.SHORT_DAY_NAME);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'day of year'
+	 * es: TO_CHAR(field, 'DDD') AS alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectDayOfYearTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DayFormatEnum.DAY_OF_YEAR);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'day of year'
+	 * es: TO_CHAR(nomeTabella.field, 'DDD') AS alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectDayOfYearTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DayFormatEnum.DAY_OF_YEAR);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'day of week'
+	 * es: TO_CHAR(field, 'D') AS alias FROM ....
+	 * 
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectDayOfWeekTimestampField(String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(field, alias, DayFormatEnum.DAY_OF_WEEK);
+	}
+	
+	/**
+	 * Aggiunge un field alla select che si occupa di estrarre il giorno, dal campo <var>field</var> (di tipo Timestamp), visualizzandolo nella forma 'day of week'
+	 * es: TO_CHAR(nomeTabella.field, 'D') AS alias FROM ....
+	 * 
+	 * @param aliasTabella Alias della tabella su cui reperire il field
+	 * @param field Nome del Field
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectDayOfWeekTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException{
+		return addSelectTimestampFieldEngine(aliasTabella, field, alias, DayFormatEnum.DAY_OF_WEEK);
+	}
 
 
 
@@ -927,10 +1355,9 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
 	}
 	public boolean isSelectDistinct() throws SQLQueryObjectException{
-		if(this.distinct){
-			if(this.fields.size()<=0){
-				throw new SQLQueryObjectException("Per usare la select distinct devono essere indicati dei select field");
-			}
+		if(this.distinct &&
+			this.fields.isEmpty()){
+			throw new SQLQueryObjectException("Per usare la select distinct devono essere indicati dei select field");
 		}
 		return this.distinct;
 	}
@@ -950,8 +1377,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public List<String> getFieldsName() throws SQLQueryObjectException{
-		if(this.fieldNames==null || this.fieldNames.size()==0){
-			throw new SQLQueryObjectException("Nessun field impostato");
+		if(this.fieldNames==null || this.fieldNames.isEmpty()){
+			throw new SQLQueryObjectException(NESSUN_FIELD_IMPOSTATO);
 		}
 
 		return this.fieldNames;
@@ -965,10 +1392,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public Boolean isFieldNameForFunction(String fieldName) throws SQLQueryObjectException{
-		if(this.fieldNames==null || this.fieldNames.size()==0){
-			throw new SQLQueryObjectException("Nessun field impostato");
+		if(this.fieldNames==null || this.fieldNames.isEmpty()){
+			throw new SQLQueryObjectException(NESSUN_FIELD_IMPOSTATO);
 		}
-		if(this.fieldNameIsFunction.containsKey(fieldName)==false){
+		if(!this.fieldNameIsFunction.containsKey(fieldName)){
 			throw new SQLQueryObjectException("Field ["+fieldName+"] non presente (se durante la definizione del field e' stato usato un 'alias' utilizzarlo come parametro di questo metodo)");
 		}
 		return this.fieldNameIsFunction.get(fieldName);
@@ -982,8 +1409,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	//@Override
 	public List<String> getFields() throws SQLQueryObjectException{
-		if(this.fields==null || this.fields.size()==0){
-			throw new SQLQueryObjectException("Nessun field impostato");
+		if(this.fields==null || this.fields.isEmpty()){
+			throw new SQLQueryObjectException(NESSUN_FIELD_IMPOSTATO);
 		}
 
 		return this.fields;
@@ -997,7 +1424,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public List<String> getTablesName() throws SQLQueryObjectException{
-		if(this.tableNames==null || this.tableNames.size()==0){
+		if(this.tableNames==null || this.tableNames.isEmpty()){
 			throw new SQLQueryObjectException("Nessuna tabella impostata");
 		}
 
@@ -1012,7 +1439,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	//@Override
 	public List<String> getTables() throws SQLQueryObjectException{
-		if(this.tables==null || this.tables.size()==0){
+		if(this.tables==null || this.tables.isEmpty()){
 			throw new SQLQueryObjectException("Nessuna tabella impostata");
 		}
 
@@ -1033,8 +1460,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @param column colonna da convertire in UnixTimestamp
 	 * @return conversione in UnixTimestamp della Colonna
 	 */
-	@Override
-	public abstract String getUnixTimestampConversion(String column);
+	/**@Override
+	public abstract String getUnixTimestampConversion(String column);*/
 	
 	/**
 	 * Ritorna l'intervallo in unixTimestamp tra le due colonne fornite
@@ -1043,8 +1470,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @param columnMin colonna con intervallo temporale minore
 	 * @return ritorna l'intervallo in unixTimestamp tra le due colonne fornite
 	 */
-	@Override
-	public abstract String getDiffUnixTimestamp(String columnMax,String columnMin);
+	/**@Override
+	public abstract String getDiffUnixTimestamp(String columnMax,String columnMin);*/
 
 	
 	
@@ -1082,10 +1509,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public List<String> getSupportedAliasesField(){
-		List<String> lista = new ArrayList<>();
-		lista.add(" as ");
-		lista.add(" ");
-		return lista;
+		return getSupportedAliasesEngine();
 	}
 	
 	/**
@@ -1095,6 +1519,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public List<String> getSupportedAliasesTable(){
+		return getSupportedAliasesEngine();
+	}
+	
+	private List<String> getSupportedAliasesEngine(){
 		List<String> lista = new ArrayList<>();
 		lista.add(" as ");
 		lista.add(" ");
@@ -1117,61 +1545,22 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @param nomeTabella Nome della tabella su cui reperire il field
 	 * @param nomeField Nome del Field
 	 */
-	protected ISQLQueryObject _engine_addSelectField(String nomeTabella,String nomeField,String alias,boolean addFieldName,boolean isFunction) throws SQLQueryObjectException{
-		return _engine_addSelectField(nomeTabella, nomeField, alias, addFieldName, null, null,isFunction);
+	protected ISQLQueryObject engineAddSelectField(String nomeTabella,String nomeField,String alias,boolean addFieldName,boolean isFunction) throws SQLQueryObjectException{
+		return engineAddSelectField(nomeTabella, nomeField, alias, addFieldName, null, null,isFunction);
 	}
-	protected ISQLQueryObject _engine_addSelectField(String nomeTabella,String nomeField,String alias,boolean addFieldName,
+	protected ISQLQueryObject engineAddSelectField(String nomeTabella,String nomeField,String alias,boolean addFieldName,
 			String functionPrefix,String functionSuffix,boolean isFunction) throws SQLQueryObjectException{
 		if(nomeField==null || "".equals(nomeField))
 			throw new SQLQueryObjectException("Field is null or empty string");
-		if(alias!=null){
-			if(this.fields.contains("*")){
-				throw new SQLQueryObjectException("Alias "+alias+" del field "+nomeField+" non utilizzabile tra i select fields. La presenza del select field '*' non permette di inserirne altri");
-			}
-			if(this.fieldNames.contains(alias))
-				throw new SQLQueryObjectAlreadyExistsException("Alias "+alias+" gia inserito tra i select fields");
-		}else{
-			if("*".equals(nomeField)==false){
-				if(this.fields.contains("*")){
-					throw new SQLQueryObjectException("Field "+nomeField+" non utilizzabile tra i select fields. La presenza del select field '*' non permette di inserirne altri");
-				}
-			}
-			if(this.fields.contains(nomeField))
-				throw new SQLQueryObjectAlreadyExistsException("Field "+nomeField+" gia inserito tra i select fields");
-		}
+		
+		checkEngineAddSelectField(nomeField, alias);
+		
 		if(nomeTabella!=null && (!"".equals(nomeTabella))){
-
-			if(this.tableNames.contains(nomeTabella)==false)
-				throw new SQLQueryObjectException("Tabella "+nomeTabella+" non esiste tra le tabelle su cui effettuare la ricerca (se nella addFromTable e' stato utilizzato l'alias per la tabella, utilizzarlo anche come parametro in questo metodo)");
-			String nomeTabellaConField = nomeTabella+"."+nomeField;
-			if(functionPrefix!=null){
-				nomeTabellaConField = functionPrefix + nomeTabellaConField;
-			}
-			if(functionSuffix!=null){
-				nomeTabellaConField = nomeTabellaConField  + functionSuffix ;
-			}
-			if(alias!=null){
-				//this.fields.add(nomeTabellaConField+" as "+alias);
-				this.fields.add(nomeTabellaConField+this.getDefaultAliasFieldKeyword()+alias);
-				this.alias.put(alias, nomeTabellaConField);
-			}else{
-				this.fields.add(nomeTabellaConField);
-			}
+			engineAddSelectField(nomeTabella, nomeField, alias,
+					functionPrefix, functionSuffix);
 		}else{
-			String tmp = new String(nomeField);
-			if(functionPrefix!=null){
-				tmp = functionPrefix + tmp;
-			}
-			if(functionSuffix!=null){
-				tmp = tmp + functionSuffix ;
-			}
-			if(alias!=null){
-				//this.fields.add(tmp+" as "+alias);
-				this.fields.add(tmp+this.getDefaultAliasFieldKeyword()+alias);
-				this.alias.put(alias, tmp);
-			}else{
-				this.fields.add(tmp);
-			}
+			engineAddSelectField(nomeField, alias,
+					functionPrefix, functionSuffix);
 		}
 		if(addFieldName){
 			if(alias!=null){
@@ -1184,7 +1573,58 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		}
 		return this;
 	}
-
+	private void checkEngineAddSelectField(String nomeField,String alias) throws SQLQueryObjectException {
+		if(alias!=null){
+			if(this.fields.contains("*")){
+				throw new SQLQueryObjectException("Alias "+alias+" del field "+nomeField+" non utilizzabile tra i select fields. La presenza del select field '*' non permette di inserirne altri");
+			}
+			if(this.fieldNames.contains(alias))
+				throw new SQLQueryObjectAlreadyExistsException("Alias "+alias+" gia inserito tra i select fields");
+		}else{
+			if(!"*".equals(nomeField) &&
+				this.fields.contains("*")){
+				throw new SQLQueryObjectException("Field "+nomeField+" non utilizzabile tra i select fields. La presenza del select field '*' non permette di inserirne altri");
+			}
+			if(this.fields.contains(nomeField))
+				throw new SQLQueryObjectAlreadyExistsException("Field "+nomeField+" gia inserito tra i select fields");
+		}
+	}
+	private void engineAddSelectField(String nomeTabella, String nomeField, String alias,
+			String functionPrefix,String functionSuffix) throws SQLQueryObjectException {
+		if(!this.tableNames.contains(nomeTabella))
+			throw new SQLQueryObjectException(TABELLA_PREFIX+nomeTabella+" non esiste tra le tabelle su cui effettuare la ricerca (se nella addFromTable e' stato utilizzato l'alias per la tabella, utilizzarlo anche come parametro in questo metodo)");
+		String nomeTabellaConField = nomeTabella+"."+nomeField;
+		if(functionPrefix!=null){
+			nomeTabellaConField = functionPrefix + nomeTabellaConField;
+		}
+		if(functionSuffix!=null){
+			nomeTabellaConField = nomeTabellaConField  + functionSuffix ;
+		}
+		if(alias!=null){
+			/**this.fields.add(nomeTabellaConField+" as "+alias);*/
+			this.fields.add(nomeTabellaConField+this.getDefaultAliasFieldKeyword()+alias);
+			this.alias.put(alias, nomeTabellaConField);
+		}else{
+			this.fields.add(nomeTabellaConField);
+		}
+	}
+	private void engineAddSelectField(String nomeField, String alias,
+			String functionPrefix,String functionSuffix) {
+		String tmp = nomeField + "";
+		if(functionPrefix!=null){
+			tmp = functionPrefix + tmp;
+		}
+		if(functionSuffix!=null){
+			tmp = tmp + functionSuffix ;
+		}
+		if(alias!=null){
+			/**this.fields.add(tmp+" as "+alias);*/
+			this.fields.add(tmp+this.getDefaultAliasFieldKeyword()+alias);
+			this.alias.put(alias, tmp);
+		}else{
+			this.fields.add(tmp);
+		}
+	}
 
 
 
@@ -1204,7 +1644,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(tabella==null || "".equals(tabella))
 			throw new SQLQueryObjectException("Tabella is null or empty string");
 		if(this.tableNames.contains(tabella))
-			throw new SQLQueryObjectAlreadyExistsException("Tabella "+tabella+" gia' esistente tra le tabella su cui effettuare la ricerca");
+			throw new SQLQueryObjectAlreadyExistsException(TABELLA_PREFIX+tabella+" gia' esistente tra le tabella su cui effettuare la ricerca");
 		this.tableNames.add(tabella);
 		this.tables.add(tabella);
 		return this;
@@ -1224,9 +1664,9 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(alias==null || "".equals(alias))
 			throw new SQLQueryObjectException("Alias tabella is null or empty string");
 		if(this.tableNames.contains(alias))
-			throw new SQLQueryObjectAlreadyExistsException("Tabella "+tabella+" gia' esistente tra le tabella su cui effettuare la ricerca");
+			throw new SQLQueryObjectAlreadyExistsException(TABELLA_PREFIX+tabella+" gia' esistente tra le tabella su cui effettuare la ricerca");
 		this.tableNames.add(alias);
-		//this.tables.add(tabella+" as "+alias);
+		/**this.tables.add(tabella+" as "+alias);*/
 		this.tables.add(tabella+this.getDefaultAliasTableKeyword()+alias);
 		this.tableAlias.add(alias);
 		return this;
@@ -1249,7 +1689,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			throw new SQLQueryObjectException("Where Condition is null or empty string");
 		String buildCondition = "( "+condition+" )";
 		if( (buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition))
-			throw new SQLQueryObjectException("Where Condition "+condition+" gia' esistente tra le condizioni di where");
+			throw new SQLQueryObjectException(WHERE_CONDITION_PREFIX+condition+GIA_ESISTENTE_TRA_CONDIZIONI_WHERE);
 		this.conditions.add(buildCondition);
 		return this;
 	}
@@ -1289,12 +1729,25 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		}
 
 		buildCondition.append("( ");
+		addWhereCondition(buildCondition, andLogicOperator, conditions);
+		buildCondition.append(" )");
+
+		if(not){
+			buildCondition.append(")");
+		}
+
+		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition.toString()))
+			throw new SQLQueryObjectException(WHERE_CONDITION_PREFIX+buildCondition.toString()+GIA_ESISTENTE_TRA_CONDIZIONI_WHERE);
+		this.conditions.add(buildCondition.toString());
+		return this;
+	}
+	private void addWhereCondition(StringBuilder buildCondition, boolean andLogicOperator,String... conditions) throws SQLQueryObjectException {
 		for(int i=0; i<conditions.length; i++){
 			if(i>0){
 				if(andLogicOperator){
-					buildCondition.append(" AND ");
+					buildCondition.append(AND_SEPARATOR);
 				}else{
-					buildCondition.append(" OR ");
+					buildCondition.append(OR_SEPARATOR);
 				}
 			}
 			if(conditions[i]==null || "".equals(conditions[i]))
@@ -1303,16 +1756,6 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			buildCondition.append(conditions[i]);
 			buildCondition.append(")");
 		}
-		buildCondition.append(" )");
-
-		if(not){
-			buildCondition.append(")");
-		}
-
-		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition.toString()))
-			throw new SQLQueryObjectException("Where Condition "+buildCondition.toString()+" gia' esistente tra le condizioni di where");
-		this.conditions.add(buildCondition.toString());
-		return this;
 	}
 
 
@@ -1325,7 +1768,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addWhereIsNullCondition(String field) throws SQLQueryObjectException{
 		if(field==null || "".equals(field)){
-			throw new SQLQueryObjectException("IsNullCondition field non puo' essere null");
+			throw new SQLQueryObjectException(IS_NULL_CONDITION_DEVE_ESSERE_DIVERSO_NULL);
 		}
 		this.addWhereCondition(field+" is null");
 		return this;
@@ -1340,7 +1783,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addWhereIsNotNullCondition(String field) throws SQLQueryObjectException{
 		if(field==null || "".equals(field)){
-			throw new SQLQueryObjectException("IsNullCondition field non puo' essere null");
+			throw new SQLQueryObjectException(IS_NULL_CONDITION_DEVE_ESSERE_DIVERSO_NULL);
 		}
 		this.addWhereCondition(field+" is not null");
 		return this;
@@ -1355,7 +1798,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addWhereIsEmptyCondition(String field) throws SQLQueryObjectException{
 		if(field==null || "".equals(field)){
-			throw new SQLQueryObjectException("IsNullCondition field non puo' essere null");
+			throw new SQLQueryObjectException(IS_NULL_CONDITION_DEVE_ESSERE_DIVERSO_NULL);
 		}
 		this.addWhereCondition(field+" = ''");
 		return this;
@@ -1370,7 +1813,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addWhereIsNotEmptyCondition(String field) throws SQLQueryObjectException{
 		if(field==null || "".equals(field)){
-			throw new SQLQueryObjectException("IsNullCondition field non puo' essere null");
+			throw new SQLQueryObjectException(IS_NULL_CONDITION_DEVE_ESSERE_DIVERSO_NULL);
 		}
 		this.addWhereCondition(field+" <> ''");
 		return this;
@@ -1441,7 +1884,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		else{
 			bf.append(leftValue);
 		}
-		bf.append(" AND ");
+		bf.append(AND_SEPARATOR);
 		if(stringValueType){
 			bf.append("'");
 			bf.append(escapeStringValue(rightValue));
@@ -1470,19 +1913,19 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			EscapeSQLPattern escapePattern = escapePatternValue(searchPattern);
 			String escapeClausole = "";
 			if(escapePattern.isUseEscapeClausole()){
-				escapeClausole = " ESCAPE '"+escapePattern.getEscapeClausole()+"'";
+				escapeClausole = ESCAPE_SEPARATOR+"'"+escapePattern.getEscapeClausole()+"'";
 			}
-			buildCondition = "( "+columnName+" LIKE '"+escapePattern.getEscapeValue()+"'"+escapeClausole+" )";
+			buildCondition = "( "+columnName+LIKE_SEPARATOR+"'"+escapePattern.getEscapeValue()+"'"+escapeClausole+" )";
 		}
 		else{
-			buildCondition = "( "+columnName+" LIKE '"+searchPattern+"' )";
+			buildCondition = "( "+columnName+LIKE_SEPARATOR+"'"+searchPattern+"' )";
 		}
 		return buildCondition;
 	}
 
 	/**
 	 * Aggiunge una condizione di ricerca
-	 * es: SELECT * from tabella WHERE (columnName LIKE 'searchPattern')
+	 * es: SELECT * from tabella WHERE (columnName LIKE 'searc"+LIKE_SEPARATOR+"rn')
 	 * 
 	 * @param columnName
 	 * @param searchPattern
@@ -1495,8 +1938,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	public ISQLQueryObject addWhereLikeCondition(String columnName,String searchPattern,boolean escape) throws SQLQueryObjectException{
 
 		String buildCondition = this.createWhereLikeCondition(columnName, searchPattern,escape);
-		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition.toString()))
-			throw new SQLQueryObjectException("Where Condition "+buildCondition.toString()+" gia' esistente tra le condizioni di where");
+		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition))
+			throw new SQLQueryObjectException(WHERE_CONDITION_PREFIX+buildCondition+GIA_ESISTENTE_TRA_CONDIZIONI_WHERE);
 		this.conditions.add(buildCondition);
 		return this;
 	}
@@ -1541,79 +1984,122 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		}
 		String buildCondition = null;
 		if(escape){
-			EscapeSQLPattern escapePattern = escapePatternValue(searchPattern);
-			String escapeClausole = "";
-			if(escapePattern.isUseEscapeClausole()){
-				escapeClausole = " ESCAPE '"+escapePattern.getEscapeClausole()+"'";
-			}
-			if(contains) {
-				if(caseInsensitive) {
-					buildCondition ="( lower("+columnName+") LIKE '%"+escapePattern.getEscapeValue().toLowerCase()+"%'"+escapeClausole+" )";
-				}
-				else {
-					buildCondition ="( "+columnName+" LIKE '%"+escapePattern.getEscapeValue()+"%'"+escapeClausole+" )";
-				}
-			}
-			else if(startsWith) {
-				if(caseInsensitive) {
-					buildCondition ="( lower("+columnName+") LIKE '"+escapePattern.getEscapeValue().toLowerCase()+"%'"+escapeClausole+" )";
-				}
-				else {
-					buildCondition ="( "+columnName+" LIKE '"+escapePattern.getEscapeValue()+"%'"+escapeClausole+" )";
-				}
-			}
-			else if(endsWith) {
-				if(caseInsensitive) {
-					buildCondition ="( lower("+columnName+") LIKE '%"+escapePattern.getEscapeValue().toLowerCase()+"'"+escapeClausole+" )";
-				}
-				else {
-					buildCondition ="( "+columnName+" LIKE '%"+escapePattern.getEscapeValue()+"'"+escapeClausole+" )";
-				}
-			}
-			else {
-				if(caseInsensitive) {
-					buildCondition ="( lower("+columnName+") LIKE '"+escapePattern.getEscapeValue().toLowerCase()+"'"+escapeClausole+" )";
-				}
-				else {
-					buildCondition ="( "+columnName+" LIKE '"+escapePattern.getEscapeValue()+"'"+escapeClausole+" )";
-				}
-			}	
+			buildCondition = createWhereLikeConditionEscapeEngine(columnName, searchPattern,
+					contains, startsWith, endsWith,  
+					caseInsensitive);
 		}
 		else{
-			if(contains) {
-				if(caseInsensitive) {
-					buildCondition ="( lower("+columnName+") LIKE '%"+searchPattern.toLowerCase()+"%' )";
-				}
-				else {
-					buildCondition ="( "+columnName+" LIKE '%"+searchPattern+"%' )";
-				}
-			}
-			else if(startsWith) {
-				if(caseInsensitive) {
-					buildCondition ="( lower("+columnName+") LIKE '"+searchPattern.toLowerCase()+"%' )";
-				}
-				else {
-					buildCondition ="( "+columnName+" LIKE '"+searchPattern+"%' )";
-				}
-			}
-			else if(endsWith) {
-				if(caseInsensitive) {
-					buildCondition ="( lower("+columnName+") LIKE '%"+searchPattern.toLowerCase()+"' )";
-				}
-				else {
-					buildCondition ="( "+columnName+" LIKE '%"+searchPattern+"' )";
-				}
-			}
-			else {
-				if(caseInsensitive) {
-					buildCondition ="( lower("+columnName+") LIKE '"+searchPattern.toLowerCase()+"' )";
-				}
-				else {
-					buildCondition ="( "+columnName+" LIKE '"+searchPattern+"' )";
-				}
-			}				
+			buildCondition = createWhereLikeConditionNoEscapeEngine(columnName, searchPattern,
+					contains, startsWith, endsWith,  
+					caseInsensitive);
 		}
 
+		return buildCondition;
+	}
+	private String createWhereLikeConditionEscapeEngine(String columnName,String searchPattern,
+			boolean contains, boolean startsWith, boolean endsWith,  
+			boolean caseInsensitive) throws SQLQueryObjectException {
+		String buildCondition = null;
+		if(caseInsensitive) {
+			buildCondition = createWhereLikeConditionEscapeEngineCaseInsensitive(columnName, searchPattern,
+					contains, startsWith, endsWith);
+		}
+		else {
+			buildCondition = createWhereLikeConditionEscapeEngineCaseSensitive(columnName, searchPattern,
+					contains, startsWith, endsWith);
+		}
+		return buildCondition;
+	}
+	private String createWhereLikeConditionEscapeEngineCaseInsensitive(String columnName,String searchPattern,
+			boolean contains, boolean startsWith, boolean endsWith) throws SQLQueryObjectException {
+		String buildCondition = null;
+		EscapeSQLPattern escapePattern = escapePatternValue(searchPattern);
+		String escapeClausole = "";
+		if(escapePattern.isUseEscapeClausole()){
+			escapeClausole = ESCAPE_SEPARATOR+"'"+escapePattern.getEscapeClausole()+"'";
+		}
+		if(contains) {
+			buildCondition =LOWER_PREFIX+columnName+")"+LIKE_SEPARATOR+"'%"+escapePattern.getEscapeValue().toLowerCase()+"%'"+escapeClausole+" )";
+		}
+		else if(startsWith) {
+			buildCondition =LOWER_PREFIX+columnName+")"+LIKE_SEPARATOR+"'"+escapePattern.getEscapeValue().toLowerCase()+"%'"+escapeClausole+" )";
+		}
+		else if(endsWith) {
+			buildCondition =LOWER_PREFIX+columnName+")"+LIKE_SEPARATOR+"'%"+escapePattern.getEscapeValue().toLowerCase()+"'"+escapeClausole+" )";
+		}
+		else {
+			buildCondition =LOWER_PREFIX+columnName+")"+LIKE_SEPARATOR+"'"+escapePattern.getEscapeValue().toLowerCase()+"'"+escapeClausole+" )";
+		}	
+		return buildCondition;
+	}
+	private String createWhereLikeConditionEscapeEngineCaseSensitive(String columnName,String searchPattern,
+			boolean contains, boolean startsWith, boolean endsWith) throws SQLQueryObjectException {
+		String buildCondition = null;
+		EscapeSQLPattern escapePattern = escapePatternValue(searchPattern);
+		String escapeClausole = "";
+		if(escapePattern.isUseEscapeClausole()){
+			escapeClausole = ESCAPE_SEPARATOR+"'"+escapePattern.getEscapeClausole()+"'";
+		}
+		if(contains) {
+			buildCondition ="( "+columnName+LIKE_SEPARATOR+"'%"+escapePattern.getEscapeValue()+"%'"+escapeClausole+" )";
+		}
+		else if(startsWith) {
+			buildCondition ="( "+columnName+LIKE_SEPARATOR+"'"+escapePattern.getEscapeValue()+"%'"+escapeClausole+" )";
+		}
+		else if(endsWith) {
+			buildCondition ="( "+columnName+LIKE_SEPARATOR+"'%"+escapePattern.getEscapeValue()+"'"+escapeClausole+" )";
+		}
+		else {
+			buildCondition ="( "+columnName+LIKE_SEPARATOR+"'"+escapePattern.getEscapeValue()+"'"+escapeClausole+" )";
+		}	
+		return buildCondition;
+	}
+	private String createWhereLikeConditionNoEscapeEngine(String columnName,String searchPattern,
+			boolean contains, boolean startsWith, boolean endsWith,  
+			boolean caseInsensitive) {
+		String buildCondition = null;
+		if(caseInsensitive) {
+			buildCondition = createWhereLikeConditionNoEscapeEngineCaseInsensitive(columnName, searchPattern,
+					contains, startsWith, endsWith);
+		}
+		else {
+			buildCondition = createWhereLikeConditionNoEscapeEngineCaseSensitive(columnName, searchPattern,
+					contains, startsWith, endsWith);
+		}				
+		return buildCondition;
+	}
+	private String createWhereLikeConditionNoEscapeEngineCaseInsensitive(String columnName,String searchPattern,
+			boolean contains, boolean startsWith, boolean endsWith) {
+		String buildCondition = null;
+		if(contains) {
+			buildCondition =LOWER_PREFIX+columnName+")"+LIKE_SEPARATOR+"'%"+searchPattern.toLowerCase()+"%' )";
+		}
+		else if(startsWith) {
+			buildCondition =LOWER_PREFIX+columnName+")"+LIKE_SEPARATOR+"'"+searchPattern.toLowerCase()+"%' )";
+		}
+		else if(endsWith) {
+			buildCondition =LOWER_PREFIX+columnName+")"+LIKE_SEPARATOR+"'%"+searchPattern.toLowerCase()+"' )";
+		}
+		else {
+			buildCondition =LOWER_PREFIX+columnName+")"+LIKE_SEPARATOR+"'"+searchPattern.toLowerCase()+"' )";
+		}				
+		return buildCondition;
+	}
+	private String createWhereLikeConditionNoEscapeEngineCaseSensitive(String columnName,String searchPattern,
+			boolean contains, boolean startsWith, boolean endsWith) {
+		String buildCondition = null;
+		if(contains) {
+			buildCondition ="( "+columnName+LIKE_SEPARATOR+"'%"+searchPattern+"%' )";
+		}
+		else if(startsWith) {
+			buildCondition ="( "+columnName+LIKE_SEPARATOR+"'"+searchPattern+"%' )";
+		}
+		else if(endsWith) {
+			buildCondition ="( "+columnName+LIKE_SEPARATOR+"'%"+searchPattern+"' )";
+		}
+		else {
+			buildCondition ="( "+columnName+LIKE_SEPARATOR+"'"+searchPattern+"' )";
+		}				
 		return buildCondition;
 	}
 	
@@ -1637,8 +2123,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 				escape, 
 				contains, false, false, 
 				caseInsensitive);
-		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition.toString()))
-			throw new SQLQueryObjectException("Where Condition "+buildCondition.toString()+" gia' esistente tra le condizioni di where");
+		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition))
+			throw new SQLQueryObjectException(WHERE_CONDITION_PREFIX+buildCondition+GIA_ESISTENTE_TRA_CONDIZIONI_WHERE);
 		this.conditions.add(buildCondition);
 		return this;
 	}
@@ -1650,8 +2136,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 				likeConfig.isEscape(), 
 				likeConfig.isContains(), likeConfig.isStartsWith(), likeConfig.isEndsWith(), 
 				likeConfig.isCaseInsensitive());
-		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition.toString()))
-			throw new SQLQueryObjectException("Where Condition "+buildCondition.toString()+" gia' esistente tra le condizioni di where");
+		if((buildCondition.indexOf("?")==-1) && this.conditions.contains(buildCondition))
+			throw new SQLQueryObjectException(WHERE_CONDITION_PREFIX+buildCondition+GIA_ESISTENTE_TRA_CONDIZIONI_WHERE);
 		this.conditions.add(buildCondition);
 		return this;
 		
@@ -1681,6 +2167,154 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 				caseInsensitive);
 	}
 
+	
+	
+	
+	private ISQLQueryObject addWhereCondition(String columnName,String searchPattern, DateTimePartEnum dateTimePart) throws SQLQueryObjectException{
+		if(columnName==null || "".equals(columnName)){
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
+		}
+		String field = this.getExtractDateTimePartFromTimestampFieldPrefix(dateTimePart)+columnName+this.getExtractDateTimePartFromTimestampFieldSuffix(dateTimePart);
+		this.addWhereCondition(field+" = '"+searchPattern+"'");
+		return this;
+	}
+
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(YEAR FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereYearCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DateTimePartEnum.YEAR);
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(MONTH FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereMonthCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DateTimePartEnum.MONTH);
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(DAY FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereDayCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DateTimePartEnum.DAY);
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(HOUR FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereHourCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DateTimePartEnum.HOUR);
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(MINUTE FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereMinuteCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DateTimePartEnum.MINUTE);
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (EXTRACT(SECOND FROM columnName) = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereSecondCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DateTimePartEnum.SECOND);
+	}
+	
+	
+	
+	private ISQLQueryObject addWhereCondition(String columnName,String searchPattern, DayFormatEnum dayFormatEnum) throws SQLQueryObjectException{
+		if(columnName==null || "".equals(columnName)){
+			throw new SQLQueryObjectException(FIELD_DEVE_ESSERE_DIVERSO_NULL);
+		}
+		String field = this.getExtractDayFormatFromTimestampFieldPrefix(dayFormatEnum)+columnName+this.getExtractDayFormatFromTimestampFieldSuffix(dayFormatEnum);
+		this.addWhereCondition(field+" = '"+searchPattern+"'");
+		return this;
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (TO_CHAR(field, 'DAY') = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereFullDayNameCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DayFormatEnum.FULL_DAY_NAME);
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (TO_CHAR(field, 'DY') = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereShortDayNameCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DayFormatEnum.SHORT_DAY_NAME);
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (TO_CHAR(field, 'DDD') = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereDayOfYearCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DayFormatEnum.DAY_OF_YEAR);
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca
+	 * es: SELECT * from tabella WHERE (TO_CHAR(field, 'D') = 'pattern')
+	 * 
+	 * @param columnName
+	 * @param searchPattern
+	 */
+	@Override
+	public ISQLQueryObject addWhereDayOfWeekCondition(String columnName,String searchPattern) throws SQLQueryObjectException{
+		return addWhereCondition(columnName, searchPattern, DayFormatEnum.DAY_OF_WEEK);
+	}
+	
+	
+	
+	
+	
+	
 	private String createWhereExistsCondition(boolean notExists,ISQLQueryObject sqlQueryObject)throws SQLQueryObjectException{
 		if(sqlQueryObject==null)
 			throw new SQLQueryObjectException("ISQLQueryObject, su cui viene effettuato il controllo di exists, non fornito");
@@ -1688,7 +2322,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(sqlQueryObject instanceof SQLQueryObjectCore){
 			// http://stackoverflow.com/questions/5119190/oracle-sql-order-by-in-subquery-problems
 			SQLQueryObjectCore core = (SQLQueryObjectCore) sqlQueryObject;
-			if(core.orderBy!=null && core.orderBy.size()>0){
+			if(core.orderBy!=null && !core.orderBy.isEmpty()){
 				throw new SQLQueryObjectException("ISQLQueryObject, su cui viene effettuato il controllo di exists, non deve possedere condizioni di order by");
 			}
 			if(core.offset>=0){
@@ -1779,17 +2413,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(sqlQueryObject instanceof SQLQueryObjectCore){
 			// http://stackoverflow.com/questions/5119190/oracle-sql-order-by-in-subquery-problems
 			SQLQueryObjectCore core = (SQLQueryObjectCore) sqlQueryObject;
-			if(core.orderBy!=null && core.orderBy.size()>0){
-				throw new SQLQueryObjectException("ISQLQueryObject, su cui viene effettuato il controllo di exists, non deve possedere condizioni di order by");
-			}
-			if(core.offset>=0){
-				throw new SQLQueryObjectException("ISQLQueryObject, su cui viene effettuato il controllo di exists, non deve possedere la condizione di OFFSET");
-			}
-			if(!in){
-				if(core.limit>1){
-					throw new SQLQueryObjectException("ISQLQueryObject, su cui viene effettuato il controllo di exists, non deve possedere la condizione di LIMIT o al massimo puo' essere definita con valore '1')");
-				}
-			}
+			checkWhereSqlConditionConditionLimitOffse(in, core);
 		}
 
 		StringBuilder bf = new StringBuilder();
@@ -1804,6 +2428,19 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		bf.append(sqlQueryObject.createSQLQuery());
 		bf.append(" )");
 		return bf.toString();
+	}
+	private void checkWhereSqlConditionConditionLimitOffse(boolean in,SQLQueryObjectCore core) throws SQLQueryObjectException {
+		// http://stackoverflow.com/questions/5119190/oracle-sql-order-by-in-subquery-problems
+		if(core.orderBy!=null && !core.orderBy.isEmpty()){
+			throw new SQLQueryObjectException("ISQLQueryObject, su cui viene effettuato il controllo di exists, non deve possedere condizioni di order by");
+		}
+		if(core.offset>=0){
+			throw new SQLQueryObjectException("ISQLQueryObject, su cui viene effettuato il controllo di exists, non deve possedere la condizione di OFFSET");
+		}
+		if(!in &&
+			core.limit>1){
+			throw new SQLQueryObjectException("ISQLQueryObject, su cui viene effettuato il controllo di exists, non deve possedere la condizione di LIMIT o al massimo puo' essere definita con valore '1')");
+		}
 	}
 
 	/**
@@ -1929,13 +2566,13 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	public ISQLQueryObject addGroupBy(String groupByNomeField) throws SQLQueryObjectException{
 		if(groupByNomeField==null || "".equals(groupByNomeField))
 			throw new SQLQueryObjectException("GroupBy Condition is null or empty string");
-		/*
+		/**
 		 * Non e' sempre vero
 		 * if(this.fields.contains(groupByNomeField)==false){
 		 *	throw new SQLQueryObjectException("GroupBy Condition field non e' registrati tra i select field");
 		}*/
 
-		/*if(this.tableAlias.size()>0){
+		/**if(this.tableAlias.size()>0){
 			throw new SQLQueryObjectException("Non e' possibile utilizzare alias nelle tabelle se poi si vuole usufruire della condizione GroupBy");
 		} IL PROBLEMA DOVREBBE ESSERE STATO RISOLTO CON LA GESTIONE DEGLI ALIAS
 		 */
@@ -1949,10 +2586,9 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	}
 
 	public List<String> getGroupByConditions() throws SQLQueryObjectException{
-		if(this.groupBy!=null && this.groupBy.size()>0){
-			if(this.fields.size()<=0){
-				throw new SQLQueryObjectException("Non e' possibile utilizzare condizioni di group by se non sono stati indicati select field");
-			}
+		if(this.groupBy!=null && !this.groupBy.isEmpty() &&
+			this.fields.isEmpty()){
+			throw new SQLQueryObjectException("Non e' possibile utilizzare condizioni di group by se non sono stati indicati select field");
 		}
 		return this.groupBy;
 	}
@@ -1970,7 +2606,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	public ISQLQueryObject addOrderBy(String orderByNomeField) throws SQLQueryObjectException{
 		if(orderByNomeField==null || "".equals(orderByNomeField))
 			throw new SQLQueryObjectException("OrderBy Condition is null or empty string");
-		/*
+		/**
 		 * Non e' sempre vero
 		 * if(this.fields.contains(orderByNomeField)==false){
 		 *	throw new SQLQueryObjectException("OrderBy Condition field non e' registrati tra i select field");
@@ -2060,7 +2696,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			else if(union){
 				tipo = "UNION";
 			}
-			else if(this.getGroupByConditions().size()>0){
+			else if(!this.getGroupByConditions().isEmpty()){
 				tipo = "GROUP BY";
 			}
 			else if(this.isSelectDistinct()){
@@ -2086,8 +2722,8 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * 
 	 * @return SQL Query
 	 */
-	@Override
-	public abstract String createSQLQuery() throws SQLQueryObjectException;
+	/**@Override
+	public abstract String createSQLQuery() throws SQLQueryObjectException;*/
 
 	@Override
 	public String toString(){
@@ -2101,24 +2737,16 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	protected void checkUnionField(boolean count,ISQLQueryObject... sqlQueryObject)throws SQLQueryObjectException{
 
 		if(count){
-			if(this.orderBy!=null && this.orderBy.size()>0){
-				throw new SQLQueryObjectException("Non e' possibile usare order by in una count");
-			}
-			if(this.limit>0){
-				throw new SQLQueryObjectException("Non e' possibile usare limit in una count");
-			}
-			if(this.offset>=0){
-				throw new SQLQueryObjectException("Non e' possibile usare offset in una count");
-			}
+			checkUnionFieldCount();
 		}
 
-		if(this.offset>=0){
-			if(this.fields.size()<=0)
-				throw new SQLQueryObjectException("Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
+		if(this.offset>=0 &&
+			this.fields.isEmpty()) {
+			throw new SQLQueryObjectException("Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
 		}
-		if(this.limit>0){
-			if(this.fields.size()<=0)
-				throw new SQLQueryObjectException("Non e' possibile usare limit se non e' stato indicato alcun field nella select piu' esterna della union");
+		if(this.limit>0 &&
+			this.fields.isEmpty()) {
+			throw new SQLQueryObjectException("Non e' possibile usare limit se non e' stato indicato alcun field nella select piu' esterna della union");
 		}
 
 		if(this.distinct){
@@ -2133,22 +2761,47 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		}
 
 		// Check presenza fields
+		checkUnionFieldExists(sqlQueryObject);
+
+		// Check nomi fields			
+		checkUnionFieldNames(sqlQueryObject);
+
+		// Check presenza order by DEVE essere accompagnata da un offset in modo che venga generata la condizione di order by su Oracle/SLQServer per le condizioni
+		checkUnionFieldOrderOffset(sqlQueryObject);
+		
+		// Check Select For Update
+		if(this.selectForUpdate){
+			throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' con la UNION");
+		}
+	}
+	protected void checkUnionFieldCount() throws SQLQueryObjectException{
+		if(this.orderBy!=null && !this.orderBy.isEmpty()){
+			throw new SQLQueryObjectException("Non e' possibile usare order by in una count");
+		}
+		if(this.limit>0){
+			throw new SQLQueryObjectException("Non e' possibile usare limit in una count");
+		}
+		if(this.offset>=0){
+			throw new SQLQueryObjectException("Non e' possibile usare offset in una count");
+		}
+	}
+	protected void checkUnionFieldExists(ISQLQueryObject... sqlQueryObject)throws SQLQueryObjectException{
 		for(int i=0;i<sqlQueryObject.length;i++){
 			ISQLQueryObject sqlQueryObjectDaVerificare = sqlQueryObject[i];
 			List<String> nomiFieldSqlQueryObjectDaVerificare = sqlQueryObjectDaVerificare.getFieldsName();
-			if(nomiFieldSqlQueryObjectDaVerificare==null || nomiFieldSqlQueryObjectDaVerificare.size()==0){
+			if(nomiFieldSqlQueryObjectDaVerificare==null || nomiFieldSqlQueryObjectDaVerificare.isEmpty()){
 				throw new SQLQueryObjectException("La select numero "+(i+1)+" non possiede fields?");
 			}
 		}
-
-		// Check nomi fields			
-		//		for(int i=0;i<sqlQueryObject.length;i++){
+	}
+	protected void checkUnionFieldNames(ISQLQueryObject... sqlQueryObject)throws SQLQueryObjectException{
+		/**		for(int i=0;i<sqlQueryObject.length;i++){
 		//			System.out.println("CHECK ["+i+"] ...");
 		//			List<String> nomiFieldSqlQueryObjectDaVerificare = sqlQueryObject[i].getFieldsName();
 		//			for (String string : nomiFieldSqlQueryObjectDaVerificare) {
 		//				System.out.println("\t-"+string);
 		//			}
-		//		}
+		//		}*/
 		for(int i=0;i<sqlQueryObject.length;i++){
 
 			List<String> nomiFieldSqlQueryObjectDaVerificare = sqlQueryObject[i].getFieldsName();
@@ -2165,28 +2818,22 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 						continue;
 					}
 
-					if( (sqlQueryObject[altriSqlObject].getFieldsName().contains(fieldDaVerificare) == false) &&
-							(sqlQueryObject[altriSqlObject].getFieldsName().contains("*") == false) ){
+					if( (!sqlQueryObject[altriSqlObject].getFieldsName().contains(fieldDaVerificare)) &&
+							(!sqlQueryObject[altriSqlObject].getFieldsName().contains("*")) ){
 						throw new SQLQueryObjectException("Field ["+fieldDaVerificare+"] trovato nella select numero "+(i+1) +" non presente nella select numero "+(altriSqlObject+1) +" (Se sono campi diversi usare lo stesso alias)");
 					}
 				}
 			}
 		}
-
-		// Check presenza order by DEVE essere accompagnata da un offset in modo che venga generata la condizione di order by su Oracle/SLQServer per le condizioni
+	}
+	protected void checkUnionFieldOrderOffset(ISQLQueryObject... sqlQueryObject)throws SQLQueryObjectException{
 		for(int i=0;i<sqlQueryObject.length;i++){
 			SQLQueryObjectCore sqlQueryObjectDaVerificare = (SQLQueryObjectCore) sqlQueryObject[i];
-			if(sqlQueryObjectDaVerificare.orderBy!=null && sqlQueryObjectDaVerificare.orderBy.size()>0){
-				if(sqlQueryObjectDaVerificare.offset<0){
-					//throw new SQLQueryObjectException("La select numero "+(i+1)+" per poter essere utilizzata nella UNION, siccome presenta condizioni di ordinamento, deve specificare anche l'offset");
-					sqlQueryObjectDaVerificare.setOffset(0); // Se viene messo il limit, l'offset cmq parte da 0
-				}
+			if(sqlQueryObjectDaVerificare.orderBy!=null && !sqlQueryObjectDaVerificare.orderBy.isEmpty() &&
+				sqlQueryObjectDaVerificare.offset<0){
+				/**throw new SQLQueryObjectException("La select numero "+(i+1)+" per poter essere utilizzata nella UNION, siccome presenta condizioni di ordinamento, deve specificare anche l'offset");*/
+				sqlQueryObjectDaVerificare.setOffset(0); // Se viene messo il limit, l'offset cmq parte da 0
 			}
-		}
-		
-		// Check Select For Update
-		if(this.selectForUpdate){
-			throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' con la UNION");
 		}
 	}
 
@@ -2217,11 +2864,11 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addUpdateField(String nomeField,String valueField) throws SQLQueryObjectException{
 		if(nomeField==null || "".equals(nomeField))
-			throw new SQLQueryObjectException("Field name is null or empty string");
+			throw new SQLQueryObjectException(FIELD_NAME_IS_NULL_OR_EMPTY);
 		if(valueField==null)
 			throw new SQLQueryObjectException("Field value is null");
 		if(this.updateFieldsName.contains(nomeField)){
-			throw new SQLQueryObjectException("Field name "+nomeField+" gia inserito tra gli update fields");
+			throw new SQLQueryObjectException(FIELD_NAME_PREFIX+nomeField+" gia inserito tra gli update fields");
 		}else{
 			this.updateFieldsName.add(nomeField);
 			this.updateFieldsValue.add(valueField);
@@ -2232,10 +2879,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addUpdateField(String nomeField,Case caseValue) throws SQLQueryObjectException{
 		if(nomeField==null || "".equals(nomeField))
-			throw new SQLQueryObjectException("Field name is null or empty string");
+			throw new SQLQueryObjectException(FIELD_NAME_IS_NULL_OR_EMPTY);
 		
 		if(this.updateFieldsName.contains(nomeField)){
-			throw new SQLQueryObjectException("Field name "+nomeField+" gia inserito tra gli update fields");
+			throw new SQLQueryObjectException(FIELD_NAME_PREFIX+nomeField+" gia inserito tra gli update fields");
 		}else{
 			String caseCondition = getCaseCondition(caseValue);
 									
@@ -2245,9 +2892,15 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		return this;
 	}
 	protected String getPrefixCastValue(CastColumnType type, int length) {
+		if(type!=null && length>0) {
+			// nop
+		}
 		return "";
 	}
 	protected String getSuffixCastValue(CastColumnType type, int length) {
+		if(type!=null || length>0) {
+			// nop
+		}
 		return "";
 	}
 	
@@ -2256,7 +2909,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		
 		if(this.updateTable==null)
 			throw new SQLQueryObjectException("Nome Tabella per l'aggiornamento non definito");
-		if(this.updateFieldsName.size()<=0)
+		if(this.updateFieldsName.isEmpty())
 			throw new SQLQueryObjectException("Nessuna coppia nome/valore da aggiornare presente");
 		if(this.updateFieldsName.size()!= this.updateFieldsValue.size()){
 			throw new SQLQueryObjectException("FieldsName.size["+this.updateFieldsName.size()+"] <> FieldsValue.size["+this.updateFieldsValue.size()+"]");
@@ -2268,18 +2921,18 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			boolean oldValueSelectForUpdate = this.selectForUpdate;
 			try{
 				this.selectForUpdate = false;
-				return this._createSQLUpdate();
+				return this.createSQLUpdateEngine();
 			}finally{
 				this.selectForUpdate = oldValueSelectForUpdate;
 			}
 			
 		}
 		else{
-			return this._createSQLUpdate();
+			return this.createSQLUpdateEngine();
 		}
 	}
 	
-	protected abstract String _createSQLUpdate() throws SQLQueryObjectException;
+	protected abstract String createSQLUpdateEngine() throws SQLQueryObjectException;
 
 
 
@@ -2310,11 +2963,11 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	@Override
 	public ISQLQueryObject addInsertField(String nomeField,String valueField) throws SQLQueryObjectException{
 		if(nomeField==null || "".equals(nomeField))
-			throw new SQLQueryObjectException("Field name is null or empty string");
+			throw new SQLQueryObjectException(FIELD_NAME_IS_NULL_OR_EMPTY);
 		if(valueField==null)
 			throw new SQLQueryObjectException("Field value is null");
 		if(this.insertFieldsName.contains(nomeField)){
-			throw new SQLQueryObjectException("Field name "+nomeField+" gia inserito tra gli insert fields");
+			throw new SQLQueryObjectException(FIELD_NAME_PREFIX+nomeField+" gia inserito tra gli insert fields");
 		}else{
 			this.insertFieldsName.add(nomeField);
 			this.insertFieldsValue.add(valueField);
@@ -2332,7 +2985,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		
 		if(this.insertTable==null)
 			throw new SQLQueryObjectException("Nome Tabella per l'inserimento non definito");
-		if(this.insertFieldsName.size()<=0)
+		if(this.insertFieldsName.isEmpty())
 			throw new SQLQueryObjectException("Nessuna coppia nome/valore da inserire presente");
 		if(this.insertFieldsName.size()!= this.insertFieldsValue.size()){
 			throw new SQLQueryObjectException("FieldsName.size <> FieldsValue.size");
@@ -2344,19 +2997,19 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			boolean oldValueSelectForUpdate = this.selectForUpdate;
 			try{
 				this.selectForUpdate = false;
-				return this._createSQLInsert();
+				return this.createSQLInsertEngine();
 			}finally{
 				this.selectForUpdate = oldValueSelectForUpdate;
 			}
 			
 		}
 		else{
-			return this._createSQLInsert();
+			return this.createSQLInsertEngine();
 		}
 		
 
 	}
-	private String _createSQLInsert() throws SQLQueryObjectException{
+	private String createSQLInsertEngine() {
 		StringBuilder bf = new StringBuilder();
 		bf.append("INSERT INTO ");
 		bf.append(this.insertTable);
@@ -2399,7 +3052,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	public String createSQLDelete() throws SQLQueryObjectException {
 
 		// Table dove effettuare la ricerca 'FromTable'
-		if(this.tables.size()==0){
+		if(this.tables.isEmpty()){
 			throw new SQLQueryObjectException("Non e' possibile creare un comando di delete senza aver definito le tabelle su cui apportare l'eliminazione dei dati");
 		}else{
 			Iterator<String> it = this.tables.iterator();
@@ -2415,18 +3068,18 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			boolean oldValueSelectForUpdate = this.selectForUpdate;
 			try{
 				this.selectForUpdate = false;
-				return this._createSQLDelete();
+				return this.createSQLDeleteEngine();
 			}finally{
 				this.selectForUpdate = oldValueSelectForUpdate;
 			}
 			
 		}
 		else{
-			return this._createSQLDelete();
+			return this.createSQLDeleteEngine();
 		}
 	}
 	
-	protected abstract String _createSQLDelete() throws SQLQueryObjectException;
+	protected abstract String createSQLDeleteEngine() throws SQLQueryObjectException;
 	
 	private void checkDeleteTable(String tabella) throws SQLQueryObjectException{
 		// Controllo quelli standard (da fare per impostare il controllo in ogni classe)
@@ -2454,7 +3107,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		
 		if(this.conditions==null)
 			throw new SQLQueryObjectException("Condizioni non definite");
-		if(this.conditions.size()<=0)
+		if(this.conditions.isEmpty())
 			throw new SQLQueryObjectException("Nessuna condizione presente");
 		
 		if(this.forceSelectForUpdateDisabledForNotQueryMethod){
@@ -2463,18 +3116,18 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			boolean oldValueSelectForUpdate = this.selectForUpdate;
 			try{
 				this.selectForUpdate = false;
-				return this._createSQLConditions();
+				return this.createSQLConditionsEngine();
 			}finally{
 				this.selectForUpdate = oldValueSelectForUpdate;
 			}
 			
 		}
 		else{
-			return this._createSQLConditions();
+			return this.createSQLConditionsEngine();
 		}
 	}
 
-	protected abstract String _createSQLConditions() throws SQLQueryObjectException;
+	protected abstract String createSQLConditionsEngine() throws SQLQueryObjectException;
 
 
 

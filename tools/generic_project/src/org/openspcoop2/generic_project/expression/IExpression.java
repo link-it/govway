@@ -315,6 +315,131 @@ public interface IExpression {
 	
 	
 	
+	/* ************ DATE PART *********** */
+	
+	/**
+	 * Create an expression che verifica l'anno di una data
+	 * Example:  ( EXTRACT(YEAR FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isYear(IField field, int value) throws ExpressionNotImplementedException,ExpressionException;
+	public IExpression isYear(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Create an expression che verifica il mese (numerico) di una data
+	 * Example:  ( EXTRACT(MONTH FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isMonth(IField field, int value) throws ExpressionNotImplementedException,ExpressionException;
+	public IExpression isMonth(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Create an expression che verifica il giorno del mese di una data
+	 * Example:  ( EXTRACT(DAY FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isDayOfMonth(IField field, int value) throws ExpressionNotImplementedException,ExpressionException;
+	public IExpression isDayOfMonth(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Create an expression che verifica il giorno dell'anno di una data
+	 * Example:  ( TO_CHAR(data_ingresso_richiesta, 'DDD') = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isDayOfYear(IField field, int value) throws ExpressionNotImplementedException,ExpressionException;
+	public IExpression isDayOfYear(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Create an expression che verifica il giorno della settimana di una data
+	 * Example:  ( TO_CHAR(data_ingresso_richiesta, 'D') = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isDayOfWeek(IField field, int value) throws ExpressionNotImplementedException,ExpressionException;
+	public IExpression isDayOfWeek(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Create an expression che verifica l'ora di una data
+	 * Example:  ( EXTRACT(HOUR FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isHour(IField field, int value) throws ExpressionNotImplementedException,ExpressionException;
+	public IExpression isHour(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Create an expression che verifica i minuti di una data
+	 * Example:  ( EXTRACT(MINUTE FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isMinute(IField field, int value) throws ExpressionNotImplementedException,ExpressionException;
+	public IExpression isMinute(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Create an expression che verifica i secondi di una data
+	 * Example:  ( EXTRACT(SECOND FROM field) = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isSecond(IField field, int value) throws ExpressionNotImplementedException,ExpressionException;
+	public IExpression isSecond(IField field, double value) throws ExpressionNotImplementedException,ExpressionException;
+	public IExpression isSecond(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Create an expression che verifica il giorno di una data, nel formato umano (es. Friday)
+	 * Example:  ( TO_CHAR(data_ingresso_richiesta, 'DAY') = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isFullDayName(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Create an expression che verifica il giorno di una data, nel formato compatto umano (es. Fri)
+	 * Example:  ( TO_CHAR(data_ingresso_richiesta, 'DY') = 'value' )  
+	 * 
+	 * @param field Resource identifier
+	 * @param value Value
+	 * @return the instance of itself enriched with expression that represents the constraint
+	 * @throws ExpressionNotImplementedException,ExpressionException
+	 */
+	public IExpression isShortDayName(IField field, String value) throws ExpressionNotImplementedException,ExpressionException;
+	
+	
+	
+	
+	
 	/* ************ IN *********** */
 	
 	/**

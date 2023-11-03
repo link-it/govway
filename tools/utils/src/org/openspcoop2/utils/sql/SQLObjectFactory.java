@@ -34,6 +34,8 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 
 public class SQLObjectFactory {
+	
+	private SQLObjectFactory() {}
 
 	public static ISQLQueryObject createSQLQueryObject(String tipoDatabase) throws SQLQueryObjectException {
 		return SQLObjectFactory.toQueryObject(tipoDatabase);

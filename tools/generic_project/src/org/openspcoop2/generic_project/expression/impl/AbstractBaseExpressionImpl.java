@@ -38,7 +38,7 @@ public abstract class AbstractBaseExpressionImpl {
 
 	private IObjectFormatter objectFormatter;
 	
-	public AbstractBaseExpressionImpl(IObjectFormatter objectFormatter){
+	protected AbstractBaseExpressionImpl(IObjectFormatter objectFormatter){
 		this.objectFormatter = objectFormatter;
 	}
 	

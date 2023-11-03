@@ -38,7 +38,7 @@ import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatte
  */
 public class ConjunctionExpressionImpl extends AbstractBaseExpressionImpl {
 
-	private List<AbstractBaseExpressionImpl> lista = new ArrayList<AbstractBaseExpressionImpl>();
+	private List<AbstractBaseExpressionImpl> lista = new ArrayList<>();
 	private boolean andConjunction = false;
 
 	public ConjunctionExpressionImpl(IObjectFormatter objectFormatter){
@@ -108,10 +108,11 @@ public class ConjunctionExpressionImpl extends AbstractBaseExpressionImpl {
 
 	@Override
 	public List<Object> getFieldValues(IField field) throws ExpressionNotImplementedException, ExpressionException{
+		List<Object> fields = null;
 		if(this.lista==null){
-			return null;
+			return fields;
 		}
-		List<Object> fields = new ArrayList<>();
+		fields = new ArrayList<>();
 		for (Iterator<AbstractBaseExpressionImpl> iterator = this.lista.iterator(); iterator.hasNext();) {
 			AbstractBaseExpressionImpl expr = iterator.next();
 			List<Object> tmp = expr.getFieldValues(field);
@@ -119,10 +120,13 @@ public class ConjunctionExpressionImpl extends AbstractBaseExpressionImpl {
 				fields.addAll(tmp);
 			}			
 		}
-		if(fields.size()>0){
+		if(!fields.isEmpty()){
 			return fields;
 		}
-		return null;
+		else {
+			fields = null;
+		}
+		return fields;
 	}
 		
 	@Override
@@ -145,10 +149,11 @@ public class ConjunctionExpressionImpl extends AbstractBaseExpressionImpl {
 	@Override
 	public List<IField> getFields()
 			throws ExpressionNotImplementedException, ExpressionException {
+		List<IField> fields = null;
 		if(this.lista==null){
-			return null;
+			return fields;
 		}
-		List<IField> fields = new ArrayList<IField>();
+		fields = new ArrayList<>();
 		for (Iterator<AbstractBaseExpressionImpl> iterator = this.lista.iterator(); iterator.hasNext();) {
 			AbstractBaseExpressionImpl expr = iterator.next();
 			List<IField> tmp = expr.getFields();
@@ -156,9 +161,12 @@ public class ConjunctionExpressionImpl extends AbstractBaseExpressionImpl {
 				fields.addAll(tmp);
 			}
 		}
-		if(fields.size()>0){
+		if(!fields.isEmpty()){
 			return fields;
 		}
-		return null;
+		else {
+			fields = null;
+		}
+		return fields;
 	}
 }

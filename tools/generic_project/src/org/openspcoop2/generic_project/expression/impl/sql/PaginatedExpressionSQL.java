@@ -20,6 +20,7 @@
 package org.openspcoop2.generic_project.expression.impl.sql;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -33,11 +34,15 @@ import org.openspcoop2.generic_project.expression.impl.BetweenExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.Comparator;
 import org.openspcoop2.generic_project.expression.impl.ComparatorExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.ConjunctionExpressionImpl;
+import org.openspcoop2.generic_project.expression.impl.DateTimePartExpressionImpl;
+import org.openspcoop2.generic_project.expression.impl.DayFormatExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.InExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.LikeExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.PaginatedExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.sql.DateTimePartEnum;
+import org.openspcoop2.utils.sql.DayFormatEnum;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 /**
@@ -90,7 +95,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 		super(expression);
 		this.sqlFieldConverter = expression.getSqlFieldConverter();
 		this.fieldsManuallyAdd = expression.getFieldsManuallyAdd();
-		//this.checkFieldManuallyAdd = expression.checkFieldManuallyAdd;
+		/**this.checkFieldManuallyAdd = expression.checkFieldManuallyAdd;*/
 		if(this.sqlFieldConverter!=null){
 			this.databaseType = this.sqlFieldConverter.getDatabaseType();
 		}
@@ -135,7 +140,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 	
 	/* ************ TO SQL *********** */
 	
-	private String toSql_engine(SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
+	private String toSqlEngine(SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
 			
 		ISQLExpression sqlExpression = null;
 		if(this.expressionEngine!=null){
@@ -188,7 +193,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 		
 	}
 	
-	private void toSql_engine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
+	private void toSqlEngine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
 	
 		ISQLExpression sqlExpression = null;
 		if(this.expressionEngine!=null){
@@ -248,17 +253,17 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 	}
 	
 	public String toSql() throws ExpressionException{
-		return toSql_engine(SQLMode.STANDARD, null, null);
+		return toSqlEngine(SQLMode.STANDARD, null, null);
 	}
 	protected String toSqlPreparedStatement(List<Object> oggetti) throws ExpressionException {
-		return toSql_engine(SQLMode.PREPARED_STATEMENT, oggetti, null);
+		return toSqlEngine(SQLMode.PREPARED_STATEMENT, oggetti, null);
 	}
 	protected String toSqlJPA(Map<String, Object> oggetti) throws ExpressionException {
-		return toSql_engine(SQLMode.JPA, null, oggetti);
+		return toSqlEngine(SQLMode.JPA, null, oggetti);
 	}
 	
 	public void toSql(ISQLQueryObject sqlQueryObject)throws ExpressionException{
-		toSql_engine(sqlQueryObject,SQLMode.STANDARD, null, null);
+		toSqlEngine(sqlQueryObject,SQLMode.STANDARD, null, null);
 	}
 	public void toSqlWithFromCondition(ISQLQueryObject sqlQueryObject,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{
 		
@@ -271,7 +276,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 	}
 	
 	protected void toSqlPreparedStatement(ISQLQueryObject sqlQueryObject,List<Object> oggetti)throws ExpressionException{
-		toSql_engine(sqlQueryObject,SQLMode.PREPARED_STATEMENT, oggetti, null);
+		toSqlEngine(sqlQueryObject,SQLMode.PREPARED_STATEMENT, oggetti, null);
 	}
 	protected void toSqlPreparedStatementWithFromCondition(ISQLQueryObject sqlQueryObject,List<Object> oggetti,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{
 		
@@ -284,7 +289,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 	}
 	
 	protected void toSqlJPA(ISQLQueryObject sqlQueryObject,Map<String, Object> oggetti)throws ExpressionException{
-		toSql_engine(sqlQueryObject,SQLMode.JPA, null, oggetti);
+		toSqlEngine(sqlQueryObject,SQLMode.JPA, null, oggetti);
 	}
 	protected void toSqlJPAWithFromCondition(ISQLQueryObject sqlQueryObject,Map<String, Object> oggetti,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{
 		
@@ -297,19 +302,19 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 	}
 	
 	public void addField(ISQLQueryObject sqlQueryObject, IField field, boolean appendTablePrefix)throws ExpressionException{
-		ExpressionSQL.addField_engine(sqlQueryObject,this.getSqlFieldConverter(),field, null, appendTablePrefix);
+		ExpressionSQL.addFieldEngine(sqlQueryObject,this.getSqlFieldConverter(),field, null, appendTablePrefix);
 		this.getFieldsManuallyAdd().add(field);
 	}
 	public void addField(ISQLQueryObject sqlQueryObject, IField field, String aliasField, boolean appendTablePrefix)throws ExpressionException{
-		ExpressionSQL.addField_engine(sqlQueryObject,this.getSqlFieldConverter(),field, aliasField, appendTablePrefix);
+		ExpressionSQL.addFieldEngine(sqlQueryObject,this.getSqlFieldConverter(),field, aliasField, appendTablePrefix);
 		this.getFieldsManuallyAdd().add(field);
 	}
 	public void addAliasField(ISQLQueryObject sqlQueryObject, IField field, boolean appendTablePrefix)throws ExpressionException{
-		ExpressionSQL.addAliasField_engine(sqlQueryObject,this.getSqlFieldConverter(),field, null, appendTablePrefix);
+		ExpressionSQL.addAliasFieldEngine(sqlQueryObject,this.getSqlFieldConverter(),field, null, appendTablePrefix);
 		this.getFieldsManuallyAdd().add(field);
 	}
 	public void addField(ISQLQueryObject sqlQueryObject, FunctionField field, boolean appendTablePrefix)throws ExpressionException{
-		ExpressionSQL.addField_engine(sqlQueryObject,this.getSqlFieldConverter(),field, null, appendTablePrefix);
+		ExpressionSQL.addFieldEngine(sqlQueryObject,this.getSqlFieldConverter(),field, null, appendTablePrefix);
 		this.getFieldsManuallyAdd().add(field);
 	}
 
@@ -317,29 +322,35 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 	
 	/* ************ OBJECTS ************ */
 	@Override
-	protected ComparatorExpressionImpl getComparatorExpression(IField field, Object value, Comparator c)throws ExpressionException {
+	protected ComparatorExpressionImpl getComparatorExpression(IField field, Object value, Comparator c) {
 		return new ComparatorExpressionSQL(this.sqlFieldConverter,this.objectFormatter,field,value,c);
 	}
 	@Override
-	protected BetweenExpressionImpl getBetweenExpression(IField field, Object lower, Object high)throws ExpressionException {
+	protected BetweenExpressionImpl getBetweenExpression(IField field, Object lower, Object high) {
 		return new BetweenExpressionSQL(this.sqlFieldConverter,this.objectFormatter,field,lower,high);
 	}
 	@Override
-	protected InExpressionImpl getInExpression(IField field, Object... values) throws ExpressionException {
+	protected InExpressionImpl getInExpression(IField field, Object... values) {
 		List<Object> lista = new ArrayList<>();
-		if(values!=null){
-			for (int i = 0; i < values.length; i++) {
-				lista.add(values[i]);
-			}
-		} 
+		if(values!=null && values.length>0){
+			lista.addAll(Arrays.asList(values));
+		}
 		return new InExpressionSQL(this.sqlFieldConverter,this.objectFormatter,field, lista);
 	}
 	@Override
-	protected LikeExpressionImpl getLikeExpression(IField field, String value, LikeMode mode, boolean caseInsensitive) throws ExpressionException {
+	protected LikeExpressionImpl getLikeExpression(IField field, String value, LikeMode mode, boolean caseInsensitive) {
 		return new LikeExpressionSQL(this.sqlFieldConverter,this.objectFormatter,field, value, mode, caseInsensitive);
 	}
 	@Override
-	protected ConjunctionExpressionImpl getConjunctionExpression() throws ExpressionException {
+	protected DateTimePartExpressionImpl getDateTimePartExpression(IField field, String value, DateTimePartEnum dateTimePartEnum) {
+		return new DateTimePartExpressionSQL(this.sqlFieldConverter,this.objectFormatter,field, value, dateTimePartEnum);
+	}
+	@Override
+	protected DayFormatExpressionImpl getDayFormatExpression(IField field, String value, DayFormatEnum dayFormatEnum) {
+		return new DayFormatExpressionSQL(this.sqlFieldConverter,this.objectFormatter,field, value, dayFormatEnum);
+	}
+	@Override
+	protected ConjunctionExpressionImpl getConjunctionExpression() {
 		return new ConjunctionExpressionSQL(this.sqlFieldConverter,this.objectFormatter);
 	}
 	

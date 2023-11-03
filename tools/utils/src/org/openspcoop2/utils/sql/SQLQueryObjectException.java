@@ -38,12 +38,10 @@ public class SQLQueryObjectException extends Exception {
 	 public SQLQueryObjectException(String message, Throwable cause)
 	{
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 	public SQLQueryObjectException(Throwable cause)
 	{
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * serialVersionUID

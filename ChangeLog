@@ -1,3 +1,11 @@
+2023-11-03  Andrea Poli <apoli@link.it>
+
+	* [Utils, GenericProject]
+	Aggiunta funzionalità  OP-1659
+	Le utility della classe 'org.openspcoop2.utils.sql' e le espressioni 'org.openspcoop2.generic_project.expression' 
+	consentono adesso di effettuare la selezione di campi e la definizione di condizioni di where relative a parti di una data: 
+	YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, DayOfWeek, DayOfYear, FullDayName e ShortDayName.
+
 2023-11-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, Utils]

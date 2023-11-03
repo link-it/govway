@@ -46,7 +46,7 @@ public class InExpressionSQL extends InExpressionImpl implements ISQLExpression 
 		this.sqlFieldConverter = sqlFieldConverter;
 	}
 	
-	public String toSql_engine(SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
+	private String toSqlEngine(SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
 		StringBuilder bf = new StringBuilder();
 		if(isNot()){
 			bf.append("( NOT ");
@@ -86,9 +86,9 @@ public class InExpressionSQL extends InExpressionImpl implements ISQLExpression 
 		return bf.toString();
 	}
 	
-	public void toSql_engine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
+	private void toSqlEngine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
 		try{
-			String s = toSql_engine(mode, oggettiPreparedStatement, oggettiJPA);
+			String s = toSqlEngine(mode, oggettiPreparedStatement, oggettiJPA);
 			s = s.substring(1,s.length()-2);
 			sqlQueryObject.addWhereCondition(s);
 		}catch(Exception e){
@@ -98,35 +98,35 @@ public class InExpressionSQL extends InExpressionImpl implements ISQLExpression 
 	
 	@Override
 	public String toSql() throws ExpressionException {
-		return toSql_engine(SQLMode.STANDARD, null, null);
+		return toSqlEngine(SQLMode.STANDARD, null, null);
 	}
 
 	@Override
 	public String toSqlPreparedStatement(List<Object> oggetti)
 			throws ExpressionException {
-		return toSql_engine(SQLMode.PREPARED_STATEMENT, oggetti, null);
+		return toSqlEngine(SQLMode.PREPARED_STATEMENT, oggetti, null);
 	}
 
 	@Override
 	public String toSqlJPA(Map<String, Object> oggetti)
 			throws ExpressionException {
-		return toSql_engine(SQLMode.JPA, null, oggetti);
+		return toSqlEngine(SQLMode.JPA, null, oggetti);
 	}
 	
 	@Override
 	public void toSql(ISQLQueryObject sqlQueryObject) throws ExpressionException {
-		toSql_engine(sqlQueryObject,SQLMode.STANDARD, null, null);
+		toSqlEngine(sqlQueryObject,SQLMode.STANDARD, null, null);
 	}
 
 	@Override
 	public void toSqlPreparedStatement(ISQLQueryObject sqlQueryObject,List<Object> oggetti)
 			throws ExpressionException {
-		toSql_engine(sqlQueryObject,SQLMode.PREPARED_STATEMENT, oggetti, null);
+		toSqlEngine(sqlQueryObject,SQLMode.PREPARED_STATEMENT, oggetti, null);
 	}
 
 	@Override
 	public void toSqlJPA(ISQLQueryObject sqlQueryObject,Map<String, Object> oggetti)
 			throws ExpressionException {
-		toSql_engine(sqlQueryObject,SQLMode.JPA, null, oggetti);
+		toSqlEngine(sqlQueryObject,SQLMode.JPA, null, oggetti);
 	}
 }
