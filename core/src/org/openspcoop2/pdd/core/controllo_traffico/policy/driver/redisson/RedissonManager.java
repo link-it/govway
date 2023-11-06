@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson;
 
 import java.util.List;
 
+import org.openspcoop2.utils.UtilsException;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -35,13 +36,17 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class RedissonManager {
+	
+	private RedissonManager() {}
 
 	private static Logger logStartup;
 	private static Logger log;
 	
 	private static List<String> connectionUrl = null;
 	
-	public static synchronized void initialize(Logger logStartup, Logger log, List<String> connectionUrl) throws Exception {
+	private static final String INIZIALIZZAZIONE_FALLITA = "Inizializzazione RedissonClient fallita: ";
+	
+	public static synchronized void initialize(Logger logStartup, Logger log, List<String> connectionUrl) {
 		
 		if(RedissonManager.connectionUrl==null){
 			RedissonManager.logStartup = logStartup;
@@ -52,7 +57,7 @@ public class RedissonManager {
 	}
 	
 	private static RedissonClient redisson = null;
-	private static synchronized void initRedissonClient(boolean throwInitializingException) throws Exception {
+	private static synchronized void initRedissonClient(boolean throwInitializingException) throws UtilsException {
 		if(redisson==null) {
 			
 			RedissonManager.logStartup.info("Inizializzazione RedissonClient ...");
@@ -62,23 +67,24 @@ public class RedissonManager {
 				Config redisConf = new Config();
 				redisConf.useClusterServers()
 					.addNodeAddress(RedissonManager.connectionUrl.toArray(new String[1]))
-					.setReadMode(ReadMode.MASTER_SLAVE);
+					.setReadMode(ReadMode.MASTER_SLAVE)
+					.setSslEnableEndpointIdentification(true);
 				redisson = Redisson.create(redisConf);
 				RedissonManager.logStartup.info("Inizializzazione RedissonClient effettuata con successo");
 				RedissonManager.log.info("Inizializzazione RedissonClient effettuata con successo");
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				if(throwInitializingException) {
-					throw new Exception("Inizializzazione RedissonClient fallita: "+t.getMessage(),t);
+					throw new UtilsException(INIZIALIZZAZIONE_FALLITA+t.getMessage(),t);
 				}
 				else {
-					RedissonManager.logStartup.error("Inizializzazione RedissonClient fallita: "+t.getMessage(),t);
-					RedissonManager.log.error("Inizializzazione RedissonClient fallita: "+t.getMessage(),t);
+					RedissonManager.logStartup.error(INIZIALIZZAZIONE_FALLITA+t.getMessage(),t);
+					RedissonManager.log.error(INIZIALIZZAZIONE_FALLITA+t.getMessage(),t);
 				}
 			}
 			
 		}
 	}
-	public static RedissonClient getRedissonClient(boolean throwInitializingException) throws Exception {
+	public static RedissonClient getRedissonClient(boolean throwInitializingException) throws UtilsException {
 		if(redisson==null) {
 			initRedissonClient(throwInitializingException);
 		}
