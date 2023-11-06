@@ -25,8 +25,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -43,7 +48,9 @@ import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.LikeConfig;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
@@ -282,6 +289,57 @@ public class RemoteStoreProviderDriverUtils {
 		if(lastEventId==null) {
 			throw new KeystoreException("LastEventId undefined");
 		}
+	}
+	
+	
+	public static List<RemoteStore> getRemoteStores(DriverConfigurazioneDB driverConfigurazioneDB) throws KeystoreException {
+		Connection con = null;
+		try {
+			con = driverConfigurazioneDB.getConnection("getRemoteStores", false);
+			return getRemoteStores(con, driverConfigurazioneDB.getTipoDB());
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			driverConfigurazioneDB.releaseConnection(con);
+		}
+	}
+	public static List<RemoteStore> getRemoteStores(Connection con, String tipoDatabase) throws KeystoreException {
+		
+		List<RemoteStore> list = new ArrayList<>();
+		PreparedStatement selectStmt = null;
+		ResultSet selectRS = null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.REMOTE_STORE);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy(COLUMN_NOME);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			selectStmt = con.prepareStatement(sqlQuery);
+			selectRS = selectStmt.executeQuery();
+			while(selectRS.next()) {
+				long idRemoteStore = selectRS.getLong(COLUMN_ID);
+				Date dataAggiornamento = selectRS.getTimestamp(COLUMN_DATA_AGGIORNAMENTO);
+				String lastEvent =  selectRS.getString(COLUMN_LAST_EVENT);
+				String nome = selectRS.getString(COLUMN_NOME);
+				RemoteStore rs = new RemoteStore();
+				rs.setId(idRemoteStore);
+				rs.setDataAggiornamento(dataAggiornamento);
+				rs.setLastEvent(lastEvent);
+				rs.setNome(nome);
+				list.add(rs);
+			}
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+		}
+		
+		return list;
 	}
 	
 	
@@ -747,5 +805,186 @@ public class RemoteStoreProviderDriverUtils {
 	private static void addWhereKidConditions(ISQLQueryObject sqlQueryObject) throws SQLQueryObjectException {
 		sqlQueryObject.addWhereCondition(COLUMN_ID_REMOTE_STORE+"=?");
 		sqlQueryObject.addWhereCondition(COLUMN_KID+"=?");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static List<RemoteStoreKeyEntry> getRemoteStoreKeyEntries(Logger log, DriverConfigurazioneDB driverConfigurazioneDB, ISearch ricerca, long idRemoteStore) throws KeystoreException {
+		Connection con = null;
+		try {
+			con = driverConfigurazioneDB.getConnection("getRemoteStoreKeyEntries", false);
+			return getRemoteStoreKeyEntries(log, con, driverConfigurazioneDB.getTipoDB(), ricerca, idRemoteStore);
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			driverConfigurazioneDB.releaseConnection(con);
+		}
+	}
+	public static List<RemoteStoreKeyEntry> getRemoteStoreKeyEntries(Logger log, Connection con, String tipoDatabase, ISearch ricerca, long idRemoteStore) throws KeystoreException {
+		
+		int idLista = Liste.REMOTE_STORE_KEY;
+		int offset;
+		int limit;
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		
+		if (limit == 0) // con limit
+			limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+		
+		String filtroKid = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_REMOTE_STORE_KEY_KID);
+		if((filtroKid!=null && "".equals(filtroKid))) {
+			filtroKid=null;
+		}
+		
+		String filtroClientId = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_REMOTE_STORE_KEY_CLIENT_ID);
+		if((filtroClientId!=null && "".equals(filtroClientId))) {
+			filtroClientId=null;
+		}
+		
+		String filtroOrganizzazione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_REMOTE_STORE_KEY_ORGANIZZAZIONE);
+		if((filtroOrganizzazione!=null && "".equals(filtroOrganizzazione))) {
+			filtroOrganizzazione=null;
+		}
+		
+		List<RemoteStoreKeyEntry> list = new ArrayList<>();
+		PreparedStatement selectStmt = null;
+		ResultSet selectRS = null;
+		try {
+			IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDatabase);
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.REMOTE_STORE_KEY);
+			sqlQueryObject.addWhereCondition(COLUMN_ID_REMOTE_STORE+"=?");
+			if(filtroKid!=null) {
+				sqlQueryObject.addWhereLikeCondition(COLUMN_KID, filtroKid, LikeConfig.contains(true));
+			}
+			if(filtroClientId!=null) {
+				sqlQueryObject.addWhereLikeCondition(COLUMN_CLIENT_ID, filtroClientId, LikeConfig.contains(true));
+			}
+			if(filtroOrganizzazione!=null) {
+				sqlQueryObject.addWhereLikeCondition(COLUMN_ORGANIZATION_DETAILS, filtroOrganizzazione, LikeConfig.contains(true));
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy(COLUMN_DATA_REGISTRAZIONE, false);
+			sqlQueryObject.setOffset(offset);
+			sqlQueryObject.setLimit(limit);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			selectStmt = con.prepareStatement(sqlQuery);
+			selectRS = selectStmt.executeQuery();
+			selectStmt.setLong(1, idRemoteStore);
+			while(selectRS.next()) {
+				long id = selectRS.getLong(COLUMN_ID);
+				Date dataRegistrazione = selectRS.getTimestamp(COLUMN_DATA_REGISTRAZIONE);
+				
+				String kid = selectRS.getString(COLUMN_KID);
+				Date dataAggiornamento = selectRS.getTimestamp(COLUMN_DATA_AGGIORNAMENTO);
+				
+				String clientId =  selectRS.getString(COLUMN_CLIENT_ID);
+				String clientDetails = selectRS.getString(COLUMN_CLIENT_DETAILS);
+				String organizationDetails = selectRS.getString(COLUMN_ORGANIZATION_DETAILS);
+				Date clientDataAggiornamento = selectRS.getTimestamp(COLUMN_CLIENT_DATA_AGGIORNAMENTO);
+				
+				RemoteStoreKeyEntry rs = new RemoteStoreKeyEntry();
+				rs.setId(id);
+				rs.setDataRegistrazione(dataRegistrazione);
+				rs.setIdRemoteStore(idRemoteStore);
+				
+				rs.setContentKey(jdbcAdapter.getBinaryData(selectRS, COLUMN_KEY));
+				rs.setKid(kid);
+				rs.setDataAggiornamento(dataAggiornamento);
+				
+				rs.setClientId(clientId);
+				rs.setClientDetails(clientDetails);
+				rs.setOrganizationDetails(organizationDetails);
+				rs.setClientDataAggiornamento(clientDataAggiornamento);
+				
+				enrichOrganizationInfo(log, organizationDetails, rs);
+				
+				list.add(rs);
+			}
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			
+			JDBCUtilities.closeResources(selectRS, selectStmt);
+		}
+		
+		return list;
+	}
+	
+	private static void enrichOrganizationInfo(Logger log, String organizationDetails, RemoteStoreKeyEntry rs) {
+		if(organizationDetails!=null) {
+			try {
+				rs.setOrganizationName(JsonPathExpressionEngine.extractAndConvertResultAsString(organizationDetails, "$.name", log));
+			}catch(Exception e) {
+				// ignore
+			}
+			try {
+				rs.setOrganizationExternalOrigin(JsonPathExpressionEngine.extractAndConvertResultAsString(organizationDetails, "$.externalId.origin", log));
+			}catch(Exception e) {
+				// ignore
+			}
+			try {
+				rs.setOrganizationExternalId(JsonPathExpressionEngine.extractAndConvertResultAsString(organizationDetails, "$.externalId.id", log));
+			}catch(Exception e) {
+				// ignore
+			}
+			try {
+				rs.setOrganizationCategory(JsonPathExpressionEngine.extractAndConvertResultAsString(organizationDetails, "$.category", log));
+			}catch(Exception e) {
+				// ignore
+			}
+		}
+	}
+	
+	
+	public static int deleteRemoteStoreKeyEntry(DriverConfigurazioneDB driverConfigurazioneDB, long idRemoteStore, long idEntry) throws KeystoreException {
+		Connection con = null;
+		try {
+			con = driverConfigurazioneDB.getConnection("deleteRemoteStoreKeyEntry", false);
+			return deleteRemoteStoreKeyEntry(con, driverConfigurazioneDB.getTipoDB(), idRemoteStore, idEntry);
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			driverConfigurazioneDB.releaseConnection(con);
+		}
+	}
+	public static int deleteRemoteStoreKeyEntry(Connection con, String tipoDatabase, long idRemoteStore, long idEntry) throws KeystoreException {
+		PreparedStatement updateStmt = null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addDeleteTable(CostantiDB.REMOTE_STORE_KEY);
+			sqlQueryObject.addWhereCondition(COLUMN_ID_REMOTE_STORE+"=?");
+			sqlQueryObject.addWhereCondition(COLUMN_ID+"=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String updateQuery = sqlQueryObject.createSQLDelete();
+			updateStmt = con.prepareStatement(updateQuery);
+			updateStmt.setLong(1, idRemoteStore);
+			updateStmt.setLong(2, idEntry);
+			int rows = updateStmt.executeUpdate();
+			updateStmt.close();
+			return rows;
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			JDBCUtilities.closeResources(updateStmt);
+		}
 	}
 }
