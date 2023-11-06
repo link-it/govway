@@ -159,7 +159,7 @@
 	<archive path="/op2_3.4.dev/lib/pdf/fontbox-2.0.27.jar"/>
 	<archive path="/op2_3.4.dev/lib/pdf/boxable-1.7.0.jar"/>
 	<!-- redis -->
-	<archive path="/op2_3.4.dev/lib/redis/redisson-3.23.5.jar"/>
+	<archive path="/op2_3.4.dev/lib/redis/redisson-3.24.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-4.1.100.Final.jar"/>
 	<archive path="/op2_3.4.dev/lib/redis/netty-resolver-dns-4.1.100.Final.jar"/>
 	<archive path="/op2_3.4.dev/lib/redis/netty-buffer-4.1.100.Final.jar"/>
