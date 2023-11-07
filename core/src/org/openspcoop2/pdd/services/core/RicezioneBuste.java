@@ -5785,7 +5785,7 @@ public class RicezioneBuste {
 	   ------------
 		 */
 		msgDiag.mediumDebug("Controllo presenza del messaggio gia' in gestione...");
-		if( (functionAsRouter==false) || (routingStateless==false) ){
+		if( (!functionAsRouter) || (!routingStateless) ){
 			try{
 				if(  msgRequest.existsMessage_noCache() ){
 
@@ -5794,9 +5794,9 @@ public class RicezioneBuste {
 					if(TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)){
 						msgDiag.logPersonalizzato("messaggioInGestione.marcatoDaEliminare");
 						String msg = msgDiag.getMessaggio_replaceKeywords("messaggioInGestione.marcatoDaEliminare");
-						if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
-							msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
-								propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+						if(propertiesReader.isMsgGiaInProcessamentoUseLock()) {
+							msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(),
+								propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 						}
 						else {
 							msgRequest.deleteMessageByNow();
@@ -5842,8 +5842,8 @@ public class RicezioneBuste {
 							// Se scade il timeout cmq genero un errore di busta gia' in gestione.
 							msgDiag.addKeyword(CostantiPdD.KEY_PROPRIETARIO_MESSAGGIO, proprietarioMessaggio);
 							msgDiag.logPersonalizzato("messaggioInGestione.gestioneAsincrona");
-							long scadenzaWhile = DateManager.getTimeMillis() + propertiesReader.getMsgGiaInProcessamento_AttesaAttiva();
-							boolean isErrore_MsgGiaRicevuto = true;
+							long scadenzaWhile = DateManager.getTimeMillis() + propertiesReader.getMsgGiaInProcessamentoAttesaAttiva();
+							boolean isErroreMsgGiaRicevuto = true;
 							boolean msgAttesaFineProcessamento = false;
 							int millisecondiTrascorsi = 0;
 							while( DateManager.getTimeMillis() < scadenzaWhile  ){
@@ -5857,7 +5857,7 @@ public class RicezioneBuste {
 									// Quindi se ho raggiunto ConsegnaContenutiApplicativi, GestoreMessaggi o non esiste piu' il messaggio, vuole dire che e' stato elaborato.
 									if(ConsegnaContenutiApplicativi.ID_MODULO.equals(proprietarioMessaggio) || 
 											TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio) ||
-											(msgRequest.existsMessage_noCache()==false) ){
+											(!msgRequest.existsMessage_noCache()) ){
 										
 										pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
 										
@@ -5874,16 +5874,16 @@ public class RicezioneBuste {
 										return;
 									}
 
-									if(msgAttesaFineProcessamento==false){
-										msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, ""+(propertiesReader.getMsgGiaInProcessamento_AttesaAttiva()/1000));
+									if(!msgAttesaFineProcessamento){
+										msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, ""+(propertiesReader.getMsgGiaInProcessamentoAttesaAttiva()/1000));
 										msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiAbilitato");
 										msgAttesaFineProcessamento = true;
 									}
 
 								}else{
 
-									if(msgAttesaFineProcessamento==false){
-										msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, ""+(propertiesReader.getMsgGiaInProcessamento_AttesaAttiva()/1000));
+									if(!msgAttesaFineProcessamento){
+										msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, ""+(propertiesReader.getMsgGiaInProcessamentoAttesaAttiva()/1000));
 										msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato");
 										msgAttesaFineProcessamento = true;
 									}
@@ -5891,31 +5891,31 @@ public class RicezioneBuste {
 									boolean existsMessage = msgRequest.existsMessage_noCache();
 									if(existsMessage==false){
 										msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.attesaTerminata");
-										isErrore_MsgGiaRicevuto = false;
+										isErroreMsgGiaRicevuto = false;
 										break;
 									}
 
 									if(TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)){
 										msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.forzoEliminazione");
 										String msg = msgDiag.getMessaggio_replaceKeywords("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.forzoEliminazione");
-										if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
-											msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamento_AttesaAttiva()-millisecondiTrascorsi,
-													propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+										if(propertiesReader.isMsgGiaInProcessamentoUseLock()) {
+											msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamentoAttesaAttiva()-millisecondiTrascorsi,
+													propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 										}
 										else {
 											msgRequest.deleteMessageByNow();
 										}
-										isErrore_MsgGiaRicevuto = false;
+										isErroreMsgGiaRicevuto = false;
 										break;
 									}
 
 								}
 
-								Utilities.sleep(propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-								millisecondiTrascorsi = millisecondiTrascorsi + propertiesReader.getMsgGiaInProcessamento_CheckInterval();
+								Utilities.sleep(propertiesReader.getMsgGiaInProcessamentoCheckInterval());
+								millisecondiTrascorsi = millisecondiTrascorsi + propertiesReader.getMsgGiaInProcessamentoCheckInterval();
 
 							}
-							if(isErrore_MsgGiaRicevuto){
+							if(isErroreMsgGiaRicevuto){
 								msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.timeoutScaduto");
 								pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
 								if(this.msgContext.isGestioneRisposta()){
@@ -6016,16 +6016,16 @@ public class RicezioneBuste {
 		/* ----------------   Salvo busta ricevuta (se non l'ho gia' ricevuta)   --------------------- */
 		msgDiag.mediumDebug("Registrazione busta di richiesta nel RepositoryBuste...");
 		try{
-			if( (oneWayStateless==false) && (sincronoStateless==false) && (asincronoStateless==false)  && (routingStateless==false) ){
+			if( (!oneWayStateless) && (!sincronoStateless) && (!asincronoStateless)  && (!routingStateless) ){
 				if(repositoryBuste.isRegistrata(bustaRichiesta.getID(),tipoMsg)){
 					try{
 						repositoryBuste.aggiornaBusta(bustaRichiesta,tipoMsg,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),erroriValidazione);
 						repositoryBuste.impostaUtilizzoPdD(bustaRichiesta.getID(),tipoMsg);
 					}catch(Exception e){
-						if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
+						if(propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 							String causa = "Aggiornamento dati busta con id ["+bustaRichiesta.getID()+"] tipo["+tipoMsg+"] non riuscito: "+e.getMessage();
 							try{
-								GestoreMessaggi.acquireLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()), msgDiag, causa, propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								GestoreMessaggi.acquireLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()), msgDiag, causa, propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(), propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 								// errore che puo' avvenire a causa del Timer delle Buste (vedi spiegazione in classe GestoreMessaggi.deleteMessageWithLock)
 								// Si riesegue tutto il codice isRegistrata e update o create con il lock. Stavolta se avviene un errore non e' dovuto al timer.
 								if(repositoryBuste.isRegistrata(bustaRichiesta.getID(),tipoMsg)){

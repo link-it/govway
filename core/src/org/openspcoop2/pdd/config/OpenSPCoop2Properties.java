@@ -242,8 +242,13 @@ public class OpenSPCoop2Properties {
 	private static final String OGGETTO_NEW_INSTANCE_NON_CREATO = "Oggetto non creato dopo aver chiamato la newInstance";
 	
 	private static final String NON_DEFINITA = "non definita";
-
 	
+	private static final String VALORE_NON_CORRETTO_ABILITATO_DISABILITATO = "Valore non corretto (abilitato/disabilitato): ";
+	
+	private static final String PROPERTY_START_SUFFIX_ERRORE = ".*': ";
+
+	private static final String PREFIX_JDBC_ADAPTER_NOT_EXISTS = "Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste [";
+		
 	private String getPrefixFile(File f, boolean expectedDir) {
 		return (expectedDir ? "Dir ":"")+"["+f.getAbsolutePath()+"] ";
 	}
@@ -471,7 +476,7 @@ public class OpenSPCoop2Properties {
 						IJDBCAdapter adapter = JDBCAdapterFactory.createJDBCAdapter(OpenSPCoop2Properties.openspcoopProperties.getDatabaseType());
 						adapter.toString();					
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
+						this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -479,14 +484,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String adapterClass = className.getJDBCAdapter(jdbcAdapter);
 					if(adapterClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
+						this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
 						return false;
 					}
 					try{
 						IJDBCAdapter adapter = (IJDBCAdapter) loaderOpenSPCoop.newInstance(adapterClass);
 						adapter.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
+						this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -539,17 +544,19 @@ public class OpenSPCoop2Properties {
 				return false;
 			}
 			this.getMaxLengthCorrelazioneApplicativa();
-			this.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
-			this.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
-			this.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
-			this.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
+			this.isMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate();
+			this.getMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate();
+			this.isMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate();
+			this.getMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate();
 			this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione();
-			this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata();
+			this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata();
+			this.isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca();
+			this.isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca();
 			
 			// Msg gia Processati (Warning)
-			this.getMsgGiaInProcessamento_AttesaAttiva();
-			this.getMsgGiaInProcessamento_CheckInterval();
-			this.isMsgGiaInProcessamento_useLock();
+			this.getMsgGiaInProcessamentoAttesaAttiva();
+			this.getMsgGiaInProcessamentoCheckInterval();
+			this.isMsgGiaInProcessamentoUseLock();
 
 			// Threshold per il Repository
 			List<String> tipiThreshold = this.getRepositoryThresholdTypes();
@@ -671,10 +678,10 @@ public class OpenSPCoop2Properties {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. Proprieta' non impostata");
 				return false;
 			}
-			if( CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD()) == true){
+			if( CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD()) ){
 
 				String path = getPathConfigurazionePDD();
-				if( (!path.startsWith("http://")) && (path.startsWith("file://")==false) ){
+				if( (!path.startsWith("http://")) && (!path.startsWith("file://")) ){
 					if( !(new File(path)).exists() ){
 						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. \n Il file indicato non esiste ["+path+"].");
 						return false;
@@ -690,7 +697,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}
-			else if( CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(getTipoConfigurazionePDD()) == false){		
+			else if( !CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(getTipoConfigurazionePDD())){		
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. \n Tipo non supportato ["+getTipoConfigurazionePDD()+"].");
 				return false;
 			}
@@ -793,21 +800,21 @@ public class OpenSPCoop2Properties {
 							IJDBCAdapter adapter = JDBCAdapterFactory.createJDBCAdapter(OpenSPCoop2Properties.openspcoopProperties.getDatabaseType());
 							adapter.toString();
 						}catch(Exception e){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
+							this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
 							return false;
 						}
 					}
 					else{
 						String adapterClass = className.getJDBCAdapter(jdbcAdapter);
 						if(adapterClass == null){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
+							this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
 							return false;
 						}
 						try{
 							IJDBCAdapter adapter = (IJDBCAdapter) loaderOpenSPCoop.newInstance(tipoClass);
 							adapter.toString();
 						}catch(Exception e){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
+							this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"]: "+e.getMessage(),e);
 							return false;
 						}
 					}
@@ -7176,7 +7183,7 @@ public class OpenSPCoop2Properties {
 	private List<String> alternativeContentTypeSoap12 = null;
 	private boolean alternativeContentTypeSoap12Read = false;
 	public List<String> getAlternativeContentTypeSoap12() {	
-		if(this.alternativeContentTypeSoap12Read == false){
+		if(!this.alternativeContentTypeSoap12Read){
 			String pName = "org.openspcoop2.pdd.soapMessage.v12.alternativeContentTypes";
 			try{ 
 				String name = null;
@@ -7270,7 +7277,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa");
 				if(name==null){
-					//throw new CoreException(NON_DEFINITA);
+					/** throw new CoreException(NON_DEFINITA); */
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa' non definita, viene usato il valore impostato nella proprieta 'org.openspcoop2.pdd.repository.scadenzaMessaggio'");
 					this.repositoryIntervalloScadenzaCorrelazioneApplicativa = getRepositoryIntervalloScadenzaMessaggi();
 				}
@@ -7294,7 +7301,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength");
 				if(name==null){
-					//throw new CoreException(NON_DEFINITA);
+					/** throw new CoreException(NON_DEFINITA); */
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength' non definita, viene usato il valore di default: 255");
 					this.maxLengthCorrelazioneApplicativa = 255;
 				}
@@ -7311,118 +7318,118 @@ public class OpenSPCoop2Properties {
 		return this.maxLengthCorrelazioneApplicativa;
 	}
 	
-	private Boolean maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = null;
-	public boolean isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate() {	
-		if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active == null){
+	private Boolean maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive = null;
+	public boolean isMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate() {	
+		if(this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive == null){
 			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.blocca.truncate";
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
-					//throw new CoreException(NON_DEFINITA);
+					/** throw new CoreException(NON_DEFINITA); */
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
-					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = false;
+					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive = false;
 				}
 				else{
 					name = name.trim();
-					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = java.lang.Boolean.parseBoolean(name);
+					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive = java.lang.Boolean.parseBoolean(name);
 				}
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
-				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = false;
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive = false;
 			}    
 		}
 		
-		return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active;
+		return this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive;
 	}
 	
-	private Integer maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = null;
-	private Boolean maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_read = null;
-	public Integer getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate() {	
-		if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_read == null){
+	private Integer maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate = null;
+	private Boolean maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRead = null;
+	public Integer getMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate() {	
+		if(this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRead == null){
 			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.blocca.truncate.length";
 			try{ 
 				String name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null && StringUtils.isNotEmpty(name.trim())){
 					name = name.trim();
-					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = java.lang.Integer.parseInt(name);
-					if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate<=0) {
+					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate = java.lang.Integer.parseInt(name);
+					if(this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate<=0) {
 						throw new CoreException("Deve essere fornito un valore maggiore di 0");
 					}
-					if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate>=getMaxLengthCorrelazioneApplicativa()) {
+					if(this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate>=getMaxLengthCorrelazioneApplicativa()) {
 						throw new CoreException("Deve essere fornito un valore minore di "+getMaxLengthCorrelazioneApplicativa());
 					}
 				}
 				else {
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: 245");
-					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = 245;
+					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate = 245;
 				}
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = null;
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate = null;
 			}  
 			
-			this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_read = true;
+			this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRead = true;
 		}
 		
-		return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate;
+		return this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate;
 	}
 	
-	private Boolean maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = null;
-	public boolean isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate() {	
-		if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active == null){
+	private Boolean maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateActive = null;
+	public boolean isMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate() {	
+		if(this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateActive == null){
 			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.accetta.truncate";
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
-					//throw new CoreException(NON_DEFINITA);
+					/** throw new CoreException(NON_DEFINITA); */
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
-					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = false;
+					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateActive = false;
 				}
 				else{
 					name = name.trim();
-					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = java.lang.Boolean.parseBoolean(name);
+					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateActive = java.lang.Boolean.parseBoolean(name);
 				}
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
-				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = false;
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateActive = false;
 			}    
 		}
 		
-		return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active;
+		return this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateActive;
 	}
 	
-	private Integer maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = null;
-	private Boolean maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_read = null;
-	public Integer getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate() {	
-		if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_read == null){
+	private Integer maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate = null;
+	private Boolean maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRead = null;
+	public Integer getMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate() {	
+		if(this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRead == null){
 			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.accetta.truncate.length";
 			try{ 
 				String name = this.reader.getValueConvertEnvProperties(pName);
 				if(name!=null && StringUtils.isNotEmpty(name.trim())){
 					name = name.trim();
-					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = java.lang.Integer.parseInt(name);
-					if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate<=0) {
+					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate = java.lang.Integer.parseInt(name);
+					if(this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate<=0) {
 						throw new CoreException("Deve essere fornito un valore maggiore di 0");
 					}
-					if(this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate>=getMaxLengthCorrelazioneApplicativa()) {
+					if(this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate>=getMaxLengthCorrelazioneApplicativa()) {
 						throw new CoreException("Deve essere fornito un valore minore di "+getMaxLengthCorrelazioneApplicativa());
 					}
 				}
 				else {
 					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: 245");
-					this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = 245;
+					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate = 245;
 				}
 			}catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = null;
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate = null;
 			}  
 			
-			this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_read = true;
+			this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRead = true;
 		}
 		
-		return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate;
+		return this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate;
 	}
 
 	
@@ -7451,29 +7458,81 @@ public class OpenSPCoop2Properties {
 		return this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione;
 	}
 	
-	private Boolean isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata = null;
-	public boolean isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata() {	
+	private Boolean isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata = null;
+	public boolean isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata() {	
 		
-		if(this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata==null){
+		if(this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione.soloCorrelazioniSenzaScadenza");
 				
 				if(name!=null){
 					name = name.trim();
-					this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata = Boolean.parseBoolean(name);
+					this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata = Boolean.parseBoolean(name);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione.soloCorrelazioniSenzaScadenza' non impostata, viene utilizzato il default=false");
-					this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata = false;
+					this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata = false;
 				}
 	
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione.soloCorrelazioniSenzaScadenza' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata = false;
+				this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata = false;
 			}    
 		}
 		
-		return this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata;
+		return this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata;
+	}
+	
+	private Boolean isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca = null;
+	public boolean isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca() {	
+		
+		String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.richiesta.regolaCorrelazioneNonTrovata.blocca";
+		if(this.isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				
+				if(name!=null){
+					name = name.trim();
+					this.isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca = false;
+				}
+	
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false));
+				this.isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca = false;
+			}    
+		}
+		
+		return this.isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca;
+	}
+	
+	private Boolean isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca = null;
+	public boolean isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca() {	
+		
+		String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.risposta.regolaCorrelazioneNonTrovata.blocca";
+		if(this.isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				
+				if(name!=null){
+					name = name.trim();
+					this.isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca = false;
+				}
+	
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false));
+				this.isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca = false;
+			}    
+		}
+		
+		return this.isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca;
 	}
 	
 
@@ -7483,9 +7542,9 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce l'intervallo in millisecondi di attesa attiva per messaggi gia in processamento
 	 *  * 
 	 */
-	private Long msgGiaInProcessamento_AttesaAttiva = null;
-	public long getMsgGiaInProcessamento_AttesaAttiva() {	
-		if(this.msgGiaInProcessamento_AttesaAttiva==null){
+	private Long msgGiaInProcessamentoAttesaAttiva = null;
+	public long getMsgGiaInProcessamentoAttesaAttiva() {	
+		if(this.msgGiaInProcessamentoAttesaAttiva==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.messaggioInProcessamento.attesaAttiva");
@@ -7493,19 +7552,19 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					long time = java.lang.Long.parseLong(name);
-					this.msgGiaInProcessamento_AttesaAttiva = time*1000;
+					this.msgGiaInProcessamentoAttesaAttiva = time*1000;
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.attesaAttiva' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA);
-					this.msgGiaInProcessamento_AttesaAttiva = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA;
+					this.msgGiaInProcessamentoAttesaAttiva = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.attesaAttiva' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
-				this.msgGiaInProcessamento_AttesaAttiva = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA;
+				this.msgGiaInProcessamentoAttesaAttiva = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA;
 			}    
 		}
 
-		return this.msgGiaInProcessamento_AttesaAttiva;
+		return this.msgGiaInProcessamentoAttesaAttiva;
 	}
 
 	/**
@@ -7514,33 +7573,34 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce Intervallo maggiore per frequenza di check nell'attesa attiva effettuata dal TransactionManager, in millisecondi
 	 * 
 	 */
-	private Integer msgGiaInProcessamento_CheckInterval = null;
-	public int getMsgGiaInProcessamento_CheckInterval() {	
-		if(this.msgGiaInProcessamento_CheckInterval==null){
+	private Integer msgGiaInProcessamentoCheckInterval = null;
+	public int getMsgGiaInProcessamentoCheckInterval() {	
+		String pName = "org.openspcoop2.pdd.repository.messaggioInProcessamento.check";
+		if(this.msgGiaInProcessamentoCheckInterval==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.messaggioInProcessamento.check");
+				name = this.reader.getValueConvertEnvProperties(pName);
 
 				if(name!=null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
-					this.msgGiaInProcessamento_CheckInterval = time;
+					this.msgGiaInProcessamentoCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.check' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL);
-					this.msgGiaInProcessamento_CheckInterval = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL;
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL);
+					this.msgGiaInProcessamentoCheckInterval = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.check' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
-				this.msgGiaInProcessamento_CheckInterval = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL;
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.msgGiaInProcessamentoCheckInterval = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL;
 			}  
 		}
 
-		return this.msgGiaInProcessamento_CheckInterval;
+		return this.msgGiaInProcessamentoCheckInterval;
 	}
 	
-	private Boolean msgGiaInProcessamento_useLock = null;
-	public boolean isMsgGiaInProcessamento_useLock() {	
-		if(this.msgGiaInProcessamento_useLock==null){
+	private Boolean msgGiaInProcessamentoUseLock = null;
+	public boolean isMsgGiaInProcessamentoUseLock() {	
+		if(this.msgGiaInProcessamentoUseLock==null){
 			String pName = "org.openspcoop2.pdd.repository.messaggioInProcessamento.useLock";
 			try{ 
 				String name = null;
@@ -7548,18 +7608,18 @@ public class OpenSPCoop2Properties {
 
 				if(name!=null){
 					name = name.trim();
-					this.msgGiaInProcessamento_useLock = Boolean.valueOf(name);
+					this.msgGiaInProcessamentoUseLock = Boolean.valueOf(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.check' non impostato, viene utilizzato il default="+false);
-					this.msgGiaInProcessamento_useLock = false;
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+false);
+					this.msgGiaInProcessamentoUseLock = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.check' non impostato, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
-				this.msgGiaInProcessamento_useLock = false;
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				this.msgGiaInProcessamentoUseLock = false;
 			}  
 		}
 
-		return this.msgGiaInProcessamento_useLock;
+		return this.msgGiaInProcessamentoUseLock;
 	}
 
 	/**
@@ -7571,7 +7631,7 @@ public class OpenSPCoop2Properties {
 	private List<String> repositoryThresholdTypes = null;
 	private boolean repositoryThresholdTypesRead = false;
 	public List<String> getRepositoryThresholdTypes() {	
-		if(this.repositoryThresholdTypesRead == false){
+		if(!this.repositoryThresholdTypesRead){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.threshold.tipi");
@@ -7608,11 +7668,11 @@ public class OpenSPCoop2Properties {
 	private Properties repositoryThresholdParameters = null;
 	private boolean repositoryThresholdParametersRead = false;
 	public Properties getRepositoryThresholdParameters(String tipoThreshould) {	
-		if(this.repositoryThresholdParametersRead==false){
+		if(!this.repositoryThresholdParametersRead){
 			try{ 
 				this.repositoryThresholdParameters = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.repository.threshold."+tipoThreshould+".");
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold."+tipoThreshould+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold."+tipoThreshould+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				this.repositoryThresholdParameters = null;
 			}  
 			this.repositoryThresholdParametersRead = true; 
@@ -7669,7 +7729,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaConfigurazioneStartupXML = false;
 					}
 					else{
-						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.config.xml.validazioneSemantica' non impostata, viene utilizzato il default=true");
@@ -7705,7 +7765,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaConfigurazioneStartup = false;
 					}
 					else{
-						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.config.validazioneSemantica' non impostata, viene utilizzato il default=false");
@@ -7741,7 +7801,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaRegistroServiziStartupXML = false;
 					}
 					else{
-						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.xml.validazioneSemantica' non impostata, viene utilizzato il default=true");
@@ -7777,7 +7837,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaRegistroServiziStartup = false;
 					}
 					else{
-						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.validazioneSemantica' non impostata, viene utilizzato il default=false");
@@ -7813,7 +7873,7 @@ public class OpenSPCoop2Properties {
 						this.isValidazioneSemanticaRegistroServiziCheckURI = false;
 					}
 					else{
-						throw new CoreException("Valore non corretto (abilitato/disabilitato): "+value);
+						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.validazioneSemantica.checkURI' non impostata, viene utilizzato il default=false");
@@ -7830,73 +7890,83 @@ public class OpenSPCoop2Properties {
 	}
 	
 
+	private static final String RISORSE_DB = "db";
+	private static final String RISORSE_JMS = "jms";
+	private static final String RISORSE_TRACCIAMENTO = "tracciamento";
+	private static final String RISORSE_MSGDIAGNOSTICI = "msgdiagnostici";
+	private static final String RISORSE_CONFIGURAZIONE = "configurazione";
+	private static final String RISORSE_CONFIGURAZIONE_VALIDAZIONE_SEMANTICA = "configurazione.validazioneSemantica";
+	private static final String RISORSE_REGISTRI = "registri";
+	private static final String RISORSE_REGISTRI_VALIDAZIONE_SEMANTICA = "registri.validazioneSemantica";
+	
+	private static final String RISORSE_PROPERTY_NAME_CHECK = "org.openspcoop2.pdd.risorse.check.";
 
 	private Boolean isAbilitatoControlloRisorseDB = null;
 	public boolean isAbilitatoControlloRisorseDB() {	
 		if(this.isAbilitatoControlloRisorseDB==null){
-			this.isAbilitatoControlloRisorseDB = isAbilitatoControlloRisorse("db");
+			this.isAbilitatoControlloRisorseDB = isAbilitatoControlloRisorse(RISORSE_DB);
 		}
 		return this.isAbilitatoControlloRisorseDB;
 	}
 	private Boolean isAbilitatoControlloRisorseJMS = null;
 	public boolean isAbilitatoControlloRisorseJMS() {	
 		if(this.isAbilitatoControlloRisorseJMS==null){
-			this.isAbilitatoControlloRisorseJMS = isAbilitatoControlloRisorse("jms");
+			this.isAbilitatoControlloRisorseJMS = isAbilitatoControlloRisorse(RISORSE_JMS);
 		}
 		return this.isAbilitatoControlloRisorseJMS;
 	}
 	private Boolean isAbilitatoControlloRisorseTracciamentiPersonalizzati = null;
 	public boolean isAbilitatoControlloRisorseTracciamentiPersonalizzati() {	
 		if(this.isAbilitatoControlloRisorseTracciamentiPersonalizzati==null){
-			this.isAbilitatoControlloRisorseTracciamentiPersonalizzati = isAbilitatoControlloRisorse("tracciamento");
+			this.isAbilitatoControlloRisorseTracciamentiPersonalizzati = isAbilitatoControlloRisorse(RISORSE_TRACCIAMENTO);
 		}
 		return this.isAbilitatoControlloRisorseTracciamentiPersonalizzati;
 	}
 	private Boolean isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati = null;
 	public boolean isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati() {	
 		if(this.isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati==null){
-			this.isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati = isAbilitatoControlloRisorse("msgdiagnostici");
+			this.isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati = isAbilitatoControlloRisorse(RISORSE_MSGDIAGNOSTICI);
 		}
 		return this.isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati;
 	}
 	private Boolean isAbilitatoControlloRisorseConfigurazione = null;
 	public boolean isAbilitatoControlloRisorseConfigurazione() {	
 		if(this.isAbilitatoControlloRisorseConfigurazione==null){
-			this.isAbilitatoControlloRisorseConfigurazione = isAbilitatoControlloRisorse("configurazione");
+			this.isAbilitatoControlloRisorseConfigurazione = isAbilitatoControlloRisorse(RISORSE_CONFIGURAZIONE);
 		}
 		return this.isAbilitatoControlloRisorseConfigurazione;
 	}
 	private Boolean isAbilitatoControlloValidazioneSemanticaConfigurazione = null;
 	public boolean isAbilitatoControlloValidazioneSemanticaConfigurazione() {	
 		if(this.isAbilitatoControlloValidazioneSemanticaConfigurazione==null){
-			this.isAbilitatoControlloValidazioneSemanticaConfigurazione = isAbilitatoControlloRisorse("configurazione.validazioneSemantica");
+			this.isAbilitatoControlloValidazioneSemanticaConfigurazione = isAbilitatoControlloRisorse(RISORSE_CONFIGURAZIONE_VALIDAZIONE_SEMANTICA);
 		}
 		return this.isAbilitatoControlloValidazioneSemanticaConfigurazione;
 	}
 	private Boolean isAbilitatoControlloRisorseRegistriServizi = null;
 	public boolean isAbilitatoControlloRisorseRegistriServizi() {	
 		if(this.isAbilitatoControlloRisorseRegistriServizi==null){
-			this.isAbilitatoControlloRisorseRegistriServizi = isAbilitatoControlloRisorse("registri");
+			this.isAbilitatoControlloRisorseRegistriServizi = isAbilitatoControlloRisorse(RISORSE_REGISTRI);
 		}
 		return this.isAbilitatoControlloRisorseRegistriServizi;
 	}
 	private Boolean isAbilitatoControlloValidazioneSemanticaRegistriServizi = null;
 	public boolean isAbilitatoControlloValidazioneSemanticaRegistriServizi() {	
 		if(this.isAbilitatoControlloValidazioneSemanticaRegistriServizi==null){
-			this.isAbilitatoControlloValidazioneSemanticaRegistriServizi = isAbilitatoControlloRisorse("registri.validazioneSemantica");
+			this.isAbilitatoControlloValidazioneSemanticaRegistriServizi = isAbilitatoControlloRisorse(RISORSE_REGISTRI_VALIDAZIONE_SEMANTICA);
 		}
 		return this.isAbilitatoControlloValidazioneSemanticaRegistriServizi;
 	}
 	private boolean isAbilitatoControlloRisorse(String tipo) {	
 		try{  
-			String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo); 
+			String value = this.reader.getValueConvertEnvProperties(RISORSE_PROPERTY_NAME_CHECK+tipo); 
 			if(value==null){
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+"' non impostata, viene utilizzato il default=false");
+				this.logWarn(getMessaggioProprietaNonImpostata(RISORSE_PROPERTY_NAME_CHECK+tipo, false));
 				return false;
 			}
 			return CostantiConfigurazione.ABILITATO.equals(value);
 		}catch(java.lang.Exception e) {
-			this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+			this.logWarn(getMessaggioProprietaNonImpostata(RISORSE_PROPERTY_NAME_CHECK+tipo, e, false));
 			return false;
 		}
 	}
@@ -7924,55 +7994,55 @@ public class OpenSPCoop2Properties {
 	private Integer getNumeroIterazioniFalliteControlloRisorseDB = null;
 	public int getNumeroIterazioniFalliteControlloRisorseDB() {	
 		if(this.getNumeroIterazioniFalliteControlloRisorseDB==null){
-			this.getNumeroIterazioniFalliteControlloRisorseDB = getNumeroIterazioniFalliteControlloRisorse("db");
+			this.getNumeroIterazioniFalliteControlloRisorseDB = getNumeroIterazioniFalliteControlloRisorse(RISORSE_DB);
 		}
 		return this.getNumeroIterazioniFalliteControlloRisorseDB;
 	}
 	private Integer getNumeroIterazioniFalliteControlloRisorseJMS = null;
 	public int getNumeroIterazioniFalliteControlloRisorseJMS() {	
 		if(this.getNumeroIterazioniFalliteControlloRisorseJMS==null){
-			this.getNumeroIterazioniFalliteControlloRisorseJMS = getNumeroIterazioniFalliteControlloRisorse("jms");
+			this.getNumeroIterazioniFalliteControlloRisorseJMS = getNumeroIterazioniFalliteControlloRisorse(RISORSE_JMS);
 		}
 		return this.getNumeroIterazioniFalliteControlloRisorseJMS;
 	}
 	private Integer getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati = null;
 	public int getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati() {	
 		if(this.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati==null){
-			this.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati = getNumeroIterazioniFalliteControlloRisorse("tracciamento");
+			this.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati = getNumeroIterazioniFalliteControlloRisorse(RISORSE_TRACCIAMENTO);
 		}
 		return this.getNumeroIterazioniFalliteControlloRisorseTracciamentiPersonalizzati;
 	}
 	private Integer getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati = null;
 	public int getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati() {	
 		if(this.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati==null){
-			this.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati = getNumeroIterazioniFalliteControlloRisorse("msgdiagnostici");
+			this.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati = getNumeroIterazioniFalliteControlloRisorse(RISORSE_MSGDIAGNOSTICI);
 		}
 		return this.getNumeroIterazioniFalliteControlloRisorseMsgDiagnosticiPersonalizzati;
 	}
 	private Integer getNumeroIterazioniFalliteControlloRisorseConfigurazione = null;
 	public int getNumeroIterazioniFalliteControlloRisorseConfigurazione() {	
 		if(this.getNumeroIterazioniFalliteControlloRisorseConfigurazione==null){
-			this.getNumeroIterazioniFalliteControlloRisorseConfigurazione = getNumeroIterazioniFalliteControlloRisorse("configurazione");
+			this.getNumeroIterazioniFalliteControlloRisorseConfigurazione = getNumeroIterazioniFalliteControlloRisorse(RISORSE_CONFIGURAZIONE);
 		}
 		return this.getNumeroIterazioniFalliteControlloRisorseConfigurazione;
 	}
 	private Integer getNumeroIterazioniFalliteControlloRisorseRegistriServizi = null;
 	public int getNumeroIterazioniFalliteControlloRisorseRegistriServizi() {	
 		if(this.getNumeroIterazioniFalliteControlloRisorseRegistriServizi==null){
-			this.getNumeroIterazioniFalliteControlloRisorseRegistriServizi = getNumeroIterazioniFalliteControlloRisorse("registri");
+			this.getNumeroIterazioniFalliteControlloRisorseRegistriServizi = getNumeroIterazioniFalliteControlloRisorse(RISORSE_REGISTRI);
 		}
 		return this.getNumeroIterazioniFalliteControlloRisorseRegistriServizi;
 	}
 	private int getNumeroIterazioniFalliteControlloRisorse(String tipo) {	
 		try{  
-			String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo+".iterazioni"); 
+			String value = this.reader.getValueConvertEnvProperties(RISORSE_PROPERTY_NAME_CHECK+tipo+".iterazioni"); 
 			if(value==null){
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+".iterazioni' non impostata, viene utilizzato il default=1");
+				this.logWarn("Proprieta' di openspcoop '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+".iterazioni' non impostata, viene utilizzato il default=1");
 				return 1;
 			}
 			return Integer.valueOf(value);
 		}catch(java.lang.Exception e) {
-			this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+"' non impostata, viene utilizzato il default=1, errore:"+e.getMessage(),e);
+			this.logWarn("Proprieta' di openspcoop '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+"' non impostata, viene utilizzato il default=1, errore:"+e.getMessage(),e);
 			return 1;
 		}
 	}
@@ -7980,55 +8050,55 @@ public class OpenSPCoop2Properties {
 	private Integer getIterazioniFalliteCheckIntervalControlloRisorseDB = null;
 	public int getIterazioniFalliteCheckIntervalControlloRisorseDB() {	
 		if(this.getIterazioniFalliteCheckIntervalControlloRisorseDB==null){
-			this.getIterazioniFalliteCheckIntervalControlloRisorseDB = getIterazioniFalliteCheckIntervalControlloRisorse("db");
+			this.getIterazioniFalliteCheckIntervalControlloRisorseDB = getIterazioniFalliteCheckIntervalControlloRisorse(RISORSE_DB);
 		}
 		return this.getIterazioniFalliteCheckIntervalControlloRisorseDB;
 	}
 	private Integer getIterazioniFalliteCheckIntervalControlloRisorseJMS = null;
 	public int getIterazioniFalliteCheckIntervalControlloRisorseJMS() {	
 		if(this.getIterazioniFalliteCheckIntervalControlloRisorseJMS==null){
-			this.getIterazioniFalliteCheckIntervalControlloRisorseJMS = getIterazioniFalliteCheckIntervalControlloRisorse("jms");
+			this.getIterazioniFalliteCheckIntervalControlloRisorseJMS = getIterazioniFalliteCheckIntervalControlloRisorse(RISORSE_JMS);
 		}
 		return this.getIterazioniFalliteCheckIntervalControlloRisorseJMS;
 	}
 	private Integer getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati = null;
 	public int getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati() {	
 		if(this.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati==null){
-			this.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati = getIterazioniFalliteCheckIntervalControlloRisorse("tracciamento");
+			this.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati = getIterazioniFalliteCheckIntervalControlloRisorse(RISORSE_TRACCIAMENTO);
 		}
 		return this.getIterazioniFalliteCheckIntervalControlloRisorseTracciamentiPersonalizzati;
 	}
 	private Integer getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati = null;
 	public int getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati() {	
 		if(this.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati==null){
-			this.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati = getIterazioniFalliteCheckIntervalControlloRisorse("msgdiagnostici");
+			this.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati = getIterazioniFalliteCheckIntervalControlloRisorse(RISORSE_MSGDIAGNOSTICI);
 		}
 		return this.getIterazioniFalliteCheckIntervalControlloRisorseMsgDiagnosticiPersonalizzati;
 	}
 	private Integer getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione = null;
 	public int getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione() {	
 		if(this.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione==null){
-			this.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione = getIterazioniFalliteCheckIntervalControlloRisorse("configurazione");
+			this.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione = getIterazioniFalliteCheckIntervalControlloRisorse(RISORSE_CONFIGURAZIONE);
 		}
 		return this.getIterazioniFalliteCheckIntervalControlloRisorseConfigurazione;
 	}
 	private Integer getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi = null;
 	public int getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi() {	
 		if(this.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi==null){
-			this.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi = getIterazioniFalliteCheckIntervalControlloRisorse("registri");
+			this.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi = getIterazioniFalliteCheckIntervalControlloRisorse(RISORSE_REGISTRI);
 		}
 		return this.getIterazioniFalliteCheckIntervalControlloRisorseRegistriServizi;
 	}
 	private int getIterazioniFalliteCheckIntervalControlloRisorse(String tipo) {	
 		try{  
-			String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.check."+tipo+".checkInterval"); 
+			String value = this.reader.getValueConvertEnvProperties(RISORSE_PROPERTY_NAME_CHECK+tipo+".checkInterval"); 
 			if(value==null){
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+".checkInterval' non impostata, viene utilizzato il default=500");
+				this.logWarn("Proprieta' di openspcoop '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+".checkInterval' non impostata, viene utilizzato il default=500");
 				return 500;
 			}
 			return Integer.valueOf(value);
 		}catch(java.lang.Exception e) {
-			this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check."+tipo+".checkInterval' non impostata, viene utilizzato il default=500, errore:"+e.getMessage(),e);
+			this.logWarn("Proprieta' di openspcoop '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+".checkInterval' non impostata, viene utilizzato il default=500, errore:"+e.getMessage(),e);
 			return 500;
 		}
 	}
@@ -11425,7 +11495,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -11518,7 +11588,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -11868,7 +11938,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -11960,7 +12030,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura delle proprieta' '"+pName+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -13081,7 +13151,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13147,7 +13217,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+".*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}

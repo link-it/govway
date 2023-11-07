@@ -1442,9 +1442,9 @@ public class InoltroRisposte extends GenericLib{
 								msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RISPOSTA, bustaConnectionReply.getID());
 								msgDiag.logPersonalizzato_prefix("(http reply) ","ricezioneSoapMessage.msgGiaPresente");
 								String msg = "(http reply)" + msgDiag.getMessaggio_replaceKeywords("ricezioneSoapMessage.msgGiaPresente");
-								if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
-									msgConnectionReply._deleteMessageWithLock(msg,this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
-											this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								if(this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
+									msgConnectionReply._deleteMessageWithLock(msg,this.propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(),
+											this.propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 								}
 								else {
 									msgConnectionReply.deleteMessageByNow();

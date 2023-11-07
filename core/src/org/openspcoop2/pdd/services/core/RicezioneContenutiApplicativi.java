@@ -4182,8 +4182,8 @@ public class RicezioneContenutiApplicativi {
 				if (TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)) {
 					msgDiag.logPersonalizzato("messaggioInGestione.marcatoDaEliminare");
 					String msg = msgDiag.getMessaggio_replaceKeywords("messaggioInGestione.marcatoDaEliminare");
-					if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
-						msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+					if(propertiesReader.isMsgGiaInProcessamentoUseLock()) {
+						msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(),propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 					}
 					else {
 						msgRequest.deleteMessageByNow();
@@ -4315,14 +4315,14 @@ public class RicezioneContenutiApplicativi {
 						}
 						repositoryBuste.impostaUtilizzoPdD(idMessageRequest,tipoMessaggio);
 					}catch(Exception e){
-						if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
+						if(propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 							String tipo = Costanti.OUTBOX;
 							if(localForward){
 								tipo = Costanti.INBOX;	
 							}
 							String causa = "Aggiornamento dati busta con id ["+idMessageRequest+"] tipo["+tipo+"] non riuscito: "+e.getMessage();
 							try{
-								GestoreMessaggi.acquireLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()),msgDiag, causa, propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+								GestoreMessaggi.acquireLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()),msgDiag, causa, propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(), propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 								// errore che puo' avvenire a causa del Timer delle Buste (vedi spiegazione in classe GestoreMessaggi.deleteMessageWithLock)
 								// Si riesegue tutto il codice isRegistrata e update o create con il lock. Stavolta se avviene un errore non e' dovuto al timer.
 								if (repositoryBuste.isRegistrata(idMessageRequest,tipoMessaggio)) {

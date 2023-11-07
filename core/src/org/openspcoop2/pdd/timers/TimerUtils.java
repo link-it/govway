@@ -189,7 +189,7 @@ public class TimerUtils {
 			tipiRuntime.add(TipoLock.GESTIONE_BUSTE_NON_RISCONTRATE);
 			tipiRuntime.add(TipoLock.GESTIONE_CORRELAZIONE_APPLICATIVA);
 			tipiRuntime.add(TipoLock.GESTIONE_PULIZIA_MESSAGGI_ANOMALI);
-			if(propertiesReader.isMsgGiaInProcessamento_useLock()) {
+			if(propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 				tipiRuntime.add(TipoLock._getLockGestioneRepositoryMessaggi());
 			}
 			else {

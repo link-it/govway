@@ -174,7 +174,7 @@ public class TimerGestoreMessaggiImpl implements SessionBean, TimedObject {
 		this.scadenzaCorrelazioneApplicativa = this.propertiesReader.getRepositoryIntervalloScadenzaCorrelazioneApplicativa();
 		this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione = this.propertiesReader.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione();
 		this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata =
-				this.propertiesReader.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata();
+				this.propertiesReader.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata();
 
 	}
 

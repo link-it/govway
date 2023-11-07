@@ -87,7 +87,7 @@ public class TimerGestoreRepositoryBusteLib {
 		this.orderByQuery = orderByQuery;
 
 		// deve essere utilizzato lo stesso lock per GestoreMessaggi, ConsegnaContenuti, GestoreBuste per risolvere problema di eliminazione descritto in GestoreMessaggi metodo deleteMessageWithLock 
-		if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+		if(this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 			this.timerLock = new TimerLock(TipoLock._getLockGestioneRepositoryMessaggi());
 		}
 		else {
@@ -164,7 +164,7 @@ public class TimerGestoreRepositoryBusteLib {
 
 				
 				Date now = null;
-				if(!this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+				if(!this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 					now = DateManager.getDate(); // vedi spiegazione nel metodo deleteMessageByOraRegistrazione di GestoreMessaggi
 				}
 				

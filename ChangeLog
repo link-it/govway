@@ -1,3 +1,12 @@
+2023-11-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1663
+	Una richiesta non applicabile a nessuna regola di correlazione applicativa, fino alla versione 3.3.13.p1, terminava con l’errore: 
+	"Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body". 
+	È stato modificato il default in modo da accettare la richiesta.
+	Il precedente comportamento è ripristinabile agendo sulle proprietà della singola fruizione o erogazione di API.
+
 2023-11-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
@@ -7,7 +16,7 @@
 2023-11-03  Andrea Poli <apoli@link.it>
 
 	* [Utils, GenericProject]
-	Aggiunta funzionalità  OP-1659
+	Aggiunta funzionalità OP-1659
 	Le utility della classe 'org.openspcoop2.utils.sql' e le espressioni 'org.openspcoop2.generic_project.expression' 
 	consentono adesso di effettuare la selezione di campi e la definizione di condizioni di where relative a parti di una data: 
 	YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, DayOfWeek, DayOfYear, FullDayName e ShortDayName.
