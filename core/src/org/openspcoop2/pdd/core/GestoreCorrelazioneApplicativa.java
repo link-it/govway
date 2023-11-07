@@ -162,6 +162,9 @@ public class GestoreCorrelazioneApplicativa {
 	private int maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRequest = -1;
 	private int maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateResponse = -1;
 	private int maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateResponse = -1;
+	
+	private boolean isRichiestaRegolaCorrelazioneNonTrovataBlocca = false;
+	private boolean isRispostaRegolaCorrelazioneNonTrovataBlocca = false;
 
 	public boolean isRiusoIdentificativo() {
 		return this.riusoIdentificativo;
@@ -203,32 +206,45 @@ public class GestoreCorrelazioneApplicativa {
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		this.maxLengthCorrelazioneApplicativa = op2Properties.getMaxLengthCorrelazioneApplicativa();
 		try {
-			if(CostantiProprieta.isCorrelazioneApplicativaRichiestaIdentificazioneFallitaBloccaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate())) {
-				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRequest = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
+			if(CostantiProprieta.isCorrelazioneApplicativaRichiestaIdentificazioneFallitaBloccaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate())) {
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateRequest = op2Properties.getMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate();
 			}
 		}catch(Exception e) {
 			this.log.error("[isCorrelazioneApplicativaRichiesta_identificazioneFallita_blocca_truncate] failed: "+e.getMessage(),e);
 		}
 		try {
-			if(CostantiProprieta.isCorrelazioneApplicativaRispostaIdentificazioneFallitaBloccaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate())) {
-				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateResponse = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
+			if(CostantiProprieta.isCorrelazioneApplicativaRispostaIdentificazioneFallitaBloccaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate())) {
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateResponse = op2Properties.getMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate();
 			}
 		}catch(Exception e) {
 			this.log.error("[isCorrelazioneApplicativaRisposta_identificazioneFallita_blocca_truncate] failed: "+e.getMessage(),e);
 		}
 		try {
-			if(CostantiProprieta.isCorrelazioneApplicativaRichiestaIdentificazioneFallitaAccettaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate())) {
-				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRequest = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
+			if(CostantiProprieta.isCorrelazioneApplicativaRichiestaIdentificazioneFallitaAccettaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate())) {
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateRequest = op2Properties.getMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate();
 			}
 		}catch(Exception e) {
 			this.log.error("[isCorrelazioneApplicativaRichiesta_identificazioneFallita_accetta_truncate] failed: "+e.getMessage(),e);
 		}
 		try {
-			if(CostantiProprieta.isCorrelazioneApplicativaRispostaIdentificazioneFallitaAccettaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate())) {
-				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateResponse = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
+			if(CostantiProprieta.isCorrelazioneApplicativaRispostaIdentificazioneFallitaAccettaTruncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate())) {
+				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateResponse = op2Properties.getMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate();
 			}
 		}catch(Exception e) {
 			this.log.error("[isCorrelazioneApplicativaRisposta_identificazioneFallita_accetta_truncate] failed: "+e.getMessage(),e);
+		}
+	
+		try {
+			this.isRichiestaRegolaCorrelazioneNonTrovataBlocca = CostantiProprieta.isCorrelazioneApplicativaRichiestaRegolaNonTrovataTerminaTransazioneConErrore(proprieta, 
+					op2Properties.isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca());
+		}catch(Exception e) {
+			this.log.error("[isCorrelazioneApplicativaRichiesta_regolaNonTrovata_terminaTransazioneConErrore] failed: "+e.getMessage(),e);
+		}
+		try {
+			this.isRispostaRegolaCorrelazioneNonTrovataBlocca = CostantiProprieta.isCorrelazioneApplicativaRispostaRegolaNonTrovataTerminaTransazioneConErrore(proprieta, 
+					op2Properties.isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca());
+		}catch(Exception e) {
+			this.log.error("[isCorrelazioneApplicativaRisposta_regolaNonTrovata_terminaTransazioneConErrore] failed: "+e.getMessage(),e);
 		}
 		
 	}
@@ -269,7 +285,7 @@ public class GestoreCorrelazioneApplicativa {
 			}
 		}
 	}
-	public boolean verificaCorrelazioneIdentificativoRichiesta() throws GestoreMessaggiException, ProtocolException{
+	public boolean verificaCorrelazioneIdentificativoRichiesta() throws GestoreMessaggiException{
 		try {
 			return this.verificaCorrelazioneIdentificativoRichiestaEngine();
 		}
@@ -471,7 +487,7 @@ public class GestoreCorrelazioneApplicativa {
 					
 					// Devo applicare lo '*' solo se ho prima guardato tutti i nodi radice e sono ad esaminare l'ultimo nodo radice.
 					// L'ordine delle correlazioni mi garantira' che lo '*' sara' esaminato per ultimo
-					if( !(elem==posizioneUltimoNodo))
+					if( elem!=posizioneUltimoNodo )
 						continue;
 					
 				}
@@ -787,7 +803,14 @@ public class GestoreCorrelazioneApplicativa {
 		}
 		
 		if(idCorrelazioneApplicativa == null){
-			if(!correlazioneNonRiuscitaDaAccettare){
+			boolean generaErrore = false;
+			if( !findCorrelazione ) {
+				generaErrore = this.isRichiestaRegolaCorrelazioneNonTrovataBlocca;
+			}
+			else {
+				generaErrore = !correlazioneNonRiuscitaDaAccettare;
+			}
+			if( generaErrore ){
 				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
 						getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body");
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
@@ -1403,7 +1426,14 @@ public class GestoreCorrelazioneApplicativa {
 		}
 
 		if(idCorrelazioneApplicativa == null){
-			if(!correlazioneNonRiuscitaDaAccettare){
+			boolean generaErrore = false;
+			if( !findCorrelazione ) {
+				generaErrore = this.isRispostaRegolaCorrelazioneNonTrovataBlocca;
+			}
+			else {
+				generaErrore = !correlazioneNonRiuscitaDaAccettare;
+			}
+			if( generaErrore ){
 				this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
 						getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body");
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));

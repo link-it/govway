@@ -146,7 +146,7 @@ public class TimerGestoreMessaggiLib  {
 				filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata;
 
 		// deve essere utilizzato lo stesso lock per GestoreMessaggi, ConsegnaContenuti, GestoreBuste per risolvere problema di eliminazione descritto in GestoreMessaggi metodo deleteMessageWithLock
-		if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+		if(this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 			this.timerLock = new TimerLock(TipoLock._getLockGestioneRepositoryMessaggi());
 		}
 		else {
@@ -241,7 +241,7 @@ public class TimerGestoreMessaggiLib  {
 
 
 				Date now = null;
-				if(!this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+				if(!this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 					now = DateManager.getDate(); // vedi spiegazione nel metodo deleteMessageByOraRegistrazione di GestoreMessaggi
 				}
 
@@ -290,7 +290,7 @@ public class TimerGestoreMessaggiLib  {
 									// eliminazione messaggio
 									gestoreMsg = new GestoreMessaggi(openspcoopstate, true
 											,idMsgDaEliminare,Costanti.INBOX,this.msgDiag,null);
-									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+									if(this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 										gestoreMsg._deleteMessageWithoutLock();
 									}
 									else {
@@ -362,7 +362,7 @@ public class TimerGestoreMessaggiLib  {
 	
 									// eliminazione messaggio
 									gestoreMsg = new GestoreMessaggi(openspcoopstate, true,idMsgDaEliminare,Costanti.OUTBOX,this.msgDiag,null);
-									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+									if(this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 										gestoreMsg._deleteMessageWithoutLock();
 									}
 									else {
@@ -515,7 +515,7 @@ public class TimerGestoreMessaggiLib  {
 									// Eliminazione effettiva
 									((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
 									//	eliminazione messaggio
-									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+									if(this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 										gestoreMsg._deleteMessageWithoutLock();
 									}
 									else {
@@ -624,7 +624,7 @@ public class TimerGestoreMessaggiLib  {
 									}
 									((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
 									//	eliminazione messaggio
-									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+									if(this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 										gestoreMsg._deleteMessageWithoutLock();
 									}
 									else {
@@ -836,7 +836,7 @@ public class TimerGestoreMessaggiLib  {
 									}
 	
 									//	eliminazione messaggio
-									if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
+									if(this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
 										gestoreMsg._deleteMessageWithoutLock();
 									}
 									else {

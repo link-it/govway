@@ -133,7 +133,7 @@ public class TimerGestoreMessaggiThread extends BaseThread{
 		this.scadenzaCorrelazioneApplicativa = this.propertiesReader.getRepositoryIntervalloScadenzaCorrelazioneApplicativa();
 		this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione = this.propertiesReader.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione();
 		this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata =
-				this.propertiesReader.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata();
+				this.propertiesReader.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata();
 		
 		this.msgDiag.logPersonalizzato("avvioEffettuato");
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));

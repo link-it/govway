@@ -23,9 +23,11 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -54,11 +56,21 @@ public class ConnettoreUtilities {
 
 	public static DatiTempiRisposta readDatiGlobaliTimeout(ConfigurazionePdDManager configPdDManager, TipoPdD tipoPdD, RequestInfo requestInfo, OpenSPCoop2Properties properties) throws DriverConfigurazioneException {
 		// Prelevo la configurazione del Controllo del Traffico
-		ConfigurazioneGenerale configurazioneGenerale = null;
+		
+		AccessoConfigurazionePdD accessoConfigurazione = null;
 		try {
-			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico(requestInfo);
-		}catch(DriverConfigurazioneNotFound notFound) {
-			// ignore
+			accessoConfigurazione = properties.getAccessoConfigurazionePdD();
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		ConfigurazioneGenerale configurazioneGenerale = null;
+		if(accessoConfigurazione!=null && CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(accessoConfigurazione.getTipo())) {
+			try {
+				configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico(requestInfo);
+			}catch(DriverConfigurazioneNotFound notFound) {
+				// ignore
+			}
 		}
 		
 		if(TipoPdD.DELEGATA.equals(tipoPdD)){

@@ -4353,9 +4353,9 @@ public class InoltroBuste extends GenericLib{
 						if(TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)){
 							msgDiag.logPersonalizzato("ricezioneSoapMessage.msgGiaPresente");
 							String msg = msgDiag.getMessaggio_replaceKeywords("ricezioneSoapMessage.msgGiaPresente");
-							if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
-								msgResponse._deleteMessageWithLock(msg,this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
-										this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+							if(this.propertiesReader.isMsgGiaInProcessamentoUseLock()) {
+								msgResponse._deleteMessageWithLock(msg,this.propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(),
+										this.propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 							}
 							else {
 								msgResponse.deleteMessageByNow();

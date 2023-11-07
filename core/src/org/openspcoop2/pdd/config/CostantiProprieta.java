@@ -258,6 +258,9 @@ public class CostantiProprieta {
 	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.response.acceptIdentificationFailed.truncate";
 	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.response.blockIdentificationFailed.truncate";
 	
+	public static final String CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_RULE_NOT_FOUND_ABORT_TRANSACTION_ID = "correlation.request.ruleNotFound.abortTransaction";
+	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_RULE_NOT_FOUND_ABORT_TRANSACTION_ID = "correlation.response.ruleNotFound.abortTransaction";
+	
 	public static boolean isCorrelazioneApplicativaRichiestaIdentificazioneFallitaBloccaTruncate(List<Proprieta> proprieta, boolean defaultValue) {
 		return isCorrelazioneApplicativaTruncate(proprieta, defaultValue,
 				CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID,
@@ -341,6 +344,13 @@ public class CostantiProprieta {
 		}
 		
 		return BooleanNullable.NULL();
+	}
+	
+	public static boolean isCorrelazioneApplicativaRichiestaRegolaNonTrovataTerminaTransazioneConErrore(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_RULE_NOT_FOUND_ABORT_TRANSACTION_ID, defaultValue, CORRELAZIONE_APPLICATIVA_VALUE_ENABLED, CORRELAZIONE_APPLICATIVA_VALUE_DISABLED);
+	}
+	public static boolean isCorrelazioneApplicativaRispostaRegolaNonTrovataTerminaTransazioneConErrore(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_RULE_NOT_FOUND_ABORT_TRANSACTION_ID, defaultValue, CORRELAZIONE_APPLICATIVA_VALUE_ENABLED, CORRELAZIONE_APPLICATIVA_VALUE_DISABLED);
 	}
 	
 	
