@@ -221,13 +221,13 @@ public class TokenUtilities {
 	
 	public static KeystoreParams getForwardToJwtKeystoreParams(GenericProperties gp) throws TokenException, ProviderException, ProviderValidationException {
 		PolicyGestioneToken policy = TokenUtilities.convertTo(gp, new GestioneToken());
-		if(!TokenUtilities.isTokenForwardEnabled(gp) || !policy.isForwardToken_informazioniRaccolte()) {
+		if(!TokenUtilities.isTokenForwardEnabled(gp) || !policy.isForwardTokenInformazioniRaccolte()) {
 			throw new TokenException(getPrefixPolicy(gp)+" non utilizza la funzionalità di forward delle informazioni raccolte del token");
 		}
 		return getForwardToJwtKeystoreParams(policy);
 	}
 	public static KeystoreParams getForwardToJwtKeystoreParams(PolicyGestioneToken policy) throws TokenException {
-		String forwardInformazioniRaccolteMode = policy.getForwardToken_informazioniRaccolteMode();
+		String forwardInformazioniRaccolteMode = policy.getForwardTokenInformazioniRaccolteMode();
 		Properties p = null;
 		if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
 				Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInformazioniRaccolteMode)) {
@@ -269,13 +269,13 @@ public class TokenUtilities {
 		policy.setTokenOpzionale(false);
 		
 		policy.setValidazioneJWT(false);
-		policy.setValidazioneJWT_warningOnly(false);
+		policy.setValidazioneJWTWarningOnly(false);
 		
 		policy.setIntrospection(false);
-		policy.setIntrospection_warningOnly(false);
+		policy.setIntrospectionWarningOnly(false);
 		
 		policy.setUserInfo(false);
-		policy.setUserInfo_warningOnly(false);
+		policy.setUserInfoWarningOnly(false);
 		
 		policy.setForwardToken(false);
 		
@@ -297,15 +297,15 @@ public class TokenUtilities {
 			switch (gestioneToken.getValidazione()) {
 			case ABILITATO:
 				policy.setValidazioneJWT(true);
-				policy.setValidazioneJWT_warningOnly(false);
+				policy.setValidazioneJWTWarningOnly(false);
 				break;
 			case WARNING_ONLY:
 				policy.setValidazioneJWT(true);
-				policy.setValidazioneJWT_warningOnly(true);
+				policy.setValidazioneJWTWarningOnly(true);
 				break;
 			case DISABILITATO:
 				policy.setValidazioneJWT(false);
-				policy.setValidazioneJWT_warningOnly(false);
+				policy.setValidazioneJWTWarningOnly(false);
 				break;
 			}
 		}
@@ -316,15 +316,15 @@ public class TokenUtilities {
 			switch (gestioneToken.getIntrospection()) {
 			case ABILITATO:
 				policy.setIntrospection(true);
-				policy.setIntrospection_warningOnly(false);
+				policy.setIntrospectionWarningOnly(false);
 				break;
 			case WARNING_ONLY:
 				policy.setIntrospection(true);
-				policy.setIntrospection_warningOnly(true);
+				policy.setIntrospectionWarningOnly(true);
 				break;
 			case DISABILITATO:
 				policy.setIntrospection(false);
-				policy.setIntrospection_warningOnly(false);
+				policy.setIntrospectionWarningOnly(false);
 				break;
 			}
 		}
@@ -335,15 +335,15 @@ public class TokenUtilities {
 			switch (gestioneToken.getUserInfo()) {
 			case ABILITATO:
 				policy.setUserInfo(true);
-				policy.setUserInfo_warningOnly(false);
+				policy.setUserInfoWarningOnly(false);
 				break;
 			case WARNING_ONLY:
 				policy.setUserInfo(true);
-				policy.setUserInfo_warningOnly(true);
+				policy.setUserInfoWarningOnly(true);
 				break;
 			case DISABILITATO:
 				policy.setUserInfo(false);
-				policy.setUserInfo_warningOnly(false);
+				policy.setUserInfoWarningOnly(false);
 				break;
 			}
 		}

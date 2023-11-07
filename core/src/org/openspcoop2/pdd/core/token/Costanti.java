@@ -172,6 +172,11 @@ public class Costanti {
 	public static final String POLICY_REQUEST_TOKEN_POSITION_URL = "url";
 	public static final String POLICY_REQUEST_TOKEN_POSITION_FORM = "form";
 	
+	public static final String POLICY_VALIDAZIONE_JWS_HEADER = "policy.validazioneJWT.header";
+	public static final String POLICY_VALIDAZIONE_JWS_HEADER_TYP = "policy.validazioneJWT.header.typ";
+	public static final String POLICY_VALIDAZIONE_JWS_HEADER_CTY = "policy.validazioneJWT.header.cty";
+	public static final String POLICY_VALIDAZIONE_JWS_HEADER_ALG = "policy.validazioneJWT.header.alg";
+	
 	public static final String POLICY_INTROSPECTION_STATO = "policy.introspection.stato";
 	public static final String POLICY_INTROSPECTION_SAVE_ERROR_IN_CACHE = "policy.introspection.saveErrorInCache";
 	public static final String POLICY_INTROSPECTION_URL = "policy.introspection.endpoint.url";

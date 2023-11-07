@@ -318,6 +318,57 @@
 			</conditions>
 	      		<property name="token.parser.user.eMail" properties="validazioneJwtTokenParserPropRefId" />
 		</item>
+
+		<subsection label="Header">
+
+			<conditions>
+				<condition and="true">
+					<equals name="tokenType" value="jws"/>
+				</condition>
+			</conditions>
+
+			<item type="checkbox" name="validazioneJwtHeader" label="" reloadOnChange="true" defaultSelected="false" note="Consente di indicare i valori attesi nell'header">
+				<property name="policy.validazioneJWT.header" />
+			</item>	
+
+			<item type="text" name="validazioneJwtHeaderTypeRFC9068" label="Type (typ)" required="false" default="at+jwt,application/at+jwt">
+				<conditions>
+					<condition and="true">
+						<selected name="validazioneJwtHeader"/>
+						<equals name="validazioneJWTParserType" value="JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068"/>
+					</condition>
+				</conditions>
+		      		<property name="policy.validazioneJWT.header.typ" />
+			</item>
+			<item type="text" name="validazioneJwtHeaderType" label="Type (typ)" required="false">
+				<conditions>
+					<condition and="true">
+						<selected name="validazioneJwtHeader"/>
+						<equals not="true" name="validazioneJWTParserType" value="JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068"/>
+					</condition>
+				</conditions>
+		      		<property name="policy.validazioneJWT.header.typ" />
+			</item>
+
+			<item type="text" name="validazioneJwtHeaderCty" label="Content Type (cty)" required="false">
+				<conditions>
+					<condition and="true">
+						<selected name="validazioneJwtHeader"/>
+					</condition>
+				</conditions>
+		      		<property name="policy.validazioneJWT.header.cty" />
+			</item>
+
+			<item type="text" name="validazioneJwtHeaderAlg" label="Algorithm (alg)" required="false" note="Sia per 'typ', 'cty' o 'alg' è possibile elencare più valori separandoli con la ','">
+				<conditions>
+					<condition and="true">
+						<selected name="validazioneJwtHeader"/>
+					</condition>
+				</conditions>
+		      		<property name="policy.validazioneJWT.header.alg" />
+			</item>
+
+		</subsection>
 		
 		<subsection label="TrustStore">
 

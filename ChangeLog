@@ -1,6 +1,12 @@
 2023-11-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Aggiunta funzionalità OP-1665
+	In una token policy di validazione, per un token JWS è adesso possibile aggiungere criteri di validazione dei 'typ', 'cty' e 'alg' presenti nell'header.
+
+2023-11-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Aggiunta funzionalità OP-1663
 	Una richiesta non applicabile a nessuna regola di correlazione applicativa, fino alla versione 3.3.13.p1, terminava con l’errore: 
 	"Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body". 

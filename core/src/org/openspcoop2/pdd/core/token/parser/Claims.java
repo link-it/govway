@@ -31,7 +31,7 @@ public class Claims {
 	private Claims() {}
 
 	// https://tools.ietf.org/html/rfc7519
-	
+		
 	public static final String JSON_WEB_TOKEN_RFC_7519_ISSUER = "iss";
 	public static final String JSON_WEB_TOKEN_RFC_7519_SUBJECT = "sub";
 	public static final String JSON_WEB_TOKEN_RFC_7519_AUDIENCE = "aud";
@@ -39,6 +39,12 @@ public class Claims {
 	public static final String JSON_WEB_TOKEN_RFC_7519_ISSUED_AT = "iat";
 	public static final String JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE = "nbf";
 	public static final String JSON_WEB_TOKEN_RFC_7519_JWT_ID = "jti";
+
+	// https://tools.ietf.org/html/rfc7515
+	
+	public static final String JSON_WEB_TOKEN_RFC_7515_ALGORITHM = "alg";
+	public static final String JSON_WEB_TOKEN_RFC_7515_TYPE = "typ";
+	public static final String JSON_WEB_TOKEN_RFC_7515_CONTENT_TYPE = "cty";
 	
 	// https://www.rfc-editor.org/rfc/rfc9068.html
 	
