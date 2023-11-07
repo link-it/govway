@@ -30,6 +30,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonSignature;
+import org.openspcoop2.utils.security.JwtHeaders;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -42,6 +43,9 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 public class ValidazioneJWTTest extends ConfigLoader {
 
 	public static final String validazione = "TestValidazioneToken-ValidazioneJWT";
+	
+	public static final String validazioneHeaderRFC9068 = "TestValidazioneToken-ValidazioneJWT-HeaderRFC9068";
+	public static final String validazioneHeader = "TestValidazioneToken-ValidazioneJWT-Header";
 		
 	@Test
 	public void success() throws Exception {
@@ -1005,6 +1009,165 @@ public class ValidazioneJWTTest extends ConfigLoader {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void successValidazioneHeader() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-username", Utilities.username);
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("JWT", "test/JWT", null,
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazioneHeader, "success", headers,  null,
+				null,
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void success2ValidazioneHeader() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-username", Utilities.username);
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("jws", "Application/Jws", null,
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazioneHeader, "success", headers,  null,
+				null,
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void invalidValidazioneHeaderTyp() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("AltroValore", "Application/Jws", null,
+						null));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazioneHeader, "success", headers,  null,
+				"Validazione del token 'JWS' fallita: Token non valido: JWT header validation failed; Claim 'typ' with invalid value 'AltroValore'",
+				Utilities.getMapExpectedTokenInfoInvalid());
+	}
+	
+	@Test
+	public void invalidValidazioneHeaderCty() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("jws", "ValoreNonCorretto", null,
+						null));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazioneHeader, "success", headers,  null,
+				"Validazione del token 'JWS' fallita: Token non valido: JWT header validation failed; Claim 'cty' with invalid value 'ValoreNonCorretto'",
+				Utilities.getMapExpectedTokenInfoInvalid());
+	}
+	
+	
+	
+	
+	
+	
+	@Test
+	public void successValidazioneHeaderRFC9068() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-username", Utilities.username);
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("at+jwt", "application/json", null,
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068, "success", headers,  null,
+				null,
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void success2ValidazioneHeaderRFC9068() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-username", Utilities.username);
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("application/at+jwt", "application/JSON", null,
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068, "success", headers,  null,
+				null,
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void invalidValidazioneHeaderTypRFC9068() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("AltroValore", "application/json", null,
+						null));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068, "success", headers,  null,
+				"Validazione del token 'JWS' fallita: Token non valido: JWT header validation failed; Claim 'typ' with invalid value 'AltroValore'",
+				Utilities.getMapExpectedTokenInfoInvalid());
+	}
+	
+	@Test
+	public void invalidValidazioneHeaderCtyRFC9068() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWTHeader("application/at+jwt", "ValoreNonCorretto", null,
+						null));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazioneHeaderRFC9068, "success", headers,  null,
+				"Validazione del token 'JWS' fallita: Token non valido: JWT header validation failed; Claim 'cty' with invalid value 'ValoreNonCorretto'",
+				Utilities.getMapExpectedTokenInfoInvalid());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	private static String buildJWT_signInvalid() throws Exception {
 		return buildJWT(true,
 				true, true, true, true, true,
@@ -1131,6 +1294,60 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		props.put("rs.security.signature.include.cert.sha256","false");
 			
 		JsonSignature jsonSignature = new JsonSignature(props, options);
+		String token = jsonSignature.sign(jsonInput);
+		//System.out.println(token);
+			
+		return token;		
+		
+	}
+	
+	
+	
+	
+	private static String buildJWTHeader(String typ,String cty,String algo,
+			List<String> mapExpectedTokenInfo) throws Exception {
+		
+		String jsonInput = Utilities.buildJson(true, 
+				false, false, false, 
+				false, false, 
+				false, false, false, 
+				false, false, false, 
+				false, false, false, false, 
+				false, false, false, false, 
+				mapExpectedTokenInfo,
+				""); 
+		
+		if(mapExpectedTokenInfo!=null) {
+			mapExpectedTokenInfo.add("\"sourceType\":\"JWT\"");
+		}
+		
+		//System.out.println("TOKEN ["+jsonInput+"]");
+		
+		Properties props = new Properties();
+		props.put("rs.security.keystore.type","JKS");
+		String password = "openspcoop";
+		props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+		props.put("rs.security.keystore.alias","erogatore");
+		props.put("rs.security.keystore.password",password);
+		props.put("rs.security.key.password",password);
+		
+		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+			
+		if(algo==null) {
+			algo = "RS256";
+		}
+		props.put("rs.security.signature.algorithm",algo);
+		props.put("rs.security.signature.include.cert","false");
+		props.put("rs.security.signature.include.key.id","true");
+		props.put("rs.security.signature.include.public.key","false");
+		props.put("rs.security.signature.include.cert.sha1","false");
+		props.put("rs.security.signature.include.cert.sha256","false");
+			
+		JwtHeaders jwtHeaders = new JwtHeaders();
+		jwtHeaders.setType(typ);
+		jwtHeaders.setContentType(cty);
+		
+		JsonSignature jsonSignature = new JsonSignature(props, jwtHeaders, options);
 		String token = jsonSignature.sign(jsonInput);
 		//System.out.println(token);
 			

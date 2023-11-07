@@ -197,33 +197,33 @@ public class ConnettoreCheck {
 			Connettore connettoreIntrospection = null;
 			Connettore connettoreUserInfo = null;
 			
-			String introspectionEndpoint = policy.getIntrospection_endpoint();
+			String introspectionEndpoint = policy.getIntrospectionEndpoint();
 			if(StringUtils.isNotEmpty(introspectionEndpoint)) {
 				connettoreIntrospection = new Connettore();
 				addProperty(connettoreIntrospection, POLICY_TIPO_ENDPOINT, POLICY_TIPO_ENDPOINT_INTROSPECTION);
 				addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_LOCATION, introspectionEndpoint);
 				
-				if(policy.isIntrospection_basicAuthentication() && StringUtils.isNotEmpty(policy.getIntrospection_basicAuthentication_username()) && policy.getIntrospection_basicAuthentication_password()!=null) {
-					addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_USERNAME, policy.getIntrospection_basicAuthentication_username());
-					addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_PASSWORD, policy.getIntrospection_basicAuthentication_password());
+				if(policy.isIntrospectionBasicAuthentication() && StringUtils.isNotEmpty(policy.getIntrospectionBasicAuthenticationUsername()) && policy.getIntrospectionBasicAuthenticationPassword()!=null) {
+					addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_USERNAME, policy.getIntrospectionBasicAuthenticationUsername());
+					addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_PASSWORD, policy.getIntrospectionBasicAuthenticationPassword());
 				}
-				if(policy.isIntrospection_bearerAuthentication() && StringUtils.isNotEmpty(policy.getIntrospection_beareAuthentication_token())) {
-					addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getIntrospection_beareAuthentication_token());
+				if(policy.isIntrospectionBearerAuthentication() && StringUtils.isNotEmpty(policy.getIntrospectionBeareAuthenticationToken())) {
+					addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getIntrospectionBeareAuthenticationToken());
 				}
 			}
 			
-			String userInfoEndpoint = policy.getUserInfo_endpoint();
+			String userInfoEndpoint = policy.getUserInfoEndpoint();
 			if(StringUtils.isNotEmpty(userInfoEndpoint)) {
 				connettoreUserInfo = new Connettore();
 				addProperty(connettoreUserInfo, POLICY_TIPO_ENDPOINT, POLICY_TIPO_ENDPOINT_USERINFO);
 				addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_LOCATION, userInfoEndpoint);
 				
-				if(policy.isUserInfo_basicAuthentication() && StringUtils.isNotEmpty(policy.getUserInfo_basicAuthentication_username()) && policy.getUserInfo_basicAuthentication_password()!=null) {
-					addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_USERNAME, policy.getUserInfo_basicAuthentication_username());
-					addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_PASSWORD, policy.getUserInfo_basicAuthentication_password());
+				if(policy.isUserInfoBasicAuthentication() && StringUtils.isNotEmpty(policy.getUserInfoBasicAuthenticationUsername()) && policy.getUserInfoBasicAuthenticationPassword()!=null) {
+					addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_USERNAME, policy.getUserInfoBasicAuthenticationUsername());
+					addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_PASSWORD, policy.getUserInfoBasicAuthenticationPassword());
 				}
-				if(policy.isUserInfo_bearerAuthentication() && StringUtils.isNotEmpty(policy.getUserInfo_beareAuthentication_token())) {
-					addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getUserInfo_beareAuthentication_token());
+				if(policy.isUserInfoBearerAuthentication() && StringUtils.isNotEmpty(policy.getUserInfoBeareAuthenticationToken())) {
+					addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getUserInfoBeareAuthenticationToken());
 				}
 			}
 			
@@ -258,7 +258,7 @@ public class ConnettoreCheck {
 						Map<String,String> mapProperties = connettoreIntrospection.getProperties();
 						putAll(sslConfig, mapProperties);
 												
-						boolean introspectionHttpsClient = policy.isIntrospection_httpsAuthentication();
+						boolean introspectionHttpsClient = policy.isIntrospectionHttpsAuthentication();
 						if(introspectionHttpsClient) {
 							Properties introspectionSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
 							putAll(introspectionSslClientConfig, mapProperties);
@@ -271,7 +271,7 @@ public class ConnettoreCheck {
 						Map<String,String> mapProperties = connettoreUserInfo.getProperties();
 						putAll(sslConfig, mapProperties);
 						
-						boolean userInfoHttpsClient = policy.isUserInfo_httpsAuthentication();
+						boolean userInfoHttpsClient = policy.isUserInfoHttpsAuthentication();
 						if(userInfoHttpsClient) {
 							Properties userInfoSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
 							putAll(userInfoSslClientConfig, mapProperties);

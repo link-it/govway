@@ -228,8 +228,8 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 								validazioneJwt = true;
 							}
 						}
-						if(policyGestioneToken.isForwardToken() && policyGestioneToken.isForwardToken_informazioniRaccolte()) {
-							String forwardInformazioniRaccolteMode = policyGestioneToken.getForwardToken_informazioniRaccolteMode();
+						if(policyGestioneToken.isForwardToken() && policyGestioneToken.isForwardTokenInformazioniRaccolte()) {
+							String forwardInformazioniRaccolteMode = policyGestioneToken.getForwardTokenInformazioniRaccolteMode();
 							KeystoreParams keystoreParams = null;
 							if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
 									org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInformazioniRaccolteMode) ||

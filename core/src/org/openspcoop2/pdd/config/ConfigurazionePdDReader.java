@@ -5584,10 +5584,10 @@ public class ConfigurazionePdDReader {
 		KeystoreParams truststoreParams = null;
 		try {
 			PolicyGestioneToken policy = TokenUtilities.convertTo(gp, gestioneToken);
-			if(!TokenUtilities.isTokenForwardEnabled(gp) || !policy.isForwardToken_informazioniRaccolte()) {
+			if(!TokenUtilities.isTokenForwardEnabled(gp) || !policy.isForwardTokenInformazioniRaccolte()) {
 				throw new DriverConfigurazioneException("La configurazione nella policy "+gp.getNome()+" non utilizza la funzionalità di forward delle informazioni raccolte del token");
 			}
-			String forwardInformazioniRaccolteMode = policy.getForwardToken_informazioniRaccolteMode();
+			String forwardInformazioniRaccolteMode = policy.getForwardTokenInformazioniRaccolteMode();
 			
 			if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
 					Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInformazioniRaccolteMode)) {

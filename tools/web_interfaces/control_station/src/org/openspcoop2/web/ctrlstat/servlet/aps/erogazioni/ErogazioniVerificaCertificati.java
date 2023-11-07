@@ -649,7 +649,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 									!policyToken.isEndpointHttps()) {
 									httpsIntrospection = false;
 									
-									String endpoint = policyToken.getIntrospection_endpoint();
+									String endpoint = policyToken.getIntrospectionEndpoint();
 									if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
 										!findConnettoreHttpConPrefissoHttps) {
 										findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
@@ -659,7 +659,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 									!policyToken.isEndpointHttps()) {
 									httpsUserInfo = false;
 									
-									String endpoint = policyToken.getUserInfo_endpoint();
+									String endpoint = policyToken.getUserInfoEndpoint();
 									if(endpoint!=null && StringUtils.isNotEmpty(endpoint) &&
 										!findConnettoreHttpConPrefissoHttps) {
 										findConnettoreHttpConPrefissoHttps = endpoint.trim().startsWith("https");
@@ -685,8 +685,8 @@ public class ErogazioniVerificaCertificati  extends Action {
 								if(forwardToJwt) {
 									try {
 										KeystoreParams keystoreParams = null;
-										if(policyToken.isForwardToken_informazioniRaccolte()) {
-											String forwardInformazioniRaccolteMode = policyToken.getForwardToken_informazioniRaccolteMode();
+										if(policyToken.isForwardTokenInformazioniRaccolte()) {
+											String forwardInformazioniRaccolteMode = policyToken.getForwardTokenInformazioniRaccolteMode();
 											if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
 													org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInformazioniRaccolteMode) ||
 													org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInformazioniRaccolteMode)) {

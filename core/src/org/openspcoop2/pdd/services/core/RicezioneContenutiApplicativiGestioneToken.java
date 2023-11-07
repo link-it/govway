@@ -243,7 +243,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 								else {
 									
 									this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoValidazioneToken.getDetails());
-									if(policyGestioneToken.isValidazioneJWT_warningOnly()) {
+									if(policyGestioneToken.isValidazioneJWTWarningOnly()) {
 										this.msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.warningOnly.fallita");
 									}
 									else {
@@ -279,7 +279,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 							
 							if(policyGestioneToken.isIntrospection()) {
 							
-								this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION, policyGestioneToken.getIntrospection_endpoint());
+								this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION, policyGestioneToken.getIntrospectionEndpoint());
 								
 								this.msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken");
 								
@@ -302,7 +302,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 								else {
 									
 									this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoIntrospectionToken.getDetails());
-									if(policyGestioneToken.isIntrospection_warningOnly()) {
+									if(policyGestioneToken.isIntrospectionWarningOnly()) {
 										this.msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.warningOnly.fallita");
 									}
 									else {
@@ -337,7 +337,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 							
 							if(policyGestioneToken.isUserInfo()) {
 							
-								this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO, policyGestioneToken.getUserInfo_endpoint());
+								this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO, policyGestioneToken.getUserInfoEndpoint());
 								
 								this.msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken");
 								
@@ -360,7 +360,7 @@ public class RicezioneContenutiApplicativiGestioneToken {
 								else {
 									
 									this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoUserInfoToken.getDetails());
-									if(policyGestioneToken.isIntrospection_warningOnly()) {
+									if(policyGestioneToken.isIntrospectionWarningOnly()) {
 										this.msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.warningOnly.fallita");
 									}
 									else {

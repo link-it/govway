@@ -996,7 +996,7 @@ public class GestoreToken {
 		if(esitoGestioneToken.isValido()) {
 			// ricontrollo tutte le date
 			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
-					datiInvocazione.getPolicyGestioneToken().isValidazioneJWT_saveErrorInCache());
+					datiInvocazione.getPolicyGestioneToken().isValidazioneJWTSaveErrorInCache());
 		}
 		
 		if(esitoGestioneToken.isValido() && esitoGestioneToken.getRestSecurityToken()!=null) {
@@ -1108,7 +1108,7 @@ public class GestoreToken {
 		if(esitoGestioneToken.isValido()) {
 			// ricontrollo tutte le date
 			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
-					datiInvocazione.getPolicyGestioneToken().isIntrospection_saveErrorInCache());
+					datiInvocazione.getPolicyGestioneToken().isIntrospectionSaveErrorInCache());
 		}
 		
 		return esitoGestioneToken;
@@ -1213,7 +1213,7 @@ public class GestoreToken {
 		if(esitoGestioneToken.isValido()) {
 			// ricontrollo tutte le date
 			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
-					datiInvocazione.getPolicyGestioneToken().isUserInfo_saveErrorInCache());
+					datiInvocazione.getPolicyGestioneToken().isUserInfoSaveErrorInCache());
 		}
 		
 		return esitoGestioneToken;
@@ -1243,9 +1243,9 @@ public class GestoreToken {
 		String forwardTrasparenteModeHeader = null;
 		String forwardTrasparenteModeUrl = null;
 		if(policyGestioneToken.isForwardToken()) {
-			trasparente = policyGestioneToken.isForwardToken_trasparente();
+			trasparente = policyGestioneToken.isForwardTokenTrasparente();
 			if(trasparente) {
-				forwardTrasparenteMode = policyGestioneToken.getForwardToken_trasparenteMode();
+				forwardTrasparenteMode = policyGestioneToken.getForwardTokenTrasparenteMode();
 				if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED.equals(forwardTrasparenteMode)) {
 					forwardTrasparenteModeHeader = esitoPresenzaToken.getHeaderHttp();
 					forwardTrasparenteModeUrl = esitoPresenzaToken.getPropertyUrl();
@@ -1257,10 +1257,10 @@ public class GestoreToken {
 					forwardTrasparenteModeUrl = Costanti.RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN;
 				}
 				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(forwardTrasparenteMode)) {
-					forwardTrasparenteModeHeader = policyGestioneToken.getForwardToken_trasparenteModeCustomHeader();
+					forwardTrasparenteModeHeader = policyGestioneToken.getForwardTokenTrasparenteModeCustomHeader();
 				} 
 				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(forwardTrasparenteMode)) {
-					forwardTrasparenteModeUrl = policyGestioneToken.getForwardToken_trasparenteModeCustomUrl();
+					forwardTrasparenteModeUrl = policyGestioneToken.getForwardTokenTrasparenteModeCustomUrl();
 				} 
 			}
 		}
@@ -1279,10 +1279,10 @@ public class GestoreToken {
 		String forwardUserInfoMode = null;
 		String forwardUserInfoName = null;
 		if(policyGestioneToken.isForwardToken()) {
-			infoRaccolte = policyGestioneToken.isForwardToken_informazioniRaccolte();
+			infoRaccolte = policyGestioneToken.isForwardTokenInformazioniRaccolte();
 			if(infoRaccolte) {
-				forwardInformazioniRaccolteMode = policyGestioneToken.getForwardToken_informazioniRaccolteMode();
-				encodeBase64 = policyGestioneToken.isForwardToken_informazioniRaccolteEncodeBase64();
+				forwardInformazioniRaccolteMode = policyGestioneToken.getForwardTokenInformazioniRaccolteMode();
+				encodeBase64 = policyGestioneToken.isForwardTokenInformazioniRaccolteEncodeBase64();
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
 						Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInformazioniRaccolteMode)) {
 					jwtSecurity = policyGestioneToken.getProperties().get(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_SIGNATURE_PROP_REF_ID);
@@ -1295,36 +1295,36 @@ public class GestoreToken {
 					JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), jwtSecurity, log); // serve per leggere il keystore dalla cache
 				}
 				
-				forwardValidazioneJWT = policyGestioneToken.isForwardToken_informazioniRaccolte_validazioneJWT();
+				forwardValidazioneJWT = policyGestioneToken.isForwardTokenInformazioniRaccolteValidazioneJWT();
 				if(forwardValidazioneJWT) {
-					forwardValidazioneJWTMode = policyGestioneToken.getForwardToken_informazioniRaccolte_validazioneJWT_mode();
+					forwardValidazioneJWTMode = policyGestioneToken.getForwardTokenInformazioniRaccolteValidazioneJWTMode();
 					if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardValidazioneJWTMode)) {
-						forwardValidazioneJWTName = policyGestioneToken.getForwardToken_informazioniRaccolte_validazioneJWT_mode_headerName();
+						forwardValidazioneJWTName = policyGestioneToken.getForwardTokenInformazioniRaccolteValidazioneJWTModeHeaderName();
 					}
 					else {
-						forwardValidazioneJWTName = policyGestioneToken.getForwardToken_informazioniRaccolte_validazioneJWT_mode_queryParameterName();
+						forwardValidazioneJWTName = policyGestioneToken.getForwardTokenInformazioniRaccolteValidazioneJWTModeQueryParameterName();
 					}
 				}
 				
-				forwardIntrospection = policyGestioneToken.isForwardToken_informazioniRaccolte_introspection();
+				forwardIntrospection = policyGestioneToken.isForwardTokenInformazioniRaccolteIntrospection();
 				if(forwardIntrospection) {
-					forwardIntrospectionMode = policyGestioneToken.getForwardToken_informazioniRaccolte_introspection_mode();
+					forwardIntrospectionMode = policyGestioneToken.getForwardTokenInformazioniRaccolteIntrospectionMode();
 					if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardIntrospectionMode)) {
-						forwardIntrospectionName = policyGestioneToken.getForwardToken_informazioniRaccolte_introspection_mode_headerName();
+						forwardIntrospectionName = policyGestioneToken.getForwardTokenInformazioniRaccolteIntrospectionModeHeaderName();
 					}
 					else {
-						forwardIntrospectionName = policyGestioneToken.getForwardToken_informazioniRaccolte_introspection_mode_queryParameterName();
+						forwardIntrospectionName = policyGestioneToken.getForwardTokenInformazioniRaccolteIntrospectionModeQueryParameterName();
 					}
 				}
 				
-				forwardUserInfo = policyGestioneToken.isForwardToken_informazioniRaccolte_userInfo();
+				forwardUserInfo = policyGestioneToken.isForwardTokenInformazioniRaccolteUserInfo();
 				if(forwardUserInfo) {
-					forwardUserInfoMode = policyGestioneToken.getForwardToken_informazioniRaccolte_userInfo_mode();
+					forwardUserInfoMode = policyGestioneToken.getForwardTokenInformazioniRaccolteUserInfoMode();
 					if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardUserInfoMode)) {
-						forwardUserInfoName = policyGestioneToken.getForwardToken_informazioniRaccolte_userInfo_mode_headerName();
+						forwardUserInfoName = policyGestioneToken.getForwardTokenInformazioniRaccolteUserInfoModeHeaderName();
 					}
 					else {
-						forwardUserInfoName = policyGestioneToken.getForwardToken_informazioniRaccolte_userInfo_mode_queryParameterName();
+						forwardUserInfoName = policyGestioneToken.getForwardTokenInformazioniRaccolteUserInfoModeQueryParameterName();
 					}
 				}
 			}

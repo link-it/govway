@@ -69,6 +69,9 @@ public class JsonVerifySignature {
 	private Properties properties;
 	private boolean dynamicProvider;
 	
+	private JwsHeaders jwsDecodedHeaders;
+	private String decodedHeader;
+	
 	private String decodedPayload;
 	private byte[] decodedPayloadAsByte;
 	
@@ -352,8 +355,14 @@ public class JsonVerifySignature {
 			consumer = new JwsCompactConsumer(jsonSignature, Base64UrlUtility.encode(jsonDetachedPayload));
 		}
 		
-		JwsHeaders jwsHeaders = consumer.getJwsHeaders();
-		JwsSignatureVerifier providerInternal = getProvider(jwsHeaders);
+		this.jwsDecodedHeaders = consumer.getJwsHeaders();
+		try {
+			this.decodedHeader = consumer.getDecodedJsonHeaders();
+		}catch(Exception e) {
+			// ignore
+		}
+		
+		JwsSignatureVerifier providerInternal = getProvider(this.jwsDecodedHeaders);
 				
 		boolean result = consumer.verifySignatureWith(providerInternal);
 		if(jsonDetachedPayload!=null) {
@@ -375,6 +384,13 @@ public class JsonVerifySignature {
 		return this.decodedPayloadAsByte;
 	}
 	
+	public JwsHeaders getJwsDecodedHeaders() {
+		return this.jwsDecodedHeaders;
+	}
+	
+	public String getDecodedHeader() {
+		return this.decodedHeader;
+	}
 	
 	private X509Certificate x509Certificate;
 	private PublicKey publicKey;

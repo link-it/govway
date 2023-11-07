@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
@@ -42,6 +43,8 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -99,6 +102,7 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
 import org.slf4j.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -137,7 +141,7 @@ public class GestoreTokenValidazioneUtilities {
 			Exception eProcess = null;
 			RestMessageSecurityToken restSecurityToken = null;
 			
-			ITokenParser tokenParser = policyGestioneToken.getValidazioneJWT_TokenParser();
+			ITokenParser tokenParser = policyGestioneToken.getValidazioneJWTTokenParser();
 			
     		if(Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType)) {
     			// JWS Compact   			
@@ -161,6 +165,15 @@ public class GestoreTokenValidazioneUtilities {
     							restSecurityToken.setQueryParameterName(esitoPresenzaToken.getPropertyUrl());
     							restSecurityToken.setFormParameterName(esitoPresenzaToken.getPropertyFormBased());
     						}
+    					}
+    					
+    					try {
+    						validazioneInformazioniTokenHeader(jsonCompactVerify.getDecodedHeader(), policyGestioneToken);
+    					}catch(Exception e) {
+    						informazioniToken.setValid(false);
+    						log.debug(GestoreToken.getMessageTokenNonValido(e),e);
+    	    				detailsError = GestoreToken.getMessageTokenNonValido(e);
+    	    				eProcess = e;
     					}
     				}
     				else {
@@ -197,7 +210,7 @@ public class GestoreTokenValidazioneUtilities {
 			}
     		else {
     			esitoGestioneToken.setTokenValidazioneFallita();
-    			esitoGestioneToken.setNoCache(!policyGestioneToken.isValidazioneJWT_saveErrorInCache());
+    			esitoGestioneToken.setNoCache(!policyGestioneToken.isValidazioneJWTSaveErrorInCache());
     			esitoGestioneToken.setEccezioneProcessamento(eProcess);
     			if(detailsError!=null) {
     				esitoGestioneToken.setDetails(detailsError);	
@@ -266,8 +279,8 @@ public class GestoreTokenValidazioneUtilities {
 					java.security.KeyStore keystore = (java.security.KeyStore) oKeystore;
 					jsonCompactVerify = new JsonVerifySignature(keystore, options);
 					
-					String signatureOCSP = policyGestioneToken.getValidazioneJWT_ocspPolicy();
-					String signatureCRL = policyGestioneToken.getValidazioneJWT_crl();
+					String signatureOCSP = policyGestioneToken.getValidazioneJWTOcspPolicy();
+					String signatureCRL = policyGestioneToken.getValidazioneJWTCrl();
 					
 					boolean crlByOcsp = false;
 					if(signatureOCSP!=null && !"".equals(signatureOCSP)) {
@@ -372,7 +385,7 @@ public class GestoreTokenValidazioneUtilities {
 			InformazioniToken informazioniToken = null;
 			Exception eProcess = null;
 			
-			ITokenParser tokenParser = policyGestioneToken.getIntrospection_TokenParser();
+			ITokenParser tokenParser = policyGestioneToken.getIntrospectionTokenParser();
 			
 			PortaApplicativa pa = null;
 			PortaDelegata pd = null;
@@ -415,7 +428,7 @@ public class GestoreTokenValidazioneUtilities {
 			}
     		else {
     			esitoGestioneToken.setTokenValidazioneFallita();
-    			esitoGestioneToken.setNoCache(!policyGestioneToken.isIntrospection_saveErrorInCache());
+    			esitoGestioneToken.setNoCache(!policyGestioneToken.isIntrospectionSaveErrorInCache());
     			esitoGestioneToken.setEccezioneProcessamento(eProcess);
     			if(detailsError!=null) {
     				esitoGestioneToken.setDetails(detailsError);	
@@ -476,7 +489,7 @@ public class GestoreTokenValidazioneUtilities {
 			InformazioniToken informazioniToken = null;
 			Exception eProcess = null;
 			
-			ITokenParser tokenParser = policyGestioneToken.getUserInfo_TokenParser();
+			ITokenParser tokenParser = policyGestioneToken.getUserInfoTokenParser();
 			
 			PortaApplicativa pa = null;
 			PortaDelegata pd = null;
@@ -519,7 +532,7 @@ public class GestoreTokenValidazioneUtilities {
 			}
     		else {
     			esitoGestioneToken.setTokenValidazioneFallita();
-    			esitoGestioneToken.setNoCache(!policyGestioneToken.isUserInfo_saveErrorInCache());
+    			esitoGestioneToken.setNoCache(!policyGestioneToken.isUserInfoSaveErrorInCache());
     			esitoGestioneToken.setEccezioneProcessamento(eProcess);
     			if(detailsError!=null) {
     				esitoGestioneToken.setDetails(detailsError);	
@@ -1325,6 +1338,54 @@ public class GestoreTokenValidazioneUtilities {
 		}
 	}
 	
+	static void validazioneInformazioniTokenHeader(String jsonHeader, PolicyGestioneToken policyGestioneToken) throws TokenException, ProviderException, ProviderValidationException {
+		
+		if(policyGestioneToken.isValidazioneJWTHeader()) {
+			
+			try {
+			
+				JSONUtils jsonUtils = JSONUtils.getInstance();
+				if(jsonUtils.isJson(jsonHeader)) {
+					JsonNode root = jsonUtils.getAsNode(jsonHeader);
+					Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+					
+					validazioneInformazioniTokenHeader(readClaims, policyGestioneToken.getValidazioneJWTHeaderTyp(), Claims.JSON_WEB_TOKEN_RFC_7515_TYPE);
+					
+					validazioneInformazioniTokenHeader(readClaims, policyGestioneToken.getValidazioneJWTHeaderCty(), Claims.JSON_WEB_TOKEN_RFC_7515_CONTENT_TYPE);
+					
+					validazioneInformazioniTokenHeader(readClaims, policyGestioneToken.getValidazioneJWTHeaderAlg(), Claims.JSON_WEB_TOKEN_RFC_7515_ALGORITHM);
+				}	
+				
+			}catch(Exception e) {
+				throw new TokenException("JWT header validation failed; "+e.getMessage());
+			}
+			
+		}
+		
+	}
+	
+	private static void validazioneInformazioniTokenHeader(Map<String, Object> readClaims, List<String> expectedValues, String claim) throws TokenException {
+		if(expectedValues!=null && !expectedValues.isEmpty()) {
+			String v = null;
+			if(readClaims!=null && !readClaims.isEmpty()) {
+				v = TokenUtilities.getClaimAsString(readClaims,claim);
+			}
+			if(v==null || StringUtils.isEmpty(v)) {
+				throw new TokenException("Expected claim '"+claim+"' not found");
+			}
+			boolean find = false;
+			for (String vCheck : expectedValues) {
+				if(v.equalsIgnoreCase(vCheck)) {
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new TokenException("Claim '"+claim+"' with invalid value '"+v+"'");
+			}
+		}
+	}
+	
 	static String buildPrefixCacheKeyValidazione(String policy, String funzione) {
 		StringBuilder bf = new StringBuilder(funzione);
     	bf.append("_");
@@ -1359,58 +1420,58 @@ public class GestoreTokenValidazioneUtilities {
 		String endpoint = null;
 		String prefixConnettore = null;
 		if(introspection) {
-			endpoint = policyGestioneToken.getIntrospection_endpoint();
+			endpoint = policyGestioneToken.getIntrospectionEndpoint();
 			prefixConnettore = "[EndpointIntrospection: "+endpoint+"] ";
 		}else {
-			endpoint = policyGestioneToken.getUserInfo_endpoint();
+			endpoint = policyGestioneToken.getUserInfoEndpoint();
 			prefixConnettore = "[EndpointUserInfo: "+endpoint+"] ";
 		}
 		
 		TipoTokenRequest tipoTokenRequest = null;
 		String positionTokenName = null;
 		if(introspection) {
-			tipoTokenRequest = policyGestioneToken.getIntrospection_tipoTokenRequest();
+			tipoTokenRequest = policyGestioneToken.getIntrospectionTipoTokenRequest();
 		}else {
-			tipoTokenRequest = policyGestioneToken.getUserInfo_tipoTokenRequest();
+			tipoTokenRequest = policyGestioneToken.getUserInfoTipoTokenRequest();
 		}
 		switch (tipoTokenRequest) {
 		case authorization:
 			break;
 		case header:
 			if(introspection) {
-				positionTokenName = policyGestioneToken.getIntrospection_tipoTokenRequest_headerName();
+				positionTokenName = policyGestioneToken.getIntrospectionTipoTokenRequestHeaderName();
 			}else {
-				positionTokenName = policyGestioneToken.getUserInfo_tipoTokenRequest_headerName();
+				positionTokenName = policyGestioneToken.getUserInfoTipoTokenRequestHeaderName();
 			}
 			break;
 		case url:
 			if(introspection) {
-				positionTokenName = policyGestioneToken.getIntrospection_tipoTokenRequest_urlPropertyName();
+				positionTokenName = policyGestioneToken.getIntrospectionTipoTokenRequestUrlPropertyName();
 			}else {
-				positionTokenName = policyGestioneToken.getUserInfo_tipoTokenRequest_urlPropertyName();
+				positionTokenName = policyGestioneToken.getUserInfoTipoTokenRequestUrlPropertyName();
 			}
 			break;
 		case form:
 			if(introspection) {
-				positionTokenName = policyGestioneToken.getIntrospection_tipoTokenRequest_formPropertyName();
+				positionTokenName = policyGestioneToken.getIntrospectionTipoTokenRequestFormPropertyName();
 			}else {
-				positionTokenName = policyGestioneToken.getUserInfo_tipoTokenRequest_formPropertyName();
+				positionTokenName = policyGestioneToken.getUserInfoTipoTokenRequestFormPropertyName();
 			}
 			break;
 		}
 		
 		String contentType = null;
 		if(introspection) {
-			contentType = policyGestioneToken.getIntrospection_contentType();
+			contentType = policyGestioneToken.getIntrospectionContentType();
 		}else {
-			contentType = policyGestioneToken.getUserInfo_contentType();
+			contentType = policyGestioneToken.getUserInfoContentType();
 		}
 		
 		HttpRequestMethod httpMethod = null;
 		if(introspection) {
-			httpMethod = policyGestioneToken.getIntrospection_httpMethod();
+			httpMethod = policyGestioneToken.getIntrospectionHttpMethod();
 		}else {
-			httpMethod = policyGestioneToken.getUserInfo_httpMethod();
+			httpMethod = policyGestioneToken.getUserInfoHttpMethod();
 		}
 		
 		
@@ -1429,9 +1490,9 @@ public class GestoreTokenValidazioneUtilities {
 		if(https) {
 			sslConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
 			if(introspection) {
-				httpsClient = policyGestioneToken.isIntrospection_httpsAuthentication();
+				httpsClient = policyGestioneToken.isIntrospectionHttpsAuthentication();
 			}else {
-				httpsClient = policyGestioneToken.isUserInfo_httpsAuthentication();
+				httpsClient = policyGestioneToken.isUserInfoHttpsAuthentication();
 			}
 			if(httpsClient) {
 				sslClientConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
@@ -1442,34 +1503,34 @@ public class GestoreTokenValidazioneUtilities {
 		String username = null;
 		String password = null;
 		if(introspection) {
-			basic = policyGestioneToken.isIntrospection_basicAuthentication();
+			basic = policyGestioneToken.isIntrospectionBasicAuthentication();
 		}else {
-			basic = policyGestioneToken.isUserInfo_basicAuthentication();
+			basic = policyGestioneToken.isUserInfoBasicAuthentication();
 		}
 		if(basic) {
 			if(introspection) {
-				username = policyGestioneToken.getIntrospection_basicAuthentication_username();
-				password = policyGestioneToken.getIntrospection_basicAuthentication_password();
+				username = policyGestioneToken.getIntrospectionBasicAuthenticationUsername();
+				password = policyGestioneToken.getIntrospectionBasicAuthenticationPassword();
 			}
 			else {
-				username = policyGestioneToken.getUserInfo_basicAuthentication_username();
-				password = policyGestioneToken.getUserInfo_basicAuthentication_password();
+				username = policyGestioneToken.getUserInfoBasicAuthenticationUsername();
+				password = policyGestioneToken.getUserInfoBasicAuthenticationPassword();
 			}
 		}
 		
 		boolean bearer = false;
 		String bearerToken = null;
 		if(introspection) {
-			bearer = policyGestioneToken.isIntrospection_bearerAuthentication();
+			bearer = policyGestioneToken.isIntrospectionBearerAuthentication();
 		}else {
-			bearer = policyGestioneToken.isUserInfo_bearerAuthentication();
+			bearer = policyGestioneToken.isUserInfoBearerAuthentication();
 		}
 		if(bearer) {
 			if(introspection) {
-				bearerToken = policyGestioneToken.getIntrospection_beareAuthentication_token();
+				bearerToken = policyGestioneToken.getIntrospectionBeareAuthenticationToken();
 			}
 			else {
-				bearerToken = policyGestioneToken.getUserInfo_beareAuthentication_token();
+				bearerToken = policyGestioneToken.getUserInfoBeareAuthenticationToken();
 			}
 		}
 		
