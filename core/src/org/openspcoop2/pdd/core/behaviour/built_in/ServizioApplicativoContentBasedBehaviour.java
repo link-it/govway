@@ -88,7 +88,7 @@ public class ServizioApplicativoContentBasedBehaviour extends AbstractCore imple
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(nomePA);
 				ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(gestoreMessaggioRichiesta.getOpenspcoopstate()!=null ? gestoreMessaggioRichiesta.getOpenspcoopstate().getStatoRichiesta() : null);
-				pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+				pa = configPdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 			}
 			
 			String azione = null;

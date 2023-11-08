@@ -103,9 +103,9 @@ public class RicezioneBusteUtils {
 				if(integrazione.getNomePorta()!=null){
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(integrazione.getNomePorta());
-					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
-					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
-					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
+					PortaDelegata pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
+					flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pd);
+					flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pd);
 				}
 
 			}
@@ -126,8 +126,8 @@ public class RicezioneBusteUtils {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
-						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pa);
 					}
 				}
 				// Risposta
@@ -138,10 +138,10 @@ public class RicezioneBusteUtils {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
+						pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
 					}
-					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
-					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
+					flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pd);
+					flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pd);
 					flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 				}
 			}
@@ -162,8 +162,8 @@ public class RicezioneBusteUtils {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
-						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pa);
 					}
 
 				}else{
@@ -175,9 +175,9 @@ public class RicezioneBusteUtils {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
-						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
-						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForSender(pd);
 
 					}
 					//	Ricevuta alla richiesta.
@@ -187,9 +187,9 @@ public class RicezioneBusteUtils {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
-						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
-						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pd);
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 
 					}
@@ -200,9 +200,9 @@ public class RicezioneBusteUtils {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
-						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
-						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pd);
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 
 					}
@@ -227,8 +227,8 @@ public class RicezioneBusteUtils {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
-						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pa);
 					}
 
 				}else{
@@ -250,8 +250,8 @@ public class RicezioneBusteUtils {
 							}
 						}
 						if(pa!=null) {
-							flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
-							flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+							flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
+							flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pa);
 						}
 
 					}
@@ -262,9 +262,9 @@ public class RicezioneBusteUtils {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
-						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
-						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pd);
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 
 					}
@@ -275,9 +275,9 @@ public class RicezioneBusteUtils {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
-						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
-						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForReceiver(pd);
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 
 					}
@@ -308,7 +308,8 @@ public class RicezioneBusteUtils {
 			MsgDiagnostico msgDiag,Logger logCore,OpenSPCoop2Properties properties,
 			RuoloBusta ruoloBustaRicevuta,String implementazionePdDMittente,
 			RequestInfo requestInfo, PdDContext pddContext,
-			PortaApplicativa paFind)throws DriverConfigurazioneException{
+			PortaApplicativa paFind,
+			FlowProperties flowPropertiesRequest)throws DriverConfigurazioneException{
 
 		//	Proprieta' Message-Security relative alla spedizione della busta
 
@@ -349,8 +350,10 @@ public class RicezioneBusteUtils {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForSender(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext,
+								null);
+						flowProperties.messageSecurityRequest = flowPropertiesRequest!=null ? flowPropertiesRequest.messageSecurity : null;
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForSender(pa);
 					}
 				}
 			}
@@ -368,8 +371,10 @@ public class RicezioneBusteUtils {
 					}
 				}
 				if(pa!=null) {
-					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+					flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForSender(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext,
+							null);
+					flowProperties.messageSecurityRequest = flowPropertiesRequest!=null ? flowPropertiesRequest.messageSecurity : null;
+					flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForSender(pa);
 				}
 			}
 
@@ -389,8 +394,10 @@ public class RicezioneBusteUtils {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForSender(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext,
+								null);
+						flowProperties.messageSecurityRequest = flowPropertiesRequest!=null ? flowPropertiesRequest.messageSecurity : null;
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForSender(pa);
 					}
 
 				}
@@ -402,9 +409,9 @@ public class RicezioneBusteUtils {
 					Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(integrazione.getNomePorta());
-					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
-					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
-					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
+					PortaDelegata pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
+					flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
+					flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForSender(pd);
 
 				}
 
@@ -428,8 +435,10 @@ public class RicezioneBusteUtils {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForSender(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext,
+								null);
+						flowProperties.messageSecurityRequest = flowPropertiesRequest!=null ? flowPropertiesRequest.messageSecurity : null;
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForSender(pa);
 					}
 
 				}
@@ -449,8 +458,10 @@ public class RicezioneBusteUtils {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getMessageSecurityForSender(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext,
+								null);
+						flowProperties.messageSecurityRequest = flowPropertiesRequest!=null ? flowPropertiesRequest.messageSecurity : null;
+						flowProperties.mtom = configurazionePdDReader.getMTOMProcessorForSender(pa);
 					}
 
 				}

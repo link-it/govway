@@ -65,6 +65,7 @@ import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.digest.IDigestReader;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -626,6 +627,22 @@ public abstract class MessageSecurityContext{
     				if(alias!=null){
     					mapAliasToPassword.put(alias, password);
     				}
+    			}
+    			
+    			if(props.containsKey(SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP)) {
+	    			String mapUserPassword = (String) props.get(SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP);
+	    			if(mapUserPassword!=null && !"".equals(mapUserPassword)) {
+	    				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(mapUserPassword);
+	    				if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
+	    					for (Map.Entry<Object,Object> entry : convertTextToProperties.entrySet()) {
+								if((entry.getKey() instanceof String) && (entry.getValue() instanceof String)) {
+									String key = (String) entry.getKey();
+									String value = (String) entry.getValue();
+									mapAliasToPassword.put(key, value);
+								}
+							}
+	    				}
+	    			}
     			}
     			
     			if(mapAliasToPassword.size()>0) {

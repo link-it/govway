@@ -102,7 +102,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
+				PortaDelegata pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 				if (pd != null) {
 					RicezionePropertiesConfig config = new RicezionePropertiesConfig();
 					
@@ -381,7 +381,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				// SetPD usato poi successivamente
 				if(idPD!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getPortaDelegata()==null) {
 					try{
-						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, null); // passo null volutamente, per non utilizzare la configurazione
+						PortaDelegata pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, null); // passo null volutamente, per non utilizzare la configurazione
 						requestInfo.getRequestConfig().setPortaDelegata(pd);
 					}catch(Exception e){
 						logCore.debug("Recupero porta delegata fallito: "+e.getMessage(),e);

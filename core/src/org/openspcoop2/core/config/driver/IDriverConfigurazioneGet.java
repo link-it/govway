@@ -105,7 +105,7 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * @return Restituisce la lista dei servizi associati a soggetti virtuali gestiti dalla PdD
 	 * @throws DriverConfigurazioneException
 	 */
-	public List<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public List<IDServizio> getServiziSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	/**
 	 * Restituisce la lista degli identificativi dei soggetti
@@ -205,7 +205,7 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * @return una porta applicativa
 	 * 
 	 */
-	public Map<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public Map<IDSoggetto,PortaApplicativa> getPorteApplicativeSoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 
 	/**
 	 * Restituisce la lista degli identificativi delle porte applicative

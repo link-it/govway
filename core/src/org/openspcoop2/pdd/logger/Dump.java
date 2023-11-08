@@ -801,7 +801,7 @@ public class Dump {
 			if(TipoPdD.APPLICATIVA.equals(this.tipoPdD)) {
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(this.nomePorta);
-				PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, this.requestInfo);
+				PortaApplicativa pa = configPdDManager.getPortaApplicativaSafeMethod(idPA, this.requestInfo);
 				if(pa!=null) {
 					return pa.getProprieta();
 				}
@@ -809,7 +809,7 @@ public class Dump {
 			else if(TipoPdD.DELEGATA.equals(this.tipoPdD)) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(this.nomePorta);
-				PortaDelegata pd = configPdDManager.getPortaDelegata_SafeMethod(idPD, this.requestInfo);
+				PortaDelegata pd = configPdDManager.getPortaDelegataSafeMethod(idPD, this.requestInfo);
 				if(pd!=null) {
 					return pd.getProprieta();
 				}

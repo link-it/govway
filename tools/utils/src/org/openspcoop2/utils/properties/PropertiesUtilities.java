@@ -332,7 +332,7 @@ public class PropertiesUtilities {
 				if(line!=null && line.startsWith("#")) {
 					continue;
 				}
-				if(line!=null && line.contains("=")) {
+				if(line!=null && line.contains("=") && !line.startsWith("=")) {
 					String key = line.split("=")[0];
 					key = key.trim();
 					int valueIndex = line.indexOf("=");

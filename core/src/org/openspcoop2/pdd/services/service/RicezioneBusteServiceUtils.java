@@ -105,7 +105,7 @@ public class RicezioneBusteServiceUtils {
 				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+				PortaApplicativa pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 				if (pa != null) {
 					RicezionePropertiesConfig config = new RicezionePropertiesConfig();
 					
@@ -306,7 +306,7 @@ public class RicezioneBusteServiceUtils {
 					paDefault = requestInfo.getRequestConfig().getPortaApplicativaDefault();
 				}
 				else {
-					paDefault = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, null); // passo null volutamente, per non utilizzare la configurazione
+					paDefault = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, null); // passo null volutamente, per non utilizzare la configurazione
 					if(requestInfo.getRequestConfig()!=null) {
 						requestInfo.getRequestConfig().setPortaApplicativaDefault(paDefault);
 					}
@@ -399,7 +399,7 @@ public class RicezioneBusteServiceUtils {
 			// SetPA usato poi successivamente
 			if(idPA!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getPortaApplicativa()==null) {
 				try{
-					PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, null); // passo null volutamente, per accedere alla configurazione
+					PortaApplicativa pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, null); // passo null volutamente, per accedere alla configurazione
 					requestInfo.getRequestConfig().setPortaApplicativa(pa);
 				}catch(Exception e){
 					logCore.debug("Recupero porta applicativa fallito: "+e.getMessage(),e);

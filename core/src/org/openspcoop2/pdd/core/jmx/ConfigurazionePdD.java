@@ -2430,13 +2430,13 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		}
 				
 		// Messaggi diagnostici
-		this.msgDiagnosticiLivelloSeverita = LogLevels.toOpenSPCoop2(this.configReader.getSeverita_msgDiagnostici(),true);
-		this.msgDiagnosticiLivelloSeveritaLog4J = LogLevels.toOpenSPCoop2(this.configReader.getSeveritaLog4J_msgDiagnostici(),true);
+		this.msgDiagnosticiLivelloSeverita = LogLevels.toOpenSPCoop2(this.configReader.getSeveritaMessaggiDiagnostici(),true);
+		this.msgDiagnosticiLivelloSeveritaLog4J = LogLevels.toOpenSPCoop2(this.configReader.getSeveritaLog4JMessaggiDiagnostici(),true);
 		this.log4jDiagnosticaAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato;
 		this.log4jOpenSPCoopAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 		this.log4jIntegrationManagerAbilitato = OpenSPCoop2Logger.loggerIntegrationManagerAbilitato;
 		
-		MessaggiDiagnostici msg = this.configReader.getOpenSPCoopAppender_MsgDiagnostici();
+		MessaggiDiagnostici msg = this.configReader.getOpenSPCoopAppenderMessaggiDiagnostici();
 		if(msg!=null && msg.sizeOpenspcoopAppenderList()>0){
 			this.msgDiagnosticiAppender = new String[msg.sizeOpenspcoopAppenderList()];
 			for(int i=0; i<msg.sizeOpenspcoopAppenderList(); i++){
@@ -2456,7 +2456,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		this.log4jTracciamentoAbilitato = OpenSPCoop2Logger.loggerTracciamentoAbilitato;
 		this.log4jDumpAbilitato = OpenSPCoop2Logger.loggerDumpAbilitato;
 		
-		Tracciamento tracciamento = this.configReader.getOpenSPCoopAppender_Tracciamento();
+		Tracciamento tracciamento = this.configReader.getOpenSPCoopAppenderTracciamento();
 		if(tracciamento!=null && tracciamento.sizeOpenspcoopAppenderList()>0){
 			this.tracciamentoAppender = new String[tracciamento.sizeOpenspcoopAppenderList()];
 			for(int i=0; i<tracciamento.sizeOpenspcoopAppenderList(); i++){
@@ -2600,8 +2600,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			throw new JMException("Livello "+livelloMsgDiagnostici+" non conosciuto");
 		}
 		this.msgDiagnosticiLivelloSeverita = livelloMsgDiagnostici;
-		ConfigurazionePdDReader.livello_msgDiagnosticiJMX = LogLevels.toLog4J(this.msgDiagnosticiLivelloSeverita);
-		ConfigurazionePdDReader.severita_msgDiagnosticiJMX = LogLevels.toOpenSPCoop2(this.msgDiagnosticiLivelloSeverita);
+		ConfigurazionePdDReader.livelloMessaggiDiagnosticiJMX = LogLevels.toLog4J(this.msgDiagnosticiLivelloSeverita);
+		ConfigurazionePdDReader.severitaMessaggiDiagnosticiJMX = LogLevels.toOpenSPCoop2(this.msgDiagnosticiLivelloSeverita);
 	}
 	
 	public void setMsgDiagnosticiLivelloSeveritaLog4J(String livelloMsgDiagnosticiLog4j)throws JMException{
@@ -2618,8 +2618,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			throw new JMException("Livello "+livelloMsgDiagnosticiLog4j+" non conosciuto");
 		}
 		this.msgDiagnosticiLivelloSeveritaLog4J = livelloMsgDiagnosticiLog4j;
-		ConfigurazionePdDReader.livelloLog4J_msgDiagnosticiJMX = LogLevels.toLog4J(this.msgDiagnosticiLivelloSeveritaLog4J);
-		ConfigurazionePdDReader.severitaLog4J_msgDiagnosticiJMX = LogLevels.toOpenSPCoop2(this.msgDiagnosticiLivelloSeveritaLog4J);
+		ConfigurazionePdDReader.livelloLog4JMessaggiDiagnosticiJMX = LogLevels.toLog4J(this.msgDiagnosticiLivelloSeveritaLog4J);
+		ConfigurazionePdDReader.severitaLog4JMessaggiDiagnosticiJMX = LogLevels.toOpenSPCoop2(this.msgDiagnosticiLivelloSeveritaLog4J);
 	}
 	
 	public void setTracciamentoAbilitato(boolean v){

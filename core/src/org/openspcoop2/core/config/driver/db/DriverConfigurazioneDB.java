@@ -673,7 +673,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	
 	@Override
-	public List<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	public List<IDServizio> getServiziSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		return this.soggettiDriver.getServiziSoggettiVirtuali();
 	}
 	
@@ -1099,8 +1099,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 
 	@Override
-	public Map<IDSoggetto, PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-		return this.porteApplicativeDriver.getPorteApplicative_SoggettiVirtuali(idServizio);
+	public Map<IDSoggetto, PortaApplicativa> getPorteApplicativeSoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.porteApplicativeDriver.getPorteApplicativeSoggettiVirtuali(idServizio);
 	}
 	
 	public List<String> portaApplicativaRuoliList(long idPA, ISearch ricerca) throws DriverConfigurazioneException {

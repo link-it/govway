@@ -523,12 +523,12 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	 * @throws DriverConfigurazioneException
 	 */
 	@Override
-	public List<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public List<IDServizio> getServiziSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		refreshConfigurazioneXML();
 
-		List<IDServizio> lista = new ArrayList<IDServizio>();
-		HashSet<String> unique = new HashSet<String>();
+		List<IDServizio> lista = new ArrayList<>();
+		HashSet<String> unique = new HashSet<>();
 		try{
 			for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
 				Soggetto soggetto = this.openspcoop.getSoggetto(i);
@@ -540,8 +540,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						IDServizio s = IDServizioUtils.buildIDServizio(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
 								new IDSoggetto(pa.getSoggettoVirtuale().getTipo(),pa.getSoggettoVirtuale().getNome()), 
 								pa.getServizio().getVersione());
-						if(unique.contains(s.toString())==false){
-							//log.info("aggiunto Servizio "+s.toString()+" alla lista dei servizi erogati da Soggetti Virtuali");
+						if(!unique.contains(s.toString())){
+							/**log.info("aggiunto Servizio "+s.toString()+" alla lista dei servizi erogati da Soggetti Virtuali");*/
 							lista.add(s);
 							unique.add(s.toString());
 						}
@@ -549,12 +549,12 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				}
 			}	
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("[getServizi_SoggettiVirtuali] Inizializzazione lista servizi dei soggetti virtuali non riuscita: "+e.getMessage());
+			throw new DriverConfigurazioneException("[getServiziSoggettiVirtuali] Inizializzazione lista servizi dei soggetti virtuali non riuscita: "+e.getMessage());
 		}
 		
 		
-		if(lista.size()==0){
-			throw new DriverConfigurazioneNotFound("[getServizi_SoggettiVirtuali] Servizi erogati da Soggetti virtuali non esistenti");
+		if(lista.isEmpty()){
+			throw new DriverConfigurazioneNotFound("[getServiziSoggettiVirtuali] Servizi erogati da Soggetti virtuali non esistenti");
 		}
 	
 		return lista;
@@ -1202,7 +1202,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	}
 	
 	@Override
-	public Map<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Map<IDSoggetto,PortaApplicativa> getPorteApplicativeSoggettiVirtuali(IDServizio idServizio)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		if(idServizio==null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro idServizio non valido");

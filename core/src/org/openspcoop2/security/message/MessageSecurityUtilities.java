@@ -32,49 +32,82 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
  * @version $Rev$, $Date$
  */
 public class MessageSecurityUtilities {
+	
+	private MessageSecurityUtilities() {}
 
 	public static boolean processSOAPFault(Map<String,Object> messageSecurityProperties){
 		// Default disabilitati
 		boolean processEncryptSOAPFault = false;
 		boolean processSignatureSOAPFault = false;
+		boolean processUsernameTokenFault = false;
+		boolean processSAMLTokenFault = false;
 		
 		String propertyEncrypt = (String) messageSecurityProperties.get(SecurityConstants.ENCRYPTION_SOAP_FAULT);
-		if(propertyEncrypt!=null){
-			if(SecurityConstants.TRUE.equalsIgnoreCase(propertyEncrypt)){
-				processEncryptSOAPFault = true;
-			}
+		if(propertyEncrypt!=null &&
+			SecurityConstants.TRUE.equalsIgnoreCase(propertyEncrypt)){
+			processEncryptSOAPFault = true;
 		}
 		
 		String propertySignature = (String) messageSecurityProperties.get(SecurityConstants.SIGNATURE_SOAP_FAULT);
-		if(propertySignature!=null){
-			if(SecurityConstants.TRUE.equalsIgnoreCase(propertySignature)){
-				processSignatureSOAPFault = true;
-			}
+		if(propertySignature!=null &&
+			SecurityConstants.TRUE.equalsIgnoreCase(propertySignature)){
+			processSignatureSOAPFault = true;
 		}
-		return _processFault(messageSecurityProperties, processEncryptSOAPFault, processSignatureSOAPFault);
+		
+		String propertyUsernameToken = (String) messageSecurityProperties.get(SecurityConstants.USERNAME_TOKEN_SOAP_FAULT);
+		if(propertyUsernameToken!=null &&
+			SecurityConstants.TRUE.equalsIgnoreCase(propertyUsernameToken)){
+			processUsernameTokenFault = true;
+		}
+		
+		String propertySAMLToken = (String) messageSecurityProperties.get(SecurityConstants.SAML_TOKEN_SOAP_FAULT);
+		if(propertySAMLToken!=null &&
+			SecurityConstants.TRUE.equalsIgnoreCase(propertySAMLToken)){
+			processSAMLTokenFault = true;
+		}
+		
+		return processFaultEngine(messageSecurityProperties, 
+				processEncryptSOAPFault, processSignatureSOAPFault,
+				processUsernameTokenFault, processSAMLTokenFault);
 	}
 	public static boolean processProblemDetails(Map<String,Object> messageSecurityProperties){
 		// Default disabilitati
 		boolean processEncryptProblemDetails = false;
 		boolean processSignatureProblemDetails = false;
+		boolean processUsernameTokenProblemDetails = false;
+		boolean processSAMLTokenProblemDetails = false;
 		
 		String propertyEncrypt = (String) messageSecurityProperties.get(SecurityConstants.ENCRYPTION_PROBLEM_DETAILS);
-		if(propertyEncrypt!=null){
-			if(SecurityConstants.TRUE.equalsIgnoreCase(propertyEncrypt)){
-				processEncryptProblemDetails = true;
-			}
+		if(propertyEncrypt!=null &&
+			SecurityConstants.TRUE.equalsIgnoreCase(propertyEncrypt)){
+			processEncryptProblemDetails = true;
 		}
 		
 		String propertySignature = (String) messageSecurityProperties.get(SecurityConstants.SIGNATURE_PROBLEM_DETAILS);
-		if(propertySignature!=null){
-			if(SecurityConstants.TRUE.equalsIgnoreCase(propertySignature)){
-				processSignatureProblemDetails = true;
-			}
+		if(propertySignature!=null &&
+			SecurityConstants.TRUE.equalsIgnoreCase(propertySignature)){
+			processSignatureProblemDetails = true;
 		}
-		return _processFault(messageSecurityProperties, processEncryptProblemDetails, processSignatureProblemDetails);
+		
+		String propertyUsernameToken = (String) messageSecurityProperties.get(SecurityConstants.USERNAME_TOKEN_PROBLEM_DETAILS);
+		if(propertyUsernameToken!=null &&
+			SecurityConstants.TRUE.equalsIgnoreCase(propertyUsernameToken)){
+			processUsernameTokenProblemDetails = true;
+		}
+		
+		String propertySAMLToken = (String) messageSecurityProperties.get(SecurityConstants.SAML_TOKEN_PROBLEM_DETAILS);
+		if(propertySAMLToken!=null &&
+			SecurityConstants.TRUE.equalsIgnoreCase(propertySAMLToken)){
+			processSAMLTokenProblemDetails = true;
+		}
+		
+		return processFaultEngine(messageSecurityProperties, 
+				processEncryptProblemDetails, processSignatureProblemDetails,
+				processUsernameTokenProblemDetails, processSAMLTokenProblemDetails);
 	}
-	private static boolean _processFault(Map<String,Object> messageSecurityProperties,
-			boolean processEncryptFault, boolean processSignatureFault ){
+	private static boolean processFaultEngine(Map<String,Object> messageSecurityProperties,
+			boolean processEncryptFault, boolean processSignatureFault,
+			boolean processUsernameTokenFault, boolean processSAMLTokenFault){
 				
 		String action = (String) messageSecurityProperties.remove(SecurityConstants.ACTION);
 		
@@ -95,6 +128,22 @@ public class MessageSecurityUtilities {
 			}
 			else if(SecurityConstants.SIGNATURE_ACTION.equals(a)){
 				if(processSignatureFault){
+					if(bfNewActions.length()>0){
+						bfNewActions.append(" ");
+					}
+					bfNewActions.append(a);
+				}
+			}
+			else if(SecurityConstants.isActionUsernameToken(a) ){
+				if(processUsernameTokenFault){
+					if(bfNewActions.length()>0){
+						bfNewActions.append(" ");
+					}
+					bfNewActions.append(a);
+				}
+			}
+			else if(SecurityConstants.isActionSAMLToken(a) ){
+				if(processSAMLTokenFault){
 					if(bfNewActions.length()>0){
 						bfNewActions.append(" ");
 					}

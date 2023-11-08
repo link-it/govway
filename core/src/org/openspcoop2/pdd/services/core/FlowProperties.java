@@ -33,6 +33,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 public class FlowProperties{
 	
 	public MessageSecurityConfig messageSecurity = null;
+	public MessageSecurityConfig messageSecurityRequest = null;
 	public MTOMProcessorConfig mtom = null;
 	public RuoloMessaggio tipoMessaggio = null;
 	

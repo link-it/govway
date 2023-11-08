@@ -766,24 +766,24 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 		}
 	}
 
-	protected Map<IDSoggetto, PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	protected Map<IDSoggetto, PortaApplicativa> getPorteApplicativeSoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
-		this.driver.logDebug("metodo getPorteApplicative_SoggettiVirtuali in esecuzione...");
+		this.driver.logDebug("metodo getPorteApplicativeSoggettiVirtuali in esecuzione...");
 
 		if (idServizio == null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro idServizio Non Valido");
+			throw new DriverConfigurazioneException("[getPortaApplicativaSoggettiVirtuali] Parametro idServizio Non Valido");
 		if (idServizio.getSoggettoErogatore() == null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro Soggetto Erogatore Non Valido");
-		Map<IDSoggetto, PortaApplicativa> paConSoggetti = new HashMap<IDSoggetto, PortaApplicativa>();
+			throw new DriverConfigurazioneException("[getPortaApplicativaSoggettiVirtuali] Parametro Soggetto Erogatore Non Valido");
+		Map<IDSoggetto, PortaApplicativa> paConSoggetti = new HashMap<>();
 		IDSoggetto soggettoVirtuale = idServizio.getSoggettoErogatore();
 		String servizio = idServizio.getNome();
 		String tipoServizio = idServizio.getTipo();
 		Integer versioneServizio = idServizio.getVersione();
 		String azione = idServizio.getAzione();
 		if ((servizio == null) || (tipoServizio == null))
-			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametri (Servizio) Non Validi");
+			throw new DriverConfigurazioneException("[getPortaApplicativaSoggettiVirtuali] Parametri (Servizio) Non Validi");
 
-		/*
+		/**
 		 * // Devi cercare tutte le porte applicative che hanno come soggetto
 		 * virtuale il soggettoVirtuale // con servizio,tipoServizio e azione
 		 * come specificato nel precendente metodo.
@@ -805,10 +805,10 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 
 		if (this.driver.atomica) {
 			try {
-				con = this.driver.getConnectionFromDatasource("getPorteApplicative_SoggettiVirtuali");
+				con = this.driver.getConnectionFromDatasource("getPorteApplicativeSoggettiVirtuali");
 
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicative_SoggettiVirtuali] Exception accedendo al datasource :" + e.getMessage(),e);
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeSoggettiVirtuali] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -822,10 +822,10 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 			String tipoSoggVirt = soggettoVirtuale.getTipo();
 
 			if (nomeSoggVirt == null || nomeSoggVirt.equals("") || tipoSoggVirt == null || tipoSoggVirt.equals(""))
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicative_SoggettiVirtuali] Parametri SoggettoVirtuale non corretti.");
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeSoggettiVirtuali] Parametri SoggettoVirtuale non corretti.");
 
 			//Prendo la lista dei soggetti presenti
-			ArrayList<Long> soggettiList = new ArrayList<Long>();
+			ArrayList<Long> soggettiList = new ArrayList<>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(this.driver.tabellaSoggetti);
 			sqlQueryObject.addSelectField("id");
@@ -992,7 +992,7 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 					if (rs1.next()) {
 						soggettoProprietario = new IDSoggetto(rs1.getString("tipo_soggetto"), rs1.getString("nome_soggetto"));
 					} else {
-						throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicative_SoggettiVirtuali] Impossibile trovare le informazioni del soggetto proprietario della PA.");
+						throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeSoggettiVirtuali] Impossibile trovare le informazioni del soggetto proprietario della PA.");
 					}
 					rs1.close();
 					stm1.close();
@@ -1010,16 +1010,16 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 			}//chiudo for
 
 			if(paConSoggetti.size() == 0)
-				throw new DriverConfigurazioneNotFound("[getPortaApplicativa_SoggettiVirtuali] Porte applicative di soggetti virtuali non esistenti.");
+				throw new DriverConfigurazioneNotFound("[getPorteApplicativeSoggettiVirtuali] Porte applicative di soggetti virtuali non esistenti.");
 
 			return paConSoggetti;
 
 		} catch (SQLException se) {
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicative_SoggettiVirtuali] SqlException: " + se.getMessage(),se);
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeSoggettiVirtuali] SqlException: " + se.getMessage(),se);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw de;
 		}catch (Exception se) {
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicative_SoggettiVirtuali] Exception: " + se.getMessage(),se);
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeSoggettiVirtuali] Exception: " + se.getMessage(),se);
 		}finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs2, stm2);

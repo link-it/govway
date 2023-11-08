@@ -111,7 +111,7 @@ public class InfoConfigurazione implements Serializable {
 						if(PddRuolo.DELEGATA.equals(transazioneDTO.getPddRuolo())) {
 							IDPortaDelegata idPD = new IDPortaDelegata();
 							idPD.setNome(nomePorta);
-							PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
+							PortaDelegata pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 							if(pd!=null) {
 								
 								idSoggettoFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
@@ -129,7 +129,7 @@ public class InfoConfigurazione implements Serializable {
 						else {
 							IDPortaApplicativa idPA = new IDPortaApplicativa();
 							idPA.setNome(nomePorta);
-							PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+							PortaApplicativa pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 							if(pa!=null) {
 								
 								idSoggettoErogatore = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());

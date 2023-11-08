@@ -989,7 +989,7 @@ public class PolicyVerifier {
 		String api = null;
 		IDPortaDelegata idPD = new IDPortaDelegata();
 		idPD.setNome(nomePorta);
-		PortaDelegata pd = configPdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
+		PortaDelegata pd = configPdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 		if(pd!=null) {
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
 					pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
@@ -1042,7 +1042,7 @@ public class PolicyVerifier {
 		String api = null;
 		IDPortaApplicativa idPA = new IDPortaApplicativa();
 		idPA.setNome(nomePorta);
-		PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+		PortaApplicativa pa = configPdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 		if(pa!=null) {
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
 					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),

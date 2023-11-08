@@ -521,3 +521,6 @@ Di seguito vengono descritti i test del package 'other':
 - 'ocsp', verifica l'utilizzo del servizio OCSP
    ant run_test -Ddelete=false -Dload=false -Dpackage=other.ocsp
 
+- 'wssecurity', verifica funzionalità specifica di WSSecurity
+   ant run_test -Ddelete=false -Dload=false -Dpackage=other.wssecurity
+

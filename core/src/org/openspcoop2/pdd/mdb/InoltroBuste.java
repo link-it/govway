@@ -539,7 +539,7 @@ public class InoltroBuste extends GenericLib{
 		
 		// ProprietaErroreApplicativo (No function Router active)
 		ProprietaErroreApplicativo proprietaErroreAppl = null;
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			proprietaErroreAppl = richiestaDelegata.getFault();
 			proprietaErroreAppl.setIdModulo(InoltroBuste.ID_MODULO);
 		}
@@ -570,7 +570,7 @@ public class InoltroBuste extends GenericLib{
 		/* ----------- Lettura PortaDelegata e Servizio Applicativo ------------- */
 		PortaDelegata pd = null;
 		ServizioApplicativo sa = null;
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			try{
 				pd = configurazionePdDManager.getPortaDelegata(richiestaDelegata.getIdPortaDelegata(), requestInfo);
 			}catch(Exception e){
@@ -610,7 +610,7 @@ public class InoltroBuste extends GenericLib{
 		boolean sendRispostaApplicativa = false;
 		boolean statelessAsincrono = false;
 		boolean richiestaAsincronaSimmetricaStateless = false;
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			// a)
 			if(Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO.equals(richiestaDelegata.getScenario()) ){
 				sendRispostaApplicativa = true; 
@@ -703,7 +703,7 @@ public class InoltroBuste extends GenericLib{
 		
 		// ResponseCaching 
 		ResponseCachingConfigurazione responseCachingConfig = null;
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			try{		
 				responseCachingConfig = configurazionePdDManager.getConfigurazioneResponseCaching(pd);	
 			}catch(Exception e){
@@ -718,7 +718,7 @@ public class InoltroBuste extends GenericLib{
 		
 		// Trasformazioni
 		Trasformazioni trasformazioni = null;
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			try {
 				trasformazioni = configurazionePdDManager.getTrasformazioni(pd);
 			}catch(Exception e){
@@ -734,7 +734,7 @@ public class InoltroBuste extends GenericLib{
 		//Identificazione del tipo di porta
 		boolean portaDiTipoStateless= false;
 		boolean routingStateless = false;
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			try{		
 				portaDiTipoStateless = configurazionePdDManager.isModalitaStateless(pd, bustaRichiesta.getProfiloDiCollaborazione());		
 			}catch(Exception e){
@@ -753,7 +753,7 @@ public class InoltroBuste extends GenericLib{
 		msgRequest.setRoutingStateless(routingStateless);
 
 		boolean sbustamentoInformazioniProtocolloRisposta = false;
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			try{		
 				sbustamentoInformazioniProtocolloRisposta = configurazionePdDManager.invocazionePortaDelegataSbustamentoInformazioniProtocollo(sa);
 			}catch(Exception e){
@@ -858,7 +858,7 @@ public class InoltroBuste extends GenericLib{
 		
 		// Gestione riscontri per profilo oneway (No function Router active)
 		boolean gestioneBusteNonRiscontrateAttive = false;
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			if(Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(richiestaDelegata.getScenario()) && (sendRispostaApplicativa==false) ){
 				gestioneBusteNonRiscontrateAttive =consegnaAffidabile;
 			}else if (Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO.equals(richiestaDelegata.getScenario()) ||
@@ -921,7 +921,7 @@ public class InoltroBuste extends GenericLib{
 		IDServizio idServizio = richiestaDelegata.getIdServizio();
 		IDAccordo idAccordoServizio = richiestaDelegata.getIdAccordo();
 		ForwardProxy forwardProxy = null;
-		if(functionAsRouter==false && configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
+		if(!functionAsRouter && configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
 			try {
 				forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(identitaPdD, idServizio, null, requestInfo);
 			}catch(Exception e) {
@@ -1002,7 +1002,7 @@ public class InoltroBuste extends GenericLib{
 			Connettore connettore = null;
 			String erroreRicercaConnettore = null;
 			Exception eForwardRoute = null;
-			if(functionAsRouter==false){
+			if(!functionAsRouter){
 				try{
 					IProtocolManager pm = protocolFactory.createProtocolManager();
 					if(pm.isStaticRoute()) {
@@ -1416,7 +1416,7 @@ public class InoltroBuste extends GenericLib{
 
 			/* ------------  Gestione Funzionalita' speciali per Attachments (Manifest) ------------- */
 			boolean scartaBody = false;
-			if(functionAsRouter==false){
+			if(!functionAsRouter){
 				boolean allegaBody = 
 					configurazionePdDManager.isAllegaBody(pd);
 				if(allegaBody){
@@ -1530,8 +1530,8 @@ public class InoltroBuste extends GenericLib{
 			
 			/* ------------ Init MTOM Processor / SecurityContext -------------- */
 			MTOMProcessor mtomProcessor = null;
-			MessageSecurityConfig messageSecurityConfig = null;
-			if(functionAsRouter==false){
+			MessageSecurityConfig messageSecurityRequestConfig = null;
+			if(!functionAsRouter){
 			
 				msgDiag.mediumDebug("init MTOM Processor / SecurityContext ...");
 				ErroreIntegrazione erroreIntegrazione = null;
@@ -1540,7 +1540,7 @@ public class InoltroBuste extends GenericLib{
 				
 				MTOMProcessorConfig mtomConfig = null;
 				try{
-					mtomConfig=configurazionePdDManager.getPD_MTOMProcessorForSender(pd);
+					mtomConfig=configurazionePdDManager.getMTOMProcessorForSender(pd);
 				}catch(Exception e){
 					oggetto = "LetturaConfigurazioneMTOMProcessorRoleSender";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1550,7 +1550,7 @@ public class InoltroBuste extends GenericLib{
 				
 				if(erroreIntegrazione==null){
 					try{
-						messageSecurityConfig=configurazionePdDManager.getPD_MessageSecurityForSender(pd, this.log, requestMessageTrasformato, bustaRichiesta, requestInfo, pddContext);
+						messageSecurityRequestConfig=configurazionePdDManager.getMessageSecurityForSender(pd, this.log, requestMessageTrasformato, bustaRichiesta, requestInfo, pddContext);
 					}catch(Exception e){
 						oggetto = "LetturaConfigurazioneMessageSecurityRoleSender";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1586,7 +1586,7 @@ public class InoltroBuste extends GenericLib{
 					return esito;
 				}
 				else{
-					mtomProcessor = new MTOMProcessor(mtomConfig, messageSecurityConfig, 
+					mtomProcessor = new MTOMProcessor(mtomConfig, messageSecurityRequestConfig, 
 							tipoPdD, msgDiag, this.log, pddContext);
 				}
 								
@@ -1635,7 +1635,7 @@ public class InoltroBuste extends GenericLib{
 				}
 			}
 			else{
-				if(functionAsRouter==false){
+				if(!functionAsRouter){
 					msgDiag.logPersonalizzato("mtom.beforeSecurity.processamentoRichiestaDisabilitato");
 				}
 			}
@@ -1653,7 +1653,7 @@ public class InoltroBuste extends GenericLib{
 			MessageSecurityFactory messageSecurityFactory = new MessageSecurityFactory();
 			MessageSecurityContext messageSecurityContext = null;
 			SecurityInfo securityInfo = null;
-			if(functionAsRouter==false){
+			if(!functionAsRouter){
 
 				// ottiene le proprieta' Message-Security relative alla porta delegata:
 				// OneWay -> RequestFlow
@@ -1663,8 +1663,8 @@ public class InoltroBuste extends GenericLib{
 				ErroreIntegrazione erroreIntegrazione = null;
 				CodiceErroreCooperazione codiceErroreCooperazione = null;
 				Exception messageSecurityException = null;
-				if(messageSecurityConfig!=null && messageSecurityConfig.getFlowParameters()!=null && 
-						messageSecurityConfig.getFlowParameters().size() > 0){
+				if(messageSecurityRequestConfig!=null && messageSecurityRequestConfig.getFlowParameters()!=null && 
+						messageSecurityRequestConfig.getFlowParameters().size() > 0){
 					try{
 						
 						msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta ...");
@@ -1683,7 +1683,7 @@ public class InoltroBuste extends GenericLib{
 						contextParameters.setPddErogatore(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null, requestInfo));
 						
 						messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
-						messageSecurityContext.setOutgoingProperties(messageSecurityConfig.getFlowParameters());
+						messageSecurityContext.setOutgoingProperties(messageSecurityRequestConfig.getFlowParameters());
 						
 						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
 						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
@@ -3122,13 +3122,13 @@ public class InoltroBuste extends GenericLib{
 					} 
 				}
 								
-				if(functionAsRouter==false && presenzaRispostaProtocollo ){		
+				if(!functionAsRouter && presenzaRispostaProtocollo ){		
 
 					
 					
 					/* *** Init MTOM Processor / SecurityContext *** */ 
 					mtomProcessor = null;
-					messageSecurityConfig = null;
+					MessageSecurityConfig messageSecurityResponseConfig = null;
 					msgDiag.mediumDebug("init MTOM Processor / SecurityContext ...");
 					ErroreIntegrazione erroreIntegrazioneConfig = null;
 					Exception configException = null;
@@ -3136,7 +3136,7 @@ public class InoltroBuste extends GenericLib{
 						
 					MTOMProcessorConfig mtomConfig = null;
 					try{
-						mtomConfig=configurazionePdDManager.getPD_MTOMProcessorForReceiver(pd);
+						mtomConfig=configurazionePdDManager.getMTOMProcessorForReceiver(pd);
 					}catch(Exception e){
 						oggetto = "LetturaConfigurazioneMTOMProcessorRoleReceiver";
 						erroreIntegrazioneConfig = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -3144,7 +3144,8 @@ public class InoltroBuste extends GenericLib{
 						configException = e;
 					}					
 					try{
-						messageSecurityConfig=configurazionePdDManager.getPD_MessageSecurityForReceiver(pd);
+						messageSecurityResponseConfig=configurazionePdDManager.getMessageSecurityForReceiver(pd, this.log, responseMessage, bustaRichiesta, requestInfo, pddContext,
+								messageSecurityRequestConfig);
 					}catch(Exception e){
 						oggetto = "LetturaConfigurazioneMessageSecurityRoleReceiver";
 						erroreIntegrazioneConfig = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -3180,7 +3181,7 @@ public class InoltroBuste extends GenericLib{
 						return esito;
 					}
 					else{
-						mtomProcessor = new MTOMProcessor(mtomConfig, messageSecurityConfig, 
+						mtomProcessor = new MTOMProcessor(mtomConfig, messageSecurityResponseConfig, 
 								tipoPdD, msgDiag, this.log, pddContext);
 					}
 					
@@ -3230,8 +3231,8 @@ public class InoltroBuste extends GenericLib{
 					
 										
 					/* *** Init context sicurezza *** */
-					if(messageSecurityConfig!=null && messageSecurityConfig.getFlowParameters()!=null
-							&& messageSecurityConfig.getFlowParameters().size()>0){
+					if(messageSecurityResponseConfig!=null && messageSecurityResponseConfig.getFlowParameters()!=null
+							&& messageSecurityResponseConfig.getFlowParameters().size()>0){
 						
 						try{							
 							msgDiag.mediumDebug("Inizializzazione contesto di Message Security della risposta ...");
@@ -3251,7 +3252,7 @@ public class InoltroBuste extends GenericLib{
 								contextParameters.setPddErogatore(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null, requestInfo));
 								messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
 							}
-							messageSecurityContext.setIncomingProperties(messageSecurityConfig.getFlowParameters());  
+							messageSecurityContext.setIncomingProperties(messageSecurityResponseConfig.getFlowParameters());  
 							messageSecurityContext.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 							
 							String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
@@ -3433,7 +3434,7 @@ public class InoltroBuste extends GenericLib{
 						boolean isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
 						
 						boolean gestioneManifestRisposta = false;
-						if(functionAsRouter==false && !isMessaggioErroreProtocollo){
+						if(!functionAsRouter && !isMessaggioErroreProtocollo){
 							gestioneManifestRisposta = configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory);
 							
 							List<Eccezione> erroriValidazione = validatore.getEccezioniValidazione();
@@ -3485,7 +3486,7 @@ public class InoltroBuste extends GenericLib{
 							headerProtocolloRisposta = validatore.getHeaderProtocollo();
 						}
 					}catch(Exception e){
-						if(functionAsRouter==false){
+						if(!functionAsRouter){
 							msgDiag.logErroreGenerico(e,"sbustatore.sbustamento("+bustaRisposta.getID()+")");
 						}else{
 							msgDiag.logErroreGenerico(e,"validator.getHeader("+bustaRisposta.getID()+")");
@@ -3917,7 +3918,7 @@ public class InoltroBuste extends GenericLib{
 			msgDiag.mediumDebug("Gestione Correlazione Applicativa... ");
 			
 			// Correlazione Applicativa
-			if(functionAsRouter==false && pd!=null && pd.getCorrelazioneApplicativaRisposta()!=null){
+			if(!functionAsRouter && pd!=null && pd.getCorrelazioneApplicativaRisposta()!=null){
 				GestoreCorrelazioneApplicativa gestoreCorrelazione = null;
 				try{
 					
@@ -4243,7 +4244,7 @@ public class InoltroBuste extends GenericLib{
 						idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta);
 
 				// Costruzione oggetto da spedire al modulo 'SbustamentoRisposte' (se routing non attivo)
-				if(functionAsRouter==false){
+				if(!functionAsRouter){
 					sbustamentoRisposteMSG = new SbustamentoRisposteMessage();
 					sbustamentoRisposteMSG.setRichiestaDelegata(richiestaDelegata);
 					sbustamentoRisposteMSG.setBusta(bustaRisposta);
@@ -4343,7 +4344,7 @@ public class InoltroBuste extends GenericLib{
 				
 				try{
 					RepositoryBuste repositoryResponse = null;
-					if(functionAsRouter==false){
+					if(!functionAsRouter){
 						repositoryResponse = new RepositoryBuste(openspcoopstate.getStatoRisposta(), false, protocolFactory);
 					}
 
@@ -4366,7 +4367,7 @@ public class InoltroBuste extends GenericLib{
 					}
 
 					// Aggiungo ErroreApplicativo come details se non sono router.
-					if(functionAsRouter==false){
+					if(!functionAsRouter){
 						if(soapFault!=null){
 							if (!isMessaggioErroreProtocollo) {
 								if(enrichSoapFaultApplicativo){
@@ -4393,7 +4394,7 @@ public class InoltroBuste extends GenericLib{
 					}
 
 					// registrazione risposta 
-					if(functionAsRouter==false){
+					if(!functionAsRouter){
 						
 						//Se functionAsRouter viene registrato in EJBUtils.sendRispostaProtocollo
 						

@@ -45,72 +45,97 @@ provider="org.openspcoop2.security.message.wss4j.WSS4JSecurityProvider">
 		</item>
 		<item type="checkbox" name="usernameTokenNoPassword" label="Token senza Password" defaultSelected="false" reloadOnChange="true">
 			<conditions>
-	            <condition not="true">
-	                    <selected name="usernameTokenSignature" />
-	            </condition>
-           	</conditions>
+				<condition not="true">
+					<selected name="usernameTokenSignature" />
+				</condition>
+			</conditions>
 			<property name="allowUsernameTokenNoPassword" />
 		</item>
 		<item type="hidden" name="securityAction" value="UsernameToken">
 			<conditions and="true">
-	            <condition not="true">
-	                    <selected name="usernameTokenSignature" />
-	            </condition>
-	             <condition not="true">
-	                    <selected name="usernameTokenNoPassword" />
-	            </condition>
-           	</conditions>
-            <property name="action"/>
-        </item>
+				<condition not="true">
+					<selected name="usernameTokenSignature" />
+				</condition>
+				<condition not="true">
+					<selected name="usernameTokenNoPassword" />
+				</condition>
+			</conditions>
+			<property name="action"/>
+		</item>
 		<item type="hidden" name="securityActionSignature" value="UsernameTokenSignature">
 			<conditions>
-	            <condition>
-	                    <selected name="usernameTokenSignature" />
-	            </condition>
-           	</conditions>
-            <property name="action"/>
-        </item>
-        <item type="hidden" name="securityActionSignatureNoPassword" value="UsernameTokenNoPassword">
+				<condition>
+					<selected name="usernameTokenSignature" />
+				</condition>
+			</conditions>
+			<property name="action"/>
+		</item>
+		<item type="hidden" name="securityActionSignatureNoPassword" value="UsernameTokenNoPassword">
 			<conditions>
-	            <condition>
-	                    <selected name="usernameTokenNoPassword" />
-	            </condition>
-           	</conditions>
-            <property name="action"/>
-        </item>
+				<condition>
+					<selected name="usernameTokenNoPassword" />
+				</condition>
+			</conditions>
+			<property name="action"/>
+		</item>
         
-        <item type="hidden" name="allowUsernameTokenNoPasswordForSignature" value="true">
+		<item type="hidden" name="allowUsernameTokenNoPasswordForSignature" value="true">
 			<conditions>
-	            <condition>
-	                    <selected name="usernameTokenSignature" />
-	            </condition>
-           	</conditions>
-            <property name="allowUsernameTokenNoPassword"/>
-        </item>
+				<condition>
+					<selected name="usernameTokenSignature" />
+				</condition>
+			</conditions>
+			<property name="allowUsernameTokenNoPassword"/>
+		</item>
         
-        <item type="text" name="usernameTokenUser" label="User" required="true">
-        	<conditions>
-	            <condition not="true">
-	                    <selected name="usernameTokenNoPassword" />
-	            </condition>
-           	</conditions>
-		    <property name="user" />
+		<item type="select" name="usernameTokenPasswordMode" label="Modalità" default="" reloadOnChange="true">
+			<conditions and="true">
+				<condition not="true">
+					<selected name="usernameTokenNoPassword" />
+				</condition>
+			</conditions>
+			<property name="usernameTokenPasswordMode" />
+		</item>
+		<item type="text" name="usernameTokenUser" label="User" required="true">
+			<conditions>
+				<condition not="true">
+					<selected name="usernameTokenNoPassword" />
+				</condition>
+				<condition not="true">
+					<equals name="usernameTokenPasswordMode" value="map" />
+				</condition>
+			</conditions>
+			<property name="user" />
 		</item>
 		<item type="text" name="usernameTokenPassword" label="Password" required="true">
-			<conditions>
-	            <condition not="true">
-	                    <selected name="usernameTokenNoPassword" />
-	            </condition>
-           	</conditions>
-		    <property name="usernameTokenPassword" />
+			<conditions and="true">
+				<condition not="true">
+					<selected name="usernameTokenNoPassword" />
+				</condition>
+				<condition not="true">
+					<equals name="usernameTokenPasswordMode" value="map" />
+				</condition>
+			</conditions>
+			<property name="usernameTokenPassword" />
+		</item>
+		<item type="textarea" name="usernameTokenPasswordMap" label="" required="true" note="Indicare per riga le credenziali valide (username=password)">
+			<conditions and="true">
+				<condition not="true">
+					<selected name="usernameTokenNoPassword" />
+				</condition>
+				<condition>
+					<equals name="usernameTokenPasswordMode" value="map" />
+				</condition>
+			</conditions>
+			<property name="usernameTokenPasswordMap" />
 		</item>
 		<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
-			<conditions>
-	            <condition not="true">
-	                    <selected name="usernameTokenNoPassword" />
-	            </condition>
-           	</conditions>
-		    <property name="passwordCallbackRef" />
+			<conditions and="true">
+				<condition not="true">
+					<selected name="usernameTokenNoPassword" />
+				</condition>
+			</conditions>
+			<property name="passwordCallbackRef" />
 		</item>
 
 </section>

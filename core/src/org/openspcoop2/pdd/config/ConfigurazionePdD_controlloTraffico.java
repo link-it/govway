@@ -158,22 +158,22 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 	
 	
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getElencoIdPolicyApiAttive(connectionPdD, tipoPdD, nomePorta, true,
+		return this.getElencoIdPolicyApiAttiveEngine(connectionPdD, tipoPdD, nomePorta, true,
 				false,true);
 	}
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getElencoIdPolicyApiAttive(connectionPdD, null, null, false,
+		return this.getElencoIdPolicyApiAttiveEngine(connectionPdD, null, null, false,
 				false,true);
 	}
-	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI_dimensioneMessaggio(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getElencoIdPolicyApiAttive(connectionPdD, tipoPdD, nomePorta, true,
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPIDimensioneMessaggio(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.getElencoIdPolicyApiAttiveEngine(connectionPdD, tipoPdD, nomePorta, true,
 				true,false);
 	}
-	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getElencoIdPolicyApiAttive(connectionPdD, null, null, false,
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobaliDimensioneMessaggio(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.getElencoIdPolicyApiAttiveEngine(connectionPdD, null, null, false,
 				true,false);
 	}
-	private Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> _getElencoIdPolicyApiAttive(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta, boolean api, 
+	private Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyApiAttiveEngine(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta, boolean api, 
 			boolean includiSoloPolicyDimensioneMessaggio, boolean escludiPolicyDimensioneMessaggio) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
 		String prefix = "";
