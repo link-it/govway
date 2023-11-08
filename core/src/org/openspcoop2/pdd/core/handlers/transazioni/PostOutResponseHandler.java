@@ -395,7 +395,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		File fileTraceConfig = null;
 		boolean fileTraceConfigGlobal = true;
 		try{
-			Tracciamento configTracciamento = this.configPdDManager.getOpenSPCoopAppender_Tracciamento();
+			Tracciamento configTracciamento = this.configPdDManager.getOpenSPCoopAppenderTracciamento();
 			StringBuilder bf = new StringBuilder();
 			String esitiConfig = configTracciamento!=null ? configTracciamento.getEsiti() : null;
 			fileTraceEnabled = this.openspcoopProperties.isTransazioniFileTraceEnabled();
@@ -410,7 +410,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					case DELEGATA:
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(transaction.getRequestInfo().getProtocolContext().getInterfaceName());
-						PortaDelegata pd = this.configPdDManager.getPortaDelegata_SafeMethod(idPD, transaction.getRequestInfo());
+						PortaDelegata pd = this.configPdDManager.getPortaDelegataSafeMethod(idPD, transaction.getRequestInfo());
 						if(pd!=null && pd.getTracciamento()!=null && pd.getTracciamento().getEsiti()!=null) {
 							esitiConfig = pd.getTracciamento().getEsiti();
 						}
@@ -432,7 +432,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					case APPLICATIVA:
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						idPA.setNome(transaction.getRequestInfo().getProtocolContext().getInterfaceName());
-						PortaApplicativa pa = this.configPdDManager.getPortaApplicativa_SafeMethod(idPA, transaction.getRequestInfo());
+						PortaApplicativa pa = this.configPdDManager.getPortaApplicativaSafeMethod(idPA, transaction.getRequestInfo());
 						if(pa!=null && pa.getTracciamento()!=null && pa.getTracciamento().getEsiti()!=null) {
 							esitiConfig = pa.getTracciamento().getEsiti();
 						}

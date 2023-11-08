@@ -95,7 +95,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		
 			if(transportRequestContext.getHeaders()!=null && transportRequestContext.getHeaders().size()>0){
 				List<EsitoTransportContextIdentification> list = this.esitiProperties.getEsitoTransactionContextHeaderTrasportoDynamicIdentification();
-				if(list!=null && list.size()>0){
+				if(list!=null && !list.isEmpty()){
 					for (EsitoTransportContextIdentification esitoTransportContextIdentification : list) {
 						if(esitoTransportContextIdentification.match(transportRequestContext.getHeaders())){
 							tipoContext = esitoTransportContextIdentification.getType();
@@ -108,7 +108,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			// urlBased eventualmente sovrascrive l'header
 			if(transportRequestContext.getParameters()!=null && transportRequestContext.getParameters().size()>0){
 				List<EsitoTransportContextIdentification> list = this.esitiProperties.getEsitoTransactionContextHeaderFormBasedDynamicIdentification();
-				if(list!=null && list.size()>0){
+				if(list!=null && !list.isEmpty()){
 					for (EsitoTransportContextIdentification esitoTransportContextIdentification : list) {
 						if(esitoTransportContextIdentification.match(transportRequestContext.getParameters())){
 							tipoContext = esitoTransportContextIdentification.getType();
@@ -123,8 +123,9 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				String headerName = this.esitiProperties.getEsitoTransactionContextHeaderTrasportoName();
 				String value = transportRequestContext.getHeaderFirstValue(headerName);
 				if(value!=null){
-					if(this.esitiProperties.getEsitiTransactionContextCode().contains(value)==false){
-						this.log.error("Trovato nell'header http un header con nome ["+headerName+"] il cui valore ["+value+"] non rientra tra i tipi di contesto supportati");
+					if(!this.esitiProperties.getEsitiTransactionContextCode().contains(value)){
+						String msg = "Trovato nell'header http un header con nome ["+headerName+"] il cui valore ["+value+"] non rientra tra i tipi di contesto supportati";
+						this.log.error(msg);
 					}
 					else{
 						tipoContext = value;
@@ -137,8 +138,9 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				String propertyName = this.esitiProperties.getEsitoTransactionContextFormBasedPropertyName();
 				String value = transportRequestContext.getParameterFirstValue(propertyName);
 				if(value!=null){
-					if(this.esitiProperties.getEsitiTransactionContextCode().contains(value)==false){
-						this.log.error("Trovato nella url una proprietà con nome ["+propertyName+"] il cui valore ["+value+"] non rientra tra i tipi di contesto supportati");
+					if(!this.esitiProperties.getEsitiTransactionContextCode().contains(value)){
+						String msg = "Trovato nella url una proprietà con nome ["+propertyName+"] il cui valore ["+value+"] non rientra tra i tipi di contesto supportati";
+						this.log.error(msg);
 					}
 					else{
 						tipoContext = value;
@@ -215,11 +217,9 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		try{
 			
 					
-			//SOAPBody soapBody = null;
 			OpenSPCoop2SoapMessage soapMessage = null;
 			if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())
 					&& !message.isForcedEmptyResponse() && message.getForcedResponse()==null){
-				//soapBody = message.castAsSoap().getSOAPBody();
 				soapMessage = message.castAsSoap();
 			}
 						
@@ -261,10 +261,11 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			if(context!=null){
 				if(context.containsKey(LimitedInputStream.ERROR_MSG_KEY)){
 					String limitedExceededMessage = (String) context.get(LimitedInputStream.ERROR_MSG_KEY);
-					if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_REQUEST)) {
-						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA, tipoContext);
-					}
-					else if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_RESPONSE)) {
+					if(
+						(limitedExceededMessage!=null && limitedExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_REQUEST))
+						||
+						(limitedExceededMessage!=null && limitedExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_RESPONSE))
+					) {
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA, tipoContext);
 					}
 				}
@@ -303,14 +304,14 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			// Devo riconoscere eventuali codifiche custom inserite nel contesto
 			if(context!=null){
 				List<Integer> customCodeForContextProperty = this.esitiProperties.getEsitiCodeForContextPropertyIdentificationMode();
-				if(customCodeForContextProperty!=null && customCodeForContextProperty.size()>0){
+				if(customCodeForContextProperty!=null && !customCodeForContextProperty.isEmpty()){
 					for (Integer customCode : customCodeForContextProperty) {
 						List<EsitoIdentificationModeContextProperty> l = this.esitiProperties.getEsitoIdentificationModeContextPropertyList(customCode);
-						if(l!=null && l.size()>0){
+						if(l!=null && !l.isEmpty()){
 							for (EsitoIdentificationModeContextProperty esitoIdentificationModeContextProperty : l) {
 								try{
 									Object p = context.get(esitoIdentificationModeContextProperty.getMapKey());
-									if(p!=null && p instanceof String){
+									if(p instanceof String){
 										String pS = (String) p;
 										if(esitoIdentificationModeContextProperty.getValue()==null ||
 												esitoIdentificationModeContextProperty.getValue().equals(pS)){
@@ -340,8 +341,9 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 											}
 										}
 									}
-								}catch(Throwable t){
-									this.log.error("Errore durante l'identificazione dell'esito: "+t.getMessage(),t);
+								}catch(Exception t){
+									String msgError = "Errore durante l'identificazione dell'esito: "+t.getMessage(); 
+									this.log.error(msgError,t);
 								}
 							}
 						}
@@ -350,7 +352,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				
 				// Eventuale possibilità di definire un errore generico sulle classi custom (es. handler)
 				Object p = context.get(org.openspcoop2.core.constants.Costanti.ERRORE_GENERICO);
-				if(p!=null && p instanceof String){
+				if(p instanceof String){
 					String pS = (String) p;
 					if("true".equalsIgnoreCase(pS)) {
 						return esitoErrore5xx;
@@ -360,13 +362,13 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			
 			
 			// viene verificato prima del contesto, poiche' una richiesta o risposta malformata deve essere segnalata anche se avviene all'interno delle altre funzionalità
-//			if(informazioniErroriInfrastrutturali.isContenutoRichiestaNonRiconosciuto()){
+/**			if(informazioniErroriInfrastrutturali.isContenutoRichiestaNonRiconosciuto()){
 //				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, tipoContext);
 //			}
 //			else if(informazioniErroriInfrastrutturali.isContenutoRispostaNonRiconosciuto()){
 //				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, tipoContext);
 //			}
-//			else 
+//			else*/ 
 			if(informazioniErroriInfrastrutturali.isErroreUtilizzoConnettore()){
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_INVOCAZIONE, tipoContext);
 			}
@@ -374,7 +376,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				
 				Object erroreGovwayObject = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY);
 				String erroreGovway = null;
-				if(erroreGovwayObject!=null && erroreGovwayObject instanceof String) {
+				if(erroreGovwayObject instanceof String) {
 					erroreGovway = (String) erroreGovwayObject;
 				}
 				
@@ -407,7 +409,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				
 				Object erroreGovwayObject = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY);
 				String erroreGovway = null;
-				if(erroreGovwayObject!=null && erroreGovwayObject instanceof String) {
+				if(erroreGovwayObject instanceof String) {
 					erroreGovway = (String) erroreGovwayObject;
 				}
 				
@@ -442,13 +444,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				case SOAP_12:
 					// body letto precedentemente
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
-						if(checkElementSeContieneFaultPdD) {
-							if(soapMessage!=null) {
-								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(message.getFactory(),
-										erroreApplicativo, soapMessage.getSOAPBody(), tipoContext, erroreGovway, internalErrorCodeGovWay);
-								if(esitoErrore!=null) {
-									return esitoErrore;
-								}
+						if(checkElementSeContieneFaultPdD &&
+							soapMessage!=null) {
+							EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(message.getFactory(),
+									erroreApplicativo, soapMessage.getSOAPBody(), tipoContext, erroreGovway, internalErrorCodeGovWay);
+							if(esitoErrore!=null) {
+								return esitoErrore;
 							}
 						}
 						checkReturnCodeForFault = true;
@@ -459,13 +460,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
 					}
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
-						if(checkElementSeContieneFaultPdD) {
-							if(message.castAsRestXml().hasContent()) {
-								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(message.getFactory(),
-										erroreApplicativo, message.castAsRestXml().getContent(), tipoContext, erroreGovway, internalErrorCodeGovWay);
-								if(esitoErrore!=null) {
-									return esitoErrore;
-								}
+						if(checkElementSeContieneFaultPdD &&
+							message.castAsRestXml().hasContent()) {
+							EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(message.getFactory(),
+									erroreApplicativo, message.castAsRestXml().getContent(), tipoContext, erroreGovway, internalErrorCodeGovWay);
+							if(esitoErrore!=null) {
+								return esitoErrore;
 							}
 						}
 						checkReturnCodeForFault = true;
@@ -476,12 +476,11 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
 					}
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
-						if(checkElementSeContieneFaultPdD) {
-							if(message.castAsRestJson().hasContent()) {
-								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestJson().getContent(), tipoContext, erroreGovway, internalErrorCodeGovWay);
-								if(esitoErrore!=null) {
-									return esitoErrore;
-								}
+						if(checkElementSeContieneFaultPdD &&
+							message.castAsRestJson().hasContent()) {
+							EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestJson().getContent(), tipoContext, erroreGovway, internalErrorCodeGovWay);
+							if(esitoErrore!=null) {
+								return esitoErrore;
 							}
 						}
 						checkReturnCodeForFault = true;
@@ -550,7 +549,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		else{
 			codice = fault.getFaultCode();
 		}
-		//System.out.println("ACTOR["+actor+"] REASON["+reason+"] CODICE["+codice+"] namespaceCodice["+namespaceCodice+"]");	
+		/**System.out.println("ACTOR["+actor+"] REASON["+reason+"] CODICE["+codice+"] namespaceCodice["+namespaceCodice+"]");*/	
 
 		Object backwardCompatibilityActorObject = message.getContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_ACTOR);
 		String backwardCompatibilityActor = null;
@@ -571,7 +570,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		
 		Object erroreGovwayObject = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY);
 		String erroreGovway = null;
-		if(erroreGovwayObject!=null && erroreGovwayObject instanceof String) {
+		if(erroreGovwayObject instanceof String) {
 			erroreGovway = (String) erroreGovwayObject;
 		}
 		
@@ -592,34 +591,33 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			// msg di errore 5xx
 			// msg dovuto alla ricezione di una busta.
 
-			if(org.openspcoop2.message.constants.Costanti.TIPO_RFC7807.equals(erroreGovway) && MessageRole.FAULT.equals(message.getMessageRole())) {
-				if(fault.getDetail()!=null) {
-					List<Node> list = SoapUtils.getNotEmptyChildNodes(message.getFactory(), fault.getDetail(), false);
-					if(list!=null && !list.isEmpty()) {
-						for (Node node : list) {
-							XmlDeserializer xmlDeserializer = new XmlDeserializer();
-							if(xmlDeserializer.isProblemRFC7807(node) && node instanceof Element) {
-								try{
-									ProblemRFC7807 problem = xmlDeserializer.fromNode((Element) node, false);
-									Integer status = problem.getStatus();
-									if(status!=null) {
-										int valueInt = status.intValue();
-										if(valueInt>=400 && valueInt<=499){
-											return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
-										}else if(valueInt>=500 && valueInt<=599){
-											return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-										}else{
-											return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-										}
+			if(org.openspcoop2.message.constants.Costanti.TIPO_RFC7807.equals(erroreGovway) && MessageRole.FAULT.equals(message.getMessageRole()) &&
+				fault.getDetail()!=null) {
+				List<Node> list = SoapUtils.getNotEmptyChildNodes(message.getFactory(), fault.getDetail(), false);
+				if(list!=null && !list.isEmpty()) {
+					for (Node node : list) {
+						XmlDeserializer xmlDeserializer = new XmlDeserializer();
+						if(xmlDeserializer.isProblemRFC7807(node) && node instanceof Element) {
+							try{
+								ProblemRFC7807 problem = xmlDeserializer.fromNode(node, false);
+								Integer status = problem.getStatus();
+								if(status!=null) {
+									int valueInt = status.intValue();
+									if(valueInt>=400 && valueInt<=499){
+										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+									}else if(valueInt>=500 && valueInt<=599){
+										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+									}else{
+										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 									}
-									else {
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
-									}
-								}catch(Exception e) {
-									this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 								}
-							}			
-						}
+								else {
+									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
+								}
+							}catch(Exception e) {
+								this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
+							}
+						}			
 					}
 				}
 			}
@@ -727,20 +725,18 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				
 				// Devo riconoscere eventuali altre codifiche custom
 				List<Integer> customCodeForSoapFault = this.esitiProperties.getEsitiCodeForSoapFaultIdentificationMode();
-				if(customCodeForSoapFault!=null && customCodeForSoapFault.size()>0){
+				if(customCodeForSoapFault!=null && !customCodeForSoapFault.isEmpty()){
 					for (Integer customCodeSF : customCodeForSoapFault) {
 						List<EsitoIdentificationModeSoapFault> l = this.esitiProperties.getEsitoIdentificationModeSoapFaultList(customCodeSF);
 						for (int i = 0; i < l.size(); i++) {
 							EsitoIdentificationModeSoapFault e = l.get(i);
-							if(e.getFaultCode()!=null){
-								if(!e.getFaultCode().equals(codice)){
-									continue;
-								}
+							if(e.getFaultCode()!=null &&
+								!e.getFaultCode().equals(codice)){
+								continue;
 							}
-							if(e.getFaultNamespaceCode()!=null){
-								if(!e.getFaultNamespaceCode().equals(namespaceCodice)){
-									continue;
-								}
+							if(e.getFaultNamespaceCode()!=null &&
+								!e.getFaultNamespaceCode().equals(namespaceCodice)){
+								continue;
 							}
 							if(e.getFaultReason()!=null){
 								if(e.getFaultReasonContains()!=null && e.getFaultReasonContains()){
@@ -754,15 +750,13 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 									}
 								}
 							}
-							if(e.getFaultActor()!=null){
-								if(!e.getFaultActor().equals(actor)){
-									continue;
-								}
+							if(e.getFaultActor()!=null &&
+								!e.getFaultActor().equals(actor)){
+								continue;
 							}
-							if(e.getFaultActorNotDefined()!=null && e.getFaultActorNotDefined()){
-								if(actor!=null){
-									continue;
-								}
+							if(e.getFaultActorNotDefined()!=null && e.getFaultActorNotDefined() &&
+								actor!=null){
+								continue;
 							}
 							// match
 							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CUSTOM, customCodeSF, tipoContext);
@@ -801,17 +795,66 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	
 	protected EsitoTransazione getEsitoMessaggioApplicativo(OpenSPCoop2MessageFactory messageFactory,
 			ProprietaErroreApplicativo erroreApplicativo,Node childNode,String tipoContext, String erroreGovway, String internalErrorCodeGovWay) throws ProtocolException{
-		if(childNode!=null){
-			if(childNode.getNextSibling()==null){
+		if(childNode!=null &&
+			childNode.getNextSibling()==null){
 				
-				if(org.openspcoop2.message.constants.Costanti.TIPO_RFC7807.equals(erroreGovway)) {
-					if(childNode instanceof Element) {
-						try{
-							XmlDeserializer xmlDeserializer = new XmlDeserializer();
-							ProblemRFC7807 problem = xmlDeserializer.fromNode((Element) childNode, false);
-							Integer status = problem.getStatus();
-							if(status!=null) {
-								int valueInt = status.intValue();
+			if(org.openspcoop2.message.constants.Costanti.TIPO_RFC7807.equals(erroreGovway)) {
+				if(childNode instanceof Element) {
+					try{
+						XmlDeserializer xmlDeserializer = new XmlDeserializer();
+						ProblemRFC7807 problem = xmlDeserializer.fromNode(childNode, false);
+						Integer status = problem.getStatus();
+						if(status!=null) {
+							int valueInt = status.intValue();
+							if(valueInt>=400 && valueInt<=499){
+								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+							}else if(valueInt>=500 && valueInt<=599){
+								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+							}else{
+								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+							}
+						}
+						else {
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
+						}
+					}catch(Exception e) {
+						this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
+					}
+				}
+			}
+			else {
+				if(XMLUtils.isErroreApplicativo(childNode)){
+					
+					try{
+						byte[] xml = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(messageFactory).toByteArray(childNode,true);
+						ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
+						Eccezione ecc = erroreApplicativoObject.getException();
+						if(TipoEccezione.PROTOCOL.equals(ecc.getType())){
+							if(this.erroreProtocollo && this.envelopeErroreProtocollo) {
+								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+							}
+							else {
+								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+							}
+						}
+						else{
+							String value = ecc.getCode().getBase();
+							String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
+							if(prefixFaultCode==null){
+								prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
+							}
+							boolean prefixOpv2 = value.startsWith(prefixFaultCode);
+							
+							if(!prefixOpv2 && internalErrorCodeGovWay!=null) {
+								if(internalErrorCodeGovWay.startsWith(prefixFaultCode)) {
+									prefixOpv2 = true;
+									value = internalErrorCodeGovWay;
+								}									
+							}
+
+							if(prefixOpv2){
+								value = value.substring(prefixFaultCode.length());
+								int valueInt = Integer.parseInt(value);
 								if(valueInt>=400 && valueInt<=499){
 									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
 								}else if(valueInt>=500 && valueInt<=599){
@@ -819,77 +862,27 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 								}else{
 									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 								}
-							}
-							else {
+							}else{
 								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
 							}
-						}catch(Exception e) {
-							this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
-						}
-					}
-				}
-				else {
-					if(XMLUtils.isErroreApplicativo(childNode)){
-						
-						try{
-							byte[] xml = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(messageFactory).toByteArray(childNode,true);
-							ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
-							Eccezione ecc = erroreApplicativoObject.getException();
-							if(TipoEccezione.PROTOCOL.equals(ecc.getType())){
-								if(this.erroreProtocollo && this.envelopeErroreProtocollo) {
-									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
-								}
-								else {
-									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-								}
-							}
-							else{
-								String value = ecc.getCode().getBase();
-								String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
-								if(prefixFaultCode==null){
-									prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
-								}
-								boolean prefixOpv2 = value.startsWith(prefixFaultCode);
-								
-								if(!prefixOpv2 && internalErrorCodeGovWay!=null) {
-									if(internalErrorCodeGovWay.startsWith(prefixFaultCode)) {
-										prefixOpv2 = true;
-										value = internalErrorCodeGovWay;
-									}									
-								}
-
-								if(prefixOpv2){
-									value = value.substring(prefixFaultCode.length());
-									int valueInt = Integer.parseInt(value);
-									if(valueInt>=400 && valueInt<=499){
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
-									}else if(valueInt>=500 && valueInt<=599){
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-									}else{
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-									}
-								}else{
-									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
-								}
-							}
-							
-						}catch(Exception e){
-							this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 						}
 						
+					}catch(Exception e){
+						this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 					}
 					
-					// se arrivo qua provo a vedere se siamo nel caso di un internal Error
-					else if(OpenSPCoop2MessageFactory.isFaultXmlMessage(childNode)) {
-						try{
-							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-						}catch(Exception e){
-							this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
-						}
-					}
 				}
 				
+				// se arrivo qua provo a vedere se siamo nel caso di un internal Error
+				else if(OpenSPCoop2MessageFactory.isFaultXmlMessage(childNode)) {
+					try{
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+					}catch(Exception e){
+						this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
+					}
+				}
 			}
+		
 		}
 
 		return null;
@@ -945,11 +938,10 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					}
 					boolean prefixOpv2 = value.startsWith(prefixFaultCode);
 					
-					if(!prefixOpv2 && internalErrorCodeGovWay!=null) {
-						if(internalErrorCodeGovWay.startsWith(prefixFaultCode)) {
-							prefixOpv2 = true;
-							value = internalErrorCodeGovWay;
-						}									
+					if(!prefixOpv2 && internalErrorCodeGovWay!=null &&
+						internalErrorCodeGovWay.startsWith(prefixFaultCode)) {
+						prefixOpv2 = true;
+						value = internalErrorCodeGovWay;
 					}
 
 					if(prefixOpv2){

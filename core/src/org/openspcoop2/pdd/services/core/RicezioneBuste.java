@@ -548,7 +548,7 @@ public class RicezioneBuste {
 					if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
 						IDPortaApplicativa identificativoPortaApplicativa = new IDPortaApplicativa();
 						identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
-						PortaApplicativa portaApplicativa = configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
+						PortaApplicativa portaApplicativa = configurazionePdDReader.getPortaApplicativaSafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
 						if(portaApplicativa!=null) {
 							DumpConfigurazione dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaApplicativa);
 							internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
@@ -707,7 +707,7 @@ public class RicezioneBuste {
 				identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
 				PortaApplicativa portaApplicativa = null;
 				try {
-					portaApplicativa = configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
+					portaApplicativa = configurazionePdDReader.getPortaApplicativaSafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
 				}catch(Exception e) {
 					// ignore
 				}
@@ -1371,7 +1371,7 @@ public class RicezioneBuste {
 			try{
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+				pa = configurazionePdDReader.getPortaApplicativaSafeMethod(idPA, requestInfo);
 				// NOTA: la pa potra' essere null nei casi di profili asincroni
 			}catch(Exception e){
 				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
@@ -2474,7 +2474,7 @@ public class RicezioneBuste {
 		/* ----------- Ruolo Busta Ricevuta ------------ */
 		
 		RuoloBusta ruoloBustaRicevuta = null;
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			
 			if( validatore.getBusta()!=null && (
 					(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(validatore.getBusta().getProfiloDiCollaborazione())) ||
@@ -2552,7 +2552,7 @@ public class RicezioneBuste {
 		IDPortaApplicativa idPA = null;
 		String servizioApplicativoErogatoreAsincronoSimmetricoRisposta = null;
 		boolean asincronoSimmetricoRisposta = false;
-		if(functionAsRouter==false && idServizio!=null){
+		if(!functionAsRouter && idServizio!=null){
 			msgDiag.mediumDebug("Lettura porta applicativa/delegata...");
 			try{
 
@@ -2581,7 +2581,7 @@ public class RicezioneBuste {
 						servizioApplicativoErogatoreAsincronoSimmetricoRisposta = integrazione.getServizioApplicativo();
 						idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
+						pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
 						idPD = configurazionePdDReader.convertToIDPortaDelegata(pd); // per aggiungere informazioni sugli identificativi
 						
 					}
@@ -2618,7 +2618,7 @@ public class RicezioneBuste {
 							}
 							idPD = new IDPortaDelegata();
 							idPD.setNome(integrazione.getNomePorta());
-							pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
+							pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
 							idPD = configurazionePdDReader.convertToIDPortaDelegata(pd); // per aggiungere informazioni sugli identificativi
 						}
 						
@@ -3295,7 +3295,7 @@ public class RicezioneBuste {
 		// Per i profili diversi dal sincrono e' possibile impostare dove far ritornare l'errore
 		boolean newConnectionForResponse = false; 
 		boolean utilizzoIndirizzoTelematico = false;		
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 
 			// Calcolo newConnectionForResponse in caso di asincroni
 			if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
@@ -3548,7 +3548,7 @@ public class RicezioneBuste {
 		
 		/* -------- Manifest attachments ------------- */
 		// per profili asincroni
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 			msgDiag.mediumDebug("Lettura manifest attachments impostato in porta applicativa/delegata...");
 			try{
 
@@ -3930,7 +3930,7 @@ public class RicezioneBuste {
 		
 
 		// Validazione Semantica (se modalita router non attiva)
-		if(functionAsRouter==false){
+		if(!functionAsRouter){
 
 
 			/* ----------- Raccolta FlowParameter MTOM / Security ------------ */
@@ -3944,7 +3944,8 @@ public class RicezioneBuste {
 						ruoloBustaRicevuta,implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),pa);				
 				flowPropertiesResponse = ricezioneBusteUtils.getFlowPropertiesResponse(requestMessage, bustaRichiesta, configurazionePdDReader, 
 						((StateMessage)openspcoopstate.getStatoRichiesta()), msgDiag,logCore,propertiesReader,
-						ruoloBustaRicevuta,implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),pa);
+						ruoloBustaRicevuta,implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),pa,
+						flowPropertiesRequest);
 				parametriGenerazioneBustaErrore.setFlowPropertiesResponse(flowPropertiesResponse);
 				
 				// init message security context
@@ -4569,7 +4570,7 @@ public class RicezioneBuste {
 		richiestaApplicativa.setProfiloGestione(versioneProtocollo);
 		parametriGenerazioneBustaErrore.setProfiloGestione(versioneProtocollo);
 		IProtocolVersionManager moduleManager = protocolFactory.createProtocolVersionManager(versioneProtocollo);
-		if( functionAsRouter==false ){
+		if( !functionAsRouter ){
 
 			// Riferimento messaggio con un profilo sincrono non può essere ricevuto in questo contesto.
 			if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione()) && 
@@ -4775,7 +4776,7 @@ public class RicezioneBuste {
 				CodiceErroreCooperazione.isEccezioneIdentificativoMessaggio(er.getCodiceEccezione()) ||	
 				CodiceErroreCooperazione.isEccezioneSicurezzaAutorizzazione(er.getCodiceEccezione()) ){
 
-				if(functionAsRouter==false){ 
+				if(!functionAsRouter){ 
 					// Può esistere un errore mittente, che non è altro che una segnalazione sull'indirizzo telematico
 					if(moduleManager.isEccezioniLivelloInfoAbilitato()){
 						if(LivelloRilevanza.INFO.equals(er.getRilevanza()))
@@ -4849,7 +4850,7 @@ public class RicezioneBuste {
 		boolean eccezioniValidazioni = false;
 		for(int k = 0; k < erroriValidazione.size() ; k++){
 			Eccezione er = erroriValidazione.get(k);
-			if(functionAsRouter==false){ 
+			if(!functionAsRouter){ 
 				// Check profilo linee guida 1.0
 				// Può esistere un errore, che non è altro che una segnalazione sull'indirizzo telematico
 				if(moduleManager.isEccezioniLivelloInfoAbilitato()){
@@ -6907,7 +6908,7 @@ public class RicezioneBuste {
 					idCorrelazioneApplicativaRisposta = msgResponse.getIDCorrelazioneApplicativaRisposta();
 				}catch(Exception e){
 					// Il router potrebbe ricevere il SOAPFault da reinoltrare
-					if( (functionAsRouter==false) || (contenutoRispostaPresente==true) ){
+					if( (!functionAsRouter) || (contenutoRispostaPresente==true) ){
 						msgDiag.logErroreGenerico(e,"msgResponse.getMessage()");
 						
 						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -7002,7 +7003,7 @@ public class RicezioneBuste {
 
 			/* ------------  Gestione Funzionalita' speciali per Attachments (Manifest) ------------- */	
 			boolean scartaBody = false;
-			if(functionAsRouter==false){
+			if(!functionAsRouter){
 				boolean allegaBody = configurazionePdDReader.isAllegaBody(pa);
 				if(allegaBody){
 					// E' stato effettuato prima l'inserimento del body come allegato.
@@ -7021,7 +7022,7 @@ public class RicezioneBuste {
 
 
 			/* ------------  Aggiunta eccezioni di livello info riscontrate dalla validazione, se profilo e' lineeGuida1.1 ------------- */	
-			if(functionAsRouter==false){
+			if(!functionAsRouter){
 				if( bustaRisposta.sizeListaEccezioni()==0 && moduleManager.isIgnoraEccezioniLivelloNonGrave()){
 					for(int i=0; i<erroriValidazione.size();i++){
 						Eccezione ec = erroriValidazione.get(i);
@@ -7138,7 +7139,7 @@ public class RicezioneBuste {
 			
 			/* ------------ Init MTOM Processor  -------------- */
 			MTOMProcessor mtomProcessor = null;
-			if(functionAsRouter==false){
+			if(!functionAsRouter){
 				if(flowPropertiesResponse!=null){
 					msgDiag.mediumDebug("init MTOM Processor ...");
 					mtomProcessor = new MTOMProcessor(flowPropertiesResponse.mtom, flowPropertiesResponse.messageSecurity, 
@@ -7190,11 +7191,15 @@ public class RicezioneBuste {
 
 
 			/* ------------ Message-Security -------------- */
-			if(functionAsRouter==false){
+			if(!functionAsRouter){
 				if(flowPropertiesResponse != null && flowPropertiesResponse.messageSecurity!=null && 
 					flowPropertiesResponse.messageSecurity.getFlowParameters() !=null &&
 					flowPropertiesResponse.messageSecurity.getFlowParameters().size() > 0){
 					try{
+						// Aggiorno valori dinamici
+						configurazionePdDReader.updateMessageSecurityForSender(flowPropertiesResponse.messageSecurity, logCore, responseMessage, bustaRichiesta, requestInfo, pddContext,
+								flowPropertiesResponse.messageSecurityRequest);
+						
 						messageSecurityContext.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
 						messageSecurityContext.setOutgoingProperties(flowPropertiesResponse.messageSecurity.getFlowParameters());
 						
@@ -7398,7 +7403,7 @@ public class RicezioneBuste {
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneMessaggioInviato();
 				SecurityInfo securityInfoResponse  = null;
-				if(functionAsRouter==false){
+				if(!functionAsRouter){
 					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader(responseMessage.getFactory())!=null){
 						IValidazioneSemantica validazioneSemantica = protocolFactory.createValidazioneSemantica(openspcoopstate.getStatoRichiesta());
 						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(responseMessage.getFactory()),responseMessage);

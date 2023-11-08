@@ -308,7 +308,7 @@ public class MsgDiagnostico {
 				try {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(this.porta);
-					PortaDelegata pd = this.getConfigurazionePdDManager().getPortaDelegata_SafeMethod(idPD, requestInfo);
+					PortaDelegata pd = this.getConfigurazionePdDManager().getPortaDelegataSafeMethod(idPD, requestInfo);
 					if(pd!=null && pd.getTracciamento()!=null) {
 						this.severitaPorta = pd.getTracciamento().getSeverita();
 					}
@@ -319,7 +319,7 @@ public class MsgDiagnostico {
 				try {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(this.porta);
-					PortaApplicativa pa = this.getConfigurazionePdDManager().getPortaApplicativa_SafeMethod(idPA, requestInfo);
+					PortaApplicativa pa = this.getConfigurazionePdDManager().getPortaApplicativaSafeMethod(idPA, requestInfo);
 					if(pa!=null && pa.getTracciamento()!=null) {
 						this.severitaPorta = pa.getTracciamento().getSeverita();
 					}
@@ -1017,8 +1017,8 @@ public class MsgDiagnostico {
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
 		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
-			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici());
-			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4JMessaggiDiagnostici());
 		}
 		if(this.severitaPorta!=null) {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
@@ -1253,8 +1253,8 @@ public class MsgDiagnostico {
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
 		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
-			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici());
-			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4JMessaggiDiagnostici());
 		}
 		if(this.severitaPorta!=null) {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
@@ -1397,8 +1397,8 @@ public class MsgDiagnostico {
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
 		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
-			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici());
-			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4JMessaggiDiagnostici());
 		}
 		if(this.severitaPorta!=null) {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
@@ -1538,8 +1538,8 @@ public class MsgDiagnostico {
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
 		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
-			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici());
-			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4JMessaggiDiagnostici());
 		}
 		if(this.severitaPorta!=null) {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
@@ -1678,8 +1678,8 @@ public class MsgDiagnostico {
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
 		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
-			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici());
-			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4JMessaggiDiagnostici());
 		}
 		if(this.severitaPorta!=null) {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
@@ -1819,8 +1819,8 @@ public class MsgDiagnostico {
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
 		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
-			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici());
-			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4JMessaggiDiagnostici());
 		}
 		if(this.severitaPorta!=null) {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
@@ -1959,8 +1959,8 @@ public class MsgDiagnostico {
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
 		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
-			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici());
-			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4JMessaggiDiagnostici());
 		}
 		if(this.severitaPorta!=null) {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
@@ -2097,8 +2097,8 @@ public class MsgDiagnostico {
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
 		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
-			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici());
-			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4JMessaggiDiagnostici());
 		}
 		if(this.severitaPorta!=null) {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
@@ -2236,8 +2236,8 @@ public class MsgDiagnostico {
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
 		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
 		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
-			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici());
-			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaLog4JMessaggiDiagnostici());
 		}
 		if(this.severitaPorta!=null) {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));

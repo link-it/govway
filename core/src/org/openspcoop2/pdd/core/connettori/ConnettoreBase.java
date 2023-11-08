@@ -410,7 +410,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled();
 					
 					if(idPA!=null) {
-						this.pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, this.requestInfo);
+						this.pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, this.requestInfo);
 						if(this.pa!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pa);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pa);
@@ -440,7 +440,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled();
 					
 					if(idPD!=null) {
-						this.pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, this.requestInfo);
+						this.pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, this.requestInfo);
 						if(this.pd!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pd);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pd);

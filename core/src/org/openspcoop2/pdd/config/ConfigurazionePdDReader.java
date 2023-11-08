@@ -231,11 +231,63 @@ public class ConfigurazionePdDReader {
 	private boolean configurazioneDinamica = false;
 
 	/** Registro dei Servizi Reader per il routing */
-	//	private RegistroServiziReader registroServiziReader;
+	/**	private RegistroServiziReader registroServiziReader;*/
 
 	/** Logger utilizzato per debug. */
-	private Logger log = null;
-
+	private Logger logger = null;
+	private void logDebug(String msg) {
+		this.logDebug(msg, null);
+	}
+	private void logDebug(String msg, Throwable e) {
+		if(this.logger!=null) {
+			if(e!=null) {
+				this.logger.debug(msg, e);
+			}
+			else {
+				this.logger.debug(msg);
+			}
+		}
+	}
+	private void logInfo(String msg) {
+		this.logInfo(msg, null);
+	}
+	private void logInfo(String msg, Throwable e) {
+		if(this.logger!=null) {
+			if(e!=null) {
+				this.logger.info(msg, e);
+			}
+			else {
+				this.logger.info(msg);
+			}
+		}
+	}
+	@SuppressWarnings("unused")
+	private void logWarn(String msg) {
+		this.logWarn(msg, null);
+	}
+	private void logWarn(String msg, Throwable e) {
+		if(this.logger!=null) {
+			if(e!=null) {
+				this.logger.warn(msg, e);
+			}
+			else {
+				this.logger.warn(msg);
+			}
+		}
+	}
+	private void logError(String msg) {
+		this.logError(msg, null);
+	}
+	private void logError(String msg, Throwable e) {
+		if(this.logger!=null) {
+			if(e!=null) {
+				this.logger.error(msg, e);
+			}
+			else {
+				this.logger.error(msg);
+			}
+		}
+	}
 	/** OpenSPCoopProperties */
 	private OpenSPCoop2Properties openspcoopProperties = null;
 	private PddProperties pddProperties = null;
@@ -408,7 +460,7 @@ public class ConfigurazionePdDReader {
 			boolean soggettiVirtuali = OpenSPCoop2Properties.getInstance().isSoggettiVirtualiEnabled();
 			
 			if(soggettiVirtuali) {
-				String keyServizi_SoggettiVirtuali = ConfigurazionePdD._getKey_getServizi_SoggettiVirtuali();
+				String keyServizi_SoggettiVirtuali = ConfigurazionePdD.getKeyMethodGetServiziSoggettiVirtuali();
 				Object oServizi_SoggettiVirtuali = ConfigurazionePdDReader.getRawObjectCache(keyServizi_SoggettiVirtuali);
 				if(oServizi_SoggettiVirtuali!=null && oServizi_SoggettiVirtuali instanceof List<?>) {
 					List<?> l = (List<?>) oServizi_SoggettiVirtuali;
@@ -460,7 +512,7 @@ public class ConfigurazionePdDReader {
 				
 				String prefixPorteApplicativeSoggettiVirtuali = null;
 				if(soggettiVirtuali) {
-					prefixPorteApplicativeSoggettiVirtuali = ConfigurazionePdD._toKey_getPorteApplicative_SoggettiVirtualiPrefix(idServizio);
+					prefixPorteApplicativeSoggettiVirtuali = ConfigurazionePdD.toKeyMethodGetPorteApplicativeSoggettiVirtualiPrefix(idServizio);
 				}
 				
 				for (String key : keys) {
@@ -531,16 +583,16 @@ public class ConfigurazionePdDReader {
 				
 				String prefixKeyPD = ConfigurazionePdD._getKey_getPortaDelegata(idPD);
 				
-				String prefixCT = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.DELEGATA, nomePorta);
-				String prefixCT_normalized = null; 
+				String prefixCT = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPI(TipoPdD.DELEGATA, nomePorta);
+				String prefixCTNormalized = null; 
 				if(nomePorta_normalized!=null) {
-					prefixCT_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.DELEGATA, nomePorta_normalized);
+					prefixCTNormalized  = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPI(TipoPdD.DELEGATA, nomePorta_normalized);
 				}
 				
-				String prefixCT_dimensioneMessaggio = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.DELEGATA, nomePorta);
-				String prefixCT_dimensioneMessaggio_normalized = null; 
+				String prefixCTDimensioneMessaggio = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPIDimensioneMessaggio(TipoPdD.DELEGATA, nomePorta);
+				String prefixCTDimensioneMessaggioNormalized = null; 
 				if(nomePorta_normalized!=null) {
-					prefixCT_dimensioneMessaggio_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.DELEGATA, nomePorta_normalized);
+					prefixCTDimensioneMessaggioNormalized  = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPIDimensioneMessaggio(TipoPdD.DELEGATA, nomePorta_normalized);
 				}
 				
 				String prefixGetAllId = ConfigurazionePdD._toKey_getAllIdPorteDelegate_method();
@@ -561,13 +613,13 @@ public class ConfigurazionePdDReader {
 						if(removeControlloTraffico && key.startsWith(prefixCT)) {
 							keyForClean.add(key);
 						}
-						else if(removeControlloTraffico && prefixCT_normalized!=null && key.startsWith(prefixCT_normalized)) {
+						else if(removeControlloTraffico && prefixCTNormalized!=null && key.startsWith(prefixCTNormalized)) {
 							keyForClean.add(key);
 						}
-						if(removeControlloTraffico && key.startsWith(prefixCT_dimensioneMessaggio)) {
+						if(removeControlloTraffico && key.startsWith(prefixCTDimensioneMessaggio)) {
 							keyForClean.add(key);
 						}
-						else if(removeControlloTraffico && prefixCT_dimensioneMessaggio_normalized!=null && key.startsWith(prefixCT_dimensioneMessaggio_normalized)) {
+						else if(removeControlloTraffico && prefixCTDimensioneMessaggioNormalized!=null && key.startsWith(prefixCTDimensioneMessaggioNormalized)) {
 							keyForClean.add(key);
 						}
 						else if(key.startsWith(prefixGetAllId)) {
@@ -671,16 +723,16 @@ public class ConfigurazionePdDReader {
 				
 				String prefixKeyPA = ConfigurazionePdD._getKey_getPortaApplicativa(idPA);
 				
-				String prefixCT = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.APPLICATIVA, nomePorta);
-				String prefixCT_normalized = null; 
+				String prefixCT = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPI(TipoPdD.APPLICATIVA, nomePorta);
+				String prefixCTNormalized = null; 
 				if(nomePorta_normalized!=null) {
-					prefixCT_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.APPLICATIVA, nomePorta_normalized);
+					prefixCTNormalized  = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPI(TipoPdD.APPLICATIVA, nomePorta_normalized);
 				}
 				
-				String prefixCT_dimensioneMessaggio = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.APPLICATIVA, nomePorta);
-				String prefixCT_dimensioneMessaggio_normalized = null; 
+				String prefixCTDimensioneMessaggio = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPIDimensioneMessaggio(TipoPdD.APPLICATIVA, nomePorta);
+				String prefixCTDimensioneMessaggioNormalized = null; 
 				if(nomePorta_normalized!=null) {
-					prefixCT_dimensioneMessaggio_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.APPLICATIVA, nomePorta_normalized);
+					prefixCTDimensioneMessaggioNormalized  = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPIDimensioneMessaggio(TipoPdD.APPLICATIVA, nomePorta_normalized);
 				}
 				
 				String prefixGetAllId = ConfigurazionePdD._toKey_getAllIdPorteApplicative_method();
@@ -701,13 +753,13 @@ public class ConfigurazionePdDReader {
 						if(removeControlloTraffico && key.startsWith(prefixCT)) {
 							keyForClean.add(key);
 						}
-						else if(removeControlloTraffico && prefixCT_normalized!=null && key.startsWith(prefixCT_normalized)) {
+						else if(removeControlloTraffico && prefixCTNormalized!=null && key.startsWith(prefixCTNormalized)) {
 							keyForClean.add(key);
 						}
-						if(removeControlloTraffico && key.startsWith(prefixCT_dimensioneMessaggio)) {
+						if(removeControlloTraffico && key.startsWith(prefixCTDimensioneMessaggio)) {
 							keyForClean.add(key);
 						}
-						else if(removeControlloTraffico && prefixCT_dimensioneMessaggio_normalized!=null && key.startsWith(prefixCT_dimensioneMessaggio_normalized)) {
+						else if(removeControlloTraffico && prefixCTDimensioneMessaggioNormalized!=null && key.startsWith(prefixCTDimensioneMessaggioNormalized)) {
 							keyForClean.add(key);
 						}
 						else if(key.startsWith(prefixGetAllId)) {
@@ -1085,10 +1137,10 @@ public class ConfigurazionePdDReader {
 			CacheType cacheType)throws DriverConfigurazioneException{
 		try{
 			if(aLog!=null)
-				this.log = aLog;
+				this.logger = aLog;
 			else
-				this.log = LoggerWrapperFactory.getLogger(ConfigurazionePdDReader.class);
-			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache,
+				this.logger = LoggerWrapperFactory.getLogger(ConfigurazionePdDReader.class);
+			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.logger,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache,
 					useOp2UtilsDatasource, bindJMX, 
 					prefillCache, configApplicativi,
 					cacheType);
@@ -1105,8 +1157,8 @@ public class ConfigurazionePdDReader {
 
 			ConfigurazionePdDReader.initialize = true;
 		}catch(Exception e){
-			if(this.log!=null)
-				this.log.error("Configurazione non inizializzata",e);
+			if(this.logger!=null)
+				this.logError("Configurazione non inizializzata",e);
 			else
 				aLogconsole.error("Configurazione non inizializzata:"+e.getMessage(),e);
 			ConfigurazionePdDReader.initialize = false;
@@ -1286,7 +1338,7 @@ public class ConfigurazionePdDReader {
 		try{
 			listaSoggettiVirtuali = this.configurazionePdD.getSoggettiVirtuali(connectionPdD);
 		}catch(DriverConfigurazioneNotFound de){
-			this.log.info("Soggetti virtuali non presenti.");
+			this.logInfo("Soggetti virtuali non presenti.");
 			return false;
 		}
 
@@ -1318,7 +1370,7 @@ public class ConfigurazionePdDReader {
 		try{
 			soggetto = this.configurazionePdD.getSoggetto(connectionPdD, idSoggetto);
 		}catch(DriverConfigurazioneNotFound e){
-			//this.log.debug("existsSoggetto (not found): "+e.getMessage());
+			//this.logDebug("existsSoggetto (not found): "+e.getMessage());
 			return false;
 		}
 		return soggetto!=null;
@@ -1330,8 +1382,8 @@ public class ConfigurazionePdDReader {
 	 * @return Restituisce la lista dei servizi associati a soggetti virtuali gestiti dalla PdD
 	 * @throws DriverConfigurazioneException
 	 */
-	protected  List<IDServizio> getServizi_SoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getServizi_SoggettiVirtuali(connectionPdD);
+	protected  List<IDServizio> getServiziSoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getServiziSoggettiVirtuali(connectionPdD);
 	}
 
 
@@ -1438,9 +1490,9 @@ public class ConfigurazionePdDReader {
 				){
 
 			if(routingTable.getAbilitata()==null || routingTable.getAbilitata()==false)
-				this.log.debug("getForwardRoute: routing table disabilitata");
+				this.logDebug("getForwardRoute: routing table disabilitata");
 			else
-				this.log.debug("getForwardRoute: routing table senza rotte");
+				this.logDebug("getForwardRoute: routing table senza rotte");
 
 			Connettore connettoreDominio = null;
 			try{
@@ -1466,7 +1518,7 @@ public class ConfigurazionePdDReader {
 
 		StringBuilder bf = new StringBuilder();
 		bf.append("Ricerca connettore del servizio...");
-		this.log.debug("getForwardRoute: routing table abilitata");
+		this.logDebug("getForwardRoute: routing table abilitata");
 
 		// Se la PdD contiene una forward route, utilizza la tabella di routing	
 		// 2) Destinazioni specifiche
@@ -1474,7 +1526,7 @@ public class ConfigurazionePdDReader {
 			if(nome.equals(routingTable.getDestinazione(i).getNome()) &&
 					tipo.equals(routingTable.getDestinazione(i).getTipo())){	
 				bf.append("\nRotta di destinazione ["+routingTable.getDestinazione(i).getTipo()+"/"+routingTable.getDestinazione(i).getNome()+"]...\n");
-				this.log.debug("getForwardRoute: esamino routing table, destinazione ["+routingTable.getDestinazione(i).getTipo()+"/"+routingTable.getDestinazione(i).getNome()+"]");
+				this.logDebug("getForwardRoute: esamino routing table, destinazione ["+routingTable.getDestinazione(i).getTipo()+"/"+routingTable.getDestinazione(i).getNome()+"]");
 
 				// Utilizzo le rotte della destinazione specifica fino a trovare un connettore
 				// Se un connettore non viene trovato, utilizzero poi il Default della tabella di routing.
@@ -1486,7 +1538,7 @@ public class ConfigurazionePdDReader {
 					String soggettoGateway = "";
 					try{
 						if(route.getRegistro()!=null){ 
-							this.log.debug("getForwardRoute: esamino routing table, destinazione ["
+							this.logDebug("getForwardRoute: esamino routing table, destinazione ["
 									+routingTable.getDestinazione(i).getTipo()+"/"+routingTable.getDestinazione(i).getNome()+"] RegistroNome["+route.getRegistro().getNome()+"]");
 
 							bf.append("\tRegistro nomeRegistro["+route.getRegistro().getNome()+"]: ");
@@ -1504,7 +1556,7 @@ public class ConfigurazionePdDReader {
 									!CostantiConfigurazione.DISABILITATO.equals(connettoreDominio.getTipo()) )
 								connettoreDominio.setNomeRegistro(route.getRegistro().getNome());
 						}else if(route.getGateway()!=null){ 
-							this.log.debug("getForwardRoute: esamino routing table, destinazione ["
+							this.logDebug("getForwardRoute: esamino routing table, destinazione ["
 									+routingTable.getDestinazione(i).getTipo()+"/"+routingTable.getDestinazione(i).getNome()+"] GateWay["+route.getGateway().getTipo()+"/"+route.getGateway().getNome()+"]"); 
 							bf.append("\tGateWay["+route.getGateway().getTipo()+"/"+route.getGateway().getNome()+"]: ");
 
@@ -1546,7 +1598,7 @@ public class ConfigurazionePdDReader {
 		// Se un connettore non viene trovato, significa che e' stata effettuata una scorretta installazione
 		if(routingTable.getDefault()!=null){
 			for(int i=0;i<routingTable.getDefault().sizeRouteList();i++){
-				this.log.debug("getForwardRoute: esamino routing table, rotta di default");
+				this.logDebug("getForwardRoute: esamino routing table, rotta di default");
 				bf.append("\nRotta di default");
 				Route route = routingTable.getDefault().getRoute(i);
 				Connettore connettoreDominio = null;
@@ -1554,7 +1606,7 @@ public class ConfigurazionePdDReader {
 				String soggettoGateway = "";
 				try{
 					if(route.getRegistro()!=null){ 
-						this.log.debug("getForwardRoute: esamino routing table, rotta di default, Registro nomeRegistro["+route.getRegistro().getNome()+"]");
+						this.logDebug("getForwardRoute: esamino routing table, rotta di default, Registro nomeRegistro["+route.getRegistro().getNome()+"]");
 						bf.append(" Registro nomeRegistro["+route.getRegistro().getNome()+"]: ");
 
 						// Utilizzo del registro con l'identita reale della busta
@@ -1570,7 +1622,7 @@ public class ConfigurazionePdDReader {
 								!CostantiConfigurazione.DISABILITATO.equals(connettoreDominio.getTipo()))
 							connettoreDominio.setNomeRegistro(route.getRegistro().getNome());
 					}else if(route.getGateway()!=null){ 
-						this.log.debug("getForwardRoute: esamino routing table, rotta di default, GateWay["+route.getGateway().getTipo()+"/"+route.getGateway().getNome()+"]");
+						this.logDebug("getForwardRoute: esamino routing table, rotta di default, GateWay["+route.getGateway().getTipo()+"/"+route.getGateway().getNome()+"]");
 						bf.append(" GateWay["+route.getGateway().getTipo()+"/"+route.getGateway().getNome()+"]: ");
 
 						// Utilizzo del gateway
@@ -1641,7 +1693,7 @@ public class ConfigurazionePdDReader {
 		try{
 			routingTable = this.configurazionePdD.getRoutingTable(connectionPdD);
 		}catch(Exception e){
-			this.log.debug("routerFunctionActive[getRoutingTable]",e);
+			this.logDebug("routerFunctionActive[getRoutingTable]",e);
 		}
 		if(routingTable == null || (routingTable.getAbilitata()==null || routingTable.getAbilitata()==false) || 
 				( 
@@ -1659,7 +1711,7 @@ public class ConfigurazionePdDReader {
 			router = this.configurazionePdD.getRouter(connectionPdD);
 		}catch(DriverConfigurazioneNotFound e){
 			return false;
-			//this.log.debug("routerFunctionActive[getRouter] (not found): "+e.getMessage());
+			//this.logDebug("routerFunctionActive[getRouter] (not found): "+e.getMessage());
 		}	
 		return router!=null;
 	}
@@ -1677,7 +1729,7 @@ public class ConfigurazionePdDReader {
 		try{
 			routingTable = this.configurazionePdD.getRoutingTable(connectionPdD);
 		}catch(Exception e){
-			this.log.debug("getRouterIdentity[routingTable]",e);
+			this.logDebug("getRouterIdentity[routingTable]",e);
 		}
 		if(routingTable == null || (routingTable.getAbilitata()==null || routingTable.getAbilitata()==false) || 
 				( 
@@ -1808,7 +1860,7 @@ public class ConfigurazionePdDReader {
 				return originale;
 			}
 
-			this.log.debug("["+funzione+"]  Originale["+originale+"] UrlPrefix["+urlPrefix+"] ...");
+			this.logDebug("["+funzione+"]  Originale["+originale+"] UrlPrefix["+urlPrefix+"] ...");
 
 			String tmp = null;
 			if(originale.contains("://")){
@@ -1817,11 +1869,11 @@ public class ConfigurazionePdDReader {
 				return urlOriginale; // url prefix effettuato solo se definito un protocollo es. http://
 			}
 
-			this.log.debug("["+funzione+"]  eliminazioneProtocollo["+tmp+"] ...");
+			this.logDebug("["+funzione+"]  eliminazioneProtocollo["+tmp+"] ...");
 
 			if(tmp.contains("/")){
 				tmp = tmp.substring(tmp.indexOf("/")+1);
-				this.log.debug("["+funzione+"]  salvataggioContesto["+tmp+"] ...");
+				this.logDebug("["+funzione+"]  salvataggioContesto["+tmp+"] ...");
 				if(urlFinale.endsWith("/")==false){
 					urlFinale = urlFinale + "/"; 
 				}
@@ -1829,12 +1881,12 @@ public class ConfigurazionePdDReader {
 			}
 			// else sostituisco completamente tutta la url, non avendo un contesto.
 
-			this.log.debug("["+funzione+"]  nuova url: ["+urlFinale+"]");
+			this.logDebug("["+funzione+"]  nuova url: ["+urlFinale+"]");
 
 			return urlFinale;
 
 		}catch(Exception e){
-			this.log.error("Processo di ["+funzione+"]  fallito (urlOriginale:"+urlOriginale+") (urlPrefix:"+urlPrefix+")",e);
+			this.logError("Processo di ["+funzione+"]  fallito (urlOriginale:"+urlOriginale+") (urlPrefix:"+urlPrefix+")",e);
 			throw new DriverConfigurazioneException("Processo di ["+funzione+"]  fallito (urlOriginale:"+urlOriginale+") (urlPrefix:"+urlPrefix+")",e);
 		}
 	}
@@ -1858,7 +1910,7 @@ public class ConfigurazionePdDReader {
 		return this.configurazionePdD.getPortaDelegata(connectionPdD,idPD);
 	}
 
-	protected PortaDelegata getPortaDelegata_SafeMethod(Connection connectionPdD,IDPortaDelegata idPD)throws DriverConfigurazioneException{
+	protected PortaDelegata getPortaDelegataSafeMethod(Connection connectionPdD,IDPortaDelegata idPD)throws DriverConfigurazioneException{
 		try{
 			if(idPD!=null && idPD.getNome()!=null)
 				return this.getPortaDelegata(connectionPdD,idPD);
@@ -1960,7 +2012,7 @@ public class ConfigurazionePdDReader {
 			
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, requestInfo, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
-					pattern, forceRegistryBased, forcePluginBased, this.log, false,
+					pattern, forceRegistryBased, forcePluginBased, this.logger, false,
 					bufferMessage_readOnly, 
 					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null,
 					rpcAcceptRootElementUnqualified);
@@ -1979,7 +2031,7 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	protected MTOMProcessorConfig getPD_MTOMProcessorForSender(PortaDelegata pd) throws DriverConfigurazioneException{
+	protected MTOMProcessorConfig getMTOMProcessorForSender(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MTOMProcessorConfig config = new MTOMProcessorConfig();
 		List<MtomXomPackageInfo> list = new ArrayList<MtomXomPackageInfo>();
@@ -2011,7 +2063,7 @@ public class ConfigurazionePdDReader {
 		return config;
 	}
 
-	protected MTOMProcessorConfig getPD_MTOMProcessorForReceiver(PortaDelegata pd) throws DriverConfigurazioneException{
+	protected MTOMProcessorConfig getMTOMProcessorForReceiver(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MTOMProcessorConfig config = new MTOMProcessorConfig();
 		List<MtomXomPackageInfo> list = new ArrayList<MtomXomPackageInfo>();
@@ -2043,7 +2095,7 @@ public class ConfigurazionePdDReader {
 		return config;
 	}
 
-	protected MessageSecurityConfig getPD_MessageSecurityForSender(PortaDelegata pd) throws DriverConfigurazioneException{
+	protected MessageSecurityConfig getMessageSecurityForSender(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
 		java.util.Map<String,Object> table = new java.util.HashMap<>();
@@ -2085,7 +2137,7 @@ public class ConfigurazionePdDReader {
 		return securityConfig;
 	}
 
-	protected MessageSecurityConfig getPD_MessageSecurityForReceiver(PortaDelegata pd) throws DriverConfigurazioneException{
+	protected MessageSecurityConfig getMessageSecurityForReceiver(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
 		java.util.Map<String,Object> table = new java.util.HashMap<>();
@@ -2464,7 +2516,7 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
-	protected String getLocalForward_NomePortaApplicativa(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected String getLocalForwardNomePortaApplicativa(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		if(pd==null || pd.getLocalForward()==null){
 			// configurazione di default
@@ -2836,8 +2888,8 @@ public class ConfigurazionePdDReader {
 		return this.configurazionePdD.getIDPortaApplicativa(connectionPdD, nome);
 	}
 
-	protected Map<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(Connection connectionPdD,IDServizio idServizio)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,idServizio,null,false);
+	protected Map<IDSoggetto,PortaApplicativa> getPorteApplicativeSoggettiVirtuali(Connection connectionPdD,IDServizio idServizio)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getPorteApplicativeSoggettiVirtuali(connectionPdD,idServizio,null,false);
 	}
 
 	protected boolean existsPA(Connection connectionPdD,RichiestaApplicativa richiestaApplicativa) throws DriverConfigurazioneException{	
@@ -2853,7 +2905,7 @@ public class ConfigurazionePdDReader {
 		if( isSoggettoVirtuale(connectionPdD,richiestaApplicativa.getIDServizio().getSoggettoErogatore())  ){
 			Map<IDSoggetto,PortaApplicativa> paConSoggetti = null;
 			try{
-				paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,richiestaApplicativa.getIDServizio(),richiestaApplicativa.getFiltroProprietaPorteApplicative(),true);
+				paConSoggetti = this.configurazionePdD.getPorteApplicativeSoggettiVirtuali(connectionPdD,richiestaApplicativa.getIDServizio(),richiestaApplicativa.getFiltroProprietaPorteApplicative(),true);
 			}catch(DriverConfigurazioneNotFound e){
 				return false;
 			}
@@ -2883,7 +2935,7 @@ public class ConfigurazionePdDReader {
 		return this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA);
 	}
 
-	protected PortaApplicativa getPortaApplicativa_SafeMethod(Connection connectionPdD,IDPortaApplicativa idPA)throws DriverConfigurazioneException{
+	protected PortaApplicativa getPortaApplicativaSafeMethod(Connection connectionPdD,IDPortaApplicativa idPA)throws DriverConfigurazioneException{
 		try{
 			if(idPA!=null && idPA.getNome()!=null)
 				return this.getPortaApplicativa(connectionPdD,idPA);
@@ -2992,7 +3044,7 @@ public class ConfigurazionePdDReader {
 			
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, requestInfo, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
-					pattern, forceRegistryBased, forcePluginBased, this.log, true,
+					pattern, forceRegistryBased, forcePluginBased, this.logger, true,
 					bufferMessage_readOnly, 
 					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null,
 					rpcAcceptRootElementUnqualified);
@@ -3025,9 +3077,9 @@ public class ConfigurazionePdDReader {
 		return sa;
 	}
 
-	protected SoggettoVirtuale getServiziApplicativi_SoggettiVirtuali(Connection connectionPdD,RichiestaApplicativa richiestaApplicativa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected SoggettoVirtuale getServiziApplicativiSoggettiVirtuali(Connection connectionPdD,RichiestaApplicativa richiestaApplicativa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
-		Map<IDSoggetto,PortaApplicativa> paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,richiestaApplicativa.getIDServizio()
+		Map<IDSoggetto,PortaApplicativa> paConSoggetti = this.configurazionePdD.getPorteApplicativeSoggettiVirtuali(connectionPdD,richiestaApplicativa.getIDServizio()
 				,richiestaApplicativa.getFiltroProprietaPorteApplicative(),true);
 		if(paConSoggetti == null)
 			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+richiestaApplicativa.getIDServizio()+"] non trovate");
@@ -3071,7 +3123,7 @@ public class ConfigurazionePdDReader {
 		return this.configurazionePdD.getPorteApplicativeVirtuali(connectionPdD, idSoggettoVirtuale, idServizio, ricercaPuntuale);
 	}
 
-	protected MTOMProcessorConfig getPA_MTOMProcessorForSender(PortaApplicativa pa)throws DriverConfigurazioneException{
+	protected MTOMProcessorConfig getMTOMProcessorForSender(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MTOMProcessorConfig config = new MTOMProcessorConfig();
 		List<MtomXomPackageInfo> list = new ArrayList<MtomXomPackageInfo>();
@@ -3103,7 +3155,7 @@ public class ConfigurazionePdDReader {
 		return config;
 	}
 
-	protected MTOMProcessorConfig getPA_MTOMProcessorForReceiver(PortaApplicativa pa)throws DriverConfigurazioneException{
+	protected MTOMProcessorConfig getMTOMProcessorForReceiver(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MTOMProcessorConfig config = new MTOMProcessorConfig();
 		List<MtomXomPackageInfo> list = new ArrayList<MtomXomPackageInfo>();
@@ -3135,7 +3187,7 @@ public class ConfigurazionePdDReader {
 		return config; 
 	}
 
-	protected MessageSecurityConfig getPA_MessageSecurityForSender(PortaApplicativa pa)throws DriverConfigurazioneException{
+	protected MessageSecurityConfig getMessageSecurityForSender(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
 		java.util.Map<String,Object> table = new java.util.HashMap<>();
@@ -3177,7 +3229,7 @@ public class ConfigurazionePdDReader {
 		return securityConfig;
 	}
 
-	protected MessageSecurityConfig getPA_MessageSecurityForReceiver(PortaApplicativa pa)throws DriverConfigurazioneException{
+	protected MessageSecurityConfig getMessageSecurityForReceiver(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
 		java.util.Map<String,Object> table = new java.util.HashMap<>();
@@ -4141,7 +4193,7 @@ public class ConfigurazionePdDReader {
 		try{
 			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiBasic(connectionPdD, aUser, aPassword, config);
 		}catch(DriverConfigurazioneNotFound e){
-			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
+			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
 
 		if(servizioApplicativo!=null){
@@ -4161,7 +4213,7 @@ public class ConfigurazionePdDReader {
 		try{
 			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiApiKey(connectionPdD, aUser, aPassword, appId, config);
 		}catch(DriverConfigurazioneNotFound e){
-			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
+			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
 
 		if(servizioApplicativo!=null){
@@ -4181,7 +4233,7 @@ public class ConfigurazionePdDReader {
 		try{
 			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject, aIssuer);
 		}catch(DriverConfigurazioneNotFound e){
-			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
+			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
 
 		if(servizioApplicativo!=null){
@@ -4201,7 +4253,7 @@ public class ConfigurazionePdDReader {
 		try{
 			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificate, strictVerifier);
 		}catch(DriverConfigurazioneNotFound e){
-			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
+			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
 
 		if(servizioApplicativo!=null){
@@ -4221,7 +4273,7 @@ public class ConfigurazionePdDReader {
 		try{
 			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, principal);
 		}catch(DriverConfigurazioneNotFound e){
-			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
+			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
 
 		if(servizioApplicativo!=null){
@@ -4241,7 +4293,7 @@ public class ConfigurazionePdDReader {
 		try{
 			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiToken(connectionPdD, tokenPolicy, tokenClientId);
 		}catch(DriverConfigurazioneNotFound e){
-			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
+			//this.logDebug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
 
 		if(servizioApplicativo!=null){
@@ -4611,7 +4663,7 @@ public class ConfigurazionePdDReader {
 		return connettoreMsg;
 	}
 
-	protected GestioneErrore getGestioneErroreConnettore_InvocazioneServizio(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected GestioneErrore getGestioneErroreConnettoreInvocazioneServizio(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		//  Servizio applicativo
 		if(sa.getInvocazioneServizio()==null || 
@@ -4951,7 +5003,7 @@ public class ConfigurazionePdDReader {
 		return connettoreMsg;
 	}
 
-	protected GestioneErrore getGestioneErroreConnettore_RispostaAsincrona(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected GestioneErrore getGestioneErroreConnettoreRispostaAsincrona(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		//  Servizio applicativo
 		if(sa.getRispostaAsincrona()==null ||
@@ -5005,7 +5057,7 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatoApplicativo(sa,sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	protected CertificateCheck checkCertificatoApplicativo(Connection connectionPdD,boolean useCache,
 			IDServizioApplicativo idSA, int sogliaWarningGiorni, 
@@ -5020,7 +5072,7 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatoApplicativo(sa, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static CertificateCheck checkCertificatoApplicativo(ServizioApplicativo sa, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
@@ -5032,8 +5084,8 @@ public class ConfigurazionePdDReader {
 		if(sa.getInvocazionePorta()==null || sa.getInvocazionePorta().sizeCredenzialiList()<=0) {
 			throw new DriverConfigurazioneException("Nessuna credenziale risulta associata all'applicativo");
 		}
-		List<byte[]> certs = new ArrayList<byte[]>();
-		List<Boolean> strictValidation = new ArrayList<Boolean>();
+		List<byte[]> certs = new ArrayList<>();
+		List<Boolean> strictValidation = new ArrayList<>();
 		for (int i = 0; i < sa.getInvocazionePorta().sizeCredenzialiList(); i++) {
 			Credenziali c = sa.getInvocazionePorta().getCredenziali(i);
 			if(!org.openspcoop2.core.config.constants.CredenzialeTipo.SSL.equals(c.getTipo())) {
@@ -5078,7 +5130,7 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatoModiApplicativo(sa,sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	protected CertificateCheck checkCertificatoModiApplicativo(Connection connectionPdD,boolean useCache,
 			IDServizioApplicativo idSA, int sogliaWarningGiorni, 
@@ -5093,11 +5145,11 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatoModiApplicativo(sa, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static CertificateCheck checkCertificatoModiApplicativo(ServizioApplicativo sa, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		String protocollo = null;
 		try {
@@ -5171,6 +5223,10 @@ public class ConfigurazionePdDReader {
 			long idConnettore, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverConfigurazioneException("Not Implemented");
 		}
@@ -5186,11 +5242,11 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatiConnettoreHttpsById(connettore,sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static CertificateCheck checkCertificatiConnettoreHttpsById(Connettore connettore, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
 		if( !TipiConnettore.HTTPS.equals(tipo)) {
@@ -5269,7 +5325,7 @@ public class ConfigurazionePdDReader {
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException{
 		return checkCertificatiJvm(sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	
 	public static CertificateCheck checkCertificatiJvm(int sogliaWarningGiorni, 
@@ -5323,7 +5379,7 @@ public class ConfigurazionePdDReader {
 		}
 		
 		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-			//String id = "Configurazione https della JVM";
+			/**String id = "Configurazione https della JVM";*/
 			String id = "";
 			if(addCertificateDetails && storeDetails!=null) {
 				id = id + newLine + storeDetails;
@@ -5359,11 +5415,11 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatiConnettoreHttpsTokenPolicyValidazione(gp, tipo, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyValidazione(GenericProperties gp, String tipo, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		GestioneToken gestioneToken = new GestioneToken();
 		List<org.openspcoop2.core.config.Connettore> listConnettori = null;
@@ -5394,6 +5450,10 @@ public class ConfigurazionePdDReader {
 			String nome, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverConfigurazioneException("Not Implemented");
 		}
@@ -5409,12 +5469,12 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatiValidazioneJwtTokenPolicyValidazione(gp, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static final String ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_JWT = "Configurazione Validazione JWT";
 	public static CertificateCheck checkCertificatiValidazioneJwtTokenPolicyValidazione(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		GestioneToken gestioneToken = new GestioneToken();
 		KeystoreParams keystoreParams = null;
@@ -5557,6 +5617,10 @@ public class ConfigurazionePdDReader {
 			String nome, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverConfigurazioneException("Not Implemented");
 		}
@@ -5572,12 +5636,12 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatiForwardToJwtTokenPolicyValidazione(gp, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static final String ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_FORWARD_TO_JWT = "Configurazione ForwardTo JWT";
 	public static CertificateCheck checkCertificatiForwardToJwtTokenPolicyValidazione(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		GestioneToken gestioneToken = new GestioneToken();
 		KeystoreParams keystoreParams = null;
@@ -5715,6 +5779,10 @@ public class ConfigurazionePdDReader {
 			String nome, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverConfigurazioneException("Not Implemented");
 		}
@@ -5730,11 +5798,11 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(gp, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		List<org.openspcoop2.core.config.Connettore> listConnettori = null;
 		try {
@@ -5763,6 +5831,10 @@ public class ConfigurazionePdDReader {
 			String nome, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverConfigurazioneException("Not Implemented");
 		}
@@ -5778,12 +5850,12 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatiSignedJwtTokenPolicyNegoziazione(gp, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static final String ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_SIGNED_JWT = "Configurazione SignedJWT";
 	public static CertificateCheck checkCertificatiSignedJwtTokenPolicyNegoziazione(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		KeystoreParams keystoreParams = null;
 		try {
@@ -5873,6 +5945,10 @@ public class ConfigurazionePdDReader {
 			String nome, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverConfigurazioneException("Not Implemented");
 		}
@@ -5888,11 +5964,11 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatiConnettoreHttpsAttributeAuthority(gp, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static CertificateCheck checkCertificatiConnettoreHttpsAttributeAuthority(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		List<org.openspcoop2.core.config.Connettore> listConnettori = null;
 		try {
@@ -5921,6 +5997,10 @@ public class ConfigurazionePdDReader {
 			String nome, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverConfigurazioneException("Not Implemented");
 		}
@@ -5936,12 +6016,12 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatiAttributeAuthorityJwtRichiesta(gp, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static final String ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA = "Configurazione JWS Richiesta";
 	public static CertificateCheck checkCertificatiAttributeAuthorityJwtRichiesta(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		KeystoreParams keystoreParams = null;
 		try {
@@ -6023,6 +6103,10 @@ public class ConfigurazionePdDReader {
 			String nome, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverConfigurazioneException("Not Implemented");
 		}
@@ -6038,11 +6122,11 @@ public class ConfigurazionePdDReader {
 		}
 		return checkCertificatiAttributeAuthorityJwtRisposta(gp, sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
-				this.log);
+				this.logger);
 	}
 	public static CertificateCheck checkCertificatiAttributeAuthorityJwtRisposta(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+			Logger log) throws DriverConfigurazioneException {
 		
 		KeystoreParams keystoreParams = null;
 		try {
@@ -6224,9 +6308,9 @@ public class ConfigurazionePdDReader {
 			try{
 				configRegistro = this.configurazionePdD.getAccessoRegistro(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getAccessoRegistroServizi (not found): "+e.getMessage());
+				this.logDebug("getAccessoRegistroServizi (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("getAccessoRegistroServizi",e);
+				this.logError("getAccessoRegistroServizi",e);
 			}
 
 			ConfigurazionePdDReader.accessoRegistroServizi = configRegistro;
@@ -6270,9 +6354,9 @@ public class ConfigurazionePdDReader {
 			try{
 				tmp = this.configurazionePdD.getAccessoConfigurazione(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getAccessoConfigurazione (not found): "+e.getMessage());
+				this.logDebug("getAccessoConfigurazione (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("getAccessoConfigurazione",e);
+				this.logError("getAccessoConfigurazione",e);
 			}
 
 			ConfigurazionePdDReader.accessoConfigurazione = tmp;
@@ -6309,9 +6393,9 @@ public class ConfigurazionePdDReader {
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiAutorizzazione(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getAccessoDatiAutorizzazione (not found): "+e.getMessage());
+				this.logDebug("getAccessoDatiAutorizzazione (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("getAccessoDatiAutorizzazione",e);
+				this.logError("getAccessoDatiAutorizzazione",e);
 			}
 
 			ConfigurazionePdDReader.accessoDatiAutorizzazione = tmp;
@@ -6348,9 +6432,9 @@ public class ConfigurazionePdDReader {
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiAutenticazione(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getAccessoDatiAutenticazione (not found): "+e.getMessage());
+				this.logDebug("getAccessoDatiAutenticazione (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("getAccessoDatiAutenticazione",e);
+				this.logError("getAccessoDatiAutenticazione",e);
 			}
 
 			ConfigurazionePdDReader.accessoDatiAutenticazione = tmp;
@@ -6387,9 +6471,9 @@ public class ConfigurazionePdDReader {
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiGestioneToken(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getAccessoDatiGestioneToken (not found): "+e.getMessage());
+				this.logDebug("getAccessoDatiGestioneToken (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("getAccessoDatiGestioneToken",e);
+				this.logError("getAccessoDatiGestioneToken",e);
 			}
 
 			ConfigurazionePdDReader.accessoDatiGestioneToken = tmp;
@@ -6426,9 +6510,9 @@ public class ConfigurazionePdDReader {
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiKeystore(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getAccessoDatiKeystore (not found): "+e.getMessage());
+				this.logDebug("getAccessoDatiKeystore (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("getAccessoDatiKeystore",e);
+				this.logError("getAccessoDatiKeystore",e);
 			}
 
 			ConfigurazionePdDReader.accessoDatiKeystore = tmp;
@@ -6466,9 +6550,9 @@ public class ConfigurazionePdDReader {
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiRichieste(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getAccessoDatiRichieste (not found): "+e.getMessage());
+				this.logDebug("getAccessoDatiRichieste (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("getAccessoDatiRichieste",e);
+				this.logError("getAccessoDatiRichieste",e);
 			}
 
 			ConfigurazionePdDReader.accessoDatiRichieste = tmp;
@@ -6531,9 +6615,9 @@ public class ConfigurazionePdDReader {
 
 
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getTipoValidazione (not found): "+e.getMessage());
+				this.logDebug("getTipoValidazione (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("getTipoValidazione",e);
+				this.logError("getTipoValidazione",e);
 			}
 			if( configurazione  == null || configurazione.getValidazioneBuste()==null){
 				ConfigurazionePdDReader.tipoValidazione = CostantiConfigurazione.STATO_CON_WARNING_ABILITATO;
@@ -6580,9 +6664,9 @@ public class ConfigurazionePdDReader {
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("isLivelloValidazioneNormale (not found): "+e.getMessage());
+				this.logDebug("isLivelloValidazioneNormale (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("isLivelloValidazioneNormale",e);
+				this.logError("isLivelloValidazioneNormale",e);
 			}
 			if( configurazione  == null  || configurazione.getValidazioneBuste()==null){
 				ConfigurazionePdDReader.isLivelloValidazioneNormale = true; // default is normale
@@ -6626,9 +6710,9 @@ public class ConfigurazionePdDReader {
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("isLivelloValidazioneRigido (not found): "+e.getMessage());
+				this.logDebug("isLivelloValidazioneRigido (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("isLivelloValidazioneRigido",e);
+				this.logError("isLivelloValidazioneRigido",e);
 			}
 			if( configurazione  == null  || configurazione.getValidazioneBuste()==null){
 				ConfigurazionePdDReader.isLivelloValidazioneRigido = false; // default is normale
@@ -6671,9 +6755,9 @@ public class ConfigurazionePdDReader {
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("isValidazioneProfiloCollaborazione (not found): "+e.getMessage());
+				this.logDebug("isValidazioneProfiloCollaborazione (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("isValidazioneProfiloCollaborazione",e);
+				this.logError("isValidazioneProfiloCollaborazione",e);
 			}
 			if(configurazione == null || configurazione.getValidazioneBuste()==null)
 				ConfigurazionePdDReader.validazioneProfiloCollaborazione = false; //default: CostantiConfigurazione.DISABILITATO;
@@ -6714,9 +6798,9 @@ public class ConfigurazionePdDReader {
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("isValidazioneManifestAttachments (not found): "+e.getMessage());
+				this.logDebug("isValidazioneManifestAttachments (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.debug("isValidazioneManifestAttachments",e);
+				this.logDebug("isValidazioneManifestAttachments",e);
 			}
 			if(configurazione == null || configurazione.getValidazioneBuste()==null)
 				ConfigurazionePdDReader.validazioneManifestAttachments = true; //default: CostantiConfigurazione.ABILITATO;
@@ -6751,9 +6835,9 @@ public class ConfigurazionePdDReader {
 				}*/
 
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("newConnectionForResponse (not found): "+e.getMessage());
+				this.logDebug("newConnectionForResponse (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("newConnectionForResponse",e);
+				this.logError("newConnectionForResponse",e);
 			}
 			if(configurazione == null || configurazione.getRisposte()==null)
 				ConfigurazionePdDReader.newConnectionForResponse = false; //default: CostantiConfigurazione.CONNECTION_REPLY;
@@ -6785,9 +6869,9 @@ public class ConfigurazionePdDReader {
 				}*/
 
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("isUtilizzoIndirizzoRisposta (not found): "+e.getMessage());
+				this.logDebug("isUtilizzoIndirizzoRisposta (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("isUtilizzoIndirizzoRisposta",e);
+				this.logError("isUtilizzoIndirizzoRisposta",e);
 			}
 			if(configurazione == null || configurazione.getIndirizzoRisposta() == null)
 				ConfigurazionePdDReader.utilizzoIndirizzoRisposta = false; //default: CostantiConfigurazione.DISABILITATO;
@@ -6819,9 +6903,9 @@ public class ConfigurazionePdDReader {
 				}*/
 
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("isGestioneManifestAttachments (not found): "+e.getMessage());
+				this.logDebug("isGestioneManifestAttachments (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("isGestioneManifestAttachments",e);
+				this.logError("isGestioneManifestAttachments",e);
 			}
 			if(configurazione == null || configurazione.getAttachments()==null)
 				ConfigurazionePdDReader.gestioneManifestAttachments = false;  //default: CostantiConfigurazione.DISABILITATO;
@@ -6854,9 +6938,9 @@ public class ConfigurazionePdDReader {
 				}*/
 
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getTimeoutRiscontro (not found): "+e.getMessage());
+				this.logDebug("getTimeoutRiscontro (not found): "+e.getMessage());
 			}catch(Exception e){
-				this.log.error("getTimeoutRiscontro",e);
+				this.logError("getTimeoutRiscontro",e);
 			}
 			if(configurazione == null || configurazione.getInoltroBusteNonRiscontrate()==null)
 				ConfigurazionePdDReader.timeoutRiscontro = -1L;
@@ -6887,37 +6971,37 @@ public class ConfigurazionePdDReader {
 	 * @return Il livello di Log4J per il logger dei messaggi diagnostici (di default ritorna ALL). 
 	 * 
 	 */
-	private static Level livello_msgDiagnostici = null;
-	public static Level livello_msgDiagnosticiJMX = null;
-	protected Level getLivello_msgDiagnostici(Connection connectionPdD){
+	private static Level livelloMessaggiDiagnostici = null;
+	public static Level livelloMessaggiDiagnosticiJMX = null;
+	protected Level getLivelloMessaggiDiagnostici(Connection connectionPdD){
 
-		if(ConfigurazionePdDReader.livello_msgDiagnosticiJMX!=null)
-			return ConfigurazionePdDReader.livello_msgDiagnosticiJMX;
+		if(ConfigurazionePdDReader.livelloMessaggiDiagnosticiJMX!=null)
+			return ConfigurazionePdDReader.livelloMessaggiDiagnosticiJMX;
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.livello_msgDiagnostici==null){
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.livelloMessaggiDiagnostici==null){
 			try{
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);					
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getLivello_msgDiagnostici (not found): "+e.getMessage());
+					this.logDebug("getLivelloMessaggiDiagnostici (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getLivello_msgDiagnostici",e);
+					this.logError("getLivelloMessaggiDiagnostici",e);
 				}
 
 				if(configurazione!=null && configurazione.getMessaggiDiagnostici()!=null){
 					String readLevel = configurazione.getMessaggiDiagnostici().getSeverita().toString();	   
-					ConfigurazionePdDReader.livello_msgDiagnostici = LogLevels.toLog4J(readLevel);
+					ConfigurazionePdDReader.livelloMessaggiDiagnostici = LogLevels.toLog4J(readLevel);
 				}else{
-					ConfigurazionePdDReader.livello_msgDiagnostici = LogLevels.LOG_LEVEL_INFO_PROTOCOL;
+					ConfigurazionePdDReader.livelloMessaggiDiagnostici = LogLevels.LOG_LEVEL_INFO_PROTOCOL;
 				}
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.livello_msgDiagnostici = LogLevels.LOG_LEVEL_INFO_PROTOCOL;
+				ConfigurazionePdDReader.livelloMessaggiDiagnostici = LogLevels.LOG_LEVEL_INFO_PROTOCOL;
 			}
 		}
 
-		return ConfigurazionePdDReader.livello_msgDiagnostici;
+		return ConfigurazionePdDReader.livelloMessaggiDiagnostici;
 	}
 
 	/**
@@ -6926,38 +7010,38 @@ public class ConfigurazionePdDReader {
 	 * @return Il livello di Log4J per il logger dei messaggi diagnostici 'openspcoop' (di default ritorna OFF). 
 	 * 
 	 */
-	private static Level livelloLog4J_msgDiagnostici = null;
-	public static Level livelloLog4J_msgDiagnosticiJMX = null;
-	protected Level getLivelloLog4J_msgDiagnostici(Connection connectionPdD){
+	private static Level livelloLog4JMessaggiDiagnostici = null;
+	public static Level livelloLog4JMessaggiDiagnosticiJMX = null;
+	protected Level getLivelloLog4JMessaggiDiagnostici(Connection connectionPdD){
 
-		if(ConfigurazionePdDReader.livelloLog4J_msgDiagnosticiJMX!=null){
-			return ConfigurazionePdDReader.livelloLog4J_msgDiagnosticiJMX;
+		if(ConfigurazionePdDReader.livelloLog4JMessaggiDiagnosticiJMX!=null){
+			return ConfigurazionePdDReader.livelloLog4JMessaggiDiagnosticiJMX;
 		}
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.livelloLog4J_msgDiagnostici==null){
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.livelloLog4JMessaggiDiagnostici==null){
 			try{
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getLivelloLog4J_msgDiagnostici (not found): "+e.getMessage());
+					this.logDebug("getLivelloLog4JMessaggiDiagnostici (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getLivelloLog4J_msgDiagnostici",e);
+					this.logError("getLivelloLog4JMessaggiDiagnostici",e);
 				}
 
 				if(configurazione!=null && configurazione.getMessaggiDiagnostici()!=null){
 					String readLevel =  configurazione.getMessaggiDiagnostici().getSeveritaLog4j().toString();	   
-					ConfigurazionePdDReader.livelloLog4J_msgDiagnostici = LogLevels.toLog4J(readLevel);
+					ConfigurazionePdDReader.livelloLog4JMessaggiDiagnostici = LogLevels.toLog4J(readLevel);
 				}else{
-					ConfigurazionePdDReader.livelloLog4J_msgDiagnostici = LogLevels.LOG_LEVEL_INFO_PROTOCOL;
+					ConfigurazionePdDReader.livelloLog4JMessaggiDiagnostici = LogLevels.LOG_LEVEL_INFO_PROTOCOL;
 				}
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.livelloLog4J_msgDiagnostici = LogLevels.LOG_LEVEL_INFO_PROTOCOL;
+				ConfigurazionePdDReader.livelloLog4JMessaggiDiagnostici = LogLevels.LOG_LEVEL_INFO_PROTOCOL;
 			}
 		}
 
-		return ConfigurazionePdDReader.livelloLog4J_msgDiagnostici;
+		return ConfigurazionePdDReader.livelloLog4JMessaggiDiagnostici;
 	}
 
 	/**
@@ -6966,39 +7050,39 @@ public class ConfigurazionePdDReader {
 	 * @return Il livello per il logger dei messaggi diagnostici  (di default ritorna ALL). 
 	 * 
 	 */
-	private static Integer severita_msgDiagnostici = null;
-	public static Integer severita_msgDiagnosticiJMX = null;
-	protected int getSeverita_msgDiagnostici(Connection connectionPdD){
+	private static Integer severitaMessaggiDiagnostici = null;
+	public static Integer severitaMessaggiDiagnosticiJMX = null;
+	protected int getSeveritaMessaggiDiagnostici(Connection connectionPdD){
 
-		if(ConfigurazionePdDReader.severita_msgDiagnosticiJMX!=null){
-			return ConfigurazionePdDReader.severita_msgDiagnosticiJMX;
+		if(ConfigurazionePdDReader.severitaMessaggiDiagnosticiJMX!=null){
+			return ConfigurazionePdDReader.severitaMessaggiDiagnosticiJMX;
 		}
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.severita_msgDiagnostici==null){
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.severitaMessaggiDiagnostici==null){
 			try{
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getSeverita_msgDiagnostici (not found): "+e.getMessage());
+					this.logDebug("getSeveritaMessaggiDiagnostici (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getSeverita_msgDiagnostici",e);
+					this.logError("getSeveritaMessaggiDiagnostici",e);
 				}
 
 				if(configurazione!=null && configurazione.getMessaggiDiagnostici()!=null){
 					String readLevel = configurazione.getMessaggiDiagnostici().getSeverita().toString();	   
-					ConfigurazionePdDReader.severita_msgDiagnostici = LogLevels.toOpenSPCoop2(readLevel);
+					ConfigurazionePdDReader.severitaMessaggiDiagnostici = LogLevels.toOpenSPCoop2(readLevel);
 				}else{
-					ConfigurazionePdDReader.severita_msgDiagnostici = LogLevels.SEVERITA_INFO_PROTOCOL;
+					ConfigurazionePdDReader.severitaMessaggiDiagnostici = LogLevels.SEVERITA_INFO_PROTOCOL;
 				}
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.severita_msgDiagnostici = LogLevels.SEVERITA_INFO_PROTOCOL;
+				ConfigurazionePdDReader.severitaMessaggiDiagnostici = LogLevels.SEVERITA_INFO_PROTOCOL;
 			}
 		}
 
-		return ConfigurazionePdDReader.severita_msgDiagnostici;
+		return ConfigurazionePdDReader.severitaMessaggiDiagnostici;
 	}
 
 	/**
@@ -7007,46 +7091,46 @@ public class ConfigurazionePdDReader {
 	 * @return Il livello per il logger dei messaggi diagnostici che finiscono su log4j (di default ritorna OFF). 
 	 * 
 	 */
-	private static Integer severitaLog4J_msgDiagnostici = null;
-	public static Integer severitaLog4J_msgDiagnosticiJMX = null;
-	public static Integer getSeveritaLog4J_msgDiagnosticiJMX() {
-		return severitaLog4J_msgDiagnosticiJMX;
+	private static Integer severitaLog4JMessaggiDiagnostici = null;
+	public static Integer severitaLog4JMessaggiDiagnosticiJMX = null;
+	public static Integer getSeveritaLog4JMessaggiDiagnosticiJMX() {
+		return severitaLog4JMessaggiDiagnosticiJMX;
 	}
-	public static void setSeveritaLog4J_msgDiagnosticiJMX(
-			Integer severitaLog4J_msgDiagnosticiJMX) {
-		ConfigurazionePdDReader.severitaLog4J_msgDiagnosticiJMX = severitaLog4J_msgDiagnosticiJMX;
+	public static void setSeveritaLog4JMessaggiDiagnosticiJMX(
+			Integer severitaLog4JMessaggiDiagnosticiJMX) {
+		ConfigurazionePdDReader.severitaLog4JMessaggiDiagnosticiJMX = severitaLog4JMessaggiDiagnosticiJMX;
 	}
-	protected int getSeveritaLog4J_msgDiagnostici(Connection connectionPdD){
+	protected int getSeveritaLog4JMessaggiDiagnostici(Connection connectionPdD){
 
-		if(ConfigurazionePdDReader.severitaLog4J_msgDiagnosticiJMX!=null){
-			return ConfigurazionePdDReader.severitaLog4J_msgDiagnosticiJMX;
+		if(ConfigurazionePdDReader.severitaLog4JMessaggiDiagnosticiJMX!=null){
+			return ConfigurazionePdDReader.severitaLog4JMessaggiDiagnosticiJMX;
 		}
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.severitaLog4J_msgDiagnostici==null){
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.severitaLog4JMessaggiDiagnostici==null){
 			try{
 
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getSeveritaOpenSPCoop_msgDiagnostici (not found): "+e.getMessage());
+					this.logDebug("getSeveritaLog4JMessaggiDiagnostici (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getSeveritaOpenSPCoop_msgDiagnostici",e);
+					this.logError("getSeveritaLog4JMessaggiDiagnostici",e);
 				}
 
 				if(configurazione!=null && configurazione.getMessaggiDiagnostici()!=null){
 					String readLevel = configurazione.getMessaggiDiagnostici().getSeveritaLog4j().toString();	   
-					ConfigurazionePdDReader.severitaLog4J_msgDiagnostici = LogLevels.toOpenSPCoop2(readLevel);
+					ConfigurazionePdDReader.severitaLog4JMessaggiDiagnostici = LogLevels.toOpenSPCoop2(readLevel);
 				}else{
-					ConfigurazionePdDReader.severitaLog4J_msgDiagnostici = LogLevels.SEVERITA_INFO_PROTOCOL;
+					ConfigurazionePdDReader.severitaLog4JMessaggiDiagnostici = LogLevels.SEVERITA_INFO_PROTOCOL;
 				}
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.severitaLog4J_msgDiagnostici = LogLevels.SEVERITA_INFO_PROTOCOL;
+				ConfigurazionePdDReader.severitaLog4JMessaggiDiagnostici = LogLevels.SEVERITA_INFO_PROTOCOL;
 			}
 		}
 
-		return ConfigurazionePdDReader.severitaLog4J_msgDiagnostici;
+		return ConfigurazionePdDReader.severitaLog4JMessaggiDiagnostici;
 	}
 
 	/**
@@ -7054,33 +7138,33 @@ public class ConfigurazionePdDReader {
 	 *
 	 * @return Restituisce gli appender personalizzati per la registrazione dei messaggi diagnostici. 
 	 */
-	private static MessaggiDiagnostici openSPCoopAppender_MsgDiagnostici = null;
-	private static Boolean openSPCoopAppender_MsgDiagnosticiLetto = false;
-	protected MessaggiDiagnostici getOpenSPCoopAppender_MsgDiagnostici(Connection connectionPdD){
+	private static MessaggiDiagnostici openSPCoopAppenderMessaggiDiagnostici = null;
+	private static Boolean openSPCoopAppenderMessaggiDiagnosticiLetto = false;
+	protected MessaggiDiagnostici getOpenSPCoopAppenderMessaggiDiagnostici(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.openSPCoopAppender_MsgDiagnosticiLetto==false){
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.openSPCoopAppenderMessaggiDiagnosticiLetto){
 			try{
 
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getOpenSPCoopAppender_MsgDiagnostici (not found): "+e.getMessage());
+					this.logDebug("getOpenSPCoopAppenderMessaggiDiagnostici (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getOpenSPCoopAppender_MsgDiagnostici",e);
+					this.logError("getOpenSPCoopAppenderMessaggiDiagnostici",e);
 				}
 				if(configurazione!=null)
-					ConfigurazionePdDReader.openSPCoopAppender_MsgDiagnostici = configurazione.getMessaggiDiagnostici();
+					ConfigurazionePdDReader.openSPCoopAppenderMessaggiDiagnostici = configurazione.getMessaggiDiagnostici();
 				else
-					ConfigurazionePdDReader.openSPCoopAppender_MsgDiagnostici = null;
+					ConfigurazionePdDReader.openSPCoopAppenderMessaggiDiagnostici = null;
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.openSPCoopAppender_MsgDiagnostici = null;
+				ConfigurazionePdDReader.openSPCoopAppenderMessaggiDiagnostici = null;
 			}
-			ConfigurazionePdDReader.openSPCoopAppender_MsgDiagnosticiLetto = true;
+			ConfigurazionePdDReader.openSPCoopAppenderMessaggiDiagnosticiLetto = true;
 		}
 
-		return ConfigurazionePdDReader.openSPCoopAppender_MsgDiagnostici;
+		return ConfigurazionePdDReader.openSPCoopAppenderMessaggiDiagnostici;
 	}
 
 
@@ -7119,9 +7203,9 @@ public class ConfigurazionePdDReader {
 					}*/
 
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("tracciamentoBuste (not found): "+e.getMessage());
+					this.logDebug("tracciamentoBuste (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("tracciamentoBuste",e);
+					this.logError("tracciamentoBuste",e);
 				}
 
 				if(configurazione!=null && configurazione.getTracciamento()!=null){
@@ -7146,32 +7230,32 @@ public class ConfigurazionePdDReader {
 	 *
 	 * @return Restituisce gli appender personalizzati per la registrazione delle buste. 
 	 */
-	private static Tracciamento openSPCoopAppender_Tracciamento = null;
-	private static Boolean openSPCoopAppender_TracciamentoLetto = false;
-	protected Tracciamento getOpenSPCoopAppender_Tracciamento(Connection connectionPdD){
+	private static Tracciamento openSPCoopAppenderTracciamento = null;
+	private static Boolean openSPCoopAppenderTracciamentoLetto = false;
+	protected Tracciamento getOpenSPCoopAppenderTracciamento(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.openSPCoopAppender_TracciamentoLetto==false){
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.openSPCoopAppenderTracciamentoLetto==false){
 			try{
 
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getOpenSPCoopAppender_Tracciamento (not found): "+e.getMessage());
+					this.logDebug("getOpenSPCoopAppenderTracciamento (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getOpenSPCoopAppender_Tracciamento",e);
+					this.logError("getOpenSPCoopAppenderTracciamento",e);
 				}
 
 				if(configurazione!=null)
-					ConfigurazionePdDReader.openSPCoopAppender_Tracciamento = configurazione.getTracciamento();	   
+					ConfigurazionePdDReader.openSPCoopAppenderTracciamento = configurazione.getTracciamento();	   
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.openSPCoopAppender_Tracciamento = null;
+				ConfigurazionePdDReader.openSPCoopAppenderTracciamento = null;
 			}
-			ConfigurazionePdDReader.openSPCoopAppender_TracciamentoLetto = true;
+			ConfigurazionePdDReader.openSPCoopAppenderTracciamentoLetto = true;
 		}
 
-		return ConfigurazionePdDReader.openSPCoopAppender_Tracciamento;
+		return ConfigurazionePdDReader.openSPCoopAppenderTracciamento;
 	}
 
 
@@ -7184,9 +7268,9 @@ public class ConfigurazionePdDReader {
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getTransazioniConfigurazione (not found): "+e.getMessage());
+					this.logDebug("getTransazioniConfigurazione (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getTransazioniConfigurazione",e);
+					this.logError("getTransazioniConfigurazione",e);
 				}
 
 				if(configurazione!=null && configurazione.getTransazioni()!=null){
@@ -7213,9 +7297,9 @@ public class ConfigurazionePdDReader {
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getDumpConfigurazione (not found): "+e.getMessage());
+					this.logDebug("getDumpConfigurazione (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getDumpConfigurazione",e);
+					this.logError("getDumpConfigurazione",e);
 				}
 
 				if(configurazione!=null && configurazione.getDump()!=null){
@@ -7242,9 +7326,9 @@ public class ConfigurazionePdDReader {
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getDumpConfigurazione (not found): "+e.getMessage());
+					this.logDebug("getDumpConfigurazione (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getDumpConfigurazione",e);
+					this.logError("getDumpConfigurazione",e);
 				}
 
 				if(configurazione!=null && configurazione.getDump()!=null){
@@ -7275,9 +7359,9 @@ public class ConfigurazionePdDReader {
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("dumpBinarioPD (not found): "+e.getMessage());
+					this.logDebug("dumpBinarioPD (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("dumpBinarioPD",e);
+					this.logError("dumpBinarioPD",e);
 				}
 
 				if(configurazione!=null && configurazione.getDump()!=null){
@@ -7312,9 +7396,9 @@ public class ConfigurazionePdDReader {
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("dumpBinarioPA (not found): "+e.getMessage());
+					this.logDebug("dumpBinarioPA (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("dumpBinarioPA",e);
+					this.logError("dumpBinarioPA",e);
 				}
 
 				if(configurazione!=null && configurazione.getDump()!=null){
@@ -7340,32 +7424,32 @@ public class ConfigurazionePdDReader {
 	 *
 	 * @return Restituisce gli appender personalizzati per la registrazione dei contenuti
 	 */
-	private static Dump openSPCoopAppender_Dump = null;
-	private static Boolean openSPCoopAppender_DumpLetto = false;
-	protected Dump getOpenSPCoopAppender_Dump(Connection connectionPdD){
+	private static Dump openSPCoopAppenderDump = null;
+	private static Boolean openSPCoopAppenderDumpLetto = false;
+	protected Dump getOpenSPCoopAppenderDump(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.openSPCoopAppender_DumpLetto==false){
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.openSPCoopAppenderDumpLetto==false){
 			try{
 
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getOpenSPCoopAppender_Dump (not found): "+e.getMessage());
+					this.logDebug("getOpenSPCoopAppenderDump (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getOpenSPCoopAppender_Dump",e);
+					this.logError("getOpenSPCoopAppenderDump",e);
 				}
 
 				if(configurazione!=null)
-					ConfigurazionePdDReader.openSPCoopAppender_Dump = configurazione.getDump();	   
+					ConfigurazionePdDReader.openSPCoopAppenderDump = configurazione.getDump();	   
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.openSPCoopAppender_Dump = null;
+				ConfigurazionePdDReader.openSPCoopAppenderDump = null;
 			}
-			ConfigurazionePdDReader.openSPCoopAppender_DumpLetto = true;
+			ConfigurazionePdDReader.openSPCoopAppenderDumpLetto = true;
 		}
 
-		return ConfigurazionePdDReader.openSPCoopAppender_Dump;
+		return ConfigurazionePdDReader.openSPCoopAppenderDump;
 	}
 
 	/**
@@ -7408,9 +7492,9 @@ public class ConfigurazionePdDReader {
 					}*/
 
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getGestioneErroreConnettoreComponenteCooperazione (not found): "+e.getMessage());
+					this.logDebug("getGestioneErroreConnettoreComponenteCooperazione (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getGestioneErroreConnettoreComponenteCooperazione",e);
+					this.logError("getGestioneErroreConnettoreComponenteCooperazione",e);
 				}
 				if(gestione == null)
 					gestione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteCooperazione(protocolFactory, serviceBinding);
@@ -7480,9 +7564,9 @@ public class ConfigurazionePdDReader {
 					}*/
 
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getGestioneErroreConnettoreComponenteIntegrazione (not found): "+e.getMessage());
+					this.logDebug("getGestioneErroreConnettoreComponenteIntegrazione (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getGestioneErroreConnettoreComponenteIntegrazione",e);
+					this.logError("getGestioneErroreConnettoreComponenteIntegrazione",e);
 				}
 				if(gestione == null)
 					gestione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteIntegrazione(protocolFactory, serviceBinding);
@@ -7533,9 +7617,9 @@ public class ConfigurazionePdDReader {
 					}*/
 
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getIntegrationManagerAuthentication (not found): "+e.getMessage());
+					this.logDebug("getIntegrationManagerAuthentication (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getIntegrationManagerAuthentication",e);
+					this.logError("getIntegrationManagerAuthentication",e);
 				}
 				if(configurazione == null || configurazione.getIntegrationManager()==null || configurazione.getIntegrationManager().getAutenticazione()==null){
 					ConfigurazionePdDReader.integrationManagerAuthentication = new String [] { CostantiConfigurazione.CREDENZIALE_BASIC.toString(),
@@ -7548,7 +7632,7 @@ public class ConfigurazionePdDReader {
 					for(int i=0; i<values.length; i++){
 						values[i] = values[i].trim();
 						if(classNameProperties.getAutenticazionePortaDelegata(values[i])==null){
-							this.log.error("Meccanismo di autenticazione ["+values[i]+"] non registrato in GovWay");
+							this.logError("Meccanismo di autenticazione ["+values[i]+"] non registrato in GovWay");
 						}else{
 							v.add(values[i]);
 						}
@@ -7560,7 +7644,7 @@ public class ConfigurazionePdDReader {
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura del tipo di autenticazione associato al servizio di IntegrationManager: "+e.getMessage());
+				this.logError("Errore durante la lettura del tipo di autenticazione associato al servizio di IntegrationManager: "+e.getMessage());
 				ConfigurazionePdDReader.integrationManagerAuthentication = new String [] { CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString(),
 						CostantiConfigurazione.CREDENZIALE_SSL.toString() };
 			}
@@ -7641,9 +7725,9 @@ public class ConfigurazionePdDReader {
 					}*/
 
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getTipoValidazioneContenutoApplicativo (not found): "+e.getMessage());
+					this.logDebug("getTipoValidazioneContenutoApplicativo (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getTipoValidazioneContenutoApplicativo",e);
+					this.logError("getTipoValidazioneContenutoApplicativo",e);
 				}
 				if(configurazione == null || configurazione.getValidazioneContenutiApplicativi()==null){
 					ConfigurazionePdDReader.validazioneContenutiApplicativi = valDefault;
@@ -7707,9 +7791,9 @@ public class ConfigurazionePdDReader {
 				try{
 					stato = this.configurazionePdD.getStatoServiziPdD();
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("isPDServiceActive (not found): "+e.getMessage());
+					this.logDebug("isPDServiceActive (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("isPDServiceActive",e);
+					this.logError("isPDServiceActive",e);
 				}
 				if(stato == null || stato.getPortaDelegata()==null || stato.getPortaDelegata().getStato()==null){
 					ConfigurazionePdDReader.isPDServiceActive = true;
@@ -7718,7 +7802,7 @@ public class ConfigurazionePdDReader {
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura dell'indicazione se il servizio porta delegata e' attivo: "+e.getMessage());
+				this.logError("Errore durante la lettura dell'indicazione se il servizio porta delegata e' attivo: "+e.getMessage());
 				ConfigurazionePdDReader.isPDServiceActive = false;
 			}
 		}
@@ -7736,9 +7820,9 @@ public class ConfigurazionePdDReader {
 				try{
 					stato = this.configurazionePdD.getStatoServiziPdD();
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getFiltriAbilitazionePDService (not found): "+e.getMessage());
+					this.logDebug("getFiltriAbilitazionePDService (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getFiltriAbilitazionePDService",e);
+					this.logError("getFiltriAbilitazionePDService",e);
 				}
 				if(stato == null || stato.getPortaDelegata()==null || stato.getPortaDelegata().sizeFiltroAbilitazioneList()<=0){
 					ConfigurazionePdDReader.getFiltriAbilitazionePDService = new ArrayList<TipoFiltroAbilitazioneServizi>();
@@ -7747,7 +7831,7 @@ public class ConfigurazionePdDReader {
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la raccolta dei filtri di abilitazione PD: "+e.getMessage());
+				this.logError("Errore durante la raccolta dei filtri di abilitazione PD: "+e.getMessage());
 				ConfigurazionePdDReader.getFiltriAbilitazionePDService = new ArrayList<TipoFiltroAbilitazioneServizi>();
 			}
 		}
@@ -7765,9 +7849,9 @@ public class ConfigurazionePdDReader {
 				try{
 					stato = this.configurazionePdD.getStatoServiziPdD();
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getFiltriDisabilitazionePDService (not found): "+e.getMessage());
+					this.logDebug("getFiltriDisabilitazionePDService (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getFiltriDisabilitazionePDService",e);
+					this.logError("getFiltriDisabilitazionePDService",e);
 				}
 				if(stato == null || stato.getPortaDelegata()==null || stato.getPortaDelegata().sizeFiltroDisabilitazioneList()<=0){
 					ConfigurazionePdDReader.getFiltriDisabilitazionePDService = new ArrayList<TipoFiltroAbilitazioneServizi>();
@@ -7776,7 +7860,7 @@ public class ConfigurazionePdDReader {
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la raccolta dei filtri di disabilitazione PD: "+e.getMessage());
+				this.logError("Errore durante la raccolta dei filtri di disabilitazione PD: "+e.getMessage());
 				ConfigurazionePdDReader.getFiltriDisabilitazionePDService = new ArrayList<TipoFiltroAbilitazioneServizi>();
 			}
 		}
@@ -7802,9 +7886,9 @@ public class ConfigurazionePdDReader {
 				try{
 					stato = this.configurazionePdD.getStatoServiziPdD();
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("isPAServiceActive (not found): "+e.getMessage());
+					this.logDebug("isPAServiceActive (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("isPAServiceActive",e);
+					this.logError("isPAServiceActive",e);
 				}
 				if(stato == null || stato.getPortaApplicativa()==null || stato.getPortaApplicativa().getStato()==null){
 					ConfigurazionePdDReader.isPAServiceActive = true;
@@ -7813,7 +7897,7 @@ public class ConfigurazionePdDReader {
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura dell'indicazione se il servizio porta applicativa e' attivo: "+e.getMessage());
+				this.logError("Errore durante la lettura dell'indicazione se il servizio porta applicativa e' attivo: "+e.getMessage());
 				ConfigurazionePdDReader.isPAServiceActive = false;
 			}
 		}
@@ -7831,9 +7915,9 @@ public class ConfigurazionePdDReader {
 				try{
 					stato = this.configurazionePdD.getStatoServiziPdD();
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getFiltriAbilitazionePAService (not found): "+e.getMessage());
+					this.logDebug("getFiltriAbilitazionePAService (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getFiltriAbilitazionePAService",e);
+					this.logError("getFiltriAbilitazionePAService",e);
 				}
 				if(stato == null || stato.getPortaApplicativa()==null || stato.getPortaApplicativa().sizeFiltroAbilitazioneList()<=0){
 					ConfigurazionePdDReader.getFiltriAbilitazionePAService = new ArrayList<TipoFiltroAbilitazioneServizi>();
@@ -7842,7 +7926,7 @@ public class ConfigurazionePdDReader {
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la raccolta dei filtri di abilitazione PA: "+e.getMessage());
+				this.logError("Errore durante la raccolta dei filtri di abilitazione PA: "+e.getMessage());
 				ConfigurazionePdDReader.getFiltriAbilitazionePAService = new ArrayList<TipoFiltroAbilitazioneServizi>();
 			}
 		}
@@ -7860,9 +7944,9 @@ public class ConfigurazionePdDReader {
 				try{
 					stato = this.configurazionePdD.getStatoServiziPdD();
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getFiltriDisabilitazionePAService (not found): "+e.getMessage());
+					this.logDebug("getFiltriDisabilitazionePAService (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("getFiltriDisabilitazionePAService",e);
+					this.logError("getFiltriDisabilitazionePAService",e);
 				}
 				if(stato == null || stato.getPortaApplicativa()==null || stato.getPortaApplicativa().sizeFiltroDisabilitazioneList()<=0){
 					ConfigurazionePdDReader.getFiltriDisabilitazionePAService = new ArrayList<TipoFiltroAbilitazioneServizi>();
@@ -7871,7 +7955,7 @@ public class ConfigurazionePdDReader {
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la raccolta dei filtri di disabilitazione PA: "+e.getMessage());
+				this.logError("Errore durante la raccolta dei filtri di disabilitazione PA: "+e.getMessage());
 				ConfigurazionePdDReader.getFiltriDisabilitazionePAService = new ArrayList<TipoFiltroAbilitazioneServizi>();
 			}
 		}
@@ -7896,9 +7980,9 @@ public class ConfigurazionePdDReader {
 				try{
 					stato = this.configurazionePdD.getStatoServiziPdD();
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("isIMServiceActive (not found): "+e.getMessage());
+					this.logDebug("isIMServiceActive (not found): "+e.getMessage());
 				}catch(Exception e){
-					this.log.error("isIMServiceActive",e);
+					this.logError("isIMServiceActive",e);
 				}
 				if(stato == null || stato.getIntegrationManager()==null || stato.getIntegrationManager().getStato()==null){
 					ConfigurazionePdDReader.isIMServiceActive = true;
@@ -7907,7 +7991,7 @@ public class ConfigurazionePdDReader {
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura dell'indicazione se il servizio porta applicativa e' attivo: "+e.getMessage());
+				this.logError("Errore durante la lettura dell'indicazione se il servizio porta applicativa e' attivo: "+e.getMessage());
 				ConfigurazionePdDReader.isIMServiceActive = false;
 			}
 		}
@@ -8369,17 +8453,17 @@ public class ConfigurazionePdDReader {
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getExtendedInfoConfigurazione (not found): "+e.getMessage());
+					this.logDebug("getExtendedInfoConfigurazione (not found): "+e.getMessage());
 				}
 				//				}catch(Exception e){
-				//					this.log.error("getExtendedInfoConfigurazione",e);
+				//					this.logError("getExtendedInfoConfigurazione",e);
 				//				}
 				if(configurazione!=null) {
 					ConfigurazionePdDReader.getExtendedInfoConfigurazione = configurazione.getExtendedInfoList();
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura delle informazioni extra della configurazione: "+e.getMessage(),e);
+				this.logError("Errore durante la lettura delle informazioni extra della configurazione: "+e.getMessage(),e);
 				throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra della configurazione: "+e.getMessage(),e);
 			}
 		}
@@ -8397,10 +8481,10 @@ public class ConfigurazionePdDReader {
 				try{
 					result = this.configurazionePdD.getSingleExtendedInfoConfigurazione(id, connectionPdD);
 				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("getSingleExtendedInfoConfigurazione (not found): "+e.getMessage());
+					this.logDebug("getSingleExtendedInfoConfigurazione (not found): "+e.getMessage());
 				}
 				//				}catch(Exception e){
-				//					this.log.error("getExtendedInfoConfigurazione",e);
+				//					this.logError("getExtendedInfoConfigurazione",e);
 				//				}
 
 				if(result!=null){
@@ -8408,7 +8492,7 @@ public class ConfigurazionePdDReader {
 				}
 
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione: "+e.getMessage(),e);
+				this.logError("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione: "+e.getMessage(),e);
 				throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione: "+e.getMessage(),e);
 			}
 		}
@@ -8423,10 +8507,10 @@ public class ConfigurazionePdDReader {
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneWithOnlyExtendedInfo(connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getConfigurazioneWithOnlyExtendedInfo (not found): "+e.getMessage());
+				this.logDebug("getConfigurazioneWithOnlyExtendedInfo (not found): "+e.getMessage());
 			}
 			//			}catch(Exception e){
-			//				this.log.error("getExtendedInfoConfigurazione",e);
+			//				this.logError("getExtendedInfoConfigurazione",e);
 			//			}
 			if(configurazione!=null) {
 				return configurazione.getExtendedInfoList();
@@ -8434,7 +8518,7 @@ public class ConfigurazionePdDReader {
 			return null;
 
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni extra della configurazione (via cache): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni extra della configurazione (via cache): "+e.getMessage(),e);
 			throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra della configurazione  (via cache): "+e.getMessage(),e);
 		}
 	}
@@ -8445,15 +8529,15 @@ public class ConfigurazionePdDReader {
 			try{
 				result = this.configurazionePdD.getSingleExtendedInfoConfigurazione(id, connectionPdD);
 			}catch(DriverConfigurazioneNotFound e){
-				this.log.debug("getSingleExtendedInfoConfigurazioneFromCache (not found): "+e.getMessage());
+				this.logDebug("getSingleExtendedInfoConfigurazioneFromCache (not found): "+e.getMessage());
 			}
 			//			}catch(Exception e){
-			//				this.log.error("getExtendedInfoConfigurazione",e);
+			//				this.logError("getExtendedInfoConfigurazione",e);
 			//			}
 			return result;
 
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione (via cache): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione (via cache): "+e.getMessage(),e);
 			throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione  (via cache): "+e.getMessage(),e);
 		}
 	}
@@ -8505,12 +8589,12 @@ public class ConfigurazionePdDReader {
 		return this.configurazionePdD.getElencoIdPolicyAttiveGlobali(connectionPdD, useCache);
 	}
 	
-	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI_dimensioneMessaggio(Connection connectionPdD, boolean useCache, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getElencoIdPolicyAttiveAPI_dimensioneMessaggio(connectionPdD, useCache, tipoPdD, nomePorta);
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPIDimensioneMessaggio(Connection connectionPdD, boolean useCache, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getElencoIdPolicyAttiveAPIDimensioneMessaggio(connectionPdD, useCache, tipoPdD, nomePorta);
 	}
 
-	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(connectionPdD, useCache);
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobaliDimensioneMessaggio(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getElencoIdPolicyAttiveGlobaliDimensioneMessaggio(connectionPdD, useCache);
 	}
 
 	public AttivazionePolicy getAttivazionePolicy(Connection connectionPdD, boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

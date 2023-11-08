@@ -2069,15 +2069,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ------------- Inizializzo il sistema di Logging per gli appender personalizzati --------------- */
 			boolean isInitializeAppender = false;
-			isInitializeAppender = OpenSPCoop2Logger.initializeMsgDiagnosticiOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppender_MsgDiagnostici());
+			isInitializeAppender = OpenSPCoop2Logger.initializeMsgDiagnosticiOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppenderMessaggiDiagnostici());
 			if(!isInitializeAppender){
 				return;
 			}
-			isInitializeAppender = OpenSPCoop2Logger.initializeTracciamentoOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppender_Tracciamento());
+			isInitializeAppender = OpenSPCoop2Logger.initializeTracciamentoOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppenderTracciamento());
 			if(!isInitializeAppender){
 				return;
 			}
-			isInitializeAppender = OpenSPCoop2Logger.initializeDumpOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppender_Dump());
+			isInitializeAppender = OpenSPCoop2Logger.initializeDumpOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppenderDump());
 			if(!isInitializeAppender){
 				return;
 			}
@@ -2991,8 +2991,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						statoServiziPdD.getComponentePD(), statoServiziPdD.getComponentePD_abilitazioniPuntuali(), statoServiziPdD.getComponentePD_disabilitazioniPuntuali(),
 						statoServiziPdD.getComponentePA(), statoServiziPdD.getComponentePA_abilitazioniPuntuali(), statoServiziPdD.getComponentePA_disabilitazioniPuntuali(),
 						statoServiziPdD.getComponenteIM(),
-						LogLevels.toOpenSPCoop2(configurazionePdDManager.getSeverita_msgDiagnostici(),true),
-						LogLevels.toOpenSPCoop2(configurazionePdDManager.getSeveritaLog4J_msgDiagnostici(),true),
+						LogLevels.toOpenSPCoop2(configurazionePdDManager.getSeveritaMessaggiDiagnostici(),true),
+						LogLevels.toOpenSPCoop2(configurazionePdDManager.getSeveritaLog4JMessaggiDiagnostici(),true),
 						OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato, OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato, OpenSPCoop2Logger.loggerIntegrationManagerAbilitato,
 						configurazionePdDManager.tracciamentoBuste(), 
 						configurazionePdDManager.dumpBinarioPD(), configurazionePdDManager.dumpBinarioPA(),

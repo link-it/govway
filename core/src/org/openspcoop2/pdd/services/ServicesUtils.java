@@ -598,13 +598,13 @@ public class ServicesUtils {
 					if(portaDelegata) {
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(nomePorta);
-						PortaDelegata pdDefault = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
+						PortaDelegata pdDefault = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 						cors = configurazionePdDManager.getConfigurazioneCORS(pdDefault);
 					}
 					else {
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						idPA.setNome(nomePorta);
-						PortaApplicativa paDefault = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+						PortaApplicativa paDefault = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 						cors = configurazionePdDManager.getConfigurazioneCORS(paDefault);						
 					}
 				}

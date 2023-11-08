@@ -63,11 +63,11 @@ public class WSS4JSecurityProvider extends org.openspcoop2.security.message.xml.
 			holderOfKey = SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID_HOLDER_OF_KEY.equals(tmp);
 		}
 		// sender
-		else if(samlConfig!=null) {
-			if(samlConfig.containsKey(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD)) {
-				String tmp = samlConfig.getProperty(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD);
-				holderOfKey = SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_VALUE_HOLDER_OF_KEY.equals(tmp);
-			}
+		else if(samlConfig!=null &&
+			(samlConfig.containsKey(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD)) 
+			){
+			String tmp = samlConfig.getProperty(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD);
+			holderOfKey = SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_VALUE_HOLDER_OF_KEY.equals(tmp);
 		}
 		
 		if(holderOfKey && !envelopedSaml) {
@@ -76,11 +76,11 @@ public class WSS4JSecurityProvider extends org.openspcoop2.security.message.xml.
 		
 		boolean bearer = false;
 		// sender
-		if(samlConfig!=null) {
-			if(samlConfig.containsKey(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD)) {
-				String tmp = samlConfig.getProperty(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD);
-				bearer = SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_VALUE_BEARER.equals(tmp);
-			}
+		if(samlConfig!=null &&
+			(samlConfig.containsKey(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD)) 
+			){
+			String tmp = samlConfig.getProperty(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD);
+			bearer = SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_VALUE_BEARER.equals(tmp);
 		}
 		
 		if(bearer && !envelopedSaml) {
@@ -97,6 +97,12 @@ public class WSS4JSecurityProvider extends org.openspcoop2.security.message.xml.
 			l.add(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_DIGEST);
 			l.add(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_TEXT);
 			l.add(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_NONE);
+			return l;
+		}
+		else if(SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP_MODE.equals(id)) {
+			List<String> l = new ArrayList<>();
+			l.add(SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP_MODE_SINGLE);
+			l.add(SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP_MODE_MAP);
 			return l;
 		}
 		else if(SecurityConstants.SAML_ISSUER_FORMAT_XMLCONFIG_ID_2.equals(id) ||
@@ -178,13 +184,22 @@ public class WSS4JSecurityProvider extends org.openspcoop2.security.message.xml.
 		}
 	}
 	
+	private static final String PASSWORD = "Password";
+	private static final String PASSWORD_PREFIX = PASSWORD+" ";
+	
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
 		if(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE.equals(id)) {
 			List<String> l = new ArrayList<>();
-			l.add("Password "+SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_DIGEST.replace("Password", ""));
-			l.add("Password "+SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_TEXT.replace("Password", ""));
-			l.add("Password "+SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_NONE.replace("Password", ""));
+			l.add(PASSWORD_PREFIX+SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_DIGEST.replace(PASSWORD, ""));
+			l.add(PASSWORD_PREFIX+SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_TEXT.replace(PASSWORD, ""));
+			l.add(PASSWORD_PREFIX+SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_NONE.replace(PASSWORD, ""));
+			return l;
+		}
+		else if(SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP_MODE.equals(id)) {
+			List<String> l = new ArrayList<>();
+			l.add("Default");
+			l.add("Mappa");
 			return l;
 		}
 		else if(SecurityConstants.SAML_ISSUER_FORMAT_XMLCONFIG_ID_2.equals(id) ||
@@ -282,7 +297,10 @@ public class WSS4JSecurityProvider extends org.openspcoop2.security.message.xml.
 	@Override
 	public String getDefault(String id) throws ProviderException {
 		
-		if(XMLCostanti.ID_ENCRYPT_TRANSPORT_KEY_WRAP_ALGORITHM.equals(id)) {
+		if(SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP_MODE.equals(id)) {
+			return SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP_MODE_SINGLE;
+		}
+		else if(XMLCostanti.ID_ENCRYPT_TRANSPORT_KEY_WRAP_ALGORITHM.equals(id)) {
 			return EncryptionKeyTransportAlgorithm.RSA_OAEP.getUri();
 		}
 		else if(SecurityConstants.SAML_ISSUER_FORMAT_XMLCONFIG_ID_2.equals(id) ||

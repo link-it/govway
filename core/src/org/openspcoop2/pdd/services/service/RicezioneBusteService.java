@@ -372,7 +372,7 @@ public class RicezioneBusteService  {
 			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+				pa = configPdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 			}
 			
 			// Limited

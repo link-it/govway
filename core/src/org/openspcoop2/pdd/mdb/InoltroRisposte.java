@@ -566,7 +566,7 @@ public class InoltroRisposte extends GenericLib{
 					pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 				}catch(Exception e){
 					if( !(e instanceof DriverConfigurazioneNotFound)  ){
-						msgDiag.logErroreGenerico(e, "getPortaApplicativa_SafeMethod");
+						msgDiag.logErroreGenerico(e, "getPortaApplicativaSafeMethod");
 						ejbUtils.rollbackMessage("Ricostruzione errore durante la lettura della porta applicativa.", esito);
 						openspcoopstate.releaseResource();
 						esito.setStatoInvocazioneErroreNonGestito(e);
@@ -1677,8 +1677,8 @@ public class InoltroRisposte extends GenericLib{
 						pa = getPortaApplicativa(configurazionePdDManager, 
 								idServizioPA);
 					}
-					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
-					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
+					flowProperties.messageSecurity = configurazionePdDManager.getMessageSecurityForSender(pa);
+					flowProperties.mtom = configurazionePdDManager.getMTOMProcessorForSender(pa);
 				}
 			}
 			// Messaggi con profilo OneWay e Sincrono
@@ -1693,8 +1693,8 @@ public class InoltroRisposte extends GenericLib{
 					idServizioPA.setAzione(bustaRisposta.getAzione());
 					pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 				}
-				flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
-				flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
+				flowProperties.messageSecurity = configurazionePdDManager.getMessageSecurityForSender(pa);
+				flowProperties.mtom = configurazionePdDManager.getMTOMProcessorForSender(pa);
 			}
 
 			// Profilo Asincrono Simmetrico
@@ -1713,8 +1713,8 @@ public class InoltroRisposte extends GenericLib{
 						idServizioPA.setAzione(bustaRisposta.getAzione());
 						pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 					}
-					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
-					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
+					flowProperties.messageSecurity = configurazionePdDManager.getMessageSecurityForSender(pa);
+					flowProperties.mtom = configurazionePdDManager.getMTOMProcessorForSender(pa);
 
 				}
 
@@ -1725,9 +1725,9 @@ public class InoltroRisposte extends GenericLib{
 					Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRisposta.getRiferimentoMsgBustaRichiedenteServizio());
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(integrazione.getNomePorta());
-					PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
-					flowProperties.messageSecurity = configurazionePdDManager.getPD_MessageSecurityForSender(pd);
-					flowProperties.mtom = configurazionePdDManager.getPD_MTOMProcessorForSender(pd);
+					PortaDelegata pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
+					flowProperties.messageSecurity = configurazionePdDManager.getMessageSecurityForSender(pd);
+					flowProperties.mtom = configurazionePdDManager.getMTOMProcessorForSender(pd);
 
 				}
 
@@ -1749,8 +1749,8 @@ public class InoltroRisposte extends GenericLib{
 						idServizioPA.setAzione(bustaRisposta.getAzione());
 						pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 					}
-					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
-					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
+					flowProperties.messageSecurity = configurazionePdDManager.getMessageSecurityForSender(pa);
+					flowProperties.mtom = configurazionePdDManager.getMTOMProcessorForSender(pa);
 
 				}
 
@@ -1768,8 +1768,8 @@ public class InoltroRisposte extends GenericLib{
 						
 						pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 					}
-					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
-					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
+					flowProperties.messageSecurity = configurazionePdDManager.getMessageSecurityForSender(pa);
+					flowProperties.mtom = configurazionePdDManager.getMTOMProcessorForSender(pa);
 
 				}
 

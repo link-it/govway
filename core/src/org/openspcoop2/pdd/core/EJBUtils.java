@@ -1725,7 +1725,7 @@ public class EJBUtils {
 			}else{
 				// lettura da invocazione servizio
 				if(soggettoVirtuale){	    
-					SoggettoVirtuale soggettiVirtuali = this.configurazionePdDReader.getServiziApplicativi_SoggettiVirtuali(richiestaApplicativa);
+					SoggettoVirtuale soggettiVirtuali = this.configurazionePdDReader.getServiziApplicativiSoggettiVirtuali(richiestaApplicativa);
 					if(soggettiVirtuali == null){
 						throw new EJBUtilsConsegnaException("(SoggettoVirtuale) "+this.msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito"),
 								this.msgDiag.getLivello(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito"),

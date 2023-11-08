@@ -518,7 +518,7 @@ public class RicezioneContenutiApplicativi {
 					if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
 						IDPortaDelegata identificativoPortaDelegata = new IDPortaDelegata();
 						identificativoPortaDelegata.setNome(urlProtocolContext.getInterfaceName());
-						PortaDelegata portaDelegata = configurazionePdDReader.getPortaDelegata_SafeMethod(identificativoPortaDelegata, this.msgContext.getRequestInfo());
+						PortaDelegata portaDelegata = configurazionePdDReader.getPortaDelegataSafeMethod(identificativoPortaDelegata, this.msgContext.getRequestInfo());
 						if(portaDelegata!=null) {
 							DumpConfigurazione dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaDelegata);
 							internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
@@ -673,7 +673,7 @@ public class RicezioneContenutiApplicativi {
 				identificativoPortaDelegata.setNome(urlProtocolContext.getInterfaceName());
 				PortaDelegata portaDelegata = null;
 				try {
-					portaDelegata = configurazionePdDReader.getPortaDelegata_SafeMethod(identificativoPortaDelegata, this.msgContext.getRequestInfo());
+					portaDelegata = configurazionePdDReader.getPortaDelegataSafeMethod(identificativoPortaDelegata, this.msgContext.getRequestInfo());
 				}catch(Exception e) {
 					// ignore
 				}
@@ -4021,7 +4021,7 @@ public class RicezioneContenutiApplicativi {
 				IDPortaApplicativa idPA = null;
 				if(erroreConfigurazione==null){
 
-					String nomePA = configurazionePdDReader.getLocalForward_NomePortaApplicativa(portaDelegata);
+					String nomePA = configurazionePdDReader.getLocalForwardNomePortaApplicativa(portaDelegata);
 					if(nomePA==null){
 						try{
 							List<PortaApplicativa> list = configurazionePdDReader.getPorteApplicative(idServizio, false);
@@ -4058,7 +4058,7 @@ public class RicezioneContenutiApplicativi {
 				
 				if(erroreConfigurazione==null){
 					ra = new RichiestaApplicativa(soggettoFruitore,idServizio.getSoggettoErogatore(), idPA);
-					pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(ra.getIdPortaApplicativa(), requestInfo);
+					pa = configurazionePdDReader.getPortaApplicativaSafeMethod(ra.getIdPortaApplicativa(), requestInfo);
 					if(pa.sizeServizioApplicativoList()<=0){
 						erroreConfigurazione = "non risultano registrati servizi applicativi erogatori associati alla porta applicativa ("+pa.getNome()
 								+") relativa al servizio richiesto";

@@ -2121,8 +2121,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
 						Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
 					try{
-						msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
-						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+						msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettoreRispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettoreRispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
 					}catch(Exception e){
 						msgDiag.logErroreGenerico(e, "ConsegnaAsincrona.getDatiConsegna(sa:"+servizioApplicativo+")");
 						ejbUtils.rollbackMessage("[ConsegnaAsincrona] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
@@ -2135,8 +2135,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione)){
 					try{
-						msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [AsincronoAsimmetricoPolling]...");
-						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+						msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettoreRispostaAsincrona) [AsincronoAsimmetricoPolling]...");
+						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettoreRispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
 					}catch(Exception e){
 						msgDiag.logErroreGenerico(e, "AsincronoSimmetricoPolling.getDatiConsegna(sa:"+servizioApplicativo+")");
 						ejbUtils.rollbackMessage("[AsincronoSimmetricoPolling] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
@@ -2146,7 +2146,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					}
 				}else{
 					try{
-						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_InvocazioneServizio(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettoreInvocazioneServizio(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
 						msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
 					}catch(Exception e){
 						msgDiag.logErroreGenerico(e, "InvocazioneServizio.getDatiConsegna(sa:"+servizioApplicativo+")");

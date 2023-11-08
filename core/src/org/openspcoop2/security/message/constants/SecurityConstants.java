@@ -262,6 +262,17 @@ public class SecurityConstants {
     public static final String SIGNATURE_XML_KEY_INFO_X509 = "x509";
     public static final String SIGNATURE_XML_KEY_INFO_RSA = "RSA";
     
+    public static final String USERNAME_TOKEN_ACTION = ConfigurationConstants.USERNAME_TOKEN;
+    public static final String USERNAME_TOKEN_NO_PASSWORD_ACTION = ConfigurationConstants.USERNAME_TOKEN_NO_PASSWORD;
+    public static final String USERNAME_TOKEN_SIGNATURE_ACTION = ConfigurationConstants.USERNAME_TOKEN_SIGNATURE;
+    public static final String USERNAME_TOKEN_SOAP_FAULT = "UsernameTokenSOAPFault";
+    public static final String USERNAME_TOKEN_PROBLEM_DETAILS = "UsernameTokenProblemDetails"; 
+    
+    public static final String SAML_TOKEN_SIGNED_ACTION = ConfigurationConstants.SAML_TOKEN_SIGNED;
+    public static final String SAML_TOKEN_UNSIGNED_ACTION = ConfigurationConstants.SAML_TOKEN_UNSIGNED;
+    public static final String SAML_TOKEN_SOAP_FAULT = "SAMLTokenSOAPFault";
+    public static final String SAML_TOKEN_PROBLEM_DETAILS = "SAMLTokenProblemDetails"; 
+    
     public static final String JOSE_KID = "joseKeyId";
     public static final String JOSE_KID_TRUE = "true";
     public static final String JOSE_KID_FALSE = "false";
@@ -338,6 +349,12 @@ public class SecurityConstants {
 	public static final String USERNAME_TOKEN_PASSWORD_TYPE_DIGEST = WSS4JConstants.PW_DIGEST;
 	public static final String USERNAME_TOKEN_PASSWORD_TYPE_TEXT = WSS4JConstants.PW_TEXT;
 	public static final String USERNAME_TOKEN_PASSWORD_TYPE_NONE = WSS4JConstants.PW_NONE;
+	
+	public static final String USERNAME_TOKEN_PASSWORD_MAP_MODE = "usernameTokenPasswordMode";
+	public static final String USERNAME_TOKEN_PASSWORD_MAP_MODE_SINGLE = "single";
+	public static final String USERNAME_TOKEN_PASSWORD_MAP_MODE_MAP = "map";
+	
+	public static final String USERNAME_TOKEN_PASSWORD_MAP = "usernameTokenPasswordMap";
 	
 	public static final String SAML_PROF_FILE =  "samlPropFile";
 	public static final String SAML_PROF_REF_ID  =  "samlPropRefId";
@@ -437,6 +454,36 @@ public class SecurityConstants {
 		return 
 				action.contains(SecurityConstants.ACTION_DECRYPTION) || 
 				action.contains(SecurityConstants.ACTION_DECRYPT_OLD);
+	}
+	
+	public static boolean isActionUsernameToken(String action) {
+		return 
+				SecurityConstants.ACTION_USERNAME_TOKEN.equals(action) || 
+				SecurityConstants.ACTION_USERNAME_TOKEN_NO_PASSWORD.equals(action) || 
+				SecurityConstants.ACTION_USERNAME_TOKEN_SIGNATURE.equals(action);
+	}
+	public static boolean containsActionUsernameToken(String action) {
+		if(action==null) {
+			return false;
+		}
+		return 
+				action.contains(SecurityConstants.ACTION_USERNAME_TOKEN) || 
+				action.contains(SecurityConstants.ACTION_USERNAME_TOKEN_NO_PASSWORD) || 
+				action.contains(SecurityConstants.ACTION_USERNAME_TOKEN_SIGNATURE);
+	}
+	
+	public static boolean isActionSAMLToken(String action) {
+		return 
+				SecurityConstants.ACTION_SAML_TOKEN_SIGNED.equals(action) || 
+				SecurityConstants.ACTION_SAML_TOKEN_UNSIGNED.equals(action);
+	}
+	public static boolean containsActionSAMLToken(String action) {
+		if(action==null) {
+			return false;
+		}
+		return 
+				action.contains(SecurityConstants.ACTION_SAML_TOKEN_SIGNED) || 
+				action.contains(SecurityConstants.ACTION_SAML_TOKEN_UNSIGNED);
 	}
     
     public static final String KEY_IDENTIFIER_BST_DIRECT_REFERENCE = CostantiDB.KEY_IDENTIFIER_BST_DIRECT_REFERENCE;

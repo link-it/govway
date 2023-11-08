@@ -16610,10 +16610,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String idAllPolicy = null;
 				try{
 					if(nomePorta!=null && !"".equals(nomePorta)) {
-						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(RuoloPolicy.DELEGATA.equals(ruoloPorta)?TipoPdD.DELEGATA : TipoPdD.APPLICATIVA, nomePorta);
+						idAllPolicy = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPI(RuoloPolicy.DELEGATA.equals(ruoloPorta)?TipoPdD.DELEGATA : TipoPdD.APPLICATIVA, nomePorta);
 					}
 					else {
-						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveGlobali();
+						idAllPolicy = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveGlobali();
 					}
 					resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idAllPolicy);
 					this.log.debug("reset["+idAllPolicy+"] "+resultReset);
@@ -16626,10 +16626,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				try{
 					if(nomePorta!=null && !"".equals(nomePorta)) {
-						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(RuoloPolicy.DELEGATA.equals(ruoloPorta)?TipoPdD.DELEGATA : TipoPdD.APPLICATIVA, nomePorta);
+						idAllPolicy = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveAPIDimensioneMessaggio(RuoloPolicy.DELEGATA.equals(ruoloPorta)?TipoPdD.DELEGATA : TipoPdD.APPLICATIVA, nomePorta);
 					}
 					else {
-						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveGlobali_dimensioneMessaggio();
+						idAllPolicy = ConfigurazionePdD.getKeyMethodElencoIdPolicyAttiveGlobaliDimensioneMessaggio();
 					}
 					resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idAllPolicy);
 					this.log.debug("reset["+idAllPolicy+"] "+resultReset);

@@ -966,7 +966,7 @@ public class DatiStatisticiDAOManager  {
 					if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(filtro.getNomePorta());
-						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
+						PortaDelegata pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 						if(pd!=null && pd.getServizio()!=null && pd.getSoggettoErogatore()!=null) {
 							idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
 									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
@@ -976,7 +976,7 @@ public class DatiStatisticiDAOManager  {
 					else {
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						idPA.setNome(filtro.getNomePorta());
-						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 						if(pa!=null && pa.getServizio()!=null) {
 							idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
 									pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 

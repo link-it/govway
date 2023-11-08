@@ -319,7 +319,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
+				pd = configPdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 			}
 			try{
 				msgDiag.mediumDebug("Lettura configurazione dump ...");
@@ -708,7 +708,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					if(portaDelegata!=null) {							
 						IDPortaDelegata identificativoPortaDelegata = new IDPortaDelegata();
 						identificativoPortaDelegata.setNome(portaDelegata);
-						PortaDelegata portaDelegataObject = configurazionePdDReader.getPortaDelegata_SafeMethod(identificativoPortaDelegata, requestInfo);
+						PortaDelegata portaDelegataObject = configurazionePdDReader.getPortaDelegataSafeMethod(identificativoPortaDelegata, requestInfo);
 						if(portaDelegataObject!=null) {
 							dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaDelegataObject);
 						}

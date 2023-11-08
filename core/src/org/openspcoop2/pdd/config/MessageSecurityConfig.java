@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.pdd.config;
 
+import java.util.Map;
+
 /**
  * MessageSecurityConfig
  *
@@ -30,6 +32,7 @@ public class MessageSecurityConfig {
 
 	private java.util.Map<String,Object> flowParameters;
 	private Boolean applyToMtom = null;
+	private Map<String, Object> dynamicMap;
 	
 	public java.util.Map<String, Object> getFlowParameters() {
 		return this.flowParameters;
@@ -42,5 +45,11 @@ public class MessageSecurityConfig {
 	}
 	public void setApplyToMtom(Boolean applyToMtom) {
 		this.applyToMtom = applyToMtom;
+	}
+	public Map<String, Object> getDynamicMap() {
+		return this.dynamicMap;
+	}
+	public void setDynamicMap(Map<String, Object> dynamicMap) {
+		this.dynamicMap = dynamicMap;
 	}
 }

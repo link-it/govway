@@ -372,11 +372,11 @@ public class GestoreConsegnaMultipla {
 		
 		try{
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(); 
-			Tracciamento configTracciamento = configPdDManager.getOpenSPCoopAppender_Tracciamento();
+			Tracciamento configTracciamento = configPdDManager.getOpenSPCoopAppenderTracciamento();
 			StringBuilder bf = new StringBuilder();
 			String esitiConfig = configTracciamento!=null ? configTracciamento.getEsiti() : null;
 			if(idPA!=null) {
-				PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+				PortaApplicativa pa = configPdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 				if(pa!=null && pa.getTracciamento()!=null && pa.getTracciamento().getEsiti()!=null) {
 					esitiConfig = pa.getTracciamento().getEsiti();
 				}

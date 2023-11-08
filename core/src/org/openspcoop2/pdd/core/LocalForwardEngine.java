@@ -275,6 +275,9 @@ public class LocalForwardEngine {
 		return this.requestMessageAfterProcess;
 	}
 
+	private MessageSecurityConfig securityConfigPDRequest = null;
+	private MessageSecurityConfig securityConfigPARequest = null;
+	
 	public boolean processRequest(OpenSPCoop2Message requestMessage) throws LocalForwardException{
 		
 		try{
@@ -295,7 +298,6 @@ public class LocalForwardEngine {
 			/* *** Init MTOM Processor / SecurityContext *** */
 			boolean messageSecurityApply = false;
 			this.localForwardParameter.getMsgDiag().mediumDebug("init MTOM Processor / SecurityContext (PD) ...");
-			MessageSecurityConfig securityConfig = null;
 			MTOMProcessorConfig mtomConfig = null;
 			String msgErrore = null;
 			String posizione = null;
@@ -303,7 +305,7 @@ public class LocalForwardEngine {
 			boolean logDiagnosticError = true;
 			IntegrationFunctionError integrationFunctionError = null;
 			try{
-				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPD_MessageSecurityForSender(this.pd, this.localForwardParameter.getLog(), requestMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext());
+				this.securityConfigPDRequest=this.localForwardParameter.getConfigurazionePdDReader().getMessageSecurityForSender(this.pd, this.localForwardParameter.getLog(), requestMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext());
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPDRequest";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -313,7 +315,7 @@ public class LocalForwardEngine {
 			}
 			if(erroreIntegrazione==null){
 				try{
-					mtomConfig=this.localForwardParameter.getConfigurazionePdDReader().getPD_MTOMProcessorForSender(this.pd);
+					mtomConfig=this.localForwardParameter.getConfigurazionePdDReader().getMTOMProcessorForSender(this.pd);
 				}catch(Exception e){
 					posizione = "LetturaParametriMTOMProcessorPDRequest";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -323,7 +325,7 @@ public class LocalForwardEngine {
 				}
 			}		
 			if(erroreIntegrazione==null){
-				mtomProcessor = new MTOMProcessor(mtomConfig, securityConfig, TipoPdD.DELEGATA, 
+				mtomProcessor = new MTOMProcessor(mtomConfig, this.securityConfigPDRequest, TipoPdD.DELEGATA, 
 						this.localForwardParameter.getMsgDiag(), this.localForwardParameter.getLog(), 
 						this.localForwardParameter.getPddContext());
 			}
@@ -346,8 +348,8 @@ public class LocalForwardEngine {
 			/* *** MessageSecurity *** */
 			MessageSecurityContext messageSecurityContext = null;
 			if(erroreIntegrazione==null){
-				if(securityConfig!=null && securityConfig.getFlowParameters()!=null &&
-						securityConfig.getFlowParameters().size() > 0){
+				if(this.securityConfigPDRequest!=null && this.securityConfigPDRequest.getFlowParameters()!=null &&
+						this.securityConfigPDRequest.getFlowParameters().size() > 0){
 					try{
 						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PD) della richiesta ...");
 						messageSecurityApply = true;
@@ -363,7 +365,7 @@ public class LocalForwardEngine {
 						contextParameters.setPddFruitore(this.localForwardParameter.getIdPdDMittente());
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
 						messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
-						messageSecurityContext.setOutgoingProperties(securityConfig.getFlowParameters());
+						messageSecurityContext.setOutgoingProperties(this.securityConfigPDRequest.getFlowParameters());
 						
 						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PD) della richiesta completata con successo");
 						
@@ -489,7 +491,6 @@ public class LocalForwardEngine {
 			erroreIntegrazione = null;
 			codiceErroreCooperazione = null;
 			configException = null;
-			securityConfig = null;
 			mtomConfig = null;
 			mtomProcessor = null;
 			msgErrore = null;
@@ -498,7 +499,7 @@ public class LocalForwardEngine {
 			logDiagnosticError = true;
 			integrationFunctionError = null;
 			try{
-				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPA_MessageSecurityForReceiver(this.pa, this.localForwardParameter.getLog(), requestMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext());
+				this.securityConfigPARequest=this.localForwardParameter.getConfigurazionePdDReader().getMessageSecurityForReceiver(this.pa, this.localForwardParameter.getLog(), requestMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext());
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPARequest";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -508,7 +509,7 @@ public class LocalForwardEngine {
 			}
 			if(erroreIntegrazione==null){
 				try{
-					mtomConfig=this.localForwardParameter.getConfigurazionePdDReader().getPA_MTOMProcessorForReceiver(this.pa);
+					mtomConfig=this.localForwardParameter.getConfigurazionePdDReader().getMTOMProcessorForReceiver(this.pa);
 				}catch(Exception e){
 					posizione = "LetturaParametriMTOMProcessorPARequest";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -518,7 +519,7 @@ public class LocalForwardEngine {
 				}
 			}		
 			if(erroreIntegrazione==null){
-				mtomProcessor = new MTOMProcessor(mtomConfig, securityConfig, TipoPdD.APPLICATIVA, 
+				mtomProcessor = new MTOMProcessor(mtomConfig, this.securityConfigPARequest, TipoPdD.APPLICATIVA, 
 						this.localForwardParameter.getMsgDiag(), this.localForwardParameter.getLog(),
 						this.localForwardParameter.getPddContext());
 			}
@@ -539,8 +540,8 @@ public class LocalForwardEngine {
 			}
 			
 			/* *** MessageSecurity (InitContext) *** */
-			if(erroreIntegrazione==null && securityConfig!=null && securityConfig.getFlowParameters()!=null){
-				if(securityConfig.getFlowParameters().size() > 0){
+			if(erroreIntegrazione==null && this.securityConfigPARequest!=null && this.securityConfigPARequest.getFlowParameters()!=null){
+				if(this.securityConfigPARequest.getFlowParameters().size() > 0){
 					try{
 						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PA) della richiesta ...");
 						
@@ -572,7 +573,7 @@ public class LocalForwardEngine {
 						contextParameters.setPddFruitore(this.localForwardParameter.getIdPdDMittente());
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
 						messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
-						messageSecurityContext.setIncomingProperties(securityConfig.getFlowParameters());
+						messageSecurityContext.setIncomingProperties(this.securityConfigPARequest.getFlowParameters());
 						
 						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PA) della richiesta completata con successo");
 						
@@ -826,7 +827,8 @@ public class LocalForwardEngine {
 			boolean logDiagnosticError = true;
 			IntegrationFunctionError integrationFunctionError = null;
 			try{
-				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPA_MessageSecurityForSender(this.pa);
+				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getMessageSecurityForSender(this.pa, this.localForwardParameter.getLog(), responseMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext(),
+						this.securityConfigPARequest);
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPAResponse";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -836,7 +838,7 @@ public class LocalForwardEngine {
 			}
 			if(erroreIntegrazione==null){
 				try{
-					mtomConfig=this.localForwardParameter.getConfigurazionePdDReader().getPA_MTOMProcessorForSender(this.pa);
+					mtomConfig=this.localForwardParameter.getConfigurazionePdDReader().getMTOMProcessorForSender(this.pa);
 				}catch(Exception e){
 					posizione = "LetturaParametriMTOMProcessorPAResponse";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1025,7 +1027,8 @@ public class LocalForwardEngine {
 			logDiagnosticError = true;
 			integrationFunctionError = null;
 			try{
-				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPD_MessageSecurityForReceiver(this.pd);
+				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getMessageSecurityForReceiver(this.pd, this.localForwardParameter.getLog(), responseMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext(),
+						this.securityConfigPDRequest);
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPDResponse";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1035,7 +1038,7 @@ public class LocalForwardEngine {
 			}
 			if(erroreIntegrazione==null){
 				try{
-					mtomConfig=this.localForwardParameter.getConfigurazionePdDReader().getPD_MTOMProcessorForReceiver(this.pd);
+					mtomConfig=this.localForwardParameter.getConfigurazionePdDReader().getMTOMProcessorForReceiver(this.pd);
 				}catch(Exception e){
 					posizione = "LetturaParametriMTOMProcessorPDResponse";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

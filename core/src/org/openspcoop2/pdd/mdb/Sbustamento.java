@@ -1082,11 +1082,11 @@ public class Sbustamento extends GenericLib{
 										Integrazione integrazione = repositoryBuste.getInfoIntegrazioneFromOutBox(idAsincronoCorrelazioneRichiesta);
 										IDPortaDelegata idPD = new IDPortaDelegata();
 										idPD.setNome(integrazione.getNomePorta());
-										PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
+										PortaDelegata pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 										ricevutaAbilitata = configurazionePdDManager.ricevutaAsincronaSimmetricaAbilitata(pd);
 									}else{
 										msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-										PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
+										PortaApplicativa pa = configurazionePdDManager.getPortaApplicativaSafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 										ricevutaAbilitata = configurazionePdDManager.ricevutaAsincronaSimmetricaAbilitata(pa);
 									}
 								}catch(Exception e){
@@ -1118,7 +1118,7 @@ public class Sbustamento extends GenericLib{
 								//	Asincrono Asimmetrico
 								
 								msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-								PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
+								PortaApplicativa pa = configurazionePdDManager.getPortaApplicativaSafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 								
 								if(configurazionePdDManager.ricevutaAsincronaAsimmetricaAbilitata(pa)==false){
 									if(bustaRichiesta.getRiferimentoMessaggio()==null){
@@ -1342,7 +1342,7 @@ public class Sbustamento extends GenericLib{
 				
 				// Lettura Porta Applicativa
 				msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
+				pa = configurazionePdDManager.getPortaApplicativaSafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 				
 				// Soggetto Virtuale
 				boolean soggettoVirtuale = false;
@@ -1434,7 +1434,7 @@ public class Sbustamento extends GenericLib{
 
 				// Lettura Porta Applicativa
 				msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
+				pa = configurazionePdDManager.getPortaApplicativaSafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 				
 				msgDiag.mediumDebug("Gestione profilo di collaborazione Sincrono (registra busta ricevuta)...");
 				try{
@@ -1508,7 +1508,7 @@ public class Sbustamento extends GenericLib{
 					
 					// Lettura Porta Applicativa
 					msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
+					pa = configurazionePdDManager.getPortaApplicativaSafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 					
 					
 					//	gestione ricevute asincrone
@@ -1718,7 +1718,7 @@ public class Sbustamento extends GenericLib{
 
 					// Lettura Porta Applicativa
 					msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
+					pa = configurazionePdDManager.getPortaApplicativaSafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 					
 					// assegnamento servizioApplicativo
 					msgDiag.mediumDebug("Gestione profilo di collaborazione AsincronoAsimmetrico richiesta (lettura servizio applicativo)...");
@@ -1973,7 +1973,7 @@ public class Sbustamento extends GenericLib{
 						
 						// Lettura Porta Applicativa
 						msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-						pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
+						pa = configurazionePdDManager.getPortaApplicativaSafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 						
 
 					}

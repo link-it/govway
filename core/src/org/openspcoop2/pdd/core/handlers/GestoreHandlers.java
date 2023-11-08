@@ -1374,14 +1374,14 @@ public class GestoreHandlers  {
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, context.getRequestInfo());
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pd);
 					//System.out.println("PreInRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, context.getRequestInfo());
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pa);
 					//System.out.println("PreInRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -1497,14 +1497,14 @@ public class GestoreHandlers  {
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, context.getRequestInfo());
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pd);
 					//System.out.println("PreInRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, context.getRequestInfo());
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pa);
 					//System.out.println("PreInRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -1623,14 +1623,14 @@ public class GestoreHandlers  {
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(context.getConnettore().getUrlProtocolContext().getInterfaceName());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestHandlers(pd);
 					//System.out.println("InRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(context.getConnettore().getUrlProtocolContext().getInterfaceName());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestHandlers(pa);
 					//System.out.println("InRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -1746,12 +1746,12 @@ public class GestoreHandlers  {
 				}
 				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestProtocolHandlers(pd);
 					//System.out.println("InRequestProtocolContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestProtocolHandlers(pa);
 					//System.out.println("InRequestProtocolContext find PA '"+pa.getNome()+"'");
 				}
@@ -1867,12 +1867,12 @@ public class GestoreHandlers  {
 				}
 				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getOutRequestHandlers(pd);
 					//System.out.println("OutRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getOutRequestHandlers(pa);
 					//System.out.println("OutRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -1988,12 +1988,12 @@ public class GestoreHandlers  {
 				}
 				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutRequestHandlers(pd);
 					//System.out.println("PostOutRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutRequestHandlers(pa);
 					//System.out.println("PostOutRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -2109,12 +2109,12 @@ public class GestoreHandlers  {
 				}
 				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPreInResponseHandlers(pd);
 					//System.out.println("PreInResponseContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPreInResponseHandlers(pa);
 					//System.out.println("PreInResponseContext find PA '"+pa.getNome()+"'");
 				}
@@ -2230,12 +2230,12 @@ public class GestoreHandlers  {
 				}
 				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getInResponseHandlers(pd);
 					//System.out.println("InResponseContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getInResponseHandlers(pa);
 					//System.out.println("InResponseContext find PA '"+pa.getNome()+"'");
 				}
@@ -2351,12 +2351,12 @@ public class GestoreHandlers  {
 				}
 				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getOutResponseHandlers(pd);
 					//System.out.println("OutResponseContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getOutResponseHandlers(pa);
 					//System.out.println("OutResponseContext find PA '"+pa.getNome()+"'");
 				}
@@ -2474,12 +2474,12 @@ public class GestoreHandlers  {
 				}
 				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutResponseHandlers(pd);
 					//System.out.println("PostOutResponseContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutResponseHandlers(pa);
 					//System.out.println("PostOutResponseContext find PA '"+pa.getNome()+"'");
 				}

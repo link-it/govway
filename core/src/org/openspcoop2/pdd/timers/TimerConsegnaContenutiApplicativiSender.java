@@ -315,7 +315,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				IdTransazioneApplicativoServer idTransazioneApplicativoServer = new IdTransazioneApplicativoServer();
 				idTransazioneApplicativoServer.setIdTransazione(PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext));
 				idTransazioneApplicativoServer.setServizioApplicativoErogatore(servizioApplicativo);
-				PortaApplicativa pa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA, requestInfoForMemoryOptimization);
+				PortaApplicativa pa = this.configurazionePdDReader.getPortaApplicativaSafeMethod(idPA, requestInfoForMemoryOptimization);
 				requestInfoForMemoryOptimization.getRequestConfig().setPortaApplicativa(pa);
 				if(pa!=null && pa.getServizioApplicativoList()!=null) {
 					for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {

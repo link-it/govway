@@ -593,7 +593,7 @@ public class UtilitiesIntegrazione {
 				if(this.portaDelegata) {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
-					PortaDelegata pd = ConfigurazionePdDManager.getInstance(null).getPortaDelegata_SafeMethod(idPD, requestInfo);
+					PortaDelegata pd = ConfigurazionePdDManager.getInstance(null).getPortaDelegataSafeMethod(idPD, requestInfo);
 					if(pd!=null) {
 						proprieta = pd.getProprietaList();
 					}
@@ -601,7 +601,7 @@ public class UtilitiesIntegrazione {
 				else {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
-					PortaApplicativa pa = ConfigurazionePdDManager.getInstance(null).getPortaApplicativa_SafeMethod(idPA, requestInfo);
+					PortaApplicativa pa = ConfigurazionePdDManager.getInstance(null).getPortaApplicativaSafeMethod(idPA, requestInfo);
 					if(pa!=null) {
 						proprieta = pa.getProprietaList();
 					}

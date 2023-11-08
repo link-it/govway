@@ -633,7 +633,7 @@ public class DriverConfigurazioneDBSoggetti {
 		String sqlQuery = "";
 		if (this.driver.atomica) {
 			try {
-				con = this.driver.getConnectionFromDatasource("getServizi_SoggettiVirtuali");
+				con = this.driver.getConnectionFromDatasource("getServiziSoggettiVirtuali");
 
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("Exception accedendo al datasource :" + e.getMessage(),e);
@@ -674,7 +674,7 @@ public class DriverConfigurazioneDBSoggetti {
 			}
 
 			if(servizi.isEmpty()){
-				throw new DriverConfigurazioneNotFound("[getServizi_SoggettiVirtuali] Servizi erogati da Soggetti virtuali non esistenti");
+				throw new DriverConfigurazioneNotFound("[getServiziSoggettiVirtuali] Servizi erogati da Soggetti virtuali non esistenti");
 			}
 
 			this.driver.logInfo("aggiunti " + servizi.size() + " servizi alla lista dei servizi erogati da Soggetti Virtuali");

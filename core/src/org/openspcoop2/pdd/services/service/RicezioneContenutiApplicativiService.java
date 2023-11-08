@@ -376,7 +376,7 @@ public class RicezioneContenutiApplicativiService {
 			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD,requestInfo);
+				pd = configPdDManager.getPortaDelegataSafeMethod(idPD,requestInfo);
 			}
 
 			// Limited

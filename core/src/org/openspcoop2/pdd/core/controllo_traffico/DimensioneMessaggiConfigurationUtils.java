@@ -89,7 +89,7 @@ public class DimensioneMessaggiConfigurationUtils {
 				if(tipoPdD!=null && nomePorta!=null) {
 					Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttiveAPI = null;
 					try {
-						mapPolicyAttiveAPI = configPdDManager.getElencoIdPolicyAttiveAPI_dimensioneMessaggio(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache(),
+						mapPolicyAttiveAPI = configPdDManager.getElencoIdPolicyAttiveAPIDimensioneMessaggio(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache(),
 								tipoPdD, nomePorta);
 					}catch(DriverConfigurazioneNotFound notFound) {}
 					if(mapPolicyAttiveAPI!=null && !mapPolicyAttiveAPI.isEmpty()) {
@@ -107,7 +107,7 @@ public class DimensioneMessaggiConfigurationUtils {
 		
 				Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttiveGlobali = null;
 				try {
-					mapPolicyAttiveGlobali = configPdDManager.getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
+					mapPolicyAttiveGlobali = configPdDManager.getElencoIdPolicyAttiveGlobaliDimensioneMessaggio(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
 				}catch(DriverConfigurazioneNotFound notFound) {}
 				if(mapPolicyAttiveGlobali!=null && !mapPolicyAttiveGlobali.isEmpty()) {
 					Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttiveGlobali.keySet().iterator();
