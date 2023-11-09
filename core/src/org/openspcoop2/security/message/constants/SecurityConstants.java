@@ -340,17 +340,17 @@ public class SecurityConstants {
 	public static final String TIMESTAMP_PRECISION = ConfigurationConstants.TIMESTAMP_PRECISION;
     public static final String TIMESTAMP_FUTURE_TTL = ConfigurationConstants.TTL_FUTURE_TIMESTAMP;
 
-	public static final String USERNAME_TOKEN_PASSWORD = "usernameTokenPassword";
-	public static final String USERNAME_TOKEN_PASSWORD_TYPE = ConfigurationConstants.PASSWORD_TYPE;
-	public static final String USERNAME_TOKEN_PASSWORD_TYPE_DIGEST = WSS4JConstants.PW_DIGEST;
-	public static final String USERNAME_TOKEN_PASSWORD_TYPE_TEXT = WSS4JConstants.PW_TEXT;
-	public static final String USERNAME_TOKEN_PASSWORD_TYPE_NONE = WSS4JConstants.PW_NONE;
+	public static final String USERNAME_TOKEN_PW = "usernameTokenPassword";
+	public static final String USERNAME_TOKEN_PW_TYPE = ConfigurationConstants.PASSWORD_TYPE;
+	public static final String USERNAME_TOKEN_PW_TYPE_DIGEST = WSS4JConstants.PW_DIGEST;
+	public static final String USERNAME_TOKEN_PW_TYPE_TEXT = WSS4JConstants.PW_TEXT;
+	public static final String USERNAME_TOKEN_PW_TYPE_NONE = WSS4JConstants.PW_NONE;
 	
-	public static final String USERNAME_TOKEN_PASSWORD_MAP_MODE = "usernameTokenPasswordMode";
-	public static final String USERNAME_TOKEN_PASSWORD_MAP_MODE_SINGLE = "single";
-	public static final String USERNAME_TOKEN_PASSWORD_MAP_MODE_MAP = "map";
+	public static final String USERNAME_TOKEN_PW_MAP_MODE = "usernameTokenPasswordMode";
+	public static final String USERNAME_TOKEN_PW_MAP_MODE_SINGLE = "single";
+	public static final String USERNAME_TOKEN_PW_MAP_MODE_MAP = "map";
 	
-	public static final String USERNAME_TOKEN_PASSWORD_MAP = "usernameTokenPasswordMap";
+	public static final String USERNAME_TOKEN_PW_MAP = "usernameTokenPasswordMap";
 	
 	public static final String SAML_PROF_FILE =  "samlPropFile";
 	public static final String SAML_PROF_REF_ID  =  "samlPropRefId";
