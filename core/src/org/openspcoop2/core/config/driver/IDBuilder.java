@@ -25,8 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
+import org.openspcoop2.core.config.AccessoDatiGestioneToken;
+import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
@@ -134,6 +139,16 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return "ConfigurazioneAccessoDatiAutenticazione";
 			}else if(o instanceof AccessoDatiAutorizzazione){
 				return "ConfigurazioneAccessoDatiAutorizzazione";
+			}else if(o instanceof AccessoDatiGestioneToken){
+				return "ConfigurazioneAccessoDatiGestioneToken";
+			}else if(o instanceof AccessoDatiAttributeAuthority){
+				return "ConfigurazioneAccessoDatiAttributeAuthority";
+			}else if(o instanceof AccessoDatiKeystore){
+				return "ConfigurazioneAccessoDatiKeystore";
+			}else if(o instanceof AccessoDatiConsegnaApplicativi){
+				return "ConfigurazioneAccessoDatiConsegnaApplicativi";
+			}else if(o instanceof AccessoDatiRichieste){
+				return "ConfigurazioneAccessoDatiRichieste";
 			}else if(o instanceof SystemProperties){
 				return "ProprietàDiSistema";
 			}else if(o instanceof RegistroPlugin){
@@ -274,6 +289,16 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof AccessoDatiAutorizzazione){
 				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiGestioneToken){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiAttributeAuthority){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiKeystore){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiConsegnaApplicativi){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiRichieste){
+				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof SystemProperties){
 				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof RegistroPlugin){
@@ -330,10 +355,15 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(GestioneErrore.class.getSimpleName());
 			oggetti.add(Configurazione.class.getSimpleName());
 			oggetti.add(AccessoRegistro.class.getSimpleName());
-			// non serve come simple name: oggetti.add(AccessoRegistroRegistro.class.getSimpleName());
+			/** non serve come simple name: oggetti.add(AccessoRegistroRegistro.class.getSimpleName()); */
 			oggetti.add(AccessoConfigurazione.class.getSimpleName());
 			oggetti.add(AccessoDatiAutenticazione.class.getSimpleName());
 			oggetti.add(AccessoDatiAutorizzazione.class.getSimpleName());
+			oggetti.add(AccessoDatiGestioneToken.class.getSimpleName());
+			oggetti.add(AccessoDatiAttributeAuthority.class.getSimpleName());
+			oggetti.add(AccessoDatiKeystore.class.getSimpleName());
+			oggetti.add(AccessoDatiConsegnaApplicativi.class.getSimpleName());
+			oggetti.add(AccessoDatiRichieste.class.getSimpleName());
 			oggetti.add(SystemProperties.class.getSimpleName());
 			oggetti.add(RegistroPlugin.class.getSimpleName());
 			oggetti.add(RegistroPluginArchivio.class.getSimpleName());
@@ -352,6 +382,11 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccessoConfigurazione.class.getName());
 			oggetti.add(AccessoDatiAutenticazione.class.getName());
 			oggetti.add(AccessoDatiAutorizzazione.class.getName());
+			oggetti.add(AccessoDatiGestioneToken.class.getName());
+			oggetti.add(AccessoDatiAttributeAuthority.class.getName());
+			oggetti.add(AccessoDatiKeystore.class.getName());
+			oggetti.add(AccessoDatiConsegnaApplicativi.class.getName());
+			oggetti.add(AccessoDatiRichieste.class.getName());
 			oggetti.add(SystemProperties.class.getName());
 			oggetti.add(RegistroPlugin.class.getName());
 			oggetti.add(RegistroPluginArchivio.class.getName());	
@@ -361,7 +396,6 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 		String[]tmp = new String[1];
 		return oggetti.toArray(tmp);
 	}
-	
 	
 	/**
 	 * Ritorna un nome descrittivo dell'oggetto.

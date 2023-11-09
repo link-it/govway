@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
@@ -364,6 +365,14 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * 
 	 */
 	public AccessoDatiGestioneToken getAccessoDatiGestioneToken() throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce l'accesso ai dati recuperati da attribute authority
+	 *
+	 * @return AccessoDatiAttributeAuthority
+	 * 
+	 */
+	public AccessoDatiAttributeAuthority getAccessoDatiAttributeAuthority() throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
 	
 	/**
 	 * Restituisce l'accesso ai dati per la gestione dei keystore

@@ -949,6 +949,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autenticazione" type="accesso-dati-autenticazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-gestione-token" type="accesso-dati-gestione-token"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-attribute-authority" type="accesso-dati-attribute-authority"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-keystore" type="accesso-dati-keystore"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-consegna-applicativi" type="accesso-dati-consegna-applicativi"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-richieste" type="accesso-dati-richieste"/>
@@ -1068,6 +1069,13 @@
 	
 	<!-- Informazioni per l'accesso dati di gestione token -->
 	<xsd:complexType name="accesso-dati-gestione-token">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- Informazioni per l'accesso dati di gestione delle attribute authority -->
+	<xsd:complexType name="accesso-dati-attribute-authority">
 		<xsd:sequence>
 			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
 		</xsd:sequence>

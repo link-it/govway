@@ -56,6 +56,8 @@ public class Constants {
 	public static final String MSG_DISABILITAZIONE_CACHE_EFFETTUATA = MSG_OPERATION_PREFIX+CACHE_METHOD_NAME_DISABILITA+MSG_OPERATION_DONE;
 	
 	public static final String MSG_CACHE_NON_ABILITATA = "Cache non abilitata";
+	public static final String MSG_CACHE_GIA_ABILITATA = "Cache già abilitata";
+	public static final String MSG_CACHE_GIA_DISABILITATA = "Cache già disabilitata";
 	
 	public static final String MSG_CACHE = "Cache";
 	public static final String MSG_CACHE_PREFIX = "Cache-";

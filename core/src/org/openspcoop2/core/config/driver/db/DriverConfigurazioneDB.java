@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
@@ -2064,6 +2065,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	@Override
 	public AccessoDatiGestioneToken getAccessoDatiGestioneToken() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		return this.configDriver.getAccessoDatiGestioneToken();
+	}
+	
+	// *** Configurazione (Accesso Dati AttributeAuthority) ***	
+	
+	@Override
+	public AccessoDatiAttributeAuthority getAccessoDatiAttributeAuthority() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configDriver.getAccessoDatiAttributeAuthority();
 	}
 
 	

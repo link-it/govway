@@ -53,9 +53,26 @@ public class GestoreRisorseJMX {
 	private Object mbeanServerConnection = null;
 	/** Logger */
 	protected Logger log = null;
+	protected void logInfo(String msg) {
+		if(this.log!=null) {
+			this.log.info(msg);
+		}
+	}
+	protected void logDebug(String msg, Throwable e) {
+		if(this.log!=null) {
+			this.log.debug(msg, e);
+		}
+	}
+	protected void logError(String msg, Throwable e) {
+		if(this.log!=null) {
+			this.log.error(msg, e);
+		}
+	}
+	
+	private static final String MBEAN_SERVER_CONNECTION = "javax.management.MBeanServerConnection";
 	
 	/** JMX Name */
-	private List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+	private List<ObjectName> jmxNames = new ArrayList<>();
 	
 	
 	/**
@@ -103,8 +120,8 @@ public class GestoreRisorseJMX {
 				logger,loggerConsole);
 	}
 	
-	private GestoreRisorseJMX(String modalita1_jndiNameMBeanServer,java.util.Properties modalita1_jndiContext,
-            String modalita2_tipoApplicationServer, String modalita2_factory, String modalita2_serverUrl, String modalita2_username,  String modalita2_password,
+	private GestoreRisorseJMX(String modalita1JndiNameMBeanServer,java.util.Properties modalita1JndiContext,
+            String modalita2TipoApplicationServer, String modalita2Factory, String modalita2ServerUrl, String modalita2Username,  String modalita2Password,
             Logger logger,Logger loggerConsole) throws RisorseJMXException{
 	
 		// log
@@ -124,37 +141,39 @@ public class GestoreRisorseJMX {
 			//	Ci sono tre modi per avere l'MBean SERVER
 			
 			// 1: da JNDI
-			if(modalita1_jndiNameMBeanServer!=null){
-				GestoreJNDI jndi = new GestoreJNDI(modalita1_jndiContext);
-				this.mbeanServer = (javax.management.MBeanServer) jndi.lookup(modalita1_jndiNameMBeanServer);
+			if(modalita1JndiNameMBeanServer!=null){
+				GestoreJNDI jndi = new GestoreJNDI(modalita1JndiContext);
+				this.mbeanServer = (javax.management.MBeanServer) jndi.lookup(modalita1JndiNameMBeanServer);
 				if(this.mbeanServer==null)
-					throw new Exception("MBeanServer ["+modalita1_jndiNameMBeanServer+"] non trovato");
+					throw new RisorseJMXException("MBeanServer ["+modalita1JndiNameMBeanServer+"] non trovato");
 				else{
-					if(logger==null)
-						loggerConsole.info("Attivata gestione jmx attraverso MBeanServer ["+modalita1_jndiNameMBeanServer+"]: "+this.mbeanServer.toString());
-					this.log.info("Attivata gestione jmx attraverso MBeanServer ["+modalita1_jndiNameMBeanServer+"]: "+this.mbeanServer.toString());
+					String msg = "Attivata gestione jmx attraverso MBeanServer ["+modalita1JndiNameMBeanServer+"]: "+this.mbeanServer.toString();
+					if(logger==null) {
+						loggerConsole.info(msg);
+					}
+					this.logInfo(msg);
 				}
 			}
 
             // 2: via url
-            else if(modalita2_tipoApplicationServer!=null && !"".equals(modalita2_tipoApplicationServer)){
-                if(modalita2_factory==null || "".equals(modalita2_factory)){
-                        throw new Exception("Parametro 'factory' non fornito");
+            else if(modalita2TipoApplicationServer!=null && !"".equals(modalita2TipoApplicationServer)){
+                if(modalita2Factory==null || "".equals(modalita2Factory)){
+                        throw new RisorseJMXException("Parametro 'factory' non fornito");
                 }
-                if(modalita2_serverUrl==null || "".equals(modalita2_serverUrl)){
-                        throw new Exception("Parametro 'serverUrl' non fornito");
+                if(modalita2ServerUrl==null || "".equals(modalita2ServerUrl)){
+                        throw new RisorseJMXException("Parametro 'serverUrl' non fornito");
                 }
-                if(modalita2_tipoApplicationServer.equals("jboss7") ||
-                		(modalita2_tipoApplicationServer!=null && modalita2_tipoApplicationServer.startsWith("wildfly")) ||
-                		modalita2_tipoApplicationServer.startsWith("tomcat")){
+                if(modalita2TipoApplicationServer.equals("jboss7") ||
+                		(modalita2TipoApplicationServer!=null && modalita2TipoApplicationServer.startsWith("wildfly")) ||
+                		modalita2TipoApplicationServer.startsWith("tomcat")){
                 	
                 	Class<?>jmxServiceURLClass = Class.forName("javax.management.remote.JMXServiceURL");
                 	Constructor<?> constructorJmxServiceURLClass = jmxServiceURLClass.getConstructor(String.class);
-                	Object serviceURL = constructorJmxServiceURLClass.newInstance(modalita2_serverUrl);
+                	Object serviceURL = constructorJmxServiceURLClass.newInstance(modalita2ServerUrl);
 
             		java.util.Map<String, Object> env = null;
-                	if(modalita2_username!=null && modalita2_password!=null){
-        				String[] creds = {modalita2_username, modalita2_password};
+                	if(modalita2Username!=null && modalita2Password!=null){
+        				String[] creds = {modalita2Username, modalita2Password};
         				env = new HashMap<>();
         				env.put("jmx.remote.credentials", creds);
                 	}
@@ -169,22 +188,22 @@ public class GestoreRisorseJMX {
     			}
     			else{
     				Properties properties = new Properties();
-    				properties.put(Context.INITIAL_CONTEXT_FACTORY, modalita2_factory);
-    				properties.put(Context.PROVIDER_URL, modalita2_serverUrl);
+    				properties.put(Context.INITIAL_CONTEXT_FACTORY, modalita2Factory);
+    				properties.put(Context.PROVIDER_URL, modalita2ServerUrl);
     				GestoreJNDI jndi = new GestoreJNDI(properties);
     				this.mbeanServerConnection = jndi.lookup("jmx/invoker/RMIAdaptor");
     				
-    				if(modalita2_username!=null && modalita2_password!=null){
+    				if(modalita2Username!=null && modalita2Password!=null){
     					
     					Class<?>simplePrincipalClass = Class.forName("org.jboss.security.SimplePrincipal");
     					Constructor<?> constructorPrincipalClass = simplePrincipalClass.getConstructor(String.class);
-    					Object simplePrincipal = constructorPrincipalClass.newInstance(modalita2_username);
+    					Object simplePrincipal = constructorPrincipalClass.newInstance(modalita2Username);
     					
     					Class<?>securityAssociationClass = Class.forName("org.jboss.security.SecurityAssociation");
     					Method setPrincipal = securityAssociationClass.getMethod("setPrincipal", simplePrincipalClass);
     					setPrincipal.invoke(null, simplePrincipal);
     					Method setCredential = securityAssociationClass.getMethod("setCredential", String.class);
-    					setCredential.invoke(null, modalita2_password);
+    					setCredential.invoke(null, modalita2Password);
     				}
     				
     			}
@@ -204,11 +223,12 @@ public class GestoreRisorseJMX {
 						if(it.hasNext()){
 							this.mbeanServer = (javax.management.MBeanServer) it.next();
 							if(this.mbeanServer==null)
-								throw new Exception("MBeanServer di default non trovato");
+								throw new RisorseJMXException("MBeanServer di default non trovato");
 							else{
+								String msg = "Attivata gestione jmx attraverso MBeanServer: "+this.mbeanServer.toString();
 								if(logger==null)
-									loggerConsole.info("Attivata gestione jmx attraverso MBeanServer: "+this.mbeanServer.toString());
-								this.log.info("Attivata gestione jmx attraverso MBeanServer: "+this.mbeanServer.toString());
+									loggerConsole.info(msg);
+								this.logInfo(msg);
 							}
 						}else{
 							throw new RisorseJMXException("Lista di MBean Server di default vuota ?");
@@ -218,7 +238,7 @@ public class GestoreRisorseJMX {
 			}
 			
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione del gestore delle RisorseJMX: "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante l'inizializzazione del gestore delle RisorseJMX: "+e.getMessage(),e);
 			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione del gestore delle RisorseJMX: "+e.getMessage(),e);
 		}
 	}
@@ -243,16 +263,16 @@ public class GestoreRisorseJMX {
 			javax.management.ObjectName jmxName = 
 				new javax.management.ObjectName(dominio,type,nome);
 			if(this.mbeanServer==null){
-				throw new Exception("Operazione di registrazione permessa solo se il gestore viene inizializzato con il costruttore di default o indicando l'MBeanServer");
+				throw new RisorseJMXException("Operazione di registrazione permessa solo se il gestore viene inizializzato con il costruttore di default o indicando l'MBeanServer");
 			}
 			this.mbeanServer.registerMBean(ClassLoaderUtilities.newInstance(c), jmxName);
 			this.jmxNames.add(jmxName);
 		}catch(Exception e){
 			if((e instanceof javax.management.InstanceAlreadyExistsException) && !throwExceptionAlreadyExists){
-				this.log.debug("Risorsa JMX ["+nome+"] già esistente: "+e.getMessage(),e);
+				this.logDebug("Risorsa JMX ["+nome+"] già esistente: "+e.getMessage(),e);
 			}
 			else{
-				this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX ["+nome+"]: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante l'inizializzazione della risorsa JMX ["+nome+"]: "+e.getMessage(),e);
 				throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX ["+nome+"]: "+e.getMessage(),e);
 			}
 		}	
@@ -268,12 +288,12 @@ public class GestoreRisorseJMX {
 			javax.management.ObjectName jmxName = this.jmxNames.get(i);
 			try{
 				if(this.mbeanServer==null){
-					throw new Exception("Operazione di cancellazione permessa solo se il gestore viene inizializzato con il costruttore di default o indicando l'MBeanServer");
+					throw new RisorseJMXException("Operazione di cancellazione permessa solo se il gestore viene inizializzato con il costruttore di default o indicando l'MBeanServer");
 				}
 				this.mbeanServer.unregisterMBean(jmxName);
-				this.log.info("Unbound della risorsa JMX ["+jmxName.toString()+"]");
+				this.logInfo("Unbound della risorsa JMX ["+jmxName.toString()+"]");
 			}catch(Exception e){
-				this.log.error("Riscontrato errore durante l'unbound della risorsa JMX ["+jmxName.toString()+"]: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante l'unbound della risorsa JMX ["+jmxName.toString()+"]: "+e.getMessage(),e);
 			}	
 		}
 	}
@@ -286,7 +306,7 @@ public class GestoreRisorseJMX {
 		try{
 			ObjectName name = new ObjectName(dominio,tipo,nomeRisorsa);
 			if(this.mbeanServerConnection!=null){
-				Class<?> c = Class.forName("javax.management.MBeanServerConnection");
+				Class<?> c = Class.forName(MBEAN_SERVER_CONNECTION);
 				Method m = c.getMethod("getAttribute", ObjectName.class, String.class);
 				return m.invoke(this.mbeanServerConnection, name, nomeAttributo);
 			}
@@ -294,8 +314,9 @@ public class GestoreRisorseJMX {
 				return this.mbeanServer.getAttribute(name, nomeAttributo);
 			}
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante la lettura dell'attributo ["+nomeAttributo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante la lettura dell'attributo ["+nomeAttributo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante la lettura dell'attributo ["+nomeAttributo+"] nella risorsa ["+nomeRisorsa+"]: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 	}
 	
@@ -307,7 +328,7 @@ public class GestoreRisorseJMX {
 			ObjectName name = new ObjectName(dominio,tipo,nomeRisorsa);
 			javax.management.Attribute attribute = new javax.management.Attribute(nomeAttributo, value);
 			if(this.mbeanServerConnection!=null){
-				Class<?> c = Class.forName("javax.management.MBeanServerConnection");
+				Class<?> c = Class.forName(MBEAN_SERVER_CONNECTION);
 				Method m = c.getMethod("setAttribute", ObjectName.class, javax.management.Attribute.class);
 				m.invoke(this.mbeanServerConnection, name, nomeAttributo);
 			}
@@ -315,8 +336,9 @@ public class GestoreRisorseJMX {
 				this.mbeanServer.setAttribute(name, attribute);
 			}
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'aggiornamento dell'attributo ["+nomeAttributo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'aggiornamento dell'attributo ["+nomeAttributo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'aggiornamento dell'attributo ["+nomeAttributo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 	}
 	
@@ -328,7 +350,7 @@ public class GestoreRisorseJMX {
 		try{
 			ObjectName name = new ObjectName(dominio,tipo,nomeRisorsa);
 			if(this.mbeanServerConnection!=null){
-				Class<?> c = Class.forName("javax.management.MBeanServerConnection");
+				Class<?> c = Class.forName(MBEAN_SERVER_CONNECTION);
 				Method m = c.getMethod("invoke", ObjectName.class, String.class, Object[].class, String[].class);
 				return m.invoke(this.mbeanServerConnection, name, nomeMetodo, params, signature);
 			}
@@ -336,8 +358,9 @@ public class GestoreRisorseJMX {
 				return this.mbeanServer.invoke(name, nomeMetodo, params, signature);
 			}
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'invocazione del metodo ["+nomeMetodo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'invocazione del metodo ["+nomeMetodo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'invocazione del metodo ["+nomeMetodo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 	}
 	

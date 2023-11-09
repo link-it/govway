@@ -97,9 +97,12 @@ public class GestoreToken {
 	public static final boolean PORTA_APPLICATIVA = false;
 	
 	/** Chiave della cache per la gestione dei token  */
-	private static final String TOKEN_CACHE_NAME = "token";
+	private static final String GESTIONE_TOKEN_CACHE_NAME = "token";
+	/** Chiave della cache per la gestione dei dati raccolti via attribute authority  */
+	private static final String ATTRIBUTE_AUTHORITY_CACHE_NAME = "attributeAuthority";
 	/** Cache */
-	private static Cache cacheToken = null;
+	private static Cache cacheGestioneToken = null;
+	private static Cache cacheAttributeAuthority = null;
 	
 	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockJWT = new HashMap<>();
 	private static synchronized org.openspcoop2.utils.Semaphore initLockJWT(String nomePolicy){
@@ -216,28 +219,31 @@ public class GestoreToken {
 		return s;
 	} 
 	
-	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockTokenCache = new HashMap<>();
-	private static synchronized org.openspcoop2.utils.Semaphore initLockTokenCache(String funzione){
-		org.openspcoop2.utils.Semaphore s = _lockTokenCache.get(funzione);
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockGenericToken = new HashMap<>();
+	private static synchronized org.openspcoop2.utils.Semaphore initLockGenericToken(String funzione){
+		org.openspcoop2.utils.Semaphore s = _lockGenericToken.get(funzione);
 		if(s==null) {
 			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveToken_lock_permits();
 			if(permits!=null && permits.intValue()>1) {
-				s = new org.openspcoop2.utils.Semaphore("GestoreTokenCache_"+funzione, permits);
+				s = new org.openspcoop2.utils.Semaphore("GestoreGenericTokenCache_"+funzione, permits);
 			}
 			else {
-				s = new org.openspcoop2.utils.Semaphore("GestoreTokenCache_"+funzione);
+				s = new org.openspcoop2.utils.Semaphore("GestoreGenericTokenCache_"+funzione);
 			}
-			_lockTokenCache.put(funzione, s);
+			_lockGenericToken.put(funzione, s);
 		}
 		return s;
 	}
-	private static org.openspcoop2.utils.Semaphore getLockTokenCache(String nomePolicy){
-		org.openspcoop2.utils.Semaphore s = _lockTokenCache.get(nomePolicy);
+	private static org.openspcoop2.utils.Semaphore getLockGenericToken(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockGenericToken.get(nomePolicy);
 		if(s==null) {
-			s = initLockTokenCache(nomePolicy);
+			s = initLockGenericToken(nomePolicy);
 		}
 		return s;
 	} 
+	
+ 
+	
 
 	static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
@@ -324,19 +330,30 @@ public class GestoreToken {
 	private static String getMessaggioErroreValoreEsitoNull(String funzione) {
 		return "Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null";
 	}
-	public static void resetCache() throws TokenException{
-		if(GestoreToken.cacheToken!=null){
+	
+	public static void resetGestioneTokenCache() throws TokenException{
+		if(GestoreToken.cacheGestioneToken!=null){
 			try{
-				GestoreToken.cacheToken.clear();
+				GestoreToken.cacheGestioneToken.clear();
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
 		}
 	}
-	public static String printStatsCache(String separator) throws TokenException{
+	public static void resetAttributeAuthorityCache() throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority!=null){
+			try{
+				GestoreToken.cacheAttributeAuthority.clear();
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}
+	}
+	
+	public static String printStatsGestioneTokenCache(String separator) throws TokenException{
 		try{
-			if(GestoreToken.cacheToken!=null){
-				return GestoreToken.cacheToken.printStats(separator);
+			if(GestoreToken.cacheGestioneToken!=null){
+				return GestoreToken.cacheGestioneToken.printStats(separator);
 			}
 			else{
 				throw new TokenException(Constants.MSG_CACHE_NON_ABILITATA);
@@ -345,35 +362,79 @@ public class GestoreToken {
 			throw new TokenException("Visualizzazione Statistiche riguardante la cache sulla gestione dei token non riuscita: "+e.getMessage(),e);
 		}
 	}
-	public static void abilitaCache() throws TokenException{
-		if(GestoreToken.cacheToken!=null)
-			throw new TokenException("Cache gia' abilitata");
-		else{
-			abilitaCacheEngine();
+	public static String printStatsAttributeAuthorityCache(String separator) throws TokenException{
+		try{
+			if(GestoreToken.cacheAttributeAuthority!=null){
+				return GestoreToken.cacheAttributeAuthority.printStats(separator);
+			}
+			else{
+				throw new TokenException(Constants.MSG_CACHE_NON_ABILITATA);
+			}
+		}catch(Exception e){
+			throw new TokenException("Visualizzazione Statistiche riguardante la cache sui dati delle Attribute Authority non riuscita: "+e.getMessage(),e);
 		}
 	}
-	private static synchronized void abilitaCacheEngine() throws TokenException{
-		if(GestoreToken.cacheToken==null) {
+	
+	public static void abilitaGestioneTokenCache() throws TokenException{
+		if(GestoreToken.cacheGestioneToken!=null)
+			throw new TokenException(Constants.MSG_CACHE_GIA_ABILITATA);
+		else{
+			abilitaGestioneTokenCacheEngine();
+		}
+	}
+	public static void abilitaAttributeAuthorityCache() throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority!=null)
+			throw new TokenException(Constants.MSG_CACHE_GIA_ABILITATA);
+		else{
+			abilitaAttributeAuthorityCacheEngine();
+		}
+	}
+	
+	private static synchronized void abilitaGestioneTokenCacheEngine() throws TokenException{
+		if(GestoreToken.cacheGestioneToken==null) {
 			try{
-				GestoreToken.cacheToken = new Cache(CacheType.JCS, GestoreToken.TOKEN_CACHE_NAME); // lascio JCS come default abilitato via jmx
-				GestoreToken.cacheToken.build();
+				GestoreToken.cacheGestioneToken = new Cache(CacheType.JCS, GestoreToken.GESTIONE_TOKEN_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreToken.cacheGestioneToken.build();
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
 		}
 	}
-	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws TokenException{
-		if(GestoreToken.cacheToken!=null)
-			throw new TokenException("Cache gia' abilitata");
-		else{
+	private static synchronized void abilitaAttributeAuthorityCacheEngine() throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority==null) {
 			try{
-				setCache(dimensioneCache, algoritmoCacheLRU, itemIdleTime, itemLifeSecond);
+				GestoreToken.cacheAttributeAuthority = new Cache(CacheType.JCS, GestoreToken.ATTRIBUTE_AUTHORITY_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreToken.cacheAttributeAuthority.build();
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
 		}
 	}
-	private static void setCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws TokenException, UtilsException{
+	
+	public static void abilitaGestioneTokenCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws TokenException{
+		if(GestoreToken.cacheGestioneToken!=null)
+			throw new TokenException(Constants.MSG_CACHE_GIA_ABILITATA);
+		else{
+			try{
+				setGestioneTokenCache(dimensioneCache, algoritmoCacheLRU, itemIdleTime, itemLifeSecond);
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}
+	}
+	public static void abilitaAttributeAuthorityCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority!=null)
+			throw new TokenException(Constants.MSG_CACHE_GIA_ABILITATA);
+		else{
+			try{
+				setAttributeAuthorityCache(dimensioneCache, algoritmoCacheLRU, itemIdleTime, itemLifeSecond);
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}
+	}
+	
+	private static void setGestioneTokenCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws TokenException, UtilsException{
 		int dimensioneCacheInt = -1;
 		if(dimensioneCache!=null){
 			dimensioneCacheInt = dimensioneCache.intValue();
@@ -399,32 +460,84 @@ public class GestoreToken {
 			itemLifeSecondLong = itemLifeSecond;
 		}
 		
-		GestoreToken.initCacheToken(CacheType.JCS, dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null); // lascio JCS come default abilitato via jmx
+		GestoreToken.initGestioneTokenCacheToken(CacheType.JCS, dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null); // lascio JCS come default abilitato via jmx
 	}
-	public static void disabilitaCache() throws TokenException{
-		if(GestoreToken.cacheToken==null)
-			throw new TokenException("Cache gia' disabilitata");
+	private static void setAttributeAuthorityCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws TokenException, UtilsException{
+		int dimensioneCacheInt = -1;
+		if(dimensioneCache!=null){
+			dimensioneCacheInt = dimensioneCache.intValue();
+		}
+		
+		String algoritmoCache = null;
+		if(algoritmoCacheLRU!=null){
+			if(algoritmoCacheLRU)
+				 algoritmoCache = CostantiConfigurazione.CACHE_LRU.toString();
+			else
+				 algoritmoCache = CostantiConfigurazione.CACHE_MRU.toString();
+		}else{
+			algoritmoCache = CostantiConfigurazione.CACHE_LRU.toString();
+		}
+		
+		long itemIdleTimeLong = -1;
+		if(itemIdleTime!=null){
+			itemIdleTimeLong = itemIdleTime;
+		}
+		
+		long itemLifeSecondLong = -1;
+		if(itemLifeSecond!=null){
+			itemLifeSecondLong = itemLifeSecond;
+		}
+		
+		GestoreToken.initAttributeAuthorityCacheToken(CacheType.JCS, dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null); // lascio JCS come default abilitato via jmx
+	}
+	
+	public static void disabilitaGestioneTokenCache() throws TokenException{
+		if(GestoreToken.cacheGestioneToken==null)
+			throw new TokenException(Constants.MSG_CACHE_GIA_DISABILITATA);
 		else{
-			disabilitaCacheEngine();
+			disabilitaGestioneTokenCacheEngine();
 		}
 	}
-	private static synchronized void disabilitaCacheEngine() throws TokenException{
-		if(GestoreToken.cacheToken!=null) {
+	public static void disabilitaAttributeAuthorityCache() throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority==null)
+			throw new TokenException(Constants.MSG_CACHE_GIA_DISABILITATA);
+		else{
+			disabilitaAttributeAuthorityCacheEngine();
+		}
+	}
+	
+	private static synchronized void disabilitaGestioneTokenCacheEngine() throws TokenException{
+		if(GestoreToken.cacheGestioneToken!=null) {
 			try{
-				GestoreToken.cacheToken.clear();
-				GestoreToken.cacheToken = null;
+				GestoreToken.cacheGestioneToken.clear();
+				GestoreToken.cacheGestioneToken = null;
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
 		}
 	}
-	public static boolean isCacheAbilitata(){
-		return GestoreToken.cacheToken != null;
-	}
-	public static String listKeysCache(String separator) throws TokenException{
-		if(GestoreToken.cacheToken!=null){
+	private static synchronized void disabilitaAttributeAuthorityCacheEngine() throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority!=null) {
 			try{
-				return GestoreToken.cacheToken.printKeys(separator);
+				GestoreToken.cacheAttributeAuthority.clear();
+				GestoreToken.cacheAttributeAuthority = null;
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}
+	}
+	
+	public static boolean isGestioneTokenCacheAbilitata(){
+		return GestoreToken.cacheGestioneToken != null;
+	}
+	public static boolean isAttributeAuthorityCacheAbilitata(){
+		return GestoreToken.cacheAttributeAuthority != null;
+	}
+	
+	public static String listKeysGestioneTokenCache(String separator) throws TokenException{
+		if(GestoreToken.cacheGestioneToken!=null){
+			try{
+				return GestoreToken.cacheGestioneToken.printKeys(separator);
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
@@ -432,10 +545,10 @@ public class GestoreToken {
 			throw new TokenException(Constants.MSG_CACHE_NON_ABILITATA);
 		}
 	}
-	public static List<String> keysCache() throws TokenException{
-		if(GestoreToken.cacheToken!=null){
+	public static String listKeysAttributeAuthorityCache(String separator) throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority!=null){
 			try{
-				return GestoreToken.cacheToken.keys();
+				return GestoreToken.cacheAttributeAuthority.printKeys(separator);
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
@@ -443,10 +556,34 @@ public class GestoreToken {
 			throw new TokenException(Constants.MSG_CACHE_NON_ABILITATA);
 		}
 	}
-	public static String getObjectCache(String key) throws TokenException{
-		if(GestoreToken.cacheToken!=null){
+	
+	public static List<String> keysGestioneTokenCache() throws TokenException{
+		if(GestoreToken.cacheGestioneToken!=null){
 			try{
-				Object o = GestoreToken.cacheToken.get(key);
+				return GestoreToken.cacheGestioneToken.keys();
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}else{
+			throw new TokenException(Constants.MSG_CACHE_NON_ABILITATA);
+		}
+	}
+	public static List<String> keysAttributeAuthorityCache() throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority!=null){
+			try{
+				return GestoreToken.cacheAttributeAuthority.keys();
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}else{
+			throw new TokenException(Constants.MSG_CACHE_NON_ABILITATA);
+		}
+	}
+	
+	public static String getObjectGestioneTokenCache(String key) throws TokenException{
+		if(GestoreToken.cacheGestioneToken!=null){
+			try{
+				Object o = GestoreToken.cacheGestioneToken.get(key);
 				if(o!=null){
 					return o.toString();
 				}else{
@@ -459,10 +596,38 @@ public class GestoreToken {
 			throw new TokenException(Constants.MSG_CACHE_NON_ABILITATA);
 		}
 	}
-	public static void removeObjectCache(String key) throws TokenException{
-		if(GestoreToken.cacheToken!=null){
+	public static String getObjectAttributeAuthorityCache(String key) throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority!=null){
 			try{
-				GestoreToken.cacheToken.remove(key);
+				Object o = GestoreToken.cacheAttributeAuthority.get(key);
+				if(o!=null){
+					return o.toString();
+				}else{
+					return getPrefixOggettoConChiave(key)+" non presente";
+				}
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}else{
+			throw new TokenException(Constants.MSG_CACHE_NON_ABILITATA);
+		}
+	}
+	
+	public static void removeObjectGestioneTokenCache(String key) throws TokenException{
+		if(GestoreToken.cacheGestioneToken!=null){
+			try{
+				GestoreToken.cacheGestioneToken.remove(key);
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}else{
+			throw new TokenException(Constants.MSG_CACHE_NON_ABILITATA);
+		}
+	}
+	public static void removeObjectAttributeAuthorityCache(String key) throws TokenException{
+		if(GestoreToken.cacheAttributeAuthority!=null){
+			try{
+				GestoreToken.cacheAttributeAuthority.remove(key);
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
@@ -477,17 +642,15 @@ public class GestoreToken {
 	
 	/*----------------- CLEANER --------------------*/
 	
-	public static void removeGenericProperties(IDGenericProperties idGP) throws TokenException {
+	public static void removeGenericPropertiesGestioneToken(IDGenericProperties idGP) throws TokenException {
 		
-		if(GestoreToken.isCacheAbilitata()){
+		if(GestoreToken.isGestioneTokenCacheAbilitata()){
 			
 			String prefixKeyValidazioneJwt = null;
 			String prefixKeyIntrospection = null;
 			String prefixKeyUserInfo = null;
 			
 			String prefixKeyRetrieveToken = null;
-			
-			String prefixKeyAA = null;
 			
 			boolean checkKeys = false;
 			
@@ -506,7 +669,24 @@ public class GestoreToken {
 				checkKeys = true;
 				
 			}
-			else if(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
+			
+			if(checkKeys) {
+				checkKeys(prefixKeyValidazioneJwt, prefixKeyIntrospection, prefixKeyUserInfo,
+						prefixKeyRetrieveToken);
+			}
+				
+		}
+		
+	}
+	public static void removeGenericPropertiesAttributeAuthority(IDGenericProperties idGP) throws TokenException {
+		
+		if(GestoreToken.isAttributeAuthorityCacheAbilitata()){
+						
+			String prefixKeyAA = null;
+			
+			boolean checkKeys = false;
+			
+			if(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
 				
 				prefixKeyAA = GestoreTokenAttributeAuthorityUtilities.buildCacheKeyRecuperoAttributiPrefix(idGP.getNome(), ATTRIBUTE_AUTHORITY_FUNCTION);
 				
@@ -514,25 +694,38 @@ public class GestoreToken {
 			}
 			
 			if(checkKeys) {
-				checkKeys(prefixKeyValidazioneJwt, prefixKeyIntrospection, prefixKeyUserInfo,
-						prefixKeyRetrieveToken, prefixKeyAA);
+				checkKeys(prefixKeyAA);
 			}
 				
 		}
 		
 	}
 	private static void checkKeys(String prefixKeyValidazioneJwt, String prefixKeyIntrospection, String prefixKeyUserInfo,
-			String prefixKeyRetrieveToken, String prefixKeyAA) throws TokenException {
+			String prefixKeyRetrieveToken) throws TokenException {
 		List<String> keyForClean = new ArrayList<>();
-		List<String> keys = GestoreToken.keysCache();
+		List<String> keys = GestoreToken.keysGestioneTokenCache();
 		if(keys!=null && !keys.isEmpty()) {
 			fillKeyForClean(prefixKeyValidazioneJwt, prefixKeyIntrospection, prefixKeyUserInfo,
-					prefixKeyRetrieveToken, prefixKeyAA,
+					prefixKeyRetrieveToken, null,
 					keys, keyForClean);
 		}
 		if(!keyForClean.isEmpty()) {
 			for (String key : keyForClean) {
-				removeObjectCache(key);
+				removeObjectGestioneTokenCache(key);
+			}
+		}
+	}
+	private static void checkKeys(String prefixKeyAA) throws TokenException {
+		List<String> keyForClean = new ArrayList<>();
+		List<String> keys = GestoreToken.keysAttributeAuthorityCache();
+		if(keys!=null && !keys.isEmpty()) {
+			fillKeyForClean(null, null, null,
+					null, prefixKeyAA,
+					keys, keyForClean);
+		}
+		if(!keyForClean.isEmpty()) {
+			for (String key : keyForClean) {
+				removeObjectAttributeAuthorityCache(key);
 			}
 		}
 	}
@@ -564,16 +757,15 @@ public class GestoreToken {
 
 
 	/*----------------- INIZIALIZZAZIONE --------------------*/
-	public static void initialize(Logger log) throws TokenException, UtilsException{
-		GestoreToken.initialize(null, false, -1,null,-1l,-1l, log);
+	public static void initializeGestioneToken(Logger log) throws TokenException, UtilsException{
+		GestoreToken.initializeGestioneToken(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(CacheType cacheType,
+	public static void initializeGestioneToken(CacheType cacheType,
 			int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws TokenException, UtilsException{
-		GestoreToken.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreToken.initializeGestioneToken(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
-
-	private static void initialize(CacheType cacheType,
+	private static void initializeGestioneToken(CacheType cacheType,
 			boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws TokenException, UtilsException{
 
@@ -582,19 +774,79 @@ public class GestoreToken {
 				
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreToken.initCacheToken(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreToken.initGestioneTokenCacheToken(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+		}
+
+	}
+	
+	public static void initializeAttributeAuthority(Logger log) throws TokenException, UtilsException{
+		GestoreToken.initializeAttributeAuthority(null, false, -1,null,-1l,-1l, log);
+	}
+	public static void initializeAttributeAuthority(CacheType cacheType,
+			int dimensioneCache,String algoritmoCache,
+			long idleTime, long itemLifeSecond, Logger log) throws TokenException, UtilsException{
+		GestoreToken.initializeAttributeAuthority(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+	}
+	private static void initializeAttributeAuthority(CacheType cacheType,
+			boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+			long idleTime, long itemLifeSecond, Logger log) throws TokenException, UtilsException{
+
+		// Inizializzo log
+		GestoreToken.logger = log;
+				
+		// Inizializzazione Cache
+		if(cacheAbilitata){
+			GestoreToken.initAttributeAuthorityCacheToken(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
 
 
-	public static void initCacheToken(CacheType cacheType, int dimensioneCache,String algoritmoCache,
+	public static void initGestioneTokenCacheToken(CacheType cacheType, int dimensioneCache,String algoritmoCache,
+			long idleTime, long itemLifeSecond, Logger log) throws TokenException, UtilsException {
+		
+		if(log!=null)
+			log.info("Inizializzazione cache GestioneToken");
+
+		GestoreToken.cacheGestioneToken = new Cache(cacheType, GestoreToken.GESTIONE_TOKEN_CACHE_NAME);
+
+		if( (dimensioneCache>0) ||
+				(algoritmoCache != null) ){
+
+			initGestioneTokenCacheSize(dimensioneCache, algoritmoCache, log);
+
+		}
+
+		if( idleTime > 0  ){
+			try{
+				String msg = "Attributo 'IdleTime' (Token) impostato al valore: "+idleTime;
+				if(log!=null)
+					log.info(msg);
+				GestoreToken.logConsole.info(msg);
+				GestoreToken.cacheGestioneToken.setItemIdleTime(idleTime);
+			}catch(Exception error){
+				throw new TokenException("Parametro errato per l'attributo 'IdleTime' (Token): "+error.getMessage(),error);
+			}
+		}
+		try{
+			String msg = "Attributo 'MaxLifeSecond' (Token) impostato al valore: "+itemLifeSecond;
+			if(log!=null)
+				log.info(msg);
+			GestoreToken.logConsole.info(msg);
+			GestoreToken.cacheGestioneToken.setItemLifeTime(itemLifeSecond);
+		}catch(Exception error){
+			throw new TokenException("Parametro errato per l'attributo 'MaxLifeSecond' (Token): "+error.getMessage(),error);
+		}
+
+		GestoreToken.cacheGestioneToken.build();
+	}
+	public static void initAttributeAuthorityCacheToken(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws TokenException, UtilsException {
 		
 		if(log!=null)
 			log.info("Inizializzazione cache Token");
 
-		GestoreToken.cacheToken = new Cache(cacheType, GestoreToken.TOKEN_CACHE_NAME);
+		GestoreToken.cacheAttributeAuthority = new Cache(cacheType, GestoreToken.ATTRIBUTE_AUTHORITY_CACHE_NAME);
 
 		if( (dimensioneCache>0) ||
 				(algoritmoCache != null) ){
@@ -605,37 +857,38 @@ public class GestoreToken {
 
 		if( idleTime > 0  ){
 			try{
-				String msg = "Attributo 'IdleTime' (Token) impostato al valore: "+idleTime;
+				String msg = "Attributo 'IdleTime' (AttributeAuthority) impostato al valore: "+idleTime;
 				if(log!=null)
 					log.info(msg);
 				GestoreToken.logConsole.info(msg);
-				GestoreToken.cacheToken.setItemIdleTime(idleTime);
+				GestoreToken.cacheAttributeAuthority.setItemIdleTime(idleTime);
 			}catch(Exception error){
-				throw new TokenException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage(),error);
+				throw new TokenException("Parametro errato per l'attributo 'IdleTime' (AttributeAuthority): "+error.getMessage(),error);
 			}
 		}
 		try{
-			String msg = "Attributo 'MaxLifeSecond' (Token) impostato al valore: "+itemLifeSecond;
+			String msg = "Attributo 'MaxLifeSecond' (AttributeAuthority) impostato al valore: "+itemLifeSecond;
 			if(log!=null)
 				log.info(msg);
 			GestoreToken.logConsole.info(msg);
-			GestoreToken.cacheToken.setItemLifeTime(itemLifeSecond);
+			GestoreToken.cacheAttributeAuthority.setItemLifeTime(itemLifeSecond);
 		}catch(Exception error){
-			throw new TokenException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
+			throw new TokenException("Parametro errato per l'attributo 'MaxLifeSecond' (AttributeAuthority): "+error.getMessage(),error);
 		}
 
-		GestoreToken.cacheToken.build();
+		GestoreToken.cacheAttributeAuthority.build();
 	}
-	public static void initCacheSize(int dimensioneCache,String algoritmoCache, Logger log) throws TokenException {
+	
+	public static void initGestioneTokenCacheSize(int dimensioneCache,String algoritmoCache, Logger log) throws TokenException {
 		if( dimensioneCache>0 ){
 			try{
 				String msg = "Dimensione della cache (Token) impostata al valore: "+dimensioneCache;
 				if(log!=null)
 					log.info(msg);
 				GestoreToken.logConsole.info(msg);
-				GestoreToken.cacheToken.setCacheSize(dimensioneCache);
+				GestoreToken.cacheGestioneToken.setCacheSize(dimensioneCache);
 			}catch(Exception error){
-				throw new TokenException("Parametro errato per la dimensione della cache (Gestore Messaggi): "+error.getMessage(),error);
+				throw new TokenException("Parametro errato per la dimensione della cache (Token): "+error.getMessage(),error);
 			}
 		}
 		if(algoritmoCache != null ){
@@ -644,9 +897,32 @@ public class GestoreToken {
 				log.info(msg);
 			GestoreToken.logConsole.info(msg);
 			if(CostantiConfigurazione.CACHE_MRU.toString().equalsIgnoreCase(algoritmoCache))
-				GestoreToken.cacheToken.setCacheAlgoritm(CacheAlgorithm.MRU);
+				GestoreToken.cacheGestioneToken.setCacheAlgoritm(CacheAlgorithm.MRU);
 			else
-				GestoreToken.cacheToken.setCacheAlgoritm(CacheAlgorithm.LRU);
+				GestoreToken.cacheGestioneToken.setCacheAlgoritm(CacheAlgorithm.LRU);
+		}
+	}
+	public static void initCacheSize(int dimensioneCache,String algoritmoCache, Logger log) throws TokenException {
+		if( dimensioneCache>0 ){
+			try{
+				String msg = "Dimensione della cache (AttributeAuthority) impostata al valore: "+dimensioneCache;
+				if(log!=null)
+					log.info(msg);
+				GestoreToken.logConsole.info(msg);
+				GestoreToken.cacheAttributeAuthority.setCacheSize(dimensioneCache);
+			}catch(Exception error){
+				throw new TokenException("Parametro errato per la dimensione della cache (AttributeAuthority): "+error.getMessage(),error);
+			}
+		}
+		if(algoritmoCache != null ){
+			String msg = "Algoritmo di cache (AttributeAuthority) impostato al valore: "+algoritmoCache;
+			if(log!=null)
+				log.info(msg);
+			GestoreToken.logConsole.info(msg);
+			if(CostantiConfigurazione.CACHE_MRU.toString().equalsIgnoreCase(algoritmoCache))
+				GestoreToken.cacheAttributeAuthority.setCacheAlgoritm(CacheAlgorithm.MRU);
+			else
+				GestoreToken.cacheAttributeAuthority.setCacheAlgoritm(CacheAlgorithm.LRU);
 		}
 	}
 	
@@ -916,7 +1192,7 @@ public class GestoreToken {
 		
 		String token = esitoPresenzaToken.getToken();
 		
-		if(GestoreToken.cacheToken==null){
+		if(GestoreToken.cacheGestioneToken==null){
 			esitoGestioneToken = GestoreTokenValidazioneUtilities.validazioneJWTTokenEngine(log, datiInvocazione, esitoPresenzaToken, token, portaDelegata, pddContext);
 		}
     	else{
@@ -927,7 +1203,7 @@ public class GestoreToken {
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
     		org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 			if(response != null){
 				if(response.getObject()!=null){
 					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -948,7 +1224,7 @@ public class GestoreToken {
 				try {
 					
 					response = 
-						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
 							GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -978,7 +1254,7 @@ public class GestoreToken {
 								try{	
 									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 									responseCache.setObject(esitoGestioneToken);
-									GestoreToken.cacheToken.put(keyCache,responseCache);
+									GestoreToken.cacheGestioneToken.put(keyCache,responseCache);
 								}catch(UtilsException e){
 									GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
 								}
@@ -1025,7 +1301,7 @@ public class GestoreToken {
 		
 		String token = esitoPresenzaToken.getToken();
 		
-		if(GestoreToken.cacheToken==null){
+		if(GestoreToken.cacheGestioneToken==null){
 			esitoGestioneToken = GestoreTokenValidazioneUtilities.introspectionTokenEngine(log, datiInvocazione, 
 					pddContext, protocolFactory,
 					token, portaDelegata,
@@ -1039,7 +1315,7 @@ public class GestoreToken {
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
     		org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 			if(response != null){
 				if(response.getObject()!=null){
 					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -1061,7 +1337,7 @@ public class GestoreToken {
 				try {
 					
 					response = 
-						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
 							GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -1093,7 +1369,7 @@ public class GestoreToken {
 							try{	
 								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 								responseCache.setObject(esitoGestioneToken);
-								GestoreToken.cacheToken.put(keyCache,responseCache);
+								GestoreToken.cacheGestioneToken.put(keyCache,responseCache);
 							}catch(UtilsException e){
 								GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
 							}
@@ -1131,7 +1407,7 @@ public class GestoreToken {
 		
 		String token = esitoPresenzaToken.getToken();
 		
-		if(GestoreToken.cacheToken==null){
+		if(GestoreToken.cacheGestioneToken==null){
 			esitoGestioneToken = GestoreTokenValidazioneUtilities.userInfoTokenEngine(log, datiInvocazione, 
 					pddContext, protocolFactory,
 					token, portaDelegata,
@@ -1145,7 +1421,7 @@ public class GestoreToken {
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
     		org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 			if(response != null){
 				if(response.getObject()!=null){
 					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -1166,7 +1442,7 @@ public class GestoreToken {
 				try {
 					
 					response = 
-						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
 							GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -1198,7 +1474,7 @@ public class GestoreToken {
 							try{	
 								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 								responseCache.setObject(esitoGestioneToken);
-								GestoreToken.cacheToken.put(keyCache,responseCache);
+								GestoreToken.cacheGestioneToken.put(keyCache,responseCache);
 							}catch(UtilsException e){
 								GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
 							}
@@ -1480,7 +1756,7 @@ public class GestoreToken {
 				pddContext, requestInfo, busta, state, protocolFactory, 
 				policyNegoziazioneToken);
 		
-		if(GestoreToken.cacheToken==null){
+		if(GestoreToken.cacheGestioneToken==null){
 			esitoNegoziazioneToken = GestoreTokenNegoziazioneUtilities.endpointTokenEngine(debug, log, policyNegoziazioneToken, 
 					busta, requestInfo, tipoPdD,
 					dynamicParameters, protocolFactory, 
@@ -1505,7 +1781,7 @@ public class GestoreToken {
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
     		org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 			if(response != null){
 				if(response.getObject()!=null){
 					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -1525,7 +1801,7 @@ public class GestoreToken {
 				try {
 					
 					response = 
-						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
 							GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -1561,7 +1837,7 @@ public class GestoreToken {
 								try{	
 									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 									responseCache.setObject(esitoNegoziazioneToken);
-									GestoreToken.cacheToken.put(keyCache,responseCache);
+									GestoreToken.cacheGestioneToken.put(keyCache,responseCache);
 								}catch(UtilsException e){
 									GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
 								}
@@ -1588,7 +1864,7 @@ public class GestoreToken {
 									policyNegoziazioneToken.isSaveErrorInCache());
 							if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
 								// DEVO riavviare la negoziazione poichè è scaduto
-								GestoreToken.cacheToken.remove(keyCache);
+								GestoreToken.cacheGestioneToken.remove(keyCache);
 								riavviaNegoziazione = true;
 								/** System.out.println("Riavvia negoziazione"); */
 							}
@@ -1616,7 +1892,7 @@ public class GestoreToken {
 						lockNegoziazione.acquire("removeToken", idTransazione);
 						try {
 							// DEVO riavviare la negoziazione poichè è scaduto
-							GestoreToken.cacheToken.remove(keyCache);
+							GestoreToken.cacheGestioneToken.remove(keyCache);
 							riavviaNegoziazione = true;
 							/** System.out.println("Riavvia negoziazione"); */
 						}finally {
@@ -1702,7 +1978,7 @@ public class GestoreToken {
 			pd = ((DatiInvocazionePortaDelegata)datiInvocazione).getPd();
 		}
 		
-		if(GestoreToken.cacheToken==null){
+		if(GestoreToken.cacheAttributeAuthority==null){
 						
 			boolean addIdAndDate = true;
 			String request = GestoreTokenAttributeAuthorityUtilities.buildDynamicAARequest(configurazionePdDManager,  
@@ -1741,7 +2017,7 @@ public class GestoreToken {
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
     		org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheAttributeAuthority.get(keyCache);
 			if(response != null){
 				if(response.getObject()!=null){
 					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -1764,7 +2040,7 @@ public class GestoreToken {
 				try {
 					
 					response = 
-						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheAttributeAuthority.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
 							GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -1812,7 +2088,7 @@ public class GestoreToken {
 								try{	
 									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 									responseCache.setObject(esitoRecuperoAttributi);
-									GestoreToken.cacheToken.put(keyCache,responseCache);
+									GestoreToken.cacheAttributeAuthority.put(keyCache,responseCache);
 								}catch(UtilsException e){
 									GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
 								}
@@ -1839,7 +2115,7 @@ public class GestoreToken {
 									dynamicParameters);
 							if(!esitoRecuperoAttributi.isValido() && !esitoRecuperoAttributi.isDateValide()) {
 								// DEVO riavviare la negoziazione poichè è scaduto
-								GestoreToken.cacheToken.remove(keyCache);
+								GestoreToken.cacheAttributeAuthority.remove(keyCache);
 								riavviaNegoziazione = true;
 							}
 						}
@@ -1865,7 +2141,7 @@ public class GestoreToken {
 						lockAttributeAuthority.acquire("removeAttributes", idTransazione);
 						try {
 							// DEVO riavviare la negoziazione poichè è scaduto
-							GestoreToken.cacheToken.remove(keyCache);
+							GestoreToken.cacheAttributeAuthority.remove(keyCache);
 							riavviaNegoziazione = true;
 						} finally{
 							// fine synchronized
@@ -1922,10 +2198,10 @@ public class GestoreToken {
 	public static TokenCacheItem getTokenCacheItem(String keyCache, String funzione, Date now) throws TokenException {
 		TokenCacheItem item = null;
 		
-		if(GestoreToken.cacheToken!=null){
+		if(GestoreToken.cacheGestioneToken!=null){
 			
 			org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 			if(response != null){
 				if(response.getObject()!=null){
 					GestoreToken.loggerDebug(GestoreToken.getMessageObjectInCache(response, keyCache, funzione));
@@ -1966,19 +2242,19 @@ public class GestoreToken {
 	
 	public static void putTokenCacheItem(TokenCacheItem item, String keyCache, String funzione, Date now) {
 		
-		if(GestoreToken.cacheToken!=null){
+		if(GestoreToken.cacheGestioneToken!=null){
 			
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
 			// Qua non va fatto come per gli altri casi, è nell'utilizzo del metodo getTokenCacheItem che lo si fa
     		
     		
-			org.openspcoop2.utils.Semaphore lockNegoziazione = getLockTokenCache(funzione);
+			org.openspcoop2.utils.Semaphore lockNegoziazione = getLockGenericToken(funzione);
 			lockNegoziazione.acquireThrowRuntime("putTokenCacheItem", item.getIdTransazione());
 			try {
 				
 				// per gestire concorrenza
 				org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheGestioneToken.get(keyCache);
 				TokenCacheItem itemInCache = null;
 				if(response != null &&
 					response.getObject()!=null){
@@ -2001,7 +2277,7 @@ public class GestoreToken {
 					try{	
 						org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
 						responseCache.setObject(item);
-						GestoreToken.cacheToken.put(keyCache,responseCache);
+						GestoreToken.cacheGestioneToken.put(keyCache,responseCache);
 					}catch(UtilsException e){
 						GestoreToken.loggerError(getMessaggioErroreInserimentoInCache(keyCache, e));
 					}

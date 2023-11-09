@@ -42,6 +42,7 @@ import java.util.List;
  * 			&lt;element name="accesso-dati-autorizzazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autorizzazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="accesso-dati-autenticazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autenticazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="accesso-dati-gestione-token" type="{http://www.openspcoop2.org/core/config}accesso-dati-gestione-token" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="accesso-dati-attribute-authority" type="{http://www.openspcoop2.org/core/config}accesso-dati-attribute-authority" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="accesso-dati-keystore" type="{http://www.openspcoop2.org/core/config}accesso-dati-keystore" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="accesso-dati-consegna-applicativi" type="{http://www.openspcoop2.org/core/config}accesso-dati-consegna-applicativi" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="accesso-dati-richieste" type="{http://www.openspcoop2.org/core/config}accesso-dati-richieste" minOccurs="0" maxOccurs="1"/&gt;
@@ -86,6 +87,7 @@ import java.util.List;
   	"accessoDatiAutorizzazione",
   	"accessoDatiAutenticazione",
   	"accessoDatiGestioneToken",
+  	"accessoDatiAttributeAuthority",
   	"accessoDatiKeystore",
   	"accessoDatiConsegnaApplicativi",
   	"accessoDatiRichieste",
@@ -191,6 +193,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
   public void setAccessoDatiGestioneToken(AccessoDatiGestioneToken accessoDatiGestioneToken) {
     this.accessoDatiGestioneToken = accessoDatiGestioneToken;
+  }
+
+  public AccessoDatiAttributeAuthority getAccessoDatiAttributeAuthority() {
+    return this.accessoDatiAttributeAuthority;
+  }
+
+  public void setAccessoDatiAttributeAuthority(AccessoDatiAttributeAuthority accessoDatiAttributeAuthority) {
+    this.accessoDatiAttributeAuthority = accessoDatiAttributeAuthority;
   }
 
   public AccessoDatiKeystore getAccessoDatiKeystore() {
@@ -469,6 +479,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBeanWithId i
 
   @XmlElement(name="accesso-dati-gestione-token",required=false,nillable=false)
   protected AccessoDatiGestioneToken accessoDatiGestioneToken;
+
+  @XmlElement(name="accesso-dati-attribute-authority",required=false,nillable=false)
+  protected AccessoDatiAttributeAuthority accessoDatiAttributeAuthority;
 
   @XmlElement(name="accesso-dati-keystore",required=false,nillable=false)
   protected AccessoDatiKeystore accessoDatiKeystore;

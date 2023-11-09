@@ -43,6 +43,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
@@ -6301,9 +6302,15 @@ public class ConfigurazionePdDReader {
 	 */
 	private static AccessoRegistro accessoRegistroServizi = null;
 	private static Boolean accessoRegistroServiziLetto = false;
+	public static void setAccessoRegistroServizi(AccessoRegistro accessoRegistroServizi) {
+		ConfigurazionePdDReader.accessoRegistroServizi = accessoRegistroServizi;
+	}
+	public static void setAccessoRegistroServiziLetto(Boolean accessoRegistroServiziLetto) {
+		ConfigurazionePdDReader.accessoRegistroServiziLetto = accessoRegistroServiziLetto;
+	}
 	protected AccessoRegistro getAccessoRegistroServizi(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoRegistroServiziLetto==false){
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.accessoRegistroServiziLetto.booleanValue()){
 			AccessoRegistro configRegistro = null;
 			try{
 				configRegistro = this.configurazionePdD.getAccessoRegistro(connectionPdD);
@@ -6313,11 +6320,11 @@ public class ConfigurazionePdDReader {
 				this.logError("getAccessoRegistroServizi",e);
 			}
 
-			ConfigurazionePdDReader.accessoRegistroServizi = configRegistro;
-			ConfigurazionePdDReader.accessoRegistroServiziLetto = true;
+			ConfigurazionePdDReader.setAccessoRegistroServizi(configRegistro);
+			ConfigurazionePdDReader.setAccessoRegistroServiziLetto(true);
 		}
 
-		/*
+		/**
 		if(ConfigurazionePdDReader.accessoRegistroServizi.getCache()==null){
 			System.out.println("REGISTRO CACHE DISABILITATA");
 		}else{
@@ -6347,9 +6354,15 @@ public class ConfigurazionePdDReader {
 	 */
 	private static AccessoConfigurazione accessoConfigurazione = null;
 	private static Boolean accessoConfigurazioneLetto = false;
+	public static void setAccessoConfigurazione(AccessoConfigurazione accessoConfigurazione) {
+		ConfigurazionePdDReader.accessoConfigurazione = accessoConfigurazione;
+	}
+	public static void setAccessoConfigurazioneLetto(Boolean accessoConfigurazioneLetto) {
+		ConfigurazionePdDReader.accessoConfigurazioneLetto = accessoConfigurazioneLetto;
+	}
 	protected AccessoConfigurazione getAccessoConfigurazione(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoConfigurazioneLetto==false){
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.accessoConfigurazioneLetto.booleanValue()){
 			AccessoConfigurazione tmp = null;
 			try{
 				tmp = this.configurazionePdD.getAccessoConfigurazione(connectionPdD);
@@ -6359,11 +6372,11 @@ public class ConfigurazionePdDReader {
 				this.logError("getAccessoConfigurazione",e);
 			}
 
-			ConfigurazionePdDReader.accessoConfigurazione = tmp;
-			ConfigurazionePdDReader.accessoConfigurazioneLetto = true;
+			ConfigurazionePdDReader.setAccessoConfigurazione(tmp);
+			ConfigurazionePdDReader.setAccessoConfigurazioneLetto(true);
 		}
 
-		/*
+		/**
 		if(ConfigurazionePdDReader.accessoConfigurazione.getCache()==null){
 			System.out.println("ACCESSO_CONFIG CACHE DISABILITATA");
 		}else{
@@ -6386,9 +6399,15 @@ public class ConfigurazionePdDReader {
 	 */
 	private static AccessoDatiAutorizzazione accessoDatiAutorizzazione = null;
 	private static Boolean accessoDatiAutorizzazioneLetto = false;
+	public static void setAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) {
+		ConfigurazionePdDReader.accessoDatiAutorizzazione = accessoDatiAutorizzazione;
+	}
+	public static void setAccessoDatiAutorizzazioneLetto(Boolean accessoDatiAutorizzazioneLetto) {
+		ConfigurazionePdDReader.accessoDatiAutorizzazioneLetto = accessoDatiAutorizzazioneLetto;
+	}
 	protected AccessoDatiAutorizzazione getAccessoDatiAutorizzazione(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiAutorizzazioneLetto==false){
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.accessoDatiAutorizzazioneLetto.booleanValue()){
 			AccessoDatiAutorizzazione tmp = null;
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiAutorizzazione(connectionPdD);
@@ -6398,11 +6417,11 @@ public class ConfigurazionePdDReader {
 				this.logError("getAccessoDatiAutorizzazione",e);
 			}
 
-			ConfigurazionePdDReader.accessoDatiAutorizzazione = tmp;
-			ConfigurazionePdDReader.accessoDatiAutorizzazioneLetto = true;
+			ConfigurazionePdDReader.setAccessoDatiAutorizzazione(tmp);
+			ConfigurazionePdDReader.setAccessoDatiAutorizzazioneLetto(true);
 		}
 
-		/*
+		/**
 		if(ConfigurazionePdDReader.accessoDatiAutorizzazione.getCache()==null){
 			System.out.println("ACCESSO_DATI_AUTH CACHE DISABILITATA");
 		}else{
@@ -6425,9 +6444,15 @@ public class ConfigurazionePdDReader {
 	 */
 	private static AccessoDatiAutenticazione accessoDatiAutenticazione = null;
 	private static Boolean accessoDatiAutenticazioneLetto = false;
+	public static void setAccessoDatiAutenticazione(AccessoDatiAutenticazione accessoDatiAutenticazione) {
+		ConfigurazionePdDReader.accessoDatiAutenticazione = accessoDatiAutenticazione;
+	}
+	public static void setAccessoDatiAutenticazioneLetto(Boolean accessoDatiAutenticazioneLetto) {
+		ConfigurazionePdDReader.accessoDatiAutenticazioneLetto = accessoDatiAutenticazioneLetto;
+	}
 	protected AccessoDatiAutenticazione getAccessoDatiAutenticazione(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiAutenticazioneLetto==false){
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.accessoDatiAutenticazioneLetto.booleanValue()){
 			AccessoDatiAutenticazione tmp = null;
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiAutenticazione(connectionPdD);
@@ -6437,11 +6462,11 @@ public class ConfigurazionePdDReader {
 				this.logError("getAccessoDatiAutenticazione",e);
 			}
 
-			ConfigurazionePdDReader.accessoDatiAutenticazione = tmp;
-			ConfigurazionePdDReader.accessoDatiAutenticazioneLetto = true;
+			ConfigurazionePdDReader.setAccessoDatiAutenticazione(tmp);
+			ConfigurazionePdDReader.setAccessoDatiAutenticazioneLetto(true);
 		}
 
-		/*
+		/**
 		if(ConfigurazionePdDReader.accessoDatiAutenticazione.getCache()==null){
 			System.out.println("ACCESSO_DATI_AUTHN CACHE DISABILITATA");
 		}else{
@@ -6464,9 +6489,15 @@ public class ConfigurazionePdDReader {
 	 */
 	private static AccessoDatiGestioneToken accessoDatiGestioneToken = null;
 	private static Boolean accessoDatiGestioneTokenLetto = false;
+	public static void setAccessoDatiGestioneToken(AccessoDatiGestioneToken accessoDatiGestioneToken) {
+		ConfigurazionePdDReader.accessoDatiGestioneToken = accessoDatiGestioneToken;
+	}
+	public static void setAccessoDatiGestioneTokenLetto(Boolean accessoDatiGestioneTokenLetto) {
+		ConfigurazionePdDReader.accessoDatiGestioneTokenLetto = accessoDatiGestioneTokenLetto;
+	}
 	protected AccessoDatiGestioneToken getAccessoDatiGestioneToken(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiGestioneTokenLetto==false){
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.accessoDatiGestioneTokenLetto.booleanValue()){
 			AccessoDatiGestioneToken tmp = null;
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiGestioneToken(connectionPdD);
@@ -6476,11 +6507,11 @@ public class ConfigurazionePdDReader {
 				this.logError("getAccessoDatiGestioneToken",e);
 			}
 
-			ConfigurazionePdDReader.accessoDatiGestioneToken = tmp;
-			ConfigurazionePdDReader.accessoDatiGestioneTokenLetto = true;
+			ConfigurazionePdDReader.setAccessoDatiGestioneToken(tmp);
+			ConfigurazionePdDReader.setAccessoDatiGestioneTokenLetto(true);
 		}
 
-		/*
+		/**
 		if(ConfigurazionePdDReader.accessoDatiGestioneToken.getCache()==null){
 			System.out.println("ACCESSO_DATI_TOKEN CACHE DISABILITATA");
 		}else{
@@ -6494,6 +6525,51 @@ public class ConfigurazionePdDReader {
 
 		return ConfigurazionePdDReader.accessoDatiGestioneToken;
 	}
+	
+	/**
+	 * Restituisce le informazioni necessarie alla porta di dominio per accedere ai dati raccolti via attribute authority
+	 *
+	 * @return informazioni
+	 * 
+	 */
+	private static AccessoDatiAttributeAuthority accessoDatiAttributeAuthority = null;
+	private static Boolean accessoDatiAttributeAuthorityLetto = false;
+	public static void setAccessoDatiAttributeAuthority(AccessoDatiAttributeAuthority accessoDatiAttributeAuthority) {
+		ConfigurazionePdDReader.accessoDatiAttributeAuthority = accessoDatiAttributeAuthority;
+	}
+	public static void setAccessoDatiAttributeAuthorityLetto(Boolean accessoDatiAttributeAuthorityLetto) {
+		ConfigurazionePdDReader.accessoDatiAttributeAuthorityLetto = accessoDatiAttributeAuthorityLetto;
+	}
+	protected AccessoDatiAttributeAuthority getAccessoDatiAttributeAuthority(Connection connectionPdD){
+
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.accessoDatiAttributeAuthorityLetto.booleanValue()){
+			AccessoDatiAttributeAuthority tmp = null;
+			try{
+				tmp = this.configurazionePdD.getAccessoDatiAttributeAuthority(connectionPdD);
+			}catch(DriverConfigurazioneNotFound e){
+				this.logDebug("getAccessoDatiAttributeAuthority (not found): "+e.getMessage());
+			}catch(Exception e){
+				this.logError("getAccessoDatiAttributeAuthority",e);
+			}
+
+			ConfigurazionePdDReader.setAccessoDatiAttributeAuthority(tmp);
+			ConfigurazionePdDReader.setAccessoDatiAttributeAuthorityLetto(true);
+		}
+
+		/**
+		if(ConfigurazionePdDReader.accessoDatiAttributeAuthority.getCache()==null){
+			System.out.println("ACCESSO_DATI_ATTRIBUTE_AUTHORITY CACHE DISABILITATA");
+		}else{
+			System.out.println("ACCESSO_DATI_ATTRIBUTE_AUTHORITY CACHE ABILITATA");
+			System.out.println("ACCESSO_DATI_ATTRIBUTE_AUTHORITY CACHE ALGORITMO: "+ConfigurazionePdDReader.accessoDatiAttributeAuthority.getCache().getAlgoritmo());
+			System.out.println("ACCESSO_DATI_ATTRIBUTE_AUTHORITY CACHE DIMENSIONE: "+ConfigurazionePdDReader.accessoDatiAttributeAuthority.getCache().getDimensione());
+			System.out.println("ACCESSO_DATI_ATTRIBUTE_AUTHORITY CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoDatiAttributeAuthority.getCache().getItemIdleTime());
+			System.out.println("ACCESSO_DATI_ATTRIBUTE_AUTHORITY CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoDatiAttributeAuthority.getCache().getItemLifeSecond());
+		}
+		 */
+
+		return ConfigurazionePdDReader.accessoDatiAttributeAuthority;
+	}
 
 	/**
 	 * Restituisce le informazioni necessarie alla porta di dominio per accedere ai dati di gestione dei keystore
@@ -6503,9 +6579,15 @@ public class ConfigurazionePdDReader {
 	 */
 	private static AccessoDatiKeystore accessoDatiKeystore = null;
 	private static Boolean accessoDatiKeystoreLetto = false;
+	public static void setAccessoDatiKeystore(AccessoDatiKeystore accessoDatiKeystore) {
+		ConfigurazionePdDReader.accessoDatiKeystore = accessoDatiKeystore;
+	}
+	public static void setAccessoDatiKeystoreLetto(Boolean accessoDatiKeystoreLetto) {
+		ConfigurazionePdDReader.accessoDatiKeystoreLetto = accessoDatiKeystoreLetto;
+	}
 	protected AccessoDatiKeystore getAccessoDatiKeystore(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiKeystoreLetto==false){
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.accessoDatiKeystoreLetto.booleanValue()){
 			AccessoDatiKeystore tmp = null;
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiKeystore(connectionPdD);
@@ -6515,11 +6597,11 @@ public class ConfigurazionePdDReader {
 				this.logError("getAccessoDatiKeystore",e);
 			}
 
-			ConfigurazionePdDReader.accessoDatiKeystore = tmp;
-			ConfigurazionePdDReader.accessoDatiKeystoreLetto = true;
+			ConfigurazionePdDReader.setAccessoDatiKeystore(tmp);
+			ConfigurazionePdDReader.setAccessoDatiKeystoreLetto(true);
 		}
 
-		/*
+		/**
 		if(ConfigurazionePdDReader.accessoDatiKeystore.getCache()==null){
 			System.out.println("ACCESSO_DATI_KEYSTORE CACHE DISABILITATA");
 		}else{
@@ -6543,9 +6625,15 @@ public class ConfigurazionePdDReader {
 	 */
 	private static AccessoDatiRichieste accessoDatiRichieste = null;
 	private static Boolean accessoDatiRichiesteLetto = false;
+	public static void setAccessoDatiRichieste(AccessoDatiRichieste accessoDatiRichieste) {
+		ConfigurazionePdDReader.accessoDatiRichieste = accessoDatiRichieste;
+	}
+	public static void setAccessoDatiRichiesteLetto(Boolean accessoDatiRichiesteLetto) {
+		ConfigurazionePdDReader.accessoDatiRichiesteLetto = accessoDatiRichiesteLetto;
+	}
 	protected AccessoDatiRichieste getAccessoDatiRichieste(Connection connectionPdD){
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiRichiesteLetto==false){
+		if( this.configurazioneDinamica || !ConfigurazionePdDReader.accessoDatiRichiesteLetto.booleanValue()){
 			AccessoDatiRichieste tmp = null;
 			try{
 				tmp = this.configurazionePdD.getAccessoDatiRichieste(connectionPdD);
@@ -6555,11 +6643,11 @@ public class ConfigurazionePdDReader {
 				this.logError("getAccessoDatiRichieste",e);
 			}
 
-			ConfigurazionePdDReader.accessoDatiRichieste = tmp;
-			ConfigurazionePdDReader.accessoDatiRichiesteLetto = true;
+			ConfigurazionePdDReader.setAccessoDatiRichieste(tmp);
+			ConfigurazionePdDReader.setAccessoDatiRichiesteLetto(true);
 		}
 
-		/*
+		/**
 		if(ConfigurazionePdDReader.accessoDatiRichieste.getCache()==null){
 			System.out.println("ACCESSO_DATI_RICHIESTE CACHE DISABILITATA");
 		}else{

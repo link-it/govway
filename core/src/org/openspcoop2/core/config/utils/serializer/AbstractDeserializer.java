@@ -128,6 +128,7 @@ import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
@@ -6908,6 +6909,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public ConfigurazioneGestioneErrore readConfigurazioneGestioneErroreFromString(String in) throws DeserializerException {
 		return (ConfigurazioneGestioneErrore) this.xmlToObj(in.getBytes(), ConfigurazioneGestioneErrore.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-dati-attribute-authority
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAttributeAuthority readAccessoDatiAttributeAuthority(String fileName) throws DeserializerException {
+		return (AccessoDatiAttributeAuthority) this.xmlToObj(fileName, AccessoDatiAttributeAuthority.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAttributeAuthority readAccessoDatiAttributeAuthority(File file) throws DeserializerException {
+		return (AccessoDatiAttributeAuthority) this.xmlToObj(file, AccessoDatiAttributeAuthority.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAttributeAuthority readAccessoDatiAttributeAuthority(InputStream in) throws DeserializerException {
+		return (AccessoDatiAttributeAuthority) this.xmlToObj(in, AccessoDatiAttributeAuthority.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAttributeAuthority readAccessoDatiAttributeAuthority(byte[] in) throws DeserializerException {
+		return (AccessoDatiAttributeAuthority) this.xmlToObj(in, AccessoDatiAttributeAuthority.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAttributeAuthority readAccessoDatiAttributeAuthorityFromString(String in) throws DeserializerException {
+		return (AccessoDatiAttributeAuthority) this.xmlToObj(in.getBytes(), AccessoDatiAttributeAuthority.class);
 	}	
 	
 	

@@ -2372,41 +2372,45 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean isAllHiddenConfigurazione = ServletUtils.isCheckBoxEnabled(configurazioneCachesTmp);
 			boolean isAllHiddenCache = !isAllHiddenConfigurazione;
 			
-			if(this.registryCheckDataCache()==false){
+			if(!this.registryCheckDataCache()){
 				return false;
 			}
 			
-			if(this.configurazioneCheckDataCache()==false){
+			if(!this.configurazioneCheckDataCache()){
 				return false;
 			}
 			
-			if(this.datiAutorizzazioneCheckDataCache()==false){
+			if(!this.datiAutorizzazioneCheckDataCache()){
 				return false;
 			}
 			
-			if(this.datiAutenticazioneCheckDataCache()==false){
+			if(!this.datiAutenticazioneCheckDataCache()){
 				return false;
 			}
 			
-			if(this.datiGestioneTokenCheckDataCache()==false){
+			if(!this.datiGestioneTokenCheckDataCache()){
 				return false;
 			}
 			
-			if(this.datiKeystoreCheckDataCache()==false){
+			if(!this.datiAttributeAuthorityCheckDataCache()){
 				return false;
 			}
 			
-			if(!isAllHiddenCache) {
-				if(this.controlloTrafficoCheckDataCache()==false){
-					return false;
-				}
-			}
-			
-			if(this.datiResponseCachingCheckDataCache()==false){
+			if(!this.datiKeystoreCheckDataCache()){
 				return false;
 			}
 			
-			if(this.datiGestoreConsegnaApplicativiCheckDataCache()==false){
+			if(!isAllHiddenCache &&
+				(!this.controlloTrafficoCheckDataCache())
+				){
+				return false;
+			}
+			
+			if(!this.datiResponseCachingCheckDataCache()){
+				return false;
+			}
+			
+			if(!this.datiGestoreConsegnaApplicativiCheckDataCache()){
 				return false;
 			}
 			
@@ -2606,6 +2610,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN);
 
 			return checkDatiCache(CostantiPdD.JMX_TOKEN, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new DriverControlStationException(e);
+		}
+	}
+	
+	public boolean datiAttributeAuthorityCheckDataCache() throws Exception {
+
+		try{
+
+			String statocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_ATTRIBUTE_AUTHORITY);
+			String dimensionecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_ATTRIBUTE_AUTHORITY);
+			String algoritmocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_ATTRIBUTE_AUTHORITY);
+			String idlecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_ATTRIBUTE_AUTHORITY);
+			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_ATTRIBUTE_AUTHORITY);
+
+			return checkDatiCache(CostantiPdD.JMX_ATTRIBUTE_AUTHORITY, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

@@ -130,6 +130,7 @@ import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
@@ -12887,6 +12888,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(ConfigurazioneGestioneErrore configurazioneGestioneErrore,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(ConfigurazioneGestioneErrore.class, configurazioneGestioneErrore, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-dati-attribute-authority
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>accessoDatiAttributeAuthority</var>
+	 * @param accessoDatiAttributeAuthority Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AccessoDatiAttributeAuthority accessoDatiAttributeAuthority) throws SerializerException {
+		this.objToXml(fileName, AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>accessoDatiAttributeAuthority</var>
+	 * @param accessoDatiAttributeAuthority Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AccessoDatiAttributeAuthority accessoDatiAttributeAuthority,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param file Xml file to serialize the object <var>accessoDatiAttributeAuthority</var>
+	 * @param accessoDatiAttributeAuthority Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AccessoDatiAttributeAuthority accessoDatiAttributeAuthority) throws SerializerException {
+		this.objToXml(file, AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param file Xml file to serialize the object <var>accessoDatiAttributeAuthority</var>
+	 * @param accessoDatiAttributeAuthority Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AccessoDatiAttributeAuthority accessoDatiAttributeAuthority,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param out OutputStream to serialize the object <var>accessoDatiAttributeAuthority</var>
+	 * @param accessoDatiAttributeAuthority Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AccessoDatiAttributeAuthority accessoDatiAttributeAuthority) throws SerializerException {
+		this.objToXml(out, AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param out OutputStream to serialize the object <var>accessoDatiAttributeAuthority</var>
+	 * @param accessoDatiAttributeAuthority Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AccessoDatiAttributeAuthority accessoDatiAttributeAuthority,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param accessoDatiAttributeAuthority Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AccessoDatiAttributeAuthority accessoDatiAttributeAuthority) throws SerializerException {
+		return this.objToXml(AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param accessoDatiAttributeAuthority Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AccessoDatiAttributeAuthority accessoDatiAttributeAuthority,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param accessoDatiAttributeAuthority Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AccessoDatiAttributeAuthority accessoDatiAttributeAuthority) throws SerializerException {
+		return this.objToXml(AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>accessoDatiAttributeAuthority</var> of type {@link org.openspcoop2.core.config.AccessoDatiAttributeAuthority}
+	 * 
+	 * @param accessoDatiAttributeAuthority Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AccessoDatiAttributeAuthority accessoDatiAttributeAuthority,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AccessoDatiAttributeAuthority.class, accessoDatiAttributeAuthority, prettyPrint).toString();
 	}
 	
 	

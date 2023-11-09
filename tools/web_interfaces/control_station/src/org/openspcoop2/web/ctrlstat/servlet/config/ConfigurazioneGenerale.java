@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
@@ -187,6 +188,12 @@ public final class ConfigurazioneGenerale extends Action {
 			String algoritmocacheToken = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN);
 			String idlecacheToken = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN);
 			String lifecacheToken = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN);
+			
+			String statoCacheAA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_ATTRIBUTE_AUTHORITY);
+			String dimensionecacheAA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_ATTRIBUTE_AUTHORITY);
+			String algoritmocacheAA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_ATTRIBUTE_AUTHORITY);
+			String idlecacheAA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_ATTRIBUTE_AUTHORITY);
+			String lifecacheAA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_ATTRIBUTE_AUTHORITY);
 			
 			String statoCacheKeystore = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_KEYSTORE);
 			String dimensionecacheKeystore = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_KEYSTORE);
@@ -462,6 +469,14 @@ public final class ConfigurazioneGenerale extends Action {
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN,lifecacheToken,
 							isAllHiddenCache);
 					
+					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_ATTRIBUTE_AUTHORITY,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_ATTRIBUTE_AUTHORITY,statoCacheAA,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_ATTRIBUTE_AUTHORITY,dimensionecacheAA,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_ATTRIBUTE_AUTHORITY,algoritmocacheAA,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_ATTRIBUTE_AUTHORITY,idlecacheAA,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_ATTRIBUTE_AUTHORITY,lifecacheAA,
+							isAllHiddenCache);
+					
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_KEYSTORE,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_KEYSTORE,statoCacheKeystore,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_KEYSTORE,dimensionecacheKeystore,
@@ -699,6 +714,20 @@ public final class ConfigurazioneGenerale extends Action {
 				}
 				else{
 					newConfigurazione.getAccessoDatiGestioneToken().setCache(null);
+				}
+				
+				if(newConfigurazione.getAccessoDatiAttributeAuthority()==null){
+					newConfigurazione.setAccessoDatiAttributeAuthority(new AccessoDatiAttributeAuthority());
+				}
+				if(statoCacheAA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)){
+					newConfigurazione.getAccessoDatiAttributeAuthority().setCache(new Cache());
+					newConfigurazione.getAccessoDatiAttributeAuthority().getCache().setDimensione(dimensionecacheAA);
+					newConfigurazione.getAccessoDatiAttributeAuthority().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocacheAA));
+					newConfigurazione.getAccessoDatiAttributeAuthority().getCache().setItemIdleTime(idlecacheAA);
+					newConfigurazione.getAccessoDatiAttributeAuthority().getCache().setItemLifeSecond(confHelper.convertLifeCacheValue(lifecacheAA));
+				}
+				else{
+					newConfigurazione.getAccessoDatiAttributeAuthority().setCache(null);
 				}
 				
 				if(newConfigurazione.getAccessoDatiKeystore()==null){
@@ -943,6 +972,14 @@ public final class ConfigurazioneGenerale extends Action {
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN,algoritmocacheToken,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN,idlecacheToken,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN,lifecacheToken,
+						isAllHiddenCache);
+				
+				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_ATTRIBUTE_AUTHORITY,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_ATTRIBUTE_AUTHORITY,statoCacheAA,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_ATTRIBUTE_AUTHORITY,dimensionecacheAA,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_ATTRIBUTE_AUTHORITY,algoritmocacheAA,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_ATTRIBUTE_AUTHORITY,idlecacheAA,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_ATTRIBUTE_AUTHORITY,lifecacheAA,
 						isAllHiddenCache);
 				
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_KEYSTORE,
@@ -1236,6 +1273,18 @@ public final class ConfigurazioneGenerale extends Action {
 				}
 				else{
 					statoCacheToken = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+				}
+				if(configurazione.getAccessoDatiAttributeAuthority()!=null && configurazione.getAccessoDatiAttributeAuthority().getCache()!=null){
+					statoCacheAA = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					dimensionecacheAA = configurazione.getAccessoDatiAttributeAuthority().getCache().getDimensione();
+					if(configurazione.getAccessoDatiAttributeAuthority().getCache().getAlgoritmo()!=null){
+						algoritmocacheAA = configurazione.getAccessoDatiAttributeAuthority().getCache().getAlgoritmo().getValue();
+					}
+					idlecacheAA = configurazione.getAccessoDatiAttributeAuthority().getCache().getItemIdleTime();
+					lifecacheAA = configurazione.getAccessoDatiAttributeAuthority().getCache().getItemLifeSecond();
+				}
+				else{
+					statoCacheAA = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 				}
 				if(configurazione.getAccessoDatiKeystore()!=null && configurazione.getAccessoDatiKeystore().getCache()!=null){
 					statoCacheKeystore = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
@@ -1539,6 +1588,14 @@ public final class ConfigurazioneGenerale extends Action {
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN,algoritmocacheToken,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN,idlecacheToken,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN,lifecacheToken,
+					isAllHiddenCache);
+			
+			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_ATTRIBUTE_AUTHORITY,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_ATTRIBUTE_AUTHORITY,statoCacheAA,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_ATTRIBUTE_AUTHORITY,dimensionecacheAA,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_ATTRIBUTE_AUTHORITY,algoritmocacheAA,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_ATTRIBUTE_AUTHORITY,idlecacheAA,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_ATTRIBUTE_AUTHORITY,lifecacheAA,
 					isAllHiddenCache);
 			
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_KEYSTORE,

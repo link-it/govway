@@ -35,6 +35,7 @@ import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
@@ -214,13 +215,40 @@ public class ConfigurazionePdD  {
 	private static GestioneErrore gestioneErroreComponenteCooperazione = null;
 	private static GestioneErrore gestioneErroreComponenteIntegrazione = null;
 	private static RoutingTable routingTable = null;
+	
 	private static AccessoRegistro accessoRegistro = null;
+	public static void setAccessoRegistro(AccessoRegistro accessoRegistro) {
+		ConfigurazionePdD.accessoRegistro = accessoRegistro;
+	}
 	private static AccessoConfigurazione accessoConfigurazione = null;
+	public static void setAccessoConfigurazione(AccessoConfigurazione accessoConfigurazione) {
+		ConfigurazionePdD.accessoConfigurazione = accessoConfigurazione;
+	}
 	private static AccessoDatiAutorizzazione accessoDatiAutorizzazione = null;
+	public static void setAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) {
+		ConfigurazionePdD.accessoDatiAutorizzazione = accessoDatiAutorizzazione;
+	}
 	private static AccessoDatiAutenticazione accessoDatiAutenticazione = null;
+	public static void setAccessoDatiAutenticazione(AccessoDatiAutenticazione accessoDatiAutenticazione) {
+		ConfigurazionePdD.accessoDatiAutenticazione = accessoDatiAutenticazione;
+	}
 	private static AccessoDatiGestioneToken accessoDatiGestioneToken = null;
+	public static void setAccessoDatiGestioneToken(AccessoDatiGestioneToken accessoDatiGestioneToken) {
+		ConfigurazionePdD.accessoDatiGestioneToken = accessoDatiGestioneToken;
+	}
+	private static AccessoDatiAttributeAuthority accessoDatiAttributeAuthority = null;
+	public static void setAccessoDatiAttributeAuthority(AccessoDatiAttributeAuthority accessoDatiAttributeAuthority) {
+		ConfigurazionePdD.accessoDatiAttributeAuthority = accessoDatiAttributeAuthority;
+	}
 	private static AccessoDatiKeystore accessoDatiKeystore = null;
+	public static void setAccessoDatiKeystore(AccessoDatiKeystore accessoDatiKeystore) {
+		ConfigurazionePdD.accessoDatiKeystore = accessoDatiKeystore;
+	}
 	private static AccessoDatiRichieste accessoDatiRichieste = null;
+	public static void setAccessoDatiRichieste(AccessoDatiRichieste accessoDatiRichieste) {
+		ConfigurazionePdD.accessoDatiRichieste = accessoDatiRichieste;
+	}
+
 	/** ConfigurazioneDinamica */
 	private boolean configurazioneDinamica = false;
 
@@ -1308,7 +1336,7 @@ public class ConfigurazionePdD  {
 		catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
-			this.cache.remove(_getKey_getAccessoRegistro());
+			this.cache.remove(getKeyMethodGetAccessoRegistro());
 			this.getAccessoRegistro(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){
@@ -1317,7 +1345,7 @@ public class ConfigurazionePdD  {
 		catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
-			this.cache.remove(_getKey_getAccessoConfigurazione());
+			this.cache.remove(getKeyMethodGetAccessoConfigurazione());
 			this.getAccessoConfigurazione(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){
@@ -1326,7 +1354,7 @@ public class ConfigurazionePdD  {
 		catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
-			this.cache.remove(_getKey_getAccessoDatiAutorizzazione());
+			this.cache.remove(getKeyMethodGetAccessoDatiAutorizzazione());
 			this.getAccessoDatiAutorizzazione(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){
@@ -1335,7 +1363,7 @@ public class ConfigurazionePdD  {
 		catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
-			this.cache.remove(_getKey_getAccessoDatiAutenticazione());
+			this.cache.remove(getMethodGetAccessoDatiAutenticazione());
 			this.getAccessoDatiAutenticazione(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){
@@ -1344,7 +1372,7 @@ public class ConfigurazionePdD  {
 		catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
-			this.cache.remove(_getKey_getAccessoDatiGestioneToken());
+			this.cache.remove(getKeyMethodGetAccessoDatiGestioneToken());
 			this.getAccessoDatiGestioneToken(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){
@@ -1353,7 +1381,16 @@ public class ConfigurazionePdD  {
 		catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
-			this.cache.remove(_getKey_getAccessoDatiKeystore());
+			this.cache.remove(getKeyMethodGetAccessoDatiAttributeAuthority());
+			this.getAccessoDatiAttributeAuthority(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
+		catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(getKeyMethodGetAccessoDatiKeystore());
 			this.getAccessoDatiKeystore(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){
@@ -1362,7 +1399,7 @@ public class ConfigurazionePdD  {
 		catch(Exception e){this.logError("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
-			this.cache.remove(_getKey_getAccessoDatiRichieste());
+			this.cache.remove(getKeyMethodGetAccessoDatiRichieste());
 			this.getAccessoDatiRichieste(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){
@@ -4351,21 +4388,22 @@ public class ConfigurazionePdD  {
 		}
 	} 
 
-	private String _getKey_getAccessoRegistro(){
-		return "getAccessoRegistro";
+	private static final String METHOD_GET_ACCESSO_DATI_REGISTRO = "getAccessoRegistro";
+	private String getKeyMethodGetAccessoRegistro(){
+		return METHOD_GET_ACCESSO_DATI_REGISTRO;
 	}
 	public AccessoRegistro getAccessoRegistro(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Se e' attiva una configurazione statica, la utilizzo.
-		if(this.configurazioneDinamica==false){
-			if(ConfigurazionePdD.accessoRegistro!=null)
-				return ConfigurazionePdD.accessoRegistro;
+		if(!this.configurazioneDinamica &&
+			ConfigurazionePdD.accessoRegistro!=null) {
+			return ConfigurazionePdD.accessoRegistro;
 		}
 
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_getAccessoRegistro();
+			key = getKeyMethodGetAccessoRegistro();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4383,38 +4421,39 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoRegistro ar = null;
 		if(this.cache!=null){
-			ar = (AccessoRegistro) this.getObjectCache(key,"getAccessoRegistro",connectionPdD,ConfigurazionePdDType.config);
+			ar = (AccessoRegistro) this.getObjectCache(key,METHOD_GET_ACCESSO_DATI_REGISTRO,connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			ar = (AccessoRegistro) this.getObject("getAccessoRegistro",connectionPdD,ConfigurazionePdDType.config);
+			ar = (AccessoRegistro) this.getObject(METHOD_GET_ACCESSO_DATI_REGISTRO,connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(ar!=null){
 			// Se e' attiva una configurazione statica, la utilizzo.
-			if(this.configurazioneDinamica==false){
-				ConfigurazionePdD.accessoRegistro = ar;
+			if(!this.configurazioneDinamica){
+				ConfigurazionePdD.setAccessoRegistro(ar);
 			}
 			return ar;
 		}
 		else{
-			throw new DriverConfigurazioneNotFound("[getAccessoRegistro] Configurazione di accesso ai registri non trovata");
+			throw new DriverConfigurazioneNotFound("["+METHOD_GET_ACCESSO_DATI_REGISTRO+"] Configurazione di accesso ai registri non trovata");
 		}
 	} 
 
-	private String _getKey_getAccessoConfigurazione(){
-		return "getAccessoConfigurazione";
+	private static final String METHOD_GET_ACCESSO_DATI_CONFIGURAZIONE = "getAccessoConfigurazione";
+	private String getKeyMethodGetAccessoConfigurazione(){
+		return METHOD_GET_ACCESSO_DATI_CONFIGURAZIONE;
 	}
 	public AccessoConfigurazione getAccessoConfigurazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Se e' attiva una configurazione statica, la utilizzo.
-		if(this.configurazioneDinamica==false){
-			if(ConfigurazionePdD.accessoConfigurazione!=null)
-				return ConfigurazionePdD.accessoConfigurazione;
+		if(!this.configurazioneDinamica &&
+			ConfigurazionePdD.accessoConfigurazione!=null) {
+			return ConfigurazionePdD.accessoConfigurazione;
 		}
 
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getAccessoConfigurazione();
+			key = this.getKeyMethodGetAccessoConfigurazione();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4432,38 +4471,39 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoConfigurazione object = null;
 		if(this.cache!=null){
-			object = (AccessoConfigurazione) this.getObjectCache(key,"getAccessoConfigurazione",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoConfigurazione) this.getObjectCache(key,METHOD_GET_ACCESSO_DATI_CONFIGURAZIONE,connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoConfigurazione) this.getObject("getAccessoConfigurazione",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoConfigurazione) this.getObject(METHOD_GET_ACCESSO_DATI_CONFIGURAZIONE,connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(object!=null){
 			// Se e' attiva una configurazione statica, la utilizzo.
-			if(this.configurazioneDinamica==false){
-				ConfigurazionePdD.accessoConfigurazione = object;
+			if(!this.configurazioneDinamica){
+				ConfigurazionePdD.setAccessoConfigurazione(object);
 			}
 			return object;
 		}
 		else{
-			throw new DriverConfigurazioneNotFound("[getAccessoConfigurazione] Configurazione di accesso alla configurazione non trovata");
+			throw new DriverConfigurazioneNotFound("["+METHOD_GET_ACCESSO_DATI_CONFIGURAZIONE+"] Configurazione di accesso alla configurazione non trovata");
 		}
 	} 
 
-	private String _getKey_getAccessoDatiAutorizzazione(){
-		return "getAccessoDatiAutorizzazione";
+	private static final String METHOD_GET_ACCESSO_DATI_AUTORIZZAZIONE = "getAccessoDatiAutorizzazione";
+	private String getKeyMethodGetAccessoDatiAutorizzazione(){
+		return METHOD_GET_ACCESSO_DATI_AUTORIZZAZIONE;
 	}
 	public AccessoDatiAutorizzazione getAccessoDatiAutorizzazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Se e' attiva una configurazione statica, la utilizzo.
-		if(this.configurazioneDinamica==false){
-			if(ConfigurazionePdD.accessoDatiAutorizzazione!=null)
-				return ConfigurazionePdD.accessoDatiAutorizzazione;
+		if(!this.configurazioneDinamica &&
+			ConfigurazionePdD.accessoDatiAutorizzazione!=null) {
+			return ConfigurazionePdD.accessoDatiAutorizzazione;
 		}
 
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getAccessoDatiAutorizzazione();
+			key = this.getKeyMethodGetAccessoDatiAutorizzazione();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4481,38 +4521,39 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoDatiAutorizzazione object = null;
 		if(this.cache!=null){
-			object = (AccessoDatiAutorizzazione) this.getObjectCache(key,"getAccessoDatiAutorizzazione",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiAutorizzazione) this.getObjectCache(key,METHOD_GET_ACCESSO_DATI_AUTORIZZAZIONE,connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoDatiAutorizzazione) this.getObject("getAccessoDatiAutorizzazione",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiAutorizzazione) this.getObject(METHOD_GET_ACCESSO_DATI_AUTORIZZAZIONE,connectionPdD,ConfigurazionePdDType.config);
 		}
 
 		if(object!=null){
 			// Se e' attiva una configurazione statica, la utilizzo.
-			if(this.configurazioneDinamica==false){
-				ConfigurazionePdD.accessoDatiAutorizzazione = object;
+			if(!this.configurazioneDinamica){
+				ConfigurazionePdD.setAccessoDatiAutorizzazione(object);
 			}
 			return object;
 		}
 		else{
-			throw new DriverConfigurazioneNotFound("[getAccessoDatiAutorizzazione] Configurazione di accesso ai dati di autorizzazione non trovata");
+			throw new DriverConfigurazioneNotFound("["+METHOD_GET_ACCESSO_DATI_AUTORIZZAZIONE+"] Configurazione di accesso ai dati di autorizzazione non trovata");
 		}
 	} 
 	
-	private String _getKey_getAccessoDatiAutenticazione(){
-		return "getAccessoDatiAutenticazione";
+	private static final String METHOD_GET_ACCESSO_DATI_AUTENTICAZIONE = "getAccessoDatiAutenticazione";
+	private String getMethodGetAccessoDatiAutenticazione(){
+		return METHOD_GET_ACCESSO_DATI_AUTENTICAZIONE;
 	}
 	public AccessoDatiAutenticazione getAccessoDatiAutenticazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// Se e' attiva una configurazione statica, la utilizzo.
-		if(this.configurazioneDinamica==false){
-			if(ConfigurazionePdD.accessoDatiAutenticazione!=null)
-				return ConfigurazionePdD.accessoDatiAutenticazione;
+		if(!this.configurazioneDinamica &&
+			ConfigurazionePdD.accessoDatiAutenticazione!=null) {
+			return ConfigurazionePdD.accessoDatiAutenticazione;
 		}
 		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_getAccessoDatiAutenticazione();
+			key = getMethodGetAccessoDatiAutenticazione();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4530,39 +4571,40 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoDatiAutenticazione object = null;
 		if(this.cache!=null){
-			object = (AccessoDatiAutenticazione) this.getObjectCache(key,"getAccessoDatiAutenticazione",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiAutenticazione) this.getObjectCache(key,METHOD_GET_ACCESSO_DATI_AUTENTICAZIONE,connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoDatiAutenticazione) this.getObject("getAccessoDatiAutenticazione",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiAutenticazione) this.getObject(METHOD_GET_ACCESSO_DATI_AUTENTICAZIONE,connectionPdD,ConfigurazionePdDType.config);
 		}
 		
 		if(object!=null){
 			// Se e' attiva una configurazione statica, la utilizzo.
-			if(this.configurazioneDinamica==false){
-				ConfigurazionePdD.accessoDatiAutenticazione = object;
+			if(!this.configurazioneDinamica){
+				ConfigurazionePdD.setAccessoDatiAutenticazione(object);
 			}
 			return object;
 		}
 		else{
-			throw new DriverConfigurazioneNotFound("[getAccessoDatiAutenticazione] Configurazione di accesso ai dati di autenticazione non trovata");
+			throw new DriverConfigurazioneNotFound("["+METHOD_GET_ACCESSO_DATI_AUTENTICAZIONE+"] Configurazione di accesso ai dati di autenticazione non trovata");
 		}
 	} 
 	
 	
-	private String _getKey_getAccessoDatiGestioneToken(){
-		return "getAccessoDatiGestioneToken";
+	private static final String METHOD_GET_ACCESSO_DATI_GESTIONE_TOKEN = "getAccessoDatiGestioneToken";
+	private String getKeyMethodGetAccessoDatiGestioneToken(){
+		return METHOD_GET_ACCESSO_DATI_GESTIONE_TOKEN;
 	}
 	public AccessoDatiGestioneToken getAccessoDatiGestioneToken(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// Se e' attiva una configurazione statica, la utilizzo.
-		if(this.configurazioneDinamica==false){
-			if(ConfigurazionePdD.accessoDatiGestioneToken!=null)
-				return ConfigurazionePdD.accessoDatiGestioneToken;
+		if(!this.configurazioneDinamica &&
+			ConfigurazionePdD.accessoDatiGestioneToken!=null) {
+			return ConfigurazionePdD.accessoDatiGestioneToken;
 		}
 		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_getAccessoDatiGestioneToken();
+			key = getKeyMethodGetAccessoDatiGestioneToken();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4580,39 +4622,92 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoDatiGestioneToken object = null;
 		if(this.cache!=null){
-			object = (AccessoDatiGestioneToken) this.getObjectCache(key,"getAccessoDatiGestioneToken",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiGestioneToken) this.getObjectCache(key,METHOD_GET_ACCESSO_DATI_GESTIONE_TOKEN,connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoDatiGestioneToken) this.getObject("getAccessoDatiGestioneToken",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiGestioneToken) this.getObject(METHOD_GET_ACCESSO_DATI_GESTIONE_TOKEN,connectionPdD,ConfigurazionePdDType.config);
 		}
 		
 		if(object!=null){
 			// Se e' attiva una configurazione statica, la utilizzo.
-			if(this.configurazioneDinamica==false){
-				ConfigurazionePdD.accessoDatiGestioneToken = object;
+			if(!this.configurazioneDinamica){
+				ConfigurazionePdD.setAccessoDatiGestioneToken(object);
 			}
 			return object;
 		}
 		else{
-			throw new DriverConfigurazioneNotFound("[getAccessoDatiGestioneToken] Configurazione di accesso ai dati di gestione token non trovata");
+			throw new DriverConfigurazioneNotFound("["+METHOD_GET_ACCESSO_DATI_GESTIONE_TOKEN+"] Configurazione di accesso ai dati di gestione token non trovata");
 		}
 	} 
-
 	
-	private String _getKey_getAccessoDatiKeystore(){
-		return "getAccessoDatiKeystore";
+	
+	
+	private static final String METHOD_GET_ACCESSO_DATI_ATTRIBUTE_AUTHORITY = "getAccessoDatiAttributeAuthority";
+	private String getKeyMethodGetAccessoDatiAttributeAuthority(){
+		return METHOD_GET_ACCESSO_DATI_ATTRIBUTE_AUTHORITY;
 	}
-	public AccessoDatiKeystore getAccessoDatiKeystore(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public AccessoDatiAttributeAuthority getAccessoDatiAttributeAuthority(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// Se e' attiva una configurazione statica, la utilizzo.
-		if(this.configurazioneDinamica==false){
-			if(ConfigurazionePdD.accessoDatiKeystore!=null)
-				return ConfigurazionePdD.accessoDatiKeystore;
+		if(!this.configurazioneDinamica &&
+			ConfigurazionePdD.accessoDatiAttributeAuthority!=null) {
+			return ConfigurazionePdD.accessoDatiAttributeAuthority;
 		}
 		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_getAccessoDatiKeystore();
+			key = getKeyMethodGetAccessoDatiAttributeAuthority();
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((AccessoDatiAttributeAuthority) response.getObject());
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		AccessoDatiAttributeAuthority object = null;
+		if(this.cache!=null){
+			object = (AccessoDatiAttributeAuthority) this.getObjectCache(key,METHOD_GET_ACCESSO_DATI_ATTRIBUTE_AUTHORITY,connectionPdD,ConfigurazionePdDType.config);
+		}else{
+			object = (AccessoDatiAttributeAuthority) this.getObject(METHOD_GET_ACCESSO_DATI_ATTRIBUTE_AUTHORITY,connectionPdD,ConfigurazionePdDType.config);
+		}
+		
+		if(object!=null){
+			// Se e' attiva una configurazione statica, la utilizzo.
+			if(!this.configurazioneDinamica){
+				ConfigurazionePdD.setAccessoDatiAttributeAuthority(object);
+			}
+			return object;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("["+METHOD_GET_ACCESSO_DATI_ATTRIBUTE_AUTHORITY+"] Configurazione di accesso ai dati recuperati tramite attribute authority non trovata");
+		}
+	} 
+
+	
+	private static final String METHOD_GET_ACCESSO_DATI_KEYSTORE = "getAccessoDatiKeystore";
+	private String getKeyMethodGetAccessoDatiKeystore(){
+		return METHOD_GET_ACCESSO_DATI_KEYSTORE;
+	}
+	public AccessoDatiKeystore getAccessoDatiKeystore(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Se e' attiva una configurazione statica, la utilizzo.
+		if(!this.configurazioneDinamica &&
+			ConfigurazionePdD.accessoDatiKeystore!=null) {
+			return ConfigurazionePdD.accessoDatiKeystore;
+		}
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = getKeyMethodGetAccessoDatiKeystore();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4630,40 +4725,40 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoDatiKeystore object = null;
 		if(this.cache!=null){
-			object = (AccessoDatiKeystore) this.getObjectCache(key,"getAccessoDatiKeystore",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiKeystore) this.getObjectCache(key,METHOD_GET_ACCESSO_DATI_KEYSTORE,connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoDatiKeystore) this.getObject("getAccessoDatiKeystore",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiKeystore) this.getObject(METHOD_GET_ACCESSO_DATI_KEYSTORE,connectionPdD,ConfigurazionePdDType.config);
 		}
 		
 		if(object!=null){
 			// Se e' attiva una configurazione statica, la utilizzo.
-			if(this.configurazioneDinamica==false){
-				ConfigurazionePdD.accessoDatiKeystore = object;
+			if(!this.configurazioneDinamica){
+				ConfigurazionePdD.setAccessoDatiKeystore(object);
 			}
 			return object;
 		}
 		else{
-			throw new DriverConfigurazioneNotFound("[getAccessoDatiKeystore] Configurazione di accesso ai dati di gestione keystore non trovata");
+			throw new DriverConfigurazioneNotFound("["+METHOD_GET_ACCESSO_DATI_KEYSTORE+"] Configurazione di accesso ai dati di gestione keystore non trovata");
 		}
 	} 
 	
 	
-	
-	private String _getKey_getAccessoDatiRichieste(){
-		return "getAccessoDatiRichieste";
+	private static final String METHOD_GET_ACCESSO_DATI_RICHIESTE = "getAccessoDatiRichieste";
+	private String getKeyMethodGetAccessoDatiRichieste(){
+		return METHOD_GET_ACCESSO_DATI_RICHIESTE;
 	}
 	public AccessoDatiRichieste getAccessoDatiRichieste(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// Se e' attiva una configurazione statica, la utilizzo.
-		if(this.configurazioneDinamica==false){
-			if(ConfigurazionePdD.accessoDatiRichieste!=null)
-				return ConfigurazionePdD.accessoDatiRichieste;
+		if(!this.configurazioneDinamica &&
+			ConfigurazionePdD.accessoDatiRichieste!=null) {
+			return ConfigurazionePdD.accessoDatiRichieste;
 		}
 		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_getAccessoDatiRichieste();
+			key = getKeyMethodGetAccessoDatiRichieste();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4681,20 +4776,20 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		AccessoDatiRichieste object = null;
 		if(this.cache!=null){
-			object = (AccessoDatiRichieste) this.getObjectCache(key,"getAccessoDatiRichieste",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiRichieste) this.getObjectCache(key,METHOD_GET_ACCESSO_DATI_RICHIESTE,connectionPdD,ConfigurazionePdDType.config);
 		}else{
-			object = (AccessoDatiRichieste) this.getObject("getAccessoDatiRichieste",connectionPdD,ConfigurazionePdDType.config);
+			object = (AccessoDatiRichieste) this.getObject(METHOD_GET_ACCESSO_DATI_RICHIESTE,connectionPdD,ConfigurazionePdDType.config);
 		}
 		
 		if(object!=null){
 			// Se e' attiva una configurazione statica, la utilizzo.
-			if(this.configurazioneDinamica==false){
-				ConfigurazionePdD.accessoDatiRichieste = object;
+			if(!this.configurazioneDinamica){
+				ConfigurazionePdD.setAccessoDatiRichieste(object);
 			}
 			return object;
 		}
 		else{
-			throw new DriverConfigurazioneNotFound("[getAccessoDatiRichieste] Configurazione di accesso ai dati di gestione delle richieste non trovata");
+			throw new DriverConfigurazioneNotFound("["+METHOD_GET_ACCESSO_DATI_RICHIESTE+"] Configurazione di accesso ai dati di gestione delle richieste non trovata");
 		}
 	} 
 

@@ -56,6 +56,12 @@ UPDATE configurazione set token_dimensionecache='5000';
 UPDATE configurazione set token_algoritmocache='lru';
 UPDATE configurazione set token_lifecache='600';
 
+-- Configurazione Cache Dati AttributeAuthority
+UPDATE configurazione set aa_statocache='abilitato';
+UPDATE configurazione set aa_dimensionecache='5000';
+UPDATE configurazione set aa_algoritmocache='lru';
+UPDATE configurazione set aa_lifecache='7200';
+
 -- Configurazione Cache Dati Keystore
 UPDATE configurazione set keystore_statocache='abilitato';
 UPDATE configurazione set keystore_dimensionecache='1000';

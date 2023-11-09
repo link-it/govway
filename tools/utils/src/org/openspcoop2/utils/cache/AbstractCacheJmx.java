@@ -83,7 +83,9 @@ public abstract class AbstractCacheJmx extends NotificationBroadcasterSupport im
 		for (int i=0; i<attributesNames.length; i++){
 			try{
 				list.add(new Attribute(attributesNames[i],getAttribute(attributesNames[i])));
-			}catch(JMException ex){}
+			}catch(JMException ex){
+				// ignore
+			}
 		}
 		return list;
 	}

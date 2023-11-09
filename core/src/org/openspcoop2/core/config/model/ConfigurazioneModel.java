@@ -46,6 +46,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new Field("accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTENTICAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel(new Field("accesso-dati-autenticazione",org.openspcoop2.core.config.AccessoDatiAutenticazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new Field("accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
+		this.ACCESSO_DATI_ATTRIBUTE_AUTHORITY = new org.openspcoop2.core.config.model.AccessoDatiAttributeAuthorityModel(new Field("accesso-dati-attribute-authority",org.openspcoop2.core.config.AccessoDatiAttributeAuthority.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_KEYSTORE = new org.openspcoop2.core.config.model.AccessoDatiKeystoreModel(new Field("accesso-dati-keystore",org.openspcoop2.core.config.AccessoDatiKeystore.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_CONSEGNA_APPLICATIVI = new org.openspcoop2.core.config.model.AccessoDatiConsegnaApplicativiModel(new Field("accesso-dati-consegna-applicativi",org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_RICHIESTE = new org.openspcoop2.core.config.model.AccessoDatiRichiesteModel(new Field("accesso-dati-richieste",org.openspcoop2.core.config.AccessoDatiRichieste.class,"configurazione",Configurazione.class));
@@ -84,6 +85,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new ComplexField(father,"accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTENTICAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel(new ComplexField(father,"accesso-dati-autenticazione",org.openspcoop2.core.config.AccessoDatiAutenticazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new ComplexField(father,"accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
+		this.ACCESSO_DATI_ATTRIBUTE_AUTHORITY = new org.openspcoop2.core.config.model.AccessoDatiAttributeAuthorityModel(new ComplexField(father,"accesso-dati-attribute-authority",org.openspcoop2.core.config.AccessoDatiAttributeAuthority.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_KEYSTORE = new org.openspcoop2.core.config.model.AccessoDatiKeystoreModel(new ComplexField(father,"accesso-dati-keystore",org.openspcoop2.core.config.AccessoDatiKeystore.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_CONSEGNA_APPLICATIVI = new org.openspcoop2.core.config.model.AccessoDatiConsegnaApplicativiModel(new ComplexField(father,"accesso-dati-consegna-applicativi",org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_RICHIESTE = new org.openspcoop2.core.config.model.AccessoDatiRichiesteModel(new ComplexField(father,"accesso-dati-richieste",org.openspcoop2.core.config.AccessoDatiRichieste.class,"configurazione",Configurazione.class));
@@ -125,6 +127,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	public org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel ACCESSO_DATI_AUTENTICAZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel ACCESSO_DATI_GESTIONE_TOKEN = null;
+	 
+	public org.openspcoop2.core.config.model.AccessoDatiAttributeAuthorityModel ACCESSO_DATI_ATTRIBUTE_AUTHORITY = null;
 	 
 	public org.openspcoop2.core.config.model.AccessoDatiKeystoreModel ACCESSO_DATI_KEYSTORE = null;
 	 

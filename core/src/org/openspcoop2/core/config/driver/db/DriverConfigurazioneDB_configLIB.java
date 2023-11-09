@@ -33,6 +33,7 @@ import java.util.List;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
@@ -1129,7 +1130,7 @@ public class DriverConfigurazioneDB_configLIB {
 		}
 		else{
 			
-			return _CRUDConfigurazioneGenerale(type, config, con);
+			return engineCRUDConfigurazioneGenerale(type, config, con);
 			
 		}
 		
@@ -1140,7 +1141,7 @@ public class DriverConfigurazioneDB_configLIB {
 		return dump.getConfigurazione();
 	}
 	
-	private static long _CRUDConfigurazioneGenerale(int type, Configurazione config, Connection con) throws DriverConfigurazioneException {
+	private static long engineCRUDConfigurazioneGenerale(int type, Configurazione config, Connection con) throws DriverConfigurazioneException {
 		PreparedStatement updateStmt = null;
 		String updateQuery = "";
 		PreparedStatement selectStmt = null;
@@ -1159,6 +1160,7 @@ public class DriverConfigurazioneDB_configLIB {
 		AccessoDatiAutorizzazione aDatiAuthz = config.getAccessoDatiAutorizzazione();
 		AccessoDatiAutenticazione aDatiAuthn = config.getAccessoDatiAutenticazione();
 		AccessoDatiGestioneToken aDatiGestioneToken = config.getAccessoDatiGestioneToken();
+		AccessoDatiAttributeAuthority aDatiAttributeAuthority = config.getAccessoDatiAttributeAuthority();
 		AccessoDatiKeystore aDatiKeystore = config.getAccessoDatiKeystore();
 		AccessoDatiRichieste aDatiRichieste = config.getAccessoDatiRichieste();
 		Attachments att = config.getAttachments();
@@ -1166,28 +1168,28 @@ public class DriverConfigurazioneDB_configLIB {
 		ConfigurazioneMultitenant multitenant = config.getMultitenant();
 		
 		CorsConfigurazione corsConfigurazione = config.getGestioneCors();
-		String cors_stato = null;
-		String cors_tipo = null; 
-		String cors_all_allow_origins = null; 
-		String cors_all_allow_methods = null; 
-		String cors_all_allow_headers = null; 
-		String cors_allow_credentials = null; 
-		int cors_allow_max_age = CostantiDB.FALSE;
-		Integer cors_allow_max_age_seconds = null;
-		String cors_allow_origins = null; 
-		String cors_allow_headers = null; 
-		String cors_allow_methods = null; 
-		String cors_allow_expose_headers = null; 
+		String corsStato = null;
+		String corsTipo = null; 
+		String corsAllAllowOrigins = null; 
+		String corsAllAllowMethods = null; 
+		String corsAllAllowHeaders = null; 
+		String corsAllowCredentials = null; 
+		int corsAllowMaxAge = CostantiDB.FALSE;
+		Integer corsAllowMaxAgeSeconds = null;
+		String corsAllowOrigins = null; 
+		String corsAllowHeaders = null; 
+		String corsAllowMethods = null; 
+		String corsAllowExposeHeaders = null; 
 		if(corsConfigurazione!=null) {
-			cors_stato = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getStato());
-			cors_tipo = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getTipo());
-			cors_all_allow_origins = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
-			cors_all_allow_methods = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowMethods());
-			cors_all_allow_headers = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowHeaders());
-			cors_allow_credentials = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllowCredentials());
+			corsStato = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getStato());
+			corsTipo = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getTipo());
+			corsAllAllowOrigins = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
+			corsAllAllowMethods = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowMethods());
+			corsAllAllowHeaders = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowHeaders());
+			corsAllowCredentials = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllowCredentials());
 			if(corsConfigurazione.getAccessControlMaxAge()!=null) {
-				cors_allow_max_age = CostantiDB.TRUE;
-				cors_allow_max_age_seconds = corsConfigurazione.getAccessControlMaxAge();	
+				corsAllowMaxAge = CostantiDB.TRUE;
+				corsAllowMaxAgeSeconds = corsConfigurazione.getAccessControlMaxAge();	
 			}
 			if(corsConfigurazione.getAccessControlAllowOrigins()!=null && corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList()>0) {
 				StringBuilder bf = new StringBuilder();
@@ -1197,7 +1199,7 @@ public class DriverConfigurazioneDB_configLIB {
 					}
 					bf.append(corsConfigurazione.getAccessControlAllowOrigins().getOrigin(i));
 				}
-				cors_allow_origins = bf.toString();
+				corsAllowOrigins = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowHeaders()!=null && corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList()>0) {
 				StringBuilder bf = new StringBuilder();
@@ -1207,7 +1209,7 @@ public class DriverConfigurazioneDB_configLIB {
 					}
 					bf.append(corsConfigurazione.getAccessControlAllowHeaders().getHeader(i));
 				}
-				cors_allow_headers = bf.toString();
+				corsAllowHeaders = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowMethods()!=null && corsConfigurazione.getAccessControlAllowMethods().sizeMethodList()>0) {
 				StringBuilder bf = new StringBuilder();
@@ -1217,7 +1219,7 @@ public class DriverConfigurazioneDB_configLIB {
 					}
 					bf.append(corsConfigurazione.getAccessControlAllowMethods().getMethod(i));
 				}
-				cors_allow_methods = bf.toString();
+				corsAllowMethods = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlExposeHeaders()!=null && corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList()>0) {
 				StringBuilder bf = new StringBuilder();
@@ -1227,134 +1229,134 @@ public class DriverConfigurazioneDB_configLIB {
 					}
 					bf.append(corsConfigurazione.getAccessControlExposeHeaders().getHeader(i));
 				}
-				cors_allow_expose_headers = bf.toString();
+				corsAllowExposeHeaders = bf.toString();
 			}
 		}
 		
 		ResponseCachingConfigurazioneGenerale responseCachingConfigurazione = config.getResponseCaching();
 		
-		String response_cache_stato = null;
-		Integer response_cache_seconds = null;
-		Long response_cache_max_msg_size = null;
-		String response_cache_hash_url = null;
-		String response_cache_hash_query = null;
-		String response_cache_hash_query_list = null;
-		String response_cache_hash_headers = null;
-		String response_cache_hash_headers_list = null;
-		String response_cache_hash_payload = null;
-		boolean response_cache_noCache = true;
-		boolean response_cache_maxAge = true;
-		boolean response_cache_noStore = true;
-		List<ResponseCachingConfigurazioneRegola> response_cache_regole = null;
+		String responseCacheStato = null;
+		Integer responseCacheSeconds = null;
+		Long responseCacheMaxMsgSize = null;
+		String responseCacheHashUrl = null;
+		String responseCacheHashQuery = null;
+		String responseCacheHashQueryList = null;
+		String responseCacheHashHeaders = null;
+		String responseCacheHashHeadersList = null;
+		String responseCacheHashPayload = null;
+		boolean responseCacheNoCache = true;
+		boolean responseCacheMaxAge = true;
+		boolean responseCacheNoStore = true;
+		List<ResponseCachingConfigurazioneRegola> responseCacheRegole = null;
 		if(responseCachingConfigurazione!=null && responseCachingConfigurazione.getConfigurazione()!=null) {
-			response_cache_stato = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getStato());
-			response_cache_seconds = responseCachingConfigurazione.getConfigurazione().getCacheTimeoutSeconds();
-			response_cache_max_msg_size = responseCachingConfigurazione.getConfigurazione().getMaxMessageSize();
+			responseCacheStato = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getStato());
+			responseCacheSeconds = responseCachingConfigurazione.getConfigurazione().getCacheTimeoutSeconds();
+			responseCacheMaxMsgSize = responseCachingConfigurazione.getConfigurazione().getMaxMessageSize();
 			if(responseCachingConfigurazione.getConfigurazione().getControl()!=null) {
-				response_cache_noCache = responseCachingConfigurazione.getConfigurazione().getControl().getNoCache();
-				response_cache_maxAge = responseCachingConfigurazione.getConfigurazione().getControl().getMaxAge();
-				response_cache_noStore = responseCachingConfigurazione.getConfigurazione().getControl().getNoStore();
+				responseCacheNoCache = responseCachingConfigurazione.getConfigurazione().getControl().getNoCache();
+				responseCacheMaxAge = responseCachingConfigurazione.getConfigurazione().getControl().getMaxAge();
+				responseCacheNoStore = responseCachingConfigurazione.getConfigurazione().getControl().getNoStore();
 			}
 			if(responseCachingConfigurazione.getConfigurazione().getHashGenerator()!=null) {
-				response_cache_hash_url = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getRequestUri());
+				responseCacheHashUrl = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getRequestUri());
 				
-				response_cache_hash_query = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameters());
-				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameters())) {
-					if(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeQueryParameterList()>0) {
-						StringBuilder bf = new StringBuilder();
-						for (int i = 0; i < responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeQueryParameterList(); i++) {
-							if(i>0) {
-								bf.append(",");
-							}
-							bf.append(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameter(i));
+				responseCacheHashQuery = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameters());
+				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameters()) &&
+					(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeQueryParameterList()>0) 
+					){
+					StringBuilder bf = new StringBuilder();
+					for (int i = 0; i < responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeQueryParameterList(); i++) {
+						if(i>0) {
+							bf.append(",");
 						}
-						response_cache_hash_query_list = bf.toString();
+						bf.append(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameter(i));
 					}
+					responseCacheHashQueryList = bf.toString();
 				}
 				
-				response_cache_hash_headers = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaders());
-				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaders())) {
-					if(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaderList()!=null && responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeHeaderList()>0) {
-						StringBuilder bf = new StringBuilder();
-						for (int i = 0; i < responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeHeaderList(); i++) {
-							if(i>0) {
-								bf.append(",");
-							}
-							bf.append(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeader(i));
+				responseCacheHashHeaders = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaders());
+				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaders()) &&
+					(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaderList()!=null && responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeHeaderList()>0) 
+					){
+					StringBuilder bf = new StringBuilder();
+					for (int i = 0; i < responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeHeaderList(); i++) {
+						if(i>0) {
+							bf.append(",");
 						}
-						response_cache_hash_headers_list = bf.toString();
+						bf.append(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeader(i));
 					}
+					responseCacheHashHeadersList = bf.toString();
 				}
 				
-				response_cache_hash_payload = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getPayload());
+				responseCacheHashPayload = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getPayload());
 			}
-			response_cache_regole = responseCachingConfigurazione.getConfigurazione().getRegolaList();
+			responseCacheRegole = responseCachingConfigurazione.getConfigurazione().getRegolaList();
 		}
 		
-		Cache responseCaching_cache = null;
-		String responseCaching_dimensioneCache = null;
-		String responseCaching_algoritmoCache = null;
-		String responseCaching_idleCache = null;
-		String responseCaching_lifeCache = null;
-		String responseCaching_statoCache = null;
+		Cache responseCachingCache = null;
+		String responseCachingDimensioneCache = null;
+		String responseCachingAlgoritmoCache = null;
+		String responseCachingIdleCache = null;
+		String responseCachingLifeCache = null;
+		String responseCachingStatoCache = null;
 		if(responseCachingConfigurazione !=null){
-			responseCaching_cache = responseCachingConfigurazione.getCache();
+			responseCachingCache = responseCachingConfigurazione.getCache();
 
 		}
-		responseCaching_statoCache = (responseCaching_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (responseCaching_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			responseCaching_dimensioneCache = responseCaching_cache.getDimensione();
-			responseCaching_algoritmoCache = DriverConfigurazioneDBLib.getValue(responseCaching_cache.getAlgoritmo());
-			responseCaching_idleCache = responseCaching_cache.getItemIdleTime();
-			responseCaching_lifeCache = responseCaching_cache.getItemLifeSecond();
+		responseCachingStatoCache = (responseCachingCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (responseCachingStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			responseCachingDimensioneCache = responseCachingCache.getDimensione();
+			responseCachingAlgoritmoCache = DriverConfigurazioneDBLib.getValue(responseCachingCache.getAlgoritmo());
+			responseCachingIdleCache = responseCachingCache.getItemIdleTime();
+			responseCachingLifeCache = responseCachingCache.getItemLifeSecond();
 		}
 		
 		
-		Cache consegna_cache = null;
-		String consegna_dimensioneCache = null;
-		String consegna_algoritmoCache = null;
-		String consegna_idleCache = null;
-		String consegna_lifeCache = null;
-		String consegna_statoCache = null;
+		Cache consegnaCache = null;
+		String consegnaDimensioneCache = null;
+		String consegnaAlgoritmoCache = null;
+		String consegnaIdleCache = null;
+		String consegnaLifeCache = null;
+		String consegnaStatoCache = null;
 		if(config.getAccessoDatiConsegnaApplicativi() !=null){
-			consegna_cache = config.getAccessoDatiConsegnaApplicativi().getCache();
+			consegnaCache = config.getAccessoDatiConsegnaApplicativi().getCache();
 
 		}
-		consegna_statoCache = (consegna_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (consegna_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			consegna_dimensioneCache = consegna_cache.getDimensione();
-			consegna_algoritmoCache = DriverConfigurazioneDBLib.getValue(consegna_cache.getAlgoritmo());
-			consegna_idleCache = consegna_cache.getItemIdleTime();
-			consegna_lifeCache = consegna_cache.getItemLifeSecond();
+		consegnaStatoCache = (consegnaCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (consegnaStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			consegnaDimensioneCache = consegnaCache.getDimensione();
+			consegnaAlgoritmoCache = DriverConfigurazioneDBLib.getValue(consegnaCache.getAlgoritmo());
+			consegnaIdleCache = consegnaCache.getItemIdleTime();
+			consegnaLifeCache = consegnaCache.getItemLifeSecond();
 		}
 		
 		String utilizzoIndTelematico = null;
 		if(indirizzoPerRisposta!=null){
 			utilizzoIndTelematico =	DriverConfigurazioneDBLib.getValue(indirizzoPerRisposta.getUtilizzo());
 		}
-		String cadenza_inoltro = null;
+		String cadenzaInoltro = null;
 		if(inoltroBusteNonRiscontrate!=null){
-			cadenza_inoltro = inoltroBusteNonRiscontrate.getCadenza();
+			cadenzaInoltro = inoltroBusteNonRiscontrate.getCadenza();
 		}
 		String autenticazione = null;
 		if(integrationManager!=null){
 			autenticazione = integrationManager.getAutenticazione();
 		}
-		String msg_diag_severita = null;
-		String msg_diag_severita_log4j = null;
+		String msgDiagSeverita = null;
+		String msgDiagSeveritaLog4j = null;
 		if(messaggiDiagnostici!=null){
-			msg_diag_severita = DriverConfigurazioneDBLib.getValue(messaggiDiagnostici.getSeverita());
-			msg_diag_severita_log4j = DriverConfigurazioneDBLib.getValue(messaggiDiagnostici.getSeveritaLog4j());
+			msgDiagSeverita = DriverConfigurazioneDBLib.getValue(messaggiDiagnostici.getSeverita());
+			msgDiagSeveritaLog4j = DriverConfigurazioneDBLib.getValue(messaggiDiagnostici.getSeveritaLog4j());
 		}
-		String val_controllo = null;
-		String val_stato = null;
-		String val_manifest = null;
-		String val_profiloCollaborazione = null;
+		String valControllo = null;
+		String valStato = null;
+		String valManifest = null;
+		String valProfiloCollaborazione = null;
 		if(validazioneBuste!=null){
-			val_controllo = DriverConfigurazioneDBLib.getValue(validazioneBuste.getControllo());
-			val_stato = DriverConfigurazioneDBLib.getValue(validazioneBuste.getStato());
-			val_manifest = DriverConfigurazioneDBLib.getValue(validazioneBuste.getManifestAttachments());
-			val_profiloCollaborazione = DriverConfigurazioneDBLib.getValue(validazioneBuste.getProfiloCollaborazione());
+			valControllo = DriverConfigurazioneDBLib.getValue(validazioneBuste.getControllo());
+			valStato = DriverConfigurazioneDBLib.getValue(validazioneBuste.getStato());
+			valManifest = DriverConfigurazioneDBLib.getValue(validazioneBuste.getManifestAttachments());
+			valProfiloCollaborazione = DriverConfigurazioneDBLib.getValue(validazioneBuste.getProfiloCollaborazione());
 		}
 
 		String gestioneManifest = null;
@@ -1362,131 +1364,147 @@ public class DriverConfigurazioneDB_configLIB {
 			gestioneManifest = DriverConfigurazioneDBLib.getValue(att.getGestioneManifest());
 		}
 
-		Cache registro_cache = null;
-		String registro_dimensioneCache = null;
-		String registro_algoritmoCache = null;
-		String registro_idleCache = null;
-		String registro_lifeCache = null;
-		String registro_statoCache = null;
+		Cache registroCache = null;
+		String registroDimensioneCache = null;
+		String registroAlgoritmoCache = null;
+		String registroIdleCache = null;
+		String registroLifeCache = null;
+		String registroStatoCache = null;
 		if(car !=null){
-			registro_cache = car.getCache();
+			registroCache = car.getCache();
 
 		}
-		registro_statoCache = (registro_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (registro_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			registro_dimensioneCache = registro_cache.getDimensione();
-			registro_algoritmoCache = DriverConfigurazioneDBLib.getValue(registro_cache.getAlgoritmo());
-			registro_idleCache = registro_cache.getItemIdleTime();
-			registro_lifeCache = registro_cache.getItemLifeSecond();
+		registroStatoCache = (registroCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (registroStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			registroDimensioneCache = registroCache.getDimensione();
+			registroAlgoritmoCache = DriverConfigurazioneDBLib.getValue(registroCache.getAlgoritmo());
+			registroIdleCache = registroCache.getItemIdleTime();
+			registroLifeCache = registroCache.getItemLifeSecond();
 		}
 		
-		Cache config_cache = null;
-		String config_dimensioneCache = null;
-		String config_algoritmoCache = null;
-		String config_idleCache = null;
-		String config_lifeCache = null;
-		String config_statoCache = null;
+		Cache configCache = null;
+		String configDimensioneCache = null;
+		String configAlgoritmoCache = null;
+		String configIdleCache = null;
+		String configLifeCache = null;
+		String configStatoCache = null;
 		if(aConfig !=null){
-			config_cache = aConfig.getCache();
+			configCache = aConfig.getCache();
 
 		}
-		config_statoCache = (config_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (config_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			config_dimensioneCache = config_cache.getDimensione();
-			config_algoritmoCache = DriverConfigurazioneDBLib.getValue(config_cache.getAlgoritmo());
-			config_idleCache = config_cache.getItemIdleTime();
-			config_lifeCache = config_cache.getItemLifeSecond();
+		configStatoCache = (configCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (configStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			configDimensioneCache = configCache.getDimensione();
+			configAlgoritmoCache = DriverConfigurazioneDBLib.getValue(configCache.getAlgoritmo());
+			configIdleCache = configCache.getItemIdleTime();
+			configLifeCache = configCache.getItemLifeSecond();
 		}
 		
-		Cache authz_cache = null;
-		String authz_dimensioneCache = null;
-		String authz_algoritmoCache = null;
-		String authz_idleCache = null;
-		String authz_lifeCache = null;
-		String authz_statoCache = null;
+		Cache authzCache = null;
+		String authzDimensioneCache = null;
+		String authzAlgoritmoCache = null;
+		String authzIdleCache = null;
+		String authzLifeCache = null;
+		String authzStatoCache = null;
 		if(aDatiAuthz !=null){
-			authz_cache = aDatiAuthz.getCache();
+			authzCache = aDatiAuthz.getCache();
 
 		}
-		authz_statoCache = (authz_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (authz_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			authz_dimensioneCache = authz_cache.getDimensione();
-			authz_algoritmoCache = DriverConfigurazioneDBLib.getValue(authz_cache.getAlgoritmo());
-			authz_idleCache = authz_cache.getItemIdleTime();
-			authz_lifeCache = authz_cache.getItemLifeSecond();
+		authzStatoCache = (authzCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (authzStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			authzDimensioneCache = authzCache.getDimensione();
+			authzAlgoritmoCache = DriverConfigurazioneDBLib.getValue(authzCache.getAlgoritmo());
+			authzIdleCache = authzCache.getItemIdleTime();
+			authzLifeCache = authzCache.getItemLifeSecond();
 		}
 		
-		Cache authn_cache = null;
-		String authn_dimensioneCache = null;
-		String authn_algoritmoCache = null;
-		String authn_idleCache = null;
-		String authn_lifeCache = null;
-		String authn_statoCache = null;
+		Cache authnCache = null;
+		String authnDimensioneCache = null;
+		String authnAlgoritmoCache = null;
+		String authnIdleCache = null;
+		String authnLifeCache = null;
+		String authnStatoCache = null;
 		if(aDatiAuthn !=null){
-			authn_cache = aDatiAuthn.getCache();
+			authnCache = aDatiAuthn.getCache();
 
 		}
-		authn_statoCache = (authn_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (authn_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			authn_dimensioneCache = authn_cache.getDimensione();
-			authn_algoritmoCache = DriverConfigurazioneDBLib.getValue(authn_cache.getAlgoritmo());
-			authn_idleCache = authn_cache.getItemIdleTime();
-			authn_lifeCache = authn_cache.getItemLifeSecond();
+		authnStatoCache = (authnCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (authnStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			authnDimensioneCache = authnCache.getDimensione();
+			authnAlgoritmoCache = DriverConfigurazioneDBLib.getValue(authnCache.getAlgoritmo());
+			authnIdleCache = authnCache.getItemIdleTime();
+			authnLifeCache = authnCache.getItemLifeSecond();
 		}
 		
-		Cache token_cache = null;
-		String token_dimensioneCache = null;
-		String token_algoritmoCache = null;
-		String token_idleCache = null;
-		String token_lifeCache = null;
-		String token_statoCache = null;
+		Cache tokenCache = null;
+		String tokenDimensioneCache = null;
+		String tokenAlgoritmoCache = null;
+		String tokenIdleCache = null;
+		String tokenLifeCache = null;
+		String tokenStatoCache = null;
 		if(aDatiGestioneToken !=null){
-			token_cache = aDatiGestioneToken.getCache();
-
+			tokenCache = aDatiGestioneToken.getCache();
 		}
-		token_statoCache = (token_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (token_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			token_dimensioneCache = token_cache.getDimensione();
-			token_algoritmoCache = DriverConfigurazioneDBLib.getValue(token_cache.getAlgoritmo());
-			token_idleCache = token_cache.getItemIdleTime();
-			token_lifeCache = token_cache.getItemLifeSecond();
+		tokenStatoCache = (tokenCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (tokenStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			tokenDimensioneCache = tokenCache.getDimensione();
+			tokenAlgoritmoCache = DriverConfigurazioneDBLib.getValue(tokenCache.getAlgoritmo());
+			tokenIdleCache = tokenCache.getItemIdleTime();
+			tokenLifeCache = tokenCache.getItemLifeSecond();
 		}
 		
-		Cache keystore_cache = null;
-		String keystore_dimensioneCache = null;
-		String keystore_algoritmoCache = null;
-		String keystore_idleCache = null;
-		String keystore_lifeCache = null;
-		String keystore_statoCache = null;
-		String keystore_crlLifeCache = null;
+		Cache aaCache = null;
+		String aaDimensioneCache = null;
+		String aaAlgoritmoCache = null;
+		String aaIdleCache = null;
+		String aaLifeCache = null;
+		String aaStatoCache = null;
+		if(aDatiAttributeAuthority !=null){
+			aaCache = aDatiAttributeAuthority.getCache();
+		}
+		aaStatoCache = (aaCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (aaStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			aaDimensioneCache = aaCache.getDimensione();
+			aaAlgoritmoCache = DriverConfigurazioneDBLib.getValue(aaCache.getAlgoritmo());
+			aaIdleCache = aaCache.getItemIdleTime();
+			aaLifeCache = aaCache.getItemLifeSecond();
+		}
+		
+		Cache keystoreCache = null;
+		String keystoreDimensioneCache = null;
+		String keystoreAlgoritmoCache = null;
+		String keystoreIdleCache = null;
+		String keystoreLifeCache = null;
+		String keystoreStatoCache = null;
+		String keystoreCrlLifeCache = null;
 		if(aDatiKeystore !=null){
-			keystore_cache = aDatiKeystore.getCache();
-			keystore_crlLifeCache = aDatiKeystore.getCrlItemLifeSecond();
+			keystoreCache = aDatiKeystore.getCache();
+			keystoreCrlLifeCache = aDatiKeystore.getCrlItemLifeSecond();
 
 		}
-		keystore_statoCache = (keystore_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (keystore_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			keystore_dimensioneCache = keystore_cache.getDimensione();
-			keystore_algoritmoCache = DriverConfigurazioneDBLib.getValue(keystore_cache.getAlgoritmo());
-			keystore_idleCache = keystore_cache.getItemIdleTime();
-			keystore_lifeCache = keystore_cache.getItemLifeSecond();
+		keystoreStatoCache = (keystoreCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (keystoreStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			keystoreDimensioneCache = keystoreCache.getDimensione();
+			keystoreAlgoritmoCache = DriverConfigurazioneDBLib.getValue(keystoreCache.getAlgoritmo());
+			keystoreIdleCache = keystoreCache.getItemIdleTime();
+			keystoreLifeCache = keystoreCache.getItemLifeSecond();
 		}
 		
-		Cache dati_richieste_cache = null;
-		String dati_richieste_dimensioneCache = null;
-		String dati_richieste_algoritmoCache = null;
-		String dati_richieste_idleCache = null;
-		String dati_richieste_lifeCache = null;
-		String dati_richieste_statoCache = null;
+		Cache datiRichiesteCache = null;
+		String datiRichiesteDimensioneCache = null;
+		String datiRichiesteAlgoritmoCache = null;
+		String datiRichiesteIdleCache = null;
+		String datiRichiesteLifeCache = null;
+		String datiRichiesteStatoCache = null;
 		if(aDatiRichieste !=null){
-			dati_richieste_cache = aDatiRichieste.getCache();
+			datiRichiesteCache = aDatiRichieste.getCache();
 		}
-		dati_richieste_statoCache = (dati_richieste_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (dati_richieste_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			dati_richieste_dimensioneCache = dati_richieste_cache.getDimensione();
-			dati_richieste_algoritmoCache = DriverConfigurazioneDBLib.getValue(dati_richieste_cache.getAlgoritmo());
-			dati_richieste_idleCache = dati_richieste_cache.getItemIdleTime();
-			dati_richieste_lifeCache = dati_richieste_cache.getItemLifeSecond();
+		datiRichiesteStatoCache = (datiRichiesteCache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (datiRichiesteStatoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			datiRichiesteDimensioneCache = datiRichiesteCache.getDimensione();
+			datiRichiesteAlgoritmoCache = DriverConfigurazioneDBLib.getValue(datiRichiesteCache.getAlgoritmo());
+			datiRichiesteIdleCache = datiRichiesteCache.getItemIdleTime();
+			datiRichiesteLifeCache = datiRichiesteCache.getItemLifeSecond();
 		}
 
 		Tracciamento t = config.getTracciamento();
@@ -1534,24 +1552,25 @@ public class DriverConfigurazioneDB_configLIB {
 					CostantiConfigurazione.CONNECTION_REPLY.toString() : CostantiConfigurazione.NEW_CONNECTION.toString());
 		}
 		String routingEnabled =  CostantiConfigurazione.DISABILITATO.toString();
-		if(config.getRoutingTable()!=null){
-			if(config.getRoutingTable().getAbilitata()!=null && config.getRoutingTable().getAbilitata())
-				routingEnabled =  CostantiConfigurazione.ABILITATO.toString();
+		if(config.getRoutingTable()!=null &&
+			(config.getRoutingTable().getAbilitata()!=null && config.getRoutingTable().getAbilitata())
+			){
+			routingEnabled =  CostantiConfigurazione.ABILITATO.toString();
 		}
 		
-		String validazione_contenuti_stato = null;
-		String validazione_contenuti_tipo = null;
-		String validazione_contenuti_acceptMtomMessage = null;
+		String validazioneContenutiStato = null;
+		String validazioneContenutiTipo = null;
+		String validazioneContenutiAcceptMtomMessage = null;
 		if(config.getValidazioneContenutiApplicativi()!=null){
-			validazione_contenuti_stato = DriverConfigurazioneDBLib.getValue(config.getValidazioneContenutiApplicativi().getStato());
-			validazione_contenuti_tipo = DriverConfigurazioneDBLib.getValue(config.getValidazioneContenutiApplicativi().getTipo());
-			validazione_contenuti_acceptMtomMessage = DriverConfigurazioneDBLib.getValue(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage());
+			validazioneContenutiStato = DriverConfigurazioneDBLib.getValue(config.getValidazioneContenutiApplicativi().getStato());
+			validazioneContenutiTipo = DriverConfigurazioneDBLib.getValue(config.getValidazioneContenutiApplicativi().getTipo());
+			validazioneContenutiAcceptMtomMessage = DriverConfigurazioneDBLib.getValue(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage());
 		}
 
 		CanaliConfigurazione configurazioneCanali = config.getGestioneCanali();
-		String configurazioneCanali_stato = null;
+		String configurazioneCanaliStato = null;
 		if(configurazioneCanali!=null) {
-			configurazioneCanali_stato = DriverConfigurazioneDBLib.getValue(configurazioneCanali.getStato());
+			configurazioneCanaliStato = DriverConfigurazioneDBLib.getValue(configurazioneCanali.getStato());
 		}
 		
 		ConfigurazioneGeneraleHandler configHandlers = config.getConfigurazioneHandler();
@@ -1618,6 +1637,12 @@ public class DriverConfigurazioneDB_configLIB {
 				sqlQueryObject.addInsertField("token_algoritmocache", "?");
 				sqlQueryObject.addInsertField("token_idlecache", "?");
 				sqlQueryObject.addInsertField("token_lifecache", "?");
+				// gestione aa cache
+				sqlQueryObject.addInsertField("aa_statocache", "?");
+				sqlQueryObject.addInsertField("aa_dimensionecache", "?");
+				sqlQueryObject.addInsertField("aa_algoritmocache", "?");
+				sqlQueryObject.addInsertField("aa_idlecache", "?");
+				sqlQueryObject.addInsertField("aa_lifecache", "?");
 				// keystore cache
 				sqlQueryObject.addInsertField("keystore_statocache", "?");
 				sqlQueryObject.addInsertField("keystore_dimensionecache", "?");
@@ -1681,18 +1706,18 @@ public class DriverConfigurazioneDB_configLIB {
 
 				int index = 1;
 				
-				updateStmt.setString(index++, cadenza_inoltro);
-				updateStmt.setString(index++, val_stato);
-				updateStmt.setString(index++, val_controllo);
-				updateStmt.setString(index++, msg_diag_severita);
-				updateStmt.setString(index++, msg_diag_severita_log4j);
+				updateStmt.setString(index++, cadenzaInoltro);
+				updateStmt.setString(index++, valStato);
+				updateStmt.setString(index++, valControllo);
+				updateStmt.setString(index++, msgDiagSeverita);
+				updateStmt.setString(index++, msgDiagSeveritaLog4j);
 				updateStmt.setString(index++, autenticazione);
-				updateStmt.setString(index++, val_profiloCollaborazione);
+				updateStmt.setString(index++, valProfiloCollaborazione);
 				updateStmt.setString(index++, modRisposta);
 				updateStmt.setString(index++, utilizzoIndTelematico);
 				updateStmt.setString(index++, routingEnabled);
 				updateStmt.setString(index++, gestioneManifest);
-				updateStmt.setString(index++, val_manifest);
+				updateStmt.setString(index++, valManifest);
 				updateStmt.setString(index++, tracciamentoBuste);
 				updateStmt.setString(index++, tracciamentoEsiti);
 				updateStmt.setString(index++, transazioniTempiElaborazione);
@@ -1700,144 +1725,152 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(index++, dumpApplicativo);
 				updateStmt.setString(index++, dumpPD);
 				updateStmt.setString(index++, dumpPA);
-				updateStmt.setString(index++, validazione_contenuti_stato);
-				updateStmt.setString(index++, validazione_contenuti_tipo);
-				updateStmt.setString(index++, validazione_contenuti_acceptMtomMessage);
+				updateStmt.setString(index++, validazioneContenutiStato);
+				updateStmt.setString(index++, validazioneContenutiTipo);
+				updateStmt.setString(index++, validazioneContenutiAcceptMtomMessage);
 				// registro cache
-				updateStmt.setString(index++, registro_statoCache);
-				updateStmt.setString(index++, registro_dimensioneCache);
-				updateStmt.setString(index++, registro_algoritmoCache);
-				updateStmt.setString(index++, registro_idleCache);
-				updateStmt.setString(index++, registro_lifeCache);
+				updateStmt.setString(index++, registroStatoCache);
+				updateStmt.setString(index++, registroDimensioneCache);
+				updateStmt.setString(index++, registroAlgoritmoCache);
+				updateStmt.setString(index++, registroIdleCache);
+				updateStmt.setString(index++, registroLifeCache);
 				// config cache
-				updateStmt.setString(index++, config_statoCache);
-				updateStmt.setString(index++, config_dimensioneCache);
-				updateStmt.setString(index++, config_algoritmoCache);
-				updateStmt.setString(index++, config_idleCache);
-				updateStmt.setString(index++, config_lifeCache);
+				updateStmt.setString(index++, configStatoCache);
+				updateStmt.setString(index++, configDimensioneCache);
+				updateStmt.setString(index++, configAlgoritmoCache);
+				updateStmt.setString(index++, configIdleCache);
+				updateStmt.setString(index++, configLifeCache);
 				// authz cache
-				updateStmt.setString(index++, authz_statoCache);
-				updateStmt.setString(index++, authz_dimensioneCache);
-				updateStmt.setString(index++, authz_algoritmoCache);
-				updateStmt.setString(index++, authz_idleCache);
-				updateStmt.setString(index++, authz_lifeCache);
+				updateStmt.setString(index++, authzStatoCache);
+				updateStmt.setString(index++, authzDimensioneCache);
+				updateStmt.setString(index++, authzAlgoritmoCache);
+				updateStmt.setString(index++, authzIdleCache);
+				updateStmt.setString(index++, authzLifeCache);
 				// authn cache
-				updateStmt.setString(index++, authn_statoCache);
-				updateStmt.setString(index++, authn_dimensioneCache);
-				updateStmt.setString(index++, authn_algoritmoCache);
-				updateStmt.setString(index++, authn_idleCache);
-				updateStmt.setString(index++, authn_lifeCache);
+				updateStmt.setString(index++, authnStatoCache);
+				updateStmt.setString(index++, authnDimensioneCache);
+				updateStmt.setString(index++, authnAlgoritmoCache);
+				updateStmt.setString(index++, authnIdleCache);
+				updateStmt.setString(index++, authnLifeCache);
 				// token cache
-				updateStmt.setString(index++, token_statoCache);
-				updateStmt.setString(index++, token_dimensioneCache);
-				updateStmt.setString(index++, token_algoritmoCache);
-				updateStmt.setString(index++, token_idleCache);
-				updateStmt.setString(index++, token_lifeCache);
+				updateStmt.setString(index++, tokenStatoCache);
+				updateStmt.setString(index++, tokenDimensioneCache);
+				updateStmt.setString(index++, tokenAlgoritmoCache);
+				updateStmt.setString(index++, tokenIdleCache);
+				updateStmt.setString(index++, tokenLifeCache);
+				// aa cache
+				updateStmt.setString(index++, aaStatoCache);
+				updateStmt.setString(index++, aaDimensioneCache);
+				updateStmt.setString(index++, aaAlgoritmoCache);
+				updateStmt.setString(index++, aaIdleCache);
+				updateStmt.setString(index++, aaLifeCache);
 				// keystore cache
-				updateStmt.setString(index++, keystore_statoCache);
-				updateStmt.setString(index++, keystore_dimensioneCache);
-				updateStmt.setString(index++, keystore_algoritmoCache);
-				updateStmt.setString(index++, keystore_idleCache);
-				updateStmt.setString(index++, keystore_lifeCache);
-				updateStmt.setString(index++, keystore_crlLifeCache);
+				updateStmt.setString(index++, keystoreStatoCache);
+				updateStmt.setString(index++, keystoreDimensioneCache);
+				updateStmt.setString(index++, keystoreAlgoritmoCache);
+				updateStmt.setString(index++, keystoreIdleCache);
+				updateStmt.setString(index++, keystoreLifeCache);
+				updateStmt.setString(index++, keystoreCrlLifeCache);
 				// multitenant
 				updateStmt.setString(index++, multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getStato()) : null);
 				updateStmt.setString(index++, multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null);
 				updateStmt.setString(index++, multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null);
 				// cors
-				updateStmt.setString(index++, cors_stato);
-				updateStmt.setString(index++, cors_tipo);
-				updateStmt.setString(index++, cors_all_allow_origins);
-				updateStmt.setString(index++, cors_all_allow_methods);
-				updateStmt.setString(index++, cors_all_allow_headers);
-				updateStmt.setString(index++, cors_allow_credentials);
-				updateStmt.setInt(index++, cors_allow_max_age);
-				if(cors_allow_max_age_seconds!=null) {
-					updateStmt.setInt(index++, cors_allow_max_age_seconds);
+				updateStmt.setString(index++, corsStato);
+				updateStmt.setString(index++, corsTipo);
+				updateStmt.setString(index++, corsAllAllowOrigins);
+				updateStmt.setString(index++, corsAllAllowMethods);
+				updateStmt.setString(index++, corsAllAllowHeaders);
+				updateStmt.setString(index++, corsAllowCredentials);
+				updateStmt.setInt(index++, corsAllowMaxAge);
+				if(corsAllowMaxAgeSeconds!=null) {
+					updateStmt.setInt(index++, corsAllowMaxAgeSeconds);
 				}
 				else {
 					updateStmt.setNull(index++, java.sql.Types.INTEGER);
 				}
-				updateStmt.setString(index++, cors_allow_origins);
-				updateStmt.setString(index++, cors_allow_headers);
-				updateStmt.setString(index++, cors_allow_methods);
-				updateStmt.setString(index++, cors_allow_expose_headers);				
+				updateStmt.setString(index++, corsAllowOrigins);
+				updateStmt.setString(index++, corsAllowHeaders);
+				updateStmt.setString(index++, corsAllowMethods);
+				updateStmt.setString(index++, corsAllowExposeHeaders);				
 				// responseCaching
-				updateStmt.setString(index++, response_cache_stato);
-				if(response_cache_seconds!=null) {
-					updateStmt.setInt(index++, response_cache_seconds);
+				updateStmt.setString(index++, responseCacheStato);
+				if(responseCacheSeconds!=null) {
+					updateStmt.setInt(index++, responseCacheSeconds);
 				}
 				else {
 					updateStmt.setNull(index++, java.sql.Types.INTEGER);
 				}
-				if(response_cache_max_msg_size!=null) {
-					updateStmt.setLong(index++, response_cache_max_msg_size);
+				if(responseCacheMaxMsgSize!=null) {
+					updateStmt.setLong(index++, responseCacheMaxMsgSize);
 				}
 				else {
 					updateStmt.setNull(index++, java.sql.Types.BIGINT);
 				}
-				updateStmt.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
-				updateStmt.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
-				updateStmt.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
-				updateStmt.setString(index++, response_cache_hash_url);
-				updateStmt.setString(index++, response_cache_hash_query);
-				updateStmt.setString(index++, response_cache_hash_query_list);
-				updateStmt.setString(index++, response_cache_hash_headers);
-				updateStmt.setString(index++, response_cache_hash_headers_list);
-				updateStmt.setString(index++, response_cache_hash_payload);
+				updateStmt.setInt(index++, responseCacheNoCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setInt(index++, responseCacheMaxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setInt(index++, responseCacheNoStore ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setString(index++, responseCacheHashUrl);
+				updateStmt.setString(index++, responseCacheHashQuery);
+				updateStmt.setString(index++, responseCacheHashQueryList);
+				updateStmt.setString(index++, responseCacheHashHeaders);
+				updateStmt.setString(index++, responseCacheHashHeadersList);
+				updateStmt.setString(index++, responseCacheHashPayload);
 				// responseCaching cache
-				updateStmt.setString(index++, responseCaching_statoCache);
-				updateStmt.setString(index++, responseCaching_dimensioneCache);
-				updateStmt.setString(index++, responseCaching_algoritmoCache);
-				updateStmt.setString(index++, responseCaching_idleCache);
-				updateStmt.setString(index++, responseCaching_lifeCache);
+				updateStmt.setString(index++, responseCachingStatoCache);
+				updateStmt.setString(index++, responseCachingDimensioneCache);
+				updateStmt.setString(index++, responseCachingAlgoritmoCache);
+				updateStmt.setString(index++, responseCachingIdleCache);
+				updateStmt.setString(index++, responseCachingLifeCache);
 				// consegna applicativi cache
-				updateStmt.setString(index++, consegna_statoCache);
-				updateStmt.setString(index++, consegna_dimensioneCache);
-				updateStmt.setString(index++, consegna_algoritmoCache);
-				updateStmt.setString(index++, consegna_idleCache);
-				updateStmt.setString(index++, consegna_lifeCache);
+				updateStmt.setString(index++, consegnaStatoCache);
+				updateStmt.setString(index++, consegnaDimensioneCache);
+				updateStmt.setString(index++, consegnaAlgoritmoCache);
+				updateStmt.setString(index++, consegnaIdleCache);
+				updateStmt.setString(index++, consegnaLifeCache);
 				// canali
-				updateStmt.setString(index++, configurazioneCanali_stato);
+				updateStmt.setString(index++, configurazioneCanaliStato);
 				// dati richieste cache
-				updateStmt.setString(index++, dati_richieste_statoCache);
-				updateStmt.setString(index++, dati_richieste_dimensioneCache);
-				updateStmt.setString(index++, dati_richieste_algoritmoCache);
-				updateStmt.setString(index++, dati_richieste_idleCache);
-				updateStmt.setString(index++, dati_richieste_lifeCache);
+				updateStmt.setString(index++, datiRichiesteStatoCache);
+				updateStmt.setString(index++, datiRichiesteDimensioneCache);
+				updateStmt.setString(index++, datiRichiesteAlgoritmoCache);
+				updateStmt.setString(index++, datiRichiesteIdleCache);
+				updateStmt.setString(index++, datiRichiesteLifeCache);
 
-				DriverConfigurazioneDBLib.log.debug("eseguo query :" + 
+				String msgDebug = "eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
-								cadenza_inoltro, 
-								val_stato, val_controllo, 
-								msg_diag_severita, msg_diag_severita_log4j, 
+								cadenzaInoltro, 
+								valStato, valControllo, 
+								msgDiagSeverita, msgDiagSeveritaLog4j, 
 								autenticazione, 
-								val_profiloCollaborazione, 
+								valProfiloCollaborazione, 
 								modRisposta, utilizzoIndTelematico, 
 								routingEnabled, gestioneManifest, 
-								val_manifest, tracciamentoBuste, transazioniTempiElaborazione, transazioniToken, dumpApplicativo, dumpPD, dumpPA,
-								validazione_contenuti_stato,validazione_contenuti_tipo,validazione_contenuti_acceptMtomMessage,
-								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
-								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,
-								authz_statoCache, authz_dimensioneCache, authz_algoritmoCache, authz_idleCache, authz_lifeCache,
-								authn_statoCache, authn_dimensioneCache, authn_algoritmoCache, authn_idleCache, authn_lifeCache,
-								token_statoCache, token_dimensioneCache, token_algoritmoCache, token_idleCache, token_lifeCache,
-								keystore_statoCache, keystore_dimensioneCache, keystore_algoritmoCache, keystore_idleCache, keystore_lifeCache, keystore_crlLifeCache,
+								valManifest, tracciamentoBuste, transazioniTempiElaborazione, transazioniToken, dumpApplicativo, dumpPD, dumpPA,
+								validazioneContenutiStato,validazioneContenutiTipo,validazioneContenutiAcceptMtomMessage,
+								registroStatoCache, registroDimensioneCache, registroAlgoritmoCache, registroIdleCache, registroLifeCache,
+								configStatoCache, configDimensioneCache, configAlgoritmoCache, configIdleCache, configLifeCache,
+								authzStatoCache, authzDimensioneCache, authzAlgoritmoCache, authzIdleCache, authzLifeCache,
+								authnStatoCache, authnDimensioneCache, authnAlgoritmoCache, authnIdleCache, authnLifeCache,
+								tokenStatoCache, tokenDimensioneCache, tokenAlgoritmoCache, tokenIdleCache, tokenLifeCache,
+								aaStatoCache, aaDimensioneCache, aaAlgoritmoCache, aaIdleCache, aaLifeCache,
+								keystoreStatoCache, keystoreDimensioneCache, keystoreAlgoritmoCache, keystoreIdleCache, keystoreLifeCache, keystoreCrlLifeCache,
 								(multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getStato()) : null),
 								(multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null),
 								(multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null),
-								cors_stato, cors_tipo, cors_all_allow_origins, cors_all_allow_methods, cors_all_allow_headers, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
-								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
-								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
-								(response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE),
-								(response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
-								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
-								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
-								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
-								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache,
-								configurazioneCanali_stato,
-								dati_richieste_statoCache, dati_richieste_dimensioneCache, dati_richieste_algoritmoCache, dati_richieste_idleCache, dati_richieste_lifeCache
-								));
+								corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowMethods, corsAllAllowHeaders, corsAllowCredentials, corsAllowMaxAge, corsAllowMaxAgeSeconds,
+								corsAllowOrigins, corsAllowHeaders, corsAllowMethods, corsAllowExposeHeaders,
+								responseCacheStato, responseCacheSeconds, responseCacheMaxMsgSize, 
+								(responseCacheNoCache ? CostantiDB.TRUE : CostantiDB.FALSE),
+								(responseCacheMaxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
+								(responseCacheNoStore ? CostantiDB.TRUE : CostantiDB.FALSE),
+								responseCacheHashUrl, responseCacheHashQuery, responseCacheHashQueryList, responseCacheHashHeaders, responseCacheHashHeadersList, responseCacheHashPayload,
+								responseCachingStatoCache, responseCachingDimensioneCache, responseCachingAlgoritmoCache, responseCachingIdleCache, responseCachingLifeCache,
+								consegnaStatoCache, consegnaDimensioneCache, consegnaAlgoritmoCache, consegnaIdleCache, consegnaLifeCache,
+								configurazioneCanaliStato,
+								datiRichiesteStatoCache, datiRichiesteDimensioneCache, datiRichiesteAlgoritmoCache, datiRichiesteIdleCache, datiRichiesteLifeCache
+								);
+				DriverConfigurazioneDBLib.log.debug(msgDebug);
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
@@ -2033,9 +2066,9 @@ public class DriverConfigurazioneDB_configLIB {
 				
 				// Cache Regole
 				n=0;
-				if(response_cache_regole!=null && response_cache_regole.size()>0){
-					for (int j = 0; j < response_cache_regole.size(); j++) {
-						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+				if(responseCacheRegole!=null && !responseCacheRegole.isEmpty()){
+					for (int j = 0; j < responseCacheRegole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = responseCacheRegole.get(j);
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
 						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
@@ -2274,6 +2307,12 @@ public class DriverConfigurazioneDB_configLIB {
 				sqlQueryObject.addUpdateField("token_algoritmocache", "?");
 				sqlQueryObject.addUpdateField("token_idlecache", "?");
 				sqlQueryObject.addUpdateField("token_lifecache", "?");
+				// aa cache
+				sqlQueryObject.addUpdateField("aa_statocache", "?");
+				sqlQueryObject.addUpdateField("aa_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("aa_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("aa_idlecache", "?");
+				sqlQueryObject.addUpdateField("aa_lifecache", "?");
 				// keystore cache
 				sqlQueryObject.addUpdateField("keystore_statocache", "?");
 				sqlQueryObject.addUpdateField("keystore_dimensionecache", "?");
@@ -2337,18 +2376,18 @@ public class DriverConfigurazioneDB_configLIB {
 				
 				index = 1;
 				
-				updateStmt.setString(index++, cadenza_inoltro);
-				updateStmt.setString(index++, val_stato);
-				updateStmt.setString(index++, val_controllo);
-				updateStmt.setString(index++, msg_diag_severita);
-				updateStmt.setString(index++, msg_diag_severita_log4j);
+				updateStmt.setString(index++, cadenzaInoltro);
+				updateStmt.setString(index++, valStato);
+				updateStmt.setString(index++, valControllo);
+				updateStmt.setString(index++, msgDiagSeverita);
+				updateStmt.setString(index++, msgDiagSeveritaLog4j);
 				updateStmt.setString(index++, autenticazione);
-				updateStmt.setString(index++, val_profiloCollaborazione);
+				updateStmt.setString(index++, valProfiloCollaborazione);
 				updateStmt.setString(index++, modRisposta);
 				updateStmt.setString(index++, utilizzoIndTelematico);
 				updateStmt.setString(index++, routingEnabled);
 				updateStmt.setString(index++, gestioneManifest);
-				updateStmt.setString(index++, val_manifest);
+				updateStmt.setString(index++, valManifest);
 				updateStmt.setString(index++, tracciamentoBuste);
 				updateStmt.setString(index++, tracciamentoEsiti);
 				updateStmt.setString(index++, transazioniTempiElaborazione);
@@ -2356,141 +2395,147 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(index++, dumpApplicativo);
 				updateStmt.setString(index++, dumpPD);
 				updateStmt.setString(index++, dumpPA);
-				updateStmt.setString(index++, validazione_contenuti_stato);
-				updateStmt.setString(index++, validazione_contenuti_tipo);
-				updateStmt.setString(index++, validazione_contenuti_acceptMtomMessage);
+				updateStmt.setString(index++, validazioneContenutiStato);
+				updateStmt.setString(index++, validazioneContenutiTipo);
+				updateStmt.setString(index++, validazioneContenutiAcceptMtomMessage);
 				// registro cache
-				updateStmt.setString(index++, registro_statoCache);
-				updateStmt.setString(index++, registro_dimensioneCache);
-				updateStmt.setString(index++, registro_algoritmoCache);
-				updateStmt.setString(index++, registro_idleCache);
-				updateStmt.setString(index++, registro_lifeCache);
+				updateStmt.setString(index++, registroStatoCache);
+				updateStmt.setString(index++, registroDimensioneCache);
+				updateStmt.setString(index++, registroAlgoritmoCache);
+				updateStmt.setString(index++, registroIdleCache);
+				updateStmt.setString(index++, registroLifeCache);
 				// config cache
-				updateStmt.setString(index++, config_statoCache);
-				updateStmt.setString(index++, config_dimensioneCache);
-				updateStmt.setString(index++, config_algoritmoCache);
-				updateStmt.setString(index++, config_idleCache);
-				updateStmt.setString(index++, config_lifeCache);
+				updateStmt.setString(index++, configStatoCache);
+				updateStmt.setString(index++, configDimensioneCache);
+				updateStmt.setString(index++, configAlgoritmoCache);
+				updateStmt.setString(index++, configIdleCache);
+				updateStmt.setString(index++, configLifeCache);
 				// authz cache
-				updateStmt.setString(index++, authz_statoCache);
-				updateStmt.setString(index++, authz_dimensioneCache);
-				updateStmt.setString(index++, authz_algoritmoCache);
-				updateStmt.setString(index++, authz_idleCache);
-				updateStmt.setString(index++, authz_lifeCache);
+				updateStmt.setString(index++, authzStatoCache);
+				updateStmt.setString(index++, authzDimensioneCache);
+				updateStmt.setString(index++, authzAlgoritmoCache);
+				updateStmt.setString(index++, authzIdleCache);
+				updateStmt.setString(index++, authzLifeCache);
 				// authn cache
-				updateStmt.setString(index++, authn_statoCache);
-				updateStmt.setString(index++, authn_dimensioneCache);
-				updateStmt.setString(index++, authn_algoritmoCache);
-				updateStmt.setString(index++, authn_idleCache);
-				updateStmt.setString(index++, authn_lifeCache);
+				updateStmt.setString(index++, authnStatoCache);
+				updateStmt.setString(index++, authnDimensioneCache);
+				updateStmt.setString(index++, authnAlgoritmoCache);
+				updateStmt.setString(index++, authnIdleCache);
+				updateStmt.setString(index++, authnLifeCache);
 				// token cache
-				updateStmt.setString(index++, token_statoCache);
-				updateStmt.setString(index++, token_dimensioneCache);
-				updateStmt.setString(index++, token_algoritmoCache);
-				updateStmt.setString(index++, token_idleCache);
-				updateStmt.setString(index++, token_lifeCache);
+				updateStmt.setString(index++, tokenStatoCache);
+				updateStmt.setString(index++, tokenDimensioneCache);
+				updateStmt.setString(index++, tokenAlgoritmoCache);
+				updateStmt.setString(index++, tokenIdleCache);
+				updateStmt.setString(index++, tokenLifeCache);
+				// aa cache
+				updateStmt.setString(index++, aaStatoCache);
+				updateStmt.setString(index++, aaDimensioneCache);
+				updateStmt.setString(index++, aaAlgoritmoCache);
+				updateStmt.setString(index++, aaIdleCache);
+				updateStmt.setString(index++, aaLifeCache);
 				// keystore cache
-				updateStmt.setString(index++, keystore_statoCache);
-				updateStmt.setString(index++, keystore_dimensioneCache);
-				updateStmt.setString(index++, keystore_algoritmoCache);
-				updateStmt.setString(index++, keystore_idleCache);
-				updateStmt.setString(index++, keystore_lifeCache);
-				updateStmt.setString(index++, keystore_crlLifeCache);
+				updateStmt.setString(index++, keystoreStatoCache);
+				updateStmt.setString(index++, keystoreDimensioneCache);
+				updateStmt.setString(index++, keystoreAlgoritmoCache);
+				updateStmt.setString(index++, keystoreIdleCache);
+				updateStmt.setString(index++, keystoreLifeCache);
+				updateStmt.setString(index++, keystoreCrlLifeCache);
 				// multitenant
 				updateStmt.setString(index++, multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getStato()) : null);
 				updateStmt.setString(index++, multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null);
 				updateStmt.setString(index++, multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null);
 				// cors
-				updateStmt.setString(index++, cors_stato);
-				updateStmt.setString(index++, cors_tipo);
-				updateStmt.setString(index++, cors_all_allow_origins);
-				updateStmt.setString(index++, cors_all_allow_methods);
-				updateStmt.setString(index++, cors_all_allow_headers);
-				updateStmt.setString(index++, cors_allow_credentials);
-				updateStmt.setInt(index++, cors_allow_max_age);
-				if(cors_allow_max_age_seconds!=null) {
-					updateStmt.setInt(index++, cors_allow_max_age_seconds);
+				updateStmt.setString(index++, corsStato);
+				updateStmt.setString(index++, corsTipo);
+				updateStmt.setString(index++, corsAllAllowOrigins);
+				updateStmt.setString(index++, corsAllAllowMethods);
+				updateStmt.setString(index++, corsAllAllowHeaders);
+				updateStmt.setString(index++, corsAllowCredentials);
+				updateStmt.setInt(index++, corsAllowMaxAge);
+				if(corsAllowMaxAgeSeconds!=null) {
+					updateStmt.setInt(index++, corsAllowMaxAgeSeconds);
 				}
 				else {
 					updateStmt.setNull(index++, java.sql.Types.INTEGER);
 				}
-				updateStmt.setString(index++, cors_allow_origins);
-				updateStmt.setString(index++, cors_allow_headers);
-				updateStmt.setString(index++, cors_allow_methods);
-				updateStmt.setString(index++, cors_allow_expose_headers);				
+				updateStmt.setString(index++, corsAllowOrigins);
+				updateStmt.setString(index++, corsAllowHeaders);
+				updateStmt.setString(index++, corsAllowMethods);
+				updateStmt.setString(index++, corsAllowExposeHeaders);				
 				// responseCaching
-				updateStmt.setString(index++, response_cache_stato);
-				if(response_cache_seconds!=null) {
-					updateStmt.setInt(index++, response_cache_seconds);
+				updateStmt.setString(index++, responseCacheStato);
+				if(responseCacheSeconds!=null) {
+					updateStmt.setInt(index++, responseCacheSeconds);
 				}
 				else {
 					updateStmt.setNull(index++, java.sql.Types.INTEGER);
 				}
-				if(response_cache_max_msg_size!=null) {
-					updateStmt.setLong(index++, response_cache_max_msg_size);
+				if(responseCacheMaxMsgSize!=null) {
+					updateStmt.setLong(index++, responseCacheMaxMsgSize);
 				}
 				else {
 					updateStmt.setNull(index++, java.sql.Types.BIGINT);
 				}
-				updateStmt.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
-				updateStmt.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
-				updateStmt.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
-				updateStmt.setString(index++, response_cache_hash_url);
-				updateStmt.setString(index++, response_cache_hash_query);
-				updateStmt.setString(index++, response_cache_hash_query_list);
-				updateStmt.setString(index++, response_cache_hash_headers);
-				updateStmt.setString(index++, response_cache_hash_headers_list);
-				updateStmt.setString(index++, response_cache_hash_payload);
+				updateStmt.setInt(index++, responseCacheNoCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setInt(index++, responseCacheMaxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setInt(index++, responseCacheNoStore ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setString(index++, responseCacheHashUrl);
+				updateStmt.setString(index++, responseCacheHashQuery);
+				updateStmt.setString(index++, responseCacheHashQueryList);
+				updateStmt.setString(index++, responseCacheHashHeaders);
+				updateStmt.setString(index++, responseCacheHashHeadersList);
+				updateStmt.setString(index++, responseCacheHashPayload);
 				// responseCaching cache
-				updateStmt.setString(index++, responseCaching_statoCache);
-				updateStmt.setString(index++, responseCaching_dimensioneCache);
-				updateStmt.setString(index++, responseCaching_algoritmoCache);
-				updateStmt.setString(index++, responseCaching_idleCache);
-				updateStmt.setString(index++, responseCaching_lifeCache);
+				updateStmt.setString(index++, responseCachingStatoCache);
+				updateStmt.setString(index++, responseCachingDimensioneCache);
+				updateStmt.setString(index++, responseCachingAlgoritmoCache);
+				updateStmt.setString(index++, responseCachingIdleCache);
+				updateStmt.setString(index++, responseCachingLifeCache);
 				// consegna applicativi cache
-				updateStmt.setString(index++, consegna_statoCache);
-				updateStmt.setString(index++, consegna_dimensioneCache);
-				updateStmt.setString(index++, consegna_algoritmoCache);
-				updateStmt.setString(index++, consegna_idleCache);
-				updateStmt.setString(index++, consegna_lifeCache);
+				updateStmt.setString(index++, consegnaStatoCache);
+				updateStmt.setString(index++, consegnaDimensioneCache);
+				updateStmt.setString(index++, consegnaAlgoritmoCache);
+				updateStmt.setString(index++, consegnaIdleCache);
+				updateStmt.setString(index++, consegnaLifeCache);
 				// canali
-				updateStmt.setString(index++, configurazioneCanali_stato);
+				updateStmt.setString(index++, configurazioneCanaliStato);
 				// dati richieste cache
-				updateStmt.setString(index++, dati_richieste_statoCache);
-				updateStmt.setString(index++, dati_richieste_dimensioneCache);
-				updateStmt.setString(index++, dati_richieste_algoritmoCache);
-				updateStmt.setString(index++, dati_richieste_idleCache);
-				updateStmt.setString(index++, dati_richieste_lifeCache);
+				updateStmt.setString(index++, datiRichiesteStatoCache);
+				updateStmt.setString(index++, datiRichiesteDimensioneCache);
+				updateStmt.setString(index++, datiRichiesteAlgoritmoCache);
+				updateStmt.setString(index++, datiRichiesteIdleCache);
+				updateStmt.setString(index++, datiRichiesteLifeCache);
 				
 				DriverConfigurazioneDBLib.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
-								cadenza_inoltro, 
-								val_stato, val_controllo, 
-								msg_diag_severita, msg_diag_severita_log4j, 
+								cadenzaInoltro, 
+								valStato, valControllo, 
+								msgDiagSeverita, msgDiagSeveritaLog4j, 
 								autenticazione, 
-								val_profiloCollaborazione, 
+								valProfiloCollaborazione, 
 								modRisposta, utilizzoIndTelematico, 
 								routingEnabled, gestioneManifest, 
-								val_manifest, 
+								valManifest, 
 								tracciamentoBuste, transazioniTempiElaborazione, transazioniToken, dumpApplicativo, dumpPD, dumpPA,
-								validazione_contenuti_stato,validazione_contenuti_tipo,
-								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
-								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,
-								authz_statoCache, authz_dimensioneCache, authz_algoritmoCache, authz_idleCache, authz_lifeCache,
-								authn_statoCache, authn_dimensioneCache, authn_algoritmoCache, authn_idleCache, authn_lifeCache,
-								token_statoCache, token_dimensioneCache, token_algoritmoCache, token_idleCache, token_lifeCache,
-								keystore_statoCache, keystore_dimensioneCache, keystore_algoritmoCache, keystore_idleCache, keystore_lifeCache, keystore_crlLifeCache,
+								validazioneContenutiStato,validazioneContenutiTipo,
+								registroStatoCache, registroDimensioneCache, registroAlgoritmoCache, registroIdleCache, registroLifeCache,
+								configStatoCache, configDimensioneCache, configAlgoritmoCache, configIdleCache, configLifeCache,
+								authzStatoCache, authzDimensioneCache, authzAlgoritmoCache, authzIdleCache, authzLifeCache,
+								authnStatoCache, authnDimensioneCache, authnAlgoritmoCache, authnIdleCache, authnLifeCache,
+								tokenStatoCache, tokenDimensioneCache, tokenAlgoritmoCache, tokenIdleCache, tokenLifeCache,
+								keystoreStatoCache, keystoreDimensioneCache, keystoreAlgoritmoCache, keystoreIdleCache, keystoreLifeCache, keystoreCrlLifeCache,
 								(multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getStato()) : null),
 								(multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null),
 								(multitenant!=null ? DriverConfigurazioneDBLib.getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null),
-								cors_stato, cors_tipo, cors_all_allow_origins, cors_all_allow_methods, cors_all_allow_headers, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
-								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
-								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
-								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
-								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
-								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache,
-								configurazioneCanali_stato,
-								dati_richieste_statoCache, dati_richieste_dimensioneCache, dati_richieste_algoritmoCache, dati_richieste_idleCache, dati_richieste_lifeCache
+								corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowMethods, corsAllAllowHeaders, corsAllowCredentials, corsAllowMaxAge, corsAllowMaxAgeSeconds,
+								corsAllowOrigins, corsAllowHeaders, corsAllowMethods, corsAllowExposeHeaders,
+								responseCacheStato, responseCacheSeconds, responseCacheMaxMsgSize, 
+								responseCacheHashUrl, responseCacheHashQuery, responseCacheHashQueryList, responseCacheHashHeaders, responseCacheHashHeadersList, responseCacheHashPayload,
+								responseCachingStatoCache, responseCachingDimensioneCache, responseCachingAlgoritmoCache, responseCachingIdleCache, responseCachingLifeCache,
+								consegnaStatoCache, consegnaDimensioneCache, consegnaAlgoritmoCache, consegnaIdleCache, consegnaLifeCache,
+								configurazioneCanaliStato,
+								datiRichiesteStatoCache, datiRichiesteDimensioneCache, datiRichiesteAlgoritmoCache, datiRichiesteIdleCache, datiRichiesteLifeCache
 								));
 
 				n = updateStmt.executeUpdate();
@@ -2698,9 +2743,9 @@ public class DriverConfigurazioneDB_configLIB {
 				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" regole di cache");
 				
 				n=0;
-				if(response_cache_regole!=null && response_cache_regole.size()>0){
-					for (int j = 0; j < response_cache_regole.size(); j++) {
-						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+				if(responseCacheRegole!=null && responseCacheRegole.size()>0){
+					for (int j = 0; j < responseCacheRegole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = responseCacheRegole.get(j);
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
 						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {

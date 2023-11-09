@@ -84,8 +84,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.ConfigurazionePdD.class, CostantiPdD.JMX_CONFIGURAZIONE_PDD);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazionePdD: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazionePdD: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazionePdD: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -100,8 +101,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.AccessoRegistroServizi.class, CostantiPdD.JMX_REGISTRO_SERVIZI);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX AccessoRegistroServizi: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX AccessoRegistroServizi: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX AccessoRegistroServizi: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -115,8 +117,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.MonitoraggioRisorse.class, CostantiPdD.JMX_MONITORAGGIO_RISORSE);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX MonitoraggioRisorse: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX MonitoraggioRisorse: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX MonitoraggioRisorse: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -130,8 +133,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineAutorizzazione.class, CostantiPdD.JMX_AUTORIZZAZIONE);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Autorizzazione: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Autorizzazione: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX Autorizzazione: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -145,8 +149,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineAutenticazione.class, CostantiPdD.JMX_AUTENTICAZIONE);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Autenticazione: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Autenticazione: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX Autenticazione: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -160,8 +165,25 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineGestioneToken.class, CostantiPdD.JMX_TOKEN);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Token: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Token: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX Token: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
+		}	
+		
+	}
+	
+	/**
+	 * Registrazione del MBean per la gestione dell'Attribute Authority
+	 * 
+	 * @throws RisorseJMXException
+	 */
+	public void registerMBeanAttributeAuthority()throws RisorseJMXException{
+		try{
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineAttributeAuthority.class, CostantiPdD.JMX_ATTRIBUTE_AUTHORITY);
+		}catch(Exception e){
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX AttributeAuthority: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -175,8 +197,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineResponseCaching.class, CostantiPdD.JMX_RESPONSE_CACHING);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Response Caching: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Response Caching: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX Response Caching: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -190,8 +213,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineKeystoreCaching.class, CostantiPdD.JMX_KEYSTORE_CACHING);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Keystore Caching: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Keystore Caching: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX Keystore Caching: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -205,8 +229,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi.class, CostantiPdD.JMX_LOAD_BALANCER);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Consegna Applicativi: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Consegna Applicativi: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Consegna Applicativi: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -220,8 +245,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.GestoreRichieste.class, CostantiPdD.JMX_GESTORE_RICHIESTE);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Richieste: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Richieste: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Richieste: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -235,8 +261,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.RepositoryMessaggi.class, CostantiPdD.JMX_REPOSITORY_MESSAGGI);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX RepositoryMessaggi: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX RepositoryMessaggi: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX RepositoryMessaggi: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -251,8 +278,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource.class, CostantiPdD.JMX_STATO_SERVIZI_PDD);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX StatoServiziPdD: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX StatoServiziPdD: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX StatoServiziPdD: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -267,8 +295,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.StatisticsJMXResource.class, CostantiPdD.JMX_INFORMAZIONI_STATISTICHE_PDD);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX StatistichePdD: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX StatistichePdD: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX StatistichePdD: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -284,8 +313,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.SysPropsJMXResource.class, CostantiPdD.JMX_SYSTEM_PROPERTIES_PDD);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX SystemPropertiesPdD: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX SystemPropertiesPdD: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX SystemPropertiesPdD: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -300,8 +330,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.ConfigurazioneSistema.class, CostantiPdD.JMX_CONFIGURAZIONE_SISTEMA);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazioneSistema: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazioneSistema: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazioneSistema: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -316,8 +347,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 		try{
 			this.registerMBean(org.openspcoop2.pdd.core.jmx.ControlloTraffico.class, CostantiPdD.JMX_CONTROLLO_TRAFFICO);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX ControlloTraffico: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX ControlloTraffico: "+e.getMessage(),e);
+			String msg = "Riscontrato errore durante l'inizializzazione della risorsa JMX ControlloTraffico: "+e.getMessage();
+			this.logError(msg,e);
+			throw new RisorseJMXException(msg,e);
 		}	
 		
 	}
@@ -338,6 +370,9 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 	}
 	public Object getAttributeMBeanGestioneToken(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_TOKEN, nomeAttributo);
+	}
+	public Object getAttributeMBeanAttributeAuthority(String nomeAttributo)throws RisorseJMXException{
+		return this.getAttribute(CostantiPdD.JMX_ATTRIBUTE_AUTHORITY, nomeAttributo);
 	}
 	public Object getAttributeMBeanResponseCaching(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_RESPONSE_CACHING, nomeAttributo);
@@ -401,6 +436,13 @@ public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRi
 	}
 	public Object invokeMethodMBeanGestioneToken(String nomeMetodo)throws RisorseJMXException{
 		return invoke(CostantiPdD.JMX_TOKEN, nomeMetodo, null, null);
+	}
+	
+	public Object invokeMethodMBeanAttributeAuthority(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_ATTRIBUTE_AUTHORITY, nomeMetodo, params, signature);
+	}
+	public Object invokeMethodMBeanAttributeAuthority(String nomeMetodo)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_ATTRIBUTE_AUTHORITY, nomeMetodo, null, null);
 	}
 	
 	public Object invokeMethodMBeanResponseCaching(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{

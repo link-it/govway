@@ -35,6 +35,7 @@ import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
@@ -1875,6 +1876,10 @@ public class ConfigurazionePdDManager {
 
 	public AccessoDatiGestioneToken getAccessoDatiGestioneToken(){
 		return this.configurazionePdDReader.getAccessoDatiGestioneToken(this.getConnection());
+	}
+	
+	public AccessoDatiAttributeAuthority getAccessoDatiAttributeAuthority(){
+		return this.configurazionePdDReader.getAccessoDatiAttributeAuthority(this.getConnection());
 	}
 
 	public AccessoDatiKeystore getAccessoDatiKeystore(){
