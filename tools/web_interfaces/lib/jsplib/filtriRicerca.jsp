@@ -64,7 +64,7 @@ boolean mostraFormHeader = (
 		pd.getFilterValues().size()>0
 	);
 
-boolean inserisciSearch = true;
+boolean inserisciSearch = pd.isInserisciSearch();
 
 List<DataElement> listaComandi = pd.getComandiAzioneBarraTitoloDettaglioElemento();
 

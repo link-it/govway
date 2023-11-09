@@ -96,6 +96,8 @@ public class PageData implements Serializable {
 	
 	private boolean paginazione = true;
 	
+	private boolean inserisciSearch = true;
+	
 	public PageData() {
 		this.pageDescription = "";
 		this.search = "auto";
@@ -131,6 +133,7 @@ public class PageData implements Serializable {
 		this.includiMenuLateraleSx = true;
 		this.paginazione = true;
 		this.comandiAzioneBarraTitoloDettaglioElemento = new ArrayList<>();
+		this.setInserisciSearch(true);
 	}
 
 	public void setPageDescription(String s) {
@@ -998,5 +1001,17 @@ public class PageData implements Serializable {
 		de.setIcon(icon);
 		
 		e.add(de);
+	}
+
+	public boolean isInserisciSearch() {
+		return this.inserisciSearch;
+	}
+	
+	public void nascondiTextFilterAutomatico() {
+		this.setInserisciSearch(false);
+	}
+
+	public void setInserisciSearch(boolean inserisciSearch) {
+		this.inserisciSearch = inserisciSearch;
 	}
 }

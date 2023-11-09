@@ -231,6 +231,7 @@ public final class Filtri
 	public static final String FILTRO_PROPRIETA_NOME = "filtroPropNome";
 	public static final String FILTRO_PROPRIETA_VALORE = "filtroPropValore";
 	
+	public static final String FILTRO_REMOTE_STORE_ID = "filtroRemoteStoreId";
 	public static final String FILTRO_REMOTE_STORE_KEY_KID = "filtroRemoteStoreKeyKid";
 	public static final String FILTRO_REMOTE_STORE_KEY_CLIENT_ID = "filtroRemoteStoreKeyClientId";
 	public static final String FILTRO_REMOTE_STORE_KEY_ORGANIZZAZIONE = "filtroRemoteStoreKeyOrganizzazione";

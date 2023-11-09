@@ -67,6 +67,7 @@ import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -87,6 +88,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
+import org.openspcoop2.web.ctrlstat.servlet.remote_stores.RemoteStoresCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -1055,6 +1057,12 @@ public class DocumentoExporter extends HttpServlet {
 						fileName+=".error";
 						docBytes = msgErrore.getBytes();
 					}
+				}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_REMOTE_STORE_ENTRY.equals(tipoDocumento)){
+					RemoteStoresCore remoteStoresCore = new RemoteStoresCore(archiviCore);
+					
+					RemoteStoreKeyEntry remoteStoreKeyEntry = remoteStoresCore.getRemoteStoreKeyEntry(idAccordoLong);
+					fileName = remoteStoreKeyEntry.getKid() + ".jwk";
+					docBytes = remoteStoreKeyEntry.getContentKey();
 				}
 				else{
 					throw new ServletException("Tipo archivio ["+tipoDocumento+"] non gestito (tipo documento: "+tipoDocumentoDaScaricare+")");

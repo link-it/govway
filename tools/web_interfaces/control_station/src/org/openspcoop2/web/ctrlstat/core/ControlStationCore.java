@@ -140,6 +140,9 @@ import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.pdd.core.keystore.RemoteStoreKey;
+import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
+import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriverUtils;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -5345,6 +5348,16 @@ public class ControlStationCore {
 						extendedServlet.performDelete(con, oggetto, extendedBean);
 					}
 					
+					/***********************************************************
+					 * Operazioni su Remote Store Keys *
+					 **********************************************************/
+					// Allarmi
+					if(oggetto instanceof RemoteStoreKeyEntry) {
+						RemoteStoreKeyEntry entry = (RemoteStoreKeyEntry) oggetto;
+						RemoteStoreProviderDriverUtils.deleteRemoteStoreKeyEntry(driver.getDriverConfigurazioneDB(), entry.getIdRemoteStore(), entry.getId());
+						doSetDati = false;
+					}
+										
 					break;
 
 				default:
@@ -6496,6 +6509,14 @@ public class ControlStationCore {
 			IExtendedBean w = (IExtendedBean) oggetto;
 			msg+=":"+w.getClass().getSimpleName();
 			msg+=":<"+w.getHumanId()+">";
+		}
+		// RemoteStoreKey
+		else if(oggetto instanceof RemoteStoreKeyEntry) {
+			RemoteStoreKeyEntry key = (RemoteStoreKeyEntry) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuilder bf = new StringBuilder();
+			bf.append("Kid[").append(key.getKid()).append("]");
+			msg+=":<"+bf.toString()+">";
 		}
 		
 		return msg;
