@@ -629,16 +629,16 @@ public abstract class MessageSecurityContext{
     				}
     			}
     			
-    			if(props.containsKey(SecurityConstants.USERNAME_TOKEN_PASSWORD)) {
-    				String password = (String) props.get(SecurityConstants.USERNAME_TOKEN_PASSWORD);
+    			if(props.containsKey(SecurityConstants.USERNAME_TOKEN_PW)) {
+    				String password = (String) props.get(SecurityConstants.USERNAME_TOKEN_PW);
     				String alias = aliasGenerico;
     				if(alias!=null){
     					mapAliasToPassword.put(alias, password);
     				}
     			}
     			
-    			if(props.containsKey(SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP)) {
-	    			String mapUserPassword = (String) props.get(SecurityConstants.USERNAME_TOKEN_PASSWORD_MAP);
+    			if(props.containsKey(SecurityConstants.USERNAME_TOKEN_PW_MAP)) {
+	    			String mapUserPassword = (String) props.get(SecurityConstants.USERNAME_TOKEN_PW_MAP);
 	    			if(mapUserPassword!=null && !"".equals(mapUserPassword)) {
 	    				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(mapUserPassword);
 	    				if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
