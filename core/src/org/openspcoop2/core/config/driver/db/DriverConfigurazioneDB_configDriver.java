@@ -28,6 +28,7 @@ import java.util.List;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
@@ -341,7 +342,7 @@ public class DriverConfigurazioneDB_configDriver {
 	
 	
 	
-	protected AccessoConfigurazione getAccessoConfigurazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	protected AccessoConfigurazione getAccessoConfigurazione() throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -517,7 +518,7 @@ public class DriverConfigurazioneDB_configDriver {
 	
 	
 	
-	protected AccessoDatiAutorizzazione getAccessoDatiAutorizzazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	protected AccessoDatiAutorizzazione getAccessoDatiAutorizzazione() throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -540,8 +541,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 		try {
 			AccessoDatiAutorizzazione accessoDatiAutorizzazione = new AccessoDatiAutorizzazione();
-			Cache cache = null;
-
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
 			sqlQueryObject.addSelectField("*");
@@ -553,31 +553,7 @@ public class DriverConfigurazioneDB_configDriver {
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
-				String tmpCache = rs.getString("auth_statocache");
-				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
-					cache = new Cache();
-
-					String tmpDim = rs.getString("auth_dimensionecache");
-					if (tmpDim != null && !tmpDim.equals(""))
-						cache.setDimensione(tmpDim);
-
-					String tmpAlg = rs.getString("auth_algoritmocache");
-					if (tmpAlg.equalsIgnoreCase("LRU"))
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
-					else
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
-
-					String tmpIdle = rs.getString("auth_idlecache");
-					String tmpLife = rs.getString("auth_lifecache");
-
-					if (tmpIdle != null && !tmpIdle.equals(""))
-						cache.setItemIdleTime(tmpIdle);
-					if (tmpLife != null && !tmpLife.equals(""))
-						cache.setItemLifeSecond(tmpLife);
-
-					accessoDatiAutorizzazione.setCache(cache);
-
-				}
+				readAccessoDatiAutorizzazione(rs, accessoDatiAutorizzazione);
 				rs.close();
 				stm.close();
 			}
@@ -594,10 +570,37 @@ public class DriverConfigurazioneDB_configDriver {
 			this.driver.closeConnection(con);
 		}
 	}
+	private void readAccessoDatiAutorizzazione(ResultSet rs, AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws SQLException {
+		String tmpCache = rs.getString("auth_statocache");
+		if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+			Cache cache = new Cache();
+
+			String tmpDim = rs.getString("auth_dimensionecache");
+			if (tmpDim != null && !tmpDim.equals(""))
+				cache.setDimensione(tmpDim);
+
+			String tmpAlg = rs.getString("auth_algoritmocache");
+			if (tmpAlg.equalsIgnoreCase("LRU"))
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+			else
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+			String tmpIdle = rs.getString("auth_idlecache");
+			String tmpLife = rs.getString("auth_lifecache");
+
+			if (tmpIdle != null && !tmpIdle.equals(""))
+				cache.setItemIdleTime(tmpIdle);
+			if (tmpLife != null && !tmpLife.equals(""))
+				cache.setItemLifeSecond(tmpLife);
+
+			accessoDatiAutorizzazione.setCache(cache);
+
+		}
+	}
 	
 	
 	
-	protected AccessoDatiAutenticazione getAccessoDatiAutenticazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	protected AccessoDatiAutenticazione getAccessoDatiAutenticazione() throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -620,8 +623,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 		try {
 			AccessoDatiAutenticazione accessoDatiAutenticazione = new AccessoDatiAutenticazione();
-			Cache cache = null;
-
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
 			sqlQueryObject.addSelectField("*");
@@ -633,31 +635,7 @@ public class DriverConfigurazioneDB_configDriver {
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
-				String tmpCache = rs.getString("authn_statocache");
-				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
-					cache = new Cache();
-
-					String tmpDim = rs.getString("authn_dimensionecache");
-					if (tmpDim != null && !tmpDim.equals(""))
-						cache.setDimensione(tmpDim);
-
-					String tmpAlg = rs.getString("authn_algoritmocache");
-					if (tmpAlg.equalsIgnoreCase("LRU"))
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
-					else
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
-
-					String tmpIdle = rs.getString("authn_idlecache");
-					String tmpLife = rs.getString("authn_lifecache");
-
-					if (tmpIdle != null && !tmpIdle.equals(""))
-						cache.setItemIdleTime(tmpIdle);
-					if (tmpLife != null && !tmpLife.equals(""))
-						cache.setItemLifeSecond(tmpLife);
-
-					accessoDatiAutenticazione.setCache(cache);
-
-				}
+				readAccessoDatiAutenticazione(rs, accessoDatiAutenticazione);
 				rs.close();
 				stm.close();
 			}
@@ -674,9 +652,36 @@ public class DriverConfigurazioneDB_configDriver {
 			this.driver.closeConnection(con);
 		}
 	}
+	private void readAccessoDatiAutenticazione(ResultSet rs, AccessoDatiAutenticazione accessoDatiAutenticazione) throws SQLException {
+		String tmpCache = rs.getString("authn_statocache");
+		if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+			Cache cache = new Cache();
+
+			String tmpDim = rs.getString("authn_dimensionecache");
+			if (tmpDim != null && !tmpDim.equals(""))
+				cache.setDimensione(tmpDim);
+
+			String tmpAlg = rs.getString("authn_algoritmocache");
+			if (tmpAlg.equalsIgnoreCase("LRU"))
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+			else
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+			String tmpIdle = rs.getString("authn_idlecache");
+			String tmpLife = rs.getString("authn_lifecache");
+
+			if (tmpIdle != null && !tmpIdle.equals(""))
+				cache.setItemIdleTime(tmpIdle);
+			if (tmpLife != null && !tmpLife.equals(""))
+				cache.setItemLifeSecond(tmpLife);
+
+			accessoDatiAutenticazione.setCache(cache);
+
+		}
+	}
 	
 	
-	protected AccessoDatiGestioneToken getAccessoDatiGestioneToken() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	protected AccessoDatiGestioneToken getAccessoDatiGestioneToken() throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -699,8 +704,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 		try {
 			AccessoDatiGestioneToken accessoDatiGestioneToken = new AccessoDatiGestioneToken();
-			Cache cache = null;
-
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
 			sqlQueryObject.addSelectField("*");
@@ -712,31 +716,7 @@ public class DriverConfigurazioneDB_configDriver {
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
-				String tmpCache = rs.getString("token_statocache");
-				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
-					cache = new Cache();
-
-					String tmpDim = rs.getString("token_dimensionecache");
-					if (tmpDim != null && !tmpDim.equals(""))
-						cache.setDimensione(tmpDim);
-
-					String tmpAlg = rs.getString("token_algoritmocache");
-					if (tmpAlg.equalsIgnoreCase("LRU"))
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
-					else
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
-
-					String tmpIdle = rs.getString("token_idlecache");
-					String tmpLife = rs.getString("token_lifecache");
-
-					if (tmpIdle != null && !tmpIdle.equals(""))
-						cache.setItemIdleTime(tmpIdle);
-					if (tmpLife != null && !tmpLife.equals(""))
-						cache.setItemLifeSecond(tmpLife);
-
-					accessoDatiGestioneToken.setCache(cache);
-
-				}
+				readAccessoDatiGestioneToken(rs, accessoDatiGestioneToken);
 				rs.close();
 				stm.close();
 			}
@@ -753,10 +733,125 @@ public class DriverConfigurazioneDB_configDriver {
 			this.driver.closeConnection(con);
 		}
 	}
+	private void readAccessoDatiGestioneToken(ResultSet rs, AccessoDatiGestioneToken accessoDatiGestioneToken) throws SQLException {
+		String tmpCache = rs.getString("token_statocache");
+		if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+			Cache cache = new Cache();
+
+			String tmpDim = rs.getString("token_dimensionecache");
+			if (tmpDim != null && !tmpDim.equals(""))
+				cache.setDimensione(tmpDim);
+
+			String tmpAlg = rs.getString("token_algoritmocache");
+			if (tmpAlg.equalsIgnoreCase("LRU"))
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+			else
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+			String tmpIdle = rs.getString("token_idlecache");
+			String tmpLife = rs.getString("token_lifecache");
+
+			if (tmpIdle != null && !tmpIdle.equals(""))
+				cache.setItemIdleTime(tmpIdle);
+			if (tmpLife != null && !tmpLife.equals(""))
+				cache.setItemLifeSecond(tmpLife);
+
+			accessoDatiGestioneToken.setCache(cache);
+
+		}
+	}
 	
 	
 	
-	protected AccessoDatiKeystore getAccessoDatiKeystore() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	
+	
+	
+	protected AccessoDatiAttributeAuthority getAccessoDatiAttributeAuthority() throws DriverConfigurazioneException {
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.driver.atomica) {
+			try {
+				con = this.driver.getConnectionFromDatasource("getAccessoDatiAttributeAuthority");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAttributeAuthority] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.driver.globalConnection;
+
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+
+		try {
+			AccessoDatiAttributeAuthority accessoDatiAttributeAuthority = new AccessoDatiAttributeAuthority();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
+			sqlQueryObject.addSelectField("*");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			this.driver.logDebug("eseguo query : " + sqlQuery);
+
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				readAccessoDatiAttributeAuthority(rs, accessoDatiAttributeAuthority);
+				rs.close();
+				stm.close();
+			}
+
+			return accessoDatiAttributeAuthority;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAttributeAuthority] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAttributeAuthority] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
+		}
+	}
+	private void readAccessoDatiAttributeAuthority(ResultSet rs, AccessoDatiAttributeAuthority accessoDatiAttributeAuthority) throws SQLException {
+		String tmpCache = rs.getString("aa_statocache");
+		if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+			Cache cache = new Cache();
+
+			String tmpDim = rs.getString("aa_dimensionecache");
+			if (tmpDim != null && !tmpDim.equals(""))
+				cache.setDimensione(tmpDim);
+
+			String tmpAlg = rs.getString("aa_algoritmocache");
+			if (tmpAlg.equalsIgnoreCase("LRU"))
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+			else
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+			String tmpIdle = rs.getString("aa_idlecache");
+			String tmpLife = rs.getString("aa_lifecache");
+
+			if (tmpIdle != null && !tmpIdle.equals(""))
+				cache.setItemIdleTime(tmpIdle);
+			if (tmpLife != null && !tmpLife.equals(""))
+				cache.setItemLifeSecond(tmpLife);
+
+			accessoDatiAttributeAuthority.setCache(cache);
+
+		}
+	}
+	
+	
+	
+	
+	
+	
+	protected AccessoDatiKeystore getAccessoDatiKeystore() throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -779,7 +874,6 @@ public class DriverConfigurazioneDB_configDriver {
 
 		try {
 			AccessoDatiKeystore accessoDatiKeystore = new AccessoDatiKeystore();
-			Cache cache = null;
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
@@ -792,35 +886,7 @@ public class DriverConfigurazioneDB_configDriver {
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
-				String tmpCache = rs.getString("keystore_statocache");
-				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
-					cache = new Cache();
-
-					String tmpDim = rs.getString("keystore_dimensionecache");
-					if (tmpDim != null && !tmpDim.equals(""))
-						cache.setDimensione(tmpDim);
-
-					String tmpAlg = rs.getString("keystore_algoritmocache");
-					if (tmpAlg.equalsIgnoreCase("LRU"))
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
-					else
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
-
-					String tmpIdle = rs.getString("keystore_idlecache");
-					String tmpLife = rs.getString("keystore_lifecache");
-					String tmpCrlLife = rs.getString("keystore_crl_lifecache");
-
-					if (tmpIdle != null && !tmpIdle.equals(""))
-						cache.setItemIdleTime(tmpIdle);
-					if (tmpLife != null && !tmpLife.equals(""))
-						cache.setItemLifeSecond(tmpLife);
-
-					accessoDatiKeystore.setCache(cache);
-					
-					if (tmpCrlLife != null && !tmpCrlLife.equals(""))
-						accessoDatiKeystore.setCrlItemLifeSecond(tmpCrlLife);
-
-				}
+				readAccessoDatiKeystore(rs, accessoDatiKeystore);
 				rs.close();
 				stm.close();
 			}
@@ -837,10 +903,45 @@ public class DriverConfigurazioneDB_configDriver {
 			this.driver.closeConnection(con);
 		}
 	}
+	private void readAccessoDatiKeystore(ResultSet rs, AccessoDatiKeystore accessoDatiKeystore) throws SQLException {
+		String tmpCache = rs.getString("keystore_statocache");
+		if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+			Cache cache = new Cache();
+
+			String tmpDim = rs.getString("keystore_dimensionecache");
+			if (tmpDim != null && !tmpDim.equals(""))
+				cache.setDimensione(tmpDim);
+
+			String tmpAlg = rs.getString("keystore_algoritmocache");
+			if (tmpAlg.equalsIgnoreCase("LRU"))
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+			else
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+			String tmpIdle = rs.getString("keystore_idlecache");
+			String tmpLife = rs.getString("keystore_lifecache");
+			
+
+			if (tmpIdle != null && !tmpIdle.equals(""))
+				cache.setItemIdleTime(tmpIdle);
+			if (tmpLife != null && !tmpLife.equals(""))
+				cache.setItemLifeSecond(tmpLife);
+
+			accessoDatiKeystore.setCache(cache);
+			
+			readAccessoDatiKeystoreCrlLife(rs, accessoDatiKeystore);
+		}
+	}
+	private void readAccessoDatiKeystoreCrlLife(ResultSet rs, AccessoDatiKeystore accessoDatiKeystore) throws SQLException {
+		String tmpCrlLife = rs.getString("keystore_crl_lifecache");
+		
+		if (tmpCrlLife != null && !tmpCrlLife.equals(""))
+			accessoDatiKeystore.setCrlItemLifeSecond(tmpCrlLife);
+	}
 	
 	
 	
-	protected AccessoDatiConsegnaApplicativi getAccessoDatiConsegnaApplicativi() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	protected AccessoDatiConsegnaApplicativi getAccessoDatiConsegnaApplicativi() throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -863,8 +964,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 		try {
 			AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi = new AccessoDatiConsegnaApplicativi();
-			Cache cache = null;
-
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
 			sqlQueryObject.addSelectField("*");
@@ -876,31 +976,7 @@ public class DriverConfigurazioneDB_configDriver {
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
-				String tmpCache = rs.getString("consegna_statocache");
-				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
-					cache = new Cache();
-
-					String tmpDim = rs.getString("consegna_dimensionecache");
-					if (tmpDim != null && !tmpDim.equals(""))
-						cache.setDimensione(tmpDim);
-
-					String tmpAlg = rs.getString("consegna_algoritmocache");
-					if (tmpAlg.equalsIgnoreCase("LRU"))
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
-					else
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
-
-					String tmpIdle = rs.getString("consegna_idlecache");
-					String tmpLife = rs.getString("consegna_lifecache");
-					
-					if (tmpIdle != null && !tmpIdle.equals(""))
-						cache.setItemIdleTime(tmpIdle);
-					if (tmpLife != null && !tmpLife.equals(""))
-						cache.setItemLifeSecond(tmpLife);
-
-					accessoDatiConsegnaApplicativi.setCache(cache);
-					
-				}
+				readAccessoDatiConsegnaApplicativi(rs, accessoDatiConsegnaApplicativi);
 				rs.close();
 				stm.close();
 			}
@@ -917,9 +993,36 @@ public class DriverConfigurazioneDB_configDriver {
 			this.driver.closeConnection(con);
 		}
 	}
+	private void readAccessoDatiConsegnaApplicativi(ResultSet rs, AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi) throws SQLException {
+		String tmpCache = rs.getString("consegna_statocache");
+		if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+			Cache cache = new Cache();
+
+			String tmpDim = rs.getString("consegna_dimensionecache");
+			if (tmpDim != null && !tmpDim.equals(""))
+				cache.setDimensione(tmpDim);
+
+			String tmpAlg = rs.getString("consegna_algoritmocache");
+			if (tmpAlg.equalsIgnoreCase("LRU"))
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+			else
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+			String tmpIdle = rs.getString("consegna_idlecache");
+			String tmpLife = rs.getString("consegna_lifecache");
+			
+			if (tmpIdle != null && !tmpIdle.equals(""))
+				cache.setItemIdleTime(tmpIdle);
+			if (tmpLife != null && !tmpLife.equals(""))
+				cache.setItemLifeSecond(tmpLife);
+
+			accessoDatiConsegnaApplicativi.setCache(cache);
+			
+		}
+	}
 	
 	
-	protected AccessoDatiRichieste getAccessoDatiRichieste() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	protected AccessoDatiRichieste getAccessoDatiRichieste() throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -942,8 +1045,7 @@ public class DriverConfigurazioneDB_configDriver {
 
 		try {
 			AccessoDatiRichieste accessoDatiRichieste = new AccessoDatiRichieste();
-			Cache cache = null;
-
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
 			sqlQueryObject.addSelectField("*");
@@ -955,31 +1057,7 @@ public class DriverConfigurazioneDB_configDriver {
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
-				String tmpCache = rs.getString("dati_richieste_statocache");
-				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
-					cache = new Cache();
-
-					String tmpDim = rs.getString("dati_richieste_dimensionecache");
-					if (tmpDim != null && !tmpDim.equals(""))
-						cache.setDimensione(tmpDim);
-
-					String tmpAlg = rs.getString("dati_richieste_algoritmocache");
-					if (tmpAlg.equalsIgnoreCase("LRU"))
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
-					else
-						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
-
-					String tmpIdle = rs.getString("dati_richieste_idlecache");
-					String tmpLife = rs.getString("dati_richieste_lifecache");
-					
-					if (tmpIdle != null && !tmpIdle.equals(""))
-						cache.setItemIdleTime(tmpIdle);
-					if (tmpLife != null && !tmpLife.equals(""))
-						cache.setItemLifeSecond(tmpLife);
-
-					accessoDatiRichieste.setCache(cache);
-
-				}
+				readAccessoDatiRichieste(rs, accessoDatiRichieste);
 				rs.close();
 				stm.close();
 			}
@@ -994,6 +1072,33 @@ public class DriverConfigurazioneDB_configDriver {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stm);
 			this.driver.closeConnection(con);
+		}
+	}
+	private void readAccessoDatiRichieste(ResultSet rs, AccessoDatiRichieste accessoDatiRichieste) throws SQLException {
+		String tmpCache = rs.getString("dati_richieste_statocache");
+		if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+			Cache cache = new Cache();
+
+			String tmpDim = rs.getString("dati_richieste_dimensionecache");
+			if (tmpDim != null && !tmpDim.equals(""))
+				cache.setDimensione(tmpDim);
+
+			String tmpAlg = rs.getString("dati_richieste_algoritmocache");
+			if (tmpAlg.equalsIgnoreCase("LRU"))
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+			else
+				cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+			String tmpIdle = rs.getString("dati_richieste_idlecache");
+			String tmpLife = rs.getString("dati_richieste_lifecache");
+			
+			if (tmpIdle != null && !tmpIdle.equals(""))
+				cache.setItemIdleTime(tmpIdle);
+			if (tmpLife != null && !tmpLife.equals(""))
+				cache.setItemLifeSecond(tmpLife);
+
+			accessoDatiRichieste.setCache(cache);
+
 		}
 	}
 	
@@ -2354,7 +2459,9 @@ public class DriverConfigurazioneDB_configDriver {
 				if(cge==null) cge = new ConfigurazioneGestioneErrore();
 				cge.setComponenteIntegrazione(ge);
 			}
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 
 		try{
 			GestioneErrore ge = this.gestioneErroreDriver.getGestioneErroreComponenteCooperazione();
@@ -2362,70 +2469,102 @@ public class DriverConfigurazioneDB_configDriver {
 				if(cge==null) cge = new ConfigurazioneGestioneErrore();
 				cge.setComponenteCooperazione(ge);
 			}
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 
 		if(cge!=null) config.setGestioneErrore(cge);
 
 		// - AccessoRegistro
 		try{
 			config.setAccessoRegistro(getAccessoRegistro());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 		
 		// - AccessoConfigurazione
 		try{
 			config.setAccessoConfigurazione(getAccessoConfigurazione());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 		
 		// - AccessoDatiAutorizzazione
 		try{
 			config.setAccessoDatiAutorizzazione(getAccessoDatiAutorizzazione());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 		
 		// - AccessoDatiAutenticazione
 		try{
 			config.setAccessoDatiAutenticazione(getAccessoDatiAutenticazione());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 		
 		// - AccessoDatiGestioneToken
 		try{
 			config.setAccessoDatiGestioneToken(getAccessoDatiGestioneToken());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
+		
+		// - AccessoDatiAttributeAuthority
+		try{
+			config.setAccessoDatiAttributeAuthority(getAccessoDatiAttributeAuthority());
+		}catch (Exception e) {
+			// ignore
+		}
 		
 		// - AccessoDatiKeystore
 		try{
 			config.setAccessoDatiKeystore(getAccessoDatiKeystore());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 		
 		// - AccessoDatiConsegnaApplicativi
 		try{
 			config.setAccessoDatiConsegnaApplicativi(getAccessoDatiConsegnaApplicativi());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 		
 		// - AccessoDatiRichieste
 		try{
 			config.setAccessoDatiRichieste(getAccessoDatiRichieste());
-		}catch (Exception e) {}
-
+		}catch (Exception e) {
+			// ignore
+		}
 
 		// - RoutingTable
 		try{
 			config.setRoutingTable(this.routingTableDriver.getRoutingTable());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 
 		// - ServiziPdD
 		try{
 			config.setStatoServiziPdd(getStatoServiziPdD());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 
 		// - SystemProperties
 		try{
 			config.setSystemProperties(getSystemPropertiesPdD());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 
 		// - GenericProperties
 		try{
 			config.getGenericPropertiesList().addAll(this.genericPropertiesDriver.getGenericProperties());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			// ignore
+		}
 
 		return config;
 	}

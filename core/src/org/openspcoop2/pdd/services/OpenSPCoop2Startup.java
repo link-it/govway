@@ -55,6 +55,7 @@ import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
@@ -1651,13 +1652,65 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreToken.initialize(propertiesReader.getCacheTypeToken(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreToken.initializeGestioneToken(propertiesReader.getCacheTypeToken(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
-					GestoreToken.initialize(logCore);
+					GestoreToken.initializeGestioneToken(logCore);
 				}
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Gestore Token");
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			/*----------- Inizializzazione AttributeAuthority --------------*/
+			try{
+				AccessoDatiAttributeAuthority datiAttributeAuthority = configurazionePdDManager.getAccessoDatiAttributeAuthority();
+				if(datiAttributeAuthority!=null && datiAttributeAuthority.getCache()!=null){
+					
+					int dimensioneCache = -1;
+					if(datiAttributeAuthority.getCache().getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(datiAttributeAuthority.getCache().getDimensione());
+						}catch(Exception e){
+							throw new CoreException("Parametro 'dimensioneCache' errato per la cache di accesso ai dati dei token");
+						}
+					}
+					
+					String algoritmo = null;
+					if(datiAttributeAuthority.getCache().getAlgoritmo()!=null){
+						algoritmo = datiAttributeAuthority.getCache().getAlgoritmo().toString();
+					}
+					
+					long idleTime = -1;
+					if(datiAttributeAuthority.getCache().getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(datiAttributeAuthority.getCache().getItemIdleTime());
+						}catch(Exception e){
+							throw new CoreException("Parametro 'idleTime' errato per la cache di accesso ai dati dei token");
+						}
+					}
+					
+					long itemLifeSecond = -1;
+					if(datiAttributeAuthority.getCache().getItemLifeSecond()!=null){
+						try{
+							itemLifeSecond = Integer.parseInt(datiAttributeAuthority.getCache().getItemLifeSecond());
+						}catch(Exception e){
+							throw new CoreException("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati dei token");
+						}
+					}
+
+					GestoreToken.initializeAttributeAuthority(propertiesReader.getCacheTypeAttributeAuthority(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+				}
+				else{
+					GestoreToken.initializeAttributeAuthority(logCore);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"AttributeAuthority");
 				return;
 			}
 			
@@ -2828,6 +2881,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - dati di gestione dei token");
 				}
+				// MBean AttributeAuthority
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanAttributeAuthority();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - dati raccolti tramite attribute authority");
+				}
 				// MBean GestioneResponseCaching
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanResponseCaching();
@@ -2902,77 +2961,84 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			/* ----------- Log Configurazione di Sistema ------------ */
 			
 			InformazioniStatoPorta informazioniStatoPorta = new InformazioniStatoPorta();
-			List<InformazioniStatoPortaCache> informazioniStatoPortaCache = new ArrayList<InformazioniStatoPortaCache>();
+			List<InformazioniStatoPortaCache> informazioniStatoPortaCache = new ArrayList<>();
 			
 			AccessoRegistroServizi infoRegistroServizi = new AccessoRegistroServizi();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_registro = new InformazioniStatoPortaCache(CostantiPdD.JMX_REGISTRO_SERVIZI, infoRegistroServizi.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheRegistro = new InformazioniStatoPortaCache(CostantiPdD.JMX_REGISTRO_SERVIZI, infoRegistroServizi.isCacheAbilitata());
 			if(infoRegistroServizi.isCacheAbilitata()){
-				informazioniStatoPortaCache_registro.setStatoCache(infoRegistroServizi.printStatCache());
+				informazioniStatoPortaCacheRegistro.setStatoCache(infoRegistroServizi.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_registro);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheRegistro);
 			
 			org.openspcoop2.pdd.core.jmx.ConfigurazionePdD infoConfigurazione = new org.openspcoop2.pdd.core.jmx.ConfigurazionePdD();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_config = new InformazioniStatoPortaCache(CostantiPdD.JMX_CONFIGURAZIONE_PDD, infoConfigurazione.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheConfig = new InformazioniStatoPortaCache(CostantiPdD.JMX_CONFIGURAZIONE_PDD, infoConfigurazione.isCacheAbilitata());
 			if(infoConfigurazione.isCacheAbilitata()){
-				informazioniStatoPortaCache_config.setStatoCache(infoConfigurazione.printStatCache());
+				informazioniStatoPortaCacheConfig.setStatoCache(infoConfigurazione.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_config);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheConfig);
 			
 			org.openspcoop2.pdd.core.jmx.EngineAutorizzazione infoAutorizzazioneDati = new org.openspcoop2.pdd.core.jmx.EngineAutorizzazione();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_autorizzazioneDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTORIZZAZIONE, infoAutorizzazioneDati.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheAutorizzazioneDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTORIZZAZIONE, infoAutorizzazioneDati.isCacheAbilitata());
 			if(infoAutorizzazioneDati.isCacheAbilitata()){
-				informazioniStatoPortaCache_autorizzazioneDati.setStatoCache(infoAutorizzazioneDati.printStatCache());
+				informazioniStatoPortaCacheAutorizzazioneDati.setStatoCache(infoAutorizzazioneDati.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_autorizzazioneDati);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheAutorizzazioneDati);
 			
 			org.openspcoop2.pdd.core.jmx.EngineAutenticazione infoAutenticazioneDati = new org.openspcoop2.pdd.core.jmx.EngineAutenticazione();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_autenticazioneDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTENTICAZIONE, infoAutenticazioneDati.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheAutenticazioneDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTENTICAZIONE, infoAutenticazioneDati.isCacheAbilitata());
 			if(infoAutenticazioneDati.isCacheAbilitata()){
-				informazioniStatoPortaCache_autenticazioneDati.setStatoCache(infoAutenticazioneDati.printStatCache());
+				informazioniStatoPortaCacheAutenticazioneDati.setStatoCache(infoAutenticazioneDati.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_autenticazioneDati);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheAutenticazioneDati);
 			
 			org.openspcoop2.pdd.core.jmx.EngineGestioneToken infoGestioneTokenDati = new org.openspcoop2.pdd.core.jmx.EngineGestioneToken();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_gestioneTokenDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_TOKEN, infoGestioneTokenDati.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheGestioneTokenDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_TOKEN, infoGestioneTokenDati.isCacheAbilitata());
 			if(infoGestioneTokenDati.isCacheAbilitata()){
-				informazioniStatoPortaCache_gestioneTokenDati.setStatoCache(infoGestioneTokenDati.printStatCache());
+				informazioniStatoPortaCacheGestioneTokenDati.setStatoCache(infoGestioneTokenDati.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_gestioneTokenDati);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheGestioneTokenDati);
+			
+			org.openspcoop2.pdd.core.jmx.EngineAttributeAuthority infoAttributeAuthorityDati = new org.openspcoop2.pdd.core.jmx.EngineAttributeAuthority();
+			InformazioniStatoPortaCache informazioniStatoPortaCacheAttributeAuthorityDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_ATTRIBUTE_AUTHORITY, infoAttributeAuthorityDati.isCacheAbilitata());
+			if(infoAttributeAuthorityDati.isCacheAbilitata()){
+				informazioniStatoPortaCacheAttributeAuthorityDati.setStatoCache(infoAttributeAuthorityDati.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheAttributeAuthorityDati);
 			
 			org.openspcoop2.pdd.core.jmx.EngineResponseCaching infoResponseCaching = new org.openspcoop2.pdd.core.jmx.EngineResponseCaching();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_responseCaching = new InformazioniStatoPortaCache(CostantiPdD.JMX_RESPONSE_CACHING, infoResponseCaching.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheResponseCaching = new InformazioniStatoPortaCache(CostantiPdD.JMX_RESPONSE_CACHING, infoResponseCaching.isCacheAbilitata());
 			if(infoResponseCaching.isCacheAbilitata()){
-				informazioniStatoPortaCache_responseCaching.setStatoCache(infoResponseCaching.printStatCache());
+				informazioniStatoPortaCacheResponseCaching.setStatoCache(infoResponseCaching.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_responseCaching);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheResponseCaching);
 			
 			org.openspcoop2.pdd.core.jmx.EngineKeystoreCaching infoKeystoreCaching = new org.openspcoop2.pdd.core.jmx.EngineKeystoreCaching();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_keystoreCaching = new InformazioniStatoPortaCache(CostantiPdD.JMX_KEYSTORE_CACHING, infoKeystoreCaching.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheKeystoreCaching = new InformazioniStatoPortaCache(CostantiPdD.JMX_KEYSTORE_CACHING, infoKeystoreCaching.isCacheAbilitata());
 			if(infoKeystoreCaching.isCacheAbilitata()){
-				informazioniStatoPortaCache_keystoreCaching.setStatoCache(infoKeystoreCaching.printStatCache());
+				informazioniStatoPortaCacheKeystoreCaching.setStatoCache(infoKeystoreCaching.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_keystoreCaching);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheKeystoreCaching);
 			
 			org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi infoGestoreConsegnaApplicativi = new org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_gestoreConsegnaApplicativi = new InformazioniStatoPortaCache(CostantiPdD.JMX_LOAD_BALANCER, infoGestoreConsegnaApplicativi.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheGestoreConsegnaApplicativi = new InformazioniStatoPortaCache(CostantiPdD.JMX_LOAD_BALANCER, infoGestoreConsegnaApplicativi.isCacheAbilitata());
 			if(infoGestoreConsegnaApplicativi.isCacheAbilitata()){
-				informazioniStatoPortaCache_gestoreConsegnaApplicativi.setStatoCache(infoGestoreConsegnaApplicativi.printStatCache());
+				informazioniStatoPortaCacheGestoreConsegnaApplicativi.setStatoCache(infoGestoreConsegnaApplicativi.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_gestoreConsegnaApplicativi);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheGestoreConsegnaApplicativi);
 			
 			org.openspcoop2.pdd.core.jmx.GestoreRichieste infoGestoreRichieste = new org.openspcoop2.pdd.core.jmx.GestoreRichieste();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_gestoreRichieste = new InformazioniStatoPortaCache(CostantiPdD.JMX_GESTORE_RICHIESTE, infoGestoreRichieste.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheGestoreRichieste = new InformazioniStatoPortaCache(CostantiPdD.JMX_GESTORE_RICHIESTE, infoGestoreRichieste.isCacheAbilitata());
 			if(infoGestoreRichieste.isCacheAbilitata()){
-				informazioniStatoPortaCache_gestoreRichieste.setStatoCache(infoGestoreRichieste.printStatCache());
+				informazioniStatoPortaCacheGestoreRichieste.setStatoCache(infoGestoreRichieste.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_gestoreRichieste);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheGestoreRichieste);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCacheRepositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());
 			if(infoRepositoryMessaggi.isCacheAbilitata()){
-				informazioniStatoPortaCache_repositoryMessaggi.setStatoCache(infoRepositoryMessaggi.printStatCache());
+				informazioniStatoPortaCacheRepositoryMessaggi.setStatoCache(infoRepositoryMessaggi.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_repositoryMessaggi);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCacheRepositoryMessaggi);
 			
 			ConfigurazioneSistema infoConfigSistema = new ConfigurazioneSistema();
 			ConfigurazioneSistema.setIncludePassword(propertiesReader.isConfigurazioneSistema_javaProperties_showPassword());

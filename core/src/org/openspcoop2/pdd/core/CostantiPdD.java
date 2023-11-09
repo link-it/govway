@@ -376,6 +376,8 @@ public class CostantiPdD {
     public static final String JMX_AUTENTICAZIONE = "DatiAutenticazione";
     /** MBean per la gestione dei token */
     public static final String JMX_TOKEN = "GestioneToken";
+    /** MBean per gli attribute authority */
+    public static final String JMX_ATTRIBUTE_AUTHORITY = "AttributeAuthority";
     /** MBean per il caching delle risposte */
     public static final String JMX_RESPONSE_CACHING = "ResponseCaching";
     /** MBean per il caching dei keystore */

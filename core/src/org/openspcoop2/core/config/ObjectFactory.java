@@ -445,6 +445,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AccessoDatiAttributeAuthority }
+     */
+    public AccessoDatiAttributeAuthority createAccessoDatiAttributeAuthority() {
+        return new AccessoDatiAttributeAuthority();
+    }
+
+    /**
      * Create an instance of {@link CorrelazioneApplicativaElemento }
      */
     public CorrelazioneApplicativaElemento createCorrelazioneApplicativaElemento() {

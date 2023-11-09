@@ -74,7 +74,6 @@ public class JMXUtils {
 	public static final MBeanOperationInfo MBEAN_OPERATION_RESET_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_RESET,"Svuota la cache",
 				null,
-				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
 	
@@ -82,7 +81,6 @@ public class JMXUtils {
 	public static final MBeanOperationInfo MBEAN_OPERATION_PREFILL_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_PREFILL,"Pre-fill della cache",
 				null,
-				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
 			
@@ -90,7 +88,6 @@ public class JMXUtils {
 	public static final MBeanOperationInfo MBEAN_OPERATION_PRINT_STATS_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_PRINT_STATS,"Visualizza le informazioni statistiche sugli oggetti presenti in cache",
 			null,
-			//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 			
@@ -98,7 +95,6 @@ public class JMXUtils {
 	public static final MBeanOperationInfo MBEAN_OPERATION_DISABILITA_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_DISABILITA,"Disabilita la cache",
 			null,
-			//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 			
@@ -118,7 +114,6 @@ public class JMXUtils {
 	public static final MBeanOperationInfo MBEAN_OPERATION_LIST_KEYS_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_LIST_KEYS,"Visualizza le chiavi attualmente presenti nella cache",
 			null,
-			//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 	

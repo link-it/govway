@@ -64,6 +64,14 @@ Le cache utilizzate da govway e i valori di default associati sono i seguenti:
 	- Item Life Time (Secondi): 600
 	- Item Idle Time (Secondi): infinito
 
+- *Attribute Authority*: mantiene i dai ottenuti consultando Attribute Authority.
+
+	- Stato: abilitato
+	- Dimensione: 5000
+	- Algoritmo: LRU
+	- Item Life Time (Secondi): 7200
+	- Item Idle Time (Secondi): infinito
+
 - *Keystore*: contiene i keystore e i certificati acceduti, le CRL e i risultati delle validazioni tramite OCSP. A differenza delle altre cache, il parametro che indica l'intervallo temporale di validità dell'elemento differisce per le CRL e per il risultato della validazione tramite OCSP per poter consentire un intervallo minore.
 
 	- Stato: abilitato

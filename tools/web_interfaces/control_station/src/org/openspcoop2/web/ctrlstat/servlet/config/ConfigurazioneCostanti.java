@@ -685,6 +685,8 @@ public class ConfigurazioneCostanti {
 	
 	public static final String LABEL_CONFIGURAZIONE_CACHE_TOKEN = "Cache (Gestione dei Token)";
 	
+	public static final String LABEL_CONFIGURAZIONE_CACHE_ATTRIBUTE_AUTHORITY = "Cache (Attribute Authority)";
+	
 	public static final String LABEL_CONFIGURAZIONE_CACHE_KEYSTORE = "Cache (Keystore)";
 	
 	public static final String LABEL_CONFIGURAZIONE_CACHE_RISPOSTE = "Cache (Risposte)";
@@ -948,6 +950,12 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN = "algoritmocacheToken";
 	public static final String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN = "idlecacheToken";
 	public static final String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN = "lifecacheToken";
+	
+	public static final String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_ATTRIBUTE_AUTHORITY = "statocacheAA";
+	public static final String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_ATTRIBUTE_AUTHORITY = "dimensionecacheAA";
+	public static final String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_ATTRIBUTE_AUTHORITY = "algoritmocacheAA";
+	public static final String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_ATTRIBUTE_AUTHORITY = "idlecacheAA";
+	public static final String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_ATTRIBUTE_AUTHORITY = "lifecacheAA";
 	
 	public static final String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_KEYSTORE = "statocacheKeystore";
 	public static final String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_KEYSTORE = "dimensionecacheKeystore";

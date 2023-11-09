@@ -114,6 +114,12 @@ CREATE TABLE configurazione
 	token_algoritmocache VARCHAR(255),
 	token_idlecache VARCHAR(255),
 	token_lifecache VARCHAR(255),
+	-- Cache per la gestione dei dati ottenuti da attribute authority
+	aa_statocache VARCHAR(255),
+	aa_dimensionecache VARCHAR(255),
+	aa_algoritmocache VARCHAR(255),
+	aa_idlecache VARCHAR(255),
+	aa_lifecache VARCHAR(255),
 	-- Cache per la gestione dei keystore
 	keystore_statocache VARCHAR(255),
 	keystore_dimensionecache VARCHAR(255),

@@ -46,13 +46,13 @@ import org.openspcoop2.utils.cache.Constants;
 
 
 /**
- * Implementazione JMX per la gestione dei token
+ * Implementazione JMX per attribute authority
  *   
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class EngineGestioneToken extends NotificationBroadcasterSupport implements DynamicMBean {
+public class EngineAttributeAuthority extends NotificationBroadcasterSupport implements DynamicMBean {
 
 	/** Attributi */
 	private boolean cacheAbilitata = false;
@@ -292,11 +292,11 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 	}
 	
 	/* Costruttore */
-	public EngineGestioneToken(){
+	public EngineAttributeAuthority(){
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 				
 		// Configurazione
-		this.cacheAbilitata = GestoreToken.isGestioneTokenCacheAbilitata();
+		this.cacheAbilitata = GestoreToken.isAttributeAuthorityCacheAbilitata();
 			
 	}
 	
@@ -309,7 +309,7 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 		try{
 			if(!this.cacheAbilitata)
 				throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
-			GestoreToken.resetGestioneTokenCache();
+			GestoreToken.resetAttributeAuthorityCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(Exception e){
 			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
@@ -321,7 +321,7 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 		try{
 			if(!this.cacheAbilitata)
 				throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
-			return GestoreToken.printStatsGestioneTokenCache("\n");
+			return GestoreToken.printStatsAttributeAuthorityCache("\n");
 		}catch(Exception e){
 			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -330,7 +330,7 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 	
 	public String abilitaCache(){
 		try{
-			GestoreToken.abilitaGestioneTokenCache();
+			GestoreToken.abilitaAttributeAuthorityCache();
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
 		}catch(Exception e){
@@ -341,7 +341,7 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 
 	public String abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond){
 		try{
-			GestoreToken.abilitaGestioneTokenCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
+			GestoreToken.abilitaAttributeAuthorityCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
 		}catch(Exception e){
@@ -352,7 +352,7 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 	
 	public void disabilitaCache() throws JMException{
 		try{
-			GestoreToken.disabilitaGestioneTokenCache();
+			GestoreToken.disabilitaAttributeAuthorityCache();
 			this.cacheAbilitata = false;
 		}catch(Exception e){
 			this.logError(e.getMessage(),e);
@@ -373,7 +373,7 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 		try{
 			if(!this.cacheAbilitata)
 				throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
-			return GestoreToken.listKeysGestioneTokenCache("\n");
+			return GestoreToken.listKeysAttributeAuthorityCache("\n");
 		}catch(Exception e){
 			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -383,8 +383,8 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 	public String getObjectCache(String key){
 		try{
 			if(!this.cacheAbilitata)
-				throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
-			return GestoreToken.getObjectGestioneTokenCache(key);
+				throw new CoreException("Cache non abilitata");
+			return GestoreToken.getObjectAttributeAuthorityCache(key);
 		}catch(Exception e){
 			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -395,7 +395,7 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 		try{
 			if(!this.cacheAbilitata)
 				throw new CoreException(Constants.MSG_CACHE_NON_ABILITATA);
-			GestoreToken.removeObjectGestioneTokenCache(key);
+			GestoreToken.removeObjectAttributeAuthorityCache(key);
 			return JMXUtils.MSG_RIMOZIONE_CACHE_EFFETTUATA;
 		}catch(Exception e){
 			this.logError(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);

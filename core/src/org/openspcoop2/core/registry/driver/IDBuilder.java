@@ -189,7 +189,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 
 	@Override
 	public String toID(Object o, String field) throws IOException {
-		if(o!=null && o instanceof Documento){
+		if(o instanceof Documento){
 			return this.toID(o);
 		}else{
 			return this.toID(o) + "." + field;

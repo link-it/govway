@@ -1,3 +1,9 @@
+2023-11-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1669
+	Differenziata cache che conserva i dati recuperati dalle Attribute Authority rispetto alla cache che conserva i token.
+
 2023-11-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

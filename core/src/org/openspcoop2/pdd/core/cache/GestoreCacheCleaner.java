@@ -70,8 +70,10 @@ import org.openspcoop2.protocol.registry.RegistroServiziReader;
  * @version $Rev$, $Date$
  */
 public class GestoreCacheCleaner {
+	
+	private GestoreCacheCleaner() {}
 
-	private static List<ICacheCleaner> listCacheCleaner = new ArrayList<ICacheCleaner>();
+	private static List<ICacheCleaner> listCacheCleaner = new ArrayList<>();
 	private static DriverRegistroServiziDB driverRegistroDB = null;
 	private static DriverConfigurazioneDB driverConfigDB = null;
 	
@@ -92,8 +94,11 @@ public class GestoreCacheCleaner {
 		if(GestoreAutorizzazione.isCacheAbilitata()) {
 			listCacheCleaner.add(new AutorizzazioneCacheCleaner());
 		}
-		if(GestoreToken.isCacheAbilitata()) {
+		if(GestoreToken.isGestioneTokenCacheAbilitata()) {
 			listCacheCleaner.add(new GestoreTokenCacheCleaner());
+		}
+		if(GestoreToken.isAttributeAuthorityCacheAbilitata()) {
+			listCacheCleaner.add(new AttributeAuthorityCacheCleaner());
 		}
 		if(GestoreLoadBalancerCaching.isCacheAbilitata()) {
 			listCacheCleaner.add(new GestoreLoadBalancerCacheCleaner());
@@ -159,7 +164,7 @@ public class GestoreCacheCleaner {
 						PortaApplicativa pa = driverConfigDB.getPortaApplicativa(idPortaApplicativa);
 						
 						if(idServiziApplicativiErogatori==null) {
-							idServiziApplicativiErogatori = new ArrayList<IDServizioApplicativo>();
+							idServiziApplicativiErogatori = new ArrayList<>();
 						}
 						for (PortaApplicativaServizioApplicativo paSa : pa.getServizioApplicativoList()) {
 							IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -170,7 +175,7 @@ public class GestoreCacheCleaner {
 						
 						if(pa.getBehaviour()!=null && pa.sizeServizioApplicativoList()>0) {
 							if(idConnettori==null) {
-								idConnettori = new ArrayList<IDConnettore>();
+								idConnettori = new ArrayList<>();
 							}
 							for (PortaApplicativaServizioApplicativo paSa : pa.getServizioApplicativoList()) {
 								IDConnettore idConnettore = new IDConnettore();

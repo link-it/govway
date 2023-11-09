@@ -24,17 +24,17 @@ import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 
 /**
- * GestoreTokenCacheCleaner
+ * AttributeAuthorityCacheCleaner
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class GestoreTokenCacheCleaner implements ICacheCleaner {
+public class AttributeAuthorityCacheCleaner implements ICacheCleaner {
 	
 	@Override
 	public void removeGenericProperties(IDGenericProperties idGP) throws Exception {
-		GestoreToken.removeGenericPropertiesGestioneToken(idGP);
+		GestoreToken.removeGenericPropertiesAttributeAuthority(idGP);
 	}
 
 }

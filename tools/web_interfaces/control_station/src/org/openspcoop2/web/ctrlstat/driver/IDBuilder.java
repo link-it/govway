@@ -27,8 +27,13 @@ import java.util.List;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
+import org.openspcoop2.core.config.AccessoDatiGestioneToken;
+import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
@@ -324,6 +329,16 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return "ConfigurazioneAccessoDatiAutenticazione";
 			}else if(o instanceof AccessoDatiAutorizzazione){
 				return "ConfigurazioneAccessoDatiAutorizzazione";
+			}else if(o instanceof AccessoDatiGestioneToken){
+				return "ConfigurazioneAccessoDatiGestioneToken";
+			}else if(o instanceof AccessoDatiAttributeAuthority){
+				return "ConfigurazioneAccessoDatiAttributeAuthority";
+			}else if(o instanceof AccessoDatiKeystore){
+				return "ConfigurazioneAccessoDatiKeystore";
+			}else if(o instanceof AccessoDatiConsegnaApplicativi){
+				return "ConfigurazioneAccessoDatiConsegnaApplicativi";
+			}else if(o instanceof AccessoDatiRichieste){
+				return "ConfigurazioneAccessoDatiRichieste";
 			}else if(o instanceof SystemProperties){
 				return "ProprietàDiSistema";
 			}else if(o instanceof RegistroPlugin){
@@ -504,7 +519,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 
 	@Override
 	public String toID(Object o, String field) throws IOException {
-		if(o!=null && o instanceof Documento){
+		if(o instanceof Documento){
 			return this.toID(o);
 		}else{
 			return this.toID(o) + "." + field;
@@ -752,6 +767,16 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof AccessoDatiAutorizzazione){
 				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiGestioneToken){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiAttributeAuthority){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiKeystore){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiConsegnaApplicativi){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiRichieste){
+				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof SystemProperties){
 				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof RegistroPlugin){
@@ -934,10 +959,15 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(GestioneErrore.class.getSimpleName());
 			oggetti.add("Configurazione");
 			oggetti.add(AccessoRegistro.class.getSimpleName());
-			// non serve come simple name: oggetti.add(AccessoRegistroRegistro.class.getName());
+			/** non serve come simple name: oggetti.add(AccessoRegistroRegistro.class.getName()); */
 			oggetti.add(AccessoConfigurazione.class.getSimpleName());
 			oggetti.add(AccessoDatiAutenticazione.class.getSimpleName());
 			oggetti.add(AccessoDatiAutorizzazione.class.getSimpleName());
+			oggetti.add(AccessoDatiGestioneToken.class.getSimpleName());
+			oggetti.add(AccessoDatiAttributeAuthority.class.getSimpleName());
+			oggetti.add(AccessoDatiKeystore.class.getSimpleName());
+			oggetti.add(AccessoDatiConsegnaApplicativi.class.getSimpleName());
+			oggetti.add(AccessoDatiRichieste.class.getSimpleName());
 			oggetti.add(SystemProperties.class.getSimpleName());
 			oggetti.add("RegolaProxyPass");
 			oggetti.add("ConfigurazioneUrlInvocazione");
@@ -1010,6 +1040,11 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccessoRegistroRegistro.class.getName());
 			oggetti.add(AccessoConfigurazione.class.getName());
 			oggetti.add(AccessoDatiAutorizzazione.class.getName());
+			oggetti.add(AccessoDatiGestioneToken.class.getName());
+			oggetti.add(AccessoDatiAttributeAuthority.class.getName());
+			oggetti.add(AccessoDatiKeystore.class.getName());
+			oggetti.add(AccessoDatiConsegnaApplicativi.class.getName());
+			oggetti.add(AccessoDatiRichieste.class.getName());
 			oggetti.add(SystemProperties.class.getName());
 			oggetti.add(ConfigurazioneUrlInvocazioneRegola.class.getName());
 			oggetti.add(ConfigurazioneUrlInvocazione.class.getName());
@@ -1103,16 +1138,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			return "ConfigurazioneUrlInvocazione";
 		}
 		else if(o instanceof GenericProperties) {
-			GenericProperties  genericProperties = (GenericProperties) o;
-			if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(genericProperties.getTipologia())) {
-				return "TokenPolicyValidazione";
-			}
-			else if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(genericProperties.getTipologia())) {
-				return "TokenPolicyNegoziazione";
-			}
-			else {
-				return o.getClass().getSimpleName();
-			}
+			return getSimpleNameGenericProperties(o);
 		}
 		else if(o instanceof RegistroPlugin) {
 			return "ArchivioPlugins";
@@ -1124,5 +1150,18 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			return o.getClass().getSimpleName();
 		}
 		
+	}
+	
+	private String getSimpleNameGenericProperties(Object o) throws IOException{
+		GenericProperties  genericProperties = (GenericProperties) o;
+		if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(genericProperties.getTipologia())) {
+			return "TokenPolicyValidazione";
+		}
+		else if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(genericProperties.getTipologia())) {
+			return "TokenPolicyNegoziazione";
+		}
+		else {
+			return o.getClass().getSimpleName();
+		}
 	}
 }

@@ -715,6 +715,7 @@ public class OpenSPCoop2Properties {
 			this.getCacheTypeAuthorization();
 			this.getCacheTypeResponseCaching();
 			this.getCacheTypeToken();
+			this.getCacheTypeAttributeAuthority();
 			this.getCacheTypeKeystore();
 			this.getCacheTypeLoadBalancer();
 			this.getCacheTypeTrafficControl();
@@ -4372,6 +4373,14 @@ public class OpenSPCoop2Properties {
 			this.readCacheTypeToken = readCacheType("org.openspcoop2.pdd.cache.impl.token");
 		}
 		return this.readCacheTypeToken;
+	}
+	
+	private CacheType readCacheTypeAttributeAuthority = null;
+	public CacheType getCacheTypeAttributeAuthority() {
+		if(this.readCacheTypeAttributeAuthority==null) {
+			this.readCacheTypeAttributeAuthority = readCacheType("org.openspcoop2.pdd.cache.impl.attributeAuthority");
+		}
+		return this.readCacheTypeAttributeAuthority;
 	}
 	
 	private CacheType readCacheTypeKeystore = null;

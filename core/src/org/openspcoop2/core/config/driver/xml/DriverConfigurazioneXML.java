@@ -36,6 +36,7 @@ import java.util.Map;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
@@ -2270,6 +2271,24 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			throw new DriverConfigurazioneNotFound("[getAccessoDatiGestioneToken] Informazioni di accesso ai dati di gestione dei token non trovati");
 		
 		return this.openspcoop.getConfigurazione().getAccessoDatiGestioneToken();
+		
+	}
+	
+	/**
+	 * Restituisce l'accesso ai dati recuperati da attribute authority
+	 *
+	 * @return AccessoDatiAttributeAuthority
+	 * 
+	 */
+	@Override
+	public AccessoDatiAttributeAuthority getAccessoDatiAttributeAuthority() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		refreshConfigurazioneXML();
+
+		if(this.openspcoop.getConfigurazione().getAccessoDatiAttributeAuthority()==null)
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiAttributeAuthority] Informazioni di accesso ai dati recuperati da Attribute Authority non trovati");
+		
+		return this.openspcoop.getConfigurazione().getAccessoDatiAttributeAuthority();
 		
 	}
 	
