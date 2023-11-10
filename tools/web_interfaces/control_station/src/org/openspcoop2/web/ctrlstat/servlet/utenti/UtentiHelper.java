@@ -1907,8 +1907,8 @@ public class UtentiHelper extends ConsoleHelper {
 
 			if(user.getPermessi().isUtenti()==false){
 				boolean trovato = this.utentiCore.getUtenzePasswordManager().check(oldpw, user.getPassword());
-				if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
-					trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(oldpw, user.getPassword());
+				if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
+					trovato = this.utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(oldpw, user.getPassword());
 				}
 				if (!trovato) {
 					this.pd.setMessage("La vecchia password indicata non e' corretta");
@@ -1967,8 +1967,8 @@ public class UtentiHelper extends ConsoleHelper {
 					
 					if(precedentiPassword == null || precedentiPassword.isEmpty()) {
 						boolean trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, user.getPassword());
-						if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
-							trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(newpw, user.getPassword());
+						if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
+							trovato = this.utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(newpw, user.getPassword());
 						}
 						if (trovato) {
 							this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
@@ -1978,8 +1978,8 @@ public class UtentiHelper extends ConsoleHelper {
 					
 					for (UserPassword userPassword : precedentiPassword) {
 						boolean trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, userPassword.getPassword());
-						if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
-							trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(newpw, userPassword.getPassword());
+						if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
+							trovato = this.utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(newpw, userPassword.getPassword());
 						}
 						if (trovato) {
 							this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
@@ -2658,8 +2658,8 @@ public class UtentiHelper extends ConsoleHelper {
 			User user = this.utentiCore.getUser(userToUpdate);
 
 			boolean trovato = this.utentiCore.getUtenzePasswordManager().check(oldpw, user.getPassword());
-			if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
-				trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(oldpw, user.getPassword());
+			if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
+				trovato = this.utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(oldpw, user.getPassword());
 			}
 			if (!trovato) {
 				this.pd.setMessage("La vecchia password indicata non &egrave; corretta");
@@ -2715,8 +2715,8 @@ public class UtentiHelper extends ConsoleHelper {
 					
 					if(precedentiPassword == null || precedentiPassword.isEmpty()) {
 						trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, user.getPassword());
-						if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
-							trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(newpw, user.getPassword());
+						if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
+							trovato = this.utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(newpw, user.getPassword());
 						}
 						if (trovato) {
 							this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
@@ -2726,8 +2726,8 @@ public class UtentiHelper extends ConsoleHelper {
 					
 					for (UserPassword userPassword : precedentiPassword) {
 						trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, userPassword.getPassword());
-						if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
-							trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(newpw, userPassword.getPassword());
+						if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
+							trovato = this.utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(newpw, userPassword.getPassword());
 						}
 						if (trovato) {
 							this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);

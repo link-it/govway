@@ -2565,7 +2565,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				if(supportAsincroni==false){
 					if (this.isModalitaAvanzata()){
-						supportAsincroni = this.core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
+						supportAsincroni = this.core.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
 					}
 				}
 			}
@@ -3104,7 +3104,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 				if(supportoAsincronoPuntualeSoggetto==false){
 					if (this.isModalitaAvanzata()){
-						supportoAsincronoPuntualeSoggetto = this.core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
+						supportoAsincronoPuntualeSoggetto = this.core.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
 					}
 				}
 			}
@@ -4421,7 +4421,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				if(supportAsincroni==false){
 					if (this.isModalitaAvanzata()){
-						supportAsincroni = this.core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
+						supportAsincroni = this.core.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
 					}
 				}
 			}
@@ -5003,7 +5003,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				if(supportAsincroni==false){
 					if (this.isModalitaAvanzata()){
-						supportAsincroni = this.core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
+						supportAsincroni = this.core.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
 					}
 				}
 			}

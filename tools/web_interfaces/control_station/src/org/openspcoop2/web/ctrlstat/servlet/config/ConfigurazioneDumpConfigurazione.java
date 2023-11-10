@@ -88,7 +88,7 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			
 			boolean showStato = false;
 			String statoDump = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_STATO);
-			boolean showRealtime = confCore.isDump_showConfigurazioneDumpRealtime();
+			boolean showRealtime = confCore.isDumpShowConfigurazioneDumpRealtime();
 			String realtime = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_REALTIME);
 			String statoDumpRichiesta = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO);
 			String statoDumpRisposta = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO);

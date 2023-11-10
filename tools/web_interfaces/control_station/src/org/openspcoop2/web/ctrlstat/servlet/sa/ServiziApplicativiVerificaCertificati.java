@@ -340,7 +340,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 				
 				boolean sceltaClusterId = true;
 				if(!verificaConnettivita) {
-					sceltaClusterId = soggettiCore.isVerificaCertificati_sceltaClusterId();
+					sceltaClusterId = soggettiCore.isVerificaCertificatiSceltaClusterId();
 				}
 				
 				if(aliases.size()==1 || alias!=null || !sceltaClusterId) {
@@ -470,7 +470,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						}
 						StringBuilder sbDetailsError = new StringBuilder(); 
 						
-						int sogliaWarningGiorni = soggettiCore.getVerificaCertificati_warning_expirationDays();
+						int sogliaWarningGiorni = soggettiCore.getVerificaCertificatiWarningExpirationDays();
 						
 						
 						String posizioneErrore = null;

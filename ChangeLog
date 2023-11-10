@@ -1,3 +1,9 @@
+2023-11-10  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1661
+	È adesso possibile verificare o eliminare i dati presenti nella cache locale contenente le chiavi pubbliche (JWK) e le informazioni sui client raccolte tramite le API PDND.
+
 2023-11-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

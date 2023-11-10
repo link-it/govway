@@ -227,7 +227,7 @@ public class SoggettiVerificaCertificati extends Action {
 			}
 			else {
 				
-				boolean sceltaClusterId = soggettiCore.isVerificaCertificati_sceltaClusterId();
+				boolean sceltaClusterId = soggettiCore.isVerificaCertificatiSceltaClusterId();
 				
 				if(aliases.size()==1 || alias!=null || !sceltaClusterId) {
 					
@@ -258,7 +258,7 @@ public class SoggettiVerificaCertificati extends Action {
 					}
 					StringBuilder sbDetailsError = new StringBuilder(); 
 					
-					int sogliaWarningGiorni = soggettiCore.getVerificaCertificati_warning_expirationDays();
+					int sogliaWarningGiorni = soggettiCore.getVerificaCertificatiWarningExpirationDays();
 					
 					
 					String posizioneErrore = null;

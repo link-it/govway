@@ -301,6 +301,8 @@ import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.remote_stores.RemoteStoresCore;
+import org.openspcoop2.web.ctrlstat.servlet.remote_stores.RemoteStoresCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -479,6 +481,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	protected RuoliCore ruoliCore = null;
 	protected ScopeCore scopeCore = null;
 	protected GruppiCore gruppiCore = null;
+	protected RemoteStoresCore remoteStoresCore= null;
 
 	protected AuditHelper auditHelper;
 	public AuditHelper getAuditHelper() {
@@ -650,6 +653,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.ruoliCore = new RuoliCore(this.core);
 			this.scopeCore = new ScopeCore(this.core);
 			this.gruppiCore = new GruppiCore(this.core);
+			this.remoteStoresCore = new RemoteStoresCore(this.core);
 			
 			this.auditHelper = new AuditHelper(request, pd, session);
 
@@ -2134,6 +2138,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 				if(!isModalitaStandard()) {
 					dimensioneEntries++; // caches
+					dimensioneEntries++; // remote stores
 				}
 				
 				if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
@@ -2176,6 +2181,14 @@ public class ConsoleHelper implements IConsoleHelper {
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CACHES+"="+Costanti.CHECK_BOX_ENABLED;
 					index++;
 				}
+				// remote stores
+				if(!isModalitaStandard()) {
+					entries[index][0] = RemoteStoresCostanti.LABEL_CACHE_PDND;
+					entries[index][1] = RemoteStoresCostanti.SERVLET_NAME_REMOTE_STORES_KEYS_LIST;
+					index++;
+				}
+				
+				
 				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU;
 				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI;
 				index++;
@@ -14637,7 +14650,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValues(valuesProp);
 		dati.add(de);
 		
-		boolean multipartPayloadParsing = this.core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
+		boolean multipartPayloadParsing = this.core.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
 		if(!multipartPayloadParsing) {
 			// regole configurate con modalita' attiva
 			if(StatoFunzionalita.ABILITATO.getValue().equals(dumpPayload) && 

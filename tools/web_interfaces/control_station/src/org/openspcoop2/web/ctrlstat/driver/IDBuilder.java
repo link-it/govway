@@ -72,6 +72,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.utils.serialization.IOException;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -508,6 +509,17 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}
 			
+			// Remote Store Key 
+			else if(o instanceof RemoteStoreKeyEntry){
+				RemoteStoreKeyEntry entry = (RemoteStoreKeyEntry) o;
+				String id = entry.getKid();
+				if(this.prefix){
+					return "[RemoteStoreKey] "+ id;
+				}else{
+					return id;
+				}
+			}
+			
 			
 						
 		}catch(Exception e){
@@ -909,7 +921,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 					return w.getOldHumanId();
 				}
 			}
-			
+			// Remote Store Key
+			else if(o instanceof RemoteStoreKeyEntry){
+				return null; // oggetto non modificabile nei dati identificativi
+			}
 						
 		}catch(Exception e){
 			throw new IOException("Trasformazione non riuscita: "+e.getMessage(),e);
@@ -1007,6 +1022,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// IExtendedBean
 			oggetti.add("ExtendedBean");
 			
+			// Remote Store Key
+			oggetti.add(RemoteStoreKeyEntry.class.getSimpleName());
 		}
 		else{
 		
@@ -1081,6 +1098,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			
 			// IExtendedBean
 			oggetti.add(IExtendedBean.class.getName());
+			
+			// Remote Store Key
+			oggetti.add(RemoteStoreKeyEntry.class.getName());
 		}
 		
 		String[]tmp = new String[1];
@@ -1145,6 +1165,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 		}
 		else if(o instanceof RegistroPluginArchivio) {
 			return "ArchivioPluginsJarEntry";
+		}
+		else if(o instanceof RemoteStoreKeyEntry) {
+			return "RemoteStoreKey";
 		}
 		else{
 			return o.getClass().getSimpleName();

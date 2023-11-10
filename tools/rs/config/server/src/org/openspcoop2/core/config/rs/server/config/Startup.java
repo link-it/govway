@@ -184,18 +184,18 @@ public class Startup implements ServletContextListener {
 			
 			ConsoleHelper.setTipoInterfacciaAPI(InterfaceType.STANDARD);
 			
-			ControlStationCore.setUtenzePasswordEncryptEngine_apiMode(serverProperties.getUtenzeCryptConfig());
+			ControlStationCore.setUtenzePasswordEncryptEngineApiMode(serverProperties.getUtenzeCryptConfig());
 			
-			ControlStationCore.setApplicativiPasswordEncryptEngine_apiMode(serverProperties.getApplicativiCryptConfig());
-			ControlStationCore.setApplicativiApiKeyPasswordGeneratedLength_apiMode(serverProperties.getApplicativiApiKeyPasswordGeneratedLength());
+			ControlStationCore.setApplicativiPasswordEncryptEngineApiMode(serverProperties.getApplicativiCryptConfig());
+			ControlStationCore.setApplicativiApiKeyPasswordGeneratedLengthApiMode(serverProperties.getApplicativiApiKeyPasswordGeneratedLength());
 			if(serverProperties.isApplicativiBasicPasswordEnableConstraints()) {
-				ControlStationCore.setApplicativiPasswordVerifierEngine_apiMode(serverProperties.getApplicativiPasswordVerifier());
+				ControlStationCore.setApplicativiPasswordVerifierEngineApiMode(serverProperties.getApplicativiPasswordVerifier());
 			}
 			
-			ControlStationCore.setSoggettiPasswordEncryptEngine_apiMode(serverProperties.getSoggettiCryptConfig());
-			ControlStationCore.setSoggettiApiKeyPasswordGeneratedLength_apiMode(serverProperties.getSoggettiApiKeyPasswordGeneratedLength());
+			ControlStationCore.setSoggettiPasswordEncryptEngineApiMode(serverProperties.getSoggettiCryptConfig());
+			ControlStationCore.setSoggettiApiKeyPasswordGeneratedLengthApiMode(serverProperties.getSoggettiApiKeyPasswordGeneratedLength());
 			if(serverProperties.isSoggettiBasicPasswordEnableConstraints()) {
-				ControlStationCore.setSoggettiPasswordVerifierEngine_apiMode(serverProperties.getSoggettiPasswordVerifier());
+				ControlStationCore.setSoggettiPasswordVerifierEngineApiMode(serverProperties.getSoggettiPasswordVerifier());
 			}
 			
 			Properties yamlSnakeLimits = serverProperties.getApiYamlSnakeLimits();
@@ -203,9 +203,9 @@ public class Startup implements ServletContextListener {
 				YamlSnakeLimits.initialize(Startup.log, yamlSnakeLimits);
 			}
 			
-			ControlStationCore.setIsSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials());
-			ControlStationCore.setIsSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials());
-			ControlStationCore.setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials());
+			ControlStationCore.setIsSoggettiApplicativiCredenzialiBasicPermitSameCredentialsApiMode(serverProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials());
+			ControlStationCore.setIsSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode(serverProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials());
+			ControlStationCore.setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode(serverProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials());
 			
 			Properties consoleSecurityConfiguration = serverProperties.getConsoleSecurityConfiguration();
 			SecurityProperties.init(consoleSecurityConfiguration, log);

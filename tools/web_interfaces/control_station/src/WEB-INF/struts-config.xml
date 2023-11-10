@@ -3852,6 +3852,26 @@
             <forward name="aboutOk" path="/jsplib/addElement.jsp"/>
             <forward name="aboutError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!-- Remote Stores -->
+
+        <action path="/remoteStoresKeysList" type="org.openspcoop2.web.ctrlstat.servlet.remote_stores.RemoteStoresKeysList"
+            scope="request" validate="true">
+            <forward name="remoteStoresKeysList" path="/jsplib/listElement.jsp"/>
+            <forward name="remoteStoresKeysError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/remoteStoresKeysChange" type="org.openspcoop2.web.ctrlstat.servlet.remote_stores.RemoteStoresKeysChange"
+            scope="request" validate="true">
+            <forward name="remoteStoresKeysChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="remoteStoresKeysChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="remoteStoresKeysChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="remoteStoresKeysError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/remoteStoresKeysDel" type="org.openspcoop2.web.ctrlstat.servlet.remote_stores.RemoteStoresKeysDel"
+            scope="request" validate="true">
+            <forward name="remoteStoresKeysDel" path="/jsplib/listElement.jsp"/>
+            <forward name="remoteStoresKeysError" path="/jsplib/info.jsp"/>
+        </action>
     
     </action-mappings>
 

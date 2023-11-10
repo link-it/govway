@@ -101,7 +101,7 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 
 			boolean showStato = true;
 			String statoDump = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_STATO);
-			boolean showRealtime = porteApplicativeCore.isDump_showConfigurazioneDumpRealtime();
+			boolean showRealtime = porteApplicativeCore.isDumpShowConfigurazioneDumpRealtime();
 			String realtime = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_REALTIME);
 			String statoDumpRichiesta = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO);
 			String statoDumpRisposta = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO);

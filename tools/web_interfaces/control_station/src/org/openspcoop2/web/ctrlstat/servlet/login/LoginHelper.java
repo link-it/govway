@@ -79,8 +79,8 @@ public class LoginHelper extends ConsoleHelper {
 				if ((pwcrypt != null) && (!pwcrypt.equals(""))) {
 					// Controlla se utente e password corrispondono
 					trovato = this.utentiCore.getUtenzePasswordManager().check(password, pwcrypt);
-					if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
-						trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(password, pwcrypt);
+					if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
+						trovato = this.utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(password, pwcrypt);
 					}
 				}
 			}
