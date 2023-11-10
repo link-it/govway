@@ -37,6 +37,7 @@ import java.util.List;
 
 public final class Filtri
 {
+	private Filtri() {}
 
 	
 	public static final String FILTRO_PROTOCOLLO = "filtroProtocollo";
@@ -231,6 +232,7 @@ public final class Filtri
 	public static final String FILTRO_PROPRIETA_NOME = "filtroPropNome";
 	public static final String FILTRO_PROPRIETA_VALORE = "filtroPropValore";
 	
+	public static final String FILTRO_REMOTE_STORE_ID = "filtroRemoteStoreId";
 	public static final String FILTRO_REMOTE_STORE_KEY_KID = "filtroRemoteStoreKeyKid";
 	public static final String FILTRO_REMOTE_STORE_KEY_CLIENT_ID = "filtroRemoteStoreKeyClientId";
 	public static final String FILTRO_REMOTE_STORE_KEY_ORGANIZZAZIONE = "filtroRemoteStoreKeyOrganizzazione";
@@ -245,22 +247,27 @@ public final class Filtri
 			}
 		}
 		else if(filterProtocolli!=null && !"".equals(filterProtocolli)) {
-			List<String> protocolli = Filtri.convertToList(filterProtocolli);
-			if(protocolli!=null && protocolli.size()>0) {
-				tipoSoggettiProtocollo = new ArrayList<>();
-				for (String protocollo : protocolli) {
-					try {
-						List<String> tipi = ProtocolFactoryReflectionUtils.getOrganizationTypes(protocollo);
-						if(tipi!=null && tipi.size()>0) {
-							tipoSoggettiProtocollo.addAll(tipi);
-						}
-					}catch(Exception e) {
-						throw new CoreException(e.getMessage(),e);
+			tipoSoggettiProtocollo = convertToTipiSoggetti(filterProtocolli);
+		}
+		return tipoSoggettiProtocollo;
+	}
+	private static List<String> convertToTipiSoggetti(String filterProtocolli) throws CoreException {
+		List<String> tipoSoggettiProtocollo = null;
+		List<String> protocolli = Filtri.convertToList(filterProtocolli);
+		if(protocolli!=null && !protocolli.isEmpty()) {
+			tipoSoggettiProtocollo = new ArrayList<>();
+			for (String protocollo : protocolli) {
+				try {
+					List<String> tipi = ProtocolFactoryReflectionUtils.getOrganizationTypes(protocollo);
+					if(tipi!=null && !tipi.isEmpty()) {
+						tipoSoggettiProtocollo.addAll(tipi);
 					}
+				}catch(Exception e) {
+					throw new CoreException(e.getMessage(),e);
 				}
-				if(tipoSoggettiProtocollo.size()<=0) {
-					tipoSoggettiProtocollo = null;
-				}
+			}
+			if(tipoSoggettiProtocollo.isEmpty()) {
+				tipoSoggettiProtocollo = null;
 			}
 		}
 		return tipoSoggettiProtocollo;
@@ -276,22 +283,27 @@ public final class Filtri
 			}
 		}
 		else if(filterProtocolli!=null && !"".equals(filterProtocolli)) {
-			List<String> protocolli = Filtri.convertToList(filterProtocolli);
-			if(protocolli!=null && protocolli.size()>0) {
-				tipoServiziProtocollo = new ArrayList<>();
-				for (String protocollo : protocolli) {
-					try {
-						List<String> tipi = ProtocolFactoryReflectionUtils.getServiceTypes(protocollo);
-						if(tipi!=null && tipi.size()>0) {
-							tipoServiziProtocollo.addAll(tipi);
-						}
-					}catch(Exception e) {
-						throw new CoreException(e.getMessage(),e);
+			tipoServiziProtocollo = convertToTipiServizi(filterProtocolli);
+		}
+		return tipoServiziProtocollo;
+	}
+	private static List<String> convertToTipiServizi(String filterProtocolli) throws CoreException {
+		List<String> tipoServiziProtocollo = null;
+		List<String> protocolli = Filtri.convertToList(filterProtocolli);
+		if(protocolli!=null && !protocolli.isEmpty()) {
+			tipoServiziProtocollo = new ArrayList<>();
+			for (String protocollo : protocolli) {
+				try {
+					List<String> tipi = ProtocolFactoryReflectionUtils.getServiceTypes(protocollo);
+					if(tipi!=null && !tipi.isEmpty()) {
+						tipoServiziProtocollo.addAll(tipi);
 					}
+				}catch(Exception e) {
+					throw new CoreException(e.getMessage(),e);
 				}
-				if(tipoServiziProtocollo.size()<=0) {
-					tipoServiziProtocollo = null;
-				}
+			}
+			if(tipoServiziProtocollo.isEmpty()) {
+				tipoServiziProtocollo = null;
 			}
 		}
 		return tipoServiziProtocollo;
@@ -300,7 +312,7 @@ public final class Filtri
 	
 	
 	public static String convertToString(List<String> listSrc) {
-		if(listSrc==null || listSrc.size()<=0) {
+		if(listSrc==null || listSrc.isEmpty()) {
 			return null;
 		}
 		StringBuilder bf = new StringBuilder();
@@ -313,10 +325,11 @@ public final class Filtri
 		return bf.toString();
 	}
 	public static List<String> convertToList(String src) {
+		List<String> l = null;
 		if(src==null) {
-			return null;
+			return l;
 		}
-		List<String> l = new ArrayList<>();
+		l = new ArrayList<>();
 		if(src.contains(",")) {
 			String [] tmp = src.split(",");
 			for (int i = 0; i < tmp.length; i++) {

@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.keystore;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +38,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDConfigUtilities;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.date.DateManager;
@@ -881,37 +883,10 @@ public class RemoteStoreProviderDriverUtils {
 			sqlQueryObject.setLimit(limit);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			selectStmt = con.prepareStatement(sqlQuery);
-			selectRS = selectStmt.executeQuery();
 			selectStmt.setLong(1, idRemoteStore);
+			selectRS = selectStmt.executeQuery();
 			while(selectRS.next()) {
-				long id = selectRS.getLong(COLUMN_ID);
-				Date dataRegistrazione = selectRS.getTimestamp(COLUMN_DATA_REGISTRAZIONE);
-				
-				String kid = selectRS.getString(COLUMN_KID);
-				Date dataAggiornamento = selectRS.getTimestamp(COLUMN_DATA_AGGIORNAMENTO);
-				
-				String clientId =  selectRS.getString(COLUMN_CLIENT_ID);
-				String clientDetails = selectRS.getString(COLUMN_CLIENT_DETAILS);
-				String organizationDetails = selectRS.getString(COLUMN_ORGANIZATION_DETAILS);
-				Date clientDataAggiornamento = selectRS.getTimestamp(COLUMN_CLIENT_DATA_AGGIORNAMENTO);
-				
-				RemoteStoreKeyEntry rs = new RemoteStoreKeyEntry();
-				rs.setId(id);
-				rs.setDataRegistrazione(dataRegistrazione);
-				rs.setIdRemoteStore(idRemoteStore);
-				
-				rs.setContentKey(jdbcAdapter.getBinaryData(selectRS, COLUMN_KEY));
-				rs.setKid(kid);
-				rs.setDataAggiornamento(dataAggiornamento);
-				
-				rs.setClientId(clientId);
-				rs.setClientDetails(clientDetails);
-				rs.setOrganizationDetails(organizationDetails);
-				rs.setClientDataAggiornamento(clientDataAggiornamento);
-				
-				enrichOrganizationInfo(log, organizationDetails, rs);
-				
-				list.add(rs);
+				list.add(readKeyEntry(log, selectRS, jdbcAdapter));
 			}
 		}
 		catch(Exception e) {
@@ -923,6 +898,37 @@ public class RemoteStoreProviderDriverUtils {
 		}
 		
 		return list;
+	}
+	
+	private static RemoteStoreKeyEntry readKeyEntry(Logger log, ResultSet selectRS, IJDBCAdapter jdbcAdapter) throws SQLException, UtilsException {
+		long id = selectRS.getLong(COLUMN_ID);
+		long idStore = selectRS.getLong(COLUMN_ID_REMOTE_STORE);
+		Date dataRegistrazione = selectRS.getTimestamp(COLUMN_DATA_REGISTRAZIONE);
+		
+		String kid = selectRS.getString(COLUMN_KID);
+		Date dataAggiornamento = selectRS.getTimestamp(COLUMN_DATA_AGGIORNAMENTO);
+		
+		String clientId =  selectRS.getString(COLUMN_CLIENT_ID);
+		String clientDetails = selectRS.getString(COLUMN_CLIENT_DETAILS);
+		String organizationDetails = selectRS.getString(COLUMN_ORGANIZATION_DETAILS);
+		Date clientDataAggiornamento = selectRS.getTimestamp(COLUMN_CLIENT_DATA_AGGIORNAMENTO);
+		
+		RemoteStoreKeyEntry rs = new RemoteStoreKeyEntry();
+		rs.setId(id);
+		rs.setDataRegistrazione(dataRegistrazione);
+		rs.setIdRemoteStore(idStore);
+		
+		rs.setContentKey(jdbcAdapter.getBinaryData(selectRS, COLUMN_KEY));
+		rs.setKid(kid);
+		rs.setDataAggiornamento(dataAggiornamento);
+		
+		rs.setClientId(clientId);
+		rs.setClientDetails(clientDetails);
+		rs.setOrganizationDetails(organizationDetails);
+		rs.setClientDataAggiornamento(clientDataAggiornamento);
+		
+		enrichOrganizationInfo(log, organizationDetails, rs);
+		return rs;
 	}
 	
 	private static void enrichOrganizationInfo(Logger log, String organizationDetails, RemoteStoreKeyEntry rs) {
@@ -985,6 +991,51 @@ public class RemoteStoreProviderDriverUtils {
 		}
 		finally {
 			JDBCUtilities.closeResources(updateStmt);
+		}
+	}
+	
+	public static RemoteStoreKeyEntry getRemoteStoreKeyEntry(Logger log, DriverConfigurazioneDB driverConfigurazioneDB, long idRemoteStoreKey) throws KeystoreException, KeystoreNotFoundException {
+		Connection con = null;
+		try {
+			con = driverConfigurazioneDB.getConnection("getRemoteStoreKeyEntry", false);
+			return getRemoteStoreKeyEntry(log, con, driverConfigurazioneDB.getTipoDB(), idRemoteStoreKey);
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			driverConfigurazioneDB.releaseConnection(con);
+		}
+	}
+	
+	public static RemoteStoreKeyEntry getRemoteStoreKeyEntry(Logger log, Connection con, String tipoDatabase, long idRemoteStoreKey) throws KeystoreException,KeystoreNotFoundException {
+		
+		PreparedStatement selectStmt = null;
+		ResultSet selectRS = null;
+		try {
+			IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDatabase);
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.REMOTE_STORE_KEY);
+			sqlQueryObject.addWhereCondition(COLUMN_ID+"=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			selectStmt = con.prepareStatement(sqlQuery);
+			selectStmt.setLong(1, idRemoteStoreKey);
+			selectRS = selectStmt.executeQuery();
+			if(selectRS.next()) {
+				return readKeyEntry(log, selectRS, jdbcAdapter);
+			}
+			throw new KeystoreNotFoundException("Key with id '"+idRemoteStoreKey+"'"+SUFFIX_NOT_FOUND);
+		}
+		catch(KeystoreNotFoundException e) {
+			throw e;
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			JDBCUtilities.closeResources(selectRS, selectStmt);
 		}
 	}
 }

@@ -96,6 +96,8 @@ public class PageData implements Serializable {
 	
 	private boolean paginazione = true;
 	
+	private boolean inserisciSearch = true;
+	
 	public PageData() {
 		this.pageDescription = "";
 		this.search = "auto";
@@ -131,6 +133,7 @@ public class PageData implements Serializable {
 		this.includiMenuLateraleSx = true;
 		this.paginazione = true;
 		this.comandiAzioneBarraTitoloDettaglioElemento = new ArrayList<>();
+		this.setInserisciSearch(true);
 	}
 
 	public void setPageDescription(String s) {
@@ -377,8 +380,8 @@ public class PageData implements Serializable {
 	
 	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size, boolean disabilitaFiltroRisultati) throws Exception{
 		if(this.filterNames == null) {
-			this.filterNames = new ArrayList<DataElement>();
-			this.filterValues = new ArrayList<DataElement>();
+			this.filterNames = new ArrayList<>();
+			this.filterValues = new ArrayList<>();
 		}
 		
 		DataElement deName = new DataElement();
@@ -414,8 +417,8 @@ public class PageData implements Serializable {
 	
 	public void addTextFilter(String name, String label, String value, int size) throws Exception{
 		if(this.filterNames == null) {
-			this.filterNames = new ArrayList<DataElement>();
-			this.filterValues = new ArrayList<DataElement>();
+			this.filterNames = new ArrayList<>();
+			this.filterValues = new ArrayList<>();
 		}
 		
 		DataElement deName = new DataElement();
@@ -441,8 +444,8 @@ public class PageData implements Serializable {
 	
 	public void addTextAreaFilter(String name, String label, String value, int size, Integer rows, Integer cols) throws Exception{
 		if(this.filterNames == null) {
-			this.filterNames = new ArrayList<DataElement>();
-			this.filterValues = new ArrayList<DataElement>();
+			this.filterNames = new ArrayList<>();
+			this.filterValues = new ArrayList<>();
 		}
 		
 		DataElement deName = new DataElement();
@@ -473,8 +476,8 @@ public class PageData implements Serializable {
 	
 	public void addNumberFilter(String name, String label, String value, int size, Integer min, Integer max) throws Exception{
 		if(this.filterNames == null) {
-			this.filterNames = new ArrayList<DataElement>();
-			this.filterValues = new ArrayList<DataElement>();
+			this.filterNames = new ArrayList<>();
+			this.filterValues = new ArrayList<>();
 		}
 		
 		DataElement deName = new DataElement();
@@ -502,8 +505,8 @@ public class PageData implements Serializable {
 	
 	public void addCheckboxFilter(String name, String label, String value, int size) throws Exception{
 		if(this.filterNames == null) {
-			this.filterNames = new ArrayList<DataElement>();
-			this.filterValues = new ArrayList<DataElement>();
+			this.filterNames = new ArrayList<>();
+			this.filterValues = new ArrayList<>();
 		}
 		
 		DataElement deName = new DataElement();
@@ -530,8 +533,8 @@ public class PageData implements Serializable {
 	
 	public void addSubtitleFilter(String name, String label, boolean visualizzaSottosezioneAperta) throws Exception{
 		if(this.filterNames == null) {
-			this.filterNames = new ArrayList<DataElement>();
-			this.filterValues = new ArrayList<DataElement>();
+			this.filterNames = new ArrayList<>();
+			this.filterValues = new ArrayList<>();
 		}
 		
 		// devo salvare anche l'elemento name perche' la jsp naviga sia names che values contemporaneamente per posizione.
@@ -575,7 +578,7 @@ public class PageData implements Serializable {
 				// se ho trovato il subtitle allora prendo i filtri successivi
 				// finche non trovo un altro subtitle o finisce la lista
 				if(idxSubtitle > -1) {
-					List<DataElement> filter_values_to_check = new ArrayList<DataElement>();
+					List<DataElement> filterValuesToCheck = new ArrayList<>();
 					
 					for (int i = idxSubtitle + 1; i < this.filterNames.size(); i++) {
 						DataElement de = this.filterValues.get(i);
@@ -583,15 +586,15 @@ public class PageData implements Serializable {
 							// ho trovato un'altra sezione mi fermo
 							break;
 						} else {
-							filter_values_to_check.add(de);
+							filterValuesToCheck.add(de);
 						}
 					}
-					visualizzaSottosezioneAperta = this.hasAlmostOneFilterDefined(filter_values_to_check);
+					visualizzaSottosezioneAperta = this.hasAlmostOneFilterDefined(filterValuesToCheck);
 					
 					// se c'e' stata una postback la sezione dell'elemento che ha provocato il reload deve restare aperta 
 					if(postbackElementName != null) {
-						for (int i = 0; i < filter_values_to_check.size(); i++) {
-							if(filter_values_to_check.get(i).getName().equals(postbackElementName)) {
+						for (int i = 0; i < filterValuesToCheck.size(); i++) {
+							if(filterValuesToCheck.get(i).getName().equals(postbackElementName)) {
 								visualizzaSottosezioneAperta = true;
 								break;
 							}
@@ -619,8 +622,8 @@ public class PageData implements Serializable {
 	
 	public void addHiddenFilter(String name, String value, int size) throws Exception{
 		if(this.filterNames == null) {
-			this.filterNames = new ArrayList<DataElement>();
-			this.filterValues = new ArrayList<DataElement>();
+			this.filterNames = new ArrayList<>();
+			this.filterValues = new ArrayList<>();
 		}
 		
 		DataElement deName = new DataElement();
@@ -682,9 +685,9 @@ public class PageData implements Serializable {
 		return this.hasAlmostOneFilterDefined(this.filterValues);
 	}
 	
-	private boolean hasAlmostOneFilterDefined(List<DataElement> filter_values_to_check) {
-		if(filter_values_to_check!=null) {
-			for (DataElement de : filter_values_to_check) {
+	private boolean hasAlmostOneFilterDefined(List<DataElement> filterValuesToCheck) {
+		if(filterValuesToCheck!=null) {
+			for (DataElement de : filterValuesToCheck) {
 				if(!de.getType().equals("hidden") && de.getValue()!=null && !("".equals(de.value) || Costanti.SA_TIPO_DEFAULT_VALUE.equals(de.value))) {
 					return true;
 				}
@@ -715,7 +718,7 @@ public class PageData implements Serializable {
 	}
 
 	public boolean isPageBodyEmpty(){
-		if(this.dati.size() > 0) {
+		if(!this.dati.isEmpty()) {
 			// conto i campi non hidden
 			int nonHidden = 0;
 			for(int i = 0; i < this.dati.size(); i++){
@@ -743,11 +746,8 @@ public class PageData implements Serializable {
 		if(this.mode.equals(Costanti.DATA_ELEMENT_VIEW_NAME))
 			return false; // c'e' sempre qualcosa o bottoni o tasto edit
 
-		if(this.mode.equals(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME) || this.mode.equals(Costanti.DATA_ELEMENT_DISABLE_ONLY_BUTTON)){
-			return true;
-		}	else{ 
-			return false; // bottoni invia/cancella
-		}
+		return (this.mode.equals(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME) || this.mode.equals(Costanti.DATA_ELEMENT_DISABLE_ONLY_BUTTON)); // bottoni invia/cancella
+
 	}
 
 	public boolean isMostraLinkHome() {
@@ -875,7 +875,7 @@ public class PageData implements Serializable {
 		this.includiMenuLateraleSx = includiMenuLateraleSx;
 	}
 	
-	public DataElement convertiSearchInTextFilterMetadata() throws Exception{
+	public DataElement convertiSearchInTextFilterMetadata() {
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
 		deName.setName(Costanti.SEARCH_PARAMETER_NAME_FAKE_NAME);
@@ -884,21 +884,21 @@ public class PageData implements Serializable {
 		return deName;
 	}
 	
-	public DataElement convertiSearchInTextFilter() throws Exception{
-		String searchDescription = this.getSearchDescription();
+	public DataElement convertiSearchInTextFilter() {
+		String searchDescriptionCheck = this.getSearchDescription();
 		String searchLabelName = this.getSearchLabel();
-		boolean searchNote = this.isSearchNote();
+		boolean searchNoteCheck = this.isSearchNote();
 		
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.TEXT_EDIT);
 		deValue.setName(Costanti.SEARCH_PARAMETER_NAME);
 		deValue.setLabel(searchLabelName);
-		deValue.setValue(searchDescription);
+		deValue.setValue(searchDescriptionCheck);
 		deValue.setSize(Costanti.SEARCH_PARAMETER_DEFAULT_SIZE);
 		
-		if(searchNote && !searchDescription.equals("")){
-			deValue.setNote(MessageFormat.format(Costanti.SEARCH_PARAMETER_NOTE, searchDescription));
+		if(searchNoteCheck && !searchDescriptionCheck.equals("")){
+			deValue.setNote(MessageFormat.format(Costanti.SEARCH_PARAMETER_NOTE, searchDescriptionCheck));
 		}
 		
 		return deValue;
@@ -990,7 +990,7 @@ public class PageData implements Serializable {
 		DataElement de = new DataElement();
 		de.setType(deType);
 		de.setToolTip(tooltip);
-		if(parameters != null && parameters.size() >0) {
+		if(parameters != null && !parameters.isEmpty()) {
 			de.setUrl(servletName, parameters.toArray(new Parameter[parameters.size()]));
 		} else {
 			de.setUrl(servletName);
@@ -998,5 +998,17 @@ public class PageData implements Serializable {
 		de.setIcon(icon);
 		
 		e.add(de);
+	}
+
+	public boolean isInserisciSearch() {
+		return this.inserisciSearch;
+	}
+	
+	public void nascondiTextFilterAutomatico() {
+		this.setInserisciSearch(false);
+	}
+
+	public void setInserisciSearch(boolean inserisciSearch) {
+		this.inserisciSearch = inserisciSearch;
 	}
 }

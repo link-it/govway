@@ -2329,7 +2329,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			if(this.isShowGestioneWorkflowStatoDocumenti()){
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 					this.addFilterStatoAccordo(filterStatoAccordo,false);
 				}
@@ -2489,7 +2489,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				//listaLabelTabella.add(correlatoLabel);
 			}
 			if(this.isShowGestioneWorkflowStatoDocumenti()) {
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 					listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO);
 				}
 			}
@@ -2963,7 +2963,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //				}
 
 				if(this.isShowGestioneWorkflowStatoDocumenti()){
-					if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 						de = new DataElement();
 						de.setValue(StatiAccordo.upper(asps.getStatoPackage()));
 						e.add(de);
@@ -3077,7 +3077,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
 			if(this.isShowGestioneWorkflowStatoDocumenti()){
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 					this.addFilterStatoAccordo(filterStatoAccordo,false);
 				}
@@ -3152,7 +3152,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			List<String> listaLabelTabella = new ArrayList<>();
 			listaLabelTabella.add(labelFruitore);
-			if(this.isShowGestioneWorkflowStatoDocumenti() && this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()){
+			if(this.isShowGestioneWorkflowStatoDocumenti() && this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()){
 				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO);
 			}
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE);
@@ -3195,7 +3195,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				e.add(de);
 
 				if(this.isShowGestioneWorkflowStatoDocumenti()){
-					if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 						de = new DataElement();
 						de.setValue(StatiAccordo.upper(fru.getStatoPackage()));
 						e.add(de);
@@ -3605,7 +3605,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ALLARMI);
 				}
 				
-				if(this.isModalitaAvanzata() || this.apsCore.isProprietaErogazioni_showModalitaStandard()) {
+				if(this.isModalitaAvanzata() || this.apsCore.isProprietaErogazioniShowModalitaStandard()) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 				}
 				if(this.isModalitaAvanzata()) {
@@ -4493,7 +4493,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						
 						// Protocol Properties
-						if(this.isModalitaAvanzata() || this.apsCore.isProprietaErogazioni_showModalitaStandard()) {
+						if(this.isModalitaAvanzata() || this.apsCore.isProprietaErogazioniShowModalitaStandard()) {
 							de = new DataElement();
 							if(visualizzazioneTabs)
 								de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
@@ -5390,7 +5390,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DUMP_CONFIGURAZIONE);
 				
-				if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioni_showModalitaStandard())) {
+				if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioniShowModalitaStandard())) {
 					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
 				}
 				if(this.isModalitaAvanzata()) {
@@ -6102,7 +6102,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						
 						// Protocol Properties
-						if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioni_showModalitaStandard())){
+						if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioniShowModalitaStandard())){
 							de = new DataElement();
 							if(visualizzazioneTabs)
 								de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
@@ -6482,7 +6482,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
-		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
+		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale();
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -8477,7 +8477,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		boolean isProfiloAsincronoSupportatoDalProtocollo = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 
-		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
+		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale();
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		

@@ -4481,7 +4481,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		if (this.isModalitaAvanzata()) {
-			if (this.confCore.isDump_showConfigurazioneCustomAppender()) {
+			if (this.confCore.isDumpShowConfigurazioneCustomAppender()) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST);
@@ -4644,7 +4644,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		this.addSeveritaMessaggiDiagnosticiToDati(severita, severita_log4j, dati);
 
 		if (this.isModalitaAvanzata()) {
-			if (this.confCore.isMsgDiagnostici_showConfigurazioneCustomAppender()) {
+			if (this.confCore.isMsgDiagnosticiShowConfigurazioneCustomAppender()) {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_LIST);
@@ -4658,7 +4658,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
 				dati.add(de);
 			}
-			if (this.confCore.isMsgDiagnostici_showSorgentiDatiDatabase()) {
+			if (this.confCore.isMsgDiagnosticiShowSorgentiDatiDatabase()) {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_LIST);

@@ -260,7 +260,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			addFilterProtocol(ricerca, idLista);
 			
 			if(this.isShowGestioneWorkflowStatoDocumenti()){
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 					this.addFilterStatoAccordo(filterStatoAccordo,false);
 				}
@@ -298,7 +298,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			// setto le label delle colonne
 			int totEl = 3;
 			if(this.isShowGestioneWorkflowStatoDocumenti()) {
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 					totEl++;
 				}
 			}
@@ -320,7 +320,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			}
 			
 			if(this.isShowGestioneWorkflowStatoDocumenti()){
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 					labels[index] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO;
 					index++;
 				}
@@ -369,7 +369,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					
 
 					if(this.isShowGestioneWorkflowStatoDocumenti()){
-						if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+						if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 							de = new DataElement();
 							de.setValue(StatiAccordo.upper(accordoCooperazione.getStatoPackage()));
 							e.add(de);

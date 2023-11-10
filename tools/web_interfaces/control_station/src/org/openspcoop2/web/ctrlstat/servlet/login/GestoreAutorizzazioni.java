@@ -40,6 +40,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.remote_stores.RemoteStoresCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
@@ -66,7 +67,15 @@ import org.slf4j.Logger;
 public class GestoreAutorizzazioni {
 	
 	private static GestoreAutorizzazioni permessi = null;
+	
 	private static ControlStationCore core = null;
+	public static ControlStationCore getCore() {
+		return core;
+	}
+	public static void setCore(ControlStationCore core) {
+		GestoreAutorizzazioni.core = core;
+	}
+
 	private static UtentiCore utentiCore = null;
 	private static synchronized void init(boolean singlePdD) throws Exception{
 		if(GestoreAutorizzazioni.permessi==null){
@@ -389,6 +398,7 @@ public class GestoreAutorizzazioni {
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_HANDLERS_RICHIESTA);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_HANDLERS_RISPOSTA);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_HANDLERS_SERVIZIO);
+			this.servletConfigurazione.addAll(RemoteStoresCostanti.getServletRuoli());
 		}
 		this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_SISTEMA);
 		this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER);

@@ -373,6 +373,9 @@ public class ArchiviCostanti {
 		
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ARCHIVIO_JAR = "jar";
 	
+	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_REMOTE_STORE_ENTRY = "remStEntry";
+	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_CHIAVE_PUBBLICA = "chPub";
+	
 	private static final String[] PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP = { ArchiveType.ALL.toString(), ArchiveType.ALL_WITHOUT_CONFIGURAZIONE.toString(), ArchiveType.CONFIGURAZIONE.toString() };
 	public static String[] getParametroValoriArchiviExportTipoDump() {
 		return PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP;

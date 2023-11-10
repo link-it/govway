@@ -253,20 +253,20 @@ public class Loader {
 			}
 		
 			try {
-				ControlStationCore.setUtenzePasswordEncryptEngine_apiMode(utenzeCryptConfig);
+				ControlStationCore.setUtenzePasswordEncryptEngineApiMode(utenzeCryptConfig);
 				
-				ControlStationCore.setApplicativiPasswordEncryptEngine_apiMode(applicativiCryptConfig);
-				ControlStationCore.setApplicativiApiKeyPasswordGeneratedLength_apiMode(applicativi_api_key_passwordGenerated_length);
+				ControlStationCore.setApplicativiPasswordEncryptEngineApiMode(applicativiCryptConfig);
+				ControlStationCore.setApplicativiApiKeyPasswordGeneratedLengthApiMode(applicativi_api_key_passwordGenerated_length);
 				if(applicativi_basic_password_enableConstraints) {
 					PasswordVerifier applicativiPasswordVerifier = new PasswordVerifier("/org/openspcoop2/utils/crypt/consolePassword.properties");
-					ControlStationCore.setApplicativiPasswordVerifierEngine_apiMode(applicativiPasswordVerifier);
+					ControlStationCore.setApplicativiPasswordVerifierEngineApiMode(applicativiPasswordVerifier);
 				}
 				
-				ControlStationCore.setSoggettiPasswordEncryptEngine_apiMode(soggettiCryptConfig);
-				ControlStationCore.setSoggettiApiKeyPasswordGeneratedLength_apiMode(soggetti_api_key_passwordGenerated_length);
+				ControlStationCore.setSoggettiPasswordEncryptEngineApiMode(soggettiCryptConfig);
+				ControlStationCore.setSoggettiApiKeyPasswordGeneratedLengthApiMode(soggetti_api_key_passwordGenerated_length);
 				if(soggetti_basic_password_enableConstraints) {
 					PasswordVerifier soggettiPasswordVerifier = new PasswordVerifier("/org/openspcoop2/utils/crypt/consolePassword.properties");
-					ControlStationCore.setSoggettiPasswordVerifierEngine_apiMode(soggettiPasswordVerifier);
+					ControlStationCore.setSoggettiPasswordVerifierEngineApiMode(soggettiPasswordVerifier);
 				}
 				
 			} catch (Exception e) {

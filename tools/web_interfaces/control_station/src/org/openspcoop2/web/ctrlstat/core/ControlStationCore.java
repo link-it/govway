@@ -140,6 +140,8 @@ import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
+import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriverUtils;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -316,24 +318,24 @@ public class ControlStationCore {
 	private String logoHeaderTitolo = null;
 	private String logoHeaderLink = null;
 	private boolean visualizzaLinkHomeHeader = false;
-	private transient AffineTransform affineTransform = null;
-	private transient FontRenderContext fontRenderContext = null;
-	private transient Font defaultFont = null;
+	private AffineTransform affineTransform = null;
+	private FontRenderContext fontRenderContext = null;
+	private Font defaultFont = null;
 	
 	private String getTitleSuffix(HttpServletRequest request, HttpSession session) {
-		IVersionInfo versionInfo = null;
+		IVersionInfo versionInfoCheck = null;
 		try {
-			versionInfo = getInfoVersion(request, session);
+			versionInfoCheck = getInfoVersion(request, session);
 		}catch(Exception e) {
 			ControlStationLogger.getPddConsoleCoreLogger().error("Errore durante la lettura delle informazioni sulla versione: "+e.getMessage(),e);
 		}
 		String consoleNomeEstesoSuffix = null;
-		if(versionInfo!=null) {
-			if(!StringUtils.isEmpty(versionInfo.getErrorTitleSuffix())) {
-				consoleNomeEstesoSuffix = versionInfo.getErrorTitleSuffix();
+		if(versionInfoCheck!=null) {
+			if(!StringUtils.isEmpty(versionInfoCheck.getErrorTitleSuffix())) {
+				consoleNomeEstesoSuffix = versionInfoCheck.getErrorTitleSuffix();
 			}
-			else if(!StringUtils.isEmpty(versionInfo.getWarningTitleSuffix())) {
-				consoleNomeEstesoSuffix = versionInfo.getWarningTitleSuffix();
+			else if(!StringUtils.isEmpty(versionInfoCheck.getWarningTitleSuffix())) {
+				consoleNomeEstesoSuffix = versionInfoCheck.getWarningTitleSuffix();
 			}
 		}
 		return consoleNomeEstesoSuffix;
@@ -427,7 +429,7 @@ public class ControlStationCore {
 	private long jdbcSerializableAttesaAttiva = 0;
 	private int jdbcSerializableCheck = 0;
 	public String getProtocolloDefault(HttpServletRequest request, HttpSession session, List<String> listaProtocolliUtilizzabili) throws DriverRegistroServiziException {
-		if(listaProtocolliUtilizzabili!=null && listaProtocolliUtilizzabili.size()>0) {
+		if(listaProtocolliUtilizzabili!=null && !listaProtocolliUtilizzabili.isEmpty()) {
 			// cerco prima il default
 			for (String protocolloUtilizzabile : listaProtocolliUtilizzabili) {
 				if(protocolloUtilizzabile.equals(this.protocolloDefault)) {
@@ -495,12 +497,12 @@ public class ControlStationCore {
 	}
 
 	/** MsgDiagnostici */
-	private boolean msgDiagnostici_showConfigurazioneCustomAppender = false;
-	private boolean msgDiagnostici_sameDBWebUI = true;
-	private boolean msgDiagnostici_showSorgentiDatiDatabase = false;
-	private String msgDiagnostici_datasource = null;
-	private String msgDiagnostici_tipoDatabase = null;
-	private Properties msgDiagnostici_ctxDatasource = null;
+	private boolean msgDiagnosticiShowConfigurazioneCustomAppender = false;
+	private boolean msgDiagnosticiSameDBWebUI = true;
+	private boolean msgDiagnosticiShowSorgentiDatiDatabase = false;
+	private String msgDiagnosticiDatasource = null;
+	private String msgDiagnosticiTipoDatabase = null;
+	private Properties msgDiagnosticiCtxDatasource = null;
 	private DriverMsgDiagnostici driverMSGDiagnostici = null;
 	public DriverMsgDiagnostici getDriverMSGDiagnostici()  throws DriverControlStationException {
 		return this.getDriverMSGDiagnostici(null, false);
@@ -514,23 +516,23 @@ public class ControlStationCore {
 		}
 		return this.driverMSGDiagnostici;
 	}
-	public boolean isMsgDiagnostici_showConfigurazioneCustomAppender() {
-		return this.msgDiagnostici_showConfigurazioneCustomAppender;
+	public boolean isMsgDiagnosticiShowConfigurazioneCustomAppender() {
+		return this.msgDiagnosticiShowConfigurazioneCustomAppender;
 	}
-	public boolean isMsgDiagnostici_showSorgentiDatiDatabase() {
-		return this.msgDiagnostici_showSorgentiDatiDatabase;
+	public boolean isMsgDiagnosticiShowSorgentiDatiDatabase() {
+		return this.msgDiagnosticiShowSorgentiDatiDatabase;
 	}
 	
 	/** Dump */
 	
-	private boolean dump_showConfigurazioneCustomAppender = false;
-	public boolean isDump_showConfigurazioneCustomAppender() {
-		return this.dump_showConfigurazioneCustomAppender;
+	private boolean dumpShowConfigurazioneCustomAppender = false;
+	public boolean isDumpShowConfigurazioneCustomAppender() {
+		return this.dumpShowConfigurazioneCustomAppender;
 	}
 	
-	private boolean dump_showConfigurazioneDumpRealtime = true;
-	public boolean isDump_showConfigurazioneDumpRealtime() {
-		return this.dump_showConfigurazioneDumpRealtime;
+	private boolean dumpShowConfigurazioneDumpRealtime = true;
+	public boolean isDumpShowConfigurazioneDumpRealtime() {
+		return this.dumpShowConfigurazioneDumpRealtime;
 	}
 
 	/** Porte di Dominio */
@@ -559,12 +561,12 @@ public class ControlStationCore {
 
 	/** Utenze Console */
 	
-	private static CryptConfig utenzePasswordEncryptEngine_apiMode = null;
-	public static CryptConfig getUtenzePasswordEncryptEngine_apiMode() {
-		return utenzePasswordEncryptEngine_apiMode;
+	private static CryptConfig utenzePasswordEncryptEngineApiMode = null;
+	public static CryptConfig getUtenzePasswordEncryptEngineApiMode() {
+		return utenzePasswordEncryptEngineApiMode;
 	}
-	public static void setUtenzePasswordEncryptEngine_apiMode(CryptConfig utenzePasswordEncryptEngine_apiMode) {
-		ControlStationCore.utenzePasswordEncryptEngine_apiMode = utenzePasswordEncryptEngine_apiMode;
+	public static void setUtenzePasswordEncryptEngineApiMode(CryptConfig utenzePasswordEncryptEngineApiMode) {
+		ControlStationCore.utenzePasswordEncryptEngineApiMode = utenzePasswordEncryptEngineApiMode;
 	}
 
 	private String utenzePasswordConfiguration = null;
@@ -618,15 +620,15 @@ public class ControlStationCore {
 	}
 	
 	protected ICrypt utenzePasswordManager;
-	protected ICrypt utenzePasswordManager_backwardCompatibility;
+	protected ICrypt utenzePasswordManagerBackwardCompatibility;
 	public ICrypt getUtenzePasswordManager() {
 		return this.utenzePasswordManager;
 	}
-	public ICrypt getUtenzePasswordManager_backwardCompatibility() {
-		return this.utenzePasswordManager_backwardCompatibility;
+	public ICrypt getUtenzePasswordManagerBackwardCompatibility() {
+		return this.utenzePasswordManagerBackwardCompatibility;
 	}
 	
-	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) throws DriverControlStationException { 
+	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) { 
 		if(passwordVerifier != null) {
 			return this.isLoginApplication() && passwordVerifier.isCheckPasswordExpire();
 		}
@@ -694,27 +696,27 @@ public class ControlStationCore {
 	
 	/** Applicativi */
 	
-	private static CryptConfig applicativiPasswordEncryptEngine_apiMode = null;
-	public static CryptConfig getApplicativiPasswordEncryptEngine_apiMode() {
-		return applicativiPasswordEncryptEngine_apiMode;
+	private static CryptConfig applicativiPasswordEncryptEngineApiMode = null;
+	public static CryptConfig getApplicativiPasswordEncryptEngineApiMode() {
+		return applicativiPasswordEncryptEngineApiMode;
 	}
-	public static void setApplicativiPasswordEncryptEngine_apiMode(CryptConfig applicativiPasswordEncryptEngine_apiMode) {
-		ControlStationCore.applicativiPasswordEncryptEngine_apiMode = applicativiPasswordEncryptEngine_apiMode;
+	public static void setApplicativiPasswordEncryptEngineApiMode(CryptConfig applicativiPasswordEncryptEngineApiMode) {
+		ControlStationCore.applicativiPasswordEncryptEngineApiMode = applicativiPasswordEncryptEngineApiMode;
 	}
-	private static Integer applicativiApiKeyPasswordGeneratedLength_apiMode = null;
-	public static Integer getApplicativiApiKeyPasswordGeneratedLength_apiMode() {
-		return applicativiApiKeyPasswordGeneratedLength_apiMode;
+	private static Integer applicativiApiKeyPasswordGeneratedLengthApiMode = null;
+	public static Integer getApplicativiApiKeyPasswordGeneratedLengthApiMode() {
+		return applicativiApiKeyPasswordGeneratedLengthApiMode;
 	}
-	public static void setApplicativiApiKeyPasswordGeneratedLength_apiMode(Integer applicativiApiKeyPasswordGeneratedLength_apiMode) {
-		ControlStationCore.applicativiApiKeyPasswordGeneratedLength_apiMode = applicativiApiKeyPasswordGeneratedLength_apiMode;
+	public static void setApplicativiApiKeyPasswordGeneratedLengthApiMode(Integer applicativiApiKeyPasswordGeneratedLengthApiMode) {
+		ControlStationCore.applicativiApiKeyPasswordGeneratedLengthApiMode = applicativiApiKeyPasswordGeneratedLengthApiMode;
 	}
-	private static PasswordVerifier applicativiPasswordVerifierEngine_apiMode = null;
-	public static PasswordVerifier getApplicativiPasswordVerifierEngine_apiMode() {
-		return applicativiPasswordVerifierEngine_apiMode;
+	private static PasswordVerifier applicativiPasswordVerifierEngineApiMode = null;
+	public static PasswordVerifier getApplicativiPasswordVerifierEngineApiMode() {
+		return applicativiPasswordVerifierEngineApiMode;
 	}
-	public static void setApplicativiPasswordVerifierEngine_apiMode(
-			PasswordVerifier applicativiPasswordVerifierEngine_apiMode) {
-		ControlStationCore.applicativiPasswordVerifierEngine_apiMode = applicativiPasswordVerifierEngine_apiMode;
+	public static void setApplicativiPasswordVerifierEngineApiMode(
+			PasswordVerifier applicativiPasswordVerifierEngineApiMode) {
+		ControlStationCore.applicativiPasswordVerifierEngineApiMode = applicativiPasswordVerifierEngineApiMode;
 	}
 
 	private String applicativiPwConfiguration = null;
@@ -782,27 +784,27 @@ public class ControlStationCore {
 	
 	/** Soggetti */
 	
-	private static CryptConfig soggettiPasswordEncryptEngine_apiMode = null;
-	public static CryptConfig getSoggettiPasswordEncryptEngine_apiMode() {
-		return soggettiPasswordEncryptEngine_apiMode;
+	private static CryptConfig soggettiPasswordEncryptEngineApiMode = null;
+	public static CryptConfig getSoggettiPasswordEncryptEngineApiMode() {
+		return soggettiPasswordEncryptEngineApiMode;
 	}
-	public static void setSoggettiPasswordEncryptEngine_apiMode(CryptConfig soggettiPasswordEncryptEngine_apiMode) {
-		ControlStationCore.soggettiPasswordEncryptEngine_apiMode = soggettiPasswordEncryptEngine_apiMode;
+	public static void setSoggettiPasswordEncryptEngineApiMode(CryptConfig soggettiPasswordEncryptEngineApiMode) {
+		ControlStationCore.soggettiPasswordEncryptEngineApiMode = soggettiPasswordEncryptEngineApiMode;
 	}
-	private static Integer soggettiApiKeyPasswordGeneratedLength_apiMode = null;
-	public static Integer getSoggettiApiKeyPasswordGeneratedLength_apiMode() {
-		return soggettiApiKeyPasswordGeneratedLength_apiMode;
+	private static Integer soggettiApiKeyPasswordGeneratedLengthApiMode = null;
+	public static Integer getSoggettiApiKeyPasswordGeneratedLengthApiMode() {
+		return soggettiApiKeyPasswordGeneratedLengthApiMode;
 	}
-	public static void setSoggettiApiKeyPasswordGeneratedLength_apiMode(Integer soggettiApiKeyPasswordGeneratedLength_apiMode) {
-		ControlStationCore.soggettiApiKeyPasswordGeneratedLength_apiMode = soggettiApiKeyPasswordGeneratedLength_apiMode;
+	public static void setSoggettiApiKeyPasswordGeneratedLengthApiMode(Integer soggettiApiKeyPasswordGeneratedLengthApiMode) {
+		ControlStationCore.soggettiApiKeyPasswordGeneratedLengthApiMode = soggettiApiKeyPasswordGeneratedLengthApiMode;
 	}
-	private static PasswordVerifier soggettiPasswordVerifierEngine_apiMode = null;
-	public static PasswordVerifier getSoggettiPasswordVerifierEngine_apiMode() {
-		return soggettiPasswordVerifierEngine_apiMode;
+	private static PasswordVerifier soggettiPasswordVerifierEngineApiMode = null;
+	public static PasswordVerifier getSoggettiPasswordVerifierEngineApiMode() {
+		return soggettiPasswordVerifierEngineApiMode;
 	}
-	public static void setSoggettiPasswordVerifierEngine_apiMode(
-			PasswordVerifier soggettiPasswordVerifierEngine_apiMode) {
-		ControlStationCore.soggettiPasswordVerifierEngine_apiMode = soggettiPasswordVerifierEngine_apiMode;
+	public static void setSoggettiPasswordVerifierEngineApiMode(
+			PasswordVerifier soggettiPasswordVerifierEngineApiMode) {
+		ControlStationCore.soggettiPasswordVerifierEngineApiMode = soggettiPasswordVerifierEngineApiMode;
 	}
 	
 	private String soggettiPwConfiguration = null;
@@ -1004,10 +1006,10 @@ public class ControlStationCore {
 	/** Credenziali Basic */
 	private boolean isSoggettiCredenzialiBasicCheckUniqueUsePassword;
 	private boolean isApplicativiCredenzialiBasicCheckUniqueUsePassword;
-	private static Boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode;
-	public static void setIsSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode(
-			Boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode) {
-		ControlStationCore.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode = isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode;
+	private static Boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentialsApiMode;
+	public static void setIsSoggettiApplicativiCredenzialiBasicPermitSameCredentialsApiMode(
+			Boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentialsApiMode) {
+		ControlStationCore.isSoggettiApplicativiCredenzialiBasicPermitSameCredentialsApiMode = isSoggettiApplicativiCredenzialiBasicPermitSameCredentialsApiMode;
 	}
 	private boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials;
 	public boolean isSoggettiCredenzialiBasicCheckUniqueUsePassword() {
@@ -1017,36 +1019,36 @@ public class ControlStationCore {
 		return this.isApplicativiCredenzialiBasicCheckUniqueUsePassword;
 	}
 	public boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials() {
-		if(ControlStationCore.isAPIMode() && isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode!=null) {
-			return isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode;
+		if(ControlStationCore.isAPIMode() && isSoggettiApplicativiCredenzialiBasicPermitSameCredentialsApiMode!=null) {
+			return isSoggettiApplicativiCredenzialiBasicPermitSameCredentialsApiMode;
 		}
 		return this.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials;
 	}
 	
 	/** Credenziali Ssl */
-	private static Boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode;
-	public static void setIsSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode(
-			Boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode) {
-		ControlStationCore.isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode = isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode;
+	private static Boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode;
+	public static void setIsSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode(
+			Boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode) {
+		ControlStationCore.isSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode = isSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode;
 	}
 	private boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials;
 	public boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials() {
-		if(ControlStationCore.isAPIMode() && isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode!=null) {
-			return isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode;
+		if(ControlStationCore.isAPIMode() && isSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode!=null) {
+			return isSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode;
 		}
 		return this.isSoggettiApplicativiCredenzialiSslPermitSameCredentials;
 	}
 	
 	/** Credenziali Principal */
-	private static Boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode;
-	public static void setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode(
-			Boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode) {
-		ControlStationCore.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode = isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode;
+	private static Boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode;
+	public static void setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode(
+			Boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode) {
+		ControlStationCore.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode = isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode;
 	}
 	private boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials;
 	public boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials() {
-		if(ControlStationCore.isAPIMode() && isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode!=null) {
-			return isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode;
+		if(ControlStationCore.isAPIMode() && isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode!=null) {
+			return isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode;
 		}
 		return this.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials;
 	}
@@ -1084,7 +1086,7 @@ public class ControlStationCore {
 	private List<String> consegnaNotificaCode;
 	private Map<String, String> consegnaNotificaCodaLabel = new HashMap<>();
 	private List<String> consegnaNotificaPriorita;
-	private Map<String, ConfigurazionePriorita> consegnaNotificaConfigurazionePriorita = new HashMap<String, ConfigurazionePriorita>();
+	private Map<String, ConfigurazionePriorita> consegnaNotificaConfigurazionePriorita = new HashMap<>();
 	public List<String> getConsegnaNotificaCode() {
 		return this.consegnaNotificaCode;
 	}
@@ -1164,15 +1166,15 @@ public class ControlStationCore {
 	}
 	
 	/** Registrazione Messaggi */
-	private boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled = false;
-	public Boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled() {
-		return this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled;
+	private boolean isRegistrazioneMessaggiMultipartPayloadParsingEnabled = false;
+	public Boolean isRegistrazioneMessaggiMultipartPayloadParsingEnabled() {
+		return this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled;
 	}
 	
 	/** Cluster dinamico */
-	private boolean isClusterDinamico_enabled = false;
-	public Boolean isClusterDinamico_enabled() throws UtilsException{
-		return this.isClusterDinamico_enabled;
+	private boolean isClusterDinamicoEnabled = false;
+	public Boolean isClusterDinamicoEnabled() {
+		return this.isClusterDinamicoEnabled;
 	}
 	
 	/** OCSP */
@@ -1182,13 +1184,13 @@ public class ControlStationCore {
 	}
 	
 	/** Certificati */
-	private int verificaCertificati_warning_expirationDays;
-	private boolean verificaCertificati_sceltaClusterId;
-	public int getVerificaCertificati_warning_expirationDays() {
-		return this.verificaCertificati_warning_expirationDays;
+	private int verificaCertificatiWarningExpirationDays;
+	private boolean verificaCertificatiSceltaClusterId;
+	public int getVerificaCertificatiWarningExpirationDays() {
+		return this.verificaCertificatiWarningExpirationDays;
 	}
-	public boolean isVerificaCertificati_sceltaClusterId() {
-		return this.verificaCertificati_sceltaClusterId;
+	public boolean isVerificaCertificatiSceltaClusterId() {
+		return this.verificaCertificatiSceltaClusterId;
 	}
 	
 	/** Cluster */
@@ -1228,27 +1230,41 @@ public class ControlStationCore {
 	private int elenchiMenuIdentificativiLunghezzaMassima = 100;
 	private boolean showCountElementInLinkList = false;
 	private boolean conservaRisultatiRicerca = false;
-	public static Boolean conservaRisultatiRicerca_staticInfo_read = null;
-	public static boolean conservaRisultatiRicerca_staticInfo = false;
+	
+	private static Boolean conservaRisultatiRicercaStaticInfoRead = null;
+	private static boolean conservaRisultatiRicercaStaticInfo = false;
+	public static Boolean getConservaRisultatiRicercaStaticInfoRead() {
+		return conservaRisultatiRicercaStaticInfoRead;
+	}
+	public static void setConservaRisultatiRicercaStaticInfoRead(Boolean conservaRisultatiRicercaStaticInfoRead) {
+		ControlStationCore.conservaRisultatiRicercaStaticInfoRead = conservaRisultatiRicercaStaticInfoRead;
+	}
+	public static boolean isConservaRisultatiRicercaStaticInfo() {
+		return conservaRisultatiRicercaStaticInfo;
+	}
+	public static void setConservaRisultatiRicercaStaticInfo(boolean conservaRisultatiRicercaStaticInfo) {
+		ControlStationCore.conservaRisultatiRicercaStaticInfo = conservaRisultatiRicercaStaticInfo;
+	}
+	
 	private boolean showAccordiColonnaAzioni = false;
 	private boolean showAccordiInformazioniProtocollo = false;
 	private boolean showConfigurazioniPersonalizzate = false;
 	private boolean showGestioneSoggettiRouter = false;
 	private boolean showGestioneSoggettiVirtuali = false;
 	private boolean showGestioneWorkflowStatoDocumenti = false;
-	private boolean gestioneWorkflowStatoDocumenti_visualizzaStatoLista = false;
-	private boolean gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = false;
+	private boolean gestioneWorkflowStatoDocumentiVisualizzaStatoLista = false;
+	private boolean gestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale = false;
 	private boolean showInterfacceAPI = false;
 	private boolean showAllegati = false;
 	private boolean enableAutoMappingWsdlIntoAccordo = false;
-	private boolean enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = false;
+	private boolean enableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes = false;
 	private boolean showMTOMVisualizzazioneCompleta = false;
 	private int portaCorrelazioneApplicativaMaxLength = 255;
 	private boolean showPortaDelegataLocalForward = false;
-	private boolean isProprietaErogazioni_showModalitaStandard;
-	private boolean isProprietaFruizioni_showModalitaStandard;
+	private boolean isProprietaErogazioniShowModalitaStandard;
+	private boolean isProprietaFruizioniShowModalitaStandard;
 	private boolean isPortTypeObbligatorioImplementazioniSOAP = true;
-	private boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = false;
+	private boolean isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona = false;
 	private boolean isVisualizzazioneConfigurazioneDiagnosticaLog4J = true;
 	private String tokenPolicyForceId = null;
 	private boolean tokenPolicyForceIdEnabled = false;
@@ -1257,8 +1273,8 @@ public class ControlStationCore {
 	private boolean attributeAuthorityForceIdEnabled = false;
 	private Properties attributeAuthorityTipologia = null;
 	private boolean showServiziVisualizzaModalitaElenco = false;
-	private Integer selectListSoggettiOperativi_numeroMassimoSoggetti = null;
-	private Integer selectListSoggettiOperativi_dimensioneMassimaLabel = null;
+	private Integer selectListSoggettiOperativiNumeroMassimoSoggetti = null;
+	private Integer selectListSoggettiOperativiDimensioneMassimaLabel = null;
 	private Integer viewLunghezzaMassimaInformazione = null;
 	private boolean isSetSearchAfterAdd = false;
 	private boolean elenchiVisualizzaComandoResetCacheSingoloElemento = false;
@@ -1307,11 +1323,11 @@ public class ControlStationCore {
 	public boolean isShowGestioneWorkflowStatoDocumenti(ConsoleHelper consoleHelper) {
 		return this.showGestioneWorkflowStatoDocumenti && consoleHelper.isModalitaCompleta();
 	}
-	public boolean isGestioneWorkflowStatoDocumenti_visualizzaStatoLista() {
-		return this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista;
+	public boolean isGestioneWorkflowStatoDocumentiVisualizzaStatoLista() {
+		return this.gestioneWorkflowStatoDocumentiVisualizzaStatoLista;
 	}
-	public boolean isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale() {
-		return this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
+	public boolean isGestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale() {
+		return this.gestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale;
 	}
 	public boolean isShowInterfacceAPI() {
 		return this.showInterfacceAPI;
@@ -1322,8 +1338,8 @@ public class ControlStationCore {
 	public boolean isEnableAutoMappingWsdlIntoAccordo() {
 		return this.enableAutoMappingWsdlIntoAccordo;
 	}
-	public boolean isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes() {
-		return this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
+	public boolean isEnableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes() {
+		return this.enableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes;
 	}
 	public boolean isShowMTOMVisualizzazioneCompleta() {
 		return this.showMTOMVisualizzazioneCompleta;
@@ -1334,17 +1350,17 @@ public class ControlStationCore {
 	public boolean isShowPortaDelegataLocalForward() {
 		return this.showPortaDelegataLocalForward;
 	}
-	public boolean isProprietaErogazioni_showModalitaStandard() throws UtilsException{
-		return this.isProprietaErogazioni_showModalitaStandard;
+	public boolean isProprietaErogazioniShowModalitaStandard() {
+		return this.isProprietaErogazioniShowModalitaStandard;
 	}
-	public boolean isProprietaFruizioni_showModalitaStandard() throws UtilsException{
-		return this.isProprietaFruizioni_showModalitaStandard;
+	public boolean isProprietaFruizioniShowModalitaStandard() {
+		return this.isProprietaFruizioniShowModalitaStandard;
 	}
-	public boolean isPortTypeObbligatorioImplementazioniSOAP() throws UtilsException{
+	public boolean isPortTypeObbligatorioImplementazioniSOAP() {
 		return this.isPortTypeObbligatorioImplementazioniSOAP;
 	}
-	public boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() {
-		return this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
+	public boolean isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona() {
+		return this.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona;
 	}
 	public boolean isVisualizzazioneConfigurazioneDiagnosticaLog4J() {
 		return this.isVisualizzazioneConfigurazioneDiagnosticaLog4J;
@@ -1371,10 +1387,10 @@ public class ControlStationCore {
 		return this.showServiziVisualizzaModalitaElenco;
 	}
 	public Integer getNumeroMassimoSoggettiSelectListSoggettiOperatiti() {
-		return this.selectListSoggettiOperativi_numeroMassimoSoggetti;
+		return this.selectListSoggettiOperativiNumeroMassimoSoggetti;
 	}
 	public Integer getLunghezzaMassimaLabelSoggettiOperativiMenuUtente() {
-		return this.selectListSoggettiOperativi_dimensioneMassimaLabel;
+		return this.selectListSoggettiOperativiDimensioneMassimaLabel;
 	}
 	public Integer getViewLunghezzaMassimaInformazione() {
 		return this.viewLunghezzaMassimaInformazione;
@@ -2337,20 +2353,20 @@ public class ControlStationCore {
 			CryptConfig applicativiConfig = null;
 			CryptConfig soggettiConfig = null;
 			if(ControlStationCore.isAPIMode()) {
-				utenzeConfig = ControlStationCore.getUtenzePasswordEncryptEngine_apiMode();
-				applicativiConfig = ControlStationCore.getApplicativiPasswordEncryptEngine_apiMode();
-				soggettiConfig = ControlStationCore.getSoggettiPasswordEncryptEngine_apiMode();
+				utenzeConfig = ControlStationCore.getUtenzePasswordEncryptEngineApiMode();
+				applicativiConfig = ControlStationCore.getApplicativiPasswordEncryptEngineApiMode();
+				soggettiConfig = ControlStationCore.getSoggettiPasswordEncryptEngineApiMode();
 				
 				this.applicativiPwConfiguration = "APIMode";
 				this.applicativiPwEncryptEngine = applicativiConfig;
-				this.applicativiApiKeyLunghezzaPwGenerate = ControlStationCore.getApplicativiApiKeyPasswordGeneratedLength_apiMode();
-				this.applicativiPwVerifierEngine = ControlStationCore.getApplicativiPasswordVerifierEngine_apiMode();
+				this.applicativiApiKeyLunghezzaPwGenerate = ControlStationCore.getApplicativiApiKeyPasswordGeneratedLengthApiMode();
+				this.applicativiPwVerifierEngine = ControlStationCore.getApplicativiPasswordVerifierEngineApiMode();
 				this.applicativiBasicPwEnableConstraints = (this.applicativiPwVerifierEngine!=null);
 				
 				this.soggettiPwConfiguration = "APIMode";
 				this.soggettiPwEncryptEngine = soggettiConfig;
-				this.soggettiApiKeyLunghezzaPwGenerate = ControlStationCore.getSoggettiApiKeyPasswordGeneratedLength_apiMode();
-				this.soggettiPwVerifierEngine = ControlStationCore.getSoggettiPasswordVerifierEngine_apiMode();
+				this.soggettiApiKeyLunghezzaPwGenerate = ControlStationCore.getSoggettiApiKeyPasswordGeneratedLengthApiMode();
+				this.soggettiPwVerifierEngine = ControlStationCore.getSoggettiPasswordVerifierEngineApiMode();
 				this.soggettiBasicPwEnableConstraints = (this.soggettiPwVerifierEngine!=null);
 			}
 			else {
@@ -2360,7 +2376,7 @@ public class ControlStationCore {
 			}
 			this.utenzePasswordManager = CryptFactory.getCrypt(log, utenzeConfig);
 			if(utenzeConfig.isBackwardCompatibility()) {
-				this.utenzePasswordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
+				this.utenzePasswordManagerBackwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 			}
 			this.applicativiPwManager = CryptFactory.getCrypt(log, applicativiConfig);
 			this.soggettiPwManager = CryptFactory.getCrypt(log, soggettiConfig);
@@ -2424,17 +2440,17 @@ public class ControlStationCore {
 		this.driverTracciamento = core.driverTracciamento;
 
 		/** MsgDiagnostici */
-		this.msgDiagnostici_showConfigurazioneCustomAppender = core.msgDiagnostici_showConfigurazioneCustomAppender;
-		this.msgDiagnostici_sameDBWebUI = core.msgDiagnostici_sameDBWebUI;
-		this.msgDiagnostici_showSorgentiDatiDatabase = core.msgDiagnostici_showSorgentiDatiDatabase;
-		this.msgDiagnostici_datasource = core.msgDiagnostici_datasource;
-		this.msgDiagnostici_tipoDatabase = core.msgDiagnostici_tipoDatabase;
-		this.msgDiagnostici_ctxDatasource = core.msgDiagnostici_ctxDatasource;
+		this.msgDiagnosticiShowConfigurazioneCustomAppender = core.msgDiagnosticiShowConfigurazioneCustomAppender;
+		this.msgDiagnosticiSameDBWebUI = core.msgDiagnosticiSameDBWebUI;
+		this.msgDiagnosticiShowSorgentiDatiDatabase = core.msgDiagnosticiShowSorgentiDatiDatabase;
+		this.msgDiagnosticiDatasource = core.msgDiagnosticiDatasource;
+		this.msgDiagnosticiTipoDatabase = core.msgDiagnosticiTipoDatabase;
+		this.msgDiagnosticiCtxDatasource = core.msgDiagnosticiCtxDatasource;
 		this.driverMSGDiagnostici = core.driverMSGDiagnostici;
 		
 		/** Dump */
-		this.dump_showConfigurazioneCustomAppender = core.dump_showConfigurazioneCustomAppender;
-		this.dump_showConfigurazioneDumpRealtime = core.dump_showConfigurazioneDumpRealtime;
+		this.dumpShowConfigurazioneCustomAppender = core.dumpShowConfigurazioneCustomAppender;
+		this.dumpShowConfigurazioneDumpRealtime = core.dumpShowConfigurazioneDumpRealtime;
 
 		/** Gestione Pdd Abilitata */
 		this.gestionePddAbilitata = core.gestionePddAbilitata;
@@ -2458,7 +2474,7 @@ public class ControlStationCore {
 		this.utenzePasswordVerifierEngine = core.utenzePasswordVerifierEngine;
 		this.utenzePasswordEncryptEngine = core.utenzePasswordEncryptEngine;
 		this.utenzePasswordManager = core.utenzePasswordManager;
-		this.utenzePasswordManager_backwardCompatibility = core.utenzePasswordManager_backwardCompatibility;
+		this.utenzePasswordManagerBackwardCompatibility = core.utenzePasswordManagerBackwardCompatibility;
 		this.utenzeModificaProfiloUtenteDaFormAggiornaSessione = core.utenzeModificaProfiloUtenteDaFormAggiornaSessione;
 		this.utenzeModificaProfiloUtenteDaLinkAggiornaDB = core.utenzeModificaProfiloUtenteDaLinkAggiornaDB;
 		
@@ -2592,17 +2608,17 @@ public class ControlStationCore {
 		this.showAllarmiElenchiStatiAllarmi = core.showAllarmiElenchiStatiAllarmi;
 		
 		/** Registrazione Messaggi */
-		this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled;
+		this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled = core.isRegistrazioneMessaggiMultipartPayloadParsingEnabled;
 		
 		/** Cluster dinamico */
-		this.isClusterDinamico_enabled = core.isClusterDinamico_enabled;
+		this.isClusterDinamicoEnabled = core.isClusterDinamicoEnabled;
 		
 		/** OCSP */
 		this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = core.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata; 
 		
 		/** Certificati */
-		this.verificaCertificati_warning_expirationDays = core.verificaCertificati_warning_expirationDays;
-		this.verificaCertificati_sceltaClusterId = core.verificaCertificati_sceltaClusterId; 
+		this.verificaCertificatiWarningExpirationDays = core.verificaCertificatiWarningExpirationDays;
+		this.verificaCertificatiSceltaClusterId = core.verificaCertificatiSceltaClusterId; 
 		
 		/** Cluster */
 		this.isClusterAsyncUpdate = core.isClusterAsyncUpdate;
@@ -2629,19 +2645,19 @@ public class ControlStationCore {
 		this.showGestioneSoggettiRouter = core.showGestioneSoggettiRouter;
 		this.showGestioneSoggettiVirtuali = core.showGestioneSoggettiVirtuali;
 		this.showGestioneWorkflowStatoDocumenti = core.showGestioneWorkflowStatoDocumenti;
-		this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista = core.gestioneWorkflowStatoDocumenti_visualizzaStatoLista;
-		this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = core.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
+		this.gestioneWorkflowStatoDocumentiVisualizzaStatoLista = core.gestioneWorkflowStatoDocumentiVisualizzaStatoLista;
+		this.gestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale = core.gestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale;
 		this.showInterfacceAPI = core.showInterfacceAPI;
 		this.showAllegati = core.showAllegati;
 		this.enableAutoMappingWsdlIntoAccordo = core.enableAutoMappingWsdlIntoAccordo;
-		this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
+		this.enableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes;
 		this.showMTOMVisualizzazioneCompleta = core.showMTOMVisualizzazioneCompleta;
 		this.portaCorrelazioneApplicativaMaxLength = core.portaCorrelazioneApplicativaMaxLength;
 		this.showPortaDelegataLocalForward = core.showPortaDelegataLocalForward;
-		this.isProprietaErogazioni_showModalitaStandard = core.isProprietaErogazioni_showModalitaStandard;
-		this.isProprietaFruizioni_showModalitaStandard = core.isProprietaFruizioni_showModalitaStandard;
+		this.isProprietaErogazioniShowModalitaStandard = core.isProprietaErogazioniShowModalitaStandard;
+		this.isProprietaFruizioniShowModalitaStandard = core.isProprietaFruizioniShowModalitaStandard;
 		this.isPortTypeObbligatorioImplementazioniSOAP = core.isPortTypeObbligatorioImplementazioniSOAP;
-		this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
+		this.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona = core.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona;
 		this.isVisualizzazioneConfigurazioneDiagnosticaLog4J = core.isVisualizzazioneConfigurazioneDiagnosticaLog4J;
 		this.tokenPolicyForceId = core.tokenPolicyForceId;
 		this.tokenPolicyForceIdEnabled = core.tokenPolicyForceIdEnabled;
@@ -2650,8 +2666,8 @@ public class ControlStationCore {
 		this.attributeAuthorityForceIdEnabled = core.attributeAuthorityForceIdEnabled;
 		this.attributeAuthorityTipologia = core.attributeAuthorityTipologia;
 		this.showServiziVisualizzaModalitaElenco = core.showServiziVisualizzaModalitaElenco;
-		this.selectListSoggettiOperativi_numeroMassimoSoggetti = core.selectListSoggettiOperativi_numeroMassimoSoggetti;
-		this.selectListSoggettiOperativi_dimensioneMassimaLabel = core.selectListSoggettiOperativi_dimensioneMassimaLabel;
+		this.selectListSoggettiOperativiNumeroMassimoSoggetti = core.selectListSoggettiOperativiNumeroMassimoSoggetti;
+		this.selectListSoggettiOperativiDimensioneMassimaLabel = core.selectListSoggettiOperativiDimensioneMassimaLabel;
 		this.viewLunghezzaMassimaInformazione = core.viewLunghezzaMassimaInformazione;
 		this.isSetSearchAfterAdd = core.isSetSearchAfterAdd;
 		this.elenchiVisualizzaComandoResetCacheSingoloElemento = core.elenchiVisualizzaComandoResetCacheSingoloElemento;
@@ -2890,11 +2906,11 @@ public class ControlStationCore {
 					this.tracceTipoDatabase = datasourceProperties.getSinglePddTracceTipoDatabase();
 				}
 				
-				this.msgDiagnostici_sameDBWebUI = datasourceProperties.isSinglePddMessaggiDiagnosticiStessoDBConsole();
-				if(!this.msgDiagnostici_sameDBWebUI){
-					this.msgDiagnostici_datasource = datasourceProperties.getSinglePddMessaggiDiagnosticiDataSource();
-					this.msgDiagnostici_ctxDatasource = datasourceProperties.getSinglePddMessaggiDiagnosticiDataSourceContext();
-					this.msgDiagnostici_tipoDatabase = datasourceProperties.getSinglePddMessaggiDiagnosticiTipoDatabase();
+				this.msgDiagnosticiSameDBWebUI = datasourceProperties.isSinglePddMessaggiDiagnosticiStessoDBConsole();
+				if(!this.msgDiagnosticiSameDBWebUI){
+					this.msgDiagnosticiDatasource = datasourceProperties.getSinglePddMessaggiDiagnosticiDataSource();
+					this.msgDiagnosticiCtxDatasource = datasourceProperties.getSinglePddMessaggiDiagnosticiDataSourceContext();
+					this.msgDiagnosticiTipoDatabase = datasourceProperties.getSinglePddMessaggiDiagnosticiTipoDatabase();
 				}
 			}
 			
@@ -3031,11 +3047,11 @@ public class ControlStationCore {
 				this.showAllarmiSearchStatiAllarmi = consoleProperties.isShowAllarmiSearchStatiAllarmi();
 				this.showAllarmiElenchiStatiAllarmi = consoleProperties.isShowAllarmiElenchiStatiAllarmi();
 			}
-			this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = consoleProperties.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
-			this.isClusterDinamico_enabled = consoleProperties.isClusterDinamicoEnabled();
+			this.isRegistrazioneMessaggiMultipartPayloadParsingEnabled = consoleProperties.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
+			this.isClusterDinamicoEnabled = consoleProperties.isClusterDinamicoEnabled();
 			this.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = consoleProperties.isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata();
-			this.verificaCertificati_warning_expirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
-			this.verificaCertificati_sceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
+			this.verificaCertificatiWarningExpirationDays = consoleProperties.getVerificaCertificatiWarningExpirationDays();
+			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
 			this.isClusterAsyncUpdate = consoleProperties.isClusterAsyncUpdate();
 			this.clusterAsyncUpdateCheckInterval = consoleProperties.getClusterAsyncUpdateCheckInterval();
 		
@@ -3070,8 +3086,8 @@ public class ControlStationCore {
 			this.showGestioneSoggettiRouter = consoleProperties.isConsoleGestioneSoggettiRouter();
 			this.showGestioneSoggettiVirtuali = consoleProperties.isConsoleGestioneSoggettiVirtuali();
 			this.showGestioneWorkflowStatoDocumenti = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti();
-			this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista = consoleProperties.isConsoleGestioneWorkflowStatoDocumentiVisualizzaStatoLista();
-			this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale();
+			this.gestioneWorkflowStatoDocumentiVisualizzaStatoLista = consoleProperties.isConsoleGestioneWorkflowStatoDocumentiVisualizzaStatoLista();
+			this.gestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale();
 			this.showInterfacceAPI = consoleProperties.isConsoleInterfacceAPIVisualizza();
 			this.showAllegati = consoleProperties.isConsoleAllegatiVisualizza();
 			this.showFlagPrivato = consoleProperties.isMenuVisualizzaFlagPrivato();
@@ -3081,22 +3097,22 @@ public class ControlStationCore {
 			this.showAccordiInformazioniProtocollo = consoleProperties.isMenuAccordiVisualizzazioneGestioneInformazioniProtocollo();
 			this.showCountElementInLinkList = consoleProperties.isElenchiVisualizzaCountElementi();
 			this.conservaRisultatiRicerca = consoleProperties.isElenchiRicercaConservaCriteri();
-			if(conservaRisultatiRicerca_staticInfo_read==null) {
-				conservaRisultatiRicerca_staticInfo_read = true;
-				conservaRisultatiRicerca_staticInfo = this.conservaRisultatiRicerca;
+			if(conservaRisultatiRicercaStaticInfoRead==null) {
+				conservaRisultatiRicercaStaticInfoRead = true;
+				conservaRisultatiRicercaStaticInfo = this.conservaRisultatiRicerca;
 			}
 			this.showAccordiColonnaAzioni = consoleProperties.isElenchiAccordiVisualizzaColonnaAzioni();
 			this.showPulsantiImportExport = consoleProperties.isElenchiMenuVisualizzazionePulsantiImportExportPackage();
 			this.elenchiMenuIdentificativiLunghezzaMassima = consoleProperties.getElenchiMenuIdentificativiLunghezzaMassima();
 			this.enableAutoMappingWsdlIntoAccordo = consoleProperties.isEnableAutoMappingWsdlIntoAccordo();
-			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes();
+			this.enableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes();
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();
 			this.portaCorrelazioneApplicativaMaxLength = consoleProperties.getPortaCorrelazioneApplicativaMaxLength();
 			this.showPortaDelegataLocalForward = consoleProperties.isMenuPortaDelegataLocalForward();
-			this.isProprietaErogazioni_showModalitaStandard = consoleProperties.isProprietaErogazioniShowModalitaStandard();
-			this.isProprietaFruizioni_showModalitaStandard = consoleProperties.isProprietaFruizioniShowModalitaStandard();
+			this.isProprietaErogazioniShowModalitaStandard = consoleProperties.isProprietaErogazioniShowModalitaStandard();
+			this.isProprietaFruizioniShowModalitaStandard = consoleProperties.isProprietaFruizioniShowModalitaStandard();
 			this.isPortTypeObbligatorioImplementazioniSOAP = consoleProperties.isPortTypeObbligatorioImplementazioniSOAP();
-			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
+			this.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona = consoleProperties.isElenchiSAAsincroniNonSupportatiVisualizzaRispostaAsincrona();
 			this.isVisualizzazioneConfigurazioneDiagnosticaLog4J = consoleProperties.isVisualizzazioneConfigurazioneDiagnosticaLog4J();
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();
 			this.tokenPolicyForceIdEnabled = StringUtils.isNotEmpty(this.tokenPolicyForceId);
@@ -3105,8 +3121,8 @@ public class ControlStationCore {
 			this.attributeAuthorityForceIdEnabled = StringUtils.isNotEmpty(this.attributeAuthorityForceId);
 			this.attributeAuthorityTipologia = consoleProperties.getAttributeAuthorityTipologia();
 			this.showServiziVisualizzaModalitaElenco = consoleProperties.isEnableServiziVisualizzaModalitaElenco();
-			this.selectListSoggettiOperativi_numeroMassimoSoggetti = consoleProperties.getNumeroMassimoSoggettiOperativiMenuUtente();
-			this.selectListSoggettiOperativi_dimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();
+			this.selectListSoggettiOperativiNumeroMassimoSoggetti = consoleProperties.getNumeroMassimoSoggettiOperativiMenuUtente();
+			this.selectListSoggettiOperativiDimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();
 			this.viewLunghezzaMassimaInformazione = consoleProperties.getLunghezzaMassimaInformazioneView();
 			this.isSetSearchAfterAdd = consoleProperties.isSetSearchAfterAdd();
 			this.elenchiVisualizzaComandoResetCacheSingoloElemento = consoleProperties.isElenchiAbilitaResetCacheSingoloElemento();
@@ -3145,11 +3161,11 @@ public class ControlStationCore {
 				this.tracceShowConfigurazioneCustomAppender = consoleProperties.isSinglePddTracceConfigurazioneCustomAppender();
 				this.tracceShowSorgentiDatiDatabase = consoleProperties.isSinglePddTracceGestioneSorgentiDatiPrelevataDaDatabase();
 				
-				this.msgDiagnostici_showConfigurazioneCustomAppender = consoleProperties.isSinglePddMessaggiDiagnosticiConfigurazioneCustomAppender();
-				this.msgDiagnostici_showSorgentiDatiDatabase = consoleProperties.isSinglePddMessaggiDiagnosticiGestioneSorgentiDatiPrelevataDaDatabase();
+				this.msgDiagnosticiShowConfigurazioneCustomAppender = consoleProperties.isSinglePddMessaggiDiagnosticiConfigurazioneCustomAppender();
+				this.msgDiagnosticiShowSorgentiDatiDatabase = consoleProperties.isSinglePddMessaggiDiagnosticiGestioneSorgentiDatiPrelevataDaDatabase();
 				
-				this.dump_showConfigurazioneCustomAppender = consoleProperties.isSinglePddDumpConfigurazioneCustomAppender();
-				this.dump_showConfigurazioneDumpRealtime = consoleProperties.isSinglePddDumpConfigurazioneRealtime();
+				this.dumpShowConfigurazioneCustomAppender = consoleProperties.isSinglePddDumpConfigurazioneCustomAppender();
+				this.dumpShowConfigurazioneDumpRealtime = consoleProperties.isSinglePddDumpConfigurazioneRealtime();
 			}
 			
 			// Opzioni di importazione/esportazione Archivi
@@ -3484,11 +3500,11 @@ public class ControlStationCore {
 		if (this.driverMSGDiagnostici == null || forceChange) {
 			try {
 				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
-					if(this.msgDiagnostici_sameDBWebUI){
+					if(this.msgDiagnosticiSameDBWebUI){
 						this.driverMSGDiagnostici = new DriverMsgDiagnostici(ControlStationCore.dbM.getDataSourceName(),this.tipoDB,ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log); 
 					}
 					else{
-						this.driverMSGDiagnostici = new DriverMsgDiagnostici(this.msgDiagnostici_datasource, this.msgDiagnostici_tipoDatabase, this.msgDiagnostici_ctxDatasource,ControlStationCore.log); 
+						this.driverMSGDiagnostici = new DriverMsgDiagnostici(this.msgDiagnosticiDatasource, this.msgDiagnosticiTipoDatabase, this.msgDiagnosticiCtxDatasource,ControlStationCore.log); 
 					}
 				} else {
 
@@ -5345,6 +5361,16 @@ public class ControlStationCore {
 						extendedServlet.performDelete(con, oggetto, extendedBean);
 					}
 					
+					/***********************************************************
+					 * Operazioni su Remote Store Keys *
+					 **********************************************************/
+					// Allarmi
+					if(oggetto instanceof RemoteStoreKeyEntry) {
+						RemoteStoreKeyEntry entry = (RemoteStoreKeyEntry) oggetto;
+						RemoteStoreProviderDriverUtils.deleteRemoteStoreKeyEntry(driver.getDriverConfigurazioneDB(), entry.getIdRemoteStore(), entry.getId());
+						doSetDati = false;
+					}
+										
 					break;
 
 				default:
@@ -6496,6 +6522,14 @@ public class ControlStationCore {
 			IExtendedBean w = (IExtendedBean) oggetto;
 			msg+=":"+w.getClass().getSimpleName();
 			msg+=":<"+w.getHumanId()+">";
+		}
+		// RemoteStoreKey
+		else if(oggetto instanceof RemoteStoreKeyEntry) {
+			RemoteStoreKeyEntry key = (RemoteStoreKeyEntry) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuilder bf = new StringBuilder();
+			bf.append("Kid[").append(key.getKid()).append("]");
+			msg+=":<"+bf.toString()+">";
 		}
 		
 		return msg;
