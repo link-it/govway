@@ -135,6 +135,9 @@ public class CostantiControlStation {
 	
 	/** LABEL GENERALI */
 	
+	public static final String LABEL_CREAZIONE = "Creazione";
+	public static final String LABEL_ULTIMA_MODIFICA = "Ultima Modifica";
+	
 	public static final String LABEL_PARAMETRO_PROTOCOLLO_DI = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI;
 	public static final String LABEL_PARAMETRO_PROTOCOLLO = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO;
 	public static final String LABEL_PARAMETRO_PROTOCOLLI = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI;

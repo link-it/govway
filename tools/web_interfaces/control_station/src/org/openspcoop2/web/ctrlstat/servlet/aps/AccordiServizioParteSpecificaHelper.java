@@ -4587,6 +4587,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							e.add(de);
 						}
 						
+						if(visualizzazioneTabs) {
+							// Audit TODO Poli
+							de = new DataElement();
+							de.setType(DataElementType.IMAGE);
+							de.setLabel(CostantiControlStation.LABEL_CREAZIONE);
+							de.addInfoAuditDataCreazione("2023/11/12 12:34", "2023/11/12 12:34");
+							de.addInfoAuditUtente("amministratore", "amministratore");
+							e.add(de);
+							
+							de = new DataElement();
+							de.setType(DataElementType.IMAGE);
+							de.setLabel(CostantiControlStation.LABEL_ULTIMA_MODIFICA);
+							de.addInfoAuditDataAggiornamento("2023/11/12 12:34", "2023/11/12 12:34");
+							de.addInfoAuditUtente("Zulio", "Zulio");
+							e.add(de);
+						}
 					}
 					
 					dati.add(e);
@@ -6188,6 +6204,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							e.add(de);
 						}
 						
+						if(visualizzazioneTabs) {
+							// Audit TODO Poli
+							de = new DataElement();
+							de.setType(DataElementType.IMAGE);
+							de.setLabel(CostantiControlStation.LABEL_CREAZIONE);
+							de.addInfoAuditDataCreazione("2023/11/12 12:34", "2023/11/12 12:34");
+							de.addInfoAuditUtente("amministratore", "amministratore");
+							e.add(de);
+							
+							de = new DataElement();
+							de.setType(DataElementType.IMAGE);
+							de.setLabel(CostantiControlStation.LABEL_ULTIMA_MODIFICA);
+							de.addInfoAuditDataAggiornamento("2023/11/12 12:34", "2023/11/12 12:34");
+							de.addInfoAuditUtente("Zulio", "Zulio");
+							e.add(de);
+						}
 					}
 					
 					dati.add(e);

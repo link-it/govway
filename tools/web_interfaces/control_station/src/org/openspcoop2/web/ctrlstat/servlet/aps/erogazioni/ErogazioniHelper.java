@@ -2285,6 +2285,21 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				de.setImage(image);
 				dati.add(de);
 			}
+			
+			// Audit TODO Poli
+			de = new DataElement();
+			de.setType(DataElementType.IMAGE);
+			de.setLabel(CostantiControlStation.LABEL_CREAZIONE);
+			de.addInfoAuditDataCreazione("2023/11/12 12:34", "2023/11/12 12:34");
+			de.addInfoAuditUtente("amministratore", "amministratore");
+			dati.add(de);
+			
+			de = new DataElement();
+			de.setType(DataElementType.IMAGE);
+			de.setLabel(CostantiControlStation.LABEL_ULTIMA_MODIFICA);
+			de.addInfoAuditDataAggiornamento("2023/11/12 12:34", "2023/11/12 12:34");
+			de.addInfoAuditUtente("Zulio", "Zulio");
+			dati.add(de);
 		}
 		
 		if(gestioneFruitori) {
@@ -2491,6 +2506,21 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				de.setImage(image);
 				dati.add(de);
 			}
+			
+			// Audit TODO Poli
+			de = new DataElement();
+			de.setType(DataElementType.IMAGE);
+			de.setLabel(CostantiControlStation.LABEL_CREAZIONE);
+			de.addInfoAuditDataCreazione("2023/11/12 12:34", "2023/11/12 12:34");
+			de.addInfoAuditUtente("amministratore", "amministratore");
+			dati.add(de);
+			
+			de = new DataElement();
+			de.setType(DataElementType.IMAGE);
+			de.setLabel(CostantiControlStation.LABEL_ULTIMA_MODIFICA);
+			de.addInfoAuditDataAggiornamento("2023/11/12 12:34", "2023/11/12 12:34");
+			de.addInfoAuditUtente("Zulio", "Zulio");
+			dati.add(de);
 		}
 		
 
