@@ -155,6 +155,10 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"privato");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"ora_registrazione");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"id_referente");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"utente_richiedente");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"data_creazione");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"utente_ultima_modifica");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"data_ultima_modifica");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI,"tipo_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI,"nome_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"versione");
@@ -257,6 +261,9 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 				// Canali
 				String canale = rs.getString("canale");
 				accordoServizio.setCanale(canale);
+				
+				// Proprieta Oggetto
+				accordoServizio.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggettoSintetico(rs));
 				
 				rs.close();
 				stm.close();

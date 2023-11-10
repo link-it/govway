@@ -56,7 +56,7 @@ public class AccordoServizioParteComuneServizioCompostoSintetico extends org.ope
 
 	private Long id;
 
-	private List<AccordoServizioParteComuneServizioCompostoServizioComponenteSintetico> servizioComponente = new ArrayList<AccordoServizioParteComuneServizioCompostoServizioComponenteSintetico>();
+	private List<AccordoServizioParteComuneServizioCompostoServizioComponenteSintetico> servizioComponente = new ArrayList<>();
 
 	private java.lang.Long idAccordoCooperazione;
 

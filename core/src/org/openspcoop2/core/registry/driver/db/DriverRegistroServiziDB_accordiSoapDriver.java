@@ -46,6 +46,7 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -689,7 +690,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 	}
 	
 	
-	protected void updatePortType(org.openspcoop2.core.registry.PortType portType) throws DriverRegistroServiziException {
+	protected void updatePortType(org.openspcoop2.core.registry.PortType portType, String user) throws DriverRegistroServiziException {
 
 		if (portType == null)
 			throw new DriverRegistroServiziException("Il port-type non puo' essere null.");
@@ -699,9 +700,9 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			throw new DriverRegistroServiziException("Il nome del port-type non e' valido.");
 
 		Connection connection = null;
-		PreparedStatement stm = null, updateStmt = null;
+		PreparedStatement stm = null;
+		PreparedStatement updateStmt = null;
 		ResultSet rs =null;
-		//String sqlQuery = ""; // updateQuery = "";
 
 		boolean error = false;
 
@@ -734,22 +735,10 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 				}
 			}
 			if(portType.getId()==null || portType.getId()<=0){
-				throw new Exception("Id PortType undefined");
+				throw new DriverRegistroServiziException("Id PortType undefined");
 			}
-			
-			//TODO possibile ottimizzazione
-			//la lista contiene tutte e sole le azioni necessarie
-			//prima cancello le azioni e poi reinserisco quelle nuove
-//			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
-//			sqlQueryObject.addDeleteTable(CostantiDB.PORT_TYPE_AZIONI);
-//			sqlQueryObject.addWhereCondition("id_port_type=?");
-//			sqlQuery = sqlQueryObject.createSQLDelete();
-//			stm=connection.prepareStatement(sqlQuery);
-//			stm.setLong(1, portType.getId());
-//			int n=stm.executeUpdate();
-//			stm.close();
-			
-			List<Long> idsOperation = new ArrayList<Long>();
+						
+			List<Long> idsOperation = new ArrayList<>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
 			sqlQueryObject.addWhereCondition("id_port_type=?");
@@ -763,7 +752,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			rs.close();
 			stm.close();
 			
-			if(idsOperation!=null && idsOperation.size()>0){
+			if(idsOperation!=null && !idsOperation.isEmpty()){
 				for (Long id : idsOperation) {
 					ISQLQueryObject sqlQueryObjectMessages = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObjectMessages.addDeleteTable(CostantiDB.PORT_TYPE_AZIONI_OPERATION_MESSAGES);
@@ -787,18 +776,29 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			stm.close();
 			this.driver.logDebug("Cancellate "+n+" azioni associate al portType "+portType.getNome()+ " dell'accordo: "+as.getNome());
 			
-//			Operation azione = null;
 			for (int i = 0; i < portType.sizeAzioneList(); i++) {
 				Operation azione = portType.getAzione(i);			
 				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzionePortType(CostantiDB.CREATE,as,portType,azione, connection, portType.getId());
 			}
 			this.driver.logDebug("inserite " + portType.sizeAzioneList() + " azioni relative al port type["+portType.getNome()+"] id-porttype["+portType.getId()+"]");
+			
+			if(user!=null && as!=null && as.getId()!=null && as.getId().longValue()>0 ) {
+				ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+				sqlQueryObjectUpdate.addUpdateTable(CostantiDB.ACCORDI);
+				sqlQueryObjectUpdate.addUpdateField("utente_ultima_modifica", "?");
+				sqlQueryObjectUpdate.addUpdateField("data_ultima_modifica", "?");
+				sqlQueryObjectUpdate.addWhereCondition("id=?");
+				updateString = sqlQueryObjectUpdate.createSQLUpdate();
+				stm = connection.prepareStatement(updateString);
+				int index = 1;
+				stm.setString(index++, user);
+				stm.setTimestamp(index++, DateManager.getTimestamp());
+				stm.setLong(index, as.getId().longValue());
+				n=stm.executeUpdate();
+				stm.close();
+				this.driver.logDebug("Aggiornata "+n+" entry per l'operazione di ultima modifica dell'accordo: "+as.getNome());
+			}
 		} 
-//		catch (SQLException se) {
-//			this.driver.log.error(se);
-//			error = true;
-//			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updatePortType] SQLException [" + se.getMessage() + "].",se);
-//		} 
 		catch (Exception se) {
 			this.driver.log.error(se.getMessage(),se);
 			error = true;

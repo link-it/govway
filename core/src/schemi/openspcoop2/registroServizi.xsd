@@ -84,6 +84,8 @@
 				type="documento"/>
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -180,6 +182,8 @@
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 			<!-- Gruppi -->
 			<xsd:element maxOccurs="1" minOccurs="0" name="gruppi" type="gruppi-accordo"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -799,6 +803,10 @@
 				</linkit:generator>
 			</xsd:appinfo>
 		</xsd:annotation>
+		<xsd:sequence>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
 			<xsd:annotation>
@@ -866,6 +874,10 @@
 				</linkit:generator>
 			</xsd:appinfo>
 		</xsd:annotation>
+		<xsd:sequence>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="tipologia" type="RuoloTipologia" use="optional" default="qualsiasi"/>
@@ -919,6 +931,10 @@
 				</linkit:generator>
 			</xsd:appinfo>
 		</xsd:annotation>
+		<xsd:sequence>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="tipologia" type="xsd:string" use="optional"/> <!-- caratteristica dello scope (es. policy di gestione) -->
@@ -971,6 +987,10 @@
 				</linkit:generator>
 			</xsd:appinfo>
 		</xsd:annotation>
+		<xsd:sequence>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="service-binding" type="ServiceBinding" use="optional" />
@@ -1026,6 +1046,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="credenziali" type="credenziali-soggetto"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="ruoli-soggetto"/>
 			<xsd:element ref="accordo-servizio-parte-specifica" maxOccurs="unbounded" minOccurs="0"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -1187,6 +1209,8 @@
 				type="documento"/>
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -1406,6 +1430,8 @@
 			<xsd:element name="configurazione-azione" type="configurazione-servizio-azione" maxOccurs="unbounded" minOccurs="0"/>		
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
@@ -1554,6 +1580,52 @@
 			</xsd:annotation>
 		</xsd:attribute>
 		<!-- end-extensions -->
+	</xsd:complexType>
+
+
+	<!-- ProprietaOggetto -->
+	<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" />
+	<xsd:complexType name="proprieta-oggetto">
+		<xsd:attribute name="utente-richiedente" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="data-creazione" type="xsd:dateTime" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" filter-interval="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="utente-ultima-modifica" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="data-ultima-modifica" type="xsd:dateTime" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" filter-interval="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	
 	

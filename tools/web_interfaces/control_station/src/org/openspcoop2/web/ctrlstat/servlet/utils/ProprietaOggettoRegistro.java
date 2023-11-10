@@ -22,6 +22,7 @@ package org.openspcoop2.web.ctrlstat.servlet.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,29 +37,31 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
-import org.openspcoop2.core.config.CanaleConfigurazione;
-import org.openspcoop2.core.controllo_traffico.IdPolicy;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
-import org.openspcoop2.core.id.IDPortType;
-import org.openspcoop2.core.id.IDPortTypeAzione;
-import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniDetailsUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
@@ -77,7 +80,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
  * @version $Rev$, $Date$
  *
  */
-public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
+public class ProprietaOggettoRegistro extends HttpServlet{
 
 	/**
 	 * 
@@ -116,6 +119,7 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 			UtilsHelper registroHelper = new UtilsHelper(request, pd, session);
 			ArchiviCore archiviCore = new ArchiviCore();
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(archiviCore);
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(archiviCore);
 			SoggettiCore soggettiCore = new SoggettiCore(archiviCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(archiviCore);
 			RuoliCore ruoliCore = new RuoliCore(archiviCore);
@@ -123,9 +127,9 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 			ConfigurazioneCore confCore = new ConfigurazioneCore(archiviCore);
 			GruppiCore gruppiCore = new GruppiCore(archiviCore);
 
-			String identificativoOggetto = registroHelper.getParameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO); 
-			String tipoOggetto = registroHelper.getParameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO); 
-			String tipoRisposta = registroHelper.getParameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA); 
+			String identificativoOggetto = registroHelper.getParameter(UtilsCostanti.PARAMETRO_PROPRIETA_OGGETTO_ID_OGGETTO); 
+			String tipoOggetto = registroHelper.getParameter(UtilsCostanti.PARAMETRO_PROPRIETA_OGGETTO_TIPO_OGGETTO); 
+			String tipoRisposta = registroHelper.getParameter(UtilsCostanti.PARAMETRO_PROPRIETA_OGGETTO_TIPO_RISPOSTA); 
 
 			InUsoType inUsoType = InUsoType.valueOf(tipoOggetto);
 			
@@ -137,132 +141,102 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 				identificativi = exporterUtils.getIdsAccordiServizioParteComune(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDAccordo idAccordo = (IDAccordo)object;
-					risultatiRicerca.add(apcCore.getDettagliAccordoInUso(idAccordo));
-				}
-				break;
-			case RISORSA:
-				identificativi = exporterUtils.getIdsAccordiServizioParteComuneRisorsa(identificativoOggetto);
-				for (Object object : identificativi) {
-					IDResource idRisorsa = (IDResource)object;
-					risultatiRicerca.add(apcCore.getDettagliRisorsaInUso(idRisorsa));
-				}
-				break;
-			case PORT_TYPE:
-				identificativi = exporterUtils.getIdsAccordiServizioParteComunePortType(identificativoOggetto);
-				for (Object object : identificativi) {
-					IDPortType idPT = (IDPortType)object;
-					risultatiRicerca.add(apcCore.getDettagliPortTypeInUso(idPT));
-				}
-				break;
-			case OPERAZIONE:
-				identificativi = exporterUtils.getIdsAccordiServizioParteComuneOperazione(identificativoOggetto);
-				for (Object object : identificativi) {
-					IDPortTypeAzione idOperazione = (IDPortTypeAzione)object;
-					risultatiRicerca.add(apcCore.getDettagliOperazioneInUso(idOperazione));
+					AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(idAccordo);
+					risultatiRicerca.add(this.getProprieta(as.getProprietaOggetto()));
 				}
 				break;
 			case SERVIZIO_APPLICATIVO:
 				identificativi = exporterUtils.getIdsServiziApplicativi(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDServizioApplicativo idServizioApplicativo = (IDServizioApplicativo)object;
-					boolean verificaRuoli = true;
-					risultatiRicerca.add(saCore.getDettagliServizioApplicativoInUso(idServizioApplicativo, verificaRuoli));
+					ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativo);
+					risultatiRicerca.add(this.getProprieta(sa.getProprietaOggetto()));
 				}
 				break;
 			case SOGGETTO:
 				identificativi = exporterUtils.getIdsSoggetti(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDSoggetto idSoggetto = (IDSoggetto)object;
-					Soggetto soggetto = new Soggetto();
-					soggetto.setTipo(idSoggetto.getTipo());
-					soggetto.setNome(idSoggetto.getNome());
-					soggetto.setIdentificativoPorta(idSoggetto.getCodicePorta());
-					boolean verificaRuoli = true;
-					risultatiRicerca.add(soggettiCore.getDettagliSoggettoInUso(soggetto, verificaRuoli));
+					Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggetto);
+					risultatiRicerca.add(this.getProprieta(soggetto.getProprietaOggetto()));
 				}
 				break;
 			case RUOLO:
 				identificativi = exporterUtils.getIdsRuoli(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDRuolo idRuolo = (IDRuolo)object;
-					risultatiRicerca.add(ruoliCore.getDettagliRuoloInUso(idRuolo));
+					Ruolo ruolo = ruoliCore.getRuolo(idRuolo.getNome());
+					risultatiRicerca.add(this.getProprieta(ruolo.getProprietaOggetto()));
 				}
 				break;
 			case SCOPE:
 				identificativi = exporterUtils.getIdsScope(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDScope idScope = (IDScope)object;
-					risultatiRicerca.add(scopeCore.getDettagliScopeInUso(idScope));
-				}
-				break;
-			case CANALE:
-				identificativi = exporterUtils.getIdsCanali(identificativoOggetto);
-				for (Object object : identificativi) {
-					CanaleConfigurazione canale = (CanaleConfigurazione)object;
-					risultatiRicerca.add(confCore.getDettagliCanaleInUso(canale));
+					Scope scope = scopeCore.getScope(idScope.getNome());
+					risultatiRicerca.add(this.getProprieta(scope.getProprietaOggetto()));
 				}
 				break;
 			case GRUPPO:
 				identificativi = exporterUtils.getIdsGruppi(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDGruppo idGruppo = (IDGruppo)object;
-					risultatiRicerca.add(gruppiCore.getDettagliGruppoInUso(idGruppo));
+					Gruppo gruppo = gruppiCore.getGruppo(idGruppo.getNome());
+					risultatiRicerca.add(this.getProprieta(gruppo.getProprietaOggetto()));
 				}
 				break;
 			case TOKEN_POLICY:
 				identificativi = exporterUtils.getIdsTokenPolicy(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDGenericProperties idGP = (IDGenericProperties)object;
-					risultatiRicerca.add(confCore.getDettagliTokenPolicyInUso(idGP));
+					risultatiRicerca.add("TODO");
 				}
 				break;
 			case ATTRIBUTE_AUTHORITY:
 				identificativi = exporterUtils.getIdsAttributeAuthority(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDGenericProperties idGP = (IDGenericProperties)object;
-					risultatiRicerca.add(confCore.getDettagliTokenPolicyInUso(idGP));
+					risultatiRicerca.add("TODO");
 				}
 				break;
-			case RATE_LIMITING_POLICY:
-				identificativi = exporterUtils.getIdsControlloTrafficoConfigPolicy(identificativoOggetto);
-				for (Object object : identificativi) {
-					IdPolicy idRP = (IdPolicy)object;
-					risultatiRicerca.add(confCore.getDettagliRateLimitingPolicyInUso(idRP));
-				}
-				break;
-			case PLUGIN_CLASSE:
-				identificativi = exporterUtils.getIdsPluginClassi(identificativoOggetto);
-				for (Object object : identificativi) {
-					IdPlugin idPlugin = (IdPlugin)object;
-					risultatiRicerca.add(confCore.getDettagliPluginClasseInUso(idPlugin));
-				}
-				break;
-			case EROGAZIONE_INFO:{
+
+			case EROGAZIONE:{
 				String uriAPSerogata = identificativoOggetto;
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uriAPSerogata);
-				risultatiRicerca.add(ErogazioniDetailsUtilities.getDetailsErogazione(idServizio, soggettiCore, registroHelper));
+				AccordoServizioParteSpecifica as = apsCore.getAccordoServizioParteSpecifica(idServizio);
+				risultatiRicerca.add(this.getProprieta(as.getProprietaOggetto()));
 				break;
 			}
-			case FRUIZIONE_INFO:{
+			case FRUIZIONE:{
 				String uriAPSfruita = identificativoOggetto;
 				if(uriAPSfruita.contains("@")) {
 					String tipoNomeFruitore = uriAPSfruita.split("@")[1];
 					uriAPSfruita = uriAPSfruita.split("@")[0];
 					IDSoggetto idSoggettoFruitore = new IDSoggetto(tipoNomeFruitore.split("/")[0], tipoNomeFruitore.split("/")[1]);
 					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uriAPSfruita);
-					risultatiRicerca.add(ErogazioniDetailsUtilities.getDetailsFruizione(idServizio, idSoggettoFruitore, soggettiCore, registroHelper));
+					AccordoServizioParteSpecifica as = apsCore.getAccordoServizioParteSpecifica(idServizio);
+					for (Fruitore fruitore : as.getFruitoreList()) {
+						if(idSoggettoFruitore.getTipo().equals(fruitore.getTipo()) && idSoggettoFruitore.getNome().equals(fruitore.getNome())) {
+							risultatiRicerca.add(this.getProprieta(fruitore.getProprietaOggetto()));
+							break;
+						}
+					}
 				}
 				else {
 					risultatiRicerca.add("Internal Error: informazione fruitore non presente");
 				}
 				break;
 			}
+			case RISORSA:
+			case PORT_TYPE:
+			case OPERAZIONE:
+			case CANALE:
 			case ACCORDO_COOPERAZIONE:
 			case ACCORDO_SERVIZIO_COMPOSTO:
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
-			case EROGAZIONE:
+			case EROGAZIONE_INFO:
 			case FRUITORE:
-			case FRUIZIONE:
+			case FRUIZIONE_INFO:
 			case PDD:
 			case PORTA_APPLICATIVA:
 			case PORTA_DELEGATA:
@@ -271,13 +245,13 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 
 			ServletOutputStream outputStream = response.getOutputStream();
 			
-			if(tipoRisposta.equalsIgnoreCase(UtilsCostanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_JSON)) {
+			if(tipoRisposta.equalsIgnoreCase(UtilsCostanti.VALUE_PARAMETRO_PROPRIETA_OGGETTO_TIPO_RISPOSTA_JSON)) {
 				response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 				JSONUtils jsonUtils = JSONUtils.getInstance(true);
 				Map<String, Object> mapResult = new HashMap<>();
 				mapResult.put(UtilsCostanti.KEY_JSON_RISPOSTA_USO, risultatiRicerca);
 				jsonUtils.writeTo(mapResult, outputStream);
-			} else if(tipoRisposta.equalsIgnoreCase(UtilsCostanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT)) {
+			} else if(tipoRisposta.equalsIgnoreCase(UtilsCostanti.VALUE_PARAMETRO_PROPRIETA_OGGETTO_TIPO_RISPOSTA_TEXT)) {
 				response.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 				outputStream.write(StringUtils.join(risultatiRicerca.toArray(new String[1])).getBytes());
 			} else {
@@ -288,5 +262,40 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la ricerca delle informazioni oggetto: "+e.getMessage(), e);
 		}
+	}
+	
+	private String getProprieta(org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico p) {
+		return getProprieta(p.getUtenteRichiedente(), p.getDataCreazione(),
+				p.getUtenteUltimaModifica(), p.getDataUltimaModifica());
+	}
+	private String getProprieta(org.openspcoop2.core.registry.ProprietaOggetto p) {
+		return getProprieta(p.getUtenteRichiedente(), p.getDataCreazione(),
+				p.getUtenteUltimaModifica(), p.getDataUltimaModifica());
+	}
+	private String getProprieta(org.openspcoop2.core.config.ProprietaOggetto p) {
+		return getProprieta(p.getUtenteRichiedente(), p.getDataCreazione(),
+				p.getUtenteUltimaModifica(), p.getDataUltimaModifica());
+	}
+	private String getProprieta(String utenteRichiedente, Date dataCreazione,
+			String utenteUtimaModifica, Date dataUtimaModifica) {
+		StringBuilder sb = new StringBuilder();
+		if(dataCreazione!=null) {
+			String dataMs = CostantiControlStation.formatDateMs(dataCreazione);
+			sb.append(CostantiControlStation.LABEL_DATA_CREAZIONE).append(": ").append(dataMs);
+		}
+		if(utenteRichiedente!=null) {
+			sb.append(CostantiControlStation.LABEL_UTENTE_RICHIEDENTE).append(": ").append(utenteRichiedente);
+		}
+		if(dataUtimaModifica!=null) {
+			String dataMs = CostantiControlStation.formatDateMs(dataUtimaModifica);
+			sb.append(CostantiControlStation.LABEL_DATA_ULTIMA_MODIFICA).append(": ").append(dataMs);
+		}
+		if(utenteUtimaModifica!=null) {
+			sb.append(CostantiControlStation.LABEL_UTENTE_ULTIMA_MODIFICA).append(": ").append(utenteUtimaModifica);
+		}
+		if(sb.length()<=0) {
+			sb.append("Nessuna proprietà disponibile");
+		}
+		return sb.toString();
 	}
 }

@@ -45,6 +45,7 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.RISPOSTA_ASINCRONA = new org.openspcoop2.core.config.model.RispostaAsincronaModel(new Field("risposta-asincrona",org.openspcoop2.core.config.RispostaAsincrona.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta",org.openspcoop2.core.config.Proprieta.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.config.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.config.ProtocolProperty.class,"servizio-applicativo",ServizioApplicativo.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.config.model.ProprietaOggettoModel(new Field("proprieta-oggetto",org.openspcoop2.core.config.ProprietaOggetto.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPO_SOGGETTO_PROPRIETARIO = new Field("tipo-soggetto-proprietario",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.NOME_SOGGETTO_PROPRIETARIO = new Field("nome-soggetto-proprietario",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
@@ -67,6 +68,7 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.RISPOSTA_ASINCRONA = new org.openspcoop2.core.config.model.RispostaAsincronaModel(new ComplexField(father,"risposta-asincrona",org.openspcoop2.core.config.RispostaAsincrona.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta",org.openspcoop2.core.config.Proprieta.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.config.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.config.ProtocolProperty.class,"servizio-applicativo",ServizioApplicativo.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.config.model.ProprietaOggettoModel(new ComplexField(father,"proprieta-oggetto",org.openspcoop2.core.config.ProprietaOggetto.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPO_SOGGETTO_PROPRIETARIO = new ComplexField(father,"tipo-soggetto-proprietario",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.NOME_SOGGETTO_PROPRIETARIO = new ComplexField(father,"nome-soggetto-proprietario",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
@@ -91,6 +93,8 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA = null;
 	 
 	public org.openspcoop2.core.config.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
+	 
+	public org.openspcoop2.core.config.model.ProprietaOggettoModel PROPRIETA_OGGETTO = null;
 	 
 	public IField ID_SOGGETTO = null;
 	 

@@ -909,8 +909,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @param portType
 	 * @throws DriverRegistroServiziException
 	 */
-	public void updatePortType(org.openspcoop2.core.registry.PortType portType) throws DriverRegistroServiziException {
-		this.accordiSoapDriver.updatePortType(portType);
+	public void updatePortType(org.openspcoop2.core.registry.PortType portType, String user) throws DriverRegistroServiziException {
+		this.accordiSoapDriver.updatePortType(portType, user);
 	}
 	
 	/**

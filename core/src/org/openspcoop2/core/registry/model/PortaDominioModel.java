@@ -40,6 +40,7 @@ public class PortaDominioModel extends AbstractModel<PortaDominio> {
 	
 		super();
 	
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new Field("proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"porta-dominio",PortaDominio.class));
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"porta-dominio",PortaDominio.class);
 		this.NOME = new Field("nome",java.lang.String.class,"porta-dominio",PortaDominio.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"porta-dominio",PortaDominio.class);
@@ -54,6 +55,7 @@ public class PortaDominioModel extends AbstractModel<PortaDominio> {
 	
 		super(father);
 	
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new ComplexField(father,"proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"porta-dominio",PortaDominio.class));
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"porta-dominio",PortaDominio.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-dominio",PortaDominio.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"porta-dominio",PortaDominio.class);
@@ -66,6 +68,8 @@ public class PortaDominioModel extends AbstractModel<PortaDominio> {
 	
 	
 
+	public org.openspcoop2.core.registry.model.ProprietaOggettoModel PROPRIETA_OGGETTO = null;
+	 
 	public IField SUPER_USER = null;
 	 
 	public IField NOME = null;

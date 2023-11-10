@@ -57,6 +57,7 @@ import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -116,6 +117,25 @@ public class DriverRegistroServiziDB_accordiLIB {
 		conversazioneErogatore = conversazioneErogatore!=null && !"".equals(conversazioneErogatore.trim().replaceAll("\n", "")) ? conversazioneErogatore : null;
 		conversazioneFruitore = conversazioneFruitore!=null && !"".equals(conversazioneFruitore.trim().replaceAll("\n", "")) ? conversazioneFruitore : null;
 
+		String utenteRichiedente = null;
+		if(accordoServizio.getProprietaOggetto()!=null && accordoServizio.getProprietaOggetto().getUtenteRichiedente()!=null) {
+			utenteRichiedente = accordoServizio.getProprietaOggetto().getUtenteRichiedente();
+		}
+		else {
+			utenteRichiedente = superUser;
+		}
+		
+		Timestamp dataCreazione = null;
+		if(accordoServizio.getProprietaOggetto()!=null && accordoServizio.getProprietaOggetto().getDataCreazione()!=null) {
+			dataCreazione = new Timestamp(accordoServizio.getProprietaOggetto().getDataCreazione().getTime());
+		}
+		else if(accordoServizio.getOraRegistrazione()!=null){
+			dataCreazione = new Timestamp(accordoServizio.getOraRegistrazione().getTime());
+		}
+		else {
+			dataCreazione = DateManager.getTimestamp();
+		}
+		
 		String sqlQuery = "";
 
 		PreparedStatement stm = null;
@@ -153,6 +173,12 @@ public class DriverRegistroServiziDB_accordiLIB {
 			sqlQueryObject.addInsertField("versione", "?");
 			if(accordoServizio.getOraRegistrazione()!=null)
 				sqlQueryObject.addInsertField("ora_registrazione", "?");
+			if(utenteRichiedente!=null) {
+				sqlQueryObject.addInsertField("utente_richiedente", "?");
+			}
+			if(dataCreazione!=null) {
+				sqlQueryObject.addInsertField("data_creazione", "?");
+			}
 			sqlQuery = sqlQueryObject.createSQLInsert();
 			stm = con.prepareStatement(sqlQuery);
 			int index = 1;
@@ -187,8 +213,10 @@ public class DriverRegistroServiziDB_accordiLIB {
 			}
 			stm.setString(index, accordoServizio.getCanale());
 			index++;
+			
+			long idReferente = -1;
 			if(accordoServizio.getSoggettoReferente()!=null){
-				long idReferente = DBUtils.getIdSoggetto(accordoServizio.getSoggettoReferente().getNome(), accordoServizio.getSoggettoReferente().getTipo(), con, DriverRegistroServiziDB_LIB.tipoDB, tabellaSoggetti);
+				idReferente = DBUtils.getIdSoggetto(accordoServizio.getSoggettoReferente().getNome(), accordoServizio.getSoggettoReferente().getTipo(), con, DriverRegistroServiziDB_LIB.tipoDB, tabellaSoggetti);
 				if(idReferente<=0){
 					throw new DriverRegistroServiziException("Soggetto Referente ["+accordoServizio.getSoggettoReferente().getTipo()+"/"+accordoServizio.getSoggettoReferente().getNome()+"] non trovato");
 				}
@@ -203,14 +231,26 @@ public class DriverRegistroServiziDB_accordiLIB {
 				stm.setTimestamp(index, new Timestamp(accordoServizio.getOraRegistrazione().getTime()));
 				index++;
 			}
+			
+			if(utenteRichiedente!=null) {
+				stm.setString(index, utenteRichiedente);
+				index++;
+			}
+			
+			if(dataCreazione!=null) {
+				stm.setTimestamp(index, dataCreazione);
+				index++;
+			}
 
-			log.debug("inserisco accordoServizio : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, 
+			String msgDebug = "inserisco accordoServizio : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, 
 					serviceBinding, messageType,
 					confermaRicezione, conegnaInOrdine, descrizione, 
 					filtroDuplicati, identificativoCollaborazione, identificativoRiferimentoRichiesta, nome, profiloCollaborazione, scadenza, 
 					wsdlConcettuale, wsdlDefinitorio, wsdlLogicoErogatore, wsdlLogicoFruitore, 
 					conversazioneConcettuale, conversazioneErogatore, conversazioneFruitore,
-					superUser, accordoServizio.getUtilizzoSenzaAzione(), (accordoServizio.getPrivato()!=null && accordoServizio.getPrivato())));
+					superUser, accordoServizio.getUtilizzoSenzaAzione(), 
+					(accordoServizio.getPrivato()!=null && accordoServizio.getPrivato()));
+			log.debug(msgDebug);
 
 			// eseguo la query
 			stm.executeUpdate();
@@ -227,23 +267,11 @@ public class DriverRegistroServiziDB_accordiLIB {
 			}
 			accordoServizio.setId(idAccordo);
 			// aggiungo le eventuali azioni che c-erano
-			//sqlQuery = "INSERT INTO " + CostantiDB.ACCORDI_AZIONI + " (id_accordo, nome, filtro_duplicati, conferma_ricezione, identificativo_collaborazione, consegna_in_ordine, scadenza) " + "VALUES (?,?,?,?,?,?,?)";
-
+			
 			Azione azione = null;
 			for (int i = 0; i < accordoServizio.sizeAzioneList(); i++) {
 				azione = accordoServizio.getAzione(i);
 				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzione(CostantiDB.CREATE,accordoServizio, azione, con, idAccordo);
-
-				//				stm = connection.prepareStatement(sqlQuery);
-				//				stm.setLong(1, idAccordo);
-				//				stm.setString(2, azione.getNome());
-				//				stm.setString(3, azione.getFiltroDuplicati());
-				//				stm.setString(4, azione.getConfermaRicezione());
-				//				stm.setString(5, azione.getIdCollaborazione());
-				//				stm.setString(6, azione.getConsegnaInOrdine());
-				//				stm.setString(7, azione.getScadenza());
-
-				//				stm.executeUpdate();
 
 			}
 			log.debug("inserite " + accordoServizio.sizeAzioneList() + " azioni relative all'accordo :" + nome + " id :" + idAccordo);
@@ -401,6 +429,22 @@ public class DriverRegistroServiziDB_accordiLIB {
 			if (idAccordoLong <= 0)
 				throw new DriverRegistroServiziException("Impossibile recuperare l'id dell'Accordo di Servizio : " + nome);
 
+			String utenteUltimaModifica = null;
+			if(accordoServizio.getProprietaOggetto()!=null && accordoServizio.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
+				utenteUltimaModifica = accordoServizio.getProprietaOggetto().getUtenteUltimaModifica();
+			}
+			else {
+				utenteUltimaModifica = superUser;
+			}
+			
+			Timestamp dataUltimaModifica = null;
+			if(accordoServizio.getProprietaOggetto()!=null && accordoServizio.getProprietaOggetto().getDataUltimaModifica()!=null) {
+				dataUltimaModifica = new Timestamp(accordoServizio.getProprietaOggetto().getDataUltimaModifica().getTime());
+			}
+			else {
+				dataUltimaModifica = DateManager.getTimestamp();
+			}
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 			sqlQueryObject.addUpdateTable(CostantiDB.ACCORDI);
 			sqlQueryObject.addUpdateField("service_binding", "?");
@@ -437,6 +481,13 @@ public class DriverRegistroServiziDB_accordiLIB {
 
 			sqlQueryObject.addUpdateField("id_referente", "?");
 			sqlQueryObject.addUpdateField("versione", "?");
+			
+			if(utenteUltimaModifica!=null) {
+				sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+			}
+			if(dataUltimaModifica!=null) {
+				sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+			}
 
 			sqlQueryObject.addWhereCondition("id=?");
 			sqlQuery = sqlQueryObject.createSQLUpdate();
@@ -488,22 +539,31 @@ public class DriverRegistroServiziDB_accordiLIB {
 			}
 			stm.setInt(index++, accordoServizio.getVersione());
 
+			if(utenteUltimaModifica!=null) {
+				stm.setString(index++, utenteUltimaModifica);
+			}
+			
+			if(dataUltimaModifica!=null) {
+				stm.setTimestamp(index++, dataUltimaModifica);
+			}
+			
 			stm.setLong(index++, idAccordoLong);
 
-			log.debug("update accordoServizio : " + 
+			String msgDebug = "update accordoServizio : " + 
 					DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, 
 							serviceBinding, messageType,
 							confermaRicezione, conegnaInOrdine, descrizione, 
 							filtroDuplicati, identificativoCollaborazione, identificativoRiferimentoRichiesta, nome, profiloCollaborazione, scadenza, 
 							wsdlConcettuale, wsdlDefinitorio, wsdlLogicoErogatore, wsdlLogicoFruitore, 
 							conversazioneConcettuale, conversazioneErogatore, conversazioneFruitore,
-							superUser,utilizzioSenzaAzione, idAccordoLong));
+							superUser,utilizzioSenzaAzione, idAccordoLong);
+			log.debug(msgDebug);
 
 			stm.executeUpdate();
 			stm.close();
 
 			//aggiorno le azioni
-			//TODO possibile ottimizzazione
+			//possibile ottimizzazione
 			//la lista contiene tutte e sole le azioni necessarie
 			//prima cancello le azioni e poi reinserisco quelle nuove
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);

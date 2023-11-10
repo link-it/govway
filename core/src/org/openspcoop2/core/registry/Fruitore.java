@@ -41,6 +41,7 @@ import java.util.List;
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="configurazione-azione" type="{http://www.openspcoop2.org/core/registry}configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/registry}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="byte-wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
@@ -67,7 +68,8 @@ import java.util.List;
   	"servizioApplicativo",
   	"connettore",
   	"configurazioneAzione",
-  	"protocolProperty"
+  	"protocolProperty",
+  	"proprietaOggetto"
   }
 )
 
@@ -156,6 +158,14 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
 
   public int sizeProtocolPropertyList() {
     return this.protocolProperty.size();
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.String getStatoPackage() {
@@ -326,6 +336,9 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   public int sizeProtocolProperty() {
   	return this.sizeProtocolPropertyList();
   }
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="stato-package",required=false)

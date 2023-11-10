@@ -73,7 +73,7 @@ public class GruppiHelper extends ConsoleHelper{
 		if(TipoOperazione.CHANGE.equals(tipoOP)){
 			
 			// In Uso Button
-			this.addComandoInUsoButton(dati, nome,
+			this.addComandoInUsoButton(nome,
 					nome,
 					InUsoType.GRUPPO);
 						

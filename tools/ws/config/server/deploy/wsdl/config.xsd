@@ -118,6 +118,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="attribute-authority" type="attribute-authority">
 				
 			</xsd:element>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -286,6 +288,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="attribute-authority" type="attribute-authority">
 				
 			</xsd:element>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -448,6 +452,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta" type="proprieta"/>
 			<!-- Protocol Properties -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -1472,6 +1478,24 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="data" type="xsd:dateTime" use="required"/>
 		<xsd:attribute name="sorgente" type="PluginSorgenteArchivio" use="required"/>
+	</xsd:complexType>
+
+
+	<!-- ProprietaOggetto -->
+	<xsd:element name="proprieta-oggetto" type="proprieta-oggetto"/>
+	<xsd:complexType name="proprieta-oggetto">
+		<xsd:attribute name="utente-richiedente" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
+		<xsd:attribute name="data-creazione" type="xsd:dateTime" use="optional">
+			
+		</xsd:attribute>
+		<xsd:attribute name="utente-ultima-modifica" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
+		<xsd:attribute name="data-ultima-modifica" type="xsd:dateTime" use="optional">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 	
 

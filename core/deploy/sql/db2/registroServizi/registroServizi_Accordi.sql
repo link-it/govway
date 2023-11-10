@@ -36,7 +36,7 @@ CREATE INDEX INDEX_DOC_SEARCH ON documenti (id_proprietario);
 CREATE TABLE accordi
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione CLOB,
 	service_binding VARCHAR(255) NOT NULL,
 	message_type VARCHAR(255),
 	profilo_collaborazione VARCHAR(255),
@@ -65,6 +65,10 @@ CREATE TABLE accordi
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	canale VARCHAR(255),
+	utente_richiedente VARCHAR(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- check constraints

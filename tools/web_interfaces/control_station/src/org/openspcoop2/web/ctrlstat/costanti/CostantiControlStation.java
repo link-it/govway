@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.costanti;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.commons.Filtri;
@@ -41,6 +42,7 @@ import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -56,6 +58,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * 
  */
 public class CostantiControlStation {
+	
+	private CostantiControlStation() {}
 	
 	public static final String DEFAULT_OPENSPCOOP2_PREFIX_LOCAL_PATH = "console";
 	public static final String DEFAULT_OPENSPCOOP2_PROPERTIES_NAME = "CONSOLE";
@@ -135,8 +139,21 @@ public class CostantiControlStation {
 	
 	/** LABEL GENERALI */
 	
+	public static final String LABEL_DATA_CREAZIONE = "Data Creazione";
+	public static final String LABEL_UTENTE_RICHIEDENTE = "Utente Richiedente";
+	public static final String LABEL_DATA_ULTIMA_MODIFICA = "Data Ultima Modifica";
+	public static final String LABEL_UTENTE_ULTIMA_MODIFICA = "Utente Ultima Modifica";
+	
 	public static final String LABEL_CREAZIONE = "Creazione";
 	public static final String LABEL_ULTIMA_MODIFICA = "Ultima Modifica";
+	private static final String DATE_FORMAT_MINUTE = "yyyy/MM/dd HH:mm";
+	public static String formatDateMinute(Date date) {
+		return DateUtils.getSimpleDateFormat(DATE_FORMAT_MINUTE).format(date);
+	}
+	private static final String DATE_FORMAT_MILLISECOND = "yyyy/MM/dd HH:mm:ss.SSS";
+	public static String formatDateMs(Date date) {
+		return DateUtils.getSimpleDateFormat(DATE_FORMAT_MILLISECOND).format(date);
+	}
 	
 	public static final String LABEL_PARAMETRO_PROTOCOLLO_DI = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI;
 	public static final String LABEL_PARAMETRO_PROTOCOLLO = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO;
@@ -824,6 +841,12 @@ public class CostantiControlStation {
 	public static final String LABEL_IN_USO_BODY_HEADER_RISULTATI = "Risultati della ricerca";
 	public static final String LABEL_IN_USO_INFORMAZIONI_TOOLTIP = "Visualizza dettagli della configurazione";
 	public static final String LABEL_IN_USO_BODY_HEADER_INFORMAZIONI = "Dettagli della configurazione";
+	
+	public static final String LABEL_PROPRIETA_OGGETTO_COLONNA_HEADER = "Proprietà";
+	public static final String LABEL_PROPRIETA_OGGETTO_TOOLTIP = "Visualizza proprietà";
+	public static final String LABEL_PROPRIETA_OGGETTO_BODY_HEADER_RISULTATI = "Proprietà";
+	public static final String LABEL_PROPRIETA_OGGETTO_INFORMAZIONI_TOOLTIP = "Visualizza proprietà della configurazione";
+	public static final String LABEL_PROPRIETA_OGGETTO_BODY_HEADER_INFORMAZIONI = "Proprietà della configurazione";
 	
 	public static final String LABEL_CONFIGURAZIONE_CANALE_DEFAULT = "Configurazione di default del Gateway";
 	public static final String LABEL_CONFIGURAZIONE_CANALE_DEFAULT_API = "Configurazione di default dell'API";

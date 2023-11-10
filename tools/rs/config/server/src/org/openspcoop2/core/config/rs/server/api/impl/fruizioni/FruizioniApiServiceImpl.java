@@ -200,6 +200,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			f.setNome(fruitore.getNome());
 			f.setStatoPackage(StatoType.FINALE.getValue());
 			f.setConnettore(regConnettore);
+			env.apsCore.setDataCreazioneFruitore(f);
 			asps.addFruitore(f);
 
 			ProtocolProperties protocolProperties = null;

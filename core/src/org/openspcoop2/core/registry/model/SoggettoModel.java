@@ -46,6 +46,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		this.CREDENZIALI = new org.openspcoop2.core.registry.model.CredenzialiSoggettoModel(new Field("credenziali",org.openspcoop2.core.registry.CredenzialiSoggetto.class,"soggetto",Soggetto.class));
 		this.RUOLI = new org.openspcoop2.core.registry.model.RuoliSoggettoModel(new Field("ruoli",org.openspcoop2.core.registry.RuoliSoggetto.class,"soggetto",Soggetto.class));
 		this.ACCORDO_SERVIZIO_PARTE_SPECIFICA = new org.openspcoop2.core.registry.model.AccordoServizioParteSpecificaModel(new Field("accordo-servizio-parte-specifica",org.openspcoop2.core.registry.AccordoServizioParteSpecifica.class,"soggetto",Soggetto.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new Field("proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"soggetto",Soggetto.class));
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"soggetto",Soggetto.class);
 		this.PRIVATO = new Field("privato",Boolean.class,"soggetto",Soggetto.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"soggetto",Soggetto.class);
@@ -69,6 +70,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		this.CREDENZIALI = new org.openspcoop2.core.registry.model.CredenzialiSoggettoModel(new ComplexField(father,"credenziali",org.openspcoop2.core.registry.CredenzialiSoggetto.class,"soggetto",Soggetto.class));
 		this.RUOLI = new org.openspcoop2.core.registry.model.RuoliSoggettoModel(new ComplexField(father,"ruoli",org.openspcoop2.core.registry.RuoliSoggetto.class,"soggetto",Soggetto.class));
 		this.ACCORDO_SERVIZIO_PARTE_SPECIFICA = new org.openspcoop2.core.registry.model.AccordoServizioParteSpecificaModel(new ComplexField(father,"accordo-servizio-parte-specifica",org.openspcoop2.core.registry.AccordoServizioParteSpecifica.class,"soggetto",Soggetto.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new ComplexField(father,"proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"soggetto",Soggetto.class));
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"soggetto",Soggetto.class);
 		this.PRIVATO = new ComplexField(father,"privato",Boolean.class,"soggetto",Soggetto.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"soggetto",Soggetto.class);
@@ -95,6 +97,8 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	public org.openspcoop2.core.registry.model.RuoliSoggettoModel RUOLI = null;
 	 
 	public org.openspcoop2.core.registry.model.AccordoServizioParteSpecificaModel ACCORDO_SERVIZIO_PARTE_SPECIFICA = null;
+	 
+	public org.openspcoop2.core.registry.model.ProprietaOggettoModel PROPRIETA_OGGETTO = null;
 	 
 	public IField SUPER_USER = null;
 	 

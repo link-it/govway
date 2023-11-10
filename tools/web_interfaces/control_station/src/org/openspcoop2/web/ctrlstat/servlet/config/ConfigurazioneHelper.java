@@ -17130,7 +17130,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// In Uso Button
 			InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
-			this.addComandoInUsoButton(dati, nome,
+			this.addComandoInUsoButton(nome,
 					id,
 					inUsoType);
 			

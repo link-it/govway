@@ -45,9 +45,12 @@ import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeProperties;
+import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
@@ -82,8 +85,21 @@ import org.slf4j.Logger;
 
 public class InitListener implements ServletContextListener {
 
-	//private static String IDMODULO = "ControlStation";
 	protected static Logger log = null;
+	public static void setLog(Logger log) {
+		InitListener.log = log;
+	}
+	private static void logDebug(String msg) {
+		if(InitListener.log!=null) {
+			InitListener.log.debug(msg);
+		}
+	}
+	private static void logError(String msg, Throwable e) {
+		if(InitListener.log!=null) {
+			InitListener.log.error(msg,e);
+		}
+	}
+
 	private static final Semaphore semaphoreInitListener = new Semaphore("InitListener");
 	private static boolean initialized = false;
 	static {
@@ -93,6 +109,9 @@ public class InitListener implements ServletContextListener {
 	public static boolean isInitialized() {
 		return InitListener.initialized;
 	}
+	public static void setInitialized(boolean initialized) {
+		InitListener.initialized = initialized;
+	}
 
 	private GestoriStartupThread gestoriStartupThread;
 	private GestoreConsistenzaDati gestoreConsistenzaDati;
@@ -101,7 +120,7 @@ public class InitListener implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent sce) {
 		InitListener.log.info("Undeploy govwayConsole in corso...");
 
-		InitListener.initialized = false;
+		InitListener.setInitialized(false);
 		
         // Fermo i Gestori
 		if(this.gestoriStartupThread!=null){
@@ -120,9 +139,9 @@ public class InitListener implements ServletContextListener {
 		// chiusura repository dei plugin
 		try {
 			CorePluginLoader.close(InitListener.log);
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			String msgErrore = "Errore durante la chiusura del loader dei plugins: " + e.getMessage();
-			InitListener.log.error(msgErrore,e);
+			InitListener.logError(msgErrore,e);
 		}
 		
 		InitListener.log.info("Undeploy govwayConsole effettuato.");
@@ -144,8 +163,7 @@ public class InitListener implements ServletContextListener {
 			String confLocalPathPrefix = null;
 			boolean appendActualConfiguration = false;
 			try{
-				InputStream is = InitListener.class.getResourceAsStream("/console.properties");
-				try{
+				try (InputStream is = InitListener.class.getResourceAsStream("/console.properties");){
 					if(is!=null){
 						Properties p = new Properties();
 						p.load(is);
@@ -170,14 +188,6 @@ public class InitListener implements ServletContextListener {
 							appendActualConfiguration = "true".equalsIgnoreCase(tmpAppendActualConfiguration.trim());
 						}
 					}
-				}finally{
-					try{
-						if(is!=null){
-							is.close();
-						}
-					}catch(Exception eClose){
-						// close
-					}
 				}
 	
 			}catch(Exception e){
@@ -186,9 +196,9 @@ public class InitListener implements ServletContextListener {
 					
 			try{
 				ControlStationLogger.initialize(InitListener.log, confDir, confPropertyName, confLocalPathPrefix, null, appendActualConfiguration);
-				InitListener.log = ControlStationLogger.getPddConsoleCoreLogger();
+				InitListener.setLog(ControlStationLogger.getPddConsoleCoreLogger());
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			
 			
@@ -196,29 +206,33 @@ public class InitListener implements ServletContextListener {
 			ConsoleProperties consoleProperties = null;
 			try{
 			
-				if(ConsoleProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)==false){
-					throw new Exception("ConsoleProperties not initialized");
+				if(!ConsoleProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)){
+					throw new UtilsException("ConsoleProperties not initialized");
 				}
 				consoleProperties = ConsoleProperties.getInstance();
 				
-				if(DatasourceProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)==false){
-					throw new Exception("DatasourceProperties not initialized");
+				if(!DatasourceProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)){
+					throw new UtilsException("DatasourceProperties not initialized");
 				}
 				
-				if(!consoleProperties.isSinglePddRegistroServiziLocale()){
-					if(RegistroServiziRemotoProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)==false){
-						throw new Exception("RegistroServiziRemotoProperties not initialized");
-					}
+				if(
+					(consoleProperties.isSinglePddRegistroServiziLocale()==null || (!consoleProperties.isSinglePddRegistroServiziLocale().booleanValue()))
+					&&
+					(!RegistroServiziRemotoProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log))
+					){
+					throw new UtilsException("RegistroServiziRemotoProperties not initialized");
 				}
 				
-				if(!consoleProperties.isSinglePdD()){
-					if(!QueueProperties.initialize(confDir,InitListener.log)){
-						throw new Exception("QueueProperties not initialized");
-					}
+				if(
+					(consoleProperties.isSinglePdD() == null ||  (!consoleProperties.isSinglePdD().booleanValue()))
+					&&
+					(!QueueProperties.initialize(confDir,InitListener.log))
+					){
+					throw new UtilsException("QueueProperties not initialized");
 				}
 							
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			InitListener.log.info("Inizializzazione resources (properties) govwayConsole effettuata con successo.");
 	
@@ -230,7 +244,7 @@ public class InitListener implements ServletContextListener {
 						consoleProperties.getExtendedInfoDriverPortaDelegata(), 
 						consoleProperties.getExtendedInfoDriverPortaApplicativa());
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			InitListener.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
 			
@@ -242,7 +256,7 @@ public class InitListener implements ServletContextListener {
 				DriverControlStationDB_LIB.initialize(InitListener.log);
 							
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			InitListener.log.info("Inizializzazione resources govwayConsole effettuata con successo.");
 			
@@ -253,7 +267,7 @@ public class InitListener implements ServletContextListener {
 					YamlSnakeLimits.initialize(InitListener.log, yamlSnakeLimits);
 				}
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			InitListener.log.info("Inizializzazione YAML Limits con successo");
 			
@@ -262,12 +276,12 @@ public class InitListener implements ServletContextListener {
 				XMLDiff diff = new XMLDiff(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
 				diff.initialize(XMLDiffImplType.XML_UNIT, new XMLDiffOptions());
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			InitListener.log.info("Inizializzazione XMLDiff effettuata con successo");
 	
 			try{
-				if(consoleProperties.isSinglePdD()==false){
+				if(consoleProperties.isSinglePdD()==null || (!consoleProperties.isSinglePdD())){
 					InitListener.log.info("Inizializzazione Gestori, della govwayConsole Centralizzata, in corso...");
 				
 	                this.gestoriStartupThread = new GestoriStartupThread();
@@ -276,7 +290,7 @@ public class InitListener implements ServletContextListener {
 					InitListener.log.info("Inizializzazione Gestori, della govwayConsole Centralizzata, effettuata con successo.");
 				}
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			
 			try{
@@ -297,7 +311,7 @@ public class InitListener implements ServletContextListener {
 				System.setProperty("org.apache.commons.fileupload.disk.DiskFileItem.serializable", "true");
 				InitListener.log.info("Inizializzazione DiskFileItem (opzione serializable), effettuata.");
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			
 			try{
@@ -310,7 +324,7 @@ public class InitListener implements ServletContextListener {
 					InitListener.log.info("Gestore Controllo Consistenza Dati disabilitato.");
 				}
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			
 			InitListener.log.info("Inizializzazione DataElement in corso...");
@@ -322,7 +336,7 @@ public class InitListener implements ServletContextListener {
 				dep.setCols(numeroColonneTextArea); 
 				DataElement.initialize(dep);
 			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
+				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 			InitListener.log.info("Inizializzazione DataElement effettuata con successo");
 			
@@ -333,31 +347,33 @@ public class InitListener implements ServletContextListener {
 			try{
 				String fontFileName = ConsoleProperties.getInstance().getConsoleFont();
 				
-				InitListener.log.debug("Caricato Font dal file: ["+fontFileName+"] in corso... ");
+				InitListener.logDebug("Caricato Font dal file: ["+fontFileName+"] in corso... ");
 				
 				isFont = servletContext.getResourceAsStream("/fonts/"+ fontFileName);
 	
 				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 				Font fontCaricato = Font.createFont(Font.PLAIN, isFont);
 				
-				InitListener.log.debug("Caricato Font: ["+fontCaricato.getName()+"] FontName: ["+fontCaricato.getFontName()+"] FontFamily: ["+fontCaricato.getFamily()+"] FontStyle: ["+fontCaricato.getStyle()+"]");
+				InitListener.logDebug("Caricato Font: ["+fontCaricato.getName()+"] FontName: ["+fontCaricato.getFontName()+"] FontFamily: ["+fontCaricato.getFamily()+"] FontStyle: ["+fontCaricato.getStyle()+"]");
 				
 				ge.registerFont(fontCaricato);
 	
-				InitListener.log.debug("Check Graphics Environment: is HeadeLess ["+java.awt.GraphicsEnvironment.isHeadless()+"]");
+				InitListener.logDebug("Check Graphics Environment: is HeadeLess ["+java.awt.GraphicsEnvironment.isHeadless()+"]");
 	
-				InitListener.log.debug("Elenco Nomi Font disponibili: " + Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()));
+				InitListener.logDebug("Elenco Nomi Font disponibili: " + Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()));
 				
 				ConsoleProperties.getInstance().setConsoleFontName(fontCaricato.getName());
 				ConsoleProperties.getInstance().setConsoleFontFamilyName(fontCaricato.getFamily());
 				ConsoleProperties.getInstance().setConsoleFontStyle(fontCaricato.getStyle());
 				
-				InitListener.log.debug("Caricato Font dal file: ["+fontFileName+"] completato.");
+				InitListener.logDebug("Caricato Font dal file: ["+fontFileName+"] completato.");
 			}catch (Exception e) {
-				InitListener.log.error(e.getMessage(),e);
+				InitListener.logError(e.getMessage(),e);
 			} finally {
 				if(isFont != null){
-					try {	isFont.close(); } catch (IOException e) {	}
+					try {	isFont.close(); } catch (IOException e) {	
+						// ignore
+					}
 				}
 			}
 			
@@ -368,32 +384,32 @@ public class InitListener implements ServletContextListener {
 				ConfigurazioneNodiRuntime.initialize(consoleProperties.getJmxPdDExternalConfiguration(), backwardCompatibility);
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del gestore dei nodi run: " + e.getMessage();
-				InitListener.log.error(
+				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
 			}
 				
 			// inizializza il repository dei plugin
 			try {
-				if(consoleProperties.isConfigurazionePluginsEnabled()) {
+				if(consoleProperties.isConfigurazionePluginsEnabled()!=null && consoleProperties.isConfigurazionePluginsEnabled().booleanValue()) {
 					CorePluginLoader.initialize(new Loader(), InitListener.log,
 							PluginLoader.class,
 							new ConfigurazioneRegistroPluginsReader(new ControlStationCore()), 
 							consoleProperties.getPluginsSeconds());
 				}
 				
-				if(consoleProperties.isConfigurazioneAllarmiEnabled()) {
+				if(consoleProperties.isConfigurazioneAllarmiEnabled()!=null && consoleProperties.isConfigurazioneAllarmiEnabled().booleanValue()) {
 					AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(InitListener.log, consoleProperties.getAllarmiConfigurazione(), consoleProperties.getConfDirectory());
 					AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
 					CostantiDB.setAllarmiEnabled(true);
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del loader dei plugins: " + e.getMessage();
-				InitListener.log.error(
+				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
 			}
 			
 			// inizializzo HSM Manager
@@ -406,10 +422,10 @@ public class InitListener implements ServletContextListener {
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
-				InitListener.log.error(
+				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
 			}
 			
 			// inizializzo OCSP Manager
@@ -421,10 +437,10 @@ public class InitListener implements ServletContextListener {
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del manager OCSP: " + e.getMessage();
-				InitListener.log.error(
+				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
 			}
 			
 			// inizializzo OpenAPIValidator
@@ -432,13 +448,24 @@ public class InitListener implements ServletContextListener {
 				org.openapi4j.parser.validation.v3.OpenApi3Validator.VALIDATE_URI_REFERENCE_AS_URL = consoleProperties.isApiOpenAPIValidateUriReferenceAsUrl();
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del validatore OpenAPI: " + e.getMessage();
-				InitListener.log.error(
+				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);
-				throw new RuntimeException(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
 			}
 			
-			InitListener.initialized = true;
+			// Basic Archive
+			try {
+				BasicArchive.setNormalizeDescription255(consoleProperties.isApiDescriptionTruncate255());
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del BasicArchive: " + e.getMessage();
+				InitListener.logError(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			
+			InitListener.setInitialized(true);
 		}finally {
 			semaphoreInitListener.release("contextInitialized");
 		}

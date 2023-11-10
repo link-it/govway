@@ -46,6 +46,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="specifica-semiformale" type="documento"/>
 			<!-- Protocol Properties -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -102,6 +104,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
 			<!-- Gruppi -->
 			<xsd:element maxOccurs="1" minOccurs="0" name="gruppi" type="gruppi-accordo"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -435,6 +439,10 @@
 	<xsd:element name="porta-dominio" type="porta-dominio"/>
 	<xsd:complexType name="porta-dominio">
 		
+		<xsd:sequence>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
+		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
 			
@@ -464,6 +472,10 @@
 	<xsd:element name="ruolo" type="ruolo"/>
 	<xsd:complexType name="ruolo">
 		
+		<xsd:sequence>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
+		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute default="qualsiasi" name="tipologia" type="RuoloTipologia" use="optional"/>
@@ -493,6 +505,10 @@
 	<xsd:element name="scope" type="scope"/>
 	<xsd:complexType name="scope">
 		
+		<xsd:sequence>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
+		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="tipologia" type="xsd:string" use="optional"/> <!-- caratteristica dello scope (es. policy di gestione) -->
@@ -521,6 +537,10 @@
 	<xsd:element name="gruppo" type="gruppo"/>
 	<xsd:complexType name="gruppo">
 		
+		<xsd:sequence>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
+		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="service-binding" type="ServiceBinding" use="optional"/>
@@ -552,6 +572,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="credenziali" type="credenziali-soggetto"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="ruoli-soggetto"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-servizio-parte-specifica"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -651,6 +673,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="specifica-sicurezza" type="documento"/>
 			<!-- Protocol Properties -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -751,6 +775,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="configurazione-azione" type="configurazione-servizio-azione"/>		
 			<!-- Protocol Properties -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
@@ -829,6 +855,24 @@
 			
 		</xsd:attribute>
 		<!-- end-extensions -->
+	</xsd:complexType>
+
+
+	<!-- ProprietaOggetto -->
+	<xsd:element name="proprieta-oggetto" type="proprieta-oggetto"/>
+	<xsd:complexType name="proprieta-oggetto">
+		<xsd:attribute name="utente-richiedente" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
+		<xsd:attribute name="data-creazione" type="xsd:dateTime" use="optional">
+			
+		</xsd:attribute>
+		<xsd:attribute name="utente-ultima-modifica" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
+		<xsd:attribute name="data-ultima-modifica" type="xsd:dateTime" use="optional">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 	
 	

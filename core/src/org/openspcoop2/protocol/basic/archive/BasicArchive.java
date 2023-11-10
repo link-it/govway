@@ -127,7 +127,23 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		return m;
 	}
 	
-	private String normalizeDescription(String description) {
+	private static boolean normalizeDescription255 = false;
+	public static boolean isNormalizeDescription255() {
+		return normalizeDescription255;
+	}
+	public static void setNormalizeDescription255(boolean normalizeDescription255) {
+		BasicArchive.normalizeDescription255 = normalizeDescription255;
+	}
+	private String normalizeDescriptionApi(String description) {
+		if(!BasicArchive.normalizeDescription255) {
+			return description;
+		}
+		return normalizeDescriptionEngine(description);
+	}
+	private String normalizeDescriptionOtherElementApi(String description) {
+		return normalizeDescriptionEngine(description);
+	}
+	private String normalizeDescriptionEngine(String description) {
 		if(description==null) {
 			return null;
 		}
@@ -135,12 +151,12 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		 while(descr.contains("\r")) {
 			 descr = descr.replace("\r", "");
 		 }
-		 int OFFSET = 15; // uso 250 per essere sicuro che finisca in oracle con caratteri strani (value too large for column "GOVWAY330"."ACCORDI"."DESCRIZIONE" (actual: 257, maximum: 255))
-		 if(descr.length()<=(255-OFFSET)) { 
+		 int offset = 15; // uso 250 per essere sicuro che finisca in oracle con caratteri strani (value too large for column "GOVWAY330"."ACCORDI"."DESCRIZIONE" (actual: 257, maximum: 255))
+		 if(descr.length()<=(255-offset)) { 
 			 return descr;
 		 }
 		 else {
-			return descr.substring(0, (245-OFFSET))+ " ...";
+			return descr.substring(0, (245-offset))+ " ...";
 		 }
 	}
 	
@@ -150,12 +166,12 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	 */
 	@Override
 	public void setProtocolInfo(AccordoServizioParteComune accordoServizioParteComune) throws ProtocolException{
-		_setProtocolInfo(accordoServizioParteComune, this.protocolFactory.getLogger());
+		setProtocolInfoEngine(accordoServizioParteComune, this.protocolFactory.getLogger());
 	}
 	public void setProtocolInfo(AccordoServizioParteComune accordoServizioParteComune,Logger log) throws ProtocolException{
-		_setProtocolInfo(accordoServizioParteComune, log);
+		setProtocolInfoEngine(accordoServizioParteComune, log);
 	}
-	private void _setProtocolInfo(AccordoServizioParteComune accordoServizioParteComune,Logger log) throws ProtocolException{
+	private void setProtocolInfoEngine(AccordoServizioParteComune accordoServizioParteComune,Logger log) throws ProtocolException{
 		
 		// NOTA non usare in questo metodo e nel metodo _setProtocolInfo il protocolFactory e dipendenze su di uno specifico protocollo.
 		//      Viene usato dal meccanismo di import per definire la struttura di un accordo in base al wsdl, indipendentemente dallo specifico protocollo
@@ -171,14 +187,14 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			if(accordoServizioParteComune.getFormatoSpecifica()==null || FormatoSpecifica.WSDL_11.equals(accordoServizioParteComune.getFormatoSpecifica())) {
 				byte[] wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
 				if(wsdlConcettuale!=null){
-					_setProtocolInfoFromWsdl(wsdlConcettuale, accordoServizioParteComune, "Concettuale", log);
+					setProtocolInfoFromWsdlEngine(wsdlConcettuale, accordoServizioParteComune, "Concettuale", log);
 				}
 				else{
 					if(accordoServizioParteComune.getByteWsdlLogicoErogatore()!=null){
-						_setProtocolInfoFromWsdl(accordoServizioParteComune.getByteWsdlLogicoErogatore(), accordoServizioParteComune, "LogicoErogatore", log);
+						setProtocolInfoFromWsdlEngine(accordoServizioParteComune.getByteWsdlLogicoErogatore(), accordoServizioParteComune, "LogicoErogatore", log);
 					}
 					if(accordoServizioParteComune.getByteWsdlLogicoFruitore()!=null){
-						_setProtocolInfoFromWsdl(accordoServizioParteComune.getByteWsdlLogicoFruitore(), accordoServizioParteComune, "LogicoFruitore", log);
+						setProtocolInfoFromWsdlEngine(accordoServizioParteComune.getByteWsdlLogicoFruitore(), accordoServizioParteComune, "LogicoFruitore", log);
 					}
 				}
 			}
@@ -196,13 +212,13 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 				if(wsdlConcettuale!=null){
 					switch (accordoServizioParteComune.getFormatoSpecifica()) {
 					case WADL:
-						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.WADL, log);
+						setProtocolInfoFromRestInterfaceEngine(wsdlConcettuale, accordoServizioParteComune, ApiFormats.WADL, log);
 						break;
 					case SWAGGER_2:
-						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.SWAGGER_2, log);
+						setProtocolInfoFromRestInterfaceEngine(wsdlConcettuale, accordoServizioParteComune, ApiFormats.SWAGGER_2, log);
 						break;
 					case OPEN_API_3:
-						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.OPEN_API_3, log);
+						setProtocolInfoFromRestInterfaceEngine(wsdlConcettuale, accordoServizioParteComune, ApiFormats.OPEN_API_3, log);
 						break;
 					default:
 						// altre interfacce non supportate per rest
@@ -214,7 +230,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			
 		}
 	}
-	private void _setProtocolInfoFromWsdl(byte [] wsdlBytes,AccordoServizioParteComune accordoServizioParteComune,String tipo,Logger log) throws ProtocolException{
+	private void setProtocolInfoFromWsdlEngine(byte [] wsdlBytes,AccordoServizioParteComune accordoServizioParteComune,String tipo,Logger log) throws ProtocolException{
 		
 		try{
 		
@@ -311,15 +327,15 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						opOpenSPCoop.setFiltroDuplicati(CostantiRegistroServizi.ABILITATO);
 						
 						// Prendo la definizione del messaggio di input
-						HashMap<String,QName> mapPartQName_input = new HashMap<String,QName>();
-						AccordoServizioWrapperUtilities.addMessageInputOperation(opWSDL, log, opOpenSPCoop, mapPartQName_input);
+						HashMap<String,QName> mapPartQNameInput = new HashMap<>();
+						AccordoServizioWrapperUtilities.addMessageInputOperation(opWSDL, log, opOpenSPCoop, mapPartQNameInput);
 						
 						// Prendo la definizione del messaggio di output
-						HashMap<String,QName> mapPartQName_output = new HashMap<String,QName>();
-						AccordoServizioWrapperUtilities.addMessageOutputOperation(opWSDL, log, opOpenSPCoop, mapPartQName_output);
+						HashMap<String,QName> mapPartQNameOutput = new HashMap<>();
+						AccordoServizioWrapperUtilities.addMessageOutputOperation(opWSDL, log, opOpenSPCoop, mapPartQNameOutput);
 						
 						// profilo di collaborazione (non basta guardare l'output, poiche' puo' avere poi un message vuoto e quindi equivale a non avere l'output)
-						//if(opWSDL.getOutput()!=null){
+						/**if(opWSDL.getOutput()!=null){*/
 						ProfiloCollaborazione profiloOp = null;
 						if(opOpenSPCoop.getMessageOutput()!=null){
 							profiloOp = CostantiRegistroServizi.SINCRONO;
@@ -350,7 +366,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									if(opOpenSPCoop.getMessageInput()!=null){
 										AccordoServizioWrapperUtilities.
 											setMessageInputSoapBindingInformation(bindingOperationWSDL, log, 
-													opOpenSPCoop, ptOpenSPCoop, mapPartQName_input,
+													opOpenSPCoop, ptOpenSPCoop, mapPartQNameInput,
 													wsdl.getTargetNamespace());
 									}
 									
@@ -358,7 +374,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									if(opOpenSPCoop.getMessageOutput()!=null){
 										AccordoServizioWrapperUtilities.
 											setMessageOutputSoapBindingInformation(bindingOperationWSDL, log, 
-													opOpenSPCoop, ptOpenSPCoop, mapPartQName_output,
+													opOpenSPCoop, ptOpenSPCoop, mapPartQNameOutput,
 													wsdl.getTargetNamespace());
 									}
 									
@@ -382,7 +398,12 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		}
 	}
 	
-	private void _setProtocolInfoFromRestInterface(byte [] bytes,AccordoServizioParteComune accordoServizioParteComune,ApiFormats format,Logger log) throws ProtocolException{
+	private static final String TROVATO_PARAMETRO_COOKIE_PREFIX = "Trovato parametro cookie '";
+	private static final String TROVATO_PARAMETRO_HEADER_PREFIX = "Trovato parametro header '";
+	private static final String SENZA_TIPO_SUFFIX = "' senza tipo";
+	private static final String SENZA_SCHEMA_SUFFIX = "' senza schema";
+	
+	private void setProtocolInfoFromRestInterfaceEngine(byte [] bytes,AccordoServizioParteComune accordoServizioParteComune,ApiFormats format,Logger log) throws ProtocolException{
 		
 		try {
 			
@@ -400,10 +421,12 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	        	 // ignore
 	         }
 	         
-	         if(accordoServizioParteComune.getDescrizione()==null || "".equals(accordoServizioParteComune.getDescrizione())) {
-	        	 if(api.getDescription()!=null) {
-	        		 accordoServizioParteComune.setDescrizione(this.normalizeDescription(api.getDescription()));
-	        	 }
+	         if( 
+	        	(accordoServizioParteComune.getDescrizione()==null || "".equals(accordoServizioParteComune.getDescrizione())) 
+	        	&&
+	        	(api.getDescription()!=null) 
+	        	 ){
+	        	 accordoServizioParteComune.setDescrizione(this.normalizeDescriptionApi(api.getDescription()));
 	         }
 	         
 	         if(api.sizeOperations()>0) {
@@ -427,7 +450,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 					if(resourceOpenSPCoop==null){
 						resourceOpenSPCoop = new Resource();
 						resourceOpenSPCoop.setNome(APIUtils.normalizeResourceName(apiOp.getHttpMethod(), apiOp.getPath()));
-						resourceOpenSPCoop.setDescrizione(this.normalizeDescription(apiOp.getDescription()));	
+						resourceOpenSPCoop.setDescrizione(this.normalizeDescriptionOtherElementApi(apiOp.getDescription()));	
 						resourceOpenSPCoop.setMethod(HttpMethod.toEnumConstant(apiOp.getHttpMethod().name()));
 						resourceOpenSPCoop.setPath(apiOp.getPath());
 						accordoServizioParteComune.addResource(resourceOpenSPCoop);
@@ -455,7 +478,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									resourceOpenSPCoop.getRequest().addRepresentation(rr);
 								}
 								rr.setNome(body.getName());
-								rr.setDescrizione(this.normalizeDescription(body.getDescription()));
+								rr.setDescrizione(this.normalizeDescriptionOtherElementApi(body.getDescription()));
 								if(body.getElement()!=null) {
 									if(body.getElement() instanceof QName) {
 										QName qname = (QName)body.getElement();
@@ -499,7 +522,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 							for (ApiCookieParameter cookie : apiOp.getRequest().getCookieParameters()) {
 								String nome = cookie.getName();
 								if(nome==null) {
-									throw new Exception("Trovato parametro cookie senza nome");
+									throw new ProtocolException("Trovato parametro cookie senza nome");
 								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
@@ -514,18 +537,18 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(cookie.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(this.normalizeDescription(cookie.getDescription()));
+								rp.setDescrizione(this.normalizeDescriptionOtherElementApi(cookie.getDescription()));
 								rp.setRequired(cookie.isRequired());
 								if(cookie.getApiParameterSchema()!=null) {
 									String type = cookie.getApiParameterSchema().getType();
 									if(type==null) {
-										throw new Exception("Trovato parametro cookie '"+rp.getNome()+"' senza tipo");
+										throw new ProtocolException(TROVATO_PARAMETRO_COOKIE_PREFIX+rp.getNome()+SENZA_TIPO_SUFFIX);
 									}
 									rp.setTipo(type);
 									rp.setRestrizioni(cookie.getApiParameterSchema().toString());
 								}
 								else {
-									throw new Exception("Trovato parametro cookie '"+rp.getNome()+"' senza schema");
+									throw new ProtocolException(TROVATO_PARAMETRO_COOKIE_PREFIX+rp.getNome()+SENZA_SCHEMA_SUFFIX);
 								}
 							}							
 						}
@@ -534,7 +557,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 							for (ApiRequestDynamicPathParameter dynamicPath : apiOp.getRequest().getDynamicPathParameters()) {
 								String nome = dynamicPath.getName();
 								if(nome==null) {
-									throw new Exception("Trovato parametro dynamic path senza nome");
+									throw new ProtocolException("Trovato parametro dynamic path senza nome");
 								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
@@ -549,18 +572,18 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(dynamicPath.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(this.normalizeDescription(dynamicPath.getDescription()));
+								rp.setDescrizione(this.normalizeDescriptionOtherElementApi(dynamicPath.getDescription()));
 								rp.setRequired(dynamicPath.isRequired());
 								if(dynamicPath.getApiParameterSchema()!=null) {
 									String type = dynamicPath.getApiParameterSchema().getType();
 									if(type==null) {
-										throw new Exception("Trovato parametro dynamic path '"+rp.getNome()+"' senza tipo");
+										throw new ProtocolException("Trovato parametro dynamic path '"+rp.getNome()+SENZA_TIPO_SUFFIX);
 									}
 									rp.setTipo(type);
 									rp.setRestrizioni(dynamicPath.getApiParameterSchema().toString());
 								}
 								else {
-									throw new Exception("Trovato parametro dynamic path '"+rp.getNome()+"' senza schema");
+									throw new ProtocolException("Trovato parametro dynamic path '"+rp.getNome()+SENZA_SCHEMA_SUFFIX);
 								}
 							}							
 						}
@@ -569,7 +592,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 							for (ApiRequestFormParameter form : apiOp.getRequest().getFormParameters()) {
 								String nome = form.getName();
 								if(nome==null) {
-									throw new Exception("Trovato parametro form senza nome");
+									throw new ProtocolException("Trovato parametro form senza nome");
 								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
@@ -584,18 +607,18 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(form.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(this.normalizeDescription(form.getDescription()));
+								rp.setDescrizione(this.normalizeDescriptionOtherElementApi(form.getDescription()));
 								rp.setRequired(form.isRequired());
 								if(form.getApiParameterSchema()!=null) {
 									String type = form.getApiParameterSchema().getType();
 									if(type==null) {
-										throw new Exception("Trovato parametro form '"+rp.getNome()+"' senza tipo");
+										throw new ProtocolException("Trovato parametro form '"+rp.getNome()+SENZA_TIPO_SUFFIX);
 									}
 									rp.setTipo(type);
 									rp.setRestrizioni(form.getApiParameterSchema().toString());
 								}
 								else {
-									throw new Exception("Trovato parametro form '"+rp.getNome()+"' senza schema");
+									throw new ProtocolException("Trovato parametro form '"+rp.getNome()+SENZA_SCHEMA_SUFFIX);
 								}
 							}							
 						}
@@ -604,7 +627,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 							for (ApiHeaderParameter header : apiOp.getRequest().getHeaderParameters()) {
 								String nome = header.getName();
 								if(nome==null) {
-									throw new Exception("Trovato parametro header senza nome");
+									throw new ProtocolException("Trovato parametro header senza nome");
 								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
@@ -619,18 +642,18 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(header.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(this.normalizeDescription(header.getDescription()));
+								rp.setDescrizione(this.normalizeDescriptionOtherElementApi(header.getDescription()));
 								rp.setRequired(header.isRequired());
 								if(header.getApiParameterSchema()!=null) {
 									String type = header.getApiParameterSchema().getType();
 									if(type==null) {
-										throw new Exception("Trovato parametro header '"+rp.getNome()+"' senza tipo");
+										throw new ProtocolException(TROVATO_PARAMETRO_HEADER_PREFIX+rp.getNome()+SENZA_TIPO_SUFFIX);
 									}
 									rp.setTipo(type);
 									rp.setRestrizioni(header.getApiParameterSchema().toString());
 								}
 								else {
-									throw new Exception("Trovato parametro header '"+rp.getNome()+"' senza schema");
+									throw new ProtocolException(TROVATO_PARAMETRO_HEADER_PREFIX+rp.getNome()+SENZA_SCHEMA_SUFFIX);
 								}
 							}							
 						}
@@ -639,7 +662,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 							for (ApiRequestQueryParameter query : apiOp.getRequest().getQueryParameters()) {
 								String nome = query.getName();
 								if(nome==null) {
-									throw new Exception("Trovato parametro query senza nome");
+									throw new ProtocolException("Trovato parametro query senza nome");
 								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
@@ -654,18 +677,18 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setNome(query.getName());
 									resourceOpenSPCoop.getRequest().addParameter(rp);
 								}
-								rp.setDescrizione(this.normalizeDescription(query.getDescription()));
+								rp.setDescrizione(this.normalizeDescriptionOtherElementApi(query.getDescription()));
 								rp.setRequired(query.isRequired());
 								if(query.getApiParameterSchema()!=null) {
 									String type = query.getApiParameterSchema().getType();
 									if(type==null) {
-										throw new Exception("Trovato parametro query '"+rp.getNome()+"' senza tipo");
+										throw new ProtocolException("Trovato parametro query '"+rp.getNome()+SENZA_TIPO_SUFFIX);
 									}
 									rp.setTipo(type);
 									rp.setRestrizioni(query.getApiParameterSchema().toString());
 								}
 								else {
-									throw new Exception("Trovato parametro query '"+rp.getNome()+"' senza schema");
+									throw new ProtocolException("Trovato parametro query '"+rp.getNome()+SENZA_SCHEMA_SUFFIX);
 								}
 							}							
 						}
@@ -695,7 +718,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								}
 								resourceOpenSPCoop.addResponse(resourceOpenSPCoopResponse);
 							}
-							resourceOpenSPCoopResponse.setDescrizione(this.normalizeDescription(apiResponse.getDescription()));
+							resourceOpenSPCoopResponse.setDescrizione(this.normalizeDescriptionOtherElementApi(apiResponse.getDescription()));
 							
 							if(apiResponse.sizeBodyParameters()>0) {
 								for (ApiBodyParameter body : apiResponse.getBodyParameters()) {
@@ -713,7 +736,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 										resourceOpenSPCoopResponse.addRepresentation(rr);
 									}
 									rr.setNome(body.getName());
-									rr.setDescrizione(this.normalizeDescription(body.getDescription()));
+									rr.setDescrizione(this.normalizeDescriptionOtherElementApi(body.getDescription()));
 									if(body.getElement()!=null) {
 										if(body.getElement() instanceof QName) {
 											QName qname = (QName)body.getElement();
@@ -757,7 +780,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								for (ApiCookieParameter cookie : apiResponse.getCookieParameters()) {
 									String nome = cookie.getName();
 									if(nome==null) {
-										throw new Exception("Trovato parametro cookie nella risposta senza nome");
+										throw new ProtocolException("Trovato parametro cookie nella risposta senza nome");
 									}
 									ResourceParameter rp = null;
 									for (ResourceParameter rpCheck : resourceOpenSPCoopResponse.getParameterList()) {
@@ -772,18 +795,18 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 										rp.setNome(cookie.getName());
 										resourceOpenSPCoopResponse.addParameter(rp);
 									}
-									rp.setDescrizione(this.normalizeDescription(cookie.getDescription()));
+									rp.setDescrizione(this.normalizeDescriptionOtherElementApi(cookie.getDescription()));
 									rp.setRequired(cookie.isRequired());
 									if(cookie.getApiParameterSchema()!=null) {
 										String type = cookie.getApiParameterSchema().getType();
 										if(type==null) {
-											throw new Exception("Trovato parametro cookie '"+rp.getNome()+"' nella risposta senza tipo");
+											throw new ProtocolException(TROVATO_PARAMETRO_COOKIE_PREFIX+rp.getNome()+"' nella risposta senza tipo");
 										}
 										rp.setTipo(type);
 										rp.setRestrizioni(cookie.getApiParameterSchema().toString());
 									}
 									else {
-										throw new Exception("Trovato parametro cookie '"+rp.getNome()+"' nella risposta senza schema");
+										throw new ProtocolException(TROVATO_PARAMETRO_COOKIE_PREFIX+rp.getNome()+"' nella risposta senza schema");
 									}
 								}							
 							}
@@ -792,7 +815,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								for (ApiHeaderParameter header : apiResponse.getHeaderParameters()) {
 									String nome = header.getName();
 									if(nome==null) {
-										throw new Exception("Trovato parametro header nella risposta senza nome");
+										throw new ProtocolException("Trovato parametro header nella risposta senza nome");
 									}
 									ResourceParameter rp = null;
 									for (ResourceParameter rpCheck : resourceOpenSPCoopResponse.getParameterList()) {
@@ -807,18 +830,18 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 										rp.setNome(header.getName());
 										resourceOpenSPCoopResponse.addParameter(rp);
 									}
-									rp.setDescrizione(this.normalizeDescription(header.getDescription()));
+									rp.setDescrizione(this.normalizeDescriptionOtherElementApi(header.getDescription()));
 									rp.setRequired(header.isRequired());
 									if(header.getApiParameterSchema()!=null) {
 										String type = header.getApiParameterSchema().getType();
 										if(type==null) {
-											throw new Exception("Trovato parametro header '"+rp.getNome()+"' nella risposta senza tipo");
+											throw new ProtocolException(TROVATO_PARAMETRO_HEADER_PREFIX+rp.getNome()+"' nella risposta senza tipo");
 										}
 										rp.setTipo(type);
 										rp.setRestrizioni(header.getApiParameterSchema().toString());
 									}
 									else {
-										throw new Exception("Trovato parametro header '"+rp.getNome()+"' nella risposta senza schema");
+										throw new ProtocolException(TROVATO_PARAMETRO_HEADER_PREFIX+rp.getNome()+"' nella risposta senza schema");
 									}
 								}							
 							}
@@ -877,7 +900,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	
 	@Override
 	public List<ImportMode> getImportModes() throws ProtocolException {
-		List<ImportMode> list = new ArrayList<ImportMode>();
+		List<ImportMode> list = new ArrayList<>();
 		list.add(Costanti.OPENSPCOOP_IMPORT_ARCHIVE_MODE);
 		return list;
 	}
@@ -916,7 +939,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	public void finalizeImportArchive(Archive archive,ArchiveMode mode,ArchiveModeType type,
 			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
 			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {
-		return; // nop;
+		// nop
 	}
 	
 	@Override
@@ -940,7 +963,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	@Override
 	public List<ExportMode> getExportModes(ArchiveType archiveType)
 			throws ProtocolException {
-		List<ExportMode> list = new ArrayList<ExportMode>();
+		List<ExportMode> list = new ArrayList<>();
 		list.add((ExportMode)Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE.clone()); // vengono supportati tutti i tipi
 		return list;
 	}

@@ -42,6 +42,7 @@ import org.openspcoop2.core.registry.IdScope;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
@@ -1401,6 +1402,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Fruitore readFruitoreFromString(String in) throws DeserializerException {
 		return (Fruitore) this.xmlToObj(in.getBytes(), Fruitore.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: proprieta-oggetto
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaOggetto readProprietaOggetto(String fileName) throws DeserializerException {
+		return (ProprietaOggetto) this.xmlToObj(fileName, ProprietaOggetto.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaOggetto readProprietaOggetto(File file) throws DeserializerException {
+		return (ProprietaOggetto) this.xmlToObj(file, ProprietaOggetto.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaOggetto readProprietaOggetto(InputStream in) throws DeserializerException {
+		return (ProprietaOggetto) this.xmlToObj(in, ProprietaOggetto.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaOggetto readProprietaOggetto(byte[] in) throws DeserializerException {
+		return (ProprietaOggetto) this.xmlToObj(in, ProprietaOggetto.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaOggetto readProprietaOggettoFromString(String in) throws DeserializerException {
+		return (ProprietaOggetto) this.xmlToObj(in.getBytes(), ProprietaOggetto.class);
 	}	
 	
 	

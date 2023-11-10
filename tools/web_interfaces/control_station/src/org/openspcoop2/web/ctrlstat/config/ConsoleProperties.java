@@ -424,6 +424,10 @@ public class ConsoleProperties {
 		return this.readBooleanRequiredProperty("api.resource.representation.messageTypeOverride");
 	}
 	
+	public boolean isApiDescriptionTruncate255() throws UtilsException{
+		return this.readBooleanRequiredProperty("api.description.truncate255");
+	}
+	
 	public Properties getApiYamlSnakeLimits() throws UtilsException{
 
 		String pName = "api.yaml.snakeLimits";

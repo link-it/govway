@@ -237,7 +237,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-column-mapping name="descrizione" medium-text="true"/>
                                 <linkit:sql-ddl-column-comment>Descrizione generica dell'accordo di servizio parte comune</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -533,6 +533,50 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="canale"/>
                                 <linkit:sql-ddl-column-comment>Canale associato all'API</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="utente-richiedente" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="utente_richiedente"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha effettuato la creazione</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data-creazione" type="xsd:dateTime" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="data_creazione" />
+                                <linkit:sql-ddl-column-comment>Data di creazione</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="utente-ultima-modifica" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="utente_ultima_modifica"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha effettuato l'ultima modifica</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data-ultima-modifica" type="xsd:dateTime" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="data_ultima_modifica" />
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

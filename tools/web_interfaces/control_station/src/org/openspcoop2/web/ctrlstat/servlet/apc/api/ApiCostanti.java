@@ -74,6 +74,9 @@ public class ApiCostanti {
 	public static final String APC_API_ICONA_MODIFICA_API_TOOLTIP = "Modifica";
 	public static final String APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO = "Modifica {0}";
 	
+	public static final String APC_API_ICONA_AGGIUNGI_DESCRIZIONE = "&#xE873;";
+	public static final String APC_API_ICONA_AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO = "Aggiungi {0}";
+	
 	public static final String APC_API_ICONA_VISUALIZZA = "&#xE89E;";
 	public static final String APC_API_ICONA_VISUALIZZA_TOOLTIP = "Visualizza";
 	public static final String APC_API_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = "Visualizza {0}";

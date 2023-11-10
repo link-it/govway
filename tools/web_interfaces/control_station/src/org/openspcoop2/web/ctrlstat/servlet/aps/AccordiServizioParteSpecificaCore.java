@@ -1084,6 +1084,30 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getAccordoServizioParteSpecifica(IDServizio)";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getAccordoServizioParteSpecifica(idServizio);
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  de),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverRegistroServiziException(getPrefixError(nomeMetodo,  e), e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 
 	public List<PortaApplicativa> serviziPorteAppList(String tipoServizio,String nomeServizio, Integer versioneServizio,
 			long idServizio, long idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException {

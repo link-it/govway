@@ -301,6 +301,9 @@ public class DriverRegistroServiziDB_accordiDriver {
 				String canale = rs.getString("canale");
 				accordoServizio.setCanale(canale);
 				
+				// Proprieta Oggetto
+				accordoServizio.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				
 				rs.close();
 				stm.close();
 

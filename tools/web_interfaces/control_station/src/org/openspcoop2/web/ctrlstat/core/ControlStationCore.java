@@ -28,6 +28,7 @@ import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -105,6 +106,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
@@ -4685,7 +4687,7 @@ public class ControlStationCore {
 					// PortType
 					if (oggetto instanceof PortType) {
 						PortType pt = (PortType) oggetto;
-						driver.getDriverRegistroServiziDB().updatePortType(pt);
+						driver.getDriverRegistroServiziDB().updatePortType(pt, superUser);
 
 						// Chiedo la setDati per l'accordo servizio
 						long idAcc = pt.getIdAccordo();
@@ -5535,6 +5537,8 @@ public class ControlStationCore {
 
 		this.cryptPassword(tipoOperazione, oggetti);
 		
+		this.setProprietaOggetto(superUser, tipoOperazione, oggetti);
+		
 		IDOperazione [] idOperazione = null;
 		boolean auditDisabiltato = false;
 		try{
@@ -5577,6 +5581,8 @@ public class ControlStationCore {
 		}
 
 		this.cryptPassword(tipoOperazione, oggetti);
+		
+		this.setProprietaOggetto(superUser, tipoOperazione, oggetti);
 		
 		IDOperazione [] idOperazione = null;
 		boolean auditDisabiltato = false;
@@ -8153,6 +8159,261 @@ public class ControlStationCore {
 					this._cryptPassword(sa);
 				}
 				
+			}
+		}
+	}
+	
+	public void setProprietaOggetto(String superUser, Tipologia[] operationTypes, Object ... oggetti) {
+		if(oggetti!=null && oggetti.length>0) {
+			for (int i = 0; i < oggetti.length; i++) {
+				Object oggetto = oggetti[i];
+				Tipologia operationType = operationTypes[i];
+				
+				boolean create = Tipologia.ADD.equals(operationType);
+				boolean update = Tipologia.CHANGE.equals(operationType);
+				
+				if(!create && !update) {
+					continue;
+				}
+								
+				setProprietaOggettoPortaDominio(superUser, oggetto, create, update);
+
+				setProprietaOggettoSoggetto(superUser, oggetto, create, update);
+				
+				setProprietaOggettoAccordoCooperazione(superUser, oggetto, create, update);
+				
+				setProprietaOggettoAccordoServizioParteComune(superUser, oggetto, create, update);
+				
+				setProprietaOggettoAccordoServizioParteSpecifica(superUser, oggetto, create, update);
+				
+				setProprietaOggettoRuolo(superUser, oggetto, create, update);
+				
+				setProprietaOggettoScope(superUser, oggetto, create, update);
+				
+				setProprietaOggettoGruppo(superUser, oggetto, create, update);
+				
+				setProprietaOggettoPortaDelegata(superUser, oggetto, create, update);
+				
+				setProprietaOggettoPortaApplicativa(superUser, oggetto, create, update);
+				
+				setProprietaOggettoServizioApplicativo(superUser, oggetto, create, update);
+				
+			}
+		}
+	}
+	private void setProprietaOggettoPortaDominio(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof PdDControlStation) {
+			PdDControlStation pdd = (PdDControlStation) oggetto;
+			if(create && pdd.getProprietaOggetto()==null) {
+				pdd.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = pdd.getProprietaOggetto();
+		}
+		else if (oggetto instanceof PortaDominio && !(oggetto instanceof PdDControlStation)) {
+			PortaDominio pdd = (PortaDominio) oggetto;
+			if(create && pdd.getProprietaOggetto()==null) {
+				pdd.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = pdd.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoSoggetto(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof SoggettoCtrlStat) {
+			SoggettoCtrlStat soggetto = (SoggettoCtrlStat) oggetto;
+			if(soggetto.getSoggettoReg()!=null) {
+				if(create && soggetto.getSoggettoReg().getProprietaOggetto()==null) {
+					soggetto.getSoggettoReg().setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+				}
+				pOggetto = soggetto.getSoggettoReg().getProprietaOggetto();
+			}
+		}
+		else if (oggetto instanceof org.openspcoop2.core.registry.Soggetto) {
+			org.openspcoop2.core.registry.Soggetto sogReg = (org.openspcoop2.core.registry.Soggetto) oggetto;
+			if(create && sogReg.getProprietaOggetto()==null) {
+				sogReg.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = sogReg.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoAccordoCooperazione(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof AccordoCooperazione) {
+			AccordoCooperazione a = (AccordoCooperazione) oggetto;
+			if(create && a.getProprietaOggetto()==null) {
+				a.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = a.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoAccordoServizioParteComune(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof AccordoServizioParteComune) {
+			AccordoServizioParteComune a = (AccordoServizioParteComune) oggetto;
+			if(create && a.getProprietaOggetto()==null) {
+				a.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = a.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoAccordoServizioParteSpecifica(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof AccordoServizioParteSpecifica) {
+			AccordoServizioParteSpecifica a = (AccordoServizioParteSpecifica) oggetto;
+						
+			boolean isFruitoreSingolo = setProprietaOggettoAccordoServizioParteSpecificaFruitore(superUser, a);
+			
+			if(!isFruitoreSingolo) {
+				if(create && a.getProprietaOggetto()==null) {
+					a.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+				}
+				pOggetto = a.getProprietaOggetto();
+			}
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private static final Date DATA_CREAZIONE = new Date(0);
+	public void setDataCreazioneFruitore(Fruitore fr) {
+		if(fr!=null) {
+			if(fr.getProprietaOggetto()==null) {
+				fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			fr.getProprietaOggetto().setDataCreazione(DATA_CREAZIONE);
+		}
+	}
+	private boolean isDataCreazioneFruitore(Fruitore fr) {
+		return fr!=null && fr.getProprietaOggetto()!=null &&
+				fr.getProprietaOggetto().getDataCreazione()!=null && 
+				DATA_CREAZIONE.equals(fr.getProprietaOggetto().getDataCreazione());
+	}
+	private boolean setProprietaOggettoAccordoServizioParteSpecificaFruitore(String superUser, AccordoServizioParteSpecifica a) {
+		boolean isFruitoreSingolo = false;
+		if(a.sizeFruitoreList()>0) {
+			isFruitoreSingolo = setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(superUser, a);
+		}
+		if(!isFruitoreSingolo && a.sizeFruitoreList()>0) {
+			// se comunque esistono dei fruitori, si tratta di un aggiornamento massivo
+			for (Fruitore fr : a.getFruitoreList()) {
+				if(fr.getProprietaOggetto()==null) {
+					fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+				}
+				setProprietaOggetto(superUser, fr.getProprietaOggetto(), false, true);
+			}
+		}
+		return isFruitoreSingolo;
+	}
+	private boolean setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(String superUser, AccordoServizioParteSpecifica a) {
+		boolean isFruitoreSingolo = false;
+		for (Fruitore fr : a.getFruitoreList()) {
+			if(fr!=null) {
+				if(fr.getProprietaOggetto()==null) {
+					isFruitoreSingolo = true;
+					fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+					setProprietaOggetto(superUser, fr.getProprietaOggetto(), false, true);
+				}
+				else if(isDataCreazioneFruitore(fr)) {
+					isFruitoreSingolo = true;
+					if(fr.getProprietaOggetto()==null) {
+						fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+					}
+					setProprietaOggetto(superUser, fr.getProprietaOggetto(), true, false);
+				}
+			}
+		}
+		return isFruitoreSingolo;
+	}
+	private void setProprietaOggettoRuolo(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof Ruolo) {
+			Ruolo r = (Ruolo) oggetto;
+			if(create && r.getProprietaOggetto()==null) {
+				r.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = r.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoScope(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof Scope) {
+			Scope s = (Scope) oggetto;
+			if(create && s.getProprietaOggetto()==null) {
+				s.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = s.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoGruppo(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof Gruppo) {
+			Gruppo g = (Gruppo) oggetto;
+			if(create && g.getProprietaOggetto()==null) {
+				g.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = g.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoPortaDelegata(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof Gruppo) {
+			PortaDelegata p = (PortaDelegata) oggetto;
+			if(create && p.getProprietaOggetto()==null) {
+				p.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
+			}
+			pOggetto = p.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoPortaApplicativa(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof Gruppo) {
+			PortaApplicativa p = (PortaApplicativa) oggetto;
+			if(create && p.getProprietaOggetto()==null) {
+				p.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
+			}
+			pOggetto = p.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoServizioApplicativo(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof Gruppo) {
+			ServizioApplicativo s = (ServizioApplicativo) oggetto;
+			if(create && s.getProprietaOggetto()==null) {
+				s.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
+			}
+			pOggetto = s.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggetto(String superUser, Object oggetto, boolean create, boolean update) {
+		if(oggetto instanceof org.openspcoop2.core.registry.ProprietaOggetto) {
+			org.openspcoop2.core.registry.ProprietaOggetto p = (org.openspcoop2.core.registry.ProprietaOggetto) oggetto;
+			if(create) {
+				p.setDataCreazione(DateManager.getDate());
+				p.setUtenteRichiedente(superUser);
+			}
+			else {
+				p.setDataUltimaModifica(DateManager.getDate());
+				p.setUtenteUltimaModifica(superUser);
+			}
+		}
+		else if(oggetto instanceof org.openspcoop2.core.config.ProprietaOggetto) {
+			org.openspcoop2.core.config.ProprietaOggetto p = (org.openspcoop2.core.config.ProprietaOggetto) oggetto;
+			if(create) {
+				p.setDataCreazione(DateManager.getDate());
+				p.setUtenteRichiedente(superUser);
+			}
+			else {
+				p.setDataUltimaModifica(DateManager.getDate());
+				p.setUtenteUltimaModifica(superUser);
 			}
 		}
 	}

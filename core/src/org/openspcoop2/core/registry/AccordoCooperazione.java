@@ -44,6 +44,7 @@ import java.util.List;
  * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/registry}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -69,7 +70,8 @@ import java.util.List;
   	"elencoPartecipanti",
   	"allegato",
   	"specificaSemiformale",
-  	"protocolProperty"
+  	"protocolProperty",
+  	"proprietaOggetto"
   }
 )
 
@@ -198,6 +200,14 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBeanWit
 
   public int sizeProtocolPropertyList() {
     return this.protocolProperty.size();
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.String getSuperUser() {
@@ -389,6 +399,9 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBeanWit
   public int sizeProtocolProperty() {
   	return this.sizeProtocolPropertyList();
   }
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

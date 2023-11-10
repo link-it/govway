@@ -78,7 +78,7 @@ public class ScopeHelper extends ConsoleHelper{
 			listaParametriChange.add(pId);
 			
 			// In Uso Button
-			this.addComandoInUsoButton(dati, nome,
+			this.addComandoInUsoButton(nome,
 					nome,
 					InUsoType.SCOPE);
 			

@@ -1707,7 +1707,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		List<DataElement> dati = datiPagina.get(0);
 		
 		// In Uso Button
-		this.addComandoInUsoInfoButton(dati, labelServizioConFruitore,
+		this.addComandoInUsoInfoButton(labelServizioConFruitore,
 				gestioneFruitori ? uriASPS+"@"+fruitore.getTipo()+"/"+fruitore.getNome() : uriASPS,
 				gestioneFruitori ? InUsoType.FRUIZIONE_INFO : InUsoType.EROGAZIONE_INFO);
 		

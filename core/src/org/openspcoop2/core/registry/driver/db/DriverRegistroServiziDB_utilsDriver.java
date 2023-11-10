@@ -24,11 +24,14 @@ package org.openspcoop2.core.registry.driver.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.registry.ProprietaOggetto;
+import org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -774,5 +777,43 @@ public class DriverRegistroServiziDB_utilsDriver {
 				JDBCUtilities.closeResources(stmtTest);
 			}
 		}
+	}
+	
+	public static ProprietaOggetto readProprietaOggetto(ResultSet rs) throws SQLException {
+		ProprietaOggetto p = null;
+		// Proprieta Oggetto
+		if(rs!=null) {
+			String utenteRichiedente = rs.getString("utente_richiedente");
+			java.util.Date dataCreazione  = rs.getTimestamp("data_creazione");
+			String utenteUltimaModifica = rs.getString("utente_ultima_modifica");
+			java.util.Date dataUltimaModifica  = rs.getTimestamp("data_ultima_modifica");
+			if(utenteRichiedente!=null || dataCreazione!=null || utenteUltimaModifica!=null || dataUltimaModifica!=null) {
+				p = new ProprietaOggetto();
+				p.setUtenteRichiedente(utenteRichiedente);
+				p.setDataCreazione(dataCreazione);
+				p.setUtenteUltimaModifica(utenteUltimaModifica);
+				p.setDataUltimaModifica(dataUltimaModifica);
+			}
+		}
+		return p;
+	}
+	
+	public static ProprietaOggettoSintetico readProprietaOggettoSintetico(ResultSet rs) throws SQLException {
+		ProprietaOggettoSintetico p = null;
+		// Proprieta Oggetto
+		if(rs!=null) {
+			String utenteRichiedente = rs.getString("utente_richiedente");
+			java.util.Date dataCreazione  = rs.getTimestamp("data_creazione");
+			String utenteUltimaModifica = rs.getString("utente_ultima_modifica");
+			java.util.Date dataUltimaModifica  = rs.getTimestamp("data_ultima_modifica");
+			if(utenteRichiedente!=null || dataCreazione!=null || utenteUltimaModifica!=null || dataUltimaModifica!=null) {
+				p = new ProprietaOggettoSintetico();
+				p.setUtenteRichiedente(utenteRichiedente);
+				p.setDataCreazione(dataCreazione);
+				p.setUtenteUltimaModifica(utenteUltimaModifica);
+				p.setDataUltimaModifica(dataUltimaModifica);
+			}
+		}
+		return p;
 	}
 }

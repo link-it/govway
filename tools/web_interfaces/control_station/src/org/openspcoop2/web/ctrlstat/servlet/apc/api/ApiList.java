@@ -84,30 +84,30 @@ public class ApiList  extends Action {
 			
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<AccordoServizioParteComuneSintetico> lista = null;
-			if(apcCore.isRegistroServiziLocale()){
-				if(!ServletUtils.isSearchDone(apiHelper)) {
-					lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  AccordoServizioParteComuneSintetico.class);
-				}
+			if(apcCore.isRegistroServiziLocale() &&
+				(!ServletUtils.isSearchDone(apiHelper)) 
+				){
+				lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  AccordoServizioParteComuneSintetico.class);
 			}
 
 			ricerca = apiHelper.checkSearchParameters(idLista, ricerca);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-//			long before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+/**			long before = org.openspcoop2.utils.date.DateManager.getTimeMillis();*/
 			if(lista==null) {
 				lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);
 			}
-//			long after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-//			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
+/**			long after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));*/
 
 			if(!apiHelper.isPostBackFilterElement()) {
 				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
-//			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+/**			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();*/
 			apiHelper.prepareApiList(lista, ricerca, tipoAccordo);
-//			after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-//			System.out.println("PRESENTATION: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
+/**			after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			System.out.println("PRESENTATION: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));*/
 
 			String msg = apiHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
 			if(msg!=null && !"".equals(msg)){

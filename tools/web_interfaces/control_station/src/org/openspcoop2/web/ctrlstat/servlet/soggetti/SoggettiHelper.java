@@ -158,7 +158,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,tipoprov));
 			
 			// In Uso Button
-			this.addComandoInUsoButton(dati, labelSoggetto,
+			this.addComandoInUsoButton(labelSoggetto,
 					id,
 					InUsoType.SOGGETTO);
 			

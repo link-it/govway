@@ -21695,21 +21695,18 @@ public class ConsoleHelper implements IConsoleHelper {
 				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
 				true, true);
 	}
-	
 	public void addInUsoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
 		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
 				CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
 				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
 				true, true);
 	}
-	
 	public void addInUsoInfoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
 		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
 				CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
 				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
 				true, true);
 	}
-	
 	private void addInUsoButton(List<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType,
 			String tooltip, String icon, String headerRiga1, 
 			Boolean resizable, Boolean draggable) {
@@ -21720,14 +21717,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	
-	public void addComandoInUsoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+	public void addComandoInUsoButton(String titolo, String id, InUsoType inUsoType) {
 		 addComandoInUsoElementoButton(titolo, id, inUsoType,
 				 CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
 					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
 					true, true);
 	}
-	public void addComandoInUsoInfoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+	public void addComandoInUsoInfoButton(String titolo, String id, InUsoType inUsoType) {
 		 addComandoInUsoElementoButton(titolo, id, inUsoType,
 				 CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
 					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
@@ -21742,11 +21738,83 @@ public class ConsoleHelper implements IConsoleHelper {
 				resizable, draggable);
 	}
 	
+	
+	
+	public void addProprietaOggettoButtonVisualizzazioneClassica(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		this.addProprietaOggettoButton(e, DataElementType.BUTTON, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_TOOLTIP, Costanti.ICON_USO,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_RISULTATI,
+				true, true);
+	}
+	public void addProprietaOggettoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		this.addProprietaOggettoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_TOOLTIP, Costanti.ICON_USO,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_RISULTATI,
+				true, true);
+	}
+	public void addProprietaOggettoInfoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		this.addProprietaOggettoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_INFORMAZIONI, 
+				true, true);
+	}
+	private void addProprietaOggettoButton(List<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {
+		
+		ServletUtils.addInUsoButton(UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO, e, deType, titolo, id, inUsoType.toString(),
+				tooltip, icon, headerRiga1, 
+				resizable, draggable);
+		
+	}
+	
+	public void addComandoProprietaOggettoButton(String titolo, String id, InUsoType inUsoType) {
+		 addComandoProprietaOggettoElementoButton(titolo, id, inUsoType,
+				 CostantiControlStation.LABEL_PROPRIETA_OGGETTO_TOOLTIP, Costanti.ICON_USO,
+					CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_RISULTATI,
+					true, true);
+	}
+	public void addComandoProprietaOggettoInfoButton(String titolo, String id, InUsoType inUsoType) {
+		 addComandoProprietaOggettoElementoButton(titolo, id, inUsoType,
+				 CostantiControlStation.LABEL_PROPRIETA_OGGETTO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
+					CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_INFORMAZIONI, 
+					true, true);
+	}
+	private void addComandoProprietaOggettoElementoButton(String titolo, String id, InUsoType inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {
+		this.pd.addComandoInUsoElementoButton(UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO,
+				titolo, id, inUsoType.toString(),
+				tooltip, icon, headerRiga1, 
+				resizable, draggable);
+	}
+	
+	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico p) {
+		return p!=null &&
+				(p.getUtenteRichiedente()!=null || p.getDataCreazione()!=null ||
+				p.getUtenteUltimaModifica()!=null || p.getDataUltimaModifica()!=null);
+	}
+	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.ProprietaOggetto p) {
+		return p!=null &&
+				(p.getUtenteRichiedente()!=null || p.getDataCreazione()!=null ||
+				p.getUtenteUltimaModifica()!=null || p.getDataUltimaModifica()!=null);
+	}
+	protected boolean existsProprietaOggetto(org.openspcoop2.core.config.ProprietaOggetto p) {
+		return p!=null &&
+				(p.getUtenteRichiedente()!=null || p.getDataCreazione()!=null ||
+				p.getUtenteUltimaModifica()!=null || p.getDataUltimaModifica()!=null);
+	}
+	
+	
+	
 	public void addComandoVerificaCertificatiButton(List<DataElement> e, String nomeElementoSuCuiEffettuareLaVerifica, String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
 			parameters = new ArrayList<>();
 		}
 
+		if(nomeElementoSuCuiEffettuareLaVerifica!=null) {
+			// nop
+		}
 		this.addAzioneButton(e, DataElementType.IMAGE,  CostantiControlStation.ICONA_VERIFICA_CERTIFICATI_TOOLTIP,
 //				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareLaVerifica),
 				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
@@ -21759,6 +21827,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		parameters.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
 		
+		if(nomeElementoSuCuiEffettuareIlReset!=null) {
+			// nop
+		}
 		this.addAzioneButton(e, DataElementType.IMAGE,  Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP,
 //				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareIlReset),
 				Costanti.ICONA_RESET_CACHE_ELEMENTO, servletName,parameters);
@@ -21780,7 +21851,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de = new DataElement();
 		de.setType(deType);
 		de.setToolTip(tooltip);
-		if(parameters != null && parameters.size() >0) {
+		if(parameters != null && !parameters.isEmpty()) {
 			de.setUrl(servletName, parameters.toArray(new Parameter[parameters.size()]));
 		} else {
 			de.setUrl(servletName);

@@ -1101,6 +1101,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			fruitore.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(strutsBean.protocolProperties, strutsBean.consoleOperationType,null));
 
 			servsp.addFruitore(fruitore);
+			apsCore.setDataCreazioneFruitore(fruitore);
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), servsp);
 
 			// Prendo i dati del soggetto erogatore del servizio

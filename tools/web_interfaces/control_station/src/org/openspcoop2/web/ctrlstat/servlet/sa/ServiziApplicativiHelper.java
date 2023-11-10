@@ -384,7 +384,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			
 			// In Uso Button
-			this.addComandoInUsoButton(dati, labelApplicativo,
+			this.addComandoInUsoButton(labelApplicativo,
 					idSA+"",
 					InUsoType.SERVIZIO_APPLICATIVO);
 			
