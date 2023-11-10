@@ -369,7 +369,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			// Flag per controllare il mapping automatico di porttype e operation
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
-			boolean enableAutoMappingEstraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
+			boolean enableAutoMappingEstraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordoEstrazioneSchemiInWsdlTypes();
 
 			
 			

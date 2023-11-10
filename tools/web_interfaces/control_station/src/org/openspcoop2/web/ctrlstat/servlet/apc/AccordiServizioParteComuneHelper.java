@@ -3108,7 +3108,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		Boolean showAccordiAzioni = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
 		Boolean showAccordiCooperazione = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 		boolean isInterfacciaAvanzata = this.isModalitaAvanzata();
-		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
+		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale();
 
 		
 		boolean modificheAbilitate = false;
@@ -5329,7 +5329,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			
 			if(this.isShowGestioneWorkflowStatoDocumenti()){
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 					this.addFilterStatoAccordo(filterStatoAccordo,false);
 				}
@@ -5388,7 +5388,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			if(this.isShowGestioneWorkflowStatoDocumenti()) {
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 					totEl++;
 				}
 			}
@@ -5443,7 +5443,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			if(this.isShowGestioneWorkflowStatoDocumenti()){
-				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 					labels[index] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE;
 					index++;
 				}
@@ -5548,7 +5548,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					}
 					
 					if(this.isShowGestioneWorkflowStatoDocumenti()){
-						if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+						if(this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 							de = new DataElement();
 							de.setValue(StatiAccordo.upper(accordoServizio.getStatoPackage()));
 							e.add(de);

@@ -67,7 +67,15 @@ import org.slf4j.Logger;
 public class GestoreAutorizzazioni {
 	
 	private static GestoreAutorizzazioni permessi = null;
+	
 	private static ControlStationCore core = null;
+	public static ControlStationCore getCore() {
+		return core;
+	}
+	public static void setCore(ControlStationCore core) {
+		GestoreAutorizzazioni.core = core;
+	}
+
 	private static UtentiCore utentiCore = null;
 	private static synchronized void init(boolean singlePdD) throws Exception{
 		if(GestoreAutorizzazioni.permessi==null){

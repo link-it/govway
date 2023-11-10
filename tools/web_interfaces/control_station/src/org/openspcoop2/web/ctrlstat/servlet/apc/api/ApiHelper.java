@@ -181,7 +181,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 			
 			if(this.isShowGestioneWorkflowStatoDocumenti() &&
-				this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+				this.core.isGestioneWorkflowStatoDocumentiVisualizzaStatoLista()) {
 				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 				this.addFilterStatoAccordo(filterStatoAccordo,false);
 			}

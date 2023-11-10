@@ -166,8 +166,7 @@ public class DocumentoExporter extends HttpServlet {
 			String tipoSoggettoFruitore = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_TIPO_SOGGETTO_FRUITORE);
 			String nomeSoggettoFruitore = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_NOME_SOGGETTO_FRUITORE);
 
-			long idAccordoLong = 0 ;
-			try{ idAccordoLong = Long.valueOf(idAccordo); }catch(Exception e){ idAccordoLong = 0 ; }
+			long idAccordoLong = getIdAccordoLong(idAccordo);
 
 			ArchiviCore archiviCore = new ArchiviCore();
 			ProtocolPropertiesCore ppCore = new ProtocolPropertiesCore(archiviCore);
@@ -1085,6 +1084,11 @@ public class DocumentoExporter extends HttpServlet {
 		} 
 	}
 
+	private long getIdAccordoLong(String idAccordo){
+		long idAccordoLong = 0;
+		try{ idAccordoLong = Long.valueOf(idAccordo); }catch(Exception e){ idAccordoLong = 0 ; }
+		return idAccordoLong;
+	}
 
 	private byte[] serializeWsdl(Logger log,XSDSchemaCollection schemaCollection, AccordoServizioParteComune asConAllegati) throws XMLException{
 		try{

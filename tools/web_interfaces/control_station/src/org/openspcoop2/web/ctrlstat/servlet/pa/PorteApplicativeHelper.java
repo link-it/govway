@@ -1919,7 +1919,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 			
 		if (tipoOp.equals(TipoOperazione.CHANGE)) {
-			if( (this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioni_showModalitaStandard()) && !isConfigurazione){
+			if( (this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioniShowModalitaStandard()) && !isConfigurazione){
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,pIdSogg,pIdPorta, pIdAsps);
@@ -2378,7 +2378,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
 			//}
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
-			if((this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioni_showModalitaStandard()))
+			if((this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioniShowModalitaStandard()))
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 //			if(this.core.isRegistroServiziLocale()){
 //				//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
@@ -2523,7 +2523,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 					e.add(de);
 
-					if((this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioni_showModalitaStandard())){
+					if((this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioniShowModalitaStandard())){
 						de = new DataElement();
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST, pIdSogg, pIdPorta, pIdAsps);
 						if (contaListe) {

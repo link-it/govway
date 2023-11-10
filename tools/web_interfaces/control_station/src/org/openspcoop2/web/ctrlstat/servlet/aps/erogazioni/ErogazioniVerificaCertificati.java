@@ -525,7 +525,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 			}
 			else {
 				
-				boolean sceltaClusterId = apsCore.isVerificaCertificati_sceltaClusterId();
+				boolean sceltaClusterId = apsCore.isVerificaCertificatiSceltaClusterId();
 				
 				if(aliases.size()==1 || alias!=null || !sceltaClusterId) {
 					
@@ -556,7 +556,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 					}
 					StringBuilder sbDetailsError = new StringBuilder(); 
 					
-					int sogliaWarningGiorni = apsCore.getVerificaCertificati_warning_expirationDays();
+					int sogliaWarningGiorni = apsCore.getVerificaCertificatiWarningExpirationDays();
 					
 					String posizioneErrore = null;
 					String extraErrore = null;

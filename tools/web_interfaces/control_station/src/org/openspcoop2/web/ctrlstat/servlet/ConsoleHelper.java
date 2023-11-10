@@ -14883,7 +14883,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValues(valuesProp);
 		dati.add(de);
 		
-		boolean multipartPayloadParsing = this.core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
+		boolean multipartPayloadParsing = this.core.isRegistrazioneMessaggiMultipartPayloadParsingEnabled();
 		if(!multipartPayloadParsing) {
 			// regole configurate con modalita' attiva
 			if(StatoFunzionalita.ABILITATO.getValue().equals(dumpPayload) && 

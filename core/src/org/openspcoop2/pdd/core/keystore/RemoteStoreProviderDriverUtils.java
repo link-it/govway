@@ -1017,7 +1017,6 @@ public class RemoteStoreProviderDriverUtils {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.REMOTE_STORE_KEY);
-//			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition(COLUMN_ID+"=?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
