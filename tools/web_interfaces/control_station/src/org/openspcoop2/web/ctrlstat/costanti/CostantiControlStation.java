@@ -843,7 +843,7 @@ public class CostantiControlStation {
 	public static final String LABEL_IN_USO_BODY_HEADER_INFORMAZIONI = "Dettagli della configurazione";
 	
 	public static final String LABEL_PROPRIETA_OGGETTO_COLONNA_HEADER = "Proprietà";
-	public static final String LABEL_PROPRIETA_OGGETTO_TOOLTIP = "Visualizza proprietà";
+	public static final String LABEL_PROPRIETA_OGGETTO_TOOLTIP = "Proprietà";
 	public static final String LABEL_PROPRIETA_OGGETTO_BODY_HEADER_RISULTATI = "Proprietà";
 	public static final String LABEL_PROPRIETA_OGGETTO_INFORMAZIONI_TOOLTIP = "Visualizza proprietà della configurazione";
 	public static final String LABEL_PROPRIETA_OGGETTO_BODY_HEADER_INFORMAZIONI = "Proprietà della configurazione";
