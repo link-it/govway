@@ -21,9 +21,12 @@ package org.openspcoop2.core.config.driver.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.utils.UtilsMultiException;
@@ -704,5 +707,25 @@ public class DriverConfigurazioneDBUtils {
 				JDBCUtilities.closeResources(stmtTest);
 			}
 		}
+	}
+	
+	
+	public ProprietaOggetto readProprietaOggetto(ResultSet rs) throws SQLException {
+		ProprietaOggetto p = null;
+		// Proprieta Oggetto
+		if(rs!=null) {
+			String utenteRichiedente = rs.getString("utente_richiedente");
+			java.util.Date dataCreazione  = rs.getTimestamp("data_creazione");
+			String utenteUltimaModifica = rs.getString("utente_ultima_modifica");
+			java.util.Date dataUltimaModifica  = rs.getTimestamp("data_ultima_modifica");
+			if(utenteRichiedente!=null || dataCreazione!=null || utenteUltimaModifica!=null || dataUltimaModifica!=null) {
+				p = new ProprietaOggetto();
+				p.setUtenteRichiedente(utenteRichiedente);
+				p.setDataCreazione(dataCreazione);
+				p.setUtenteUltimaModifica(utenteUltimaModifica);
+				p.setDataUltimaModifica(dataUltimaModifica);
+			}
+		}
+		return p;
 	}
 }

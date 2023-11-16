@@ -3,7 +3,7 @@
 CREATE TABLE porte_applicative
 (
 	nome_porta VARCHAR(2000) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione MEDIUMTEXT,
 	-- Soggetto Virtuale
 	id_soggetto_virtuale BIGINT,
 	tipo_soggetto_virtuale VARCHAR(255),
@@ -128,6 +128,12 @@ CREATE TABLE porte_applicative
 	ora_registrazione TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
 	options VARCHAR(4000),
 	canale VARCHAR(255),
+	utente_richiedente VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_creazione TIMESTAMP(3) DEFAULT 0,
+	utente_ultima_modifica VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ultima_modifica TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints

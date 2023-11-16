@@ -287,6 +287,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String actionConfirm = apsHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
 			String tmpModificaAPI = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API);
+			/**boolean modificaAPI = false;
+			if(tmpModificaAPI!=null) {
+				modificaAPI = "true".equals(tmpModificaAPI);
+			}*/
 			
 			String tmpModificaProfilo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
 			boolean modificaProfilo = false;
@@ -298,6 +302,16 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			boolean cambiaAPI = false;
 			if(tmpCambiaAPI!=null) {
 				cambiaAPI = "true".equals(tmpCambiaAPI);
+			}
+			
+			String tmpModificaDescrizione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_DESCRIZIONE);
+			boolean modificaDescrizione = false;
+			if(tmpModificaDescrizione!=null) {
+				modificaDescrizione = "true".equals(tmpModificaDescrizione);
+			}
+			String descrizioneModificata = null;
+			if(modificaDescrizione) {
+				descrizioneModificata = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE_MODIFICA);
 			}
 			
 			String tmpCambiaSoggettoErogatore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE);
@@ -499,9 +513,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}
 			
 			String providerSoggettoFruitore = null;
+			Fruitore fruitore = null;
 			if(gestioneFruitori) {
 				// In questa modalità ci deve essere solo un fruitore
-				Fruitore fruitore = null;
 				// In questa modalità ci deve essere un fruitore indirizzato
 				for (Fruitore check : asps.getFruitoreList()) {
 					if(check.getTipo().equals(idSoggettoFruitore.getTipo()) && check.getNome().equals(idSoggettoFruitore.getNome())) {
@@ -587,8 +601,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 				
 				// Fruizioni
-				for (Fruitore fruitore : asps.getFruitoreList()) {
-					IDSoggetto idSoggettoFr = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+					IDSoggetto idSoggettoFr = new IDSoggetto(fruitoreCheck.getTipo(), fruitoreCheck.getNome());
 					Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoFr);
 					if(!pddCore.isPddEsterna(soggetto.getPortaDominio())){
 						IDPortaDelegata idPD = porteDelegateCore.getIDPortaDelegataAssociataDefault(idServizio, idSoggettoFr);
@@ -923,6 +937,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				if(statoPackage==null)
 					statoPackage = asps.getStatoPackage();
 
+				if(modificaDescrizione &&
+					(descrizioneModificata==null) 
+					){
+					descrizioneModificata = gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione();
+				}
+				
 				if(versione==null &&
 					asps.getVersione()!=null) {
 					versione=asps.getVersione().intValue()+"";
@@ -1260,7 +1280,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio,
 							provider, tipoSoggettoErogatore, nomeSoggettoErogatore,
 							soggettiList, soggettiListLabel, accordo,serviceBinding, formatoSpecifica, accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
-							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
+							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, 
+							descrizione, descrizioneModificata, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage
 							,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
@@ -1462,7 +1483,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList, 
 						soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
 						accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
-						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
+						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, 
+						descrizione, descrizioneModificata,  
+						soggettoErogatoreID.getId(),
 						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 						null,null,generaPACheckSoggetto,asParteComuneCompatibili,
 						null,
@@ -1587,7 +1610,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList, 
 							soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
 							accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
-							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
+							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, 
+							descrizione, descrizioneModificata,  
+							soggettoErogatoreID.getId(),
 							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,
@@ -1642,7 +1667,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					dati = apsHelper.addServiziToDatiAsHidden(dati, nomeservizio, tiposervizio, provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList,
 							soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, "", "", tipoOp, 
-							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
+							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, 
+							descrizione, soggettoErogatoreID.getId(),
 							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,tipoProtocollo,generaPACheckSoggetto);
 
@@ -1806,21 +1832,31 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// Modifico i dati del servizio nel db
 			
 			boolean cambioAccordoAlreadyExists = false;
-			if((gestioneFruitori || gestioneErogatori)) {
-				
-				// Per adesso non gestito, vedi spiegazione nella costante
-				if(AccordiServizioParteSpecificaCostanti.MODIFICA_DATI_IDENTIFICATIVI_VERSO_APS_ESISTENTE) {
-					IDServizio nuovoIdAps = apsHelper.getIDServizioFromValues(tiposervizio, nomeservizio, tipoSoggettoErogatore, nomeSoggettoErogatore, versione);
-					String nuovoURI = IDServizioFactory.getInstance().getUriFromIDServizio(nuovoIdAps);
-					String oldURI = IDServizioFactory.getInstance().getUriFromIDServizio(oldIdAps);
-					if(!nuovoURI.equals(oldURI)) {
-						cambioAccordoAlreadyExists = apsCore.existsAccordoServizioParteSpecifica(nuovoIdAps);
-					}
+			if(
+					(gestioneFruitori || gestioneErogatori)
+					&&
+					// Per adesso non gestito, vedi spiegazione nel metodo
+					(AccordiServizioParteSpecificaCostanti.isModificaDatiIdentificativiVersoApsEsistente()) 
+				){
+				IDServizio nuovoIdAps = apsHelper.getIDServizioFromValues(tiposervizio, nomeservizio, tipoSoggettoErogatore, nomeSoggettoErogatore, versione);
+				String nuovoURI = IDServizioFactory.getInstance().getUriFromIDServizio(nuovoIdAps);
+				String oldURI = IDServizioFactory.getInstance().getUriFromIDServizio(oldIdAps);
+				if(!nuovoURI.equals(oldURI)) {
+					cambioAccordoAlreadyExists = apsCore.existsAccordoServizioParteSpecifica(nuovoIdAps);
 				}
-				
 			}			
 			
 			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
+			fruitore = null;
+			if(gestioneFruitori && idSoggettoFruitore!=null) {
+				// In questa modalità ci deve essere solo un fruitore
+				for (Fruitore check : asps.getFruitoreList()) {
+					if(check.getTipo().equals(idSoggettoFruitore.getTipo()) && check.getNome().equals(idSoggettoFruitore.getNome())) {
+						fruitore = check;
+						break;
+					}
+				}
+			}
 			
 			
 			// nuovi valori
@@ -1914,6 +1950,17 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// stato
 			asps.setStatoPackage(statoPackage);
 
+			// descrizioneModificata
+			if(modificaDescrizione) {
+				if(gestioneFruitori) {
+					if(fruitore!=null) {
+						fruitore.setDescrizione(descrizioneModificata);
+					}
+				}
+				else {
+					asps.setDescrizione(descrizioneModificata);
+				}
+			}
 
 			// Check stato
 			if(apsHelper.isShowGestioneWorkflowStatoDocumenti() && !cambioAccordoAlreadyExists){
@@ -1947,7 +1994,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList,
 							soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
 							accordiList, accordiListLabel, servcorr, strutsBean.wsdlimpler, strutsBean.wsdlimplfru, tipoOp, 
-							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
+							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, 
+							descrizione,  descrizioneModificata,  
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,
@@ -2052,6 +2100,17 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			//imposto properties custom
 			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(strutsBean.protocolProperties, strutsBean.consoleOperationType, oldProtocolPropertyList));
 
+			if(gestioneFruitori && fruitore!=null) {
+				if(modificaDescrizione || modificaProfilo) {
+					apsCore.setDataAggiornamentoFruitore(fruitore);
+				}
+			}
+			else if(gestioneErogatori &&
+				(modificaDescrizione || modificaProfilo) 
+				){
+				apsCore.setDataAggiornamentoServizio(asps); // per evitare l'aggiornamento dei fruitori
+			}
+			
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps, apsCore);
 			
 			// eseguo l'aggiornamento

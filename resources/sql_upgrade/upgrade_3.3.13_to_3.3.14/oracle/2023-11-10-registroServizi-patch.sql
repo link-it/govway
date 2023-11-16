@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/oracle/registroServizi/2023-11-10-patch.sql

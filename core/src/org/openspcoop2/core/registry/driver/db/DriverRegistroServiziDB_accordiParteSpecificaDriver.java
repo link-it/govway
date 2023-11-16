@@ -114,7 +114,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 
 	protected List<IDServizio> getAllIdServizi(FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		
-		List<IDServizio> list = new ArrayList<IDServizio>();
+		List<IDServizio> list = new ArrayList<>();
 		_fillAllIdServiziEngine("getAllIdServizi", filtroRicerca, list);
 		return list;
 		
@@ -416,7 +416,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 					listReturn.add((T)idServ);
 				}
 			}
-			if(listReturn.size()<=0){
+			if(listReturn.isEmpty()){
 				String msgFiltro = "Elementi non trovati che rispettano il filtro di ricerca selezionato: ";
 				if(filtroFruizioni!=null){
 					throw new DriverRegistroServiziNotFound(msgFiltro+filtroFruizioni.toString());
@@ -474,14 +474,14 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, idSoggetto);
 			rs = stm.executeQuery();
-			List<IDServizio> idServizi = new ArrayList<IDServizio>();
+			List<IDServizio> idServizi = new ArrayList<>();
 			while (rs.next()) {
 				IDSoggetto idSoggettoErogatore = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 				IDServizio idServ = this.driver.idServizioFactory.getIDServizioFromValues(rs.getString("tipo_servizio"),rs.getString("nome_servizio"), 
 						idSoggettoErogatore, rs.getInt("versione_servizio"));
 				idServizi.add(idServ);
 			}
-			if(idServizi.size()==0){
+			if(idServizi.isEmpty()){
 				throw new DriverRegistroServiziNotFound("Servizi non trovati per il soggetto con id: "+idSoggetto);
 			}else{
 				IDServizio[] res = new IDServizio[1];
@@ -1053,7 +1053,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 
 				// porttype
 				String tmp = rs.getString("port_type");
-				if(tmp!=null && ("".equals(tmp)==false))
+				if(tmp!=null && (!"".equals(tmp)))
 					accordoServizioParteSpecifica.setPortType(tmp);
 
 				// Profilo 
@@ -1074,6 +1074,9 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				// MessageType
 				tmp = rs.getString("message_type");
 				accordoServizioParteSpecifica.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				// Proprieta Oggetto
+				accordoServizioParteSpecifica.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
 				
 			}else{
 				throw new DriverRegistroServiziNotFound("Servizio ["+tipoServizio+"/"+nomeServizio+":"+versioneServizio+"] erogato dal soggetto ["+tipoSoggEr+"/"+nomeSoggEr+"] non esiste");
@@ -1118,6 +1121,12 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				// Stato Documento
 				fruitore.setStatoPackage(rs.getString("stato"));
 
+				// Descrizione
+				fruitore.setDescrizione(rs.getString("descrizione"));
+				
+				// Proprieta Oggetto
+				fruitore.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				
 				// recupero informazioni del soggetto fruitore
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
@@ -1145,7 +1154,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				// Protocol Properties
 				try{
 					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(fruitore.getId(), ProprietariProtocolProperty.FRUITORE, con, this.driver.tipoDB);
-					if(listPP!=null && listPP.size()>0){
+					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							fruitore.addProtocolProperty(protocolProperty);
 						}

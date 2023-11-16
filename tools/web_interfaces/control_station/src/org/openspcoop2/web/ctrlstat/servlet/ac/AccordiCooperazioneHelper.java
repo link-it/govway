@@ -565,7 +565,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				DataElement deLABEL = new DataElement();
 				deLABEL.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
 				deLABEL.setType(DataElementType.TEXT);
-				deLABEL.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO+"__label");
+				deLABEL.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
 				dati.add(deLABEL);
 				
@@ -694,7 +694,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				deLabel.setType(DataElementType.TEXT);
 				deLabel.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 				deLabel.setValue(StatiAccordo.upper(StatiAccordo.bozza.toString()));
-				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+"__label");
+				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				dati.add(deLabel);
 				
 				de.setType(DataElementType.HIDDEN);
@@ -710,7 +710,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				deLabel.setType(DataElementType.TEXT);
 				deLabel.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 				deLabel.setValue(StatiAccordo.upper(StatiAccordo.finale.toString()));
-				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+"__label");
+				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				dati.add(deLabel);
 				
 				de.setType(DataElementType.HIDDEN);

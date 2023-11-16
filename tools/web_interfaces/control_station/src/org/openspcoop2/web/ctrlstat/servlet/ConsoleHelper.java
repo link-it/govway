@@ -34,6 +34,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -160,6 +161,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
@@ -368,7 +370,14 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	protected void logError(String msg,Exception e) {
-		this.log.error(msg,e);
+		if(this.log!=null) {
+			this.log.error(msg,e);
+		}
+	}
+	protected void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
+		}
 	}
 	
 	@Override
@@ -5061,7 +5070,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
-						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						de.setType(DataElementType.TEXT);
 						de.setValue(TipoAutenticazione.SSL.getLabel());
 						de.setValoreDefault(TipoAutenticazione.DISABILITATO.getLabel());
@@ -5073,7 +5082,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
-						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						de.setType(DataElementType.TEXT);
 						String labelAutenticazione = null;
 						for (int i = 0; i < tipoAutenticazione.length; i++) {
@@ -14614,7 +14623,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP.equals(tipoValidazione) && this.isModalitaStandard()) {
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE+"__LABEL");
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setType(DataElementType.TEXT);
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_REGISTRO_OPENSPCOOP);
 				dati.add(de);
@@ -21789,20 +21798,50 @@ public class ConsoleHelper implements IConsoleHelper {
 				resizable, draggable);
 	}
 	
-	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico p) {
-		return p!=null &&
-				(p.getUtenteRichiedente()!=null || p.getDataCreazione()!=null ||
-				p.getUtenteUltimaModifica()!=null || p.getDataUltimaModifica()!=null);
+	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico p, String descrizione) {
+		return (p!=null &&
+					(
+							(p.getUtenteRichiedente()!=null && StringUtils.isNotEmpty(p.getUtenteRichiedente())) 
+							|| 
+							p.getDataCreazione()!=null 
+							||
+							(p.getUtenteUltimaModifica()!=null && StringUtils.isNotEmpty(p.getUtenteUltimaModifica()))  
+							|| 
+							p.getDataUltimaModifica()!=null
+					)
+				)
+				||
+				(descrizione!=null && StringUtils.isNotEmpty(descrizione));
 	}
-	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.ProprietaOggetto p) {
-		return p!=null &&
-				(p.getUtenteRichiedente()!=null || p.getDataCreazione()!=null ||
-				p.getUtenteUltimaModifica()!=null || p.getDataUltimaModifica()!=null);
+	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.ProprietaOggetto p, String descrizione) {
+		return (p!=null &&
+				(
+						(p.getUtenteRichiedente()!=null && StringUtils.isNotEmpty(p.getUtenteRichiedente())) 
+						|| 
+						p.getDataCreazione()!=null 
+						||
+						(p.getUtenteUltimaModifica()!=null && StringUtils.isNotEmpty(p.getUtenteUltimaModifica()))  
+						|| 
+						p.getDataUltimaModifica()!=null
+				)
+			)
+			||
+			(descrizione!=null && StringUtils.isNotEmpty(descrizione));
 	}
-	protected boolean existsProprietaOggetto(org.openspcoop2.core.config.ProprietaOggetto p) {
-		return p!=null &&
-				(p.getUtenteRichiedente()!=null || p.getDataCreazione()!=null ||
-				p.getUtenteUltimaModifica()!=null || p.getDataUltimaModifica()!=null);
+	protected boolean existsProprietaOggetto(org.openspcoop2.core.config.ProprietaOggetto p, String descrizione) {
+		return (p!=null &&
+				(
+						(p.getUtenteRichiedente()!=null && StringUtils.isNotEmpty(p.getUtenteRichiedente())) 
+						|| 
+						p.getDataCreazione()!=null 
+						||
+						(p.getUtenteUltimaModifica()!=null && StringUtils.isNotEmpty(p.getUtenteUltimaModifica()))  
+						|| 
+						p.getDataUltimaModifica()!=null
+				)
+			)
+			||
+			(descrizione!=null && StringUtils.isNotEmpty(descrizione));
 	}
 	
 	
@@ -22369,7 +22408,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 				}
 				DataElement deLABEL = new DataElement();
-				deLABEL.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI+"__LABEL");
+				deLABEL.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				deLABEL.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_CONTATORI);
 				deLABEL.setValue(label);
 				deLABEL.setType(DataElementType.TEXT);
@@ -23464,5 +23503,93 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		
+	}
+	
+	
+	public void addProprietaOggetto(List<DataElement> dati, org.openspcoop2.core.registry.ProprietaOggetto pOggetto) {
+		if(pOggetto!=null) {
+			// Creazione
+			if(pOggetto.getDataCreazione()!=null || pOggetto.getUtenteRichiedente()!=null) {
+				addProprietaOggettoCreazione(dati, pOggetto.getDataCreazione(), pOggetto.getUtenteRichiedente());
+			}
+			
+			// Aggiornamento
+			if(pOggetto.getDataUltimaModifica()!=null || pOggetto.getUtenteUltimaModifica()!=null) {
+				addProprietaOggettoAggiornamento(dati, pOggetto.getDataUltimaModifica(), pOggetto.getUtenteUltimaModifica());
+			}
+		}
+	}
+	public void addProprietaOggetto(List<DataElement> dati, org.openspcoop2.core.config.ProprietaOggetto pOggetto) {
+		if(pOggetto!=null) {
+			// Creazione
+			if(pOggetto.getDataCreazione()!=null || pOggetto.getUtenteRichiedente()!=null) {
+				addProprietaOggettoCreazione(dati, pOggetto.getDataCreazione(), pOggetto.getUtenteRichiedente());
+			}
+			
+			// Aggiornamento
+			if(pOggetto.getDataUltimaModifica()!=null || pOggetto.getUtenteUltimaModifica()!=null) {
+				addProprietaOggettoAggiornamento(dati, pOggetto.getDataUltimaModifica(), pOggetto.getUtenteUltimaModifica());
+			}
+		}
+	}
+	private void addProprietaOggettoCreazione(List<DataElement> dati, Date dataCreazione, String utenteRichiedente) {
+		DataElement de = new DataElement();
+		de.setType(DataElementType.IMAGE);
+		de.setLabel(CostantiControlStation.LABEL_CREAZIONE);
+		if(dataCreazione!=null) {
+			String data = CostantiControlStation.formatDateMinute(dataCreazione);
+			String dataMs = CostantiControlStation.formatDateMs(dataCreazione);
+			de.addInfoAuditDataCreazione(dataMs, data);
+		}
+		if(utenteRichiedente!=null) {
+			de.addInfoAuditUtente(utenteRichiedente, utenteRichiedente);
+		}
+		dati.add(de);
+	}
+	private void addProprietaOggettoAggiornamento(List<DataElement> dati, Date dataUltimaModifica, String utenteUltimaModifica) {
+		DataElement de = new DataElement();
+		de.setType(DataElementType.IMAGE);
+		de.setLabel(CostantiControlStation.LABEL_ULTIMA_MODIFICA);
+		if(dataUltimaModifica!=null) {
+			String data = CostantiControlStation.formatDateMinute(dataUltimaModifica);
+			String dataMs = CostantiControlStation.formatDateMs(dataUltimaModifica);
+			de.addInfoAuditDataAggiornamento(dataMs, data);
+		}
+		if(utenteUltimaModifica!=null) {
+			de.addInfoAuditUtente(utenteUltimaModifica, utenteUltimaModifica);
+		}
+		dati.add(de);
+	}
+	
+	public ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto pRegistry, org.openspcoop2.core.config.ProprietaOggetto pConfigPortaDefault) {
+		ProprietaOggetto p = null;
+		if(pRegistry!=null &&
+			(pRegistry.getDataCreazione()!=null || pRegistry.getUtenteRichiedente()!=null ||
+					pRegistry.getDataUltimaModifica()!=null || pRegistry.getUtenteUltimaModifica()!=null) 
+			){
+			p = new ProprietaOggetto();
+			p.setDataCreazione(pRegistry.getDataCreazione());
+			p.setUtenteRichiedente(pRegistry.getUtenteRichiedente());
+			p.setDataUltimaModifica(pRegistry.getDataUltimaModifica());
+			p.setUtenteUltimaModifica(pRegistry.getUtenteUltimaModifica());
+		}
+		if(pConfigPortaDefault!=null &&
+			(pConfigPortaDefault.getDataUltimaModifica()!=null) 
+			){
+			if(p==null) {
+				p = new ProprietaOggetto();
+				p.setDataCreazione(pConfigPortaDefault.getDataCreazione());
+				p.setUtenteRichiedente(pConfigPortaDefault.getUtenteRichiedente());
+				p.setDataUltimaModifica(pConfigPortaDefault.getDataUltimaModifica());
+				p.setUtenteUltimaModifica(pConfigPortaDefault.getUtenteUltimaModifica());
+			}
+			else if(p.getDataUltimaModifica()==null || p.getDataUltimaModifica().before(pConfigPortaDefault.getDataUltimaModifica())) {
+				p.setDataUltimaModifica(pConfigPortaDefault.getDataUltimaModifica());
+				if(pConfigPortaDefault.getUtenteUltimaModifica()!=null) {
+					p.setUtenteUltimaModifica(pConfigPortaDefault.getUtenteUltimaModifica());
+				}
+			}
+		}
+		return p;
 	}
 }

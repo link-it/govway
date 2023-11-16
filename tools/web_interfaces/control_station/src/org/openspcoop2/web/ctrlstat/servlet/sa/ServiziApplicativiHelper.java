@@ -483,7 +483,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					DataElement deLABEL = new DataElement();
 					deLABEL.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 					deLABEL.setType(DataElementType.TEXT);
-					deLABEL.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO+"__label");
+					deLABEL.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 					deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
 					dati.add(deLABEL);
 					
@@ -522,7 +522,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
 				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
-				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO+"__LABEL");
+				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				String valueDom = dominio;
 				String [] sdValues = SoggettiCostanti.getSoggettiDominiValue();
 				String [] sdLabels = SoggettiCostanti.getSoggettiDominiLabel();
@@ -716,7 +716,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO);
-				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA+"__LABEL");
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setType(DataElementType.TEXT);
 				de.setValue(this.getTipo(tipoSA, (applicativiServerEnabled && useAsClient)));
 			}

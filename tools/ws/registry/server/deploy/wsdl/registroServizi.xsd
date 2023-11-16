@@ -800,6 +800,9 @@
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			
 		</xsd:attribute>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 	
 	

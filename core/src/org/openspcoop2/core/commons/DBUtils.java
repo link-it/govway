@@ -309,6 +309,63 @@ public class DBUtils {
 	}
 
 	
+	
+	
+	
+	
+	public static String getSuperUserServizioSafe(Logger log, String method,
+			long idServizio,Connection con, String tipoDB) 
+	{
+		try
+		{
+			return getSuperUserServizio(idServizio, con, tipoDB);
+		}catch(Exception e) {
+			if(log!=null) {
+				String msgError = "["+method+"] getSuperUserServizio failed: "+e.getMessage();
+				log.error(msgError, e);
+			}
+			return null;
+		}
+	}
+	public static String getSuperUserServizio(long idServizio,Connection con, String tipoDB) throws CoreException
+	{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String superuser=null;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addSelectField("superuser");
+			sqlQueryObject.addWhereCondition("id = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setLong(1, idServizio);
+
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				superuser = rs.getString("superuser");
+			}
+
+			return superuser;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(rs, stm);
+
+		}
+	}
+	
+	
+	
+	
 
 	public static long getIdPortaApplicativa(String nomePorta, Connection con, String tipoDB) throws CoreException
 	{

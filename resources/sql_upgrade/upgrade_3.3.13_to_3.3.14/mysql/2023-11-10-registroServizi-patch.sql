@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/mysql/registroServizi/2023-11-10-patch.sql

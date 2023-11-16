@@ -3928,7 +3928,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!editModeEnabled) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE+"__LABEL");
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				String multi = MultitenantSoggettiFruizioni.SOLO_SOGGETTI_ESTERNI.getValue();
 				try {
 					multi = MultitenantSoggettiFruizioni.valueOf(multitenantSoggettiFruizioni).getValue();
@@ -3969,7 +3969,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!editModeEnabled) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI+"__LABEL");
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				String multi = MultitenantSoggettiErogazioni.SOLO_SOGGETTI_ESTERNI.getValue();
 				try {
 					multi = MultitenantSoggettiErogazioni.valueOf(multitenantSoggettiErogazioni).getValue();
@@ -12792,7 +12792,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				dati.add(de);
 				
 				de = new DataElement();
-				de.setName(parametroRisorsaNome+"__LABEL");
+				de.setName(parametroRisorsaNome+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO);
 				de.setType(DataElementType.TEXT);
 				String labelRisorsaPolicyAttiva = this.getLabelTipoRisorsaPolicyAttiva(valoreRisorsa);
@@ -13332,15 +13332,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					String modalitaRisorsaConvertValue = this.getDataElementValueRisorsa(infoPolicy.getTipoRisorsa(), infoPolicy.isCheckRichiesteSimultanee());
 					String modalitaEsitiConvertValue = this.getDataElementValueRisorsaEsiti(infoPolicy.getTipoRisorsa());
 					addDataElementRisorsa(dati, 
-							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_RISORSA+"__label", modalitaRisorsaConvertValue, 
-							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ESITI+"__label", modalitaEsitiConvertValue,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_RISORSA+CostantiControlStation.PARAMETRO_SUFFIX_LABEL, modalitaRisorsaConvertValue, 
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ESITI+CostantiControlStation.PARAMETRO_SUFFIX_LABEL, modalitaEsitiConvertValue,
 							false);
 					
 					if(!TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(modalitaRisorsaConvertValue)) {
 					
 						if(!infoPolicy.isCheckRichiesteSimultanee()) {
 							de = new DataElement();
-							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO+"__label");
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 							de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
 							de.setType(DataElementType.TEXT);
 							if(infoPolicy.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo()!=null) {
@@ -13358,7 +13358,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						if(infoPolicy.isControlloCongestione()) {
 							de = new DataElement();
-							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE+"__label");
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 							de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
 							de.setType(DataElementType.TEXT);
 							dati.add(de);
@@ -13366,7 +13366,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						if(infoPolicy.isDegradoPrestazione()) {
 							de = new DataElement();
-							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO+"__label");
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 							de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
 							de.setType(DataElementType.TEXT);
 							dati.add(de);
@@ -13377,7 +13377,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				else {
 					
 					de = new DataElement();
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID+"__label");
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
 					de.setType(DataElementType.TEXT);
 					de.setValue(infoPolicy.getIdPolicy());
@@ -17197,7 +17197,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO+"__LABEL");
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setType(DataElementType.TEXT);
 				if(propConfigPolicyGestioneTokenList!=null && propConfigPolicyGestioneTokenList.length>0) {
 					boolean found = false;

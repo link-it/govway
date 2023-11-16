@@ -1420,7 +1420,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE);
-				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE+"__LABEL");
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setType(DataElementType.TEXT);
 				if(visualizzazioneSpecialeSoapPerEssereUgualeARest) {
 					de.setValue(this.getPortaApplicativaAzioneIdentificazioneLabel(PortaApplicativaAzioneIdentificazione.INTERFACE_BASED.getValue()));
@@ -11132,7 +11132,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				DataElement deLABEL = new DataElement();
 				deLABEL.setType(DataElementType.TEXT);
-				deLABEL.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA+"__LABEL");
+				deLABEL.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				deLABEL.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA);
 				deLABEL.setValue(this.porteApplicativeCore.getConsegnaNotificaConfigurazionePriorita(priorita).getLabel());
 				dati.add(deLABEL);

@@ -503,6 +503,7 @@
 		<xsd:attribute name="wsdl-implementativo-erogatore" type="xsd:string"/>
 		<xsd:attribute name="wsdl-implementativo-fruitore" type="xsd:string"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
 	

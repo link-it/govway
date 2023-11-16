@@ -1490,6 +1490,16 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	
 	

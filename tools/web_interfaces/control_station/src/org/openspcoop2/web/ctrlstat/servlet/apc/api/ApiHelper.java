@@ -26,6 +26,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -423,7 +424,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				}
 
 				// Proprieta Button
-				if(this.existsProprietaOggetto(accordoServizio.getProprietaOggetto())) {
+				if(this.existsProprietaOggetto(accordoServizio.getProprietaOggetto(), accordoServizio.getDescrizione())) {
 					this.addProprietaOggettoButton(e, labelAccordo, accordoServizio.getId()+"", InUsoType.ACCORDO_SERVIZIO_PARTE_COMUNE);
 				}
 				
@@ -637,7 +638,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		}
 		
 		// Proprieta Button
-		if(this.existsProprietaOggetto(as.getProprietaOggetto())) {
+		if(this.existsProprietaOggetto(as.getProprietaOggetto(), as.getDescrizione())) {
 			this.addComandoProprietaOggettoButton(labelAccordo, as.getId()+"", InUsoType.ACCORDO_SERVIZIO_PARTE_COMUNE);
 		}
 		
@@ -884,7 +885,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			else {
 				descrizione =  as.getDescrizione() ;
 			}
-			de.setValue(descrizione);
+			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
 			de.setToolTip(as.getDescrizione());
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
 			de.setIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
@@ -963,39 +964,9 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			dati.add(de);
 		}
 		
-		if(as.getProprietaOggetto()!=null) {
-			// Creazione
-			if(as.getProprietaOggetto().getDataCreazione()!=null || as.getProprietaOggetto().getUtenteRichiedente()!=null) {
-				de = new DataElement();
-				de.setType(DataElementType.IMAGE);
-				de.setLabel(CostantiControlStation.LABEL_CREAZIONE);
-				if(as.getProprietaOggetto().getDataCreazione()!=null) {
-					String data = CostantiControlStation.formatDateMinute(as.getProprietaOggetto().getDataCreazione());
-					String dataMs = CostantiControlStation.formatDateMs(as.getProprietaOggetto().getDataCreazione());
-					de.addInfoAuditDataCreazione(dataMs, data);
-				}
-				if(as.getProprietaOggetto().getUtenteRichiedente()!=null) {
-					de.addInfoAuditUtente(as.getProprietaOggetto().getUtenteRichiedente(), as.getProprietaOggetto().getUtenteRichiedente());
-				}
-				dati.add(de);
-			}
-			
-			// Aggiornamento
-			if(as.getProprietaOggetto().getDataUltimaModifica()!=null || as.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
-				de = new DataElement();
-				de.setType(DataElementType.IMAGE);
-				de.setLabel(CostantiControlStation.LABEL_ULTIMA_MODIFICA);
-				if(as.getProprietaOggetto().getDataUltimaModifica()!=null) {
-					String data = CostantiControlStation.formatDateMinute(as.getProprietaOggetto().getDataUltimaModifica());
-					String dataMs = CostantiControlStation.formatDateMs(as.getProprietaOggetto().getDataUltimaModifica());
-					de.addInfoAuditDataAggiornamento(dataMs, data);
-				}
-				if(as.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
-					de.addInfoAuditUtente(as.getProprietaOggetto().getUtenteUltimaModifica(), as.getProprietaOggetto().getUtenteUltimaModifica());
-				}
-				dati.add(de);
-			}
-		}
+		// Proprieta Oggetto
+		this.addProprietaOggetto(dati, as.getProprietaOggetto());
+
 		
 		// link
 		// 1. risorse/servizi

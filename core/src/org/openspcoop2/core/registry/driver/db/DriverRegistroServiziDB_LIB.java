@@ -84,6 +84,28 @@ public class DriverRegistroServiziDB_LIB {
 
 	/** Logger utilizzato per debug. */
 	public static org.slf4j.Logger log = LoggerWrapperFactory.getLogger(CostantiRegistroServizi.REGISTRO_DRIVER_DB_LOGGER);
+	
+	static void logDebug(String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	static void logDebug(String msg, Exception e) {
+		if(log!=null) {
+			log.debug(msg,e);
+		}
+	}
+	
+	static void logError(String msg) {
+		if(log!=null) {
+			log.error(msg);
+		}
+	}
+	static void logError(String msg, Exception e) {
+		if(log!=null) {
+			log.error(msg,e);
+		}
+	}
 
 	// Tipo database ereditato da DriverRegistroServiziDB
 	static String tipoDB = null;
@@ -92,7 +114,7 @@ public class DriverRegistroServiziDB_LIB {
 	 */
 	private static boolean initialize = false;
 	public static void initStaticLogger(Logger aLog){
-		if(DriverRegistroServiziDB_LIB.initialize==false){
+		if(!DriverRegistroServiziDB_LIB.initialize){
 			if(aLog!=null){
 				DriverRegistroServiziDB_LIB.log = aLog;
 			}

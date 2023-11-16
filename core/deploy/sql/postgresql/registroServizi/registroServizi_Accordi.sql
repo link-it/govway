@@ -403,9 +403,13 @@ CREATE TABLE servizi
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	port_type VARCHAR(255),
 	profilo VARCHAR(255),
-	descrizione VARCHAR(255),
+	descrizione TEXT,
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	message_type VARCHAR(255),
+	utente_richiedente VARCHAR(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_servizi') NOT NULL,
 	-- check constraints
@@ -473,6 +477,11 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_fruitore TEXT,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
+	descrizione TEXT,
+	utente_richiedente VARCHAR(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_servizi_fruitori') NOT NULL,
 	-- check constraints

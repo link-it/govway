@@ -510,7 +510,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE+"__LABEL");
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setType(DataElementType.TEXT);
 				if(visualizzazioneSpecialeSoapPerEssereUgualeARest) {
 					de.setValue(this.getPortaDelegataAzioneIdentificazioneLabel(PortaDelegataAzioneIdentificazione.INTERFACE_BASED.getValue()));

@@ -294,7 +294,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
 				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
-				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO+"__LABEL");
+				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				String valueDom = dominio;
 				String [] sdValues = SoggettiCostanti.getSoggettiDominiValue();
 				String [] sdLabels = SoggettiCostanti.getSoggettiDominiLabel();
@@ -339,7 +339,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				DataElement deLABEL = new DataElement();
 				deLABEL.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO);
 				deLABEL.setType(DataElementType.TEXT);
-				deLABEL.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO+"__label");
+				deLABEL.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				deLABEL.setValue(this.getLabelProtocollo(protocollo));
 				dati.add(deLABEL);
 				

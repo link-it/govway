@@ -570,9 +570,13 @@ CREATE TABLE servizi
 	ora_registrazione TIMESTAMP,
 	port_type VARCHAR2(255),
 	profilo VARCHAR2(255),
-	descrizione VARCHAR2(255),
+	descrizione CLOB,
 	stato VARCHAR2(255) NOT NULL,
 	message_type VARCHAR2(255),
+	utente_richiedente VARCHAR2(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR2(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
@@ -679,6 +683,11 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_fruitore CLOB,
 	ora_registrazione TIMESTAMP,
 	stato VARCHAR2(255) NOT NULL,
+	descrizione CLOB,
+	utente_richiedente VARCHAR2(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR2(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints

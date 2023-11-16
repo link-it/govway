@@ -3,7 +3,7 @@
 CREATE TABLE porte_delegate
 (
 	nome_porta VARCHAR(2000) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(max),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
 	-- id utilizzato in caso di registryInput
@@ -137,6 +137,10 @@ CREATE TABLE porte_delegate
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
 	options VARCHAR(4000),
 	canale VARCHAR(255),
+	utente_richiedente VARCHAR(255),
+	data_creazione DATETIME2,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica DATETIME2,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

@@ -144,6 +144,8 @@ public class CostantiControlStation {
 	public static final String LABEL_DATA_ULTIMA_MODIFICA = "Data Ultima Modifica";
 	public static final String LABEL_UTENTE_ULTIMA_MODIFICA = "Utente Ultima Modifica";
 	
+	public static final String LABEL_PROPRIETA_DESCRIZIONE = "Descrizione";
+	
 	public static final String LABEL_CREAZIONE = "Creazione";
 	public static final String LABEL_ULTIMA_MODIFICA = "Ultima Modifica";
 	private static final String DATE_FORMAT_MINUTE = "yyyy/MM/dd HH:mm";
@@ -913,6 +915,9 @@ public class CostantiControlStation {
 	};
 	
 	/** PARAMETERS **/
+	
+	public static final String PARAMETRO_SUFFIX_LABEL = "__label";
+	public static final String PARAMETRO_PREFIX = "param_";
 	
 	public static final String PARAMETRO_ID = "id";
 	public static final String PARAMETRO_ID_SOGGETTO = "idsogg";
@@ -1951,7 +1956,12 @@ public class CostantiControlStation {
 	
 	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI = "Non è stato selezionato nessun gruppo di metadati";
 	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO = "Non è stato selezionato nessun valore per il gruppo di metadati {0}";
+	
 	/** ICONE E TOOLTIP */
+	
+	public static final String ICONA_AGGIUNGI_DESCRIZIONE = "&#xE873;";
+	public static final String AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO = "Aggiungi {0}";
+	
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE = "&#xE3C9;";
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = "Modifica";
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Modifica {0}";

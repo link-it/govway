@@ -392,9 +392,13 @@ CREATE TABLE servizi
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
 	port_type VARCHAR(255),
 	profilo VARCHAR(255),
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(max),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	message_type VARCHAR(255),
+	utente_richiedente VARCHAR(255),
+	data_creazione DATETIME2,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica DATETIME2,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- check constraints
@@ -459,6 +463,11 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_fruitore VARCHAR(max),
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
+	descrizione VARCHAR(max),
+	utente_richiedente VARCHAR(255),
+	data_creazione DATETIME2,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica DATETIME2,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- check constraints

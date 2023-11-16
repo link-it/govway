@@ -69,7 +69,6 @@ public final class ErogazioniList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			// ctrlstatHelper ch = new ctrlstatHelper (request, pd, con, session);
 			ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
 			
 			ServletUtils.setObjectIntoSession(request, session, Boolean.valueOf(true), ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI); 
@@ -119,7 +118,7 @@ public final class ErogazioniList extends Action {
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
 			
-//			long before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+/**			long before = org.openspcoop2.utils.date.DateManager.getTimeMillis();*/
 			if(lista==null) {
 				if(apsCore.isVisioneOggettiGlobale(superUser)){
 					lista = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
@@ -127,17 +126,17 @@ public final class ErogazioniList extends Action {
 					lista = apsCore.soggettiServizioList(superUser, ricerca,permessi, gestioneFruitori, gestioneErogatori);
 				}
 			}
-//			long after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-//			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
+/**			long after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));*/
 
 			if(!erogazioniHelper.isPostBackFilterElement()) {
 				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
-//			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+/**			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();*/
 			erogazioniHelper.prepareErogazioniList(ricerca, lista);
-//			after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-//			System.out.println("PRESENTATION: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
+/**			after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			System.out.println("PRESENTATION: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));*/
 
 			String msg = erogazioniHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
 			if(msg!=null && !"".equals(msg)){

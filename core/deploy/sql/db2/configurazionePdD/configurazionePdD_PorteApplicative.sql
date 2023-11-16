@@ -3,7 +3,7 @@
 CREATE TABLE porte_applicative
 (
 	nome_porta VARCHAR(2000) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione CLOB,
 	-- Soggetto Virtuale
 	id_soggetto_virtuale BIGINT,
 	tipo_soggetto_virtuale VARCHAR(255),
@@ -127,6 +127,10 @@ CREATE TABLE porte_applicative
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	options VARCHAR(4000),
 	canale VARCHAR(255),
+	utente_richiedente VARCHAR(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints

@@ -75,16 +75,32 @@ import org.slf4j.Logger;
  */
 public class DriverRegistroServiziDB_accordiLIB {
 	
+	private DriverRegistroServiziDB_accordiLIB() {}
+	
+	private static final String ACCORDO_DIVERSO_NULL = "L'accordo non può essere null.";
+	private static final String NOME_ACCORDO_NON_VALIDO = "Il nome dell'accordo non è valido.";
+	
+	private static void logDebug(Logger log, String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	
+	private static void logError(Logger log, String msg, Exception e) {
+		if(log!=null) {
+			log.error(msg,e);
+		}
+	}
 	
 	public static void createAccordoServizioParteComune(org.openspcoop2.core.registry.AccordoServizioParteComune accordoServizio, 
 			Connection con, String tabellaSoggetti, Logger log, IDAccordoFactory idAccordoFactory) throws DriverRegistroServiziException {
 
 		if (accordoServizio == null)
-			throw new DriverRegistroServiziException("L'AccordoServizio non puo' essere null.");
+			throw new DriverRegistroServiziException(ACCORDO_DIVERSO_NULL);
 
 		String nome = accordoServizio.getNome();
 		if (nome == null || nome.equals(""))
-			throw new DriverRegistroServiziException("Il nome dell'AccordoServizio non e' valido.");
+			throw new DriverRegistroServiziException(NOME_ACCORDO_NON_VALIDO);
 
 		ServiceBinding serviceBinding = accordoServizio.getServiceBinding();
 		MessageType messageType = accordoServizio.getMessageType();
@@ -109,13 +125,13 @@ public class DriverRegistroServiziDB_accordiLIB {
 		String superUser = accordoServizio.getSuperUser();
 
 		FormatoSpecifica formatoSpecifica = accordoServizio.getFormatoSpecifica();
-		wsdlConcettuale = wsdlConcettuale!=null && !"".equals(wsdlConcettuale.trim().replaceAll("\n", "")) ? wsdlConcettuale : null;
-		wsdlDefinitorio = wsdlDefinitorio!=null && !"".equals(wsdlDefinitorio.trim().replaceAll("\n", "")) ? wsdlDefinitorio : null;
-		wsdlLogicoErogatore = wsdlLogicoErogatore!=null && !"".equals(wsdlLogicoErogatore.trim().replaceAll("\n", "")) ? wsdlLogicoErogatore : null;
-		wsdlLogicoFruitore = wsdlLogicoFruitore!=null && !"".equals(wsdlLogicoFruitore.trim().replaceAll("\n", "")) ? wsdlLogicoFruitore : null;
-		conversazioneConcettuale = conversazioneConcettuale!=null && !"".equals(conversazioneConcettuale.trim().replaceAll("\n", "")) ? conversazioneConcettuale : null;
-		conversazioneErogatore = conversazioneErogatore!=null && !"".equals(conversazioneErogatore.trim().replaceAll("\n", "")) ? conversazioneErogatore : null;
-		conversazioneFruitore = conversazioneFruitore!=null && !"".equals(conversazioneFruitore.trim().replaceAll("\n", "")) ? conversazioneFruitore : null;
+		wsdlConcettuale = wsdlConcettuale!=null && !"".equals(wsdlConcettuale.trim().replace("\n", "")) ? wsdlConcettuale : null;
+		wsdlDefinitorio = wsdlDefinitorio!=null && !"".equals(wsdlDefinitorio.trim().replace("\n", "")) ? wsdlDefinitorio : null;
+		wsdlLogicoErogatore = wsdlLogicoErogatore!=null && !"".equals(wsdlLogicoErogatore.trim().replace("\n", "")) ? wsdlLogicoErogatore : null;
+		wsdlLogicoFruitore = wsdlLogicoFruitore!=null && !"".equals(wsdlLogicoFruitore.trim().replace("\n", "")) ? wsdlLogicoFruitore : null;
+		conversazioneConcettuale = conversazioneConcettuale!=null && !"".equals(conversazioneConcettuale.trim().replace("\n", "")) ? conversazioneConcettuale : null;
+		conversazioneErogatore = conversazioneErogatore!=null && !"".equals(conversazioneErogatore.trim().replace("\n", "")) ? conversazioneErogatore : null;
+		conversazioneFruitore = conversazioneFruitore!=null && !"".equals(conversazioneFruitore.trim().replace("\n", "")) ? conversazioneFruitore : null;
 
 		String utenteRichiedente = null;
 		if(accordoServizio.getProprietaOggetto()!=null && accordoServizio.getProprietaOggetto().getUtenteRichiedente()!=null) {
@@ -274,21 +290,21 @@ public class DriverRegistroServiziDB_accordiLIB {
 				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzione(CostantiDB.CREATE,accordoServizio, azione, con, idAccordo);
 
 			}
-			log.debug("inserite " + accordoServizio.sizeAzioneList() + " azioni relative all'accordo :" + nome + " id :" + idAccordo);
+			logDebug(log, "inserite " + accordoServizio.sizeAzioneList() + " azioni relative all'accordo :" + nome + " id :" + idAccordo);
 
 			PortType pt = null;
 			for (int i = 0; i < accordoServizio.sizePortTypeList(); i++) {
 				pt = accordoServizio.getPortType(i);
 				DriverRegistroServiziDB_accordiSoapLIB.CRUDPortType(CostantiDB.CREATE,accordoServizio,pt, con, idAccordo);
 			}
-			log.debug("inserite " + accordoServizio.sizePortTypeList() + " porttype relative all'accordo :" + nome + " id :" + idAccordo);
+			logDebug(log, "inserite " + accordoServizio.sizePortTypeList() + " porttype relative all'accordo :" + nome + " id :" + idAccordo);
 
 			Resource resource = null;
 			for (int i = 0; i < accordoServizio.sizeResourceList(); i++) {
 				resource = accordoServizio.getResource(i);
 				DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.CREATE,accordoServizio,resource, con, idAccordo);
 			}
-			log.debug("inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordo);
+			logDebug(log, "inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordo);
 			
 			// Gruppi
 			if(accordoServizio.getGruppi()!=null && accordoServizio.getGruppi().sizeGruppoList()>0) {
@@ -296,7 +312,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 					GruppoAccordo gruppo = accordoServizio.getGruppi().getGruppo(i);
 					DriverRegistroServiziDB_accordiLIB.CRUDAccordoGruppo(CostantiDB.CREATE,accordoServizio, gruppo, con, idAccordo);
 				}
-				log.debug("inserite " + accordoServizio.sizeAzioneList() + " gruppi relative all'accordo :" + nome + " id :" + idAccordo);
+				logDebug(log, "inserite " + accordoServizio.sizeAzioneList() + " gruppi relative all'accordo :" + nome + " id :" + idAccordo);
 			}
 			
 			// Accordo servizio composto
@@ -307,7 +323,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 
 
 			// Documenti generici accordo di servizio
-			List<Documento> documenti = new ArrayList<Documento>();
+			List<Documento> documenti = new ArrayList<>();
 			// Allegati
 			for(int i=0; i<accordoServizio.sizeAllegatoList(); i++){
 				Documento doc = accordoServizio.getAllegato(i);
@@ -354,11 +370,11 @@ public class DriverRegistroServiziDB_accordiLIB {
 			Connection con, String tabellaSoggetti, Logger log, IDAccordoFactory idAccordoFactory) throws DriverRegistroServiziException {
 
 		if (accordoServizio == null)
-			throw new DriverRegistroServiziException("L'AccordoServizio non puo' essere null.");
+			throw new DriverRegistroServiziException(ACCORDO_DIVERSO_NULL);
 
 		String nome = accordoServizio.getNome();
 		if (nome == null || nome.equals(""))
-			throw new DriverRegistroServiziException("Il nome dell'AccordoServizio non e' valido.");
+			throw new DriverRegistroServiziException(NOME_ACCORDO_NON_VALIDO);
 
 		PreparedStatement stm = null;
 		ResultSet rs =null;
@@ -389,13 +405,13 @@ public class DriverRegistroServiziDB_accordiLIB {
 		String conversazioneFruitore = (accordoServizio.getByteSpecificaConversazioneFruitore()!=null ? new String(accordoServizio.getByteSpecificaConversazioneFruitore()) : null);
 		String superUser = accordoServizio.getSuperUser();
 
-		wsdlConcettuale = wsdlConcettuale!=null && !"".equals(wsdlConcettuale.trim().replaceAll("\n", "")) ? wsdlConcettuale : null;
-		wsdlDefinitorio = wsdlDefinitorio!=null && !"".equals(wsdlDefinitorio.trim().replaceAll("\n", "")) ? wsdlDefinitorio : null;
-		wsdlLogicoErogatore = wsdlLogicoErogatore!=null && !"".equals(wsdlLogicoErogatore.trim().replaceAll("\n", "")) ? wsdlLogicoErogatore : null;
-		wsdlLogicoFruitore = wsdlLogicoFruitore!=null && !"".equals(wsdlLogicoFruitore.trim().replaceAll("\n", "")) ? wsdlLogicoFruitore : null;
-		conversazioneConcettuale = conversazioneConcettuale!=null && !"".equals(conversazioneConcettuale.trim().replaceAll("\n", "")) ? conversazioneConcettuale : null;
-		conversazioneErogatore = conversazioneErogatore!=null && !"".equals(conversazioneErogatore.trim().replaceAll("\n", "")) ? conversazioneErogatore : null;
-		conversazioneFruitore = conversazioneFruitore!=null && !"".equals(conversazioneFruitore.trim().replaceAll("\n", "")) ? conversazioneFruitore : null;
+		wsdlConcettuale = wsdlConcettuale!=null && !"".equals(wsdlConcettuale.trim().replace("\n", "")) ? wsdlConcettuale : null;
+		wsdlDefinitorio = wsdlDefinitorio!=null && !"".equals(wsdlDefinitorio.trim().replace("\n", "")) ? wsdlDefinitorio : null;
+		wsdlLogicoErogatore = wsdlLogicoErogatore!=null && !"".equals(wsdlLogicoErogatore.trim().replace("\n", "")) ? wsdlLogicoErogatore : null;
+		wsdlLogicoFruitore = wsdlLogicoFruitore!=null && !"".equals(wsdlLogicoFruitore.trim().replace("\n", "")) ? wsdlLogicoFruitore : null;
+		conversazioneConcettuale = conversazioneConcettuale!=null && !"".equals(conversazioneConcettuale.trim().replace("\n", "")) ? conversazioneConcettuale : null;
+		conversazioneErogatore = conversazioneErogatore!=null && !"".equals(conversazioneErogatore.trim().replace("\n", "")) ? conversazioneErogatore : null;
+		conversazioneFruitore = conversazioneFruitore!=null && !"".equals(conversazioneFruitore.trim().replace("\n", "")) ? conversazioneFruitore : null;
 
 		try {
 
@@ -557,7 +573,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 							wsdlConcettuale, wsdlDefinitorio, wsdlLogicoErogatore, wsdlLogicoFruitore, 
 							conversazioneConcettuale, conversazioneErogatore, conversazioneFruitore,
 							superUser,utilizzioSenzaAzione, idAccordoLong);
-			log.debug(msgDebug);
+			logDebug(log, msgDebug);
 
 			stm.executeUpdate();
 			stm.close();
@@ -574,7 +590,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm.setLong(1, idAccordoLong);
 			int n=stm.executeUpdate();
 			stm.close();
-			log.debug("Cancellate "+n+" azioni associate all'accordo "+idAccordoLong);
+			logDebug(log, "Cancellate "+n+" azioni associate all'accordo "+idAccordoLong);
 
 			for (int i = 0; i < accordoServizio.sizeAzioneList(); i++) {
 				Azione azione = accordoServizio.getAzione(i);
@@ -586,10 +602,9 @@ public class DriverRegistroServiziDB_accordiLIB {
 				}
 				DriverRegistroServiziDB_accordiSoapLIB.CRUDAzione(CostantiDB.CREATE, accordoServizio,azione, con, idAccordoLong);
 			}
-			log.debug("Inserite "+accordoServizio.sizeAzioneList()+" azioni associate all'accordo "+idAccordoLong);
+			logDebug(log, "Inserite "+accordoServizio.sizeAzioneList()+" azioni associate all'accordo "+idAccordoLong);
 
 			//aggiorno i port type
-			//TODO possibile ottimizzazione
 			//la lista contiene tutte e soli i port type necessari
 			//prima cancello i port type e poi reinserisco quelle nuove
 
@@ -601,15 +616,15 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm=con.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordoLong);
 			rs=stm.executeQuery();
-			List<Long> idPT = new ArrayList<Long>();
+			List<Long> idPT = new ArrayList<>();
 			while(rs.next()){
 				idPT.add(rs.getLong("id"));
 			}
 			rs.close();
 			stm.close();
-			log.debug("Trovati "+idPT.size()+" port type...");
+			logDebug(log, "Trovati "+idPT.size()+" port type...");
 
-			while(idPT.size()>0){
+			while(!idPT.isEmpty()){
 				Long idPortType = idPT.remove(0);
 
 				// Seleziono id port type azione
@@ -622,19 +637,19 @@ public class DriverRegistroServiziDB_accordiLIB {
 				stm=con.prepareStatement(sqlQuery);
 				stm.setLong(1, idPortType);
 				rs=stm.executeQuery();
-				List<Long> idPTAzione = new ArrayList<Long>();
+				List<Long> idPTAzione = new ArrayList<>();
 				while(rs.next()){
 					idPTAzione.add(rs.getLong("id"));
 				}
 				rs.close();
 				stm.close();
 
-				log.debug("Trovati "+idPTAzione.size()+" port type azioni...");
+				logDebug(log, "Trovati "+idPTAzione.size()+" port type azioni...");
 
 				// Elimino i messages
-				while(idPTAzione.size()>0){
+				while(!idPTAzione.isEmpty()){
 					Long idPortTypeAzione = idPTAzione.remove(0);
-					log.debug("Eliminazione message con id["+idPortTypeAzione+"]...");
+					logDebug(log, "Eliminazione message con id["+idPortTypeAzione+"]...");
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addDeleteTable(CostantiDB.PORT_TYPE_AZIONI_OPERATION_MESSAGES);
 					sqlQueryObject.addWhereCondition("id_port_type_azione=?");
@@ -644,10 +659,10 @@ public class DriverRegistroServiziDB_accordiLIB {
 					stm.setLong(1, idPortTypeAzione);
 					n=stm.executeUpdate();
 					stm.close();
-					log.debug("Cancellate "+n+" messages di un'azione con id["+idPortTypeAzione+"] del port type ["+idPortType+"] associate all'accordo "+idAccordoLong);
+					logDebug(log, "Cancellate "+n+" messages di un'azione con id["+idPortTypeAzione+"] del port type ["+idPortType+"] associate all'accordo "+idAccordoLong);
 				}
 
-				log.debug("Elimino port type azione del port types ["+idPortType+"]...");
+				logDebug(log, "Elimino port type azione del port types ["+idPortType+"]...");
 
 				// Elimino port types azioni
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -659,7 +674,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 				stm.setLong(1, idPortType);
 				n=stm.executeUpdate();
 				stm.close();
-				log.debug("Cancellate "+n+" azioni del port type ["+idPortType+"] associate all'accordo "+idAccordoLong);
+				logDebug(log, "Cancellate "+n+" azioni del port type ["+idPortType+"] associate all'accordo "+idAccordoLong);
 			}
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -671,17 +686,16 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm.setLong(1, idAccordoLong);
 			n=stm.executeUpdate();
 			stm.close();
-			log.debug("Cancellate "+n+" port type associate all'accordo "+idAccordoLong);
+			logDebug(log, "Cancellate "+n+" port type associate all'accordo "+idAccordoLong);
 
 			PortType pt = null;
 			for (int i = 0; i < accordoServizio.sizePortTypeList(); i++) {
 				pt = accordoServizio.getPortType(i);
 				DriverRegistroServiziDB_accordiSoapLIB.CRUDPortType(CostantiDB.CREATE,accordoServizio,pt, con, idAccordoLong);
 			}
-			log.debug("inserite " + accordoServizio.sizePortTypeList() + " porttype relative all'accordo :" + nome + " id :" + idAccordoLong);
+			logDebug(log, "inserite " + accordoServizio.sizePortTypeList() + " porttype relative all'accordo :" + nome + " id :" + idAccordoLong);
 
 			// risorse
-			//TODO possibile ottimizzazione
 			//la lista contiene tutte e sole le risorse necessarie
 			//prima cancello le risorse e poi reinserisco quelle nuove
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -692,7 +706,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm=con.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordoLong);
 			rs=stm.executeQuery();
-			List<Long> idResources = new ArrayList<Long>();
+			List<Long> idResources = new ArrayList<>();
 			while(rs.next()){
 				idResources.add(rs.getLong("id"));
 			}
@@ -700,25 +714,24 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm.close();
 	
 			n=0;
-			while(idResources.size()>0){
+			while(!idResources.isEmpty()){
 				Long idR = idResources.remove(0);
 				Resource resource = new Resource();
 				resource.setId(idR);
 				n = n + DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, con, idAccordoLong);
 			}
-			log.debug("Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
+			logDebug(log, "Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
 			
 			Resource resource = null;
 			for (int i = 0; i < accordoServizio.sizeResourceList(); i++) {
 				resource = accordoServizio.getResource(i);
 				DriverRegistroServiziDB_accordiRestLIB.CRUDResource(CostantiDB.CREATE,accordoServizio,resource, con, idAccordoLong);
 			}
-			log.debug("inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordoLong);
+			logDebug(log, "inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordoLong);
 			
 			
 			
 			// Gruppi
-			//TODO possibile ottimizzazione
 			//la lista contiene tutte e sole le risorse necessarie
 			//prima cancello le risorse e poi reinserisco quelle nuove
 			
@@ -734,7 +747,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm=con.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordoLong);
 			rs=stm.executeQuery();
-			List<GruppoAccordo> gruppi = new ArrayList<GruppoAccordo>();
+			List<GruppoAccordo> gruppi = new ArrayList<>();
 			while(rs.next()){
 				GruppoAccordo gruppo = new GruppoAccordo();
 				gruppo.setNome(rs.getString("nomeGruppo"));
@@ -744,18 +757,18 @@ public class DriverRegistroServiziDB_accordiLIB {
 			rs.close();
 			stm.close();
 	
-			while(gruppi.size()>0){
+			while(!gruppi.isEmpty()){
 				GruppoAccordo gruppo = gruppi.remove(0);
 				DriverRegistroServiziDB_accordiLIB.CRUDAccordoGruppo(CostantiDB.DELETE, accordoServizio, gruppo, con, idAccordoLong);
 			}
-			log.debug("Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
+			logDebug(log, "Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
 			
 			if(accordoServizio.getGruppi()!=null && accordoServizio.getGruppi().sizeGruppoList()>0) {
 				for (int i = 0; i < accordoServizio.getGruppi().sizeGruppoList(); i++) {
 					GruppoAccordo gruppo = accordoServizio.getGruppi().getGruppo(i);
 					DriverRegistroServiziDB_accordiLIB.CRUDAccordoGruppo(CostantiDB.CREATE,accordoServizio, gruppo, con, idAccordoLong);
 				}
-				log.debug("inserite " + accordoServizio.sizeAzioneList() + " gruppi relative all'accordo :" + nome + " id :" + idAccordoLong);
+				logDebug(log, "inserite " + accordoServizio.sizeAzioneList() + " gruppi relative all'accordo :" + nome + " id :" + idAccordoLong);
 			}
 			
 			
@@ -808,11 +821,11 @@ public class DriverRegistroServiziDB_accordiLIB {
 			
 			
 		}catch (SQLException se) {
-			log.error(se.getMessage(),se);
+			logError(log, se.getMessage(),se);
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoServizio] SQLException [" + se.getMessage() + "].",se);
 		} 
 		catch (Exception se) {
-			log.error(se.getMessage(),se);
+			logError(log, se.getMessage(),se);
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoServizio] Exception [" + se.getMessage() + "].",se);
 		}finally {
 			JDBCUtilities.closeResources(rs, stm);
@@ -834,7 +847,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			IDGruppo idGruppo = new IDGruppo(gruppo.getNome());
 			long idGruppoLong = DBUtils.getIdGruppo(idGruppo, con, DriverRegistroServiziDB_LIB.tipoDB);
 			if(idGruppoLong<=0) {
-				throw new Exception("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] Gruppo con nome '"+idGruppo.getNome()+"' non esistente.");
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] Gruppo con nome '"+idGruppo.getNome()+"' non esistente.");
 			}
 			
 			switch (type) {
@@ -851,11 +864,11 @@ public class DriverRegistroServiziDB_accordiLIB {
 				updateStmt.setLong(index++, idAccordo);
 				updateStmt.setLong(index++, idGruppoLong);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoGruppo CREATE :\n"+
+				DriverRegistroServiziDB_LIB.logDebug("CRUDAccordoGruppo CREATE :\n"+
 						DriverRegistroServiziDB_LIB.formatSQLString(updateQuery,idAccordo,idGruppoLong));
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoGruppo type = " + type + " row affected =" + n);
+				DriverRegistroServiziDB_LIB.logDebug("CRUDAccordoGruppo type = " + type + " row affected =" + n);
 
 				break;
 
@@ -878,7 +891,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 				updateStmt.setLong(index++, idGruppoLong);
 				n=updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoGruppo type = " + type + " row affected =" + n);
+				DriverRegistroServiziDB_LIB.logDebug("CRUDAccordoGruppo type = " + type + " row affected =" + n);
 				
 				break;
 			}
@@ -979,11 +992,11 @@ public class DriverRegistroServiziDB_accordiLIB {
 		sqlQueryObjectExistsAsinAsimRisposta.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio is not null");
 		sqlQueryObjectExistsAsinAsimRisposta.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio="+CostantiDB.PORT_TYPE+".nome");
 		sqlQueryObjectExistsAsinAsimRisposta.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata is not null");
-		ISQLQueryObject sqlQueryObjectExistsAsinAsimRisposta_checkCorrelata = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
-		sqlQueryObjectExistsAsinAsimRisposta_checkCorrelata.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
-		sqlQueryObjectExistsAsinAsimRisposta_checkCorrelata.addSelectField(CostantiDB.PORT_TYPE_AZIONI, "nome");
-		sqlQueryObjectExistsAsinAsimRisposta_checkCorrelata.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".id_port_type="+CostantiDB.PORT_TYPE+".id");
-		sqlQueryObjectExistsAsinAsimRisposta.addWhereINSelectSQLCondition(false, CostantiDB.PORT_TYPE_AZIONI+".correlata", sqlQueryObjectExistsAsinAsimRisposta_checkCorrelata);
+		ISQLQueryObject sqlQueryObjectExistsAsinAsimRispostaCheckCorrelata = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+		sqlQueryObjectExistsAsinAsimRispostaCheckCorrelata.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
+		sqlQueryObjectExistsAsinAsimRispostaCheckCorrelata.addSelectField(CostantiDB.PORT_TYPE_AZIONI, "nome");
+		sqlQueryObjectExistsAsinAsimRispostaCheckCorrelata.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".id_port_type="+CostantiDB.PORT_TYPE+".id");
+		sqlQueryObjectExistsAsinAsimRisposta.addWhereINSelectSQLCondition(false, CostantiDB.PORT_TYPE_AZIONI+".correlata", sqlQueryObjectExistsAsinAsimRispostaCheckCorrelata);
 		sqlQueryObjectExistsAsinAsimRisposta.setANDLogicOperator(true);
 	
 		sqlQueryObject.addWhereCondition(true, 
@@ -993,7 +1006,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 		
 		
 		
-		// (
+		/** (
 		//   port_type.profilo_collaborazione='asincronoSimmetrico' AND
 		//
         //   EXISTS (select * from port_type_azioni where port_type_azioni.id_port_type=port_type.id AND 
@@ -1013,7 +1026,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 		//										  select nome from port_type_azioni where port_type_azioni.id_port_type=port_type.id
 		//									  )
 		//           )
-		// )
+		// )*/
 		
 		ISQLQueryObject sqlQueryObjectExistsAsinSimRichiesta = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		sqlQueryObjectExistsAsinSimRichiesta.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
@@ -1022,32 +1035,32 @@ public class DriverRegistroServiziDB_accordiLIB {
 		sqlQueryObjectExistsAsinSimRichiesta.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata is null");
 		sqlQueryObjectExistsAsinSimRichiesta.setANDLogicOperator(true);
 		
-		ISQLQueryObject sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
-		String PORT_TYPE_ALIAS_RICERCA = "ptRicerca2";
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addFromTable(CostantiDB.PORT_TYPE+" as "+PORT_TYPE_ALIAS_RICERCA);
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addWhereCondition(PORT_TYPE_ALIAS_RICERCA+".id_accordo="+CostantiDB.PORT_TYPE+".id_accordo");
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addWhereCondition(PORT_TYPE_ALIAS_RICERCA+".profilo_collaborazione='asincronoSimmetrico'");
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addWhereCondition(PORT_TYPE_ALIAS_RICERCA+".nome <> "+CostantiDB.PORT_TYPE+".nome");
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".id_port_type="+PORT_TYPE_ALIAS_RICERCA+".id");
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio is not null");
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio="+CostantiDB.PORT_TYPE+".nome");
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata is not null");
-		ISQLQueryObject sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione_checkAzione = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione_checkAzione.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione_checkAzione.addSelectField(CostantiDB.PORT_TYPE_AZIONI, "nome");
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione_checkAzione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".id_port_type="+CostantiDB.PORT_TYPE+".id");
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.addWhereINSelectSQLCondition(false, CostantiDB.PORT_TYPE_AZIONI+".correlata", sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione_checkAzione);
-		sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione.setANDLogicOperator(true);
+		ISQLQueryObject sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+		String portTypeAliasRicerca = "ptRicerca2";
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addFromTable(CostantiDB.PORT_TYPE+" as "+portTypeAliasRicerca);
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addWhereCondition(portTypeAliasRicerca+".id_accordo="+CostantiDB.PORT_TYPE+".id_accordo");
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addWhereCondition(portTypeAliasRicerca+".profilo_collaborazione='asincronoSimmetrico'");
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addWhereCondition(portTypeAliasRicerca+".nome <> "+CostantiDB.PORT_TYPE+".nome");
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".id_port_type="+portTypeAliasRicerca+".id");
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio is not null");
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio="+CostantiDB.PORT_TYPE+".nome");
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata is not null");
+		ISQLQueryObject sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazioneCheckAzione = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazioneCheckAzione.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazioneCheckAzione.addSelectField(CostantiDB.PORT_TYPE_AZIONI, "nome");
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazioneCheckAzione.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".id_port_type="+CostantiDB.PORT_TYPE+".id");
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.addWhereINSelectSQLCondition(false, CostantiDB.PORT_TYPE_AZIONI+".correlata", sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazioneCheckAzione);
+		sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione.setANDLogicOperator(true);
 			
 		sqlQueryObject.addWhereCondition(true, 
 				CostantiDB.PORT_TYPE+".profilo_collaborazione='asincronoSimmetrico'",
 				sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectExistsAsinSimRichiesta),
-				sqlQueryObject.getWhereExistsCondition(false,sqlQueryObjectExistsAsinSimRichiesta_checkCorrelazione));
+				sqlQueryObject.getWhereExistsCondition(false,sqlQueryObjectExistsAsinSimRichiestaCheckCorrelazione));
 		
 		
 		
-		// (
+		/** (
 		//    port_type.profilo_collaborazione='asincronoSimmetrico' AND
 		//
         //    EXISTS (select * from port_type_azioni where port_type_azioni.id_port_type=port_type.id AND 
@@ -1064,30 +1077,30 @@ public class DriverRegistroServiziDB_accordiLIB {
 		//															ptAzioniRicerca2.nome=port_type_azioni.correlata
 		//   					 							)
         //           ) 
-        // )
-		if(isErogazione==false){
-			ISQLQueryObject sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
-			String PORT_TYPE_ALIAS_RICERCA_AS = "ptRicerca2";
-			String PORT_TYPE_AZIONI_ALIAS_RICERCA_AS = "ptAzioniRicerca2";
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addFromTable(CostantiDB.PORT_TYPE+" as "+PORT_TYPE_ALIAS_RICERCA_AS);
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addFromTable(CostantiDB.PORT_TYPE_AZIONI+" as "+PORT_TYPE_AZIONI_ALIAS_RICERCA_AS);
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addWhereCondition(PORT_TYPE_ALIAS_RICERCA_AS+".id_accordo="+CostantiDB.PORT_TYPE+".id_accordo");
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addWhereCondition(PORT_TYPE_ALIAS_RICERCA_AS+".profilo_collaborazione='asincronoSimmetrico'");
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addWhereCondition(PORT_TYPE_ALIAS_RICERCA_AS+".nome <> "+CostantiDB.PORT_TYPE+".nome");
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addWhereCondition(PORT_TYPE_AZIONI_ALIAS_RICERCA_AS+".id_port_type="+PORT_TYPE_ALIAS_RICERCA_AS+".id");
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addWhereCondition(PORT_TYPE_AZIONI_ALIAS_RICERCA_AS+".correlata_servizio is null");
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addWhereCondition(PORT_TYPE_ALIAS_RICERCA_AS+".nome="+CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio");
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addWhereCondition(PORT_TYPE_AZIONI_ALIAS_RICERCA_AS+".correlata is null");
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.addWhereCondition(PORT_TYPE_AZIONI_ALIAS_RICERCA_AS+".nome="+CostantiDB.PORT_TYPE_AZIONI+".correlata");
+        // )*/
+		if(!isErogazione){
+			ISQLQueryObject sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			String portTypeAliasRicercaAs = "ptRicerca2";
+			String portTypeAzioniAliasRicercaAs = "ptAzioniRicerca2";
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addFromTable(CostantiDB.PORT_TYPE+" as "+portTypeAliasRicercaAs);
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addFromTable(CostantiDB.PORT_TYPE_AZIONI+" as "+portTypeAzioniAliasRicercaAs);
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addWhereCondition(portTypeAliasRicercaAs+".id_accordo="+CostantiDB.PORT_TYPE+".id_accordo");
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addWhereCondition(portTypeAliasRicercaAs+".profilo_collaborazione='asincronoSimmetrico'");
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addWhereCondition(portTypeAliasRicercaAs+".nome <> "+CostantiDB.PORT_TYPE+".nome");
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addWhereCondition(portTypeAzioniAliasRicercaAs+".id_port_type="+portTypeAliasRicercaAs+".id");
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addWhereCondition(portTypeAzioniAliasRicercaAs+".correlata_servizio is null");
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addWhereCondition(portTypeAliasRicercaAs+".nome="+CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio");
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addWhereCondition(portTypeAzioniAliasRicercaAs+".correlata is null");
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.addWhereCondition(portTypeAzioniAliasRicercaAs+".nome="+CostantiDB.PORT_TYPE_AZIONI+".correlata");
 			
-			sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione.setANDLogicOperator(true);
+			sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione.setANDLogicOperator(true);
 			
 			ISQLQueryObject sqlQueryObjectExistsAsinSimRisposta = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 			sqlQueryObjectExistsAsinSimRisposta.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
 			sqlQueryObjectExistsAsinSimRisposta.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".id_port_type="+CostantiDB.PORT_TYPE+".id");
 			sqlQueryObjectExistsAsinSimRisposta.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata is not null");
 			sqlQueryObjectExistsAsinSimRisposta.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".correlata_servizio is not null");
-			sqlQueryObjectExistsAsinSimRisposta.addWhereExistsCondition(false, sqlQueryObjectExistsAsinSimRisposta_checkCorrelazione);
+			sqlQueryObjectExistsAsinSimRisposta.addWhereExistsCondition(false, sqlQueryObjectExistsAsinSimRispostaCheckCorrelazione);
 			sqlQueryObjectExistsAsinSimRisposta.setANDLogicOperator(true);
 			
 			sqlQueryObject.addWhereCondition(true, 
@@ -1108,12 +1121,16 @@ public class DriverRegistroServiziDB_accordiLIB {
 	public static void deleteAccordoServizioParteComune(org.openspcoop2.core.registry.AccordoServizioParteComune accordoServizio, 
 			Connection con, String tabellaSoggetti, Logger log, IDAccordoFactory idAccordoFactory) throws DriverRegistroServiziException {
 
+		if(tabellaSoggetti!=null) {
+			// nop
+		}
+		
 		if (accordoServizio == null)
-			throw new DriverRegistroServiziException("L'AccordoServizio non puo' essere null.");
+			throw new DriverRegistroServiziException(ACCORDO_DIVERSO_NULL);
 
 		String nome = accordoServizio.getNome();
 		if (nome == null || nome.equals(""))
-			throw new DriverRegistroServiziException("Il nome dell'AccordoServizio non e' valido.");
+			throw new DriverRegistroServiziException(NOME_ACCORDO_NON_VALIDO);
 
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -1135,10 +1152,10 @@ public class DriverRegistroServiziDB_accordiLIB {
 			String updateString = sqlQueryObject.createSQLDelete();
 			stm = con.prepareStatement(updateString);
 			stm.setLong(1, idAccordoLong);
-			log.debug("delete azioni :" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
+			logDebug(log, "delete azioni :" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
 			int n=stm.executeUpdate();
 			stm.close();
-			log.debug("cancellate " + n + " azioni.");
+			logDebug(log, "cancellate " + n + " azioni.");
 
 			
 			// elimino tutte i port type e struttura interna
@@ -1150,18 +1167,18 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm=con.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordoLong);
 			rs=stm.executeQuery();
-			List<Long> idPT = new ArrayList<Long>();
+			List<Long> idPT = new ArrayList<>();
 			while(rs.next()){
 				idPT.add(rs.getLong("id"));
 			}
 			rs.close();
 			stm.close();
 
-			while(idPT.size()>0){
+			while(!idPT.isEmpty()){
 				Long idPortType = idPT.remove(0);
 
 				// gestione operation_messages
-				List<Long> idPortTypeAzioni = new ArrayList<Long>();
+				List<Long> idPortTypeAzioni = new ArrayList<>();
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
 				sqlQueryObject.addSelectField("id");
@@ -1176,7 +1193,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 				rs.close();
 				stm.close();
 
-				while(idPortTypeAzioni.size()>0){
+				while(!idPortTypeAzioni.isEmpty()){
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addDeleteTable(CostantiDB.PORT_TYPE_AZIONI_OPERATION_MESSAGES);
 					sqlQueryObject.addWhereCondition("id_port_type_azione=?");
@@ -1197,7 +1214,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 				stm.setLong(1, idPortType);
 				n=stm.executeUpdate();
 				stm.close();
-				log.debug("Cancellate "+n+" azioni del port type ["+idPortType+"] associate all'accordo "+idAccordoLong);
+				logDebug(log, "Cancellate "+n+" azioni del port type ["+idPortType+"] associate all'accordo "+idAccordoLong);
 			}
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -1209,7 +1226,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm.setLong(1, idAccordoLong);
 			n=stm.executeUpdate();
 			stm.close();
-			log.debug("Cancellate "+n+" port type associate all'accordo "+idAccordoLong);
+			logDebug(log, "Cancellate "+n+" port type associate all'accordo "+idAccordoLong);
 
 			
 			
@@ -1223,14 +1240,14 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm=con.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordoLong);
 			rs=stm.executeQuery();
-			List<Long> idResources = new ArrayList<Long>();
+			List<Long> idResources = new ArrayList<>();
 			while(rs.next()){
 				idResources.add(rs.getLong("id"));
 			}
 			rs.close();
 			stm.close();
 	
-			while(idResources.size()>0){
+			while(!idResources.isEmpty()){
 				Long idR = idResources.remove(0);
 				Resource resource = new Resource();
 				resource.setId(idR);
@@ -1239,7 +1256,6 @@ public class DriverRegistroServiziDB_accordiLIB {
 			
 			
 			// Gruppi
-			//TODO possibile ottimizzazione
 			//la lista contiene tutte e sole le risorse necessarie
 			//prima cancello le risorse e poi reinserisco quelle nuove
 			
@@ -1255,7 +1271,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			stm=con.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordoLong);
 			rs=stm.executeQuery();
-			List<GruppoAccordo> gruppi = new ArrayList<GruppoAccordo>();
+			List<GruppoAccordo> gruppi = new ArrayList<>();
 			while(rs.next()){
 				GruppoAccordo gruppo = new GruppoAccordo();
 				gruppo.setNome(rs.getString("nomeGruppo"));
@@ -1265,11 +1281,11 @@ public class DriverRegistroServiziDB_accordiLIB {
 			rs.close();
 			stm.close();
 	
-			while(gruppi.size()>0){
+			while(!gruppi.isEmpty()){
 				GruppoAccordo gruppo = gruppi.remove(0);
 				DriverRegistroServiziDB_accordiLIB.CRUDAccordoGruppo(CostantiDB.DELETE, accordoServizio, gruppo, con, idAccordoLong);
 			}
-			log.debug("Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
+			logDebug(log, "Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
 			
 			
 			
@@ -1302,7 +1318,7 @@ public class DriverRegistroServiziDB_accordiLIB {
 			updateString = sqlQueryObject.createSQLDelete();
 			stm = con.prepareStatement(updateString);
 			stm.setLong(1, idAccordoLong);
-			log.debug("delete accordoServizio :" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
+			logDebug(log, "delete accordoServizio :" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
 			stm.executeUpdate();
 			stm.close();
 

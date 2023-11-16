@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_porte_applicative MINVALUE 1 MAXVALUE 9223372036854775807 ST
 CREATE TABLE porte_applicative
 (
 	nome_porta VARCHAR2(2000) NOT NULL,
-	descrizione VARCHAR2(255),
+	descrizione CLOB,
 	-- Soggetto Virtuale
 	id_soggetto_virtuale NUMBER,
 	tipo_soggetto_virtuale VARCHAR2(255),
@@ -129,6 +129,10 @@ CREATE TABLE porte_applicative
 	ora_registrazione TIMESTAMP,
 	options VARCHAR2(4000),
 	canale VARCHAR2(255),
+	utente_richiedente VARCHAR2(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR2(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

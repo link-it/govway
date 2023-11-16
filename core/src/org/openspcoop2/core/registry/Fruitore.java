@@ -53,6 +53,7 @@ import java.util.List;
  * 		&lt;attribute name="wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="wsdl-implementativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -248,6 +249,14 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
     this.oraRegistrazione = oraRegistrazione;
   }
 
+  public java.lang.String getDescrizione() {
+    return this.descrizione;
+  }
+
+  public void setDescrizione(java.lang.String descrizione) {
+    this.descrizione = descrizione;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -378,5 +387,9 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlAttribute(name="ora-registrazione",required=false)
   protected java.util.Date oraRegistrazione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="descrizione",required=false)
+  protected java.lang.String descrizione;
 
 }

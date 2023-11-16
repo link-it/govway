@@ -1489,8 +1489,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			//imposto properties custom
 			fruitore.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(strutsBean.protocolProperties, strutsBean.consoleOperationType, oldProtocolPropertyList));
-			
+					
 			serviziosp.addFruitore(fruitore);
+			apsCore.setDataAggiornamentoFruitore(fruitore);
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), serviziosp);
 

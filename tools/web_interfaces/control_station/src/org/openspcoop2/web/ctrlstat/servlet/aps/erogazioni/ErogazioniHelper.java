@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -67,6 +68,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.GruppoSintetico;
@@ -81,8 +83,8 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
@@ -98,6 +100,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.utils.ProprietaOggettoRegistro;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -1481,10 +1484,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						}
 					}
 					
+					String idServizioButton = gestioneFruitori ? uriASPS+"@"+fruitore.getTipo()+"/"+fruitore.getNome() : uriASPS;
+					
 					// In Uso Button
 					this.addInUsoInfoButton(e, 
 							labelServizio,
-							gestioneFruitori ? uriASPS+"@"+fruitore.getTipo()+"/"+fruitore.getNome() : uriASPS,
+							idServizioButton,
 							gestioneFruitori ? InUsoType.FRUIZIONE_INFO : InUsoType.EROGAZIONE_INFO);
 					
 					// Verifica Certificati
@@ -1519,7 +1524,19 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						
 						this.addComandoResetCacheButton(e, labelServizio, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listaParametriChange);
 					}
-									
+					
+					// Proprieta Button
+					if(gestioneFruitori
+							&& this.existsProprietaOggetto(fruitore.getProprietaOggetto(), fruitore.getDescrizione())) {
+						this.addProprietaOggettoButton(e, labelServizio, idServizioButton, 
+								InUsoType.FRUIZIONE);
+					}
+					else if(!gestioneFruitori &&
+						this.existsProprietaOggetto(asps.getProprietaOggetto(), asps.getDescrizione())) {
+						this.addProprietaOggettoButton(e, labelServizio, idServizioButton, 
+								InUsoType.EROGAZIONE);
+					}
+					
 					// aggiungo entry
 					dati.add(e);
 				}
@@ -1706,9 +1723,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// sezione 1 riepilogo
 		List<DataElement> dati = datiPagina.get(0);
 		
+		String idServizioButton = gestioneFruitori ? uriASPS+"@"+fruitore.getTipo()+"/"+fruitore.getNome() : uriASPS;
+		
 		// In Uso Button
 		this.addComandoInUsoInfoButton(labelServizioConFruitore,
-				gestioneFruitori ? uriASPS+"@"+fruitore.getTipo()+"/"+fruitore.getNome() : uriASPS,
+				idServizioButton,
 				gestioneFruitori ? InUsoType.FRUIZIONE_INFO : InUsoType.EROGAZIONE_INFO);
 		
 		// Verifica Certificati
@@ -1725,6 +1744,19 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
 			this.pd.addComandoResetCacheElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listaParametriChange);
 		}
+		
+		// Proprieta Button
+		if(gestioneFruitori
+				&& this.existsProprietaOggetto(fruitore.getProprietaOggetto(), fruitore.getDescrizione())) {
+			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
+					InUsoType.FRUIZIONE);
+		}
+		else if(!gestioneFruitori &&
+			this.existsProprietaOggetto(asps.getProprietaOggetto(), asps.getDescrizione())) {
+			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
+					InUsoType.EROGAZIONE);
+		}
+		
 		
 		// Titolo Servizio
 		DataElement de = new DataElement();
@@ -1799,11 +1831,45 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		if(imageChangeStato!=null) {
 			de.addImage(imageChangeName);
-			de.addImage(imageChangeStato);
 		}
 		else {
 			de.setImage(imageChangeName);
 		}
+		
+		boolean descrizioneEmpty = false;
+		if(
+				(
+						gestioneFruitori && 
+						(fruitore.getDescrizione()==null || StringUtils.isEmpty(fruitore.getDescrizione()))
+				)
+			||
+				(
+					!gestioneFruitori && 
+					(asps.getDescrizione()==null || StringUtils.isEmpty(asps.getDescrizione()))
+				)
+		){
+			
+			descrizioneEmpty = true;
+		}
+		
+		if(descrizioneEmpty) {
+			DataElementImage image = new DataElementImage();
+			
+			List<Parameter> listParametersServizioModificaDescrizione = new ArrayList<>();
+			listParametersServizioModificaDescrizione.addAll(listaParametriChange);
+			listParametersServizioModificaDescrizione.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_DESCRIZIONE, true+""));
+			
+			image.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, listParametersServizioModificaDescrizione.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO, AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE));
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_AGGIUNGI_DESCRIZIONE);
+			de.addImage(image);
+		}
+		
+		if(imageChangeStato!=null) {
+			de.addImage(imageChangeStato);
+		}
+		
+		
 		
 		dati.add(de);
 		
@@ -1969,6 +2035,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		de.addImage(image);
 		dati.add(de);
 
+				
 		
 		// ProtocolProperties
 
@@ -2035,6 +2102,39 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			dati.add(de);
 		}
 
+		
+		
+		
+		// Descrizione
+		if(!descrizioneEmpty) {
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
+			int length = 150;
+			String descrizione = gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione();
+			if(descrizione!=null && descrizione.length()>length) {
+				descrizione = descrizione.substring(0, (length-4)) + " ...";
+			}
+			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+			de.setToolTip(gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione());
+			
+			List<Parameter> listParametersServizioModificaDescrizione = new ArrayList<>();
+			listParametersServizioModificaDescrizione.addAll(listaParametriChange);
+			listParametersServizioModificaDescrizione.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_DESCRIZIONE, true+""));
+						
+			image = new DataElementImage();
+			image.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, listParametersServizioModificaDescrizione.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE));
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			de.setImage(image);
+			
+			dati.add(de);
+			
+		}
+		
+		
+		
+		
 		
 		// Url Invocazione
 		Parameter paIdSogg = null;
@@ -2286,20 +2386,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				dati.add(de);
 			}
 			
-			// Audit TODO Poli
-			de = new DataElement();
-			de.setType(DataElementType.IMAGE);
-			de.setLabel(CostantiControlStation.LABEL_CREAZIONE);
-			de.addInfoAuditDataCreazione("2023/11/12 12:34", "2023/11/12 12:34");
-			de.addInfoAuditUtente("amministratore", "amministratore");
-			dati.add(de);
+			// Proprieta
+			ProprietaOggetto pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(asps.getProprietaOggetto(), idServizio, paDefault, this.saCore, this); 
+			this.addProprietaOggetto(dati, pOggetto);
 			
-			de = new DataElement();
-			de.setType(DataElementType.IMAGE);
-			de.setLabel(CostantiControlStation.LABEL_ULTIMA_MODIFICA);
-			de.addInfoAuditDataAggiornamento("2023/11/12 12:34", "2023/11/12 12:34");
-			de.addInfoAuditUtente("Zulio", "Zulio");
-			dati.add(de);
 		}
 		
 		if(gestioneFruitori) {
@@ -2507,20 +2597,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				dati.add(de);
 			}
 			
-			// Audit TODO Poli
-			de = new DataElement();
-			de.setType(DataElementType.IMAGE);
-			de.setLabel(CostantiControlStation.LABEL_CREAZIONE);
-			de.addInfoAuditDataCreazione("2023/11/12 12:34", "2023/11/12 12:34");
-			de.addInfoAuditUtente("amministratore", "amministratore");
-			dati.add(de);
-			
-			de = new DataElement();
-			de.setType(DataElementType.IMAGE);
-			de.setLabel(CostantiControlStation.LABEL_ULTIMA_MODIFICA);
-			de.addInfoAuditDataAggiornamento("2023/11/12 12:34", "2023/11/12 12:34");
-			de.addInfoAuditUtente("Zulio", "Zulio");
-			dati.add(de);
+			// Proprieta
+			ProprietaOggetto pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(fruitore.getProprietaOggetto(), idServizio, idSoggettoFruitore, pdDefault, this); 
+			this.addProprietaOggetto(dati, pOggetto);
 		}
 		
 
@@ -2573,7 +2652,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 		return datiPagina;
 	}
-
 
 	@SuppressWarnings("unused")
 	private void aggiungiListaConfigurazioni(List<List<DataElement>> datiPagina, ServiceBinding serviceBinding,

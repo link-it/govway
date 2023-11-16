@@ -112,6 +112,11 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 	private AuthorizationConfig getAuthorizationConfig() throws Exception {
 		return new AuthorizationConfig(ServerProperties.getInstance().getProperties());
 	}
+	
+	private javax.ws.rs.WebApplicationException newNotFoundSoggettoFruitore(ErogazioniEnv env){
+		return FaultCode.NOT_FOUND
+				.toException("Soggetto fruitore " + env.idSoggetto.toString() + "non registrato per la fruizione scelta");
+	}
 
 	/**
 	 * Creazione di una fruizione di API
@@ -273,9 +278,10 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+			AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
 					"Fruizione");
+			
 			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
 
 			try {
@@ -283,7 +289,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			} catch (Exception e) {
 				throw FaultCode.NOT_FOUND.toException(e.getMessage());
 			}
-
+			
 			ErogazioniApiHelper.createAllegatoAsps(body, env, asps);
 
 			context.getLogger().info("Invocazione completata con successo");
@@ -371,7 +377,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
 					"Fruizione");
-
+			
 			ErogazioniApiHelper.deleteAllegato(nomeAllegato, env, asps);
 
 			context.getLogger().info("Invocazione completata con successo");
@@ -719,8 +725,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					final Fruitore servFru = env.apsCore.getServizioFruitore(idServizioFruitoreInt);
 
 					if (servFru == null)
-						throw FaultCode.NOT_FOUND
-								.toException("Soggetto fruitore " + env.idSoggetto.toString() + "non registrato per la fruizione scelta");
+						throw newNotFoundSoggettoFruitore(env);
 
 					// Prendo pero poi immagine del fruitore dall'asps
 					final Fruitore fruitore = BaseHelper.findFirst(asps.getFruitoreList(),
@@ -964,9 +969,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			asps.setIdAccordo(newApc.get().getId());
 
 			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
-
+			
 			ErogazioniApiHelper.serviziUpdateCheckData(as, asps, false, env);
-
+			
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps,
 					env.apsCore);
 
@@ -1004,7 +1009,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
 					"Fruizione");
-
+			
 			ErogazioniApiHelper.updateAllegatoAsps(body, nomeAllegato, env, asps);
 
 			context.getLogger().info("Invocazione completata con successo");
@@ -1059,8 +1064,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			final Fruitore servFru = env.apsCore.getServizioFruitore(idServizioFruitoreInt);
 
 			if (servFru == null)
-				throw FaultCode.NOT_FOUND
-						.toException("Soggetto fruitore " + env.idSoggetto.toString() + "non registrato per la fruizione scelta");
+				throw newNotFoundSoggettoFruitore(env);
 
 			org.openspcoop2.core.registry.Connettore connettore = null;
 
@@ -1162,6 +1166,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			}
 			
 			fruitori.add(fruitore);
+			env.apsCore.setDataAggiornamentoFruitore(fruitore);
 			asps.setFruitoreList(fruitori);
 
 			env.apsCore.performUpdateOperation(env.userLogin, false, asps);
@@ -1199,7 +1204,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
 					"Fruizione");
-
+			
 			ErogazioniApiHelper.updateInformazioniGenerali(body, env, asps, false);
 
 			context.getLogger().info("Invocazione completata con successo");
@@ -1256,6 +1261,20 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			ErogazioniApiHelper.validateProperties(env, protocolProperties, idFruizione, ConsoleOperationType.CHANGE);
 
+			long idServizioFruitoreInt = env.apsCore
+					.getServizioFruitore(IDServizioFactory.getInstance().getIDServizioFromAccordo(asps), env.idSoggetto.getId());
+			final Fruitore servFru = env.apsCore.getServizioFruitore(idServizioFruitoreInt);
+
+			if (servFru == null)
+				throw newNotFoundSoggettoFruitore(env);
+
+			// Prendo pero poi immagine del fruitore dall'asps
+			final Fruitore fruitore = BaseHelper.findFirst(asps.getFruitoreList(),
+					f -> f.getTipo().equals(servFru.getTipo()) && f.getNome().equals(servFru.getNome()))
+					.orElseThrow(() -> FaultCode.RICHIESTA_NON_VALIDA.toException("Fruizione non presente nel registro."));
+			
+			env.apsCore.setDataAggiornamentoFruitore(fruitore);
+			
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps,
 					env.apsCore);
 
@@ -1438,6 +1457,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			pd.setAzione(pdAzione);
 			pd.setOldIDPortaDelegataForUpdate(idPorta);
+						
 			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
 
 			context.getLogger().info("Invocazione completata con successo");

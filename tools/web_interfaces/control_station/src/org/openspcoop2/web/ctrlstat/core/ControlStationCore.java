@@ -967,6 +967,7 @@ public class ControlStationCore {
 	private List<String> getApiResourcePathQualsiasiSpecialChar;
 	private boolean isApiOpenAPIValidateUriReferenceAsUrl;
 	private boolean isApiRestResourceRepresentationMessageTypeOverride;
+	private boolean isApiDescriptionTruncate255;
 	public boolean isApiResourcePathValidatorEnabled() {
 		return this.isApiResourcePathValidatorEnabled;
 	}
@@ -981,6 +982,9 @@ public class ControlStationCore {
 	}
 	public boolean isApiRestResourceRepresentationMessageTypeOverride() {
 		return this.isApiRestResourceRepresentationMessageTypeOverride;
+	}
+	public boolean isApiDescriptionTruncate255() {
+		return  this.isApiDescriptionTruncate255;
 	}
 	
 	/** Accordi di Cooperazione */
@@ -2547,6 +2551,7 @@ public class ControlStationCore {
 		this.getApiResourcePathQualsiasiSpecialChar = core.getApiResourcePathQualsiasiSpecialChar;
 		this.isApiOpenAPIValidateUriReferenceAsUrl = core.isApiOpenAPIValidateUriReferenceAsUrl;
 		this.isApiRestResourceRepresentationMessageTypeOverride = core.isApiRestResourceRepresentationMessageTypeOverride;
+		this.isApiDescriptionTruncate255 = core.isApiDescriptionTruncate255;
 		
 		/** Accordi di Cooperazione */
 		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
@@ -3010,6 +3015,7 @@ public class ControlStationCore {
 			this.getApiResourcePathQualsiasiSpecialChar = consoleProperties.getApiResourcePathQualsiasiSpecialChar();
 			this.isApiOpenAPIValidateUriReferenceAsUrl = consoleProperties.isApiOpenAPIValidateUriReferenceAsUrl();
 			this.isApiRestResourceRepresentationMessageTypeOverride = consoleProperties.isApiRestResourceRepresentationMessageTypeOverride();
+			this.isApiDescriptionTruncate255 = consoleProperties.isApiDescriptionTruncate255();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
 			this.isErogazioniVerificaCertificati = consoleProperties.isErogazioniVerificaCertificati();
 			this.isFruizioniVerificaCertificati = consoleProperties.isFruizioniVerificaCertificati();
@@ -8265,7 +8271,12 @@ public class ControlStationCore {
 		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
 		if (oggetto instanceof AccordoServizioParteSpecifica) {
 			AccordoServizioParteSpecifica a = (AccordoServizioParteSpecifica) oggetto;
-						
+			
+			// per gli aggiornamenti i casi da gestire sono:
+			// modifica solo dei dati di un fruizione (si usa setDataAggiornamentoFruitore)
+			// modifica solo dei dati di una erogazione (si usa setDataAggiornamentoServizio)
+			// modifica effettuata in una fruizione o in una erogazione che comunque impatta su tutte le fruizioni/erogazioni esistenti
+			
 			boolean isFruitoreSingolo = setProprietaOggettoAccordoServizioParteSpecificaFruitore(superUser, a);
 			
 			if(!isFruitoreSingolo) {
@@ -8273,10 +8284,22 @@ public class ControlStationCore {
 					a.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
 				}
 				pOggetto = a.getProprietaOggetto();
+				
+				if(isDataAggiornamentoServizio(a) ) {
+					setProprietaOggettoAccordoServizioParteSpecificaResetFruitori(a);
+				}
 			}
 		}
 		setProprietaOggetto(superUser, pOggetto, create, update);
 	}
+	private void setProprietaOggettoAccordoServizioParteSpecificaResetFruitori(AccordoServizioParteSpecifica a) {
+		if(a.sizeFruitoreList()>0) {
+			for (Fruitore fr : a.getFruitoreList()) {
+				fr.setProprietaOggetto(null); // per non far aggiornare visto che la modifica non riguarda il fruitore
+			}
+		}
+	}
+	
 	private static final Date DATA_CREAZIONE = new Date(0);
 	public void setDataCreazioneFruitore(Fruitore fr) {
 		if(fr!=null) {
@@ -8291,6 +8314,35 @@ public class ControlStationCore {
 				fr.getProprietaOggetto().getDataCreazione()!=null && 
 				DATA_CREAZIONE.equals(fr.getProprietaOggetto().getDataCreazione());
 	}
+	
+	private static final Date DATA_AGGIORNAMENTO = new Date(0);
+	private boolean isDataAggiornamentoServizio(AccordoServizioParteSpecifica asps) {
+		return asps!=null && asps.getProprietaOggetto()!=null &&
+				asps.getProprietaOggetto().getDataUltimaModifica()!=null && 
+				DATA_AGGIORNAMENTO.equals(asps.getProprietaOggetto().getDataUltimaModifica());
+	}
+	public void setDataAggiornamentoServizio(AccordoServizioParteSpecifica asps) {
+		if(asps!=null) {
+			if(asps.getProprietaOggetto()==null) {
+				asps.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			asps.getProprietaOggetto().setDataUltimaModifica(DATA_AGGIORNAMENTO);
+		}
+	}
+	public void setDataAggiornamentoFruitore(Fruitore fr) {
+		if(fr!=null) {
+			if(fr.getProprietaOggetto()==null) {
+				fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			fr.getProprietaOggetto().setDataUltimaModifica(DATA_AGGIORNAMENTO);
+		}
+	}
+	private boolean isDataAggiornamentoFruitore(Fruitore fr) {
+		return fr!=null && fr.getProprietaOggetto()!=null &&
+				fr.getProprietaOggetto().getDataUltimaModifica()!=null && 
+				DATA_AGGIORNAMENTO.equals(fr.getProprietaOggetto().getDataUltimaModifica());
+	}
+	
 	private boolean setProprietaOggettoAccordoServizioParteSpecificaFruitore(String superUser, AccordoServizioParteSpecifica a) {
 		boolean isFruitoreSingolo = false;
 		if(a.sizeFruitoreList()>0) {
@@ -8308,21 +8360,39 @@ public class ControlStationCore {
 		return isFruitoreSingolo;
 	}
 	private boolean setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(String superUser, AccordoServizioParteSpecifica a) {
-		boolean isFruitoreSingolo = false;
+		boolean isFruitoreSingolo = isProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(a);
 		for (Fruitore fr : a.getFruitoreList()) {
 			if(fr!=null) {
-				if(fr.getProprietaOggetto()==null) {
-					isFruitoreSingolo = true;
-					fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
-					setProprietaOggetto(superUser, fr.getProprietaOggetto(), false, true);
-				}
-				else if(isDataCreazioneFruitore(fr)) {
-					isFruitoreSingolo = true;
-					if(fr.getProprietaOggetto()==null) {
-						fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
-					}
-					setProprietaOggetto(superUser, fr.getProprietaOggetto(), true, false);
-				}
+				setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(superUser, fr, isFruitoreSingolo);
+			}
+		}
+		return isFruitoreSingolo;
+	}
+	private void setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(String superUser, Fruitore fr, boolean isFruitoreSingolo) {
+		if(isDataAggiornamentoFruitore(fr)) {
+			if(fr.getProprietaOggetto()==null) {
+				fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			setProprietaOggetto(superUser, fr.getProprietaOggetto(), false, true);
+		}
+		else if(isDataCreazioneFruitore(fr)) {
+			if(fr.getProprietaOggetto()==null) {
+				fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			setProprietaOggetto(superUser, fr.getProprietaOggetto(), true, false);
+		}
+		else if(isFruitoreSingolo && fr!=null){
+			fr.setProprietaOggetto(null); // per non far aggiornare visto che la modifica non riguarda il fruitore
+		}
+	}
+	private boolean isProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(AccordoServizioParteSpecifica a) {
+		boolean isFruitoreSingolo = false;
+		for (Fruitore fr : a.getFruitoreList()) {
+			if(fr!=null &&
+				(isDataAggiornamentoFruitore(fr) || isDataCreazioneFruitore(fr)) 
+				){
+				isFruitoreSingolo = true;
+				break;
 			}
 		}
 		return isFruitoreSingolo;
@@ -8362,7 +8432,7 @@ public class ControlStationCore {
 	}
 	private void setProprietaOggettoPortaDelegata(String superUser, Object oggetto, boolean create, boolean update) {
 		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
-		if (oggetto instanceof Gruppo) {
+		if (oggetto instanceof PortaDelegata) {
 			PortaDelegata p = (PortaDelegata) oggetto;
 			if(create && p.getProprietaOggetto()==null) {
 				p.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
@@ -8373,7 +8443,7 @@ public class ControlStationCore {
 	}
 	private void setProprietaOggettoPortaApplicativa(String superUser, Object oggetto, boolean create, boolean update) {
 		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
-		if (oggetto instanceof Gruppo) {
+		if (oggetto instanceof PortaApplicativa) {
 			PortaApplicativa p = (PortaApplicativa) oggetto;
 			if(create && p.getProprietaOggetto()==null) {
 				p.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
@@ -8384,7 +8454,7 @@ public class ControlStationCore {
 	}
 	private void setProprietaOggettoServizioApplicativo(String superUser, Object oggetto, boolean create, boolean update) {
 		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
-		if (oggetto instanceof Gruppo) {
+		if (oggetto instanceof ServizioApplicativo) {
 			ServizioApplicativo s = (ServizioApplicativo) oggetto;
 			if(create && s.getProprietaOggetto()==null) {
 				s.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	

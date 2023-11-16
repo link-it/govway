@@ -1296,6 +1296,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps, ConsoleOperationType.CHANGE);
 
+			env.apsCore.setDataAggiornamentoServizio(asps);
+			
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps,
 					env.apsCore);
 

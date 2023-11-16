@@ -37,10 +37,16 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -49,6 +55,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
@@ -60,14 +67,18 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -126,6 +137,8 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 			ScopeCore scopeCore = new ScopeCore(archiviCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(archiviCore);
 			GruppiCore gruppiCore = new GruppiCore(archiviCore);
+			PorteApplicativeCore paCore = new PorteApplicativeCore(archiviCore);
+			PorteDelegateCore pdCore = new PorteDelegateCore(archiviCore);
 
 			String identificativoOggetto = registroHelper.getParameter(UtilsCostanti.PARAMETRO_PROPRIETA_OGGETTO_ID_OGGETTO); 
 			String tipoOggetto = registroHelper.getParameter(UtilsCostanti.PARAMETRO_PROPRIETA_OGGETTO_TIPO_OGGETTO); 
@@ -142,7 +155,7 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 				for (Object object : identificativi) {
 					IDAccordo idAccordo = (IDAccordo)object;
 					AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(idAccordo);
-					risultatiRicerca.add(this.getProprieta(as.getProprietaOggetto()));
+					risultatiRicerca.add(this.getProprieta(as.getProprietaOggetto(), as.getDescrizione()));
 				}
 				break;
 			case SERVIZIO_APPLICATIVO:
@@ -150,7 +163,7 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 				for (Object object : identificativi) {
 					IDServizioApplicativo idServizioApplicativo = (IDServizioApplicativo)object;
 					ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativo);
-					risultatiRicerca.add(this.getProprieta(sa.getProprietaOggetto()));
+					risultatiRicerca.add(this.getProprieta(sa.getProprietaOggetto(), sa.getDescrizione()));
 				}
 				break;
 			case SOGGETTO:
@@ -158,7 +171,7 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 				for (Object object : identificativi) {
 					IDSoggetto idSoggetto = (IDSoggetto)object;
 					Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggetto);
-					risultatiRicerca.add(this.getProprieta(soggetto.getProprietaOggetto()));
+					risultatiRicerca.add(this.getProprieta(soggetto.getProprietaOggetto(), soggetto.getDescrizione()));
 				}
 				break;
 			case RUOLO:
@@ -166,7 +179,7 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 				for (Object object : identificativi) {
 					IDRuolo idRuolo = (IDRuolo)object;
 					Ruolo ruolo = ruoliCore.getRuolo(idRuolo.getNome());
-					risultatiRicerca.add(this.getProprieta(ruolo.getProprietaOggetto()));
+					risultatiRicerca.add(this.getProprieta(ruolo.getProprietaOggetto(), ruolo.getDescrizione()));
 				}
 				break;
 			case SCOPE:
@@ -174,7 +187,7 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 				for (Object object : identificativi) {
 					IDScope idScope = (IDScope)object;
 					Scope scope = scopeCore.getScope(idScope.getNome());
-					risultatiRicerca.add(this.getProprieta(scope.getProprietaOggetto()));
+					risultatiRicerca.add(this.getProprieta(scope.getProprietaOggetto(), scope.getDescrizione()));
 				}
 				break;
 			case GRUPPO:
@@ -182,7 +195,7 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 				for (Object object : identificativi) {
 					IDGruppo idGruppo = (IDGruppo)object;
 					Gruppo gruppo = gruppiCore.getGruppo(idGruppo.getNome());
-					risultatiRicerca.add(this.getProprieta(gruppo.getProprietaOggetto()));
+					risultatiRicerca.add(this.getProprieta(gruppo.getProprietaOggetto(), gruppo.getDescrizione()));
 				}
 				break;
 			case TOKEN_POLICY:
@@ -204,7 +217,9 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 				String uriAPSerogata = identificativoOggetto;
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uriAPSerogata);
 				AccordoServizioParteSpecifica as = apsCore.getAccordoServizioParteSpecifica(idServizio);
-				risultatiRicerca.add(this.getProprieta(as.getProprietaOggetto()));
+				ProprietaOggetto p = as.getProprietaOggetto();
+				p = mergeProprietaOggetto(p, idServizio, paCore, saCore, registroHelper);
+				risultatiRicerca.add(this.getProprieta(p, as.getDescrizione()));
 				break;
 			}
 			case FRUIZIONE:{
@@ -217,7 +232,9 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 					AccordoServizioParteSpecifica as = apsCore.getAccordoServizioParteSpecifica(idServizio);
 					for (Fruitore fruitore : as.getFruitoreList()) {
 						if(idSoggettoFruitore.getTipo().equals(fruitore.getTipo()) && idSoggettoFruitore.getNome().equals(fruitore.getNome())) {
-							risultatiRicerca.add(this.getProprieta(fruitore.getProprietaOggetto()));
+							ProprietaOggetto p = fruitore.getProprietaOggetto();
+							mergeProprietaOggetto(p, idServizio, idSoggettoFruitore, pdCore, registroHelper);
+							risultatiRicerca.add(this.getProprieta(p,fruitore.getDescrizione()));
 							break;
 						}
 					}
@@ -264,35 +281,143 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 		}
 	}
 	
-	private String getProprieta(org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico p) {
-		return getProprieta(p.getUtenteRichiedente(), p.getDataCreazione(),
-				p.getUtenteUltimaModifica(), p.getDataUltimaModifica());
+	public static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, PorteApplicativeCore paCore, ServiziApplicativiCore saCore,
+			ConsoleHelper consoleHelper) throws DriverConfigurazioneException {
+		IDPortaApplicativa idPA = paCore.getIDPortaApplicativaAssociataDefault(idServizio);
+		if(idPA!=null) {
+			PortaApplicativa pa = getPASafe(paCore, idPA);
+			if(pa!=null) {
+				p = mergeProprietaOggetto(p, idServizio, pa, saCore, consoleHelper);
+			}
+		}
+		return p;
 	}
-	private String getProprieta(org.openspcoop2.core.registry.ProprietaOggetto p) {
-		return getProprieta(p.getUtenteRichiedente(), p.getDataCreazione(),
-				p.getUtenteUltimaModifica(), p.getDataUltimaModifica());
+	public static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, PortaApplicativa pa, ServiziApplicativiCore saCore,
+			ConsoleHelper consoleHelper) {
+		if(pa!=null) {
+			p = consoleHelper.mergeProprietaOggetto(p, pa.getProprietaOggetto());
+			if(pa.sizeServizioApplicativoList()>0) {
+				for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+					IDServizioApplicativo idSA = new IDServizioApplicativo();
+					idSA.setIdSoggettoProprietario(idServizio.getSoggettoErogatore());
+					idSA.setNome(pasa.getNome());
+					ServizioApplicativo sa = getSASafe(saCore, idSA);
+					if(sa!=null && !ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+						p = consoleHelper.mergeProprietaOggetto(p, sa.getProprietaOggetto());
+					}
+				}
+			}
+		}
+		return p;
 	}
-	private String getProprieta(org.openspcoop2.core.config.ProprietaOggetto p) {
-		return getProprieta(p.getUtenteRichiedente(), p.getDataCreazione(),
-				p.getUtenteUltimaModifica(), p.getDataUltimaModifica());
+	
+	public static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, IDSoggetto idSoggettoFruitore, PorteDelegateCore pdCore, 
+			ConsoleHelper consoleHelper) throws DriverConfigurazioneException {
+		IDPortaDelegata idPD = pdCore.getIDPortaDelegataAssociataDefault(idServizio, idSoggettoFruitore);
+		if(idPD!=null) {
+			PortaDelegata pd = getPDSafe(pdCore, idPD);
+			if(pd!=null) {
+				p = mergeProprietaOggetto(p, idServizio, idSoggettoFruitore, pd, consoleHelper);
+			}
+		}
+		return p;
+	}
+	public static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, IDSoggetto idSoggettoFruitore, PortaDelegata pd, 
+			ConsoleHelper consoleHelper) {
+		if(idServizio!=null && idSoggettoFruitore!=null) {
+			// lascio i parametri per eventuali altri merge
+		}
+		if(pd!=null) {
+			p = consoleHelper.mergeProprietaOggetto(p, pd.getProprietaOggetto());
+		}
+		return p;
+	}
+	
+	private static PortaApplicativa getPASafe(PorteApplicativeCore paCore, IDPortaApplicativa idPA) {
+		try {
+			return paCore.getPortaApplicativa(idPA);
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante il recupero della porta applicativa '"+idPA+"': "+e.getMessage(), e);
+		}
+		return null;
+	}
+	private static PortaDelegata getPDSafe(PorteDelegateCore pdCore, IDPortaDelegata idPD) {
+		try {
+			return pdCore.getPortaDelegata(idPD);
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante il recupero della porta delegata '"+idPD+"': "+e.getMessage(), e);
+		}
+		return null;
+	}
+	private static ServizioApplicativo getSASafe(ServiziApplicativiCore saCore, IDServizioApplicativo idSA) {
+		try {
+			return saCore.getServizioApplicativo(idSA);
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante il recupero dell'applicativo '"+idSA+"': "+e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	private String getProprieta(org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico p,
+			String descrizione) {
+		return getProprieta(p!=null ? p.getUtenteRichiedente() : null, 
+				p!=null ? p.getDataCreazione() : null,
+				p!=null ? p.getUtenteUltimaModifica() : null, 
+				p!=null ? p.getDataUltimaModifica() : null,
+				descrizione);
+	}
+	private String getProprieta(org.openspcoop2.core.registry.ProprietaOggetto p,
+			String descrizione) {
+		return getProprieta(p!=null ? p.getUtenteRichiedente() : null, 
+				p!=null ? p.getDataCreazione() : null,
+				p!=null ? p.getUtenteUltimaModifica() : null, 
+				p!=null ? p.getDataUltimaModifica() : null,
+				descrizione);
+	}
+	private String getProprieta(org.openspcoop2.core.config.ProprietaOggetto p,
+			String descrizione) {
+		return getProprieta(p!=null ? p.getUtenteRichiedente() : null, 
+				p!=null ? p.getDataCreazione() : null,
+				p!=null ? p.getUtenteUltimaModifica() : null, 
+				p!=null ? p.getDataUltimaModifica() : null,
+				descrizione);
 	}
 	private String getProprieta(String utenteRichiedente, Date dataCreazione,
-			String utenteUtimaModifica, Date dataUtimaModifica) {
+			String utenteUtimaModifica, Date dataUtimaModifica,
+			String descrizione) {
 		StringBuilder sb = new StringBuilder();
 		if(dataCreazione!=null) {
 			String dataMs = CostantiControlStation.formatDateMs(dataCreazione);
 			sb.append(CostantiControlStation.LABEL_DATA_CREAZIONE).append(": ").append(dataMs);
 		}
 		if(utenteRichiedente!=null) {
+			if(sb.length()>0) {
+				sb.append("\n");
+			}
 			sb.append(CostantiControlStation.LABEL_UTENTE_RICHIEDENTE).append(": ").append(utenteRichiedente);
 		}
 		if(dataUtimaModifica!=null) {
 			String dataMs = CostantiControlStation.formatDateMs(dataUtimaModifica);
+			if(sb.length()>0) {
+				sb.append("\n\n");
+			}
 			sb.append(CostantiControlStation.LABEL_DATA_ULTIMA_MODIFICA).append(": ").append(dataMs);
 		}
 		if(utenteUtimaModifica!=null) {
+			if(sb.length()>0) {
+				sb.append("\n");
+			}
 			sb.append(CostantiControlStation.LABEL_UTENTE_ULTIMA_MODIFICA).append(": ").append(utenteUtimaModifica);
 		}
+		
+		if(descrizione!=null && StringUtils.isNotEmpty(descrizione)) {
+			if(sb.length()>0) {
+				sb.append("\n\n");
+			}
+			sb.append(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE).append(": \n");
+			sb.append(descrizione);
+		}
+		
 		if(sb.length()<=0) {
 			sb.append("Nessuna proprietà disponibile");
 		}
