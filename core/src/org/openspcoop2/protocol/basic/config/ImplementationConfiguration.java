@@ -63,7 +63,14 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 	protected ImplementationConfiguration(IntegrationConfiguration integrationConfiguration) {
 		super(integrationConfiguration);
 	}
+	
+	public static boolean isDescriptionDefault(String descrizione) {
+		return descrizione!=null &&
+				(descrizione.startsWith(ImplementationConfiguration.INTERNAL_IMPLEMENTATION_PREFIX) ||
+				descrizione.startsWith(ImplementationConfiguration.SERVICE_IMPLEMENTATION_PREFIX));
+	}
 
+	private static final String SERVICE_IMPLEMENTATION_PREFIX = "Service implementation ";
 	public ProtocolImplementation createDefaultImplementation(IDServizio idServizio) throws ProtocolException {
 		
 		ProtocolImplementation implementation = new ProtocolImplementation();
@@ -71,9 +78,9 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		PortaApplicativa portaApplicativa = new PortaApplicativa();
 		portaApplicativa.setNome(this.getNome(idServizio, null, null, null, 
 				this.integrationConfiguration.getName().getParamList()));
-		portaApplicativa.setDescrizione("Service implementation "+idServizio.toString());
+		portaApplicativa.setDescrizione(SERVICE_IMPLEMENTATION_PREFIX+idServizio.toString());
 		if(portaApplicativa.getDescrizione().length()>255) {
-			portaApplicativa.setDescrizione("Service implementation "+idServizio.toString());
+			portaApplicativa.setDescrizione(SERVICE_IMPLEMENTATION_PREFIX+idServizio.toString());
 		}
 		if(portaApplicativa.getDescrizione().length()>255) {
 			portaApplicativa.setDescrizione(null);
@@ -138,15 +145,14 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		
 	}
 	
-	public List<PortaApplicativaAzioneIdentificazione> supportedIdentificationModes(ConsoleInterfaceType consoleType) throws ProtocolException{
-		List<PortaApplicativaAzioneIdentificazione> list = new ArrayList<PortaApplicativaAzioneIdentificazione>();
+	public List<PortaApplicativaAzioneIdentificazione> supportedIdentificationModes(ConsoleInterfaceType consoleType) {
+		List<PortaApplicativaAzioneIdentificazione> list = new ArrayList<>();
 		for (IntegrationConfigurationResourceIdentificationMode mode : 
 			this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getModeList()) {
 			
-			if(mode.isOnlyAdvancedMode()) {
-				if(ConsoleInterfaceType.STANDARD.equals(consoleType)) {
-					continue;
-				}
+			if(mode.isOnlyAdvancedMode() &&
+				ConsoleInterfaceType.STANDARD.equals(consoleType)) {
+				continue;
 			}
 			
 			ResourceIdentificationType type = mode.getName();
@@ -171,7 +177,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 				break;
 			case PROTOCOL:
 				list.add(PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED);	
-//				throw new ProtocolException("IdentificationMode '"+type+"' unsupported");
+/**				throw new ProtocolException("IdentificationMode '"+type+"' unsupported");*/
 			}
 		}
 		return list;
@@ -184,6 +190,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 				portaApplicativaDefault, null, 
 				ruleName, description, azione);
 	}
+	private static final String INTERNAL_IMPLEMENTATION_PREFIX = "Internal Implementation '";
 	public ProtocolImplementation createImplementation(IConfigIntegrationReader configIntegrationReader, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaClonare,
 			String ruleName, String description, String ... azione ) throws ProtocolException {
@@ -195,9 +202,9 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		String nomePortaDelegante = portaApplicativaDefault.getNome();
 		String nomeNuovaPortaApplicativa = this.getNome(idServizio, null, nomePortaDelegante, ruleName, 
 				this.integrationConfiguration.getResourceIdentification().getSpecificResource().getName().getParamList());
-		String descrizioneNuovaPortaApplicativa = "Internal Implementation '"+ruleName+"' for "+nomePortaDelegante;	
+		String descrizioneNuovaPortaApplicativa = INTERNAL_IMPLEMENTATION_PREFIX+ruleName+"' for "+nomePortaDelegante;	
 		if(descrizioneNuovaPortaApplicativa.length()>255) {
-			descrizioneNuovaPortaApplicativa = "Internal Implementation '"+ruleName+"'";
+			descrizioneNuovaPortaApplicativa = INTERNAL_IMPLEMENTATION_PREFIX+ruleName+"'";
 		}
 		if(descrizioneNuovaPortaApplicativa.length()>255) {
 			descrizioneNuovaPortaApplicativa = null;
@@ -247,7 +254,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 							apCloned.setIdActivePolicy(idActive);
 							
 							if(implementation.getRateLimitingPolicies()==null) {
-								implementation.setRateLimitingPolicies(new ArrayList<AttivazionePolicy>());
+								implementation.setRateLimitingPolicies(new ArrayList<>());
 							}
 							implementation.getRateLimitingPolicies().add(apCloned);
 							
@@ -285,7 +292,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 							allarmeCloned.setNome(uniqueName);
 							
 							if(implementation.getAllarmi()==null) {
-								implementation.setAllarmi(new ArrayList<Allarme>());
+								implementation.setAllarmi(new ArrayList<>());
 							}
 							implementation.getAllarmi().add(allarmeCloned);
 							

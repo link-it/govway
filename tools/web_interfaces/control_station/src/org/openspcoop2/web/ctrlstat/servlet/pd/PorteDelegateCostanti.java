@@ -483,6 +483,7 @@ public class PorteDelegateCostanti {
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO = "Soggetto";
 	
 	public static final String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE = "URL Invocazione";
+	public static final String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DESCRIZIONE = "Descrizione";
 	public static final String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI = "Dati Generali";
 	public static final String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_SERVIZIO = "Dati Servizio";
 	public static final String LABEL_COLUMN_PORTE_DELEGATE_STATO_PORTA = "Abilitato";
@@ -550,10 +551,11 @@ public class PorteDelegateCostanti {
 	public static final String PARAMETRO_PORTE_DELEGATE_MAPPING = "mapping";
 	public static final String PARAMETRO_PORTE_DELEGATE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	
-	public static final String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
-	public static final String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA = "configurazioneAltroPorta";
-	public static final String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API = "configurazioneAltroApi";
-	public static final String PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS = "connettoreDaListaAps";
+	public static final String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_DATI_INVOCAZIONE;
+	public static final String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DESCRIZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_DESCRIZIONE;
+	public static final String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_ALTRO_PORTA;
+	public static final String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_ALTRO_API;
+	public static final String PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS = CostantiControlStation.PARAMETRO_CONNETTORE_DA_LISTA_APS;
 	
 	public static final String PARAMETRO_PORTE_DELEGATE_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_MTOM_RICHIESTA;
 	public static final String PARAMETRO_PORTE_DELEGATE_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_MTOM_RISPOSTA;
@@ -690,6 +692,7 @@ public class PorteDelegateCostanti {
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_URL_INVOCAZIONE = "URL";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE = "Base URL";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "Descrizione";
+	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE_DI = "Descrizione di ";
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI;
 	public static final String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;

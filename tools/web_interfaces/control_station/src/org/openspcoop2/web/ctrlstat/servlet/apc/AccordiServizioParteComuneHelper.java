@@ -3472,6 +3472,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setValue(StringEscapeUtils.escapeHtml(descr));
 		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneDescrizione && modificheAbilitate)){
 			de.setType(DataElementType.TEXT_AREA);
+			if(gestioneDescrizione) {
+				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
+				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
+			}
 		}else{
 			if(gestioneDescrizione) {
 				de.setType(DataElementType.TEXT);

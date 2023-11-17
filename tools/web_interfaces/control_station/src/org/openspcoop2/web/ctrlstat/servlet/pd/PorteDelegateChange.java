@@ -75,6 +75,7 @@ import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
+import org.openspcoop2.protocol.basic.config.SubscriptionConfiguration;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
@@ -179,7 +180,7 @@ public final class PorteDelegateChange extends Action {
 				serviceBinding = ServiceBinding.valueOf(serviceBindingS);
 			
 			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
-				
+			boolean modificaDescrizione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DESCRIZIONE));
 			boolean datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA));
 			boolean datiAltroApi = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API));
 			
@@ -234,7 +235,10 @@ public final class PorteDelegateChange extends Action {
 		
 			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<>();  
 			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<>();
-			boolean isConfigurazione =  parentPD!=null ? (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE) : false; 
+			boolean isConfigurazione = false;
+			if(parentPD!=null) {
+				isConfigurazione = (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE); 
+			}
 			boolean visualizzaSezioneOpzioniAvanzate = !(porteDelegateHelper.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
 
 			// dal secondo accesso in poi il calcolo dei gruppi da visualizzare avviene leggendo i parametri dalla richiesta
@@ -282,7 +286,7 @@ public final class PorteDelegateChange extends Action {
 			idpd.setNome(oldNomePD);
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idpd);
 			
-			Long idAspsLong = -1L;
+			Long idAspsLong;
 			if(idAsps.equals("")) {
 				PortaDelegataServizio servizio2 = pde.getServizio();
 				idAspsLong = servizio2.getId();
@@ -703,6 +707,21 @@ public final class PorteDelegateChange extends Action {
 					}
 					nomeBreadCrumb=null;
 				}
+				else if(modificaDescrizione) {
+					String labelPerPorta = null;
+					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+						labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+								PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE_DI,
+								PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE,
+								pde);
+					}
+					else {
+						lstParam.remove(lstParam.size()-1);
+						labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE_DI+pde.getNome();
+					}				
+					lstParam.add(new Parameter(labelPerPorta,  null));
+					nomeBreadCrumb=null;
+				}
 				else if(datiAltroPorta) {
 					String labelPerPorta = null;
 					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
@@ -1087,9 +1106,9 @@ public final class PorteDelegateChange extends Action {
 						azioniList = new String[azioni.size()];
 						azioniListLabel = new String[azioni.size()];
 						int i = 0;
-						for (String string : azioni.keySet()) {
-							azioniList[i] = string;
-							azioniListLabel[i] = azioni.get(string);
+						for (Map.Entry<String,String> entry : azioni.entrySet()) {
+							azioniList[i] = entry.getKey();
+							azioniListLabel[i] = entry.getValue();
 							i++;
 						}
 					}
@@ -1263,9 +1282,9 @@ public final class PorteDelegateChange extends Action {
 						azioniList = new String[azioni.size()];
 						azioniListLabel = new String[azioni.size()];
 						int i = 0;
-						for (String string : azioni.keySet()) {
-							azioniList[i] = string;
-							azioniListLabel[i] = azioni.get(string);
+						for (Map.Entry<String,String> entry : azioni.entrySet()) {
+							azioniList[i] = entry.getKey();
+							azioniListLabel[i] = entry.getValue();
 							i++;
 						}
 					}
@@ -1357,7 +1376,13 @@ public final class PorteDelegateChange extends Action {
 			IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
 			oldIDPortaDelegataForUpdate.setNome(oldPD.getNome());
 			portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
-			portaDelegata.setDescrizione(descr);
+			if(modificaDescrizione && (descr==null || StringUtils.isEmpty(descr)) && SubscriptionConfiguration.isDescriptionDefault(oldPD.getDescrizione())) {
+				// lascio la precedente descrizione
+				portaDelegata.setDescrizione(oldPD.getDescrizione());
+			}
+			else {
+				portaDelegata.setDescrizione(descr);
+			}
 			if(statoPorta==null || "".equals(statoPorta) || CostantiConfigurazione.ABILITATO.toString().equals(statoPorta)){
 				portaDelegata.setStato(StatoFunzionalita.ABILITATO);
 			}
@@ -1659,7 +1684,7 @@ public final class PorteDelegateChange extends Action {
 			
 			ForwardParams fwP = ForwardParams.CHANGE();
 			
-			if(datiAltroPorta && !porteDelegateHelper.isModalitaCompleta()) {
+			if( (datiAltroPorta || modificaDescrizione) && !porteDelegateHelper.isModalitaCompleta()) {
 				fwP = PorteDelegateCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			}
 			

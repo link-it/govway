@@ -145,6 +145,8 @@ public class CostantiControlStation {
 	public static final String LABEL_UTENTE_ULTIMA_MODIFICA = "Utente Ultima Modifica";
 	
 	public static final String LABEL_PROPRIETA_DESCRIZIONE = "Descrizione";
+	public static final String LABEL_PROPRIETA_DESCRIZIONE_EMPTY = "";
+	public static final int TEXT_AREA_DESCRIZIONE_ROWS = 15;
 	
 	public static final String LABEL_CREAZIONE = "Creazione";
 	public static final String LABEL_ULTIMA_MODIFICA = "Ultima Modifica";
@@ -1101,6 +1103,7 @@ public class CostantiControlStation {
 	public static final String PARAMETRO_API_PAGE_INFO = "fromApiPageInfo";
 	
 	public static final String PARAMETRO_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
+	public static final String PARAMETRO_CONFIGURAZIONE_DESCRIZIONE = "configurazioneDescrizione";
 	public static final String PARAMETRO_CONFIGURAZIONE_ALTRO_PORTA = "configurazioneAltroPorta";
 	public static final String PARAMETRO_CONFIGURAZIONE_ALTRO_API = "configurazioneAltroApi";
 	public static final String PARAMETRO_CONNETTORE_DA_LISTA_APS = "connettoreDaListaAps";

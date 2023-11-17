@@ -94,6 +94,8 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
+import org.openspcoop2.protocol.basic.config.ImplementationConfiguration;
+import org.openspcoop2.protocol.basic.config.SubscriptionConfiguration;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -1721,15 +1723,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					String wsdlimplfruS = wsdlimplfru.getValue() != null ? new String(wsdlimplfru.getValue()) : null; 
 					byte [] wsdlImplementativoFruitore = this.apsCore.getInterfaceAsByteArray(formato, wsdlimplfruS);
 
-					//aps.setByteWsdlImplementativoErogatore(wsdlImplementativoErogatore);
-					//aps.setByteWsdlImplementativoFruitore(wsdlImplementativoFruitore);
-
 					Fruitore f = new Fruitore();
 					f.setByteWsdlImplementativoErogatore(wsdlImplementativoErogatore);
 					f.setByteWsdlImplementativoFruitore(wsdlImplementativoFruitore);
 
 					ValidazioneResult result = this.apsCore.validaInterfacciaWsdlParteSpecifica(f,asps, as, this.soggettiCore);
-					if(result.isEsito()==false){
+					if(!result.isEsito()){
 						this.pd.setMessage(result.getMessaggioErrore());
 						return false;
 					}	
@@ -3315,7 +3314,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	public void prepareServiziConfigurazioneList(List<MappingErogazionePortaApplicativa> listaParam, String id, String idSoggettoErogatoreDelServizio, ISearch ricerca)
 			throws Exception {
 		try {
-			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+			Boolean contaListeObject = ServletUtils.getContaListeFromSession(this.session);
+			boolean contaListe = contaListeObject!=null ? contaListeObject.booleanValue() : false;
 
 			IExtendedListServlet extendedServletList = this.core.getExtendedServletPortaApplicativa();
 			
@@ -3545,15 +3545,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 				}
 			}
-//			if(paAssociataDefault==null) {
-//				throw new Exception("PortaApplicativa di default non trovata");
-//			}
-//			if(portaApplicativaServizioApplicativoDefault==null) {
-//				throw new Exception("PortaApplicativaServizioApplicativo di default non trovata");
-//			}
-			
-//			@SuppressWarnings("unused")
-//			boolean isPaDefaultMulti = paAssociataDefault.getBehaviour() != null;
 			
 			// setto le label delle colonne
 			List<String> listaLabel = new ArrayList<>();
@@ -3561,9 +3552,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(visualizzazioneTabs && (gestioneGruppi || listaParam.size()>1)) {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
 			}
-			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE); // spostata direttamente nell'elenco delle erogazioni
 			if(gestioneConfigurazioni) {
-				//listaLabel.add(PorteApplicativeCostanti.LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA);
+				/**listaLabel.add(PorteApplicativeCostanti.LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA);*/
 				listaLabel.add("");
 			}
 			if(!visualizzazioneTabs && (gestioneGruppi || listaParam.size()>1)) {
@@ -3653,9 +3643,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					@SuppressWarnings("unused")
 					Parameter pConfigurazioneDati = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
 					Parameter pConfigurazioneAltroPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA, Costanti.CHECK_BOX_ENABLED_TRUE);
+					
+					Parameter pConfigurazioneDescrizione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DESCRIZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
 	
 					// spostata direttamente nell'elenco delle erogazioni
-	//				// nome mapping
+	/**				// nome mapping
 	//				DataElement de = new DataElement();
 	//				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 	//				if(mapping.isDefault()) {
@@ -3664,7 +3656,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	//				de.setValue(mapping.isDefault() ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT : mapping.getNome());
 	//				de.setIdToRemove(paAssociata.getNome());
 	//				//de.setToolTip(StringUtils.isNotEmpty(paAssociata.getDescrizione()) ? paAssociata.getDescrizione() : paAssociata.getNome()); 
-	//				e.add(de);
+	//				e.add(de);*/
 					
 					if(gestioneConfigurazioni && mapping.isDefault() && allActionRedefined && (!showConnettoreLink)) {
 						int numEntries = ricerca.getNumEntries(idLista);
@@ -3685,6 +3677,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						urlCambiaStato = false;
 					}
 					
+					boolean descrizioneEmpty = paAssociata.getDescrizione()==null || StringUtils.isEmpty(paAssociata.getDescrizione()) || 
+							ImplementationConfiguration.isDescriptionDefault(paAssociata.getDescrizione());
+					
+
 					// Nome Gruppo
 					if(visualizzazioneTabs && (gestioneGruppi || listaParam.size()>1)) {
 						DataElement de = new DataElement();
@@ -3716,6 +3712,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(!mapping.isDefault()) 
 							de.setIdToRemove(paAssociata.getNome());
 						
+						if(descrizioneEmpty) {
+							
+							DataElementImage image = new DataElementImage();
+							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneDescrizione,pIdTAb);
+							image.setToolTip(MessageFormat.format(CostantiControlStation.AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE));
+							image.setImage(CostantiControlStation.ICONA_AGGIUNGI_DESCRIZIONE);
+							
+							de.addImage(image);
+						}
+						
 						if(urlCambiaStato) {
 							Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
 							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps, pAbilita);
@@ -3735,12 +3741,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						// Abilitato
 						DataElement de = new DataElement();
-						//if(visualizzazioneTabs)
-						//	de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO);
+						/**if(visualizzazioneTabs)
+						//	de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO);*/
 						
 						de.setWidthPx(10);
 						de.setType(DataElementType.CHECKBOX);
-						//if(visualizzazioneTabs) {
+						/**if(visualizzazioneTabs) {
 						//	de.setStatusValue(statoPA ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) : this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
 						//	de.setStatusToolTip(statoPA ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP_NO_ACTION : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP_NO_ACTION);
 						//	if(statoPAallRedefined!=null) {
@@ -3749,9 +3755,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						//	else {
 						//		de.setStatusType(statoPA ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);
 						//	}
-						//} else { 
+						//} else {*/ 
 						de.setToolTip(statoMapping);
-						//}
 						
 						if(statoPAallRedefined!=null) {
 							de.setSelected(statoPAallRedefined);
@@ -3793,12 +3798,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(!mapping.isDefault()) {
 							listaAzioni = paAssociata.getAzione()!= null ?  paAssociata.getAzione().getAzioneDelegataList() : new ArrayList<>();
 							
-							if(listaAzioni.size() > 0 && azioni.size()>0) {
+							if(!listaAzioni.isEmpty() && azioni.size()>0) {
 								
 								StringBuilder sb = new StringBuilder();
 								Iterator<String> itAz = azioni.keySet().iterator();
 								while (itAz.hasNext()) {
-									String idAzione = (String) itAz.next();
+									String idAzione = itAz.next();
 									if(listaAzioni.contains(idAzione)) {
 										if(sb.length() >0)
 											sb.append(", ");
@@ -3846,7 +3851,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									StringBuilder sb = new StringBuilder();
 									Iterator<String> itAz = azioni.keySet().iterator();
 									while (itAz.hasNext()) {
-										String idAzione = (String) itAz.next();
+										String idAzione = itAz.next();
 										if(actionNonRidefinite.contains(idAzione)) {
 											if(sb.length() >0)
 												sb.append(", ");
@@ -3891,6 +3896,33 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						e.add(de);
 						
+					}
+					
+					// Descrizione
+					if(!descrizioneEmpty) {
+						DataElement de = new DataElement();
+						if(visualizzazioneTabs)
+							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
+						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneDescrizione);
+						
+						int length = 150;
+						String descrizione = paAssociata.getDescrizione();
+						if(descrizione!=null && descrizione.length()>length) {
+							descrizione = descrizione.substring(0, (length-4)) + " ...";
+						}
+						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+						de.setToolTip(paAssociata.getDescrizione());
+						
+						if(visualizzazioneTabs) {
+							DataElementImage image = new DataElementImage();
+							
+							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneDescrizione,pIdTAb);
+							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE));
+							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+							
+							de.setImage(image);
+						}
+						e.add(de);
 					}
 					
 					if(gestioneConfigurazioni) {
@@ -3957,17 +3989,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
 										new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getIdServizioApplicativo()+""));
 								
-								if(visualizzazioneTabs) {
-									if(visualizzaLinkConfigurazioneConnettore) {
-										DataElementImage image = new DataElementImage();
-										image.setUrl(servletConnettore, pIdProvider, pIdPortaPerSA, pIdAsps,pIdTAb,
-												new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
-												new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getIdServizioApplicativo()+""));
-										image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
-										image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
-										
-										de.addImage(image);
-									}
+								if(visualizzazioneTabs &&
+									(visualizzaLinkConfigurazioneConnettore) 
+									){
+									DataElementImage image = new DataElementImage();
+									image.setUrl(servletConnettore, pIdProvider, pIdPortaPerSA, pIdAsps,pIdTAb,
+											new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
+											new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getIdServizioApplicativo()+""));
+									image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
+									image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+									
+									de.addImage(image);
 								}
 								
 							}else {
@@ -3983,10 +4015,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 											de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 										} 
 										else if(connettoreMultiploEnabledDefault) {
-											//de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault));
+											/**de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault));*/
 											de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault)); // comunque i connettori vengono ridefiniti internamente, sono proprio istanze differenti, quindi non ha senso la descrizione 
 											de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociataDefault));
-											// Ci vuole, devo poter ridefinire il connettore visualizzaLinkConfigurazioneConnettore = false;
+											/** Ci vuole, devo poter ridefinire il connettore visualizzaLinkConfigurazioneConnettore = false;*/
 										}
 										else {
 											de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociata));
@@ -4028,40 +4060,38 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									}
 								}
 								if(visualizzaLinkConfigurazioneConnettore) {
-	//								if(!isPaDefaultMulti) {
+	/**								if(!isPaDefaultMulti) {*/
 										de.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps);
-	//								}else {
+	/**								}else {
 	//									// solo modifica non ridefinizione
 	//									de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdProvider, pIdPortaPerSA, pIdAsps,
 	//											new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
 	//											new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getIdServizioApplicativo()+""));
-	//								}
+	//								}*/
 								}
 								
-								if(visualizzazioneTabs) {
-									if(visualizzaLinkConfigurazioneConnettore) {
-										DataElementImage image = new DataElementImage();
-	//									if(!isPaDefaultMulti) {
-											image.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps,pIdTAb);
-	//									}else {
-	//										image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdProvider, pIdPortaPerSA, pIdAsps,pIdTAb,
-	//												new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
-	//												new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getIdServizioApplicativo()+""));
-	//									}
-										
-										image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
-										image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
-										
-										de.addImage(image);
-									}
+								if(visualizzazioneTabs &&
+									visualizzaLinkConfigurazioneConnettore) {
+									DataElementImage image = new DataElementImage();
+/**									if(!isPaDefaultMulti) {*/
+										image.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps,pIdTAb);
+/**									}else {
+//										image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdProvider, pIdPortaPerSA, pIdAsps,pIdTAb,
+//												new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
+//												new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getIdServizioApplicativo()+""));
+//									}*/
+									
+									image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
+									image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+									
+									de.addImage(image);
 								}
 							}
 							
 							boolean checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
-							if(checkConnettore) {
-								if(!mapping.isDefault() && !ridefinito) {
-									checkConnettore = false;
-								}
+							if(checkConnettore &&
+								!mapping.isDefault() && !ridefinito) {
+								checkConnettore = false;
 							}
 							
 							long idConnettore = connettore.getId();
@@ -4076,18 +4106,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							Parameter pIdConnettore = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+"");
 							Parameter pConnettoreAccessoDaGruppi = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "true");
 							Parameter pConnettoreVerificaRegistro = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false");
-							if(visualizzazioneTabs) {
-								if(visualizzaLinkCheckConnettore) {
-									DataElementImage image = new DataElementImage();
-									image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, paIdSogg, pIdPorta, pIdAsps,pIdTAb,
-											pIdConnettore,
-											pConnettoreAccessoDaGruppi,
-											pConnettoreVerificaRegistro);
-									image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
-									image.setImage(CostantiControlStation.ICONA_VERIFICA);
-									
-									de.addImage(image);
-								}
+							if(visualizzazioneTabs &&
+								visualizzaLinkCheckConnettore) {
+								DataElementImage image = new DataElementImage();
+								image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, paIdSogg, pIdPorta, pIdAsps,pIdTAb,
+										pIdConnettore,
+										pConnettoreAccessoDaGruppi,
+										pConnettoreVerificaRegistro);
+								image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
+								image.setImage(CostantiControlStation.ICONA_VERIFICA);
+								
+								de.addImage(image);
 							}
 							
 							de.allineaTdAlCentro();
@@ -4114,7 +4143,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							// configurazione connettori multipli
 							if(visualizzazioneTabs) {
 								if(this.core.isConnettoriMultipliEnabled() && (connettoreRidefinito || mapping.isDefault())) {
-									DataElementImage image = new DataElementImage();
 									List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
 									listParametersConfigutazioneConnettoriMultipli.add(paIdSogg);
 									listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
@@ -4124,7 +4152,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									listParametersConfigutazioneConnettoriMultipli.add(pConnettoreVerificaRegistro);
 									listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, "0"));
 									
-									image = new DataElementImage();
+									DataElementImage image = new DataElementImage();
 									image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP);
 									image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI);
 									image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, 
@@ -4151,7 +4179,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							// lista connettori multipli
 							if(visualizzazioneTabs) {
 								if(this.core.isConnettoriMultipliEnabled() && connettoreMultiploEnabled) {
-									DataElementImage image = new DataElementImage();
 									List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
 									listParametersConfigutazioneConnettoriMultipli.add(paIdSogg);
 									listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
@@ -4160,7 +4187,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
 									listParametersConfigutazioneConnettoriMultipli.add(pConnettoreVerificaRegistro);
 									
-									image = new DataElementImage();
+									DataElementImage image = new DataElementImage();
 									image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP);
 									image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI);
 									image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, 
@@ -4377,7 +4404,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								if(paAssociata.getTrasformazioni()!=null) {
 									size = paAssociata.getTrasformazioni().sizeRegolaList();
 								}
-								ServletUtils.setDataElementVisualizzaLabel(de, (long) size); 
+								ServletUtils.setDataElementVisualizzaLabel(de, size); 
 							}
 							else {
 								ServletUtils.setDataElementVisualizzaLabel(de);
@@ -5084,7 +5111,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String idSoggFruitoreDelServizio, IDSoggetto idSoggettoFruitore, String idFruzione, ISearch ricerca)	throws Exception {
 		try {
 			
-			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+			Boolean contaListeObject = ServletUtils.getContaListeFromSession(this.session);
+			boolean contaListe = contaListeObject!=null ? contaListeObject.booleanValue() : false;
 			
 			Parameter parametroTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, idSoggettoFruitore.getTipo());
 			Parameter parametroNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, idSoggettoFruitore.getNome());
@@ -5103,10 +5131,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
+			if(tipologia!=null &&
+				AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
 			}
 			
 			boolean gestioneGruppi = true;
@@ -5183,7 +5210,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					
 					this.pd.setLabelBottoneFiltra(CostantiControlStation.LABEL_BOTTONE_INDIVIDUA_GRUPPO);
-					//this.pd.setLabelBottoneRipulsci("Ripulisci Selezione");
 				}
 			}
 			else {
@@ -5283,7 +5309,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						List<String> listaAzioniPDAssociataMappingNonDefault = pdAssociata.getAzione().getAzioneDelegataList();
 						
 						String azioneConnettore =  null;
-						if(listaAzioniPDAssociataMappingNonDefault!=null && listaAzioniPDAssociataMappingNonDefault.size()>0) {
+						if(listaAzioniPDAssociataMappingNonDefault!=null && !listaAzioniPDAssociataMappingNonDefault.isEmpty()) {
 							azioneConnettore = listaAzioniPDAssociataMappingNonDefault.get(0);
 						}
 						
@@ -5357,14 +5383,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		        listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
 			}
 			if(gestioneConfigurazioni) {
-				//listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO);
+				/**listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO);*/
 				listaLabel.add("");
 			}
 			if(!visualizzazioneTabs && (gestioneGruppi || listaParam.size()>1)) {
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO);
 			}
 			if(gestioneGruppi || visualizzazioneTabs) {
-				//listaLabel.add(this.getLabelAzioni(serviceBindingMessage));
+				/**listaLabel.add(this.getLabelAzioni(serviceBindingMessage));*/
 				if(this.isModalitaCompleta()) {
 					listaLabel.add(labelAzioni);
 				}
@@ -5440,13 +5466,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					Parameter pConfigurazioneDati = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
 					Parameter pConfigurazioneAltroPorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA, Costanti.CHECK_BOX_ENABLED_TRUE);
 					
+					Parameter pConfigurazioneDescrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DESCRIZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
+					
 					List<String> listaAzioniPDAssociataMappingNonDefault = null;
 					if(!mapping.isDefault()) {
 						listaAzioniPDAssociataMappingNonDefault = pdAssociata.getAzione().getAzioneDelegataList();
 					}
 					
 					// spostata direttamente nell'elenco delle fruizioni
-	//				// nome con link al PortaDeletagataChange
+	/**				// nome con link al PortaDeletagataChange
 	//				DataElement de = new DataElement();
 	//				if(mapping.isDefault()) {
 	//					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneDati);
@@ -5454,7 +5482,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	//				de.setValue(mapping.isDefault() ? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT : mapping.getNome());
 	//				de.setIdToRemove(pdAssociata.getNome());
 	//				//de.setToolTip(StringUtils.isNotEmpty(pdAssociata.getDescrizione()) ? pdAssociata.getDescrizione() : pdAssociata.getNome());
-	//				e.add(de);
+	//				e.add(de);*/
 					
 					if(gestioneConfigurazioni && mapping.isDefault() && allActionRedefined && (!showConnettoreLink)) {
 						int numEntries = ricerca.getNumEntries(idLista);
@@ -5473,6 +5501,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						statoMapping = this.getLabelAllAzioniRidefiniteTooltip(serviceBindingMessage);
 						urlCambiaStato = false;
 					}
+					
+					boolean descrizioneEmpty = pdAssociata.getDescrizione()==null || StringUtils.isEmpty(pdAssociata.getDescrizione()) || 
+							SubscriptionConfiguration.isDescriptionDefault(pdAssociata.getDescrizione());
 					
 					// Nome Gruppo
 					if(visualizzazioneTabs && (gestioneGruppi || listaParam.size()>1)) {
@@ -5505,6 +5536,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(!mapping.isDefault()) 
 		                       de.setIdToRemove(pdAssociata.getNome());
 		               
+						if(descrizioneEmpty) {
+							
+							DataElementImage image = new DataElementImage();
+							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneDescrizione,pIdTAb);
+							image.setToolTip(MessageFormat.format(CostantiControlStation.AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE));
+							image.setImage(CostantiControlStation.ICONA_AGGIUNGI_DESCRIZIONE);
+							
+							de.addImage(image);
+						}
+						
 						if(urlCambiaStato) {
 							Parameter pAbilita = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA,  (statoPD ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
 							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
@@ -5524,12 +5565,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						// Abilitato
 						DataElement de = new DataElement();
-						//if(visualizzazioneTabs)
-					    //   de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATO);
+						/**if(visualizzazioneTabs)
+					    //   de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATO);*/
 						
 						de.setWidthPx(10);
 						de.setType(DataElementType.CHECKBOX);
-						//if(visualizzazioneTabs) {
+						/**if(visualizzazioneTabs) {
 						//	de.setStatusValue(statoPD ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) : this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
 						//	de.setStatusToolTip(statoPD ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP_NO_ACTION : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP_NO_ACTION);
 						//	if(statoPDallRedefined!=null) {
@@ -5539,9 +5580,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						//		de.setStatusType(statoPD ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);
 						//	}
 						//}
-						//else {
+						//else {*/
 						de.setToolTip(statoMapping);
-						//}
+
 						if(statoPDallRedefined!=null) {
 							de.setSelected(statoPDallRedefined);
 						}
@@ -5584,12 +5625,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(!mapping.isDefault()) {
 							listaAzioni = listaAzioniPDAssociataMappingNonDefault!= null ? listaAzioniPDAssociataMappingNonDefault : new ArrayList<>();
 							
-							if(listaAzioni.size() > 0 && azioni.size()>0) {
+							if(!listaAzioni.isEmpty() && azioni.size()>0) {
 								
 								StringBuilder sb = new StringBuilder();
 								Iterator<String> itAz = azioni.keySet().iterator();
 								while (itAz.hasNext()) {
-									String idAzione = (String) itAz.next();
+									String idAzione = itAz.next();
 									if(listaAzioni.contains(idAzione)) {
 										if(sb.length() >0)
 											sb.append(", ");
@@ -5636,7 +5677,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									StringBuilder sb = new StringBuilder();
 									Iterator<String> itAz = azioni.keySet().iterator();
 									while (itAz.hasNext()) {
-										String idAzione = (String) itAz.next();
+										String idAzione = itAz.next();
 										if(actionNonRidefinite.contains(idAzione)) {
 											if(sb.length() >0)
 												sb.append(", ");
@@ -5683,9 +5724,35 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 					}
 	
+					// Descrizione
+					if(!descrizioneEmpty) {
+						DataElement de = new DataElement();
+						if(visualizzazioneTabs)
+							de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneDescrizione,pIdTAb);
+						
+						int length = 150;
+						String descrizione = pdAssociata.getDescrizione();
+						if(descrizione!=null && descrizione.length()>length) {
+							descrizione = descrizione.substring(0, (length-4)) + " ...";
+						}
+						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+						de.setToolTip(pdAssociata.getDescrizione());
+						
+						if(visualizzazioneTabs) {
+							DataElementImage image = new DataElementImage();
+							
+							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneDescrizione,pIdTAb);
+							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE));
+							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+							
+							de.setImage(image);
+						}
+						e.add(de);
+					}
+					
 					if(gestioneConfigurazioni) {
 					
-						//if(gestioneFruitori) {
 						// connettore	
 						if(showConnettoreLink && !connettoreStatic) {
 							DataElement de = new DataElement();
@@ -5706,7 +5773,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								List<Parameter> listParameter = new ArrayList<>();
 								
 								String azioneConnettore =  null;
-								if(listaAzioniPDAssociataMappingNonDefault!=null && listaAzioniPDAssociataMappingNonDefault.size()>0) {
+								if(listaAzioniPDAssociataMappingNonDefault!=null && !listaAzioniPDAssociataMappingNonDefault.isEmpty()) {
 									azioneConnettore = listaAzioniPDAssociataMappingNonDefault.get(0);
 								}
 								
@@ -5795,10 +5862,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								
 								long idConnettore = connettore.getId();
 								boolean checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
-								if(checkConnettore) {
-									if(!mapping.isDefault() && !ridefinito) {
-										checkConnettore = false;
-									}
+								if(checkConnettore &&
+									(!mapping.isDefault() && !ridefinito) 
+									){
+									checkConnettore = false;
 								}
 								
 								if(visualizzazioneTabs) {
@@ -5829,7 +5896,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								}
 							}
 						}
-						//}
+
 	
 						// Controllo Accessi
 						DataElement de = new DataElement();
@@ -5999,7 +6066,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								if(pdAssociata.getTrasformazioni()!=null) {
 									size = pdAssociata.getTrasformazioni().sizeRegolaList();
 								}
-								ServletUtils.setDataElementVisualizzaLabel(de, (long) size); 
+								ServletUtils.setDataElementVisualizzaLabel(de, size); 
 							}
 							else {
 								ServletUtils.setDataElementVisualizzaLabel(de);
@@ -7005,6 +7072,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
 			if(modificaAbilitata) {
 				de.setType(DataElementType.TEXT_AREA);
+				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
+				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
 			}
 			else {
 				de.setType(DataElementType.TEXT_EDIT);

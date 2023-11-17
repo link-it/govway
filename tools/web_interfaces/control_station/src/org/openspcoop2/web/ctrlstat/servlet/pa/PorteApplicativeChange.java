@@ -74,11 +74,12 @@ import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
+import org.openspcoop2.protocol.basic.config.ImplementationConfiguration;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -181,10 +182,20 @@ public final class PorteApplicativeChange extends Action {
 			String integrazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
 			String[] integrazioneGruppi = porteApplicativeHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
 					
-			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<GruppoIntegrazione>();  
+			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<>();  
 			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<>();
-			boolean isConfigurazione = parentPA!=null ? (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) : false; 
-			boolean datiAltroPorta = isConfigurazione ? ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA)) : false;
+			boolean isConfigurazione =false;
+			if(parentPA!=null) {
+				isConfigurazione = (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE);
+			}
+			boolean modificaDescrizione=false;
+			if(isConfigurazione) {
+				modificaDescrizione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DESCRIZIONE));
+			}
+			boolean datiAltroPorta =false;
+			if(isConfigurazione) {
+				datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA));
+			}
 			boolean visualizzaSezioneOpzioniAvanzate = !(porteApplicativeHelper.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
 
 			// dal secondo accesso in poi il calcolo dei gruppi da visualizzare avviene leggendo i parametri dalla richiesta
@@ -275,7 +286,7 @@ public final class PorteApplicativeChange extends Action {
 
 			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
 			
-			Long idAspsLong = -1L;
+			Long idAspsLong;
 			if(idAsps.equals("")) {
 				PortaApplicativaServizio servizio2 = pa.getServizio();
 				idAspsLong = servizio2.getId();
@@ -354,20 +365,18 @@ public final class PorteApplicativeChange extends Action {
 			boolean isMTOMAbilitatoReq = false;
 			boolean isMTOMAbilitatoRes= false;
 			if(pa.getMtomProcessor()!= null){
-				if(pa.getMtomProcessor().getRequestFlow() != null){
-					if(pa.getMtomProcessor().getRequestFlow().getMode() != null){
-						MTOMProcessorType mode = pa.getMtomProcessor().getRequestFlow().getMode();
-						if(!mode.equals(MTOMProcessorType.DISABLE))
-							isMTOMAbilitatoReq = true;
-					}
+				if(pa.getMtomProcessor().getRequestFlow() != null &&
+					pa.getMtomProcessor().getRequestFlow().getMode() != null){
+					MTOMProcessorType mode = pa.getMtomProcessor().getRequestFlow().getMode();
+					if(!mode.equals(MTOMProcessorType.DISABLE))
+						isMTOMAbilitatoReq = true;
 				}
 
-				if(pa.getMtomProcessor().getResponseFlow() != null){
-					if(pa.getMtomProcessor().getResponseFlow().getMode() != null){
-						MTOMProcessorType mode = pa.getMtomProcessor().getResponseFlow().getMode();
-						if(!mode.equals(MTOMProcessorType.DISABLE))
-							isMTOMAbilitatoRes = true;
-					}
+				if(pa.getMtomProcessor().getResponseFlow() != null &&
+					pa.getMtomProcessor().getResponseFlow().getMode() != null){
+					MTOMProcessorType mode = pa.getMtomProcessor().getResponseFlow().getMode();
+					if(!mode.equals(MTOMProcessorType.DISABLE))
+						isMTOMAbilitatoRes = true;
 				}
 			}
 
@@ -713,6 +722,22 @@ public final class PorteApplicativeChange extends Action {
 					}
 					nomeBreadCrumb=null;
 				}
+				else if(modificaDescrizione) {
+					String labelPerPorta = null;
+					if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+						labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+								PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE_DI,
+								PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE,
+								pa);
+					}
+					else {
+						lstParm.remove(lstParm.size()-1);
+						labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE_DI+pa.getNome();
+					}
+					
+					lstParm.add(new Parameter(labelPerPorta,  null));
+					nomeBreadCrumb=null;
+				}
 				else if(datiAltroPorta) {
 					String labelPerPorta = null;
 					if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
@@ -888,10 +913,12 @@ public final class PorteApplicativeChange extends Action {
 
 				// recupero informazioni su servizio se non specificato l'id
 				// del servizio
-				if ( servizio==null || "".equals(servizio)) {
-					if( !(soggvirt!=null && idSoggettoVirtuale!=null) ){
-						servizio = tipoSoggettoProprietario+"/"+nomeSoggettoProprietario+" "+pa.getServizio().getTipo()+"/"+pa.getServizio().getNome() + "/" + pa.getServizio().getVersione().intValue();
-					}
+				if ( 
+						(servizio==null || "".equals(servizio)) 
+						&&
+						( !(soggvirt!=null && idSoggettoVirtuale!=null) )
+					){
+					servizio = tipoSoggettoProprietario+"/"+nomeSoggettoProprietario+" "+pa.getServizio().getTipo()+"/"+pa.getServizio().getNome() + "/" + pa.getServizio().getVersione().intValue();
 				}
 				
 				if (modeaz == null) {
@@ -983,14 +1010,14 @@ public final class PorteApplicativeChange extends Action {
 					if(list!=null){
 						for (int i = 0; i < list.size(); i++) {
 							String idSoggetto = list.get(i).getSoggettoErogatore().toString();
-							if (!idSoggetto.equals(tipoNomeSoggettoProprietario)){ // non aggiungo il soggetto proprietario della porta applicativa
-								if(!identitaSoggetti.contains(idSoggetto)){
-									identitaSoggetti.add(idSoggetto);
-									IDSoggetto soggettoErogatore = list.get(i).getSoggettoErogatore();
-									String protocolloSoggettoErogatore = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoErogatore.getTipo());
-									if(protocolloSoggettoErogatore.equals(protocollo)){
-										listSoggetti.add(soggettoErogatore);
-									}
+							if (!idSoggetto.equals(tipoNomeSoggettoProprietario) && // non aggiungo il soggetto proprietario della porta applicativa
+								(!identitaSoggetti.contains(idSoggetto))
+								){
+								identitaSoggetti.add(idSoggetto);
+								IDSoggetto soggettoErogatore = list.get(i).getSoggettoErogatore();
+								String protocolloSoggettoErogatore = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoErogatore.getTipo());
+								if(protocolloSoggettoErogatore.equals(protocollo)){
+									listSoggetti.add(soggettoErogatore);
 								}
 							}
 						}
@@ -1077,6 +1104,7 @@ public final class PorteApplicativeChange extends Action {
 						try{
 							servS = apsCore.getServizio(idServizio);
 						}catch(DriverRegistroServiziNotFound dNotFound){
+							// ignore
 						}
 					}
 					if(servS==null){
@@ -1093,6 +1121,7 @@ public final class PorteApplicativeChange extends Action {
 							try{
 								servS = apsCore.getServizio(idServizio);
 							}catch(DriverRegistroServiziNotFound dNotFound){
+								// ignore
 							}
 							if(servS==null){
 								servizio = null;
@@ -1122,9 +1151,9 @@ public final class PorteApplicativeChange extends Action {
 						azioniList = new String[azioni.size()];
 						azioniListLabel = new String[azioni.size()];
 						int i = 0;
-						for (String string : azioni.keySet()) {
-							azioniList[i] = string;
-							azioniListLabel[i] = azioni.get(string);
+						for (Map.Entry<String,String> entry : azioni.entrySet()) {
+							azioniList[i] = entry.getKey();
+							azioniListLabel[i] = entry.getValue();
 							i++;
 						}
 					}
@@ -1196,15 +1225,18 @@ public final class PorteApplicativeChange extends Action {
 					List<String> identitaSoggetti = new ArrayList<>();
 					try{
 						list = apsCore.getAllIdServizi(new FiltroRicercaServizi());
-					}catch(DriverRegistroServiziNotFound dNotFound){}
+					}catch(DriverRegistroServiziNotFound dNotFound){
+						// ignore
+					}
 					if(list!=null){
 						for (int i = 0; i < list.size(); i++) {
 							String idSoggetto = list.get(i).getSoggettoErogatore().toString();
-							if (!idSoggetto.equals(tipoNomeSoggettoProprietario)){ // non aggiungo il soggetto proprietario della porta applicativa
-								if(identitaSoggetti.contains(idSoggetto)==false){
-									identitaSoggetti.add(idSoggetto);
-									listSoggetti.add(list.get(i).getSoggettoErogatore());
-								}
+							if ( 
+									(!idSoggetto.equals(tipoNomeSoggettoProprietario)) && // non aggiungo il soggetto proprietario della porta applicativa
+									(!identitaSoggetti.contains(idSoggetto))
+								){
+								identitaSoggetti.add(idSoggetto);
+								listSoggetti.add(list.get(i).getSoggettoErogatore());
 							}
 						}
 					}
@@ -1304,9 +1336,9 @@ public final class PorteApplicativeChange extends Action {
 						azioniList = new String[azioni.size()];
 						azioniListLabel = new String[azioni.size()];
 						int i = 0;
-						for (String string : azioni.keySet()) {
-							azioniList[i] = string;
-							azioniListLabel[i] = azioni.get(string);
+						for (Map.Entry<String,String> entry : azioni.entrySet()) {
+							azioniList[i] = entry.getKey();
+							azioniListLabel[i] = entry.getValue();
 							i++;
 						}
 					}
@@ -1364,7 +1396,13 @@ public final class PorteApplicativeChange extends Action {
 			IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
 			oldIDPortaApplicativaForUpdate.setNome(oldNomePA);
 			pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
-			pa.setDescrizione(descr);
+			if(modificaDescrizione && (descr==null || StringUtils.isEmpty(descr)) && ImplementationConfiguration.isDescriptionDefault(pa.getDescrizione())) {
+				// lascio la precedente descrizione
+				/**pa.setDescrizione(pa.getDescrizione());*/
+			}
+			else {
+				pa.setDescrizione(descr);
+			}
 			if(statoPorta==null || "".equals(statoPorta) || CostantiConfigurazione.ABILITATO.toString().equals(statoPorta)){
 				pa.setStato(StatoFunzionalita.ABILITATO);
 			}
@@ -1632,7 +1670,7 @@ public final class PorteApplicativeChange extends Action {
 			
 			ForwardParams fwP = ForwardParams.CHANGE();
 			
-			if(datiAltroPorta && !porteApplicativeHelper.isModalitaCompleta()) {
+			if( (datiAltroPorta || modificaDescrizione) && !porteApplicativeHelper.isModalitaCompleta()) {
 				fwP = PorteApplicativeCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			}
 			// Forward control to the specified success URI
