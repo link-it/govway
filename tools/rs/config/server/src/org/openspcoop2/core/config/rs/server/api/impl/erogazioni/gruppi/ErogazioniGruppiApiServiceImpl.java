@@ -601,7 +601,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			
 			mappingErogazionePortaApplicativa.setDescrizione(body.getNome());
 			
-			env.paCore.aggiornaDescrizioneMappingErogazionePortaApplicativa( mappingErogazionePortaApplicativa );
+			env.paCore.aggiornaDescrizioneMappingErogazionePortaApplicativa( mappingErogazionePortaApplicativa, env.userLogin );
 								
 			context.getLogger().info("Invocazione completata con successo");
         

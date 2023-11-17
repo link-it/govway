@@ -23561,7 +23561,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.add(de);
 	}
 	
-	public ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto pRegistry, org.openspcoop2.core.config.ProprietaOggetto pConfigPortaDefault) {
+	public ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto pRegistry, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta, boolean consideraDataCreazioneComeDataModifica) {
 		ProprietaOggetto p = null;
 		if(pRegistry!=null &&
 			(pRegistry.getDataCreazione()!=null || pRegistry.getUtenteRichiedente()!=null ||
@@ -23573,23 +23573,57 @@ public class ConsoleHelper implements IConsoleHelper {
 			p.setDataUltimaModifica(pRegistry.getDataUltimaModifica());
 			p.setUtenteUltimaModifica(pRegistry.getUtenteUltimaModifica());
 		}
-		if(pConfigPortaDefault!=null &&
-			(pConfigPortaDefault.getDataUltimaModifica()!=null) 
+		
+		return mergeProprietaOggettoEngine(p, pConfigPorta, consideraDataCreazioneComeDataModifica);
+	}
+	
+	private ProprietaOggetto mergeProprietaOggettoEngine(ProprietaOggetto p, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta, boolean consideraDataCreazioneComeDataModifica) {
+		if(pConfigPorta!=null &&
+			(pConfigPorta.getDataUltimaModifica()!=null) 
 			){
-			if(p==null) {
-				p = new ProprietaOggetto();
-				p.setDataCreazione(pConfigPortaDefault.getDataCreazione());
-				p.setUtenteRichiedente(pConfigPortaDefault.getUtenteRichiedente());
-				p.setDataUltimaModifica(pConfigPortaDefault.getDataUltimaModifica());
-				p.setUtenteUltimaModifica(pConfigPortaDefault.getUtenteUltimaModifica());
-			}
-			else if(p.getDataUltimaModifica()==null || p.getDataUltimaModifica().before(pConfigPortaDefault.getDataUltimaModifica())) {
-				p.setDataUltimaModifica(pConfigPortaDefault.getDataUltimaModifica());
-				if(pConfigPortaDefault.getUtenteUltimaModifica()!=null) {
-					p.setUtenteUltimaModifica(pConfigPortaDefault.getUtenteUltimaModifica());
-				}
+			mergeProprietaOggettoEngineInitUpdate(p, pConfigPorta);
+		}
+		else if(consideraDataCreazioneComeDataModifica && pConfigPorta!=null &&
+				(pConfigPorta.getDataUltimaModifica()==null) &&
+				(pConfigPorta.getDataCreazione()!=null)
+				){
+			mergeProprietaOggettoEngineInitCreate(p, pConfigPorta);
+		}
+		return p;
+	}
+	private ProprietaOggetto mergeProprietaOggettoEngineInit(ProprietaOggetto p, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta) {
+		if(p==null) {
+			p = new ProprietaOggetto();
+			p.setDataCreazione(pConfigPorta.getDataCreazione());
+			p.setUtenteRichiedente(pConfigPorta.getUtenteRichiedente());
+			p.setDataUltimaModifica(pConfigPorta.getDataUltimaModifica());
+			p.setUtenteUltimaModifica(pConfigPorta.getUtenteUltimaModifica());
+		}
+		return p;
+	}
+	private ProprietaOggetto mergeProprietaOggettoEngineInitUpdate(ProprietaOggetto p, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta){
+		if(p==null) {
+			p = mergeProprietaOggettoEngineInit(p, pConfigPorta);
+		}
+		else if(p.getDataUltimaModifica()==null || p.getDataUltimaModifica().before(pConfigPorta.getDataUltimaModifica())) {
+			p.setDataUltimaModifica(pConfigPorta.getDataUltimaModifica());
+			if(pConfigPorta.getUtenteUltimaModifica()!=null) {
+				p.setUtenteUltimaModifica(pConfigPorta.getUtenteUltimaModifica());
 			}
 		}
 		return p;
 	}
+	private ProprietaOggetto mergeProprietaOggettoEngineInitCreate(ProprietaOggetto p, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta){
+		if(p==null) {
+			p = mergeProprietaOggettoEngineInit(p, pConfigPorta);
+		}
+		else if(p.getDataUltimaModifica()==null || p.getDataUltimaModifica().before(pConfigPorta.getDataCreazione())) {
+			p.setDataUltimaModifica(pConfigPorta.getDataCreazione());
+			if(pConfigPorta.getUtenteRichiedente()!=null) {
+				p.setUtenteUltimaModifica(pConfigPorta.getUtenteRichiedente());
+			}
+		}
+		return p;
+	}
+	
 }

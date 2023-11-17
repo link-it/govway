@@ -2013,6 +2013,19 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.accordiParteSpecificaFruitoreDriver.validaStatoFruitoreServizio(fruitore, serv);
 	}
 	
+	public void updateProprietaOggettoErogazione(IDServizio idServizio, String user) throws DriverRegistroServiziException {
+		this.accordiParteSpecificaDriver.updateProprietaOggettoErogazione(idServizio, user);
+	}
+	public void updateProprietaOggettoErogazione(long idServizio, String user) throws DriverRegistroServiziException {
+		this.accordiParteSpecificaDriver.updateProprietaOggettoErogazione(idServizio, user);
+	}
+	public void updateProprietaOggettoFruizione(IDServizio idServizio, IDSoggetto idFruitore, String user) throws DriverRegistroServiziException {
+		this.accordiParteSpecificaDriver.updateProprietaOggettoFruizione(idServizio, idFruitore, user);
+	}
+	public void updateProprietaOggettoFruizione(long idFruizione, String user) throws DriverRegistroServiziException {
+		this.accordiParteSpecificaDriver.updateProprietaOggettoFruizione(idFruizione, user);
+	}
+	
 
 
 	/* Connettori */

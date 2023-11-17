@@ -313,6 +313,73 @@ public class DBUtils {
 	
 	
 	
+	public static String getSuperUserSoggettoSafe(Logger log, String method,
+			long idSoggetto,Connection con, String tipoDB) 
+	{
+		return getSuperUserSoggettoSafe(log, method,
+				idSoggetto,con, tipoDB,CostantiDB.SOGGETTI);
+	}
+	public static String getSuperUserSoggettoSafe(Logger log, String method,
+			long idSoggetto,Connection con, String tipoDB,String tabellaSoggetti) 
+	{
+		try
+		{
+			return getSuperUserSoggetto(idSoggetto, con, tipoDB, tabellaSoggetti);
+		}catch(Exception e) {
+			if(log!=null) {
+				String msgError = "["+method+"] getSuperUserSoggetto failed: "+e.getMessage();
+				log.error(msgError, e);
+			}
+			return null;
+		}
+	}
+	public static String getSuperUserSoggetto(long idSoggetto,Connection con, String tipoDB) throws CoreException
+	{
+		return getSuperUserSoggetto(idSoggetto, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static String getSuperUserSoggetto(long idSoggetto,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
+	{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String superuser=null;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(tabellaSoggetti);
+			sqlQueryObject.addSelectField("superuser");
+			sqlQueryObject.addWhereCondition("id = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setLong(1, idSoggetto);
+
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				superuser = rs.getString("superuser");
+			}
+
+			return superuser;
+
+		}
+		catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(rs, stm);
+
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static String getSuperUserServizioSafe(Logger log, String method,
 			long idServizio,Connection con, String tipoDB) 
 	{
@@ -351,9 +418,8 @@ public class DBUtils {
 
 			return superuser;
 
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new CoreException(e);
 		}finally
 		{
@@ -362,6 +428,8 @@ public class DBUtils {
 
 		}
 	}
+	
+	
 	
 	
 	

@@ -66,6 +66,7 @@ import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.ProtocolProperty;
 import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.RegistroPluginArchivio;
@@ -177,6 +178,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	void logInfo(String msg) {
 		if(this.log!=null) {
 			this.log.info(msg);
+		}
+	}
+	void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
+		}
+	}
+	void logError(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.error(msg,e);
 		}
 	}
 
@@ -1051,6 +1062,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	public MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idSoggetto, IDPortaDelegata idPortaDelegata) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		return this.porteDelegateDriver.getMappingFruizione(idServizio, idSoggetto, idPortaDelegata);		
 	}
+		
+	public ProprietaOggetto getProprietaOggetto(IDPortaDelegata idPD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.porteDelegateDriver.getProprietaOggetto(idPD);
+	}
+	
+	public void updateProprietaOggetto(IDPortaDelegata idPD, String user) throws DriverConfigurazioneException {
+		this.porteDelegateDriver.updateProprietaOggetto(idPD, user);
+	}
 
 	
 
@@ -1451,6 +1470,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	
 	public static List<String> normalizeConnettoriMultpliById(List<String> sa, PortaApplicativa pa){
 		return DriverConfigurazioneDB_porteApplicativeDriver.normalizeConnettoriMultpliById(sa, pa);
+	}
+	
+	public ProprietaOggetto getProprietaOggetto(IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.porteApplicativeDriver.getProprietaOggetto(idPA);
+	}
+	
+	public void updateProprietaOggetto(IDPortaApplicativa idPA, String user) throws DriverConfigurazioneException {
+		this.porteApplicativeDriver.updateProprietaOggetto(idPA, user);
 	}
 	
 	
@@ -1895,6 +1922,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	public IDServizio getLabelNomeServizioApplicativo(String nomeServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		return this.serviziApplicativiDriver.getLabelNomeServizioApplicativo(nomeServizioApplicativo);
 	}
+	
+	public ProprietaOggetto getProprietaOggetto(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.serviziApplicativiDriver.getProprietaOggetto(idServizioApplicativo);
+	}
+	
+	public void updateProprietaOggetto(IDServizioApplicativo idServizioApplicativo, String user) throws DriverConfigurazioneException {
+		this.serviziApplicativiDriver.updateProprietaOggetto(idServizioApplicativo, user);
+	}
+	
 	
 	
 

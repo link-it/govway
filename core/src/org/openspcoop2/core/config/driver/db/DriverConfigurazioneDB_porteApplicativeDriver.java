@@ -65,6 +65,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
@@ -3834,5 +3835,79 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 		}
 		
 		return sorted;
+	}
+	
+	protected ProprietaOggetto getProprietaOggetto(IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		String nomeMetodo = "getProprietaOggetto";
+		
+		if (idPA == null || idPA.getNome()==null)
+			throw new DriverConfigurazioneException("["+nomeMetodo+"] Parametro Non Valido");
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.driver.atomica) {
+			try {
+				con = this.driver.getConnectionFromDatasource(nomeMetodo);
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.driver.globalConnection;
+
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+			sqlQueryObject.addSelectField("utente_richiedente");
+			sqlQueryObject.addSelectField("data_creazione");
+			sqlQueryObject.addSelectField("utente_ultima_modifica");
+			sqlQueryObject.addSelectField("data_ultima_modifica");
+			sqlQueryObject.addWhereCondition("nome_porta = ?");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			stm.setString(1, idPA.getNome());
+
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPA.getNome()));
+			rs = stm.executeQuery();
+
+			ProprietaOggetto proprieta = null;
+			if (rs.next()) {			
+				proprieta = this.utilsDriver.readProprietaOggetto(rs);
+			}
+			else{
+				throw new DriverConfigurazioneNotFound("PortaApplicativa ["+idPA.getNome()+"] non esistente");
+			}
+
+			return proprieta;
+
+		} catch (SQLException se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] SqlException: " + se.getMessage(),se);
+		} catch (Exception se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception: " + se.getMessage(),se);
+		}
+		finally {
+
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
+		}
+	}
+	
+	protected void updateProprietaOggetto(IDPortaApplicativa idPA, String user) throws DriverConfigurazioneException {
+		if(idPA==null || idPA.getNome()==null) {
+			throw new DriverConfigurazioneException("Identificativo non fornito");
+		}
+		this.porteDriver.updateProprietaOggetto(idPA.getNome(), user, CostantiDB.PORTE_APPLICATIVE);
 	}
 }

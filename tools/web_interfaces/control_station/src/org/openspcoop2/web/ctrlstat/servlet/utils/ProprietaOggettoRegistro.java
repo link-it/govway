@@ -41,7 +41,6 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
@@ -282,20 +281,26 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 	}
 	
 	public static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, PorteApplicativeCore paCore, ServiziApplicativiCore saCore,
-			ConsoleHelper consoleHelper) throws DriverConfigurazioneException {
-		IDPortaApplicativa idPA = paCore.getIDPortaApplicativaAssociataDefault(idServizio);
-		if(idPA!=null) {
-			PortaApplicativa pa = getPASafe(paCore, idPA);
-			if(pa!=null) {
-				p = mergeProprietaOggetto(p, idServizio, pa, saCore, consoleHelper);
+			ConsoleHelper consoleHelper) {
+		/** Devo considerare tutte le porte */
+		List<IDPortaApplicativa> listPA = getIDPorteApplicativeAssociateSafe(paCore, idServizio);
+		if(listPA!=null && !listPA.isEmpty()) {
+			for (IDPortaApplicativa idPA : listPA) {
+				if(idPA!=null) {
+					PortaApplicativa pa = getPASafe(paCore, idPA);
+					if(pa!=null) {
+						p = mergeProprietaOggetto(p, idServizio, pa, saCore, consoleHelper);
+					}
+				}		
 			}
 		}
 		return p;
 	}
-	public static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, PortaApplicativa pa, ServiziApplicativiCore saCore,
+	private static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, PortaApplicativa pa, ServiziApplicativiCore saCore,
 			ConsoleHelper consoleHelper) {
 		if(pa!=null) {
-			p = consoleHelper.mergeProprietaOggetto(p, pa.getProprietaOggetto());
+			boolean consideraDataCreazioneComeDataModifica  = true;
+			p = consoleHelper.mergeProprietaOggetto(p, pa.getProprietaOggetto(), consideraDataCreazioneComeDataModifica);
 			if(pa.sizeServizioApplicativoList()>0) {
 				for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
 					IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -303,7 +308,7 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 					idSA.setNome(pasa.getNome());
 					ServizioApplicativo sa = getSASafe(saCore, idSA);
 					if(sa!=null && !ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
-						p = consoleHelper.mergeProprietaOggetto(p, sa.getProprietaOggetto());
+						p = consoleHelper.mergeProprietaOggetto(p, sa.getProprietaOggetto(), !consideraDataCreazioneComeDataModifica);
 					}
 				}
 			}
@@ -312,27 +317,51 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 	}
 	
 	public static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, IDSoggetto idSoggettoFruitore, PorteDelegateCore pdCore, 
-			ConsoleHelper consoleHelper) throws DriverConfigurazioneException {
-		IDPortaDelegata idPD = pdCore.getIDPortaDelegataAssociataDefault(idServizio, idSoggettoFruitore);
-		if(idPD!=null) {
-			PortaDelegata pd = getPDSafe(pdCore, idPD);
-			if(pd!=null) {
-				p = mergeProprietaOggetto(p, idServizio, idSoggettoFruitore, pd, consoleHelper);
+			ConsoleHelper consoleHelper) {
+		/** Devo considerare tutte le porte */
+		List<IDPortaDelegata> listPD = getIDPorteDelegateAssociateSafe(pdCore, idServizio, idSoggettoFruitore);
+		if(listPD!=null && !listPD.isEmpty()) {
+			for (IDPortaDelegata idPD : listPD) {
+				if(idPD!=null) {
+					PortaDelegata pd = getPDSafe(pdCore, idPD);
+					if(pd!=null) {
+						p = mergeProprietaOggetto(p, idServizio, idSoggettoFruitore, pd, consoleHelper);
+					}
+				}
 			}
 		}
 		return p;
 	}
-	public static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, IDSoggetto idSoggettoFruitore, PortaDelegata pd, 
+	private static ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto p, IDServizio idServizio, IDSoggetto idSoggettoFruitore, PortaDelegata pd, 
 			ConsoleHelper consoleHelper) {
 		if(idServizio!=null && idSoggettoFruitore!=null) {
 			// lascio i parametri per eventuali altri merge
 		}
 		if(pd!=null) {
-			p = consoleHelper.mergeProprietaOggetto(p, pd.getProprietaOggetto());
+			boolean consideraDataCreazioneComeDataModifica  = true;
+			p = consoleHelper.mergeProprietaOggetto(p, pd.getProprietaOggetto(), consideraDataCreazioneComeDataModifica);
 		}
 		return p;
 	}
 	
+	private static List<IDPortaApplicativa> getIDPorteApplicativeAssociateSafe(PorteApplicativeCore paCore, IDServizio idServizio) {
+		List<IDPortaApplicativa> l = null;
+		try {
+			l = paCore.getIDPorteApplicativeAssociate(idServizio);
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante il recupero delle porte applicative associate al servizio '"+idServizio+"': "+e.getMessage(), e);
+		}
+		return l;
+	}
+	private static List<IDPortaDelegata> getIDPorteDelegateAssociateSafe(PorteDelegateCore pdCore, IDServizio idServizio, IDSoggetto idFruitore) {
+		List<IDPortaDelegata> l = null;
+		try {
+			l = pdCore.getIDPorteDelegateAssociate(idServizio, idFruitore);
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante il recupero delle porte delegate associate al servizio '"+idServizio+"': "+e.getMessage(), e);
+		}
+		return l;
+	}
 	private static PortaApplicativa getPASafe(PorteApplicativeCore paCore, IDPortaApplicativa idPA) {
 		try {
 			return paCore.getPortaApplicativa(idPA);
@@ -352,6 +381,30 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 	private static ServizioApplicativo getSASafe(ServiziApplicativiCore saCore, IDServizioApplicativo idSA) {
 		try {
 			return saCore.getServizioApplicativo(idSA);
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante il recupero dell'applicativo '"+idSA+"': "+e.getMessage(), e);
+		}
+		return null;
+	}
+	public static org.openspcoop2.core.config.ProprietaOggetto getProprietaOggettoSafe(PorteApplicativeCore paCore, IDPortaApplicativa idPA) {
+		try {
+			return paCore.getProprietaOggetto(idPA);
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante il recupero della porta applicativa '"+idPA+"': "+e.getMessage(), e);
+		}
+		return null;
+	}
+	public static org.openspcoop2.core.config.ProprietaOggetto getProprietaOggettoSafe(PorteDelegateCore pdCore, IDPortaDelegata idPD) {
+		try {
+			return pdCore.getProprietaOggetto(idPD);
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante il recupero della porta delegata '"+idPD+"': "+e.getMessage(), e);
+		}
+		return null;
+	}
+	public static org.openspcoop2.core.config.ProprietaOggetto getProprietaOggettoSafe(ServiziApplicativiCore saCore, IDServizioApplicativo idSA) {
+		try {
+			return saCore.getProprietaOggetto(idSA);
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante il recupero dell'applicativo '"+idSA+"': "+e.getMessage(), e);
 		}

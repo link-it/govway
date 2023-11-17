@@ -125,25 +125,25 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 			switch (type) {
 			case CREATE:
 				
-//				String utenteRichiedente = null;
-//				if(aSA.getProprietaOggetto()!=null && aSA.getProprietaOggetto().getUtenteRichiedente()!=null) {
-//					utenteRichiedente = aSA.getProprietaOggetto().getUtenteRichiedente();
-//				}
-//				else {
-//					utenteRichiedente = DBUtils.getSuperUserServizioSafe(DriverConfigurazioneDBLib.log, "CRUDPortaApplicativa",
-//								idServizio, con, DriverConfigurazioneDBLib.tipoDB);
-//				}
-//				
-//				Timestamp dataCreazione = null;
-//				if(aPA.getProprietaOggetto()!=null && aPA.getProprietaOggetto().getDataCreazione()!=null) {
-//					dataCreazione = new Timestamp(aPA.getProprietaOggetto().getDataCreazione().getTime());
-//				}
-//				else if(aPA.getOraRegistrazione()!=null){
-//					dataCreazione = new Timestamp(aPA.getOraRegistrazione().getTime());
-//				}
-//				else {
-//					dataCreazione = DateManager.getTimestamp();
-//				}
+				String utenteRichiedente = null;
+				if(aSA.getProprietaOggetto()!=null && aSA.getProprietaOggetto().getUtenteRichiedente()!=null) {
+					utenteRichiedente = aSA.getProprietaOggetto().getUtenteRichiedente();
+				}
+				else {
+					utenteRichiedente = DBUtils.getSuperUserSoggettoSafe(DriverConfigurazioneDBLib.log, "CRUDPortaApplicativa",
+							idProprietario, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
+				}
+				
+				Timestamp dataCreazione = null;
+				if(aSA.getProprietaOggetto()!=null && aSA.getProprietaOggetto().getDataCreazione()!=null) {
+					dataCreazione = new Timestamp(aSA.getProprietaOggetto().getDataCreazione().getTime());
+				}
+				else if(aSA.getOraRegistrazione()!=null){
+					dataCreazione = new Timestamp(aSA.getOraRegistrazione().getTime());
+				}
+				else {
+					dataCreazione = DateManager.getTimestamp();
+				}
 				
 				// create
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -189,6 +189,12 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				sqlQueryObject.addInsertField("prefix_fault_code", "?");
 				sqlQueryObject.addInsertField("tipologia_fruizione", "?");
 				sqlQueryObject.addInsertField("tipologia_erogazione", "?");
+				if(utenteRichiedente!=null) {
+					sqlQueryObject.addInsertField("utente_richiedente", "?");
+				}
+				if(dataCreazione!=null) {
+					sqlQueryObject.addInsertField("data_creazione", "?");
+				}
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 
@@ -327,6 +333,14 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				//tipologia erogazione/fruizione
 				stm.setString(index++, aSA.getTipologiaFruizione()!=null ? TipologiaFruizione.valueOf(aSA.getTipologiaFruizione().toUpperCase()).toString() : TipologiaFruizione.DISABILITATO.toString());
 				stm.setString(index++, aSA.getTipologiaErogazione()!=null ? TipologiaErogazione.valueOf(aSA.getTipologiaErogazione().toUpperCase()).toString() : TipologiaErogazione.DISABILITATO.toString());
+				
+				if(utenteRichiedente!=null) {
+					stm.setString(index++, utenteRichiedente);
+				}
+				
+				if(dataCreazione!=null) {
+					stm.setTimestamp(index++, dataCreazione);
+				}
 				
 				n = stm.executeUpdate();
 				stm.close();
@@ -559,6 +573,19 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				if(oldIdProprietario <=0) 
 					throw new DriverConfigurazioneException("Impossibile recuperare l'id del Soggetto Proprietario del Servizio Applicativo");
 				
+				String utenteUltimaModifica = null;
+				if(aSA.getProprietaOggetto()!=null && aSA.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
+					utenteUltimaModifica = aSA.getProprietaOggetto().getUtenteUltimaModifica();
+				}
+				
+				Timestamp dataUltimaModifica = null;
+				if(aSA.getProprietaOggetto()!=null && aSA.getProprietaOggetto().getDataUltimaModifica()!=null) {
+					dataUltimaModifica = new Timestamp(aSA.getProprietaOggetto().getDataUltimaModifica().getTime());
+				}
+				else {
+					dataUltimaModifica = DateManager.getTimestamp();
+				}
+				
 				
 				// update
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -610,6 +637,12 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				}
 				sqlQueryObject.addUpdateField("tipologia_fruizione", "?");
 				sqlQueryObject.addUpdateField("tipologia_erogazione", "?");
+				if(utenteUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+				}
+				if(dataUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+				}
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQueryObject.addWhereCondition("nome=?");
 				sqlQueryObject.addWhereCondition("id_soggetto=?");
@@ -787,6 +820,14 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				//tipologia erogazione/fruizione
 				stm.setString(index++, aSA.getTipologiaFruizione()!=null ? TipologiaFruizione.valueOf(aSA.getTipologiaFruizione().toUpperCase()).toString() : TipologiaFruizione.DISABILITATO.toString());
 				stm.setString(index++, aSA.getTipologiaErogazione()!=null ? TipologiaErogazione.valueOf(aSA.getTipologiaErogazione().toUpperCase()).toString() : TipologiaErogazione.DISABILITATO.toString());
+				
+				if(utenteUltimaModifica!=null) {
+					stm.setString(index++, utenteUltimaModifica);
+				}
+				
+				if(dataUltimaModifica!=null) {
+					stm.setTimestamp(index++, dataUltimaModifica);
+				}
 				
 				// where
 				stm.setLong(index++, idServizioApplicativo); 

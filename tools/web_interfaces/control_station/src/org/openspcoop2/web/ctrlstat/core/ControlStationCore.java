@@ -81,6 +81,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.utils.ConfigUtils;
+import org.openspcoop2.core.config.utils.UpdateProprietaOggetto;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -3704,8 +3705,6 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, soggetto.getTipo());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, soggetto.getNome());
 
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
 						if(soggetto.getSoggettoReg()!=null){
 							operazioneDaSmistare.setPdd(soggetto.getSoggettoReg().getPortaDominio());
 						}
@@ -3762,8 +3761,6 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogReg.getNome());
 
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
 						operazioneDaSmistare.setPdd(sogReg.getPortaDominio());
 						
 						doSetDati = true;
@@ -3796,7 +3793,6 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO_APPLICATIVO, sa.getNome());
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sa.getTipoSoggettoProprietario());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sa.getNomeSoggettoProprietario());
-						// operazioneDaSmistare.setNomeServizioApplicativo(sa.getNome());
 
 						doSetDati = true;
 					}
@@ -4235,6 +4231,24 @@ public class ControlStationCore {
 						doSetDati = true;
 					}
 
+					
+					/***********************************************************
+					 * Caso Speciale di update di proprieta oggetto *
+					 **********************************************************/
+					if (oggetto instanceof UpdateProprietaOggetto) {
+						UpdateProprietaOggetto update = (UpdateProprietaOggetto) oggetto;
+						
+						if(update.getIdPortaApplicativa()!=null) {
+							driver.getDriverConfigurazioneDB().updateProprietaOggetto(update.getIdPortaApplicativa(), superUser);
+						}
+						else if(update.getIdPortaDelegata()!=null) {
+							driver.getDriverConfigurazioneDB().updateProprietaOggetto(update.getIdPortaDelegata(), superUser);
+						}
+						else if(update.getIdServizioApplicativo()!=null) {
+							driver.getDriverConfigurazioneDB().updateProprietaOggetto(update.getIdServizioApplicativo(), superUser);
+						}
+					}
+					
 
 					/***********************************************************
 					 * Caso Speciale dei Soggetti *
@@ -4250,8 +4264,6 @@ public class ControlStationCore {
 						if(this.registroServiziLocale){
 							driver.getDriverRegistroServiziDB().updateSoggetto(soggetto.getSoggettoReg());
 						}
-
-						// driver.getDriverConfigurazioneDB().updateSoggetto(soggetto.getSoggettoConf());
 
 						Soggetto sogConf = soggetto.getSoggettoConf();
 						// imposto i valori old del soggetto configurazione
@@ -4278,11 +4290,6 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, soggetto.getOldNomeForUpdate());
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, soggetto.getTipo());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, soggetto.getNome());
-
-						// operazioneDaSmistare.setOldNomeSoggetto(soggetto.getSoggettoConf().getOldNomeForUpdate());
-						// operazioneDaSmistare.setOldTipoSoggetto(soggetto.getSoggettoConf().getOldTipoForUpdate());
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
 
 						doSetDati = true;
 					}
@@ -4333,8 +4340,6 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogReg.getNome());
 
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
 						operazioneDaSmistare.setPdd(sogReg.getPortaDominio());
 						
 						doSetDati = true;
@@ -4857,13 +4862,16 @@ public class ControlStationCore {
 						
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						//operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
 						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_FRUITORE, "" + driver.getTableIdSoggetto(mapping.getIdFruitore()));
 						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_SERVIZIO, "" + driver.getTableIdAccordoServizioParteSpecifica(mapping.getIdServizio()));
 						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_PORTA_DELEGATA, "" + driver.getTableIdPortaDelegata(mapping.getIdPortaDelegata()));
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingFruizionePD);
 
+						if(mapping.getIdServizio()!=null && mapping.getIdFruitore()!=null) {
+							driver.updateProprietaOggettoFruizione(mapping.getIdServizio(), mapping.getIdFruitore() ,superUser ,false);
+						}
+						
 						doSetDati = false;
 
 					}
@@ -4874,12 +4882,15 @@ public class ControlStationCore {
 						
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						//operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
 						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_SERVIZIO, "" + driver.getTableIdAccordoServizioParteSpecifica(mapping.getIdServizio()));
 						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_PORTA_APPLICATIVA, "" + driver.getTableIdPortaApplicativa(mapping.getIdPortaApplicativa()));
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingErogazionePA);
 
+						if(mapping.getIdServizio()!=null) {
+							driver.updateProprietaOggettoErogazione(mapping.getIdServizio() ,superUser ,false);
+						}
+						
 						doSetDati = false;
 
 					}
@@ -4953,8 +4964,6 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogReg.getNome());
 
-						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
-						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
 						operazioneDaSmistare.setPdd(sogReg.getPortaDominio());
 						
 						doSetDati = true;

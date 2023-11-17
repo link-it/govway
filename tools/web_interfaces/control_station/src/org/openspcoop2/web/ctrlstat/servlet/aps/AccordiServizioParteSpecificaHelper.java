@@ -3408,7 +3408,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					
 					this.pd.setLabelBottoneFiltra(CostantiControlStation.LABEL_BOTTONE_INDIVIDUA_GRUPPO);
-					//this.pd.setLabelBottoneRipulsci("Ripulisci Selezione");
 				}
 			}
 			else {

@@ -7,7 +7,7 @@ CREATE TABLE servizi_applicativi
 	nome VARCHAR2(2000) NOT NULL,
 	tipo VARCHAR2(255),
 	as_client NUMBER,
-	descrizione VARCHAR2(255),
+	descrizione CLOB,
 	-- * Risposta Asincrona *
 	-- valori 0/1 indicano rispettivamente FALSE/TRUE
 	sbustamentorisp NUMBER,
@@ -56,6 +56,10 @@ CREATE TABLE servizi_applicativi
 	tipologia_fruizione VARCHAR2(255),
 	tipologia_erogazione VARCHAR2(255),
 	ora_registrazione TIMESTAMP,
+	utente_richiedente VARCHAR2(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR2(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

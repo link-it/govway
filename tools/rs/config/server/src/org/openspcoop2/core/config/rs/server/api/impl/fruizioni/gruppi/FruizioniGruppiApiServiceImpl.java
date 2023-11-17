@@ -613,7 +613,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			
 			mapping.setDescrizione(body.getNome());
 			
-			env.pdCore.aggiornaDescrizioneMappingFruizionePortaDelegata( mapping );
+			env.pdCore.aggiornaDescrizioneMappingFruizionePortaDelegata( mapping, env.userLogin );
 			                        
         
 			context.getLogger().info("Invocazione completata con successo");

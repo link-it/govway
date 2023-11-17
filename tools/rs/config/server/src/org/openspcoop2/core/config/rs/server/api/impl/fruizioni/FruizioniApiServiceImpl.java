@@ -57,6 +57,7 @@ import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaFruizioni;
 import org.openspcoop2.core.config.rs.server.model.ModalitaIdentificazioneAzioneEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
+import org.openspcoop2.core.config.utils.UpdateProprietaOggetto;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -1169,7 +1170,15 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			env.apsCore.setDataAggiornamentoFruitore(fruitore);
 			asps.setFruitoreList(fruitori);
 
-			env.apsCore.performUpdateOperation(env.userLogin, false, asps);
+			if(gruppo != null) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(pd.getNome());
+				UpdateProprietaOggetto uPO = new UpdateProprietaOggetto(idPD, env.userLogin);
+				env.apsCore.performUpdateOperation(env.userLogin, false, asps, uPO);
+			}
+			else {
+				env.apsCore.performUpdateOperation(env.userLogin, false, asps);
+			}
 
 			context.getLogger().info("Invocazione completata con successo");
 

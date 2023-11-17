@@ -2387,7 +2387,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 			
 			// Proprieta
-			ProprietaOggetto pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(asps.getProprietaOggetto(), idServizio, paDefault, this.saCore, this); 
+			ProprietaOggetto pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(asps.getProprietaOggetto(), idServizio, this.porteApplicativeCore, this.saCore, this); 
 			this.addProprietaOggetto(dati, pOggetto);
 			
 		}
@@ -2598,7 +2598,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 			
 			// Proprieta
-			ProprietaOggetto pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(fruitore.getProprietaOggetto(), idServizio, idSoggettoFruitore, pdDefault, this); 
+			ProprietaOggetto pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(fruitore.getProprietaOggetto(), idServizio, idSoggettoFruitore, this.porteDelegateCore, this); 
 			this.addProprietaOggetto(dati, pOggetto);
 		}
 		

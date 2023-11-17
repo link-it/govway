@@ -203,7 +203,10 @@ public class PorteDelegateConfigurazioneChange extends Action {
 			}
 
 			mappingFruizionePortaDelegata.setDescrizione(nomeGruppo); 
-			porteDelegateCore.aggiornaDescrizioneMappingFruizionePortaDelegata(mappingFruizionePortaDelegata);
+			
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			porteDelegateCore.aggiornaDescrizioneMappingFruizionePortaDelegata(mappingFruizionePortaDelegata, userLogin);
+			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
 

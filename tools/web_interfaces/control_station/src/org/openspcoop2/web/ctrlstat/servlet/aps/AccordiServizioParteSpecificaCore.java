@@ -1536,4 +1536,5 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
 }
