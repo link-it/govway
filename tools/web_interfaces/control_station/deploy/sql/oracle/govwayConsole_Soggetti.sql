@@ -6,7 +6,7 @@ CREATE TABLE soggetti
 (
 	nome_soggetto VARCHAR2(255) NOT NULL,
 	tipo_soggetto VARCHAR2(255) NOT NULL,
-	descrizione VARCHAR2(255),
+	descrizione CLOB,
 	identificativo_porta VARCHAR2(255),
 	-- 1/0 (true/false) Indicazione se il soggetto svolge è quello di default per il protocollo
 	is_default NUMBER,
@@ -29,6 +29,10 @@ CREATE TABLE soggetti
 	cn_issuer VARCHAR2(255),
 	certificate BLOB,
 	cert_strict_verification NUMBER,
+	utente_richiedente VARCHAR2(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR2(255),
+	data_ultima_modifica TIMESTAMP,
 	pd_url_prefix_rewriter VARCHAR2(255),
 	pa_url_prefix_rewriter VARCHAR2(255),
 	-- fk/pk columns

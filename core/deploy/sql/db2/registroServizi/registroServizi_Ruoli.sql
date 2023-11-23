@@ -3,12 +3,16 @@
 CREATE TABLE ruoli
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione CLOB,
 	tipologia VARCHAR(255) NOT NULL DEFAULT 'qualsiasi',
 	nome_esterno VARCHAR(255),
 	contesto_utilizzo VARCHAR(255) NOT NULL DEFAULT 'qualsiasi',
 	superuser VARCHAR(255),
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	utente_richiedente VARCHAR(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- check constraints

@@ -27,3 +27,43 @@ ALTER TABLE servizi_fruitori ADD data_ultima_modifica DATETIME2;
 UPDATE servizi_fruitori sf SET utente_richiedente=(select superuser from servizi s where s.id=sf.id_servizio);
 UPDATE servizi_fruitori SET data_creazione=ora_registrazione;
 
+
+ALTER TABLE soggetti ALTER COLUMN descrizione VARCHAR(max);
+
+ALTER TABLE soggetti ADD utente_richiedente VARCHAR(255);
+ALTER TABLE soggetti ADD data_creazione DATETIME2;
+ALTER TABLE soggetti ADD utente_ultima_modifica VARCHAR(255);
+ALTER TABLE soggetti ADD data_ultima_modifica DATETIME2;
+UPDATE soggetti SET utente_richiedente=superuser;
+UPDATE soggetti SET data_creazione=ora_registrazione;
+
+
+ALTER TABLE scope ALTER COLUMN descrizione VARCHAR(max);
+
+ALTER TABLE scope ADD utente_richiedente VARCHAR(255);
+ALTER TABLE scope ADD data_creazione DATETIME2;
+ALTER TABLE scope ADD utente_ultima_modifica VARCHAR(255);
+ALTER TABLE scope ADD data_ultima_modifica DATETIME2;
+UPDATE scope SET utente_richiedente=superuser;
+UPDATE scope SET data_creazione=ora_registrazione;
+
+
+ALTER TABLE ruoli ALTER COLUMN descrizione VARCHAR(max);
+
+ALTER TABLE ruoli ADD utente_richiedente VARCHAR(255);
+ALTER TABLE ruoli ADD data_creazione DATETIME2;
+ALTER TABLE ruoli ADD utente_ultima_modifica VARCHAR(255);
+ALTER TABLE ruoli ADD data_ultima_modifica DATETIME2;
+UPDATE ruoli SET utente_richiedente=superuser;
+UPDATE ruoli SET data_creazione=ora_registrazione;
+
+
+ALTER TABLE gruppi ALTER COLUMN descrizione VARCHAR(max);
+
+ALTER TABLE gruppi ADD utente_richiedente VARCHAR(255);
+ALTER TABLE gruppi ADD data_creazione DATETIME2;
+ALTER TABLE gruppi ADD utente_ultima_modifica VARCHAR(255);
+ALTER TABLE gruppi ADD data_ultima_modifica DATETIME2;
+UPDATE gruppi SET utente_richiedente=superuser;
+UPDATE gruppi SET data_creazione=ora_registrazione;
+

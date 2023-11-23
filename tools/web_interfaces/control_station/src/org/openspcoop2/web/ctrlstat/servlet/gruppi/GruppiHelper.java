@@ -28,11 +28,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
@@ -68,7 +70,12 @@ public class GruppiHelper extends ConsoleHelper{
 		super(core, request, pd,  session);
 	}
 
-	public List<DataElement> addGruppoToDati(TipoOperazione tipoOP, Long gruppoId, String nome, String descrizione, String serviceBinding, List<DataElement> dati) {
+	public List<DataElement> addGruppoToDati(TipoOperazione tipoOP, Long gruppoId, String nome, String descrizione, String serviceBinding, List<DataElement> dati) throws DriverConfigurazioneException {
+		
+		Gruppo gruppo = null;
+		if(TipoOperazione.CHANGE.equals(tipoOP) && nome!=null && StringUtils.isNotEmpty(nome)){
+			gruppo = this.gruppiCore.getGruppo(nome);
+		}
 		
 		if(TipoOperazione.CHANGE.equals(tipoOP)){
 			
@@ -76,7 +83,12 @@ public class GruppiHelper extends ConsoleHelper{
 			this.addComandoInUsoButton(nome,
 					nome,
 					InUsoType.GRUPPO);
-						
+					
+			// Proprieta Button
+			if(gruppo!=null && this.existsProprietaOggetto(gruppo.getProprietaOggetto(), gruppo.getDescrizione())) {
+				this.addComandoProprietaOggettoButton(nome,
+						nome, InUsoType.GRUPPO);
+			}
 		}
 		
 		DataElement de = new DataElement();
@@ -84,7 +96,6 @@ public class GruppiHelper extends ConsoleHelper{
 		de.setType(DataElementType.TITLE);
 		dati.add(de);
 		
-		de = new DataElement();
 		if(gruppoId!=null){
 			de = new DataElement();
 			de.setLabel(GruppiCostanti.PARAMETRO_GRUPPO_ID);
@@ -98,12 +109,7 @@ public class GruppiHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME);
 		de.setValue(nome);
-		//if(TipoOperazione.ADD.equals(tipoOP)){
 		de.setType(DataElementType.TEXT_EDIT);
-		//}
-		//else{
-		//	de.setType(DataElementType.TEXT);
-		//}
 		de.setName(GruppiCostanti.PARAMETRO_GRUPPO_NOME);
 		de.setSize( getSize());
 		de.setRequired(true);
@@ -112,7 +118,8 @@ public class GruppiHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_DESCRIZIONE);
 		de.setValue(descrizione);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(2);
 		de.setName(GruppiCostanti.PARAMETRO_GRUPPO_DESCRIZIONE);
 		de.setSize( getSize());
 		dati.add(de);
@@ -276,12 +283,6 @@ public class GruppiHelper extends ConsoleHelper{
 			}
 
 			// setto le label delle colonne
-//			String[] labels = {
-//					GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME,
-//					GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING,
-//					CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER // inuso
-//			};
-			
 			String[] labels = {
 					GruppiCostanti.LABEL_GRUPPI
 			};
@@ -304,29 +305,28 @@ public class GruppiHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 			
 			// preparo bottoni
-			if(lista!=null && !lista.isEmpty()){
-				if (this.core.isShowPulsantiImportExport()) {
+			if(lista!=null && !lista.isEmpty() &&
+				this.core.isShowPulsantiImportExport()) {
 
-					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.GRUPPO, this.request, this.session)){
+				ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+				if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.GRUPPO, this.request, this.session)){
 
-						List<AreaBottoni> bottoni = new ArrayList<>();
+					List<AreaBottoni> bottoni = new ArrayList<>();
 
-						AreaBottoni ab = new AreaBottoni();
-						List<DataElement> otherbott = new ArrayList<>();
-						DataElement de = new DataElement();
-						de.setValue(GruppiCostanti.LABEL_GRUPPI_ESPORTA_SELEZIONATI);
-						de.setOnClick(GruppiCostanti.LABEL_GRUPPI_ESPORTA_SELEZIONATI_ONCLICK);
-						de.setDisabilitaAjaxStatus();
-						otherbott.add(de);
-						ab.setBottoni(otherbott);
-						bottoni.add(ab);
+					AreaBottoni ab = new AreaBottoni();
+					List<DataElement> otherbott = new ArrayList<>();
+					DataElement de = new DataElement();
+					de.setValue(GruppiCostanti.LABEL_GRUPPI_ESPORTA_SELEZIONATI);
+					de.setOnClick(GruppiCostanti.LABEL_GRUPPI_ESPORTA_SELEZIONATI_ONCLICK);
+					de.setDisabilitaAjaxStatus();
+					otherbott.add(de);
+					ab.setBottoni(otherbott);
+					bottoni.add(ab);
 
-						this.pd.setAreaBottoni(bottoni);
-
-					}
+					this.pd.setAreaBottoni(bottoni);
 
 				}
+
 			}
 			
 		} catch (Exception e) {
@@ -402,6 +402,11 @@ public class GruppiHelper extends ConsoleHelper{
 		e.add(de);
 
 		this.addInUsoButton(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
+		
+		// Proprieta Button
+		if(this.existsProprietaOggetto(gruppo.getProprietaOggetto(), gruppo.getDescrizione())) {
+			this.addProprietaOggettoButton(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
+		}
 		
 		return e;
 	}

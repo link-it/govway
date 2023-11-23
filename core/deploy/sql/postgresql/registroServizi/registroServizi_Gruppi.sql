@@ -5,10 +5,14 @@ CREATE SEQUENCE seq_gruppi start 1 increment 1 maxvalue 9223372036854775807 minv
 CREATE TABLE gruppi
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione TEXT,
 	service_binding VARCHAR(255),
 	superuser VARCHAR(255),
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	utente_richiedente VARCHAR(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_gruppi') NOT NULL,
 	-- check constraints

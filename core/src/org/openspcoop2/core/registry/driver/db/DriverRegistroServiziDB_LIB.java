@@ -65,6 +65,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -355,7 +356,7 @@ public class DriverRegistroServiziDB_LIB {
 			"[DriverRegistroServiziDB_LIB::CRUDGruppo] Parametro non valido.");
 		}
 
-		/*if ((type != CostantiDB.CREATE) && (pdd.getId() <= 0)) {
+		/**if ((type != CostantiDB.CREATE) && (pdd.getId() <= 0)) {
 			throw new DriverRegistroServiziException(
 			"[DriverRegistroServiziDB_LIB::CRUDGruppo] ID Gruppo non valido.");
 		}*/
@@ -379,6 +380,26 @@ public class DriverRegistroServiziDB_LIB {
 			switch (type) {
 			case CREATE:
 				// CREATE
+				
+				String utenteRichiedente = null;
+				if(gruppo.getProprietaOggetto()!=null && gruppo.getProprietaOggetto().getUtenteRichiedente()!=null) {
+					utenteRichiedente = gruppo.getProprietaOggetto().getUtenteRichiedente();
+				}
+				else {
+					utenteRichiedente = superuser;
+				}
+				
+				Timestamp dataCreazione = null;
+				if(gruppo.getProprietaOggetto()!=null && gruppo.getProprietaOggetto().getDataCreazione()!=null) {
+					dataCreazione = new Timestamp(gruppo.getProprietaOggetto().getDataCreazione().getTime());
+				}
+				else if(gruppo.getOraRegistrazione()!=null){
+					dataCreazione = new Timestamp(gruppo.getOraRegistrazione().getTime());
+				}
+				else {
+					dataCreazione = DateManager.getTimestamp();
+				}
+				
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.GRUPPI);
 				sqlQueryObject.addInsertField("nome", "?");
@@ -387,6 +408,12 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("superuser", "?");
 				if(gruppo.getOraRegistrazione()!=null)
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
+				if(utenteRichiedente!=null) {
+					sqlQueryObject.addInsertField("utente_richiedente", "?");
+				}
+				if(dataCreazione!=null) {
+					sqlQueryObject.addInsertField("data_creazione", "?");
+				}
 
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -396,18 +423,27 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, descrizione);
 				updateStmt.setString(index++, serviceBinding!=null? serviceBinding.getValue() : null);
 				updateStmt.setString(index++, superuser);
+				
 				if(gruppo.getOraRegistrazione()!=null)
 					updateStmt.setTimestamp(index++, new Timestamp(gruppo.getOraRegistrazione().getTime()));
+				
+				if(utenteRichiedente!=null) {
+					updateStmt.setString(index++, utenteRichiedente);
+				}
+				
+				if(dataCreazione!=null) {
+					updateStmt.setTimestamp(index++, dataCreazione);
+				}
 
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 
 				updateStmt.close();
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo type = " + type
+				DriverRegistroServiziDB_LIB.logDebug("CRUDGruppo type = " + type
 						+ " row affected =" + n);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo CREATE : \n"
+				DriverRegistroServiziDB_LIB.logDebug("CRUDGruppo CREATE : \n"
 						+ DriverRegistroServiziDB_LIB.formatSQLString(
 								updateQuery, nome, descrizione,(serviceBinding!=null? serviceBinding.getValue() : null),
 								superuser));
@@ -440,6 +476,22 @@ public class DriverRegistroServiziDB_LIB {
 				if (idGruppo <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDGruppo(UPDATE)] Id Gruppo non valido.");
 				
+				String utenteUltimaModifica = null;
+				if(gruppo.getProprietaOggetto()!=null && gruppo.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
+					utenteUltimaModifica = gruppo.getProprietaOggetto().getUtenteUltimaModifica();
+				}
+				else {
+					utenteUltimaModifica = superuser;
+				}
+				
+				Timestamp dataUltimaModifica = null;
+				if(gruppo.getProprietaOggetto()!=null && gruppo.getProprietaOggetto().getDataUltimaModifica()!=null) {
+					dataUltimaModifica = new Timestamp(gruppo.getProprietaOggetto().getDataUltimaModifica().getTime());
+				}
+				else {
+					dataUltimaModifica = DateManager.getTimestamp();
+				}
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.GRUPPI);
 				sqlQueryObject.addUpdateField("nome", "?");
@@ -448,6 +500,13 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("superuser", "?");
 				if(gruppo.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
+				if(utenteUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+				}
+				if(dataUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+				}
+				
 				sqlQueryObject.addWhereCondition("id=?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -459,16 +518,22 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, superuser);
 				if(gruppo.getOraRegistrazione()!=null)
 					updateStmt.setTimestamp(index++, new Timestamp(gruppo.getOraRegistrazione().getTime()));
+				if(utenteUltimaModifica!=null) {
+					updateStmt.setString(index++, utenteUltimaModifica);
+				}
+				if(dataUltimaModifica!=null) {
+					updateStmt.setTimestamp(index++, dataUltimaModifica);
+				}
 	
 				updateStmt.setLong(index++, idGruppo);
 
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo type = " + type
+				DriverRegistroServiziDB_LIB.logDebug("CRUDGruppo type = " + type
 						+ " row affected =" + n);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo UPDATE : \n"
+				DriverRegistroServiziDB_LIB.logDebug("CRUDGruppo UPDATE : \n"
 						+ DriverRegistroServiziDB_LIB.formatSQLString(
 								updateQuery, nome, descrizione,(serviceBinding!=null? serviceBinding.getValue() : null),
 								superuser,idGruppo));
@@ -494,10 +559,10 @@ public class DriverRegistroServiziDB_LIB {
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo type = " + type
+				DriverRegistroServiziDB_LIB.logDebug("CRUDGruppo type = " + type
 						+ " row affected =" + n);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo DELETE : \n"
+				DriverRegistroServiziDB_LIB.logDebug("CRUDGruppo DELETE : \n"
 						+ DriverRegistroServiziDB_LIB.formatSQLString(
 								updateQuery, idGruppo));
 
@@ -527,7 +592,7 @@ public class DriverRegistroServiziDB_LIB {
 			"[DriverRegistroServiziDB_LIB::CRUDRuolo] Parametro non valido.");
 		}
 
-		/*if ((type != CostantiDB.CREATE) && (pdd.getId() <= 0)) {
+		/**if ((type != CostantiDB.CREATE) && (pdd.getId() <= 0)) {
 			throw new DriverRegistroServiziException(
 			"[DriverRegistroServiziDB_LIB::CRUDRuolo] ID Ruolo non valido.");
 		}*/
@@ -552,6 +617,26 @@ public class DriverRegistroServiziDB_LIB {
 			// preparo lo statement in base al tipo di operazione
 			switch (type) {
 			case CREATE:
+				
+				String utenteRichiedente = null;
+				if(ruolo.getProprietaOggetto()!=null && ruolo.getProprietaOggetto().getUtenteRichiedente()!=null) {
+					utenteRichiedente = ruolo.getProprietaOggetto().getUtenteRichiedente();
+				}
+				else {
+					utenteRichiedente = superuser;
+				}
+				
+				Timestamp dataCreazione = null;
+				if(ruolo.getProprietaOggetto()!=null && ruolo.getProprietaOggetto().getDataCreazione()!=null) {
+					dataCreazione = new Timestamp(ruolo.getProprietaOggetto().getDataCreazione().getTime());
+				}
+				else if(ruolo.getOraRegistrazione()!=null){
+					dataCreazione = new Timestamp(ruolo.getOraRegistrazione().getTime());
+				}
+				else {
+					dataCreazione = DateManager.getTimestamp();
+				}
+				
 				// CREATE
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.RUOLI);
@@ -563,6 +648,12 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("superuser", "?");
 				if(ruolo.getOraRegistrazione()!=null)
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
+				if(utenteRichiedente!=null) {
+					sqlQueryObject.addInsertField("utente_richiedente", "?");
+				}
+				if(dataCreazione!=null) {
+					sqlQueryObject.addInsertField("data_creazione", "?");
+				}
 
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -574,18 +665,27 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, nomeEsterno);
 				updateStmt.setString(index++, ruoloContesto!=null? ruoloContesto.getValue() : null);
 				updateStmt.setString(index++, superuser);
+				
 				if(ruolo.getOraRegistrazione()!=null)
 					updateStmt.setTimestamp(index++, new Timestamp(ruolo.getOraRegistrazione().getTime()));
+				
+				if(utenteRichiedente!=null) {
+					updateStmt.setString(index++, utenteRichiedente);
+				}
+				
+				if(dataCreazione!=null) {
+					updateStmt.setTimestamp(index++, dataCreazione);
+				}
 
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 
 				updateStmt.close();
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo type = " + type
+				DriverRegistroServiziDB_LIB.logDebug("CRUDRuolo type = " + type
 						+ " row affected =" + n);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo CREATE : \n"
+				DriverRegistroServiziDB_LIB.logDebug("CRUDRuolo CREATE : \n"
 						+ DriverRegistroServiziDB_LIB.formatSQLString(
 								updateQuery, nome, descrizione,(ruoloTipologia!=null? ruoloTipologia.getValue() : null),
 								(ruoloContesto!=null? ruoloContesto.getValue() : null),superuser));
@@ -618,6 +718,22 @@ public class DriverRegistroServiziDB_LIB {
 				if (idRuolo <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDRuolo(UPDATE)] Id Ruolo non valido.");
 				
+				String utenteUltimaModifica = null;
+				if(ruolo.getProprietaOggetto()!=null && ruolo.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
+					utenteUltimaModifica = ruolo.getProprietaOggetto().getUtenteUltimaModifica();
+				}
+				else {
+					utenteUltimaModifica = superuser;
+				}
+				
+				Timestamp dataUltimaModifica = null;
+				if(ruolo.getProprietaOggetto()!=null && ruolo.getProprietaOggetto().getDataUltimaModifica()!=null) {
+					dataUltimaModifica = new Timestamp(ruolo.getProprietaOggetto().getDataUltimaModifica().getTime());
+				}
+				else {
+					dataUltimaModifica = DateManager.getTimestamp();
+				}
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.RUOLI);
 				sqlQueryObject.addUpdateField("nome", "?");
@@ -628,6 +744,13 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("superuser", "?");
 				if(ruolo.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
+				if(utenteUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+				}
+				if(dataUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+				}
+				
 				sqlQueryObject.addWhereCondition("id=?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -641,16 +764,22 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, superuser);
 				if(ruolo.getOraRegistrazione()!=null)
 					updateStmt.setTimestamp(index++, new Timestamp(ruolo.getOraRegistrazione().getTime()));
+				if(utenteUltimaModifica!=null) {
+					updateStmt.setString(index++, utenteUltimaModifica);
+				}
+				if(dataUltimaModifica!=null) {
+					updateStmt.setTimestamp(index++, dataUltimaModifica);
+				}
 	
 				updateStmt.setLong(index++, idRuolo);
 
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo type = " + type
+				DriverRegistroServiziDB_LIB.logDebug("CRUDRuolo type = " + type
 						+ " row affected =" + n);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo UPDATE : \n"
+				DriverRegistroServiziDB_LIB.logDebug("CRUDRuolo UPDATE : \n"
 						+ DriverRegistroServiziDB_LIB.formatSQLString(
 								updateQuery, nome, descrizione,(ruoloTipologia!=null? ruoloTipologia.getValue() : null),
 								(ruoloContesto!=null? ruoloContesto.getValue() : null),superuser,idRuolo));
@@ -676,10 +805,10 @@ public class DriverRegistroServiziDB_LIB {
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo type = " + type
+				DriverRegistroServiziDB_LIB.logDebug("CRUDRuolo type = " + type
 						+ " row affected =" + n);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo DELETE : \n"
+				DriverRegistroServiziDB_LIB.logDebug("CRUDRuolo DELETE : \n"
 						+ DriverRegistroServiziDB_LIB.formatSQLString(
 								updateQuery, idRuolo));
 
@@ -708,7 +837,7 @@ public class DriverRegistroServiziDB_LIB {
 			"[DriverRegistroServiziDB_LIB::CRUDScope] Parametro non valido.");
 		}
 
-		/*if ((type != CostantiDB.CREATE) && (pdd.getId() <= 0)) {
+		/**if ((type != CostantiDB.CREATE) && (pdd.getId() <= 0)) {
 			throw new DriverRegistroServiziException(
 			"[DriverRegistroServiziDB_LIB::CRUDScope] ID Scope non valido.");
 		}*/
@@ -733,6 +862,26 @@ public class DriverRegistroServiziDB_LIB {
 			// preparo lo statement in base al tipo di operazione
 			switch (type) {
 			case CREATE:
+				
+				String utenteRichiedente = null;
+				if(scope.getProprietaOggetto()!=null && scope.getProprietaOggetto().getUtenteRichiedente()!=null) {
+					utenteRichiedente = scope.getProprietaOggetto().getUtenteRichiedente();
+				}
+				else {
+					utenteRichiedente = superuser;
+				}
+				
+				Timestamp dataCreazione = null;
+				if(scope.getProprietaOggetto()!=null && scope.getProprietaOggetto().getDataCreazione()!=null) {
+					dataCreazione = new Timestamp(scope.getProprietaOggetto().getDataCreazione().getTime());
+				}
+				else if(scope.getOraRegistrazione()!=null){
+					dataCreazione = new Timestamp(scope.getOraRegistrazione().getTime());
+				}
+				else {
+					dataCreazione = DateManager.getTimestamp();
+				}				
+				
 				// CREATE
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.SCOPE);
@@ -744,6 +893,12 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("superuser", "?");
 				if(scope.getOraRegistrazione()!=null)
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
+				if(utenteRichiedente!=null) {
+					sqlQueryObject.addInsertField("utente_richiedente", "?");
+				}
+				if(dataCreazione!=null) {
+					sqlQueryObject.addInsertField("data_creazione", "?");
+				}
 
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -755,18 +910,27 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, nomeEsterno);
 				updateStmt.setString(index++, scopeContesto!=null? scopeContesto.getValue() : null);
 				updateStmt.setString(index++, superuser);
+				
 				if(scope.getOraRegistrazione()!=null)
 					updateStmt.setTimestamp(index++, new Timestamp(scope.getOraRegistrazione().getTime()));
+				
+				if(utenteRichiedente!=null) {
+					updateStmt.setString(index++, utenteRichiedente);
+				}
+				
+				if(dataCreazione!=null) {
+					updateStmt.setTimestamp(index++, dataCreazione);
+				}
 
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 
 				updateStmt.close();
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDScope type = " + type
+				DriverRegistroServiziDB_LIB.logDebug("CRUDScope type = " + type
 						+ " row affected =" + n);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDScope CREATE : \n"
+				DriverRegistroServiziDB_LIB.logDebug("CRUDScope CREATE : \n"
 						+ DriverRegistroServiziDB_LIB.formatSQLString(
 								updateQuery, nome, descrizione,scopeTipologia,
 								(scopeContesto!=null? scopeContesto.getValue() : null),superuser));
@@ -799,6 +963,22 @@ public class DriverRegistroServiziDB_LIB {
 				if (idScope <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDScope(UPDATE)] Id Scope non valido.");
 				
+				String utenteUltimaModifica = null;
+				if(scope.getProprietaOggetto()!=null && scope.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
+					utenteUltimaModifica = scope.getProprietaOggetto().getUtenteUltimaModifica();
+				}
+				else {
+					utenteUltimaModifica = superuser;
+				}
+				
+				Timestamp dataUltimaModifica = null;
+				if(scope.getProprietaOggetto()!=null && scope.getProprietaOggetto().getDataUltimaModifica()!=null) {
+					dataUltimaModifica = new Timestamp(scope.getProprietaOggetto().getDataUltimaModifica().getTime());
+				}
+				else {
+					dataUltimaModifica = DateManager.getTimestamp();
+				}
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.SCOPE);
 				sqlQueryObject.addUpdateField("nome", "?");
@@ -809,6 +989,13 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("superuser", "?");
 				if(scope.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
+				if(utenteUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+				}
+				if(dataUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+				}
+				
 				sqlQueryObject.addWhereCondition("id=?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -822,16 +1009,22 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, superuser);
 				if(scope.getOraRegistrazione()!=null)
 					updateStmt.setTimestamp(index++, new Timestamp(scope.getOraRegistrazione().getTime()));
-	
+				if(utenteUltimaModifica!=null) {
+					updateStmt.setString(index++, utenteUltimaModifica);
+				}
+				if(dataUltimaModifica!=null) {
+					updateStmt.setTimestamp(index++, dataUltimaModifica);
+				}
+				
 				updateStmt.setLong(index++, idScope);
 
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDScope type = " + type
+				DriverRegistroServiziDB_LIB.logDebug("CRUDScope type = " + type
 						+ " row affected =" + n);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDScope UPDATE : \n"
+				DriverRegistroServiziDB_LIB.logDebug("CRUDScope UPDATE : \n"
 						+ DriverRegistroServiziDB_LIB.formatSQLString(
 								updateQuery, nome, descrizione,scopeTipologia,
 								(scopeContesto!=null? scopeContesto.getValue() : null),superuser,idScope));
@@ -857,10 +1050,10 @@ public class DriverRegistroServiziDB_LIB {
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDScope type = " + type
+				DriverRegistroServiziDB_LIB.logDebug("CRUDScope type = " + type
 						+ " row affected =" + n);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDScope DELETE : \n"
+				DriverRegistroServiziDB_LIB.logDebug("CRUDScope DELETE : \n"
 						+ DriverRegistroServiziDB_LIB.formatSQLString(
 								updateQuery, idScope));
 

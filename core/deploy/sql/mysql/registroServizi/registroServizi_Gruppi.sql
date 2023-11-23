@@ -3,11 +3,17 @@
 CREATE TABLE gruppi
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione MEDIUMTEXT,
 	service_binding VARCHAR(255),
 	superuser VARCHAR(255),
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ora_registrazione TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
+	utente_richiedente VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_creazione TIMESTAMP(3) DEFAULT 0,
+	utente_ultima_modifica VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ultima_modifica TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints

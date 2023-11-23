@@ -148,6 +148,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String multipleApiKey, String appId, String apiKey, 
 			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd, int numeroProprieta) throws Exception {
 
+		Soggetto soggetto = null;
+		if(TipoOperazione.CHANGE.equals(tipoOp) &&
+				oldtipoprov!=null && !"".equals(oldtipoprov) && 
+				oldnomeprov!=null && !"".equals(oldnomeprov)) {
+			IDSoggetto idSoggetto = new IDSoggetto(oldtipoprov, oldnomeprov);
+			soggetto = this.soggettiCore.getSoggettoRegistro(idSoggetto);
+		}
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 			String labelSoggetto = this.getLabelNomeSoggetto(protocollo, tipoprov, nomeprov);
@@ -179,6 +186,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
 				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
 				this.pd.addComandoResetCacheElementoButton(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, listaParametriChange);
+			}
+			
+			// Proprieta Button
+			if(this.existsProprietaOggetto(soggetto.getProprietaOggetto(), soggetto.getDescrizione())) {
+				this.addComandoProprietaOggettoButton(labelSoggetto,labelSoggetto, InUsoType.SOGGETTO);
 			}
 		}
 		
@@ -450,7 +462,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DESCRIZIONE);
 		de.setValue(descr);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(2);
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
 		de.setSize(this.getSize());
 		dati.add(de);
@@ -588,11 +601,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 				
 				String oldtipoauth = null;
 				if(isSupportatoAutenticazioneSoggetti && TipoOperazione.CHANGE.equals(tipoOp) &&
-						oldtipoprov!=null && !"".equals(oldtipoprov) && 
-						oldnomeprov!=null && !"".equals(oldnomeprov)) {
-					IDSoggetto idSoggetto = new IDSoggetto(oldtipoprov, oldnomeprov);
-					Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(idSoggetto);
-
+						soggetto!=null) {
+					
 					// prendo il primo
 					org.openspcoop2.core.registry.constants.CredenzialeTipo tipo = null;
 					if(soggetto.sizeCredenzialiList()>0) {
@@ -1277,7 +1287,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			// **** filtro proprieta ****
 			
 			List<String> nomiProprieta = this.nomiProprietaSoggetti(protocolloPerFiltroProprieta); 
-			if(nomiProprieta != null && nomiProprieta.size() >0) {
+			if(nomiProprieta != null && !nomiProprieta.isEmpty()) {
 				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA, CostantiControlStation.LABEL_SUBTITLE_PROPRIETA, false);
 				
 				// filtro nome
@@ -1322,7 +1332,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 
 			// Prendo la lista di pdd dell'utente connesso
-			/*List<String> nomiPdd = new ArrayList<>();
+			/**List<String> nomiPdd = new ArrayList<>();
 			List<PdDControlStation> listaPdd = this.core.pddList(superUser, new Search(true));
 			Iterator<PdDControlStation> itP = listaPdd.iterator();
 			while (itP.hasNext()) {
@@ -1345,29 +1355,28 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 			// preparo bottoni
-			if(lista!=null && lista.size()>0){
-				if (this.core.isShowPulsantiImportExport()) {
+			if(lista!=null && !lista.isEmpty() &&
+				this.core.isShowPulsantiImportExport()) {
 
-					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.request, this.session)){
+				ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+				if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.request, this.session)){
 
-						List<AreaBottoni> bottoni = new ArrayList<>();
+					List<AreaBottoni> bottoni = new ArrayList<>();
 
-						AreaBottoni ab = new AreaBottoni();
-						List<DataElement> otherbott = new ArrayList<>();
-						DataElement de = new DataElement();
-						de.setValue(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI);
-						de.setOnClick(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK);
-						de.setDisabilitaAjaxStatus();
-						otherbott.add(de);
-						ab.setBottoni(otherbott);
-						bottoni.add(ab);
+					AreaBottoni ab = new AreaBottoni();
+					List<DataElement> otherbott = new ArrayList<>();
+					DataElement de = new DataElement();
+					de.setValue(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI);
+					de.setOnClick(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK);
+					de.setDisabilitaAjaxStatus();
+					otherbott.add(de);
+					ab.setBottoni(otherbott);
+					bottoni.add(ab);
 
-						this.pd.setAreaBottoni(bottoni);
-
-					}
+					this.pd.setAreaBottoni(bottoni);
 
 				}
+
 			}
 
 		} catch (Exception e) {
@@ -1611,7 +1620,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 	
 	private List<DataElement> creaEntryCustom(boolean multiTenant, boolean showProtocolli,
 			Iterator<org.openspcoop2.core.registry.Soggetto> it)
-			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, Exception,
+			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, 
 			DriverControlStationException, DriverControlStationNotFound, DriverConfigurazioneException {
 		org.openspcoop2.core.registry.Soggetto elem = it.next();
 
@@ -1658,13 +1667,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SENZA_PROFILO, dominioLabel));
 				}
 			} else {
-				//if(showProtocolli) {
 				String labelProtocollo =this.getLabelProtocollo(protocollo); 
 				de.setValue(MessageFormat.format(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_SOLO_PROFILO, labelProtocollo));
-				//} else {
-				//	de.setValue(SoggettiCostanti.MESSAGE_METADATI_SOGGETTO_VUOTI);
-				//	addMetadati = false;
-				//}
 			}
 			
 			de.setType(DataElementType.SUBTITLE);
@@ -1683,13 +1687,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.BUTTON);
 			de.setLabel(ruolo);
 			
-//					int indexOf = ruoliDisponibili.indexOf(ruolo);
+/**					int indexOf = ruoliDisponibili.indexOf(ruolo);
 //					if(indexOf == -1)
 //						indexOf = 0;
 //					
-//					indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
+//					indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;*/
 			
-			de.setStyleClass("ruolo-label-info-0"); //+indexOf);
+			de.setStyleClass("ruolo-label-info-0"); /**+indexOf);*/
 			
 			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
 					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
@@ -1702,8 +1706,10 @@ public class SoggettiHelper extends ConnettoriHelper {
 		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA, "true"));
 		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA, "true"));
 		
+		String labelSoggetto = this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome());
+		
 		// In Uso Button
-		this.addInUsoButton(e, this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()), elem.getId()+"", InUsoType.SOGGETTO);
+		this.addInUsoButton(e, labelSoggetto, elem.getId()+"", InUsoType.SOGGETTO);
 		
 		if(this.core.isSoggettiVerificaCertificati()) {
 			// Verifica certificati visualizzato solo se il soggetto ha credenziali https
@@ -1725,6 +1731,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.addComandoResetCacheButton(e,this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()), SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, listaParametriChange);
 		}
 		
+		// Proprieta Button
+		if(this.existsProprietaOggetto(elem.getProprietaOggetto(), elem.getDescrizione())) {
+			this.addProprietaOggettoButton(e, labelSoggetto, elem.getId()+"", InUsoType.SOGGETTO);
+		}
+		
 		return e;
 	}
 
@@ -1732,7 +1743,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 		try {
 			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
 
-			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+			Boolean contaListeObject = ServletUtils.getContaListeFromSession(this.session);
+			boolean contaListe = false;
+			if(contaListeObject!=null) {
+				contaListe = contaListeObject.booleanValue();
+			}
 
 			int idLista = Liste.SOGGETTI;
 			int limit = ricerca.getPageSize(idLista);
@@ -1765,7 +1780,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			// **** filtro proprieta ****
 			
 			List<String> nomiProprieta = this.nomiProprietaSoggetti(protocolloPerFiltroProprieta); 
-			if(nomiProprieta != null && nomiProprieta.size() >0) {
+			if(nomiProprieta != null && !nomiProprieta.isEmpty()) {
 				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA, CostantiControlStation.LABEL_SUBTITLE_PROPRIETA, false);
 				
 				// filtro nome
@@ -1816,12 +1831,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(this.isModalitaCompleta()) {
 				labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			}
-//			else {
+/**			else {
 //				labels[i++] = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
-//			}
+//			}*/
 			if(this.isModalitaCompleta()) {
 				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
-				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
+				labels[i] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
 			}
 			
 			this.pd.setLabels(labels);
@@ -1837,7 +1852,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(lista!=null) {
 				Iterator<org.openspcoop2.core.config.Soggetto> it = lista.listIterator();
 				while (it.hasNext()) {
-					org.openspcoop2.core.config.Soggetto elem = (org.openspcoop2.core.config.Soggetto) it.next();
+					org.openspcoop2.core.config.Soggetto elem = it.next();
 	
 					List<DataElement> e = new ArrayList<>();
 					
@@ -1865,11 +1880,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
 						if (contaListe) {
 							// BugFix OP-674
-							//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
+							/**List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());*/
 							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
 							this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
-							//int numSA = lista1.size();
+							/**int numSA = lista1.size();*/
 							int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
 							ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
 						} else
@@ -1886,10 +1901,10 @@ public class SoggettiHelper extends ConnettoriHelper {
 								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
 						if (contaListe) {
 							// BugFix OP-674
-							// List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
+							/** List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));*/
 							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
-							//int numPA = lista1.size();
+							/**int numPA = lista1.size();*/
 							int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
 							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
 						} else
@@ -1904,10 +1919,10 @@ public class SoggettiHelper extends ConnettoriHelper {
 								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
 						if (contaListe) {
 							// BugFix OP-674
-							//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
+							/**List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));*/
 							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
-							//int numPD = lista1.size();
+							/**int numPD = lista1.size();*/
 							int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
 							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
 						} else

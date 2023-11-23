@@ -119,6 +119,9 @@ public class DriverRegistroServiziDB_gruppiDriver {
 					gruppo.setOraRegistrazione(new Date(rs.getTimestamp("ora_registrazione").getTime()));
 				}
 
+				// Proprieta Oggetto
+				gruppo.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				
 			} else {
 				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getGruppo] rs.next non ha restituito valori con la seguente interrogazione :\n" + 
 						DriverRegistroServiziDB_LIB.formatSQLString(queryString, idGruppo.getNome()));
@@ -220,7 +223,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		}catch(Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
-		boolean searchByTipoSoggetto = (tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0);
+		boolean searchByTipoSoggetto = (tipoSoggettiProtocollo!=null && !tipoSoggettiProtocollo.isEmpty());
 		
 		this.driver.logDebug("getAllIdGruppi...");
 
@@ -301,11 +304,11 @@ public class DriverRegistroServiziDB_gruppiDriver {
 				}
 			}
 			rs = stm.executeQuery();
-			List<IDGruppo> nomiGruppi = new ArrayList<IDGruppo>();
+			List<IDGruppo> nomiGruppi = new ArrayList<>();
 			while (rs.next()) {
 				nomiGruppi.add(new IDGruppo(rs.getString("nome")));
 			}
-			if(nomiGruppi.size()==0){
+			if(nomiGruppi.isEmpty()){
 				if(filtroRicerca!=null)
 					throw new DriverRegistroServiziNotFound("Gruppi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
 				else
@@ -508,7 +511,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
-		ArrayList<Gruppo> lista = new ArrayList<Gruppo>();
+		ArrayList<Gruppo> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {

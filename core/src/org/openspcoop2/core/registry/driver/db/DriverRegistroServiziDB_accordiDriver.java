@@ -271,21 +271,21 @@ public class DriverRegistroServiziDB_accordiDriver {
 				}
 
 				// Soggetto referente
-				long id_referente = rs.getLong("id_referente");
-				if(id_referente>0) {
+				long idReferente = rs.getLong("id_referente");
+				if(idReferente>0) {
 					IDSoggetto soggettoReferente = null;
 					try {
-						soggettoReferente = this.driver.getIdSoggetto(id_referente,con);
+						soggettoReferente = this.driver.getIdSoggetto(idReferente,con);
 						if(soggettoReferente==null){
 							throw new DriverRegistroServiziNotFound ("non esiste");
 						}
 					}catch(DriverRegistroServiziNotFound notFound) {
-						throw new Exception ("Soggetto referente ["+id_referente+"] dell'accordo non esiste");
+						throw new Exception ("Soggetto referente ["+idReferente+"] dell'accordo non esiste");
 					}
 					IdSoggetto assr = new IdSoggetto();
 					assr.setTipo(soggettoReferente.getTipo());
 					assr.setNome(soggettoReferente.getNome());
-					assr.setId(id_referente);
+					assr.setId(idReferente);
 					accordoServizio.setSoggettoReferente(assr);
 				}
 
@@ -358,19 +358,6 @@ public class DriverRegistroServiziDB_accordiDriver {
 					tmp = rs.getString("correlata");
 					azione.setCorrelata(((tmp == null || tmp.equals("")) ? null : tmp));
 
-					//		    if (tmp == null || tmp.equals("")){
-					//			azione.setProfiloCollaborazione(null);
-					//		    }
-					//		    else if (tmp.equals("oneway")){
-					//			azione.setProfiloCollaborazione(CostantiRegistroServizi.ONEWAY);
-					//		    }else if (tmp.equals("sincrono")){
-					//			azione.setProfiloCollaborazione(CostantiRegistroServizi.SINCRONO);
-					//		    }else if (tmp.equals("asincrono-simmetrico")){
-					//			azione.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_SIMMETRICO);
-					//		    }else if (tmp.equals("asincrono-asimmetrico")){
-					//			azione.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO);
-					//		    }
-
 					tmp = rs.getString("profilo_azione");
 					if (tmp == null || tmp.equals(""))
 						azione.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
@@ -384,7 +371,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 					// Protocol Properties
 					try{
 						List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzione, ProprietariProtocolProperty.AZIONE_ACCORDO, con, this.driver.tipoDB);
-						if(listPP!=null && listPP.size()>0){
+						if(listPP!=null && !listPP.isEmpty()){
 							for (ProtocolProperty protocolProperty : listPP) {
 								azione.addProtocolProperty(protocolProperty);
 							}
@@ -429,7 +416,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 				}catch(DriverRegistroServiziNotFound dNotFound){}
 				if(accordoServizio.getServizioComposto()!=null){
 					// read Documenti generici: i bytes non vengono ritornati se readContenutoAllegati==false, utilizzare il metodo apposta per averli: 
-					//                                               DriverRegistroServiziDB_LIB.getDocumento(id, readBytes, connection);
+					/**                                               DriverRegistroServiziDB_LIB.getDocumento(id, readBytes, connection);*/
 					try{
 						List<?> specificheCoordinamento = DriverRegistroServiziDB_documentiLIB.getListaDocumenti(RuoliDocumento.specificaCoordinamento.toString(), 
 								idAccordoLong, ProprietariDocumento.accordoServizio,readContenutoAllegati, con, this.driver.tipoDB);
@@ -443,7 +430,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 				// Protocol Properties
 				try{
 					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, this.driver.tipoDB);
-					if(listPP!=null && listPP.size()>0){
+					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							accordoServizio.addProtocolProperty(protocolProperty);
 						}
@@ -456,10 +443,10 @@ public class DriverRegistroServiziDB_accordiDriver {
 			}
 
 
-//			if(accordoServizio!=null){
+/**			if(accordoServizio!=null){
 //				// nomiAzione setting 
 //				accordoServizio.setNomiAzione(accordoServizio.readNomiAzione());
-//			}
+//			}*/
 			return accordoServizio;
 
 		}catch (DriverRegistroServiziNotFound e) {

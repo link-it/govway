@@ -1526,13 +1526,24 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					}
 					
 					// Proprieta Button
+					/**
+					 * troppo costo fare il merge per ogni elemento della lista. Lascio la possibilità di invocare le proprietà sempre.
+					 * ProprietaOggetto pOggetto = null;
+					if(gestioneFruitori) {
+						pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(fruitore.getProprietaOggetto(), idServizio, idSoggettoFruitore, this.porteDelegateCore, this); 
+					}
+					else {
+						pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(asps.getProprietaOggetto(), idServizio, this.porteApplicativeCore, this.saCore, this); 
+					}*/
 					if(gestioneFruitori
-							&& this.existsProprietaOggetto(fruitore.getProprietaOggetto(), fruitore.getDescrizione())) {
+							/**&& this.existsProprietaOggetto(pOggetto, fruitore.getDescrizione())*/
+							) {
 						this.addProprietaOggettoButton(e, labelServizio, idServizioButton, 
 								InUsoType.FRUIZIONE);
 					}
-					else if(!gestioneFruitori &&
-						this.existsProprietaOggetto(asps.getProprietaOggetto(), asps.getDescrizione())) {
+					else if(!gestioneFruitori 
+						/**&& this.existsProprietaOggetto(pOggetto, asps.getDescrizione())*/
+						) {
 						this.addProprietaOggettoButton(e, labelServizio, idServizioButton, 
 								InUsoType.EROGAZIONE);
 					}
@@ -1746,13 +1757,20 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		}
 		
 		// Proprieta Button
+		ProprietaOggetto pOggetto = null;
+		if(gestioneFruitori) {
+			pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(fruitore.getProprietaOggetto(), idServizio, idSoggettoFruitore, this.porteDelegateCore, this); 
+		}
+		else {
+			pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(asps.getProprietaOggetto(), idServizio, this.porteApplicativeCore, this.saCore, this); 
+		}
 		if(gestioneFruitori
-				&& this.existsProprietaOggetto(fruitore.getProprietaOggetto(), fruitore.getDescrizione())) {
+				&& this.existsProprietaOggetto(pOggetto, fruitore.getDescrizione())) {
 			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
 					InUsoType.FRUIZIONE);
 		}
-		else if(!gestioneFruitori &&
-			this.existsProprietaOggetto(asps.getProprietaOggetto(), asps.getDescrizione())) {
+		else if(!gestioneFruitori &&	
+			this.existsProprietaOggetto(pOggetto, asps.getDescrizione())) {
 			this.addComandoProprietaOggettoButton(labelServizioConFruitore, idServizioButton, 
 					InUsoType.EROGAZIONE);
 		}
@@ -2387,7 +2405,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 			
 			// Proprieta
-			ProprietaOggetto pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(asps.getProprietaOggetto(), idServizio, this.porteApplicativeCore, this.saCore, this); 
 			this.addProprietaOggetto(dati, pOggetto);
 			
 		}
@@ -2598,7 +2615,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 			
 			// Proprieta
-			ProprietaOggetto pOggetto = ProprietaOggettoRegistro.mergeProprietaOggetto(fruitore.getProprietaOggetto(), idServizio, idSoggettoFruitore, this.porteDelegateCore, this); 
 			this.addProprietaOggetto(dati, pOggetto);
 		}
 		

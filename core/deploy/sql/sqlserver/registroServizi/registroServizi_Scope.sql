@@ -3,12 +3,16 @@
 CREATE TABLE scope
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(max),
 	tipologia VARCHAR(255),
 	nome_esterno VARCHAR(255),
 	contesto_utilizzo VARCHAR(255) NOT NULL DEFAULT 'qualsiasi',
 	superuser VARCHAR(255),
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
+	utente_richiedente VARCHAR(255),
+	data_creazione DATETIME2,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica DATETIME2,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- check constraints

@@ -564,10 +564,10 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addSelectField("options");
 			sqlQueryObject.addSelectField("canale");
-			sqlQueryObject.addSelectField("utente_richiedente");
-			sqlQueryObject.addSelectField("data_creazione");
-			sqlQueryObject.addSelectField("utente_ultima_modifica");
-			sqlQueryObject.addSelectField("data_ultima_modifica");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE,"utente_richiedente");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE,"data_creazione");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE,"utente_ultima_modifica");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE,"data_ultima_modifica");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.driver.tabellaSoggetti+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id = ?");
 			sqlQueryObject.setANDLogicOperator(true);

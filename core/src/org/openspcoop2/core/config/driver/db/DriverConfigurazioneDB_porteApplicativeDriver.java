@@ -1228,10 +1228,10 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 			sqlQueryObject.addSelectField("options");
 			sqlQueryObject.addSelectField("id_sa_default");
 			sqlQueryObject.addSelectField("canale");
-			sqlQueryObject.addSelectField("utente_richiedente");
-			sqlQueryObject.addSelectField("data_creazione");
-			sqlQueryObject.addSelectField("utente_ultima_modifica");
-			sqlQueryObject.addSelectField("data_ultima_modifica");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE,"utente_richiedente");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE,"data_creazione");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE,"utente_ultima_modifica");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE,"data_ultima_modifica");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+this.driver.tabellaSoggetti+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id = ?");
 			sqlQueryObject.setANDLogicOperator(true);

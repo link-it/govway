@@ -232,7 +232,7 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 					for (Fruitore fruitore : as.getFruitoreList()) {
 						if(idSoggettoFruitore.getTipo().equals(fruitore.getTipo()) && idSoggettoFruitore.getNome().equals(fruitore.getNome())) {
 							ProprietaOggetto p = fruitore.getProprietaOggetto();
-							mergeProprietaOggetto(p, idServizio, idSoggettoFruitore, pdCore, registroHelper);
+							p = mergeProprietaOggetto(p, idServizio, idSoggettoFruitore, pdCore, registroHelper);
 							risultatiRicerca.add(this.getProprieta(p,fruitore.getDescrizione()));
 							break;
 						}

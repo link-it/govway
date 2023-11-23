@@ -5,12 +5,16 @@ CREATE SEQUENCE seq_scope MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 I
 CREATE TABLE scope
 (
 	nome VARCHAR2(255) NOT NULL,
-	descrizione VARCHAR2(255),
+	descrizione CLOB,
 	tipologia VARCHAR2(255),
 	nome_esterno VARCHAR2(255),
 	contesto_utilizzo VARCHAR2(255) NOT NULL,
 	superuser VARCHAR2(255),
 	ora_registrazione TIMESTAMP,
+	utente_richiedente VARCHAR2(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR2(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
