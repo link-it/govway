@@ -40,6 +40,7 @@ import java.util.List;
  * 		&lt;sequence&gt;
  * 			&lt;element name="filtro" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/config}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -62,7 +63,8 @@ import java.util.List;
 @XmlType(name = "porta-applicativa-servizio-applicativo-connettore", 
   propOrder = {
   	"filtro",
-  	"proprieta"
+  	"proprieta",
+  	"proprietaOggetto"
   }
 )
 
@@ -119,6 +121,14 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
 
   public int sizeProprietaList() {
     return this.proprieta.size();
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.String getNome() {
@@ -275,6 +285,9 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
   public int sizeProprieta() {
   	return this.sizeProprietaList();
   }
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

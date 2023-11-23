@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.TipoBehaviour;
@@ -72,7 +73,9 @@ import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneM
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -281,11 +284,6 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
 
-			boolean forceEnableConnettore = false;
-			if( (!porteApplicativeHelper.isModalitaCompleta())) {
-				forceEnableConnettore = true;
-			}
-
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_PORTA_APPLICATIVA_ADD, porteApplicativeHelper, 
@@ -313,7 +311,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			if(pa==null) {
-				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
+				throw new ControlStationCoreException("PortaApplicativa con id '"+idInt+"' non trovata");
 			}
 			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, ControlStationCore.getLog());
 			String idporta = pa.getNome();
@@ -366,12 +364,12 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			idSADB.setId(oldPaSA.getId());
 			ServizioApplicativo oldSA = saCore.getServizioApplicativo(idSA );
 			if(oldSA==null) {
-				throw new Exception("ServizioApplicativo con id '"+idSA+"' non trovata");
+				throw new ControlStationCoreException("ServizioApplicativo con id '"+idSA+"' non trovata");
 			}
 			InvocazionePorta invocazionePorta = oldSA.getInvocazionePorta();
 			InvocazioneServizio oldIS = oldSA.getInvocazioneServizio();
 			if(oldIS==null) {
-				throw new Exception("ServizioApplicativo con id '"+idSA+"' senza InvocazioneServizio");
+				throw new ControlStationCoreException("ServizioApplicativo con id '"+idSA+"' senza InvocazioneServizio");
 			}
 			InvocazioneCredenziali oldCis = oldIS.getCredenziali();
 			Connettore oldConnis = oldIS.getConnettore();
@@ -380,10 +378,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			String oldTipoSA = oldSA.getTipo();
 
 			// Lista dei servizi applicativi per la creazione automatica
-			List<IDServizioApplicativoDB> listaIdSAServer = null;
-			//String [] saSoggetti = null;	
+			List<IDServizioApplicativoDB> listaIdSAServer = null;	
 			if ((idsogg != null) && !idsogg.equals("")) {
-				long idErogatore = Long.valueOf(idsogg);
+				long idErogatore = Long.parseLong(idsogg);
 
 				// I servizi applicativi da visualizzare sono quelli che hanno
 				// -Integration Manager (getMessage abilitato)
@@ -402,7 +399,10 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					// devo resettare il connettore se passo da SA Server a Default
 					if(!erogazioneServizioApplicativoServerEnabled) {
 						
-						boolean isDefault = oldDatiConnettore != null ? !oldDatiConnettore.isNotifica() : true;
+						boolean isDefault = true;
+						if(oldDatiConnettore != null) {
+							isDefault = !oldDatiConnettore.isNotifica();
+						}
 												
 						// vecchio SA era un Server allora devo fare il reinit del connettore
 						if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)) {
@@ -533,39 +533,39 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				}
 				
 				// Tempi di risposta
-				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE)) {
-					if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE) &&
+					(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 							|| 
 							tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
 							|| 
-							tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ){
+							tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) )
+					){
 						
-						ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
-						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
-												
-						if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
-							tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
-						}
-						if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
-							tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
-						}
-						if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
-							tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
-						}
+					ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
+					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
+											
+					if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) ) {
+						tempiRispostaConnectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+					}
+					if(tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) ) {
+						tempiRispostaReadTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+					}
+					if(tempiRispostaTempoMedioRisposta==null || "".equals(tempiRispostaTempoMedioRisposta) ) {
+						tempiRispostaTempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
 					}
 				}
 				
 				
 				// Change Password basic/api
-				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD)) {
-					if(!ServletUtils.isCheckBoxEnabled(changepwd)) {
-						if (invocazionePorta != null && invocazionePorta.sizeCredenzialiList()>0){
-							getmsgPassword = invocazionePorta.getCredenziali(0).getPassword();
-						}
-					}
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD) &&
+					(!ServletUtils.isCheckBoxEnabled(changepwd)) &&
+					(invocazionePorta != null && invocazionePorta.sizeCredenzialiList()>0)
+					){
+					getmsgPassword = invocazionePorta.getCredenziali(0).getPassword();
 				}
 			}
 
+			boolean forceEnableConnettore = false;
 			if(getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				forceEnableConnettore = false;
 			}
@@ -729,16 +729,13 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					httpspwdprivatekey = "";
 
 					if(endpointtype==null) {
-						if(porteApplicativeHelper.isModalitaCompleta()==false) {
+						if(!porteApplicativeHelper.isModalitaCompleta()) {
 							endpointtype = TipiConnettore.HTTP.getNome();
 						}
 						else {
 							endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
 						}
 					}
-
-					tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
-					tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 
 					autenticazioneHttp = porteApplicativeHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 
@@ -751,8 +748,6 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 
 					// Devo cmq rileggere i valori se non definiti
-					//					ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
-					//					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 					if(tempiRispostaConnectionTimeout==null || "".equals(tempiRispostaConnectionTimeout) 
 							|| 
 							tempiRispostaReadTimeout==null || "".equals(tempiRispostaReadTimeout) 
@@ -792,36 +787,36 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				}
 
 				if(initConnettoreFromSA) {
-					if (erogazioneServizioApplicativoServer == null && isApplicativiServerEnabled) {
+					if (erogazioneServizioApplicativoServer == null && isApplicativiServerEnabled &&
 						// se in configurazione ho selezionato un server
-						if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)) {
-							erogazioneServizioApplicativoServer = oldSA.getNome();
-							erogazioneServizioApplicativoServerEnabled = true;
-						}
+						(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)) 
+						){
+						erogazioneServizioApplicativoServer = oldSA.getNome();
+						erogazioneServizioApplicativoServerEnabled = true;
 					}
 
-					if (sbustamento == null) {
-						if(oldIS.getSbustamentoSoap()!=null)
-							sbustamento = oldIS.getSbustamentoSoap().toString();
+					if (sbustamento == null &&
+						oldIS.getSbustamentoSoap()!=null) {
+						sbustamento = oldIS.getSbustamentoSoap().toString();
 					}
-					if (sbustamentoInformazioniProtocolloRichiesta == null) {
-						if(oldIS.getSbustamentoInformazioniProtocollo()!=null)
-							sbustamentoInformazioniProtocolloRichiesta = oldIS.getSbustamentoInformazioniProtocollo().toString();
+					if (sbustamentoInformazioniProtocolloRichiesta == null &&
+						oldIS.getSbustamentoInformazioniProtocollo()!=null) {
+						sbustamentoInformazioniProtocolloRichiesta = oldIS.getSbustamentoInformazioniProtocollo().toString();
 					}
-					if (getmsg == null){
-						if(oldIS.getGetMessage()!=null) {
-							getmsg = oldIS.getGetMessage().toString();
-							if(CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
-								if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
-									for (int i = 0; i < invocazionePorta.sizeCredenzialiList(); i++) {
-										Credenziali c = invocazionePorta.getCredenziali(i);
-										if(CredenzialeTipo.BASIC.equals(c.getTipo())) {
-											getmsgUsername = c.getUser();
-											getmsgPassword = c.getPassword();
-											tipoCredenzialiSSLVerificaTuttiICampi = c.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
-											break;
-										}
-									}
+					if (getmsg == null &&
+						(oldIS.getGetMessage()!=null) 
+						){
+						getmsg = oldIS.getGetMessage().toString();
+						if(CostantiConfigurazione.ABILITATO.toString().equals(getmsg) &&
+							(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) 
+							){
+							for (int i = 0; i < invocazionePorta.sizeCredenzialiList(); i++) {
+								Credenziali c = invocazionePorta.getCredenziali(i);
+								if(CredenzialeTipo.BASIC.equals(c.getTipo())) {
+									getmsgUsername = c.getUser();
+									getmsgPassword = c.getPassword();
+									tipoCredenzialiSSLVerificaTuttiICampi = c.isCertificateStrictVerification() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+									break;
 								}
 							}
 						}
@@ -848,6 +843,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 					if ((tipoauthRichiesta == null) && (oldIS != null) && oldIS.getAutenticazione()!=null) {
 						tipoauthRichiesta = oldIS.getAutenticazione().getValue();
+						if(tipoauthRichiesta!=null) {
+							// nop
+						}
 					}
 					if ((user == null) && (oldCis != null)) {
 						user = oldCis.getUser();
@@ -1014,45 +1012,37 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 					for (int i = 0; i < oldConnis.sizePropertyList(); i++) {
 						Property singlecp = oldCP.get(i);
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION)) {
-							if (url == null) {
-								url = singlecp.getValore();
-							}
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION) &&
+							url == null) {
+							url = singlecp.getValore();
 						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_NOME)) {
-							if (nomeCodaJms == null) {
-								nomeCodaJms = singlecp.getValore();
-							}
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_NOME) &&
+							nomeCodaJms == null) {
+							nomeCodaJms = singlecp.getValore();
 						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_TIPO)) {
-							if (tipoJms == null) {
-								tipoJms = singlecp.getValore();
-							}
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_TIPO) &&
+							tipoJms == null) {
+							tipoJms = singlecp.getValore();
 						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY)) {
-							if (connfact == null) {
-								connfact = singlecp.getValore();
-							}
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY) &&
+							connfact == null) {
+							connfact = singlecp.getValore();
 						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_SEND_AS)) {
-							if (tipoSendas == null) {
-								tipoSendas = singlecp.getValore();
-							}
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_SEND_AS) &&
+							tipoSendas == null) {
+							tipoSendas = singlecp.getValore();
 						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL)) {
-							if (initcont == null) {
-								initcont = singlecp.getValore();
-							}
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL) &&
+							initcont == null) {
+							initcont = singlecp.getValore();
 						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG)) {
-							if (urlpgk == null) {
-								urlpgk = singlecp.getValore();
-							}
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG) &&
+							urlpgk == null) {
+							urlpgk = singlecp.getValore();
 						}
-						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL)) {
-							if (provurl == null) {
-								provurl = singlecp.getValore();
-							}
+						if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL) &&
+							provurl == null) {
+							provurl = singlecp.getValore();
 						}
 					}
 
@@ -1108,11 +1098,11 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 					}
 					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
-						httpshostverifyS = "true";
+						/**httpshostverifyS = "true";*/
 						httpshostverify = true;
 					}
 					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
-						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+						/**httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;*/
 						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 					}
 
@@ -1124,32 +1114,32 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
 						requestOutputFileNameHeadersPermissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);	
 						String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}					
 						v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}	
 
 						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-						if(v!=null && !"".equals(v)){
-							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-								responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
-							}
+						if(v!=null && !"".equals(v) &&
+							("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+							){
+							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
 						}
 						if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
 							responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
 							responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
 							v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
-							if(v!=null && !"".equals(v)){
-								if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
-									responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
-								}
+							if(v!=null && !"".equals(v) &&
+								("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) )
+								){
+								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
 							}						
 							responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
 						}
@@ -1426,6 +1416,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						ForwardParams.CHANGE());
 			}
 
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			List<Object> listaOggettiDaCreare = new ArrayList<>();
 			List<Object> listaOggettiDaModificare = new ArrayList<>();
@@ -1446,9 +1437,18 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				datiConnettore.setNome(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
 			}
 
+			if(datiConnettore.getProprietaOggetto()==null) {
+				datiConnettore.setProprietaOggetto(new ProprietaOggetto());
+			}
+			datiConnettore.getProprietaOggetto().setUtenteUltimaModifica(userLogin);
+			datiConnettore.getProprietaOggetto().setDataUltimaModifica(DateManager.getDate());
+			
 			paSA.setDatiConnettore(datiConnettore);
 
-			boolean isDefault = datiConnettore != null ? !datiConnettore.isNotifica() : true;
+			boolean isDefault = true;
+			if(	datiConnettore != null ) { 
+				isDefault = !datiConnettore.isNotifica();
+			}
 
 			String nomeConnettoreChangeList = null;
 			
@@ -1457,70 +1457,70 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 				nomeConnettoreChangeList = nomeConnettore;
 				
-				if(!nomeConnettore.equals(oldNomeConnettore)) {
+				if(!nomeConnettore.equals(oldNomeConnettore) &&
 					
-					if(pa.getBehaviour() != null) {
+					(pa.getBehaviour() != null) 
+					){
 
-						TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
+					TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 
-						boolean consegnaCondizionale = false;
-						if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)
-								|| behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)
-								|| behaviourType.equals(TipoBehaviour.CONSEGNA_CONDIZIONALE)
-								|| behaviourType.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE)) {
-							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
+					boolean consegnaCondizionale = false;
+					if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)
+							|| behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)
+							|| behaviourType.equals(TipoBehaviour.CONSEGNA_CONDIZIONALE)
+							|| behaviourType.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE)) {
+						consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
 
-							if( behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
-								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
-										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa);
+						if( behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
+							org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
+									org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa);
 
-								if(configurazioneMultiDeliver != null &&
-									configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null &&
-										configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
-									// modifica riferimento
-									configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
-									boolean differenziazioneConsegnaDaNotifiche = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
-									org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
+							if(configurazioneMultiDeliver != null &&
+								configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null &&
+									configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
+								// modifica riferimento
+								configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
+								boolean differenziazioneConsegnaDaNotifiche = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
+								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
+							}
+						}
+
+						if(consegnaCondizionale) {
+							boolean save = false;
+							org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = 
+									org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
+
+							for (String nomeRegola : configurazioneCondizionale.getRegoleOrdinate()) {
+								ConfigurazioneSelettoreCondizioneRegola regola = configurazioneCondizionale.getRegola(nomeRegola);
+								if(!configurazioneCondizionale.isByFilter() &&
+									regola.getStaticInfo() != null &&
+										regola.getStaticInfo().equals(nomeConnettore)) {
+									regola.setStaticInfo(nomeConnettore);
 								}
 							}
 
-							if(consegnaCondizionale) {
-								boolean save = false;
-								org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = 
-										org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
+							org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione condizioneNonIdentificata =
+									configurazioneCondizionale.getCondizioneNonIdentificata();
 
-								for (String nomeRegola : configurazioneCondizionale.getRegoleOrdinate()) {
-									ConfigurazioneSelettoreCondizioneRegola regola = configurazioneCondizionale.getRegola(nomeRegola);
-									if(!configurazioneCondizionale.isByFilter() &&
-										regola.getStaticInfo() != null &&
-											regola.getStaticInfo().equals(nomeConnettore)) {
-										regola.setStaticInfo(nomeConnettore);
-									}
-								}
+							if(condizioneNonIdentificata.getNomeConnettore() != null &&
+								condizioneNonIdentificata.getNomeConnettore().equals(oldNomeConnettore)) {
+								// modifica riferimento
+								condizioneNonIdentificata.setNomeConnettore(nomeConnettore);
+								save = true;
+							}
 
-								org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione condizioneNonIdentificata =
-										configurazioneCondizionale.getCondizioneNonIdentificata();
+							org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione connettoreNonTrovato = 
+									configurazioneCondizionale.getNessunConnettoreTrovato();
 
-								if(condizioneNonIdentificata.getNomeConnettore() != null &&
-									condizioneNonIdentificata.getNomeConnettore().equals(oldNomeConnettore)) {
-									// modifica riferimento
-									condizioneNonIdentificata.setNomeConnettore(nomeConnettore);
-									save = true;
-								}
+							if(connettoreNonTrovato.getNomeConnettore() != null &&
+								connettoreNonTrovato.getNomeConnettore().equals(oldNomeConnettore)) {
+								// modifica riferimento
+								connettoreNonTrovato.setNomeConnettore(nomeConnettore);
+								save = true;
+							}
 
-								org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione connettoreNonTrovato = 
-										configurazioneCondizionale.getNessunConnettoreTrovato();
-
-								if(connettoreNonTrovato.getNomeConnettore() != null &&
-									connettoreNonTrovato.getNomeConnettore().equals(oldNomeConnettore)) {
-									// modifica riferimento
-									connettoreNonTrovato.setNomeConnettore(nomeConnettore);
-									save = true;
-								}
-
-								if(save) {
-									org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.save(pa, configurazioneCondizionale);
-								}
+							if(save) {
+								org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.save(pa, configurazioneCondizionale);
 							}
 						}
 					}
@@ -1635,11 +1635,11 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								}
 							}
 
-							if(paSAtmp!= null) {
+							if(paSAtmp!= null &&
 								// se ho modificato il server che sto utilizzando lo rimuovo
-								if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){
-									pa.getServizioApplicativoList().remove(paSAtmp); 	
-								}
+								(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo()))
+								){
+								pa.getServizioApplicativoList().remove(paSAtmp); 	
 							}
 
 							paSA.setNome(oldServizioApplicativoDefault);
@@ -1933,16 +1933,15 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			listaOggettiDaModificare.add(pa);
 
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
-
-			if(!listaOggettiDaEliminare.isEmpty())
-				porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray(new Object[listaOggettiDaEliminare.size()]));
-
 			if(!listaOggettiDaCreare.isEmpty())
 				porteApplicativeCore.performCreateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaCreare.toArray(new Object[listaOggettiDaCreare.size()]));
 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaModificare.toArray(new Object[listaOggettiDaModificare.size()]));
 
+			// L'eliminazione degli oggetti non più necessari deve essere effettuata dopo l'update, altrimenti si ha un errore di foreign key violata
+			if(!listaOggettiDaEliminare.isEmpty())
+				porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray(new Object[listaOggettiDaEliminare.size()]));
+			
 			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
 			
 			// Messaggio 'Please Copy'

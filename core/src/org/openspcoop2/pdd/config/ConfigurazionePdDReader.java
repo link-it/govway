@@ -2954,9 +2954,15 @@ public class ConfigurazionePdDReader {
 	protected String updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.updateStatoConnettoreMultiplo(connectionPdD, idPA, nomeConnettore, stato);
 	}
+	protected String updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, String user, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.updateStatoConnettoreMultiplo(connectionPdD, idPA, nomeConnettore, user, stato);
+	}
 	
 	protected String updateSchedulingConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.updateSchedulingConnettoreMultiplo(connectionPdD, idPA, nomeConnettore, stato);
+	}
+	protected String updateSchedulingConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, String user, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.updateSchedulingConnettoreMultiplo(connectionPdD, idPA, nomeConnettore, user, stato);
 	}
 	
 	public Map<String, String> getProprietaConfigurazione(PortaApplicativa pa) throws DriverConfigurazioneException {

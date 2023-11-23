@@ -179,6 +179,10 @@ CREATE TABLE porte_applicative_sa
 	connettore_coda VARCHAR2(10),
 	connettore_priorita VARCHAR2(10),
 	connettore_max_priorita NUMBER,
+	utente_richiedente VARCHAR2(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR2(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

@@ -1883,6 +1883,7 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 						rs1 = stm1.executeQuery();
 
 						PortaApplicativaServizioApplicativo servizioApplicativo = null;
+						
 						if (rs1.next()) {
 							// setto solo il nome come da specifica
 							servizioApplicativo = new PortaApplicativaServizioApplicativo();
@@ -1911,6 +1912,8 @@ public class DriverConfigurazioneDB_porteApplicativeDriver {
 								if(!l.isEmpty()) {
 									servizioApplicativo.getDatiConnettore().setFiltroList(l);
 								}
+								
+								servizioApplicativo.getDatiConnettore().setProprietaOggetto(this.utilsDriver.readProprietaOggetto(rs));
 								
 								Proprieta prop = null;
 								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);

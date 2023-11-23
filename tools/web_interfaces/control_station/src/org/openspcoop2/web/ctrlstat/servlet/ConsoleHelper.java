@@ -23561,6 +23561,18 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.add(de);
 	}
 	
+	public ProprietaOggetto convertToProprietaOggettoRegistro(org.openspcoop2.core.config.ProprietaOggetto pConfig) {
+		ProprietaOggetto p = null;
+		if(pConfig!=null) {
+			p = new ProprietaOggetto();
+			p.setDataCreazione(pConfig.getDataCreazione());
+			p.setDataUltimaModifica(pConfig.getDataUltimaModifica());
+			p.setUtenteRichiedente(pConfig.getUtenteRichiedente());
+			p.setUtenteUltimaModifica(pConfig.getUtenteUltimaModifica());
+		}
+		return p;
+	}
+	
 	public ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto pRegistry, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta, boolean consideraDataCreazioneComeDataModifica) {
 		ProprietaOggetto p = null;
 		if(pRegistry!=null &&

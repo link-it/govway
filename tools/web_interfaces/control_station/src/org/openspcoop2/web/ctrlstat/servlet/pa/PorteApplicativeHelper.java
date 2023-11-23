@@ -89,6 +89,7 @@ import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
@@ -125,8 +126,8 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -8188,7 +8189,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	public void preparePorteAppConnettoriMultipliList(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa) throws Exception {
-		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+		this.preparePorteAppConnettoriMultipliListEngine(nomePorta, ricerca, 
 				listaFiltrata,
 				pa, 
 				false,
@@ -8200,7 +8201,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			String nomeConnettoreAdd) throws Exception {
-		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+		this.preparePorteAppConnettoriMultipliListEngine(nomePorta, ricerca, 
 				listaFiltrata,
 				pa, 
 				true,
@@ -8212,7 +8213,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			String nomeConnettoreChanged) throws Exception {
-		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+		this.preparePorteAppConnettoriMultipliListEngine(nomePorta, ricerca, 
 				listaFiltrata,
 				pa, 
 				false,
@@ -8223,7 +8224,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	public void preparePorteAppConnettoriMultipliList_fromDeleteConnettore(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa) throws Exception {
-		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+		this.preparePorteAppConnettoriMultipliListEngine(nomePorta, ricerca, 
 				listaFiltrata,
 				pa, 
 				false,
@@ -8232,7 +8233,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				null);
 	}
 	
-	private void _preparePorteAppConnettoriMultipliList(String nomePorta, ConsoleSearch ricerca, 
+	private void preparePorteAppConnettoriMultipliListEngine(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			boolean fromAdd, 
@@ -8442,7 +8443,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 			// Colleziono prima i nomi dei connettori per ordinarli in ordine alfatebito, lasciando in testa il connettore di default
-			HashMap<String, PortaApplicativaServizioApplicativo> paList = new HashMap<String, PortaApplicativaServizioApplicativo>();
+			HashMap<String, PortaApplicativaServizioApplicativo> paList = new HashMap<>();
 			PortaApplicativaServizioApplicativo paDefault = null;
 			Iterator<PortaApplicativaServizioApplicativo> it = listaFiltrata.iterator();
 			while (it.hasNext()) {
@@ -8456,7 +8457,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					paList.put(nomeConnettore, paSA);
 				}
 			}
-			List<PortaApplicativaServizioApplicativo> listOrdinata = new ArrayList<PortaApplicativaServizioApplicativo>();
+			List<PortaApplicativaServizioApplicativo> listOrdinata = new ArrayList<>();
 			if(paDefault!=null) {
 				listOrdinata.add(paDefault);
 			}	
@@ -8722,9 +8723,6 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				image = new DataElementImage();
 				
 				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneConnettore, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
-//				image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,pIdProvider, pIdPortaPerSA, pIdAsps, pIdTAb, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM,
-//						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, paSA.getNome()),
-//						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSA.getId()+""));
 				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
 				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 				
@@ -8748,10 +8746,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				// Filtri
 				boolean showFiltri = behaviourConFiltri;
-				if(showFiltri) {
-					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) {
-						showFiltri = false;
-					}
+				if(showFiltri &&
+					(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) 
+					){
+					showFiltri = false;
 				}
 				if(showFiltri) {
 					de = new DataElement();
@@ -8918,6 +8916,27 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.add(de);
 				}
 				
+				
+				// Proprieta
+				org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+				if(paSA.getDatiConnettore() != null && paSA.getDatiConnettore().getProprietaOggetto()!=null) {
+					pOggetto = paSA.getDatiConnettore().getProprietaOggetto();
+				}
+				ProprietaOggetto p = convertToProprietaOggettoRegistro(pOggetto);
+				if(sa!=null && !ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+					boolean consideraDataCreazioneComeDataModifica  = true;
+					p = this.mergeProprietaOggetto(p, sa.getProprietaOggetto(), !consideraDataCreazioneComeDataModifica);
+					
+				}
+				if(p!=null) {
+					if(p.getUtenteUltimaModifica()==null && p.getDataUltimaModifica()!=null && 
+							connettoreDefault &&
+							pa!=null && pa.getProprietaOggetto()!=null) {
+						p.setUtenteUltimaModifica(pa.getProprietaOggetto().getUtenteUltimaModifica());
+					}
+					this.addProprietaOggetto(e, p);
+				}
+
 				dati.add(e);
 				idTab ++;
 			}
@@ -8925,10 +8944,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setDati(dati);
 			this.pd.setSelect(true);
 			this.pd.setAddButton(true);
-			if(pa.sizeServizioApplicativoList() > 1)
-				this.pd.setRemoveButton(true);
-			else 
-				this.pd.setRemoveButton(false);
+			this.pd.setRemoveButton(pa.sizeServizioApplicativoList() > 1);
 			
 		}  catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

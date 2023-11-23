@@ -899,6 +899,8 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				sqlQueryObject.addInsertField("connettore_coda", "?");
 				sqlQueryObject.addInsertField("connettore_priorita", "?");
 				sqlQueryObject.addInsertField("connettore_max_priorita", "?");
+				sqlQueryObject.addInsertField("utente_richiedente", "?");
+				sqlQueryObject.addInsertField("data_creazione", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 
@@ -920,8 +922,26 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 
 					if (idSA <= 0)
 						throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
-
+					
 					idsPaSa.add(idSA);
+
+					String utenteRichiedenteSA = null;
+					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().getProprietaOggetto()!=null && 
+							servizioApplicativo.getDatiConnettore().getProprietaOggetto().getUtenteRichiedente()!=null) {
+						utenteRichiedenteSA = servizioApplicativo.getDatiConnettore().getProprietaOggetto().getUtenteRichiedente();
+					}
+					else {
+						utenteRichiedenteSA = utenteRichiedente; // uso richiedente della PA
+					}
+					
+					Timestamp dataCreazioneSA = null;
+					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().getProprietaOggetto()!=null && 
+							servizioApplicativo.getDatiConnettore().getProprietaOggetto().getDataCreazione()!=null) {
+						dataCreazioneSA = new Timestamp(servizioApplicativo.getDatiConnettore().getProprietaOggetto().getDataCreazione().getTime());
+					}
+					else {
+						dataCreazioneSA = dataCreazione; // uso data creazione della PA 
+					}
 					
 					int indexSA = 1;
 					stm.setLong(indexSA++, idPortaApplicativa);
@@ -933,17 +953,17 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? DriverConfigurazioneDBLib.getValue(servizioApplicativo.getDatiConnettore().getScheduling()) : null);
 					
 					String filtri = null; 
-					if(servizioApplicativo.getDatiConnettore()!=null) {
-						if(servizioApplicativo.getDatiConnettore().getFiltroList()!=null && servizioApplicativo.getDatiConnettore().sizeFiltroList()>0) {
-							StringBuilder bf = new StringBuilder();
-							for (int k = 0; k < servizioApplicativo.getDatiConnettore().sizeFiltroList(); k++) {
-								if(k>0) {
-									bf.append(",");
-								}
-								bf.append(servizioApplicativo.getDatiConnettore().getFiltro(k));
+					if(servizioApplicativo.getDatiConnettore()!=null &&
+						(servizioApplicativo.getDatiConnettore().getFiltroList()!=null && servizioApplicativo.getDatiConnettore().sizeFiltroList()>0) 
+						){
+						StringBuilder bf = new StringBuilder();
+						for (int k = 0; k < servizioApplicativo.getDatiConnettore().sizeFiltroList(); k++) {
+							if(k>0) {
+								bf.append(",");
 							}
-							filtri = bf.toString();
+							bf.append(servizioApplicativo.getDatiConnettore().getFiltro(k));
 						}
+						filtri = bf.toString();
 					}
 					stm.setString(indexSA++, filtri);
 					
@@ -957,6 +977,9 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.setString(indexSA++, CostantiConfigurazione.PRIORITA_DEFAULT);
 						stm.setInt(indexSA++, CostantiDB.FALSE);
 					}
+					
+					stm.setString(indexSA++, utenteRichiedenteSA);
+					stm.setTimestamp(indexSA++, dataCreazioneSA);
 					
 					stm.executeUpdate();
 					
@@ -2137,6 +2160,42 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 
 					idsPaSa.add(idSA);
 					
+					String utenteRichiedenteSA = null;
+					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().getProprietaOggetto()!=null && 
+							servizioApplicativo.getDatiConnettore().getProprietaOggetto().getUtenteRichiedente()!=null) {
+						utenteRichiedenteSA = servizioApplicativo.getDatiConnettore().getProprietaOggetto().getUtenteRichiedente();
+					}
+					else if(aPA.getProprietaOggetto()!=null && aPA.getProprietaOggetto().getUtenteRichiedente()!=null) {
+						utenteRichiedenteSA = 	aPA.getProprietaOggetto().getUtenteRichiedente(); // uso richiedente della PA
+					}
+					
+					Timestamp dataCreazioneSA = null;
+					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().getProprietaOggetto()!=null && 
+							servizioApplicativo.getDatiConnettore().getProprietaOggetto().getDataCreazione()!=null) {
+						dataCreazioneSA = new Timestamp(servizioApplicativo.getDatiConnettore().getProprietaOggetto().getDataCreazione().getTime());
+					}
+					else if(aPA.getProprietaOggetto()!=null && aPA.getProprietaOggetto().getDataCreazione()!=null) {
+						dataCreazioneSA = 	new Timestamp(aPA.getProprietaOggetto().getDataCreazione().getTime()); // uso data creazione della PA
+					}
+					else {
+						dataCreazioneSA = DateManager.getTimestamp();
+					}
+					
+					String utenteUltimaModificaSA = null;
+					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().getProprietaOggetto()!=null && 
+							servizioApplicativo.getDatiConnettore().getProprietaOggetto().getUtenteUltimaModifica()!=null) {
+						utenteUltimaModificaSA = servizioApplicativo.getDatiConnettore().getProprietaOggetto().getUtenteUltimaModifica();
+					}
+					
+					Timestamp dataUltimaModificaSA = null;
+					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().getProprietaOggetto()!=null && 
+							servizioApplicativo.getDatiConnettore().getProprietaOggetto().getDataUltimaModifica()!=null) {
+						dataUltimaModificaSA = new Timestamp(servizioApplicativo.getDatiConnettore().getProprietaOggetto().getDataUltimaModifica().getTime());
+					}
+					/**else { In modo da gestire la data di creazione che comunque si figura sempre all'interno di un update della porta applicativa
+						dataUltimaModificaSA = DateManager.getTimestamp();
+					}*/
+					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA);
 					sqlQueryObject.addInsertField("id_porta", "?");
@@ -2150,6 +2209,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					sqlQueryObject.addInsertField("connettore_coda", "?");
 					sqlQueryObject.addInsertField("connettore_priorita", "?");
 					sqlQueryObject.addInsertField("connettore_max_priorita", "?");
+					sqlQueryObject.addInsertField("utente_richiedente", "?");
+					sqlQueryObject.addInsertField("data_creazione", "?");
+					sqlQueryObject.addInsertField("utente_ultima_modifica", "?");
+					sqlQueryObject.addInsertField("data_ultima_modifica", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 				
@@ -2188,6 +2251,11 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 						stm.setInt(indexSA++, CostantiDB.FALSE);
 					}
 
+					stm.setString(indexSA++, utenteRichiedenteSA);
+					stm.setTimestamp(indexSA++, dataCreazioneSA);
+					stm.setString(indexSA++, utenteUltimaModificaSA);
+					stm.setTimestamp(indexSA++, dataUltimaModificaSA);
+					
 					stm.executeUpdate();
 					stm.close();
 					n++;

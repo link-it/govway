@@ -7,6 +7,14 @@ UPDATE porte_applicative pa SET utente_richiedente=(select superuser from serviz
 UPDATE porte_applicative SET data_creazione=ora_registrazione;
 
 
+ALTER TABLE porte_applicative_sa ADD COLUMN utente_richiedente VARCHAR(255);
+ALTER TABLE porte_applicative_sa ADD COLUMN data_creazione TIMESTAMP;
+ALTER TABLE porte_applicative_sa ADD COLUMN utente_ultima_modifica VARCHAR(255);
+ALTER TABLE porte_applicative_sa ADD COLUMN data_ultima_modifica TIMESTAMP;
+UPDATE porte_applicative_sa pasa SET utente_richiedente=(select utente_richiedente from porte_applicative pa where pa.id=pasa.id_porta AND pa.utente_richiedente is not null);
+UPDATE porte_applicative_sa pasa SET data_creazione=(select data_creazione from porte_applicative pa where pa.id=pasa.id_porta AND pa.data_creazione is not null);
+
+
 ALTER TABLE porte_delegate ALTER COLUMN descrizione LONGVARCHAR;
 ALTER TABLE porte_delegate ADD COLUMN utente_richiedente VARCHAR(255);
 ALTER TABLE porte_delegate ADD COLUMN data_creazione TIMESTAMP;

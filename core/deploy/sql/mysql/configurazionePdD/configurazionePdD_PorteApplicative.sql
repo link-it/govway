@@ -164,6 +164,12 @@ CREATE TABLE porte_applicative_sa
 	connettore_coda VARCHAR(10) DEFAULT 'DEFAULT',
 	connettore_priorita VARCHAR(10) DEFAULT 'DEFAULT',
 	connettore_max_priorita INT DEFAULT 0,
+	utente_richiedente VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_creazione TIMESTAMP(3) DEFAULT 0,
+	utente_ultima_modifica VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ultima_modifica TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints

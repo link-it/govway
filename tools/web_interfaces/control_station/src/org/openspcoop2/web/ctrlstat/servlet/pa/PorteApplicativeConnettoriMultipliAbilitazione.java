@@ -39,6 +39,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -46,6 +47,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -266,6 +268,13 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 				}
 
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
+				
+				if(datiConnettore.getProprietaOggetto()==null) {
+					datiConnettore.setProprietaOggetto(new ProprietaOggetto());
+				}
+				datiConnettore.getProprietaOggetto().setUtenteUltimaModifica(userLogin);
+				datiConnettore.getProprietaOggetto().setDataUltimaModifica(DateManager.getDate());
+				
 				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 				
 				List<String> aliasJmx = porteApplicativeCore.getJmxPdDAliases();
@@ -294,7 +303,8 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 									porteApplicativeCore.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias), 
 									metodo, 
 									pa.getNome(),
-									nomeConnettore);
+									nomeConnettore,
+									userLogin);
 							if(stato==null) {
 								throw new ServletException("Aggiornamento fallito");
 							}

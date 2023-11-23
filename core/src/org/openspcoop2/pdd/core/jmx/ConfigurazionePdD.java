@@ -186,6 +186,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public static final String DISABILITA_CONNETTORE_MULTIPLO = "disableConnettoreMultiplo";
 	public static final String ABILITA_SCHEDULING_CONNETTORE_MULTIPLO = "enableSchedulingConnettoreMultiplo";
 	public static final String DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO = "disableSchedulingConnettoreMultiplo";
+	public static final String ABILITA_CONNETTORE_MULTIPLO_USERNAME = "enableConnettoreMultiploByUsername";
+	public static final String DISABILITA_CONNETTORE_MULTIPLO_USERNAME = "disableConnettoreMultiploByUsername";
+	public static final String ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_USERNAME = "enableSchedulingConnettoreMultiploByUsername";
+	public static final String DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_USERNAME = "disableSchedulingConnettoreMultiploByUsername";
 	public static final String ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME = "enableSchedulingConnettoreMultiploRuntimeRepository";
 	public static final String DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME = "disableSchedulingConnettoreMultiploRuntimeRepository";
 	public static final String RIPULISCI_RIFERIMENTI_CACHE_PREFIX = "ripulisciRiferimentiCache";
@@ -1232,6 +1236,50 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.updateStatoConnettoreMultiplo(param1, param2, false);
 		}
 		
+		if(actionName.equals(ABILITA_CONNETTORE_MULTIPLO_USERNAME)){
+			if(params.length != 3)
+				throw new MBeanException(new Exception("["+ABILITA_CONNETTORE_MULTIPLO_USERNAME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			String param3 = null;
+			if(params[2]!=null && !"".equals(params[2])){
+				param3 = (String)params[2];
+			}
+			
+			return this.updateStatoConnettoreMultiplo(param1, param2, param3, true);
+		}
+		
+		if(actionName.equals(DISABILITA_CONNETTORE_MULTIPLO_USERNAME)){
+			if(params.length != 3)
+				throw new MBeanException(new Exception("["+DISABILITA_CONNETTORE_MULTIPLO_USERNAME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			String param3 = null;
+			if(params[2]!=null && !"".equals(params[2])){
+				param3 = (String)params[2];
+			}
+			
+			return this.updateStatoConnettoreMultiplo(param1, param2, param3, false);
+		}
+		
 		if(actionName.equals(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO)){
 			if(params.length != 2)
 				throw new MBeanException(new Exception("["+ABILITA_SCHEDULING_CONNETTORE_MULTIPLO+"] Lunghezza parametri non corretta: "+params.length));
@@ -1264,6 +1312,50 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			}
 			
 			return this.updateSchedulingConnettoreMultiplo(param1, param2, false);
+		}
+		
+		if(actionName.equals(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_USERNAME)){
+			if(params.length != 3)
+				throw new MBeanException(new Exception("["+ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_USERNAME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			String param3 = null;
+			if(params[2]!=null && !"".equals(params[2])){
+				param3 = (String)params[2];
+			}
+			
+			return this.updateSchedulingConnettoreMultiplo(param1, param2, param3, true);
+		}
+		
+		if(actionName.equals(DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_USERNAME)){
+			if(params.length != 3)
+				throw new MBeanException(new Exception("["+DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_USERNAME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			String param3 = null;
+			if(params[2]!=null && !"".equals(params[2])){
+				param3 = (String)params[2];
+			}
+			
+			return this.updateSchedulingConnettoreMultiplo(param1, param2, param3, false);
 		}
 		
 		if(actionName.equals(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME)){
@@ -2151,7 +2243,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		
 		// MetaData per l'operazione enableConnettoreMultiplo
 		MBeanOperationInfo enableConnettoreMultiplo 
-		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo stato del connettore della porta identificato dai parametri",
+		= new MBeanOperationInfo(ABILITA_CONNETTORE_MULTIPLO,"Abilita lo stato del connettore della porta identificato dai parametri",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
 				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
@@ -2161,7 +2253,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		
 		// MetaData per l'operazione disableConnettoreMultiplo
 		MBeanOperationInfo disableConnettoreMultiplo
-		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo stato del connettore della porta identificato dai parametri",
+		= new MBeanOperationInfo(DISABILITA_CONNETTORE_MULTIPLO,"Disabilita lo stato del connettore della porta identificato dai parametri",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
 				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
@@ -2169,9 +2261,31 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione enableConnettoreMultiploByUsername
+		MBeanOperationInfo enableConnettoreMultiploByUsername 
+		= new MBeanOperationInfo(ABILITA_CONNETTORE_MULTIPLO_USERNAME,"Abilita lo stato del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+				new MBeanParameterInfo("username",String.class.getName(),"Utente che effettua la richiesta")
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+				
+		// MetaData per l'operazione disableConnettoreMultiploByUsername
+		MBeanOperationInfo disableConnettoreMultiploByUsername
+		= new MBeanOperationInfo(DISABILITA_CONNETTORE_MULTIPLO_USERNAME,"Disabilita lo stato del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+				new MBeanParameterInfo("username",String.class.getName(),"Utente che effettua la richiesta")
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// MetaData per l'operazione enableSchedulingConnettoreMultiplo
 		MBeanOperationInfo enableSchedulingConnettoreMultiplo 
-		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo scheduling del connettore della porta identificato dai parametri",
+		= new MBeanOperationInfo(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO,"Abilita lo scheduling del connettore della porta identificato dai parametri",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
 				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
@@ -2181,7 +2295,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		
 		// MetaData per l'operazione disableSchedulingConnettoreMultiplo
 		MBeanOperationInfo disableSchedulingConnettoreMultiplo
-		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo scheduling del connettore della porta identificato dai parametri",
+		= new MBeanOperationInfo(DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO,"Disabilita lo scheduling del connettore della porta identificato dai parametri",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
 				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
@@ -2189,9 +2303,31 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione enableSchedulingConnettoreMultiploByUsername
+		MBeanOperationInfo enableSchedulingConnettoreMultiploByUsername 
+		= new MBeanOperationInfo(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_USERNAME,"Abilita lo scheduling del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+				new MBeanParameterInfo("username",String.class.getName(),"Utente che effettua la richiesta")
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione disableSchedulingConnettoreMultiploByUsername
+		MBeanOperationInfo disableSchedulingConnettoreMultiploByUsername
+		= new MBeanOperationInfo(DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_USERNAME,"Disabilita lo scheduling del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+				new MBeanParameterInfo("username",String.class.getName(),"Utente che effettua la richiesta")
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// MetaData per l'operazione enableSchedulingConnettoreMultiploRuntimeRepository
 		MBeanOperationInfo enableSchedulingConnettoreMultiploRuntimeRepository
-		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo scheduling del connettore della porta identificato dai parametri nel RuntimeRepository",
+		= new MBeanOperationInfo(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME,"Abilita lo scheduling del connettore della porta identificato dai parametri nel RuntimeRepository",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
 				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
@@ -2201,7 +2337,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		
 		// MetaData per l'operazione disableSchedulingConnettoreMultiploRuntimeRepository
 		MBeanOperationInfo disableSchedulingConnettoreMultiploRuntimeRepository
-		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo scheduling del connettore della porta identificato dai parametri nel RuntimeRepository",
+		= new MBeanOperationInfo(DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME,"Disabilita lo scheduling del connettore della porta identificato dai parametri nel RuntimeRepository",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
 				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
@@ -2385,8 +2521,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(disablePortaApplicativa);
 		listOperation.add(enableConnettoreMultiplo);
 		listOperation.add(disableConnettoreMultiplo);
+		listOperation.add(enableConnettoreMultiploByUsername);
+		listOperation.add(disableConnettoreMultiploByUsername);
 		listOperation.add(enableSchedulingConnettoreMultiplo);
 		listOperation.add(disableSchedulingConnettoreMultiplo);
+		listOperation.add(enableSchedulingConnettoreMultiploByUsername);
+		listOperation.add(disableSchedulingConnettoreMultiploByUsername);
 		listOperation.add(enableSchedulingConnettoreMultiploRuntimeRepository);
 		listOperation.add(disableSchedulingConnettoreMultiploRuntimeRepository);
 		listOperation.add(ripulisciRiferimentiCacheAccordoCooperazione);
@@ -3088,10 +3228,19 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	}
 	
 	public String updateStatoConnettoreMultiplo(String nomePorta, String nomeConnettore, boolean enable) {
+		return updateStatoConnettoreMultiplo(nomePorta, nomeConnettore, null, enable);
+	}
+	public String updateStatoConnettoreMultiplo(String nomePorta, String nomeConnettore, String username, boolean enable) {
 		try{
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
 			idPA.setNome(nomePorta);
-			String nomeServizioApplicativo = this.configReader.updateStatoConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			String nomeServizioApplicativo = null;
+			if(username!=null) {
+				nomeServizioApplicativo = this.configReader.updateStatoConnettoreMultiplo(idPA, nomeConnettore, username, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			}
+			else {
+				nomeServizioApplicativo = this.configReader.updateStatoConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			}
 			if(nomeServizioApplicativo==null) {
 				throw new CoreException("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
 			}
@@ -3103,10 +3252,19 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	}
 	
 	public String updateSchedulingConnettoreMultiplo(String nomePorta, String nomeConnettore, boolean enable) {
+		return updateSchedulingConnettoreMultiplo(nomePorta, nomeConnettore, null, enable);
+	}
+	public String updateSchedulingConnettoreMultiplo(String nomePorta, String nomeConnettore, String username, boolean enable) {
 		try{
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
 			idPA.setNome(nomePorta);
-			String nomeServizioApplicativo = this.configReader.updateSchedulingConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			String nomeServizioApplicativo = null;
+			if(username!=null) {
+				nomeServizioApplicativo = this.configReader.updateSchedulingConnettoreMultiplo(idPA, nomeConnettore, username, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			}
+			else {
+				nomeServizioApplicativo = this.configReader.updateSchedulingConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			}
 			if(nomeServizioApplicativo==null) {
 				throw new CoreException("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
 			}

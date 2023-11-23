@@ -161,6 +161,10 @@ CREATE TABLE porte_applicative_sa
 	connettore_coda VARCHAR(10) DEFAULT 'DEFAULT',
 	connettore_priorita VARCHAR(10) DEFAULT 'DEFAULT',
 	connettore_max_priorita INT DEFAULT 0,
+	utente_richiedente VARCHAR(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints
