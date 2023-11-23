@@ -91,6 +91,8 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreads
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -4146,6 +4148,8 @@ public class ControlStationCore {
 						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
 						driver.createAttivazionePolicy(policy);
 						doSetDati = false;
+						
+						updateProprietaOggettoPorta(policy, superUser, driver);
 					}
 					
 					/***********************************************************
@@ -4771,6 +4775,8 @@ public class ControlStationCore {
 						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
 						driver.updateAttivazionePolicy(policy);
 						doSetDati = false;
+						
+						updateProprietaOggettoPorta(policy, superUser, driver);
 					}
 					
 					/***********************************************************
@@ -5312,6 +5318,8 @@ public class ControlStationCore {
 							}
 						}
 						doSetDati = false;
+						
+						updateProprietaOggettoPorta(policy, superUser, driver);
 					}
 					
 					/***********************************************************
@@ -5422,31 +5430,30 @@ public class ControlStationCore {
 			}
 
 			// Prima di committare provo a eseguire lo script se previsto
-			if(pddGestore!=null && this.isSinglePdD()==false){
+			if(pddGestore!=null && !this.isSinglePdD()){
 				String tipoPdd = pddGestore.getTipo();
-				if (tipoPdd != null && PddTipologia.OPERATIVO.toString().equals(tipoPdd)) {
-					if(this.getSincronizzazionePddEngineEnabled_scriptShell_Path()!=null){
-						if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione || 
-								CostantiControlStation.PERFORM_OPERATION_DELETE == pddGestoreTipoOperazione){
-							ScriptInvoker scriptInvoker = new ScriptInvoker(this.getSincronizzazionePddEngineEnabled_scriptShell_Path());
-							String tipoOperazione = null;
-							if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione){
-								tipoOperazione = CostantiControlStation.SCRIPT_PERFORM_OPERATION_CREATE;
-							}else{
-								tipoOperazione = CostantiControlStation.SCRIPT_PERFORM_OPERATION_DELETE;
-							}
-							String nomeCoda = this.getSincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd() + pddGestore.getNome();
-							scriptInvoker.run(tipoOperazione,nomeCoda,this.getSincronizzazionePddEngineEnabled_scriptShell_Args());
-							String msg = "Invocazione script ["+this.getSincronizzazionePddEngineEnabled_scriptShell_Path()+"] ha ritornato un codice di uscita ["+scriptInvoker.getExitValue()+
-									"] (Param1:"+tipoOperazione+" Param2:"+nomeCoda+" Param3:"+this.getSincronizzazionePddEngineEnabled_scriptShell_Args()+
-									").\nOutputStream: "+scriptInvoker.getOutputStream()+"\nErrorStream: "+scriptInvoker.getErrorStream();
-							if(scriptInvoker.getExitValue()!=0){
-								throw new Exception(msg);
-							}
-							else{
-								ControlStationCore.logDebug(msg);
-							}
-						}
+				if (tipoPdd != null && PddTipologia.OPERATIVO.toString().equals(tipoPdd) &&
+					(this.getSincronizzazionePddEngineEnabled_scriptShell_Path()!=null) &&
+					(CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione || 
+							CostantiControlStation.PERFORM_OPERATION_DELETE == pddGestoreTipoOperazione)
+					){
+					ScriptInvoker scriptInvoker = new ScriptInvoker(this.getSincronizzazionePddEngineEnabled_scriptShell_Path());
+					String tipoOperazione = null;
+					if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione){
+						tipoOperazione = CostantiControlStation.SCRIPT_PERFORM_OPERATION_CREATE;
+					}else{
+						tipoOperazione = CostantiControlStation.SCRIPT_PERFORM_OPERATION_DELETE;
+					}
+					String nomeCoda = this.getSincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd() + pddGestore.getNome();
+					scriptInvoker.run(tipoOperazione,nomeCoda,this.getSincronizzazionePddEngineEnabled_scriptShell_Args());
+					String msg = "Invocazione script ["+this.getSincronizzazionePddEngineEnabled_scriptShell_Path()+"] ha ritornato un codice di uscita ["+scriptInvoker.getExitValue()+
+							"] (Param1:"+tipoOperazione+" Param2:"+nomeCoda+" Param3:"+this.getSincronizzazionePddEngineEnabled_scriptShell_Args()+
+							").\nOutputStream: "+scriptInvoker.getOutputStream()+"\nErrorStream: "+scriptInvoker.getErrorStream();
+					if(scriptInvoker.getExitValue()!=0){
+						throw new ControlStationCoreException(msg);
+					}
+					else{
+						ControlStationCore.logDebug(msg);
 					}
 				}
 			}
@@ -5455,7 +5462,7 @@ public class ControlStationCore {
 			con.commit();
 			
 			// Devo Fermare e ricreare. Potrebbero essere stati modificati dei parametri
-			if(pddGestore!=null && this.isSinglePdD()==false){
+			if(pddGestore!=null && !this.isSinglePdD()){
 				if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione){
 					GestorePdDInitThread.addGestore(pddGestore);
 				}
@@ -8493,6 +8500,22 @@ public class ControlStationCore {
 			else {
 				p.setDataUltimaModifica(DateManager.getDate());
 				p.setUtenteUltimaModifica(superUser);
+			}
+		}
+	}
+	
+	private void updateProprietaOggettoPorta(AttivazionePolicy policy, String superUser, DriverControlStationDB driver) throws DriverConfigurazioneException {		
+		if(policy.getFiltro()!=null && policy.getFiltro().getEnabled() && policy.getFiltro().getRuoloPorta()!=null && 
+				policy.getFiltro().getNomePorta()!=null && StringUtils.isNotEmpty(policy.getFiltro().getNomePorta())) {
+			if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.APPLICATIVA.equals(policy.getFiltro().getRuoloPorta())) {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(policy.getFiltro().getNomePorta());
+				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPA, superUser);
+			}
+			else if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.DELEGATA.equals(policy.getFiltro().getRuoloPorta())) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(policy.getFiltro().getNomePorta());
+				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPD, superUser);
 			}
 		}
 	}
