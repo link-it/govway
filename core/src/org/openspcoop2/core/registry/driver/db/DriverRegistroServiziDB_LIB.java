@@ -409,10 +409,10 @@ public class DriverRegistroServiziDB_LIB {
 				if(gruppo.getOraRegistrazione()!=null)
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
 				if(utenteRichiedente!=null) {
-					sqlQueryObject.addInsertField("utente_richiedente", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
 				}
 				if(dataCreazione!=null) {
-					sqlQueryObject.addInsertField("data_creazione", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
 				}
 
 				updateQuery = sqlQueryObject.createSQLInsert();
@@ -501,10 +501,10 @@ public class DriverRegistroServiziDB_LIB {
 				if(gruppo.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
 				if(utenteUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
 				}
 				if(dataUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 				}
 				
 				sqlQueryObject.addWhereCondition("id=?");
@@ -649,10 +649,10 @@ public class DriverRegistroServiziDB_LIB {
 				if(ruolo.getOraRegistrazione()!=null)
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
 				if(utenteRichiedente!=null) {
-					sqlQueryObject.addInsertField("utente_richiedente", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
 				}
 				if(dataCreazione!=null) {
-					sqlQueryObject.addInsertField("data_creazione", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
 				}
 
 				updateQuery = sqlQueryObject.createSQLInsert();
@@ -745,10 +745,10 @@ public class DriverRegistroServiziDB_LIB {
 				if(ruolo.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
 				if(utenteUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
 				}
 				if(dataUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 				}
 				
 				sqlQueryObject.addWhereCondition("id=?");
@@ -894,10 +894,10 @@ public class DriverRegistroServiziDB_LIB {
 				if(scope.getOraRegistrazione()!=null)
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
 				if(utenteRichiedente!=null) {
-					sqlQueryObject.addInsertField("utente_richiedente", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
 				}
 				if(dataCreazione!=null) {
-					sqlQueryObject.addInsertField("data_creazione", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
 				}
 
 				updateQuery = sqlQueryObject.createSQLInsert();
@@ -990,10 +990,10 @@ public class DriverRegistroServiziDB_LIB {
 				if(scope.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
 				if(utenteUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
 				}
 				if(dataUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 				}
 				
 				sqlQueryObject.addWhereCondition("id=?");

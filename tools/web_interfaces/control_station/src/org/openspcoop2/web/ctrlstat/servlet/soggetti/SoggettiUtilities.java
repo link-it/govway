@@ -165,18 +165,18 @@ public class SoggettiUtilities {
 	public static boolean soggettiCheckData(SoggettiCore soggettiCore, SoggettiHelper soggettiHelper,
 			String newLine,
 			String oldnomeprov, String oldtipoprov, boolean privato,
-			TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pd_url_prefix_rewriter, String pa_url_prefix_rewriter,
+			TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pdUrlPrefixRewriter, String paUrlPrefixRewriter,
 			Soggetto soggettoOld, boolean isSupportatoAutenticazioneSoggetti, String descrizione) throws Exception {
 		
 		// Controlli sui campi immessi
-		boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, id, tipoprov, nomeprov, codiceIpa, pd_url_prefix_rewriter, pa_url_prefix_rewriter,
+		boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, id, tipoprov, nomeprov, codiceIpa, pdUrlPrefixRewriter, paUrlPrefixRewriter,
 				soggettoOld, isSupportatoAutenticazioneSoggetti, descrizione);
 
 		if(isOk){
 			// check change tipo/nome con gestione workflow abilitata
 			if(soggettiCore.isRegistroServiziLocale() && soggettiHelper.isShowGestioneWorkflowStatoDocumenti()){
-				if( (oldnomeprov.equals(nomeprov)==false) || (oldtipoprov.equals(tipoprov)==false) ){
-					HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
+				if( (!oldnomeprov.equals(nomeprov)) || (!oldtipoprov.equals(tipoprov)) ){
+					HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<>();
 					if (soggettiCore.isSoggettoInUsoInPackageFinali(soggettoOld, whereIsInUso)) {
 						Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
 						String tipoNome = soggettoOld.getTipo() + "/" + soggettoOld.getNome();
@@ -213,42 +213,41 @@ public class SoggettiUtilities {
 			}
 		}
 
-		if(isOk){
+		if(isOk &&
 			// check visibilita
-			if (soggettiCore.isRegistroServiziLocale() && soggettiCore.isShowFlagPrivato() && privato) {
-				HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
-				if (soggettiCore.isSoggettoInUsoInPackagePubblici(soggettoOld, whereIsInUso)) {
-					Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
-					String tipoNome = soggettoOld.getTipo() + "/" + soggettoOld.getNome();
-					StringBuilder bf = new StringBuilder();
-					bf.append("Visibilita' del soggetto ");
-					bf.append(tipoNome);
-					bf.append(" non impostabile a privata poichè :"+newLine);
-					for (ErrorsHandlerCostant key : keys) {
-						String msg = whereIsInUso.get(key);
+			soggettiCore.isRegistroServiziLocale() && soggettiCore.isShowFlagPrivato() && privato) {
+			HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<>();
+			if (soggettiCore.isSoggettoInUsoInPackagePubblici(soggettoOld, whereIsInUso)) {
+				Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
+				String tipoNome = soggettoOld.getTipo() + "/" + soggettoOld.getNome();
+				StringBuilder bf = new StringBuilder();
+				bf.append("Visibilita' del soggetto ");
+				bf.append(tipoNome);
+				bf.append(" non impostabile a privata poichè :"+newLine);
+				for (ErrorsHandlerCostant key : keys) {
+					String msg = whereIsInUso.get(key);
 
-						if (ErrorsHandlerCostant.IN_USO_IN_SERVIZI.toString().equals(key.toString())) {
-							bf.append("- erogatore di Servizi con visibilita' pubblica: " + msg + newLine);
-						}
-						else if (ErrorsHandlerCostant.POSSIEDE_FRUITORI.toString().equals(key.toString())) {
-							bf.append("- fruitore di servizi con visibilita' pubblica: " + msg + newLine);
-						}
-						else if (ErrorsHandlerCostant.IS_REFERENTE.toString().equals(key.toString())) {
-							bf.append("- referente di un accordo di servizio con visibilita' pubblica: " + msg + newLine);
-						}
-						else if (ErrorsHandlerCostant.IS_REFERENTE_COOPERAZIONE.toString().equals(key.toString())) {
-							bf.append("- referente di un accordo di cooperazione con visibilita' pubblica: " + msg + newLine);
-						}
-						else if (ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE.toString().equals(key.toString())) {
-							bf.append("- soggetto partecipante di un accordo di cooperazione con visibilita' pubblica: " + msg + newLine);
-						}
+					if (ErrorsHandlerCostant.IN_USO_IN_SERVIZI.toString().equals(key.toString())) {
+						bf.append("- erogatore di Servizi con visibilita' pubblica: " + msg + newLine);
+					}
+					else if (ErrorsHandlerCostant.POSSIEDE_FRUITORI.toString().equals(key.toString())) {
+						bf.append("- fruitore di servizi con visibilita' pubblica: " + msg + newLine);
+					}
+					else if (ErrorsHandlerCostant.IS_REFERENTE.toString().equals(key.toString())) {
+						bf.append("- referente di un accordo di servizio con visibilita' pubblica: " + msg + newLine);
+					}
+					else if (ErrorsHandlerCostant.IS_REFERENTE_COOPERAZIONE.toString().equals(key.toString())) {
+						bf.append("- referente di un accordo di cooperazione con visibilita' pubblica: " + msg + newLine);
+					}
+					else if (ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE.toString().equals(key.toString())) {
+						bf.append("- soggetto partecipante di un accordo di cooperazione con visibilita' pubblica: " + msg + newLine);
+					}
 
-					}// chiudo for
+				}// chiudo for
 
-					bf.append("<br>");
-					isOk = false;
-					soggettiHelper.getPd().setMessage(bf.toString(),Costanti.MESSAGE_TYPE_INFO);
-				} 
+				bf.append("<br>");
+				isOk = false;
+				soggettiHelper.getPd().setMessage(bf.toString(),Costanti.MESSAGE_TYPE_INFO);
 			}
 		}
 		

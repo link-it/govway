@@ -190,7 +190,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			// Proprieta Button
 			if(this.existsProprietaOggetto(soggetto.getProprietaOggetto(), soggetto.getDescrizione())) {
-				this.addComandoProprietaOggettoButton(labelSoggetto,labelSoggetto, InUsoType.SOGGETTO);
+				this.addComandoProprietaOggettoButton(labelSoggetto,id, InUsoType.SOGGETTO);
 			}
 		}
 		
@@ -793,13 +793,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(this.soggettiCore.getSoggettiNomeMaxLength()!=null && this.soggettiCore.getSoggettiNomeMaxLength()>0) {
 				maxLength = this.soggettiCore.getSoggettiNomeMaxLength();
 			}
-			if(this.checkLength(nomeprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME, -1, maxLength)==false) {
+			if(!this.checkLength(nomeprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME, -1, maxLength)) {
 				return false;
-			}
-			if(descrizione!=null && !"".equals(descrizione)) {
-				if(this.checkLength255(descrizione, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DESCRIZIONE)==false) {
-					return false;
-				}
 			}
 
 			
@@ -1620,7 +1615,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 	
 	private List<DataElement> creaEntryCustom(boolean multiTenant, boolean showProtocolli,
 			Iterator<org.openspcoop2.core.registry.Soggetto> it)
-			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, 
+			throws DriverRegistroServiziException, 
 			DriverControlStationException, DriverControlStationNotFound, DriverConfigurazioneException {
 		org.openspcoop2.core.registry.Soggetto elem = it.next();
 
@@ -1732,9 +1727,10 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 		
 		// Proprieta Button
-		if(this.existsProprietaOggetto(elem.getProprietaOggetto(), elem.getDescrizione())) {
-			this.addProprietaOggettoButton(e, labelSoggetto, elem.getId()+"", InUsoType.SOGGETTO);
-		}
+		/**if(this.existsProprietaOggetto(elem.getProprietaOggetto(), elem.getDescrizione())) {
+		 * la lista non riporta le proprietà. Ma esistono e poi sarà la servlet a gestirlo
+		 */
+		this.addProprietaOggettoButton(e, labelSoggetto, elem.getId()+"", InUsoType.SOGGETTO);
 		
 		return e;
 	}

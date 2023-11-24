@@ -564,10 +564,10 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addSelectField("options");
 			sqlQueryObject.addSelectField("canale");
-			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE,"utente_richiedente");
-			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE,"data_creazione");
-			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE,"utente_ultima_modifica");
-			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE,"data_ultima_modifica");
+			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE,CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE,CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_RICHIEDENTE);
+			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE,CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE,CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_CREAZIONE);
+			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE,CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA,CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_ULTIMA_MODIFICA);
+			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE,CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA,CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_ULTIMA_MODIFICA);
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.driver.tabellaSoggetti+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -984,7 +984,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 				pd.setCanale(canale);
 				
 				// Proprieta Oggetto
-				pd.setProprietaOggetto(this.utilsDriver.readProprietaOggetto(rs));
+				pd.setProprietaOggetto(this.utilsDriver.readProprietaOggetto(rs, true));
 				
 				rs.close();
 				stm.close();
@@ -2462,10 +2462,10 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-			sqlQueryObject.addSelectField("utente_richiedente");
-			sqlQueryObject.addSelectField("data_creazione");
-			sqlQueryObject.addSelectField("utente_ultima_modifica");
-			sqlQueryObject.addSelectField("data_ultima_modifica");
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
 			sqlQueryObject.addWhereCondition("nome_porta = ?");
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
@@ -2477,7 +2477,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 
 			ProprietaOggetto proprieta = null;
 			if (rs.next()) {			
-				proprieta = this.utilsDriver.readProprietaOggetto(rs);
+				proprieta = this.utilsDriver.readProprietaOggetto(rs,false);
 			}
 			else{
 				throw new DriverConfigurazioneNotFound("PortaDelegata ["+idPD.getNome()+"] non esistente");

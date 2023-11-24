@@ -120,7 +120,7 @@ public class DriverRegistroServiziDB_gruppiDriver {
 				}
 
 				// Proprieta Oggetto
-				gruppo.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				gruppo.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs,false));
 				
 			} else {
 				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getGruppo] rs.next non ha restituito valori con la seguente interrogazione :\n" + 

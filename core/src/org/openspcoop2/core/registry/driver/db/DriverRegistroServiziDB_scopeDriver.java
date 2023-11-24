@@ -129,7 +129,7 @@ public class DriverRegistroServiziDB_scopeDriver {
 				}
 				
 				// Proprieta Oggetto
-				scope.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				scope.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs,false));
 
 			} else {
 				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getScope] rs.next non ha restituito valori con la seguente interrogazione :\n" + 

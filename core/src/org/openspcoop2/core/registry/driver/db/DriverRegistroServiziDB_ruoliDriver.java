@@ -154,7 +154,7 @@ public class DriverRegistroServiziDB_ruoliDriver {
 				}
 				
 				// Proprieta Oggetto
-				ruolo.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				ruolo.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs,false));
 
 			} else {
 				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getRuolo] rs.next non ha restituito valori con la seguente interrogazione :\n" + 

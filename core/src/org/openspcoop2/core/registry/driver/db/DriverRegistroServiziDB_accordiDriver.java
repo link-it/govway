@@ -302,7 +302,7 @@ public class DriverRegistroServiziDB_accordiDriver {
 				accordoServizio.setCanale(canale);
 				
 				// Proprieta Oggetto
-				accordoServizio.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				accordoServizio.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs,false));
 				
 				rs.close();
 				stm.close();

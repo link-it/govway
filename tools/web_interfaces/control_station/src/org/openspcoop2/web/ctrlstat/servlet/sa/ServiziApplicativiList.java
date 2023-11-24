@@ -75,7 +75,6 @@ public final class ServiziApplicativiList extends Action {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
 			String resetCacheFromLista = saHelper.getParameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA);
 			String verificaCertificatiFromLista = saHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA);
@@ -84,6 +83,7 @@ public final class ServiziApplicativiList extends Action {
 			String idsogg = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			long soggLong = -1;
 			// Posso arrivare a questa pagina anche dal menu' senza specificare il soggetto
+			boolean useIdSogg;
 			if(idsogg != null && !arrivoDaLista){
 				soggLong = Long.parseLong(idsogg);
 				useIdSogg = true;
@@ -104,7 +104,7 @@ public final class ServiziApplicativiList extends Action {
 			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 						
-			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			List<ServizioApplicativo> lista = null;
 			int idLista = -1;

@@ -185,7 +185,6 @@ public class RuoliHelper extends ConsoleHelper{
 		try{
 
 			String nome = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
-			String descrizione = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
 			String nomeEsterno = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
 			
 			// Campi obbligatori
@@ -210,10 +209,6 @@ public class RuoliHelper extends ConsoleHelper{
 				return false;
 			}
 			
-			if(descrizione!=null && !"".equals(descrizione) &&
-				!this.checkLength255(descrizione, RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE)) {
-				return false;
-			}
 			if(nomeEsterno!=null && !"".equals(nomeEsterno) &&
 				!this.checkLength255(nomeEsterno, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO)) {
 				return false;
@@ -541,10 +536,11 @@ public class RuoliHelper extends ConsoleHelper{
 		}
 		
 		// Proprieta Button
-		if(this.existsProprietaOggetto(ruolo.getProprietaOggetto(), ruolo.getDescrizione())) {
-			this.addProprietaOggettoButton(e, ruolo.getNome(), ruolo.getNome(), InUsoType.RUOLO);
-		}
-		
+		/**if(this.existsProprietaOggetto(ruolo.getProprietaOggetto(), ruolo.getDescrizione())) {
+		 * ** la lista non riporta le proprietà. Ma esistono e poi sarà la servlet a gestirlo
+		 */
+		this.addProprietaOggettoButton(e, ruolo.getNome(), ruolo.getNome(), InUsoType.RUOLO);
+				
 		return e;
 	}
 	

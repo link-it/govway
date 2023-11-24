@@ -143,7 +143,6 @@ public class GruppiHelper extends ConsoleHelper{
 		try{
 
 			String nome = this.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_NOME);
-			String descrizione = this.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_DESCRIZIONE);
 			String serviceBinding = this.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_SERVICE_BINDING);
 			
 			// Campi obbligatori
@@ -166,12 +165,6 @@ public class GruppiHelper extends ConsoleHelper{
 			}
 			if(this.checkLength255(nome, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME)==false) {
 				return false;
-			}
-			
-			if(descrizione!=null && !"".equals(descrizione)) {
-				if(this.checkLength255(descrizione, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_DESCRIZIONE)==false) {
-					return false;
-				}
 			}
 
 			// Se tipoOp = add, controllo che il registro non sia gia' stato
@@ -404,9 +397,10 @@ public class GruppiHelper extends ConsoleHelper{
 		this.addInUsoButton(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
 		
 		// Proprieta Button
-		if(this.existsProprietaOggetto(gruppo.getProprietaOggetto(), gruppo.getDescrizione())) {
-			this.addProprietaOggettoButton(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
-		}
+		/**if(this.existsProprietaOggetto(gruppo.getProprietaOggetto(), gruppo.getDescrizione())) {
+		 * ** la lista non riporta le proprietà. Ma esistono e poi sarà la servlet a gestirlo
+		 */
+		this.addProprietaOggettoButton(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
 		
 		return e;
 	}

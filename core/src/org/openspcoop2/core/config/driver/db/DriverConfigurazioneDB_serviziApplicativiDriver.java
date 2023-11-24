@@ -986,7 +986,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 				}	
 				
 				// Proprieta Oggetto
-				sa.setProprietaOggetto(this.utilsDriver.readProprietaOggetto(rs));
+				sa.setProprietaOggetto(this.utilsDriver.readProprietaOggetto(rs,false));
 				
 				rs.close();
 				stm.close();
@@ -2863,10 +2863,10 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObject.addSelectField("utente_richiedente");
-			sqlQueryObject.addSelectField("data_creazione");
-			sqlQueryObject.addSelectField("utente_ultima_modifica");
-			sqlQueryObject.addSelectField("data_ultima_modifica");
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
 			sqlQueryObject.addWhereCondition("nome = ?");
 			sqlQueryObject.addWhereCondition("id_soggetto = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -2880,7 +2880,7 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 
 			ProprietaOggetto proprieta = null;
 			if (rs.next()) {			
-				proprieta = this.utilsDriver.readProprietaOggetto(rs);
+				proprieta = this.utilsDriver.readProprietaOggetto(rs,false);
 			}
 			else{
 				throw new DriverConfigurazioneNotFound("ServizioApplicativo ["+idServizioApplicativo.getNome()+"] non esistente");
@@ -2935,8 +2935,8 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 			
 			ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 			sqlQueryObjectUpdate.addUpdateTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObjectUpdate.addUpdateField("utente_ultima_modifica", "?");
-			sqlQueryObjectUpdate.addUpdateField("data_ultima_modifica", "?");
+			sqlQueryObjectUpdate.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
+			sqlQueryObjectUpdate.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 			sqlQueryObjectUpdate.addWhereCondition("nome = ?");
 			sqlQueryObjectUpdate.addWhereCondition("id_soggetto = ?");
 			sqlQueryObjectUpdate.setANDLogicOperator(true);

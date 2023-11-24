@@ -1077,7 +1077,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				accordoServizioParteSpecifica.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
 				
 				// Proprieta Oggetto
-				accordoServizioParteSpecifica.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				accordoServizioParteSpecifica.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs,false));
 				
 			}else{
 				throw new DriverRegistroServiziNotFound("Servizio ["+tipoServizio+"/"+nomeServizio+":"+versioneServizio+"] erogato dal soggetto ["+tipoSoggEr+"/"+nomeSoggEr+"] non esiste");
@@ -1126,7 +1126,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				fruitore.setDescrizione(rs.getString("descrizione"));
 				
 				// Proprieta Oggetto
-				fruitore.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				fruitore.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs,false));
 				
 				// recupero informazioni del soggetto fruitore
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -1829,8 +1829,8 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			
 			ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 			sqlQueryObjectUpdate.addUpdateTable(tabella);
-			sqlQueryObjectUpdate.addUpdateField("utente_ultima_modifica", "?");
-			sqlQueryObjectUpdate.addUpdateField("data_ultima_modifica", "?");
+			sqlQueryObjectUpdate.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
+			sqlQueryObjectUpdate.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 			sqlQueryObjectUpdate.addWhereCondition("id=?");
 			String updateString = sqlQueryObjectUpdate.createSQLUpdate();
 			stm = con.prepareStatement(updateString);

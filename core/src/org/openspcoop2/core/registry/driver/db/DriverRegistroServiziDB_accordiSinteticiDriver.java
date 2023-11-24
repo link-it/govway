@@ -155,10 +155,10 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"privato");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"ora_registrazione");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"id_referente");
-			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"utente_richiedente");
-			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"data_creazione");
-			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"utente_ultima_modifica");
-			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"data_ultima_modifica");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI,"tipo_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI,"nome_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"versione");
@@ -263,7 +263,7 @@ public class DriverRegistroServiziDB_accordiSinteticiDriver {
 				accordoServizio.setCanale(canale);
 				
 				// Proprieta Oggetto
-				accordoServizio.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggettoSintetico(rs));
+				accordoServizio.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggettoSintetico(rs, false));
 				
 				rs.close();
 				stm.close();

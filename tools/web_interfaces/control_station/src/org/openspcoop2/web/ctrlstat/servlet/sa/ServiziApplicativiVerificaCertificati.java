@@ -756,6 +756,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					
 					String oldNome = sa.getNome();
 					String nomeParameter = oldNome;
+					String descrizione = sa.getDescrizione();
 					String tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(tipoProtocollo, idSoggettoProprietario.getTipo() , idSoggettoProprietario.getNome());
 					
 					InvocazionePortaGestioneErrore ipge = null;
@@ -1357,7 +1358,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
 							registryReader, configRegistryReader, idServizioApplicativoTmp); 
 					
-					dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
+					dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, descrizione, tipoENomeSoggetto, fault, 
 							TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
 							utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 							sbustamentoInformazioniProtocolloRisposta,

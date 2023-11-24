@@ -286,7 +286,7 @@ public class DriverRegistroServiziDB_soggettiDriver {
 				soggetto.setConnettore(connettore);
 
 				// Proprieta Oggetto
-				soggetto.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs));
+				soggetto.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs,false));
 				
 				rs.close();
 				stm.close();

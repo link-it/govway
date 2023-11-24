@@ -779,14 +779,14 @@ public class DriverRegistroServiziDB_utilsDriver {
 		}
 	}
 	
-	public static ProprietaOggetto readProprietaOggetto(ResultSet rs) throws SQLException {
+	public static ProprietaOggetto readProprietaOggetto(ResultSet rs, boolean useAlias) throws SQLException {
 		ProprietaOggetto p = null;
 		// Proprieta Oggetto
 		if(rs!=null) {
-			String utenteRichiedente = rs.getString("utente_richiedente");
-			java.util.Date dataCreazione  = rs.getTimestamp("data_creazione");
-			String utenteUltimaModifica = rs.getString("utente_ultima_modifica");
-			java.util.Date dataUltimaModifica  = rs.getTimestamp("data_ultima_modifica");
+			String utenteRichiedente = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_RICHIEDENTE : CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			java.util.Date dataCreazione  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_CREAZIONE : CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			String utenteUltimaModifica = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			java.util.Date dataUltimaModifica  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
 			if(utenteRichiedente!=null || dataCreazione!=null || utenteUltimaModifica!=null || dataUltimaModifica!=null) {
 				p = new ProprietaOggetto();
 				p.setUtenteRichiedente(utenteRichiedente);
@@ -798,14 +798,14 @@ public class DriverRegistroServiziDB_utilsDriver {
 		return p;
 	}
 	
-	public static ProprietaOggettoSintetico readProprietaOggettoSintetico(ResultSet rs) throws SQLException {
+	public static ProprietaOggettoSintetico readProprietaOggettoSintetico(ResultSet rs, boolean useAlias) throws SQLException {
 		ProprietaOggettoSintetico p = null;
 		// Proprieta Oggetto
 		if(rs!=null) {
-			String utenteRichiedente = rs.getString("utente_richiedente");
-			java.util.Date dataCreazione  = rs.getTimestamp("data_creazione");
-			String utenteUltimaModifica = rs.getString("utente_ultima_modifica");
-			java.util.Date dataUltimaModifica  = rs.getTimestamp("data_ultima_modifica");
+			String utenteRichiedente = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_RICHIEDENTE : CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			java.util.Date dataCreazione  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_CREAZIONE : CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			String utenteUltimaModifica = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			java.util.Date dataUltimaModifica  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
 			if(utenteRichiedente!=null || dataCreazione!=null || utenteUltimaModifica!=null || dataUltimaModifica!=null) {
 				p = new ProprietaOggettoSintetico();
 				p.setUtenteRichiedente(utenteRichiedente);

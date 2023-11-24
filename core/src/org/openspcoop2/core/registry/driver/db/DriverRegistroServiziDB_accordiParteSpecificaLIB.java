@@ -225,10 +225,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
 				sqlQueryObject.addInsertField("message_type", "?");
 				if(utenteRichiedente!=null) {
-					sqlQueryObject.addInsertField("utente_richiedente", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
 				}
 				if(dataCreazione!=null) {
-					sqlQueryObject.addInsertField("data_creazione", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
 				}
 				
 				updateQuery = sqlQueryObject.createSQLInsert();
@@ -450,10 +450,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
 				sqlQueryObject.addUpdateField("message_type", "?");
 				if(utenteUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
 				}
 				if(dataUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 				}
 				sqlQueryObject.addWhereCondition("id=?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
@@ -790,10 +790,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
 				sqlQueryObject.addInsertField("descrizione", "?");
 				if(utenteRichiedente!=null) {
-					sqlQueryObject.addInsertField("utente_richiedente", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
 				}
 				if(dataCreazione!=null) {
-					sqlQueryObject.addInsertField("data_creazione", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
 				}
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -891,10 +891,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
 				sqlQueryObject.addUpdateField("descrizione", "?");
 				if(utenteUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
 				}
 				if(dataUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 				}
 				sqlQueryObject.addWhereCondition("id_servizio=?");
 				sqlQueryObject.addWhereCondition("id_soggetto=?");

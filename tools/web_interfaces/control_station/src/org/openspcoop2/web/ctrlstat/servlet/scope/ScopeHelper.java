@@ -175,7 +175,6 @@ public class ScopeHelper extends ConsoleHelper{
 		try{
 
 			String nome = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME);
-			String descrizione = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
 			String nomeEsterno = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
 			
 			// Campi obbligatori
@@ -200,10 +199,6 @@ public class ScopeHelper extends ConsoleHelper{
 				return false;
 			}
 			
-			if(descrizione!=null && !"".equals(descrizione) &&
-				!this.checkLength255(descrizione, ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE)) {
-				return false;
-			}
 			if(nomeEsterno!=null && !"".equals(nomeEsterno) &&
 				!this.checkLength255(nomeEsterno, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME_ESTERNO)) {
 				return false;
@@ -521,10 +516,11 @@ public class ScopeHelper extends ConsoleHelper{
 		}
 		
 		// Proprieta Button
-		if(this.existsProprietaOggetto(scope.getProprietaOggetto(), scope.getDescrizione())) {
-			this.addProprietaOggettoButton(e, scope.getNome(), scope.getNome(), InUsoType.SCOPE);
-		}
-
+		/**if(this.existsProprietaOggetto(scope.getProprietaOggetto(), scope.getDescrizione())) {
+		 * ** la lista non riporta le proprietà. Ma esistono e poi sarà la servlet a gestirlo
+		 */
+		this.addProprietaOggettoButton(e, scope.getNome(), scope.getNome(), InUsoType.SCOPE);
+		
 		return e;
 	}
 }

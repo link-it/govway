@@ -120,6 +120,8 @@ public class ExporterUtils {
 	private ScopeCore scopeCore;
 	private ConfigurazioneCore confCore;
 	
+	private static final String FORMATO_DIVERSO_ATTESO = "Formato diverso da quello atteso";
+	
 	public ExporterUtils(ArchiviCore archiviCore) throws Exception{
 		this.archiviCore = archiviCore;
 		this.soggettiCore = new SoggettiCore(archiviCore);
@@ -134,7 +136,7 @@ public class ExporterUtils {
 
 	public List<ExportMode> getExportModesCompatibleWithAllProtocol(List<String> protocolli,ArchiveType archiveType) throws ProtocolException{
 		
-		List<ExportMode> exportModes = new ArrayList<ExportMode>();
+		List<ExportMode> exportModes = new ArrayList<>();
 		
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocolName = protocolli.get(i);
@@ -152,15 +154,15 @@ public class ExporterUtils {
 					IProtocolFactory<?> pfCheck = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolCheck);
 					IArchive archiveEngineCheck = pfCheck.createArchive();
 					List<ExportMode> exportModesByProtocolCheck = archiveEngineCheck.getExportModes(archiveType);
-					if(exportModesByProtocolCheck.contains(exportMode)==false){
+					if(!exportModesByProtocolCheck.contains(exportMode)){
 						found = false;
 						break;
 					}
 				}
 				
-				if(found){
-					if(exportModes.contains(exportMode)==false)
-						exportModes.add(exportMode);
+				if(found &&
+					!exportModes.contains(exportMode)) {
+					exportModes.add(exportMode);
 				}
 				
 			}
@@ -171,15 +173,15 @@ public class ExporterUtils {
 	
 	public Map<ExportMode,String> getExportModesWithProtocol(List<String> protocolli,ArchiveType archiveType) throws ProtocolException{
 
-		Map<ExportMode,String> exportModes = new HashMap<ExportMode,String>();
+		Map<ExportMode,String> exportModes = new HashMap<>();
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocolName = protocolli.get(i);
-			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocolName)==false){
+			if(!ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocolName)){
 				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
 				IArchive archiveEngine = pf.createArchive();
 				List<ExportMode> exportModesByProtocol = archiveEngine.getExportModes(archiveType);
 				for (ExportMode exp : exportModesByProtocol) {
-					if(exportModes.containsKey(exp)==false){
+					if(!exportModes.containsKey(exp)){
 						exportModes.put(exp,protocolName);
 					}
 				}
@@ -195,8 +197,8 @@ public class ExporterUtils {
 		return this.getExportModesWithProtocol(protocolli, archiveType).size()>0;
 	}
 
-	public List<?> getIdsSoggetti(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDSoggetto> idsSoggetti = new ArrayList<IDSoggetto>();
+	public List<IDSoggetto> getIdsSoggetti(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<IDSoggetto> idsSoggetti = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idLong = Long.parseLong(id);
@@ -205,8 +207,8 @@ public class ExporterUtils {
 		return idsSoggetti;
 	}
 	
-	public List<?> getIdsServiziApplicativi(String ids) throws DriverConfigurazioneNotFound, DriverConfigurazioneException{
-		List<IDServizioApplicativo> idsSA = new ArrayList<IDServizioApplicativo>();
+	public List<IDServizioApplicativo> getIdsServiziApplicativi(String ids) throws DriverConfigurazioneNotFound, DriverConfigurazioneException{
+		List<IDServizioApplicativo> idsSA = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idLong = Long.parseLong(id);
@@ -219,11 +221,11 @@ public class ExporterUtils {
 		return idsSA;
 	}
 	
-	public List<?> getIdsAccordiServizioComposti(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+	public List<IDAccordo> getIdsAccordiServizioComposti(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
 		return this.getIdsAccordiServizioParteComune(ids);
 	}
-	public List<?> getIdsAccordiServizioParteComune(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDAccordo> idsAccordi = new ArrayList<IDAccordo>();
+	public List<IDAccordo> getIdsAccordiServizioParteComune(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<IDAccordo> idsAccordi = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idLong = Long.parseLong(id);
@@ -232,16 +234,16 @@ public class ExporterUtils {
 		return idsAccordi;
 	}
 	
-	public List<?> getIdsAccordiServizioParteComuneRisorsa(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDResource> idsAccordi = new ArrayList<IDResource>();
+	public List<IDResource> getIdsAccordiServizioParteComuneRisorsa(String ids) throws DriverRegistroServiziException{
+		List<IDResource> idsAccordi = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			if(!id.contains("@")) {
-				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+				throw new DriverRegistroServiziException(FORMATO_DIVERSO_ATTESO);
 			}
 			String [] tmp = id.split("@");
 			if(tmp==null || tmp.length!=2) {
-				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+				throw new DriverRegistroServiziException(FORMATO_DIVERSO_ATTESO);
 			}
 			IDResource idR = new IDResource();
 			idR.setNome(tmp[0]);
@@ -251,16 +253,16 @@ public class ExporterUtils {
 		return idsAccordi;
 	}
 	
-	public List<?> getIdsAccordiServizioParteComunePortType(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDPortType> idsAccordi = new ArrayList<IDPortType>();
+	public List<IDPortType> getIdsAccordiServizioParteComunePortType(String ids) throws DriverRegistroServiziException{
+		List<IDPortType> idsAccordi = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			if(!id.contains("@")) {
-				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+				throw new DriverRegistroServiziException(FORMATO_DIVERSO_ATTESO);
 			}
 			String [] tmp = id.split("@");
 			if(tmp==null || tmp.length!=2) {
-				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+				throw new DriverRegistroServiziException(FORMATO_DIVERSO_ATTESO);
 			}
 			IDPortType idPT = new IDPortType();
 			idPT.setNome(tmp[0]);
@@ -270,16 +272,16 @@ public class ExporterUtils {
 		return idsAccordi;
 	}
 	
-	public List<?> getIdsAccordiServizioParteComuneOperazione(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDPortTypeAzione> idsAccordi = new ArrayList<IDPortTypeAzione>();
+	public List<IDPortTypeAzione> getIdsAccordiServizioParteComuneOperazione(String ids) throws DriverRegistroServiziException{
+		List<IDPortTypeAzione> idsAccordi = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			if(!id.contains("@")) {
-				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+				throw new DriverRegistroServiziException(FORMATO_DIVERSO_ATTESO);
 			}
 			String [] tmp = id.split("@");
 			if(tmp==null || tmp.length!=3) {
-				throw new DriverRegistroServiziException("Formato diverso da quello atteso");
+				throw new DriverRegistroServiziException(FORMATO_DIVERSO_ATTESO);
 			}
 			IDPortTypeAzione idOperazione = new IDPortTypeAzione();
 			idOperazione.setNome(tmp[0]);
@@ -292,14 +294,14 @@ public class ExporterUtils {
 		return idsAccordi;
 	}
 	
-	public List<?> getIdsAccordiServizioParteSpecifica(String ids, boolean isFruizione) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDServizio> idsAccordi = new ArrayList<IDServizio>();
-		List<IDFruizione> fruizioni = new ArrayList<IDFruizione>();
+	public List<?> getIdsAccordiServizioParteSpecifica(String ids, boolean isFruizione) throws DriverRegistroServiziException{
+		List<IDServizio> idsAccordi = new ArrayList<>();
+		List<IDFruizione> fruizioni = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			try {
 				if(isFruizione) {
-					if(id.contains("@")==false) {
+					if(!id.contains("@")) {
 						throw new DriverRegistroServiziException("atteso @");
 					}
 					String idServ = id.split("@")[0];
@@ -331,8 +333,8 @@ public class ExporterUtils {
 		}
 	}
 	
-	public List<?> getIdsAccordiCooperazione(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDAccordoCooperazione> idsAccordi = new ArrayList<IDAccordoCooperazione>();
+	public List<IDAccordoCooperazione> getIdsAccordiCooperazione(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<IDAccordoCooperazione> idsAccordi = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idLong = Long.parseLong(id);
@@ -341,8 +343,8 @@ public class ExporterUtils {
 		return idsAccordi;
 	}
 	
-	public List<?> getIdsGruppi(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDGruppo> idsGruppi = new ArrayList<IDGruppo>();
+	public List<IDGruppo> getIdsGruppi(String ids) {
+		List<IDGruppo> idsGruppi = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			IDGruppo idGruppo = new IDGruppo(id);
@@ -351,8 +353,8 @@ public class ExporterUtils {
 		return idsGruppi;
 	}
 		
-	public List<?> getIdsRuoli(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDRuolo> idsRuoli = new ArrayList<IDRuolo>();
+	public List<IDRuolo> getIdsRuoli(String ids) {
+		List<IDRuolo> idsRuoli = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			IDRuolo idRuolo = new IDRuolo(id);
@@ -361,8 +363,8 @@ public class ExporterUtils {
 		return idsRuoli;
 	}
 	
-	public List<?> getIdsScope(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDScope> idsScope = new ArrayList<IDScope>();
+	public List<IDScope> getIdsScope(String ids) {
+		List<IDScope> idsScope = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			IDScope idScope = new IDScope(id);
@@ -371,8 +373,8 @@ public class ExporterUtils {
 		return idsScope;
 	}
 	
-	public List<?> getIdsCanali(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<CanaleConfigurazione> idsCanali = new ArrayList<CanaleConfigurazione>();
+	public List<CanaleConfigurazione> getIdsCanali(String ids) {
+		List<CanaleConfigurazione> idsCanali = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			CanaleConfigurazione canale = new CanaleConfigurazione();
@@ -382,11 +384,11 @@ public class ExporterUtils {
 		return idsCanali;
 	}
 	
-	public List<?> getIdsAttributeAuthority(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public List<IDGenericProperties> getIdsAttributeAuthority(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return getIdsTokenPolicy(ids); // è uguale
 	}
-	public List<?> getIdsTokenPolicy(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		List<IDGenericProperties> idsTokenPolicy = new ArrayList<IDGenericProperties>();
+	public List<IDGenericProperties> getIdsTokenPolicy(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<IDGenericProperties> idsTokenPolicy = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idGenericProperties = Long.parseLong(id);
@@ -400,8 +402,8 @@ public class ExporterUtils {
 		return idsTokenPolicy;
 	}
 	
-	public List<?> getIdsControlloTrafficoConfigPolicy(String ids) throws DriverControlStationNotFound, DriverControlStationException{
-		List<IdPolicy> idsRateLimitingPolicy = new ArrayList<IdPolicy>();
+	public List<IdPolicy> getIdsControlloTrafficoConfigPolicy(String ids) throws DriverControlStationNotFound, DriverControlStationException{
+		List<IdPolicy> idsRateLimitingPolicy = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idPolicy = Long.parseLong(id);
@@ -414,8 +416,8 @@ public class ExporterUtils {
 		return idsRateLimitingPolicy;
 	}
 	
-	public List<?> getIdsControlloTrafficoActivePolicy(String ids) throws DriverControlStationNotFound, DriverControlStationException{
-		List<IdActivePolicy> idsRateLimitingPolicy = new ArrayList<IdActivePolicy>();
+	public List<IdActivePolicy> getIdsControlloTrafficoActivePolicy(String ids) throws DriverControlStationNotFound, DriverControlStationException{
+		List<IdActivePolicy> idsRateLimitingPolicy = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idPolicy = Long.parseLong(id);
@@ -438,8 +440,8 @@ public class ExporterUtils {
 		return idsRateLimitingPolicy;
 	}
 	
-	public List<?> getIdsAllarmi(String ids) throws DriverControlStationNotFound, DriverControlStationException{
-		List<IdAllarme> idsAllarmi = new ArrayList<IdAllarme>();
+	public List<IdAllarme> getIdsAllarmi(String ids) throws DriverControlStationException{
+		List<IdAllarme> idsAllarmi = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idAllarmeLong = Long.parseLong(id);
@@ -459,8 +461,8 @@ public class ExporterUtils {
 		return idsAllarmi;
 	}
 	
-	public List<?> getIdsPluginClassi(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		List<IdPlugin> idsPlugins = new ArrayList<IdPlugin>();
+	public List<IdPlugin> getIdsPluginClassi(String ids) throws DriverConfigurazioneException{
+		List<IdPlugin> idsPlugins = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idPluginLong = Long.parseLong(id);
@@ -476,7 +478,7 @@ public class ExporterUtils {
 		return idsPlugins;
 	}
 	
-	public List<?> getIdsPluginArchivi(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public List<String> getIdsPluginArchivi(String ids) {
 		List<String> idsPlugins = new ArrayList<>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
@@ -485,7 +487,7 @@ public class ExporterUtils {
 		return idsPlugins;
 	}
 	
-	public List<?> getIdsUrlInvocazioneRegole(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public List<String> getIdsUrlInvocazioneRegole(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
 		ConfigurazioneUrlInvocazione urlInvocazione = this.confCore.getConfigurazioneGenerale().getUrlInvocazione();
 		
@@ -519,7 +521,7 @@ public class ExporterUtils {
 			while(archive.getSoggetti().size()>0) {
 				archive.getSoggetti().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveSoggetto archiveFiltrato : listFiltrata) {
 					archive.getSoggetti().add(archiveFiltrato);		
 				}
@@ -538,7 +540,7 @@ public class ExporterUtils {
 			while(archive.getServiziApplicativi().size()>0) {
 				archive.getServiziApplicativi().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveServizioApplicativo archiveFiltrato : listFiltrata) {
 					archive.getServiziApplicativi().add(archiveFiltrato);		
 				}
@@ -557,7 +559,7 @@ public class ExporterUtils {
 			while(archive.getPorteDelegate().size()>0) {
 				archive.getPorteDelegate().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchivePortaDelegata archiveFiltrato : listFiltrata) {
 					archive.getPorteDelegate().add(archiveFiltrato);		
 				}
@@ -576,7 +578,7 @@ public class ExporterUtils {
 			while(archive.getPorteApplicative().size()>0) {
 				archive.getPorteApplicative().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchivePortaApplicativa archiveFiltrato : listFiltrata) {
 					archive.getPorteApplicative().add(archiveFiltrato);		
 				}
@@ -595,7 +597,7 @@ public class ExporterUtils {
 			while(archive.getAccordiCooperazione().size()>0) {
 				archive.getAccordiCooperazione().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAccordoCooperazione archiveFiltrato : listFiltrata) {
 					archive.getAccordiCooperazione().add(archiveFiltrato);		
 				}
@@ -614,7 +616,7 @@ public class ExporterUtils {
 			while(archive.getAccordiServizioParteComune().size()>0) {
 				archive.getAccordiServizioParteComune().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAccordoServizioParteComune archiveFiltrato : listFiltrata) {
 					archive.getAccordiServizioParteComune().add(archiveFiltrato);		
 				}
@@ -633,7 +635,7 @@ public class ExporterUtils {
 			while(archive.getAccordiServizioComposto().size()>0) {
 				archive.getAccordiServizioComposto().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAccordoServizioComposto archiveFiltrato : listFiltrata) {
 					archive.getAccordiServizioComposto().add(archiveFiltrato);		
 				}
@@ -652,7 +654,7 @@ public class ExporterUtils {
 			while(archive.getAccordiServizioParteSpecifica().size()>0) {
 				archive.getAccordiServizioParteSpecifica().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAccordoServizioParteSpecifica archiveFiltrato : listFiltrata) {
 					archive.getAccordiServizioParteSpecifica().add(archiveFiltrato);		
 				}
@@ -671,7 +673,7 @@ public class ExporterUtils {
 			while(archive.getAccordiFruitori().size()>0) {
 				archive.getAccordiFruitori().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveFruitore archiveFiltrato : listFiltrata) {
 					archive.getAccordiFruitori().add(archiveFiltrato);		
 				}
@@ -685,20 +687,17 @@ public class ExporterUtils {
 				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
 				boolean filtra = false;
 				if(archivePolicy.getPolicy().getFiltro()!=null) {
-					if(archivePolicy.getPolicy().getFiltro().getTipoErogatore()!=null) {
-						if(tipiSoggetti.contains(archivePolicy.getPolicy().getFiltro().getTipoErogatore())==false) {
-							filtra = true;
-						}
+					if(archivePolicy.getPolicy().getFiltro().getTipoErogatore()!=null &&
+						!tipiSoggetti.contains(archivePolicy.getPolicy().getFiltro().getTipoErogatore())) {
+						filtra = true;
 					}
-					if(archivePolicy.getPolicy().getFiltro().getTipoFruitore()!=null) {
-						if(tipiSoggetti.contains(archivePolicy.getPolicy().getFiltro().getTipoFruitore())==false) {
-							filtra = true;
-						}
+					if(archivePolicy.getPolicy().getFiltro().getTipoFruitore()!=null &&
+						!tipiSoggetti.contains(archivePolicy.getPolicy().getFiltro().getTipoFruitore())) {
+						filtra = true;
 					}
-					if(archivePolicy.getPolicy().getFiltro().getTipoServizio()!=null) {
-						if(tipiServizi.contains(archivePolicy.getPolicy().getFiltro().getTipoServizio())==false) {
-							filtra = true;
-						}
+					if(archivePolicy.getPolicy().getFiltro().getTipoServizio()!=null &&
+						!tipiServizi.contains(archivePolicy.getPolicy().getFiltro().getTipoServizio())) {
+						filtra = true;
 					}
 				}
 				if(!filtra) {
@@ -708,7 +707,7 @@ public class ExporterUtils {
 			while(archive.getControlloTraffico_activePolicies().size()>0) {
 				archive.getControlloTraffico_activePolicies().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveActivePolicy archiveFiltrato : listFiltrata) {
 					archive.getControlloTraffico_activePolicies().add(archiveFiltrato);		
 				}
@@ -722,20 +721,17 @@ public class ExporterUtils {
 				ArchiveAllarme archiveAllarme = archive.getAllarmi().get(i);
 				boolean filtra = false;
 				if(archiveAllarme.getAllarme().getFiltro()!=null) {
-					if(archiveAllarme.getAllarme().getFiltro().getTipoErogatore()!=null) {
-						if(tipiSoggetti.contains(archiveAllarme.getAllarme().getFiltro().getTipoErogatore())==false) {
-							filtra = true;
-						}
+					if(archiveAllarme.getAllarme().getFiltro().getTipoErogatore()!=null &&
+						!tipiSoggetti.contains(archiveAllarme.getAllarme().getFiltro().getTipoErogatore())) {
+						filtra = true;
 					}
-					if(archiveAllarme.getAllarme().getFiltro().getTipoFruitore()!=null) {
-						if(tipiSoggetti.contains(archiveAllarme.getAllarme().getFiltro().getTipoFruitore())==false) {
-							filtra = true;
-						}
+					if(archiveAllarme.getAllarme().getFiltro().getTipoFruitore()!=null &&
+						!tipiSoggetti.contains(archiveAllarme.getAllarme().getFiltro().getTipoFruitore())) {
+						filtra = true;
 					}
-					if(archiveAllarme.getAllarme().getFiltro().getTipoServizio()!=null) {
-						if(tipiServizi.contains(archiveAllarme.getAllarme().getFiltro().getTipoServizio())==false) {
-							filtra = true;
-						}
+					if(archiveAllarme.getAllarme().getFiltro().getTipoServizio()!=null &&
+						!tipiServizi.contains(archiveAllarme.getAllarme().getFiltro().getTipoServizio())) {
+						filtra = true;
 					}
 				}
 				if(!filtra) {
@@ -745,7 +741,7 @@ public class ExporterUtils {
 			while(archive.getAllarmi().size()>0) {
 				archive.getAllarmi().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAllarme archiveFiltrato : listFiltrata) {
 					archive.getAllarmi().add(archiveFiltrato);		
 				}
@@ -774,7 +770,7 @@ public class ExporterUtils {
 						idSoggettoSelezionato.equals(archive.getServiziApplicativi().get(i).getIdSoggettoProprietario())) {
 					
 					IDServizioApplicativo idSA = archive.getServiziApplicativi().get(i).getIdServizioApplicativo();
-					if(idServiziApplicativiCoinvolti.contains(idSA)==false) {
+					if(!idServiziApplicativiCoinvolti.contains(idSA)) {
 						idServiziApplicativiCoinvolti.add(idSA);
 					}
 				}
@@ -789,10 +785,10 @@ public class ExporterUtils {
 					
 					IDServizio idServizio = archive.getPorteDelegate().get(i).getIdPortaDelegata().getIdentificativiFruizione().getIdServizio();
 					IDSoggetto idSoggettoErogatore = idServizio.getSoggettoErogatore();
-					if(idSoggettiCoinvolti.contains(idSoggettoErogatore)==false) {
+					if(!idSoggettiCoinvolti.contains(idSoggettoErogatore)) {
 						idSoggettiCoinvolti.add(idSoggettoErogatore);
 					}
-					if(idServiziCoinvolti.contains(idServizio)==false) {
+					if(!idServiziCoinvolti.contains(idServizio)) {
 						idServiziCoinvolti.add(idServizio);
 					}
 				}
@@ -810,7 +806,7 @@ public class ExporterUtils {
 						for (int j = 0; j < pa.getSoggetti().sizeSoggettoList(); j++) {
 							PortaApplicativaAutorizzazioneSoggetto authSoggetto = pa.getSoggetti().getSoggetto(j);
 							IDSoggetto idSoggettoAutorizzato = new IDSoggetto(authSoggetto.getTipo(), authSoggetto.getNome());
-							if(idSoggettiCoinvolti.contains(idSoggettoAutorizzato)==false) {
+							if(!idSoggettiCoinvolti.contains(idSoggettoAutorizzato)) {
 								idSoggettiCoinvolti.add(idSoggettoAutorizzato);
 							}
 						}
@@ -819,13 +815,13 @@ public class ExporterUtils {
 						for (int j = 0; j < pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList(); j++) {
 							PortaApplicativaAutorizzazioneServizioApplicativo authSA = pa.getServiziApplicativiAutorizzati().getServizioApplicativo(j);
 							IDSoggetto idSoggettoProprietarioSAAutorizzato = new IDSoggetto(authSA.getTipoSoggettoProprietario(), authSA.getNomeSoggettoProprietario());
-							if(idSoggettiCoinvolti.contains(idSoggettoProprietarioSAAutorizzato)==false) {
+							if(!idSoggettiCoinvolti.contains(idSoggettoProprietarioSAAutorizzato)) {
 								idSoggettiCoinvolti.add(idSoggettoProprietarioSAAutorizzato);
 							}
 							IDServizioApplicativo idSAAutorizzato = new IDServizioApplicativo();
 							idSAAutorizzato.setIdSoggettoProprietario(idSoggettoProprietarioSAAutorizzato);
 							idSAAutorizzato.setNome(authSA.getNome());
-							if(idServiziApplicativiCoinvolti.contains(idSAAutorizzato)==false) {
+							if(!idServiziApplicativiCoinvolti.contains(idSAAutorizzato)) {
 								idServiziApplicativiCoinvolti.add(idSAAutorizzato);
 							}
 						}
@@ -841,12 +837,12 @@ public class ExporterUtils {
 						idSoggettoSelezionato.equals(archive.getAccordiCooperazione().get(i).getIdSoggettoReferente())) {
 					
 					IDAccordoCooperazione idAC = archive.getAccordiCooperazione().get(i).getIdAccordoCooperazione();
-					if(idAccordiCooperazioneCoinvolti.contains(idAC)==false) {
+					if(!idAccordiCooperazioneCoinvolti.contains(idAC)) {
 						idAccordiCooperazioneCoinvolti.add(idAC);
 					} 
 					
 					IDSoggetto idSoggettoReferente = archive.getAccordiCooperazione().get(i).getIdSoggettoReferente();
-					if(idSoggettiCoinvolti.contains(idSoggettoReferente)==false) {
+					if(!idSoggettiCoinvolti.contains(idSoggettoReferente)) {
 						idSoggettiCoinvolti.add(idSoggettoReferente);
 					}
 				}
@@ -867,12 +863,12 @@ public class ExporterUtils {
 								idSoggettoSelezionato.equals(archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente())) {
 							
 							IDAccordo idAccordo = archive.getAccordiServizioParteComune().get(i).getIdAccordoServizioParteComune();
-							if(idAccordiCoinvolti.contains(idAccordo)==false) {
+							if(!idAccordiCoinvolti.contains(idAccordo)) {
 								idAccordiCoinvolti.add(idAccordo);
 							}
 							
 							IDSoggetto idSoggettoReferente = archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente();
-							if(idSoggettiCoinvolti.contains(idSoggettoReferente)==false) {
+							if(!idSoggettiCoinvolti.contains(idSoggettoReferente)) {
 								idSoggettiCoinvolti.add(idSoggettoReferente);
 							}
 						}
@@ -890,12 +886,12 @@ public class ExporterUtils {
 						idSoggettoSelezionato.equals(archive.getAccordiServizioComposto().get(i).getIdSoggettoReferente())) {
 					
 					IDAccordo idAccordo = archive.getAccordiServizioComposto().get(i).getIdAccordoServizioParteComune();
-					if(idAccordiCoinvolti.contains(idAccordo)==false) {
+					if(!idAccordiCoinvolti.contains(idAccordo)) {
 						idAccordiCoinvolti.add(idAccordo);
 					}
 					
 					IDSoggetto idSoggettoReferente = archive.getAccordiServizioComposto().get(i).getIdSoggettoReferente();
-					if(idSoggettiCoinvolti.contains(idSoggettoReferente)==false) {
+					if(!idSoggettiCoinvolti.contains(idSoggettoReferente)) {
 						idSoggettiCoinvolti.add(idSoggettoReferente);
 					}
 					
@@ -907,7 +903,7 @@ public class ExporterUtils {
 								try {
 									IDServizio idServizioComponente = IDServizioFactory.getInstance().getIDServizioFromValues(componente.getTipo(), componente.getNome(), 
 											componente.getTipoSoggetto(), componente.getNomeSoggetto(), componente.getVersione());
-									if(idServiziCoinvolti.contains(idServizioComponente)==false) {
+									if(!idServiziCoinvolti.contains(idServizioComponente)) {
 										idServiziCoinvolti.add(idServizioComponente);
 									}
 								}catch(Exception e) {
@@ -919,7 +915,7 @@ public class ExporterUtils {
 							String uriAC = apc.getServizioComposto().getAccordoCooperazione();
 							try {
 								IDAccordoCooperazione idAC = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromUri(uriAC);
-								if(idAccordiCooperazioneCoinvolti.contains(idAC)==false) {
+								if(!idAccordiCooperazioneCoinvolti.contains(idAC)) {
 									idAccordiCooperazioneCoinvolti.add(idAC);
 								} 
 							}catch(Exception e) {
@@ -938,14 +934,14 @@ public class ExporterUtils {
 						idSoggettoSelezionato.equals(archive.getAccordiServizioParteSpecifica().get(i).getIdSoggettoErogatore())) {
 					
 					IDServizio idServizio =  archive.getAccordiServizioParteSpecifica().get(i).getIdAccordoServizioParteSpecifica();
-					if(idServiziCoinvolti.contains(idServizio)==false) {
+					if(!idServiziCoinvolti.contains(idServizio)) {
 						idServiziCoinvolti.add(idServizio);
 					}
 					
 					String uriAccordoServizioParteComune = archive.getAccordiServizioParteSpecifica().get(i).getAccordoServizioParteSpecifica().getAccordoServizioParteComune();
 					try {
 						IDAccordo idApc = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordoServizioParteComune);
-						if(idAccordiCoinvolti.contains(idApc)==false) {
+						if(!idAccordiCoinvolti.contains(idApc)) {
 							idAccordiCoinvolti.add(idApc);
 						}
 					}catch(Exception e) {
@@ -963,10 +959,10 @@ public class ExporterUtils {
 					
 					IDServizio idServizio =  archive.getAccordiFruitori().get(i).getIdAccordoServizioParteSpecifica();
 					IDSoggetto idSoggettoErogatore = idServizio.getSoggettoErogatore();
-					if(idSoggettiCoinvolti.contains(idSoggettoErogatore)==false) {
+					if(!idSoggettiCoinvolti.contains(idSoggettoErogatore)) {
 						idSoggettiCoinvolti.add(idSoggettoErogatore);
 					}
-					if(idServiziCoinvolti.contains(idServizio)==false) {
+					if(!idServiziCoinvolti.contains(idServizio)) {
 						idServiziCoinvolti.add(idServizio);
 					}
 				}
@@ -992,7 +988,7 @@ public class ExporterUtils {
 			while(archive.getSoggetti().size()>0) {
 				archive.getSoggetti().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveSoggetto archiveFiltrato : listFiltrata) {
 					archive.getSoggetti().add(archiveFiltrato);		
 				}
@@ -1011,7 +1007,7 @@ public class ExporterUtils {
 			while(archive.getServiziApplicativi().size()>0) {
 				archive.getServiziApplicativi().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveServizioApplicativo archiveFiltrato : listFiltrata) {
 					archive.getServiziApplicativi().add(archiveFiltrato);		
 				}
@@ -1030,7 +1026,7 @@ public class ExporterUtils {
 			while(archive.getPorteDelegate().size()>0) {
 				archive.getPorteDelegate().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchivePortaDelegata archiveFiltrato : listFiltrata) {
 					archive.getPorteDelegate().add(archiveFiltrato);		
 				}
@@ -1049,7 +1045,7 @@ public class ExporterUtils {
 			while(archive.getPorteApplicative().size()>0) {
 				archive.getPorteApplicative().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchivePortaApplicativa archiveFiltrato : listFiltrata) {
 					archive.getPorteApplicative().add(archiveFiltrato);		
 				}
@@ -1068,7 +1064,7 @@ public class ExporterUtils {
 			while(archive.getAccordiCooperazione().size()>0) {
 				archive.getAccordiCooperazione().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAccordoCooperazione archiveFiltrato : listFiltrata) {
 					archive.getAccordiCooperazione().add(archiveFiltrato);		
 				}
@@ -1087,7 +1083,7 @@ public class ExporterUtils {
 			while(archive.getAccordiServizioParteComune().size()>0) {
 				archive.getAccordiServizioParteComune().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAccordoServizioParteComune archiveFiltrato : listFiltrata) {
 					archive.getAccordiServizioParteComune().add(archiveFiltrato);		
 				}
@@ -1106,7 +1102,7 @@ public class ExporterUtils {
 			while(archive.getAccordiServizioComposto().size()>0) {
 				archive.getAccordiServizioComposto().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAccordoServizioComposto archiveFiltrato : listFiltrata) {
 					archive.getAccordiServizioComposto().add(archiveFiltrato);		
 				}
@@ -1125,7 +1121,7 @@ public class ExporterUtils {
 			while(archive.getAccordiServizioParteSpecifica().size()>0) {
 				archive.getAccordiServizioParteSpecifica().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAccordoServizioParteSpecifica archiveFiltrato : listFiltrata) {
 					archive.getAccordiServizioParteSpecifica().add(archiveFiltrato);		
 				}
@@ -1145,7 +1141,7 @@ public class ExporterUtils {
 			while(archive.getAccordiFruitori().size()>0) {
 				archive.getAccordiFruitori().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveFruitore archiveFiltrato : listFiltrata) {
 					archive.getAccordiFruitori().add(archiveFiltrato);		
 				}
@@ -1163,13 +1159,13 @@ public class ExporterUtils {
 					IDSoggetto idSoggettoErogatore = null;
 					if(archivePolicy.getPolicy().getFiltro().getTipoErogatore()!=null && archivePolicy.getPolicy().getFiltro().getNomeErogatore()!=null) {
 						idSoggettoErogatore = new IDSoggetto(archivePolicy.getPolicy().getFiltro().getTipoErogatore(), archivePolicy.getPolicy().getFiltro().getNomeErogatore());
-						if(idSoggettiCoinvolti.contains(idSoggettoErogatore)==false) {
+						if(!idSoggettiCoinvolti.contains(idSoggettoErogatore)) {
 							filtra = true;
 						}
 					}
 					if(archivePolicy.getPolicy().getFiltro().getTipoFruitore()!=null && archivePolicy.getPolicy().getFiltro().getNomeFruitore()!=null) {
 						IDSoggetto idSoggettoFruitore = new IDSoggetto(archivePolicy.getPolicy().getFiltro().getTipoFruitore(), archivePolicy.getPolicy().getFiltro().getNomeFruitore());
-						if(idSoggettiCoinvolti.contains(idSoggettoFruitore)==false) {
+						if(!idSoggettiCoinvolti.contains(idSoggettoFruitore)) {
 							filtra = true;
 						}
 					}
@@ -1182,7 +1178,7 @@ public class ExporterUtils {
 									archivePolicy.getPolicy().getFiltro().getNomeServizio(), 
 									idSoggettoErogatore, 
 									archivePolicy.getPolicy().getFiltro().getVersioneServizio());
-							if(idServiziCoinvolti.contains(idServizio)==false) {
+							if(!idServiziCoinvolti.contains(idServizio)) {
 								filtra = true;
 							}
 						}catch(Exception e) {
@@ -1197,7 +1193,7 @@ public class ExporterUtils {
 			while(archive.getControlloTraffico_activePolicies().size()>0) {
 				archive.getControlloTraffico_activePolicies().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveActivePolicy archiveFiltrato : listFiltrata) {
 					archive.getControlloTraffico_activePolicies().add(archiveFiltrato);		
 				}
@@ -1215,13 +1211,13 @@ public class ExporterUtils {
 					IDSoggetto idSoggettoErogatore = null;
 					if(archiveAllarme.getAllarme().getFiltro().getTipoErogatore()!=null && archiveAllarme.getAllarme().getFiltro().getNomeErogatore()!=null) {
 						idSoggettoErogatore = new IDSoggetto(archiveAllarme.getAllarme().getFiltro().getTipoErogatore(), archiveAllarme.getAllarme().getFiltro().getNomeErogatore());
-						if(idSoggettiCoinvolti.contains(idSoggettoErogatore)==false) {
+						if(!idSoggettiCoinvolti.contains(idSoggettoErogatore)) {
 							filtra = true;
 						}
 					}
 					if(archiveAllarme.getAllarme().getFiltro().getTipoFruitore()!=null && archiveAllarme.getAllarme().getFiltro().getNomeFruitore()!=null) {
 						IDSoggetto idSoggettoFruitore = new IDSoggetto(archiveAllarme.getAllarme().getFiltro().getTipoFruitore(), archiveAllarme.getAllarme().getFiltro().getNomeFruitore());
-						if(idSoggettiCoinvolti.contains(idSoggettoFruitore)==false) {
+						if(!idSoggettiCoinvolti.contains(idSoggettoFruitore)) {
 							filtra = true;
 						}
 					}
@@ -1234,7 +1230,7 @@ public class ExporterUtils {
 									archiveAllarme.getAllarme().getFiltro().getNomeServizio(), 
 									idSoggettoErogatore, 
 									archiveAllarme.getAllarme().getFiltro().getVersioneServizio());
-							if(idServiziCoinvolti.contains(idServizio)==false) {
+							if(!idServiziCoinvolti.contains(idServizio)) {
 								filtra = true;
 							}
 						}catch(Exception e) {
@@ -1249,7 +1245,7 @@ public class ExporterUtils {
 			while(archive.getAllarmi().size()>0) {
 				archive.getAllarmi().remove(0);
 			}
-			if(listFiltrata.size()>0) {
+			if(!listFiltrata.isEmpty()) {
 				for (ArchiveAllarme archiveFiltrato : listFiltrata) {
 					archive.getAllarmi().add(archiveFiltrato);		
 				}

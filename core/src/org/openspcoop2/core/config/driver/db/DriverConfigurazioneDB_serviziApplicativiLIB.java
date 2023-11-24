@@ -190,10 +190,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				sqlQueryObject.addInsertField("tipologia_fruizione", "?");
 				sqlQueryObject.addInsertField("tipologia_erogazione", "?");
 				if(utenteRichiedente!=null) {
-					sqlQueryObject.addInsertField("utente_richiedente", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
 				}
 				if(dataCreazione!=null) {
-					sqlQueryObject.addInsertField("data_creazione", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
 				}
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
@@ -638,10 +638,10 @@ public class DriverConfigurazioneDB_serviziApplicativiLIB {
 				sqlQueryObject.addUpdateField("tipologia_fruizione", "?");
 				sqlQueryObject.addUpdateField("tipologia_erogazione", "?");
 				if(utenteUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
 				}
 				if(dataUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 				}
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQueryObject.addWhereCondition("nome=?");

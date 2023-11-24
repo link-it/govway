@@ -202,6 +202,7 @@ public final class ServiziApplicativiChange extends Action {
 			protocolPropertiesSet = saHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			
 			String nomeParameter = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
+			String descrizione = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_DESCRIZIONE);
 			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			String dominio = saHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);			
 			String fault = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
@@ -1056,6 +1057,10 @@ public final class ServiziApplicativiChange extends Action {
 					nomeParameter = oldNome;
 				}
 				
+				if(descrizione==null) {
+					descrizione = sa.getDescrizione();
+				}
+				
 				if (fault == null &&
 					ipge != null &&
 					ipge.getFault()!=null) {
@@ -1540,7 +1545,7 @@ public final class ServiziApplicativiChange extends Action {
 				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
 						registryReader, configRegistryReader, oldIdServizioApplicativo); 
 				
-				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
+				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, descrizione, tipoENomeSoggetto, fault, 
 						TipoOperazione.CHANGE, idServizioApplicativoLong, contaListe,null,null,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
@@ -1650,7 +1655,7 @@ public final class ServiziApplicativiChange extends Action {
 				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
 						registryReader, configRegistryReader, oldIdServizioApplicativo); 
 				
-				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
+				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, descrizione, tipoENomeSoggetto, fault, 
 						TipoOperazione.CHANGE, idServizioApplicativoLong, contaListe,null,null,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
@@ -1703,6 +1708,8 @@ public final class ServiziApplicativiChange extends Action {
 				sa.setOldIDServizioApplicativoForUpdate(oldIdServizioApplicativo);
 				sa.setNome(nomeParameter);
 			}
+			
+			sa.setDescrizione(descrizione);
 			
 			if(isApplicativiServerEnabled && tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
 				tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;

@@ -489,10 +489,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				// canale
 				sqlQueryObject.addInsertField("canale", "?");
 				if(utenteRichiedente!=null) {
-					sqlQueryObject.addInsertField("utente_richiedente", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
 				}
 				if(dataCreazione!=null) {
-					sqlQueryObject.addInsertField("data_creazione", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
 				}
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
@@ -899,8 +899,8 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				sqlQueryObject.addInsertField("connettore_coda", "?");
 				sqlQueryObject.addInsertField("connettore_priorita", "?");
 				sqlQueryObject.addInsertField("connettore_max_priorita", "?");
-				sqlQueryObject.addInsertField("utente_richiedente", "?");
-				sqlQueryObject.addInsertField("data_creazione", "?");
+				sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
+				sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 
@@ -1651,10 +1651,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				sqlQueryObject.addUpdateField("canale", "?");
 				
 				if(utenteUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("utente_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
 				}
 				if(dataUltimaModifica!=null) {
-					sqlQueryObject.addUpdateField("data_ultima_modifica", "?");
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 				}
 				
 				sqlQueryObject.addWhereCondition("nome_porta=?");
@@ -2209,10 +2209,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 					sqlQueryObject.addInsertField("connettore_coda", "?");
 					sqlQueryObject.addInsertField("connettore_priorita", "?");
 					sqlQueryObject.addInsertField("connettore_max_priorita", "?");
-					sqlQueryObject.addInsertField("utente_richiedente", "?");
-					sqlQueryObject.addInsertField("data_creazione", "?");
-					sqlQueryObject.addInsertField("utente_ultima_modifica", "?");
-					sqlQueryObject.addInsertField("data_ultima_modifica", "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
 				

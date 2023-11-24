@@ -189,6 +189,7 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			
 			String nome = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
+			String descrizione = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_DESCRIZIONE);
 			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			String dominio = saHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);			
 			String fault = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
@@ -871,7 +872,7 @@ public final class ServiziApplicativiAdd extends Action {
 				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
 						registryReader, configRegistryReader, idSA); 
 				
-				dati = saHelper.addServizioApplicativoToDati(dati, null, (nome != null ? nome : ""), null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP), 
+				dati = saHelper.addServizioApplicativoToDati(dati, null, (nome != null ? nome : ""), descrizione, null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP), 
 						TipoOperazione.ADD, 0, contaListe,soggettiList,soggettiListLabel,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,null,null,null,null,sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD,null,tipoProtocollo,
@@ -985,7 +986,7 @@ public final class ServiziApplicativiAdd extends Action {
 				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConfiguration, consoleOperationType, saHelper, protocolProperties, 
 						registryReader, configRegistryReader, idSA); 
 				
-				dati = saHelper.addServizioApplicativoToDati(dati, null, (nome != null ? nome : ""), null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP),
+				dati = saHelper.addServizioApplicativoToDati(dati, null, (nome != null ? nome : ""), descrizione, null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP),
 						TipoOperazione.ADD, 0, contaListe,soggettiList,soggettiListLabel,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA, tipoauthSA,null,null,null,null,sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD,null,tipoProtocollo,
@@ -1110,6 +1111,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 				sa = new ServizioApplicativo();
 				sa.setNome(nome);
+				sa.setDescrizione(descrizione);
 
 				if(ruoloFruitore==null){
 					ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
