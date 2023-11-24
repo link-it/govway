@@ -46,8 +46,6 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="specifica-semiformale" type="documento"/>
 			<!-- Protocol Properties -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
-			<!-- Proprieta Oggetto -->
-			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -439,10 +437,6 @@
 	<xsd:element name="porta-dominio" type="porta-dominio"/>
 	<xsd:complexType name="porta-dominio">
 		
-		<xsd:sequence>
-			<!-- Proprieta Oggetto -->
-			<xsd:element maxOccurs="1" minOccurs="0" name="proprieta-oggetto" type="proprieta-oggetto"/>
-		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
 			

@@ -658,6 +658,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
 			de.setType(DataElementType.TEXT);
 		}
+		dati.add(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);

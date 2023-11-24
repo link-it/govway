@@ -84,8 +84,6 @@
 				type="documento"/>
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
-			<!-- Proprieta Oggetto -->
-			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -803,10 +801,6 @@
 				</linkit:generator>
 			</xsd:appinfo>
 		</xsd:annotation>
-		<xsd:sequence>
-			<!-- Proprieta Oggetto -->
-			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
-		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
 			<xsd:annotation>

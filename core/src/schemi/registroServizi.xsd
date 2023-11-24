@@ -40,8 +40,6 @@
 				type="documento"/>
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
-			<!-- Proprieta Oggetto -->
-			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -294,10 +292,6 @@
 	<!-- Porta di Dominio -->
 	<xsd:element name="porta-dominio" type="porta-dominio"/>
 	<xsd:complexType name="porta-dominio">
-		<xsd:sequence>
-			<!-- Proprieta Oggetto -->
-			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
-		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
 		<xsd:attribute name="implementazione" type="xsd:string" default="standard"/>

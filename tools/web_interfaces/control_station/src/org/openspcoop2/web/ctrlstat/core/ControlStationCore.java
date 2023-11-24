@@ -8197,12 +8197,8 @@ public class ControlStationCore {
 				if(!create && !update) {
 					continue;
 				}
-								
-				setProprietaOggettoPortaDominio(superUser, oggetto, create, update);
-
-				setProprietaOggettoSoggetto(superUser, oggetto, create, update);
 				
-				setProprietaOggettoAccordoCooperazione(superUser, oggetto, create, update);
+				setProprietaOggettoSoggetto(superUser, oggetto, create, update);
 				
 				setProprietaOggettoAccordoServizioParteComune(superUser, oggetto, create, update);
 				
@@ -8223,24 +8219,6 @@ public class ControlStationCore {
 			}
 		}
 	}
-	private void setProprietaOggettoPortaDominio(String superUser, Object oggetto, boolean create, boolean update) {
-		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
-		if (oggetto instanceof PdDControlStation) {
-			PdDControlStation pdd = (PdDControlStation) oggetto;
-			if(create && pdd.getProprietaOggetto()==null) {
-				pdd.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
-			}
-			pOggetto = pdd.getProprietaOggetto();
-		}
-		else if (oggetto instanceof PortaDominio && !(oggetto instanceof PdDControlStation)) {
-			PortaDominio pdd = (PortaDominio) oggetto;
-			if(create && pdd.getProprietaOggetto()==null) {
-				pdd.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
-			}
-			pOggetto = pdd.getProprietaOggetto();
-		}
-		setProprietaOggetto(superUser, pOggetto, create, update);
-	}
 	private void setProprietaOggettoSoggetto(String superUser, Object oggetto, boolean create, boolean update) {
 		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
 		if (oggetto instanceof SoggettoCtrlStat) {
@@ -8258,17 +8236,6 @@ public class ControlStationCore {
 				sogReg.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
 			}
 			pOggetto = sogReg.getProprietaOggetto();
-		}
-		setProprietaOggetto(superUser, pOggetto, create, update);
-	}
-	private void setProprietaOggettoAccordoCooperazione(String superUser, Object oggetto, boolean create, boolean update) {
-		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
-		if (oggetto instanceof AccordoCooperazione) {
-			AccordoCooperazione a = (AccordoCooperazione) oggetto;
-			if(create && a.getProprietaOggetto()==null) {
-				a.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
-			}
-			pOggetto = a.getProprietaOggetto();
 		}
 		setProprietaOggetto(superUser, pOggetto, create, update);
 	}
