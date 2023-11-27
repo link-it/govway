@@ -4194,6 +4194,8 @@ public class ControlStationCore {
 						Allarme allarme = (Allarme) oggetto;
 						driver.createAllarme(allarme);
 						doSetDati = false;
+						
+						updateProprietaOggettoPorta(allarme, superUser, driver);
 					}
 					// Allarmi History
 					if(oggetto instanceof AllarmeHistory) {
@@ -4825,6 +4827,8 @@ public class ControlStationCore {
 						Allarme allarme = (Allarme) oggetto;
 						driver.updateAllarme(allarme);
 						doSetDati = false;
+						
+						updateProprietaOggettoPorta(allarme, superUser, driver);
 					}
 					
 					/***********************************************************
@@ -5365,6 +5369,8 @@ public class ControlStationCore {
 						// Il file importato potrebbe avere un identificativo diverso da quello effettivamente salvato
 						if(allarme.getAlias()==null) {
 							driver.deleteAllarme(allarme);
+							
+							updateProprietaOggettoPorta(allarme, superUser, driver);
 						}
 						else {
 							try {
@@ -5372,6 +5378,8 @@ public class ControlStationCore {
 										(allarme.getFiltro()!=null) ? allarme.getFiltro().getRuoloPorta() : null,
 										(allarme.getFiltro()!=null) ? allarme.getFiltro().getNomePorta() : null);
 								driver.deleteAllarme(all); 
+								
+								updateProprietaOggettoPorta(all, superUser, driver);
 							}catch(DriverControlStationNotFound notFound) {
 								// ignore
 							}
@@ -5389,7 +5397,7 @@ public class ControlStationCore {
 					/***********************************************************
 					 * Operazioni su Remote Store Keys *
 					 **********************************************************/
-					// Allarmi
+					// RemoteStoreKeys
 					if(oggetto instanceof RemoteStoreKeyEntry) {
 						RemoteStoreKeyEntry entry = (RemoteStoreKeyEntry) oggetto;
 						RemoteStoreProviderDriverUtils.deleteRemoteStoreKeyEntry(driver.getDriverConfigurazioneDB(), entry.getIdRemoteStore(), entry.getId());
@@ -5507,12 +5515,15 @@ public class ControlStationCore {
 		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performing operation on objects " + this.getClassNames(oggetti));
 		Tipologia[] tipoOperazione = new Tipologia[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
-			if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_CREATE)
+			if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_CREATE) {
 				tipoOperazione[i] = Tipologia.ADD;
-			else if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_UPDATE)
+			}
+			else if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_UPDATE) {
 				tipoOperazione[i] = Tipologia.CHANGE;
-			else
+			}
+			else {
 				tipoOperazione[i] = Tipologia.DEL;
+			}
 		}
 
 		this.cryptPassword(tipoOperazione, oggetti);
@@ -8216,6 +8227,8 @@ public class ControlStationCore {
 				
 				setProprietaOggettoServizioApplicativo(superUser, oggetto, create, update);
 				
+				setProprietaOggettoGenericProperties(superUser, oggetto, create, update);
+				
 			}
 		}
 	}
@@ -8446,6 +8459,19 @@ public class ControlStationCore {
 		}
 		setProprietaOggetto(superUser, pOggetto, create, update);
 	}
+	private void setProprietaOggettoGenericProperties(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof GenericProperties) {
+			GenericProperties gp = (GenericProperties) oggetto;
+			if(
+				//create && 
+				gp.getProprietaOggetto()==null) {
+				gp.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
+			}
+			pOggetto = gp.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
 	private void setProprietaOggetto(String superUser, Object oggetto, boolean create, boolean update) {
 		if(oggetto instanceof org.openspcoop2.core.registry.ProprietaOggetto) {
 			org.openspcoop2.core.registry.ProprietaOggetto p = (org.openspcoop2.core.registry.ProprietaOggetto) oggetto;
@@ -8453,7 +8479,7 @@ public class ControlStationCore {
 				p.setDataCreazione(DateManager.getDate());
 				p.setUtenteRichiedente(superUser);
 			}
-			else {
+			else if(update) {
 				p.setDataUltimaModifica(DateManager.getDate());
 				p.setUtenteUltimaModifica(superUser);
 			}
@@ -8464,7 +8490,7 @@ public class ControlStationCore {
 				p.setDataCreazione(DateManager.getDate());
 				p.setUtenteRichiedente(superUser);
 			}
-			else {
+			else if(update) {
 				p.setDataUltimaModifica(DateManager.getDate());
 				p.setUtenteUltimaModifica(superUser);
 			}
@@ -8482,6 +8508,22 @@ public class ControlStationCore {
 			else if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.DELEGATA.equals(policy.getFiltro().getRuoloPorta())) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(policy.getFiltro().getNomePorta());
+				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPD, superUser);
+			}
+		}
+	}
+	
+	private void updateProprietaOggettoPorta(Allarme allarme, String superUser, DriverControlStationDB driver) throws DriverConfigurazioneException {		
+		if(allarme!=null && allarme.getFiltro()!=null && allarme.getFiltro().getEnabled() && allarme.getFiltro().getRuoloPorta()!=null && 
+				allarme.getFiltro().getNomePorta()!=null && StringUtils.isNotEmpty(allarme.getFiltro().getNomePorta())) {
+			if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.APPLICATIVA.equals(allarme.getFiltro().getRuoloPorta())) {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(allarme.getFiltro().getNomePorta());
+				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPA, superUser);
+			}
+			else if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.DELEGATA.equals(allarme.getFiltro().getRuoloPorta())) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(allarme.getFiltro().getNomePorta());
 				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPD, superUser);
 			}
 		}

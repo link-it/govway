@@ -369,7 +369,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.session;
 	}
 	
-	protected void logError(String msg,Exception e) {
+	protected void logError(String msg,Throwable e) {
 		if(this.log!=null) {
 			this.log.error(msg,e);
 		}

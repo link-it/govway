@@ -1045,6 +1045,8 @@
 	<xsd:complexType name="generic-properties">
 		<xsd:sequence>
 			<xsd:element name="property" type="Property" maxOccurs="unbounded" minOccurs="0"/>
+			<!-- Proprieta Oggetto -->
+			<xsd:element name="proprieta-oggetto" type="proprieta-oggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>

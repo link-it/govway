@@ -307,6 +307,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			policy.setTipo(tipo);
 			policy.setId(genericProperties.getId()); 
 			
+			policy.setProprietaOggetto(genericProperties.getProprietaOggetto());
+			
 			Map<String, Properties> mappaDestinazione = configurazioneBean.getPropertiesMap();	
 			Map<String, String> map = DBPropertiesUtils.toMap(mappaDestinazione);
 			

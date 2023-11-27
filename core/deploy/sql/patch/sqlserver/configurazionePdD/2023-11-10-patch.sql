@@ -34,3 +34,11 @@ ALTER TABLE servizi_applicativi ADD utente_ultima_modifica VARCHAR(255);
 ALTER TABLE servizi_applicativi ADD data_ultima_modifica DATETIME2;
 UPDATE servizi_applicativi sa SET utente_richiedente=(select superuser from soggetti s where s.id=sa.id_soggetto) where sa.id_soggetto is not null AND sa.id_soggetto>0;
 UPDATE servizi_applicativi SET data_creazione=ora_registrazione;
+
+
+ALTER TABLE generic_properties ALTER COLUMN descrizione VARCHAR(max);
+
+ALTER TABLE generic_properties ADD utente_richiedente VARCHAR(255);
+ALTER TABLE generic_properties ADD data_creazione DATETIME2;
+ALTER TABLE generic_properties ADD utente_ultima_modifica VARCHAR(255);
+ALTER TABLE generic_properties ADD data_ultima_modifica DATETIME2;

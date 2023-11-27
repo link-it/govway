@@ -37,6 +37,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -201,14 +202,16 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 				identificativi = exporterUtils.getIdsTokenPolicy(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDGenericProperties idGP = (IDGenericProperties)object;
-					risultatiRicerca.add("TODO");
+					GenericProperties gp = confCore.getGenericProperties(idGP.getNome(), idGP.getTipologia(), false);
+					risultatiRicerca.add(this.getProprieta(gp.getProprietaOggetto(), gp.getDescrizione()));
 				}
 				break;
 			case ATTRIBUTE_AUTHORITY:
 				identificativi = exporterUtils.getIdsAttributeAuthority(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDGenericProperties idGP = (IDGenericProperties)object;
-					risultatiRicerca.add("TODO");
+					GenericProperties gp = confCore.getGenericProperties(idGP.getNome(), idGP.getTipologia(), false);
+					risultatiRicerca.add(this.getProprieta(gp.getProprietaOggetto(), gp.getDescrizione()));
 				}
 				break;
 
@@ -256,6 +259,8 @@ public class ProprietaOggettoRegistro extends HttpServlet{
 			case PDD:
 			case PORTA_APPLICATIVA:
 			case PORTA_DELEGATA:
+			case RATE_LIMITING_POLICY:
+			case PLUGIN_CLASSE:
 				throw new CoreException("TipoOggetto non gestito.");
 			}
 
