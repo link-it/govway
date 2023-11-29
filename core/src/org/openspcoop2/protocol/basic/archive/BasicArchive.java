@@ -134,16 +134,28 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	public static void setNormalizeDescription255(boolean normalizeDescription255) {
 		BasicArchive.normalizeDescription255 = normalizeDescription255;
 	}
+	private static boolean normalizeDescription4000 = false;
+	public static boolean isNormalizeDescription4000() {
+		return normalizeDescription4000;
+	}
+	public static void setNormalizeDescription4000(boolean normalizeDescription4000) {
+		BasicArchive.normalizeDescription4000 = normalizeDescription4000;
+	}
 	private String normalizeDescriptionApi(String description) {
-		if(!BasicArchive.normalizeDescription255) {
+		if(BasicArchive.normalizeDescription255) {
+			return normalizeDescriptionEngine(description, 255);
+		}
+		else if(BasicArchive.normalizeDescription4000) {
+			return normalizeDescriptionEngine(description, 4000);
+		}
+		else {
 			return description;
 		}
-		return normalizeDescriptionEngine(description);
 	}
 	private String normalizeDescriptionOtherElementApi(String description) {
-		return normalizeDescriptionEngine(description);
+		return normalizeDescriptionEngine(description, 255);
 	}
-	private String normalizeDescriptionEngine(String description) {
+	private String normalizeDescriptionEngine(String description, int maxSize) {
 		if(description==null) {
 			return null;
 		}
@@ -151,12 +163,16 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		 while(descr.contains("\r")) {
 			 descr = descr.replace("\r", "");
 		 }
-		 int offset = 15; // uso 250 per essere sicuro che finisca in oracle con caratteri strani (value too large for column "GOVWAY330"."ACCORDI"."DESCRIZIONE" (actual: 257, maximum: 255))
-		 if(descr.length()<=(255-offset)) { 
+		 int offset = 15; // uso maxSize-15 per essere sicuro che finisca in oracle con caratteri strani (value too large for column "GOVWAY330"."ACCORDI"."DESCRIZIONE" (actual: 257, maximum: 255))
+		 if(descr.length()<=(maxSize-offset)) { 
 			 return descr;
 		 }
 		 else {
-			return descr.substring(0, (245-offset))+ " ...";
+			 int ulterioreOffset = 10;
+			 if(maxSize==4000) {
+				 ulterioreOffset = 50;
+			 }
+			 return descr.substring(0, ((maxSize-ulterioreOffset)-offset))+ " ...";
 		 }
 	}
 	

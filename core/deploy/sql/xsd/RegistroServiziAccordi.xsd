@@ -237,7 +237,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="descrizione" medium-text="true"/>
+                                <linkit:sql-column-mapping name="descrizione" varchar="4000"/>
                                 <linkit:sql-ddl-column-comment>Descrizione generica dell'accordo di servizio parte comune</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -2282,7 +2282,7 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="descrizione" medium-text="true"/>
+                                <linkit:sql-column-mapping name="descrizione" varchar="4000"/>
                                 <linkit:sql-ddl-column-comment>Generica descrizione del servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -2592,7 +2592,7 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="descrizione" medium-text="true"/>
+                                <linkit:sql-column-mapping name="descrizione" varchar="4000"/>
                                 <linkit:sql-ddl-column-comment>Generica descrizione della fruizione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

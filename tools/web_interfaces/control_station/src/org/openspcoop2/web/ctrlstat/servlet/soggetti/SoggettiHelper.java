@@ -796,6 +796,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(!this.checkLength(nomeprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME, -1, maxLength)) {
 				return false;
 			}
+			if(descrizione!=null && !"".equals(descrizione)) {
+				if(this.checkLength4000(descrizione, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
 
 			
 			// check Codice IPA

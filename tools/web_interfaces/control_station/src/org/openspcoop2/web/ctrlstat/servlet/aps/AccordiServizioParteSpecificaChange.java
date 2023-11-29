@@ -1397,6 +1397,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 			
+			String descrizioneVerificata = descrizione;
+			if(modificaDescrizione) {
+				descrizioneVerificata = descrizioneModificata;
+			}
+			
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.serviziCheckData(tipoOp, soggettiList,
 					accordiList, asps.getNome(), asps.getTipo(), asps.getVersione(),
@@ -1425,7 +1430,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					null,null,null,null,null,null,null,
 					null, null, null, null,
 					tipoProtocollo,null, 
-					descrizione, tipoSoggettoFruitore, nomeSoggettoFruitore,
+					descrizioneVerificata, tipoSoggettoFruitore, nomeSoggettoFruitore,
 					autenticazioneToken, tokenPolicy, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer, 
 					canaleStato, canale, gestioneCanaliEnabled);
 			

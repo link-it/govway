@@ -1,4 +1,4 @@
-ALTER TABLE soggetti MODIFY COLUMN descrizione MEDIUMTEXT;
+ALTER TABLE soggetti MODIFY COLUMN descrizione VARCHAR(4000);
 ALTER TABLE soggetti ADD COLUMN utente_richiedente VARCHAR(255);
 ALTER TABLE soggetti ADD COLUMN data_creazione TIMESTAMP(3) DEFAULT 0;
 ALTER TABLE soggetti ADD COLUMN utente_ultima_modifica VARCHAR(255);

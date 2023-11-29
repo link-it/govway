@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_porte_applicative AS BIGINT START WITH 1 INCREMENT BY 1 ; --
 CREATE TABLE porte_applicative
 (
 	nome_porta VARCHAR(2000) NOT NULL,
-	descrizione LONGVARCHAR,
+	descrizione VARCHAR(4000),
 	-- Soggetto Virtuale
 	id_soggetto_virtuale BIGINT,
 	tipo_soggetto_virtuale VARCHAR(255),

@@ -3,7 +3,7 @@
 CREATE TABLE gruppi
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione CLOB,
+	descrizione VARCHAR(4000),
 	service_binding VARCHAR(255),
 	superuser VARCHAR(255),
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -53,7 +53,7 @@ CREATE SEQUENCE seq_accordi MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1
 CREATE TABLE accordi
 (
 	nome VARCHAR2(255) NOT NULL,
-	descrizione CLOB,
+	descrizione VARCHAR2(4000),
 	service_binding VARCHAR2(255) NOT NULL,
 	message_type VARCHAR2(255),
 	profilo_collaborazione VARCHAR2(255),
@@ -570,7 +570,7 @@ CREATE TABLE servizi
 	ora_registrazione TIMESTAMP,
 	port_type VARCHAR2(255),
 	profilo VARCHAR2(255),
-	descrizione CLOB,
+	descrizione VARCHAR2(4000),
 	stato VARCHAR2(255) NOT NULL,
 	message_type VARCHAR2(255),
 	utente_richiedente VARCHAR2(255),
@@ -683,7 +683,7 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_fruitore CLOB,
 	ora_registrazione TIMESTAMP,
 	stato VARCHAR2(255) NOT NULL,
-	descrizione CLOB,
+	descrizione VARCHAR2(4000),
 	utente_richiedente VARCHAR2(255),
 	data_creazione TIMESTAMP,
 	utente_ultima_modifica VARCHAR2(255),

@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_scope MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 I
 CREATE TABLE scope
 (
 	nome VARCHAR2(255) NOT NULL,
-	descrizione CLOB,
+	descrizione VARCHAR2(4000),
 	tipologia VARCHAR2(255),
 	nome_esterno VARCHAR2(255),
 	contesto_utilizzo VARCHAR2(255) NOT NULL,

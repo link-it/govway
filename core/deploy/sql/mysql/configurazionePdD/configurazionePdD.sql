@@ -513,7 +513,7 @@ CREATE UNIQUE INDEX index_pdd_sys_props_1 ON pdd_sys_props (nome,valore);
 CREATE TABLE generic_properties
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione MEDIUMTEXT,
+	descrizione VARCHAR(4000),
 	tipologia VARCHAR(255) NOT NULL,
 	tipo VARCHAR(255) NOT NULL,
 	utente_richiedente VARCHAR(255),

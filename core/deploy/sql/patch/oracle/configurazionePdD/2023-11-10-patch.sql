@@ -1,9 +1,4 @@
--- ALTER TABLE porte_applicative MODIFY descrizione CLOB;
-ALTER TABLE porte_applicative ADD temp CLOB;
-UPDATE porte_applicative SET temp=descrizione;
-ALTER TABLE porte_applicative DROP COLUMN descrizione;
-ALTER TABLE porte_applicative RENAME COLUMN temp TO descrizione;
-
+ALTER TABLE porte_applicative MODIFY descrizione VARCHAR2(4000);
 ALTER TABLE porte_applicative ADD utente_richiedente VARCHAR2(255);
 ALTER TABLE porte_applicative ADD data_creazione TIMESTAMP;
 ALTER TABLE porte_applicative ADD utente_ultima_modifica VARCHAR2(255);
@@ -20,12 +15,7 @@ UPDATE porte_applicative_sa pasa SET utente_richiedente=(select utente_richieden
 UPDATE porte_applicative_sa pasa SET data_creazione=(select data_creazione from porte_applicative pa where pa.id=pasa.id_porta AND pa.data_creazione is not null);
 
 
--- ALTER TABLE porte_delegate MODIFY descrizione CLOB;
-ALTER TABLE porte_delegate ADD temp CLOB;
-UPDATE porte_delegate SET temp=descrizione;
-ALTER TABLE porte_delegate DROP COLUMN descrizione;
-ALTER TABLE porte_delegate RENAME COLUMN temp TO descrizione;
-
+ALTER TABLE porte_delegate MODIFY descrizione VARCHAR2(4000);
 ALTER TABLE porte_delegate ADD utente_richiedente VARCHAR2(255);
 ALTER TABLE porte_delegate ADD data_creazione TIMESTAMP;
 ALTER TABLE porte_delegate ADD utente_ultima_modifica VARCHAR2(255);
@@ -34,12 +24,7 @@ UPDATE porte_delegate pd SET utente_richiedente=(select superuser from servizi s
 UPDATE porte_delegate SET data_creazione=ora_registrazione;
 
 
--- ALTER TABLE servizi_applicativi MODIFY descrizione CLOB;
-ALTER TABLE servizi_applicativi ADD temp CLOB;
-UPDATE servizi_applicativi SET temp=descrizione;
-ALTER TABLE servizi_applicativi DROP COLUMN descrizione;
-ALTER TABLE servizi_applicativi RENAME COLUMN temp TO descrizione;
-
+ALTER TABLE servizi_applicativi MODIFY descrizione VARCHAR2(4000);
 ALTER TABLE servizi_applicativi ADD utente_richiedente VARCHAR2(255);
 ALTER TABLE servizi_applicativi ADD data_creazione TIMESTAMP;
 ALTER TABLE servizi_applicativi ADD utente_ultima_modifica VARCHAR2(255);
@@ -48,12 +33,7 @@ UPDATE servizi_applicativi sa SET utente_richiedente=(select superuser from sogg
 UPDATE servizi_applicativi SET data_creazione=ora_registrazione;
 
 
--- ALTER TABLE generic_properties MODIFY descrizione CLOB;
-ALTER TABLE generic_properties ADD temp CLOB;
-UPDATE generic_properties SET temp=descrizione;
-ALTER TABLE generic_properties DROP COLUMN descrizione;
-ALTER TABLE generic_properties RENAME COLUMN temp TO descrizione;
-
+ALTER TABLE generic_properties MODIFY descrizione VARCHAR2(4000);
 ALTER TABLE generic_properties ADD utente_richiedente VARCHAR2(255);
 ALTER TABLE generic_properties ADD data_creazione TIMESTAMP;
 ALTER TABLE generic_properties ADD utente_ultima_modifica VARCHAR2(255);

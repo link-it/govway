@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_gruppi AS BIGINT START WITH 1 INCREMENT BY 1 ; -- (Scommenta
 CREATE TABLE gruppi
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione LONGVARCHAR,
+	descrizione VARCHAR(4000),
 	service_binding VARCHAR(255),
 	superuser VARCHAR(255),
 	ora_registrazione TIMESTAMP,

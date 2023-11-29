@@ -39,7 +39,7 @@ CREATE SEQUENCE seq_accordi start 1 increment 1 maxvalue 9223372036854775807 min
 CREATE TABLE accordi
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione TEXT,
+	descrizione VARCHAR(4000),
 	service_binding VARCHAR(255) NOT NULL,
 	message_type VARCHAR(255),
 	profilo_collaborazione VARCHAR(255),
@@ -403,7 +403,7 @@ CREATE TABLE servizi
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	port_type VARCHAR(255),
 	profilo VARCHAR(255),
-	descrizione TEXT,
+	descrizione VARCHAR(4000),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	message_type VARCHAR(255),
 	utente_richiedente VARCHAR(255),
@@ -477,7 +477,7 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_fruitore TEXT,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
-	descrizione TEXT,
+	descrizione VARCHAR(4000),
 	utente_richiedente VARCHAR(255),
 	data_creazione TIMESTAMP,
 	utente_ultima_modifica VARCHAR(255),

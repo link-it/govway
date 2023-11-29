@@ -3,7 +3,7 @@
 CREATE TABLE gruppi
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione MEDIUMTEXT,
+	descrizione VARCHAR(4000),
 	service_binding VARCHAR(255),
 	superuser VARCHAR(255),
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'

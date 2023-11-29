@@ -3,7 +3,7 @@
 CREATE TABLE porte_delegate
 (
 	nome_porta VARCHAR(2000) NOT NULL,
-	descrizione VARCHAR(max),
+	descrizione VARCHAR(4000),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
 	-- id utilizzato in caso di registryInput

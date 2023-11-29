@@ -3472,7 +3472,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setValue(StringEscapeUtils.escapeHtml(descr));
 		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneDescrizione && modificheAbilitate)){
 			de.setType(DataElementType.TEXT_AREA);
-			if(gestioneDescrizione) {
+			if(gestioneDescrizione && !tipoOperazione.equals(TipoOperazione.ADD)) {
 				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
 				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
 			}
@@ -4959,14 +4959,18 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(!this.checkLength255(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)) {
 				return false;
 			}
-			if( (descr!=null && !"".equals(descr)) 
-					&&
-					this.apcCore.isApiDescriptionTruncate255()
-					&&
-				(!this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE)) 
-				){
-				return false;
-			}
+			if( descr!=null && !"".equals(descr) ) {
+				boolean valid = true;
+				if(this.apcCore.isApiDescriptionTruncate255()) {
+					valid = this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+				}
+				else if(this.apcCore.isApiDescriptionTruncate4000()) {
+					valid = this.checkLength4000(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+				}
+				if(!valid) {
+					return false;
+				}
+			} 
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 			if(!this.checkNCName(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)){

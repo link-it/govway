@@ -457,6 +457,7 @@ public class InitListener implements ServletContextListener {
 			// Basic Archive
 			try {
 				BasicArchive.setNormalizeDescription255(consoleProperties.isApiDescriptionTruncate255());
+				BasicArchive.setNormalizeDescription4000(consoleProperties.isApiDescriptionTruncate4000());
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del BasicArchive: " + e.getMessage();
 				InitListener.logError(

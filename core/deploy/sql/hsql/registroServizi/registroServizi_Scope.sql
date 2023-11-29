@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_scope AS BIGINT START WITH 1 INCREMENT BY 1 ; -- (Scommentar
 CREATE TABLE scope
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione LONGVARCHAR,
+	descrizione VARCHAR(4000),
 	tipologia VARCHAR(255),
 	nome_esterno VARCHAR(255),
 	contesto_utilizzo VARCHAR(255) NOT NULL,

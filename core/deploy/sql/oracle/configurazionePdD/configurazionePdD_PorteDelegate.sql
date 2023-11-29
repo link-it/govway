@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_porte_delegate MINVALUE 1 MAXVALUE 9223372036854775807 START
 CREATE TABLE porte_delegate
 (
 	nome_porta VARCHAR2(2000) NOT NULL,
-	descrizione CLOB,
+	descrizione VARCHAR2(4000),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
 	-- id utilizzato in caso di registryInput

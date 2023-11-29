@@ -971,6 +971,7 @@ public class ControlStationCore {
 	private boolean isApiOpenAPIValidateUriReferenceAsUrl;
 	private boolean isApiRestResourceRepresentationMessageTypeOverride;
 	private boolean isApiDescriptionTruncate255;
+	private boolean isApiDescriptionTruncate4000;
 	public boolean isApiResourcePathValidatorEnabled() {
 		return this.isApiResourcePathValidatorEnabled;
 	}
@@ -988,6 +989,9 @@ public class ControlStationCore {
 	}
 	public boolean isApiDescriptionTruncate255() {
 		return  this.isApiDescriptionTruncate255;
+	}
+	public boolean isApiDescriptionTruncate4000() {
+		return  this.isApiDescriptionTruncate4000;
 	}
 	
 	/** Accordi di Cooperazione */
@@ -2555,6 +2559,7 @@ public class ControlStationCore {
 		this.isApiOpenAPIValidateUriReferenceAsUrl = core.isApiOpenAPIValidateUriReferenceAsUrl;
 		this.isApiRestResourceRepresentationMessageTypeOverride = core.isApiRestResourceRepresentationMessageTypeOverride;
 		this.isApiDescriptionTruncate255 = core.isApiDescriptionTruncate255;
+		this.isApiDescriptionTruncate4000 = core.isApiDescriptionTruncate4000;
 		
 		/** Accordi di Cooperazione */
 		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
@@ -3019,6 +3024,7 @@ public class ControlStationCore {
 			this.isApiOpenAPIValidateUriReferenceAsUrl = consoleProperties.isApiOpenAPIValidateUriReferenceAsUrl();
 			this.isApiRestResourceRepresentationMessageTypeOverride = consoleProperties.isApiRestResourceRepresentationMessageTypeOverride();
 			this.isApiDescriptionTruncate255 = consoleProperties.isApiDescriptionTruncate255();
+			this.isApiDescriptionTruncate4000 = consoleProperties.isApiDescriptionTruncate4000();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
 			this.isErogazioniVerificaCertificati = consoleProperties.isErogazioniVerificaCertificati();
 			this.isFruizioniVerificaCertificati = consoleProperties.isFruizioniVerificaCertificati();

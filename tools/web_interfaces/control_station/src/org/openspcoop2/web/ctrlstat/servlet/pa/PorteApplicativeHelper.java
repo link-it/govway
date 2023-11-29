@@ -180,7 +180,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String nomePorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
-			// String descr = this.getParameter("descr");
+			String descr = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
 			String soggvirt = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE);
 			if (soggvirt == null) {
 				soggvirt = "-";
@@ -254,6 +254,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						return false;
 					}
 				}
+			}
+			
+			// descrizione
+			if( (tipoOp.equals(TipoOperazione.CHANGE)) 
+					&&
+				(descr!=null && StringUtils.isNotEmpty(descr)) 
+				    &&
+				(!this.checkLength4000(descr, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE)) 
+				){
+				return false;
 			}
 			
 			// integrazione metadati
@@ -9524,12 +9534,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			boolean visualizzaDescrizione = ServletUtils.isCheckBoxEnabled(vDescrizione);
 			
-			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDescrizione)) {
-				if(StringUtils.isNotEmpty(descrizione)) {
-					if(this.checkLength4000(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE)==false) {
-						return false;
-					}
-				}
+			if( (tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDescrizione)) 
+					&&
+				(StringUtils.isNotEmpty(descrizione)) 
+				    &&
+				(!this.checkLength4000(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE)) 
+				){
+				return false;
 			}
 			
 			// check univocita' del nome

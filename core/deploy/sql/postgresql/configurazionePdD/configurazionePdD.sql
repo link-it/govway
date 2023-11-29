@@ -551,7 +551,7 @@ CREATE SEQUENCE seq_generic_properties start 1 increment 1 maxvalue 922337203685
 CREATE TABLE generic_properties
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione TEXT,
+	descrizione VARCHAR(4000),
 	tipologia VARCHAR(255) NOT NULL,
 	tipo VARCHAR(255) NOT NULL,
 	utente_richiedente VARCHAR(255),

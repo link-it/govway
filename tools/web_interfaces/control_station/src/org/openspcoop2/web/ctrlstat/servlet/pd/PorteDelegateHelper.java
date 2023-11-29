@@ -1809,7 +1809,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String nomePD = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
 			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
-			// String descr = this.getParameter("descr");
+			String descr = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 			String autenticazione = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 			String autenticazioneOpzionale = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
@@ -1902,6 +1902,16 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			// descrizione
+			if( (tipoOp.equals(TipoOperazione.CHANGE)) 
+					&&
+				(descr!=null && StringUtils.isNotEmpty(descr)) 
+				    &&
+				(!this.checkLength4000(descr, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE)) 
+				){
+				return false;
+			}
+			
 			// integrazione metadati
 			if(tipoOp == TipoOperazione.CHANGE && datiAltroPorta) {
 				boolean validazioneIntegrazione = this.validaIntegrazioneMetadati();

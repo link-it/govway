@@ -788,7 +788,7 @@ CREATE SEQUENCE seq_generic_properties MINVALUE 1 MAXVALUE 9223372036854775807 S
 CREATE TABLE generic_properties
 (
 	nome VARCHAR2(255) NOT NULL,
-	descrizione CLOB,
+	descrizione VARCHAR2(4000),
 	tipologia VARCHAR2(255) NOT NULL,
 	tipo VARCHAR2(255) NOT NULL,
 	utente_richiedente VARCHAR2(255),

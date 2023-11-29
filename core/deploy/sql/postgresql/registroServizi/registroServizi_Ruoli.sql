@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_ruoli start 1 increment 1 maxvalue 9223372036854775807 minva
 CREATE TABLE ruoli
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione TEXT,
+	descrizione VARCHAR(4000),
 	tipologia VARCHAR(255) NOT NULL DEFAULT 'qualsiasi',
 	nome_esterno VARCHAR(255),
 	contesto_utilizzo VARCHAR(255) NOT NULL DEFAULT 'qualsiasi',

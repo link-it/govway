@@ -427,6 +427,9 @@ public class ConsoleProperties {
 	public boolean isApiDescriptionTruncate255() throws UtilsException{
 		return this.readBooleanRequiredProperty("api.description.truncate255");
 	}
+	public boolean isApiDescriptionTruncate4000() throws UtilsException{
+		return this.readBooleanRequiredProperty("api.description.truncate4000");
+	}
 	
 	public Properties getApiYamlSnakeLimits() throws UtilsException{
 

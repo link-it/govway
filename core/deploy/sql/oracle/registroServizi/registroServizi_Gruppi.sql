@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_gruppi MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 
 CREATE TABLE gruppi
 (
 	nome VARCHAR2(255) NOT NULL,
-	descrizione CLOB,
+	descrizione VARCHAR2(4000),
 	service_binding VARCHAR2(255),
 	superuser VARCHAR2(255),
 	ora_registrazione TIMESTAMP,

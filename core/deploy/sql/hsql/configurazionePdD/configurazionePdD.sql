@@ -605,7 +605,7 @@ CREATE SEQUENCE seq_generic_properties AS BIGINT START WITH 1 INCREMENT BY 1 ; -
 CREATE TABLE generic_properties
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione LONGVARCHAR,
+	descrizione VARCHAR(4000),
 	tipologia VARCHAR(255) NOT NULL,
 	tipo VARCHAR(255) NOT NULL,
 	utente_richiedente VARCHAR(255),

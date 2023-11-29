@@ -17303,6 +17303,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return false;
 		}
 		
+		if(tipoOperazione.equals(TipoOperazione.ADD)) {
+			// nop
+		}
+		
 		return true;
 	}
 	

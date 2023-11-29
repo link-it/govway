@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_scope start 1 increment 1 maxvalue 9223372036854775807 minva
 CREATE TABLE scope
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione TEXT,
+	descrizione VARCHAR(4000),
 	tipologia VARCHAR(255),
 	nome_esterno VARCHAR(255),
 	contesto_utilizzo VARCHAR(255) NOT NULL DEFAULT 'qualsiasi',

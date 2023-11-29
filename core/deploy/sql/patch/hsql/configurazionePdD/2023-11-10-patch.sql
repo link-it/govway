@@ -1,4 +1,4 @@
-ALTER TABLE porte_applicative ALTER COLUMN descrizione LONGVARCHAR;
+ALTER TABLE porte_applicative ALTER COLUMN descrizione VARCHAR(4000);
 ALTER TABLE porte_applicative ADD COLUMN utente_richiedente VARCHAR(255);
 ALTER TABLE porte_applicative ADD COLUMN data_creazione TIMESTAMP;
 ALTER TABLE porte_applicative ADD COLUMN utente_ultima_modifica VARCHAR(255);
@@ -15,7 +15,7 @@ UPDATE porte_applicative_sa pasa SET utente_richiedente=(select utente_richieden
 UPDATE porte_applicative_sa pasa SET data_creazione=(select data_creazione from porte_applicative pa where pa.id=pasa.id_porta AND pa.data_creazione is not null);
 
 
-ALTER TABLE porte_delegate ALTER COLUMN descrizione LONGVARCHAR;
+ALTER TABLE porte_delegate ALTER COLUMN descrizione VARCHAR(4000);
 ALTER TABLE porte_delegate ADD COLUMN utente_richiedente VARCHAR(255);
 ALTER TABLE porte_delegate ADD COLUMN data_creazione TIMESTAMP;
 ALTER TABLE porte_delegate ADD COLUMN utente_ultima_modifica VARCHAR(255);
@@ -24,7 +24,7 @@ UPDATE porte_delegate pd SET utente_richiedente=(select superuser from servizi s
 UPDATE porte_delegate SET data_creazione=ora_registrazione;
 
 
-ALTER TABLE servizi_applicativi ALTER COLUMN descrizione LONGVARCHAR;
+ALTER TABLE servizi_applicativi ALTER COLUMN descrizione VARCHAR(4000);
 ALTER TABLE servizi_applicativi ADD COLUMN utente_richiedente VARCHAR(255);
 ALTER TABLE servizi_applicativi ADD COLUMN data_creazione TIMESTAMP;
 ALTER TABLE servizi_applicativi ADD COLUMN utente_ultima_modifica VARCHAR(255);
@@ -33,7 +33,7 @@ UPDATE servizi_applicativi sa SET utente_richiedente=(select superuser from sogg
 UPDATE servizi_applicativi SET data_creazione=ora_registrazione;
 
 
-ALTER TABLE generic_properties ALTER COLUMN descrizione LONGVARCHAR;
+ALTER TABLE generic_properties ALTER COLUMN descrizione VARCHAR(4000);
 ALTER TABLE generic_properties ADD COLUMN utente_richiedente VARCHAR(255);
 ALTER TABLE generic_properties ADD COLUMN data_creazione TIMESTAMP;
 ALTER TABLE generic_properties ADD COLUMN utente_ultima_modifica VARCHAR(255);

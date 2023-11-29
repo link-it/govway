@@ -185,6 +185,7 @@ public class RuoliHelper extends ConsoleHelper{
 		try{
 
 			String nome = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
+			String descrizione = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
 			String nomeEsterno = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
 			
 			// Campi obbligatori
@@ -209,6 +210,10 @@ public class RuoliHelper extends ConsoleHelper{
 				return false;
 			}
 			
+			if(descrizione!=null && !"".equals(descrizione) &&
+				!this.checkLength4000(descrizione, RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE)) {
+				return false;
+			}
 			if(nomeEsterno!=null && !"".equals(nomeEsterno) &&
 				!this.checkLength255(nomeEsterno, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO)) {
 				return false;

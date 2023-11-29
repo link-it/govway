@@ -143,6 +143,7 @@ public class GruppiHelper extends ConsoleHelper{
 		try{
 
 			String nome = this.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_NOME);
+			String descrizione = this.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_DESCRIZIONE);
 			String serviceBinding = this.getParameter(GruppiCostanti.PARAMETRO_GRUPPO_SERVICE_BINDING);
 			
 			// Campi obbligatori
@@ -160,10 +161,15 @@ public class GruppiHelper extends ConsoleHelper{
 				this.pd.setMessage("Non inserire spazi nel campo '"+GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME+"'");
 				return false;
 			}
-			if(this.checkNCName(nome, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME)==false){
+			if(!this.checkNCName(nome, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME)){
 				return false;
 			}
-			if(this.checkLength255(nome, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME)==false) {
+			if(!this.checkLength255(nome, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME)) {
+				return false;
+			}
+			
+			if(descrizione!=null && !"".equals(descrizione) &&
+				!this.checkLength4000(descrizione, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_DESCRIZIONE)) {
 				return false;
 			}
 
@@ -189,7 +195,7 @@ public class GruppiHelper extends ConsoleHelper{
 				// service binding cambia da SOAP a REST o viceversa
 				if(!serviceBinding.equals(GruppiCostanti.DEFAULT_VALUE_PARAMETRO_GRUPPO_SERVICE_BINDING_QUALSIASI) && !serviceBinding.equals(oldServiceBinding)){
 						// 
-					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<>();
 					boolean normalizeObjectIds = !this.isModalitaCompleta();
 					boolean gruppoInUso = this.gruppiCore.isGruppoInUso(gruppo.getNome(),whereIsInUso,normalizeObjectIds);
 					String newLine = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
@@ -204,11 +210,11 @@ public class GruppiHelper extends ConsoleHelper{
 					}
 				}
 				
-				if(gruppo.getNome().equals(nome)==false){
+				if(!gruppo.getNome().equals(nome) &&
 					// e' stato modificato ilnome
 					
 					// e' stato implementato l'update
-//					java.util.HashMap<org.openspcoop2.core.commons.ErrorsHandlerCostant, List<String>> whereIsInUso = new java.util.HashMap<org.openspcoop2.core.commons.ErrorsHandlerCostant, List<String>>();
+/**					java.util.HashMap<org.openspcoop2.core.commons.ErrorsHandlerCostant, List<String>> whereIsInUso = new java.util.HashMap<org.openspcoop2.core.commons.ErrorsHandlerCostant, List<String>>();
 //					boolean gruppoInUso = this.confCore.isGruppoInUso(gruppo.getNome(),whereIsInUso);
 //					if (gruppoInUso) {
 //						String msg = "";
@@ -218,11 +224,11 @@ public class GruppiHelper extends ConsoleHelper{
 //						this.pd.setMessage(msg);
 //						return false;
 //					} 
-//					
-					if(this.gruppiCore.existsGruppo(nome)){
-						this.pd.setMessage("Un gruppo con nome '" + nome + "' risulta gi&agrave; stato registrato");
-						return false;
-					}
+//					*/
+					(this.gruppiCore.existsGruppo(nome))
+					){
+					this.pd.setMessage("Un gruppo con nome '" + nome + "' risulta gi&agrave; stato registrato");
+					return false;
 					
 				}
 				
@@ -231,8 +237,8 @@ public class GruppiHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new Exception(e.getMessage(),e);
 		}
 	}
 	
@@ -323,8 +329,8 @@ public class GruppiHelper extends ConsoleHelper{
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new Exception(e.getMessage(),e);
 		}
 	}
 	
@@ -352,6 +358,9 @@ public class GruppiHelper extends ConsoleHelper{
 				break;
 			case SOAP:
 				de.setValue(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP);
+				break;
+			default:
+				de.setValue("?");
 				break;
 			}
 		}
@@ -387,6 +396,9 @@ public class GruppiHelper extends ConsoleHelper{
 				break;
 			case SOAP:
 				de.setValue(MessageFormat.format(GruppiCostanti.MESSAGE_METADATI_GRUPPO_TIPO, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP));
+				break;
+			default:
+				de.setValue("?");
 				break;
 			}
 		}

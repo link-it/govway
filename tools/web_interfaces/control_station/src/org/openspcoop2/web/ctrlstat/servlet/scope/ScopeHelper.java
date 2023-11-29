@@ -175,6 +175,7 @@ public class ScopeHelper extends ConsoleHelper{
 		try{
 
 			String nome = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME);
+			String descrizione = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
 			String nomeEsterno = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
 			
 			// Campi obbligatori
@@ -199,6 +200,10 @@ public class ScopeHelper extends ConsoleHelper{
 				return false;
 			}
 			
+			if(descrizione!=null && !"".equals(descrizione) &&
+				!this.checkLength4000(descrizione, ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE)) {
+				return false;
+			}
 			if(nomeEsterno!=null && !"".equals(nomeEsterno) &&
 				!this.checkLength255(nomeEsterno, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME_ESTERNO)) {
 				return false;

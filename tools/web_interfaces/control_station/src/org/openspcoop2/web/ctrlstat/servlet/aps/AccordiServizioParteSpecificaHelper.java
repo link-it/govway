@@ -1111,11 +1111,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(!this.checkLength255(nomeservizio, AccordiServizioParteSpecificaCostanti.LABEL_APS_NOME_SERVIZIO)) {
 				return false;
 			}
-			/** rilasciato vincolo da 3.3.14 if(descrizione!=null && !"".equals(descrizione)) {
-				if(this.checkLength255(descrizione, AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE)==false) {
-					return false;
-				}
-			}*/
+			if(descrizione!=null && !"".equals(descrizione) &&
+				!this.checkLength4000(descrizione, AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE)) {
+				return false;
+			}
 			
 			if (tipoOp.equals(TipoOperazione.ADD) &&
 				(!this.canaleCheckData(canaleStato, canale, gestioneCanaliEnabled)) 
@@ -1129,8 +1128,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(gestioneFruitori) {
 				connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
 			}
-			if(!connettoreStatic) {
-				if (!this.endPointCheckData(protocollo, gestioneErogatori,
+			if(!connettoreStatic &&
+				!this.endPointCheckData(protocollo, gestioneErogatori,
 						endpointtype, url, nome, tipo,
 						user, password, initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia, httpshostverify,
@@ -1148,8 +1147,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,erogazioneServizioApplicativoServer)) {
-					return false;
-				}
+				return false;
 			}
 
 			// Controllo che i campi "checkbox" abbiano uno dei valori
@@ -1191,7 +1189,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Visibilita rispetto al soggetto erogatore
 			if(visibilitaServizio==visibile){
 				org.openspcoop2.core.registry.Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(tipoErogatore, nomeErogatore));
-				if(tmpSogg.getPrivato()!=null && tmpSogg.getPrivato()==true){
+				if(tmpSogg.getPrivato()!=null && tmpSogg.getPrivato()){
 					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_USO_SOGGETTO_EROGATORE_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA);
 					return false;
 				}

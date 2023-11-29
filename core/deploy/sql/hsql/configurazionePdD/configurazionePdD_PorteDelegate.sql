@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_porte_delegate AS BIGINT START WITH 1 INCREMENT BY 1 ; -- (S
 CREATE TABLE porte_delegate
 (
 	nome_porta VARCHAR(2000) NOT NULL,
-	descrizione LONGVARCHAR,
+	descrizione VARCHAR(4000),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
 	-- id utilizzato in caso di registryInput
