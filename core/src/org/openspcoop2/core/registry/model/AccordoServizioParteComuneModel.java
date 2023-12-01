@@ -49,6 +49,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.GRUPPI = new org.openspcoop2.core.registry.model.GruppiAccordoModel(new Field("gruppi",org.openspcoop2.core.registry.GruppiAccordo.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new Field("proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.STATO_PACKAGE = new Field("stato-package",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.PRIVATO = new Field("privato",Boolean.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
@@ -98,6 +99,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.GRUPPI = new org.openspcoop2.core.registry.model.GruppiAccordoModel(new ComplexField(father,"gruppi",org.openspcoop2.core.registry.GruppiAccordo.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new ComplexField(father,"proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.STATO_PACKAGE = new ComplexField(father,"stato-package",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.PRIVATO = new ComplexField(father,"privato",Boolean.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
@@ -153,6 +155,8 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 	public org.openspcoop2.core.registry.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
 	 
 	public org.openspcoop2.core.registry.model.GruppiAccordoModel GRUPPI = null;
+	 
+	public org.openspcoop2.core.registry.model.ProprietaOggettoModel PROPRIETA_OGGETTO = null;
 	 
 	public IField SUPER_USER = null;
 	 

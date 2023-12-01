@@ -150,36 +150,6 @@ public final class AccordiCooperazioneAdd extends Action {
 			String[] providersListLabel = null;
 
 			// Provider
-			/*
-				int totProv = ch.getCounterFromDB("soggetti", "superuser", userLogin);
-				if (totProv != 0) {
-					providersList = new String[totProv+1];
-					providersListLabel = new String[totProv+1];
-					int i = 1;
-					providersList[0]="-";
-					providersListLabel[0]="-";
-
-					String[] selectFields = new String[3];
-					selectFields[0] = "id";
-					selectFields[1] = "tipo_soggetto";
-					selectFields[2] = "nome_soggetto";
-					this.queryString = ch.getQueryStringForList(selectFields, "soggetti", "superuser", userLogin, "", 0, 0);
-					this.stmt = con.prepareStatement(this.queryString);
-					this.risultato = this.stmt.executeQuery();
-					while (this.risultato.next()) {
-						providersList[i] = "" + this.risultato.getInt("id");
-						providersListLabel[i] = this.risultato.getString("tipo_soggetto") + "/" + this.risultato.getString("nome_soggetto");
-						i++;
-					}
-					this.risultato.close();
-					this.stmt.close();
-				}else{
-					providersList = new String[1];
-					providersListLabel = new String[1];
-					providersList[0]="-";
-					providersListLabel[0]="-";
-				}
-			 */
 			List<Soggetto> lista = null;
 			if(acCore.isVisioneOggettiGlobale(userLogin)){
 				lista = soggettiCore.soggettiRegistroList(null, new ConsoleSearch(true));
@@ -192,7 +162,7 @@ public final class AccordiCooperazioneAdd extends Action {
 			soggettiListTmp.add("-");
 			soggettiListLabelTmp.add("-");
 
-			if (lista.size() > 0) {
+			if (!lista.isEmpty()) {
 				for (Soggetto soggetto : lista) {
 					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
 						soggettiListTmp.add(soggetto.getId().toString());
@@ -246,11 +216,7 @@ public final class AccordiCooperazioneAdd extends Action {
 					strutsBean.statoPackage=StatiAccordo.finale.toString();
 				}
 
-				//if(core.isBackwardCompatibilityAccordo11()){
-				//	strutsBean.versione="0";
-				//}else{
 				strutsBean.versione="1";
-				//}
 
 				if(strutsBean.nome == null)
 					strutsBean.nome = "";
@@ -353,6 +319,7 @@ public final class AccordiCooperazioneAdd extends Action {
 				try {
 					idRef = Integer.parseInt(strutsBean.referente);
 				} catch (Exception e) {
+					// ignore
 				}
 				if (idRef != 0) {
 					int idReferente = Integer.parseInt(strutsBean.referente);

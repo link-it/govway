@@ -38,6 +38,14 @@ Background:
 * def info_generali = read('informazioni_generali_petstore.json')
 * def erogazione_versione = read('api_versione3.json')
 
+* def fruizione_petstore_descrizione4000 = read('fruizione_petstore_descrizione4000.json')
+* eval fruizione_petstore_descrizione4000.api_nome = api_petstore.nome
+* eval fruizione_petstore_descrizione4000.api_versione = api_petstore.versione
+* eval fruizione_petstore_descrizione4000.erogatore = erogatore.nome
+* eval fruizione_petstore_descrizione4000.api_referente = api_petstore.referente
+
+* def fruizione_key_descrizione4000 = fruizione_petstore_descrizione4000.erogatore + '/' + fruizione_petstore_descrizione4000.api_nome + '/' + fruizione_petstore_descrizione4000.api_versione
+
 @FindAll200
 Scenario: Fruizioni FindAll 200 OK
 
@@ -189,5 +197,25 @@ Scenario: Fruizioni FindAll di Api con indicazione della uri implementata
 * assert fruizioni_response.findall_response_body.items.length == 0
 
 * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
+* call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+* call delete ({ resourcePath: api_petstore_path })
+
+
+@Descrizione
+Scenario: Fruizione creazione e lettura descrizione
+
+* call create ({ resourcePath: 'api', body: api_petstore })
+* call create ({ resourcePath: 'soggetti', body: erogatore })
+* call create ({ resourcePath: 'fruizioni', body: fruizione_petstore_descrizione4000 })
+
+    Given url configUrl
+    And path 'fruizioni', fruizione_key_descrizione4000, 'descrizione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == fruizione_petstore_descrizione4000.descrizione
+
+* call delete ({ resourcePath: 'fruizioni/' + fruizione_key_descrizione4000 })
 * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
 * call delete ({ resourcePath: api_petstore_path })

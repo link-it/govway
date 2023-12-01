@@ -88,10 +88,9 @@ public final class SoggettiList extends Action {
 			
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<Soggetto> lista = null;
-			if(soggettiCore.isRegistroServiziLocale()){
-				if(!ServletUtils.isSearchDone(soggettiHelper)) {
-					lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Soggetto.class);
-				}
+			if(soggettiCore.isRegistroServiziLocale() &&
+				!ServletUtils.isSearchDone(soggettiHelper)) {
+				lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Soggetto.class);
 			}
 			
 			ricerca = soggettiHelper.checkSearchParameters(idLista, ricerca);

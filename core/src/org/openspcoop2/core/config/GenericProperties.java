@@ -38,6 +38,7 @@ import java.util.List;
  * &lt;complexType name="generic-properties"&gt;
  * 		&lt;sequence&gt;
  * 			&lt;element name="property" type="{http://www.openspcoop2.org/core/config}Property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/config}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -55,7 +56,8 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "generic-properties", 
   propOrder = {
-  	"property"
+  	"property",
+  	"proprietaOggetto"
   }
 )
 
@@ -88,6 +90,14 @@ public class GenericProperties extends org.openspcoop2.utils.beans.BaseBeanWithI
 
   public int sizePropertyList() {
     return this.property.size();
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.String getNome() {
@@ -152,6 +162,9 @@ public class GenericProperties extends org.openspcoop2.utils.beans.BaseBeanWithI
   public int sizeProperty() {
   	return this.sizePropertyList();
   }
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

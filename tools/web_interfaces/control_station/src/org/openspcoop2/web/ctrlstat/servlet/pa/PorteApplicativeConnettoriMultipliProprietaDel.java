@@ -36,7 +36,10 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProprietaOggetto;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -96,11 +99,11 @@ public final class PorteApplicativeConnettoriMultipliProprietaDel extends Action
 				}
 			}
 			if(oldPaSA==null) {
-				throw new Exception("PortaApplicativaServizioApplicativo con nome '"+nomeSAConnettore+"' non trovato");
+				throw new ControlStationCoreException("PortaApplicativaServizioApplicativo con nome '"+nomeSAConnettore+"' non trovato");
 			}
 			
-			long idPaSa = oldPaSA.getId();
-
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				Long idToRemove = Long.parseLong(idsToRemove.get(i));
@@ -108,14 +111,21 @@ public final class PorteApplicativeConnettoriMultipliProprietaDel extends Action
 				for (int j = 0; j < oldPaSA.getDatiConnettore().sizeProprietaList(); j++) {
 					if(oldPaSA.getDatiConnettore().getProprieta(j).getId().longValue() == idToRemove.longValue()){
 						oldPaSA.getDatiConnettore().removeProprieta(j);
+						
+						if(oldPaSA.getDatiConnettore().getProprietaOggetto()==null) {
+							oldPaSA.getDatiConnettore().setProprietaOggetto(new ProprietaOggetto());
+						}
+						oldPaSA.getDatiConnettore().getProprietaOggetto().setUtenteUltimaModifica(userLogin);
+						oldPaSA.getDatiConnettore().getProprietaOggetto().setDataUltimaModifica(DateManager.getDate());
+						
 						break;
 					}
 				}
 			}
 
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+			
+			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
 
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			oldPaSA = null;
@@ -126,10 +136,10 @@ public final class PorteApplicativeConnettoriMultipliProprietaDel extends Action
 			}
 
 			if(oldPaSA==null) {
-				throw new Exception("Connettore '"+nomeSAConnettore+"' non trovato");
+				throw new ControlStationCoreException("Connettore '"+nomeSAConnettore+"' non trovato");
 			}
 			
-			idPaSa = oldPaSA.getId();
+			long idPaSa = oldPaSA.getId();
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

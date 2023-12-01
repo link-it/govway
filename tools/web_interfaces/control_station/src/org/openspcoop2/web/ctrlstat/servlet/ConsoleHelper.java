@@ -34,6 +34,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -160,6 +161,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
@@ -368,8 +370,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.session;
 	}
 	
-	protected void logError(String msg,Exception e) {
-		this.log.error(msg,e);
+	protected void logError(String msg,Throwable e) {
+		if(this.log!=null) {
+			this.log.error(msg,e);
+		}
+	}
+	protected void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
+		}
 	}
 	
 	@Override
@@ -4838,7 +4847,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
-						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						de.setType(DataElementType.TEXT);
 						de.setValue(TipoAutenticazione.SSL.getLabel());
 						de.setValoreDefault(TipoAutenticazione.DISABILITATO.getLabel());
@@ -4850,7 +4859,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
-						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						de.setType(DataElementType.TEXT);
 						String labelAutenticazione = null;
 						for (int i = 0; i < tipoAutenticazione.length; i++) {
@@ -14381,7 +14390,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP.equals(tipoValidazione) && this.isModalitaStandard()) {
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE+"__LABEL");
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setType(DataElementType.TEXT);
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_REGISTRO_OPENSPCOOP);
 				dati.add(de);
@@ -21462,21 +21471,18 @@ public class ConsoleHelper implements IConsoleHelper {
 				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
 				true, true);
 	}
-	
 	public void addInUsoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
 		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
 				CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
 				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
 				true, true);
 	}
-	
 	public void addInUsoInfoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
 		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
 				CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
 				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
 				true, true);
 	}
-	
 	private void addInUsoButton(List<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType,
 			String tooltip, String icon, String headerRiga1, 
 			Boolean resizable, Boolean draggable) {
@@ -21487,14 +21493,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	
-	public void addComandoInUsoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+	public void addComandoInUsoButton(String titolo, String id, InUsoType inUsoType) {
 		 addComandoInUsoElementoButton(titolo, id, inUsoType,
 				 CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
 					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
 					true, true);
 	}
-	public void addComandoInUsoInfoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+	public void addComandoInUsoInfoButton(String titolo, String id, InUsoType inUsoType) {
 		 addComandoInUsoElementoButton(titolo, id, inUsoType,
 				 CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
 					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
@@ -21509,11 +21514,113 @@ public class ConsoleHelper implements IConsoleHelper {
 				resizable, draggable);
 	}
 	
+	
+	
+	public void addProprietaOggettoButtonVisualizzazioneClassica(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		this.addProprietaOggettoButton(e, DataElementType.BUTTON, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_TOOLTIP, Costanti.ICON_USO,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_RISULTATI,
+				true, true);
+	}
+	public void addProprietaOggettoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		this.addProprietaOggettoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_TOOLTIP, Costanti.ICON_USO,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_RISULTATI,
+				true, true);
+	}
+	public void addProprietaOggettoInfoButton(List<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		this.addProprietaOggettoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
+				CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_INFORMAZIONI, 
+				true, true);
+	}
+	private void addProprietaOggettoButton(List<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {
+		
+		ServletUtils.addInUsoButton(UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO, e, deType, titolo, id, inUsoType.toString(),
+				tooltip, icon, headerRiga1, 
+				resizable, draggable);
+		
+	}
+	
+	public void addComandoProprietaOggettoButton(String titolo, String id, InUsoType inUsoType) {
+		 addComandoProprietaOggettoElementoButton(titolo, id, inUsoType,
+				 CostantiControlStation.LABEL_PROPRIETA_OGGETTO_TOOLTIP, Costanti.ICON_USO,
+					CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_RISULTATI,
+					true, true);
+	}
+	public void addComandoProprietaOggettoInfoButton(String titolo, String id, InUsoType inUsoType) {
+		 addComandoProprietaOggettoElementoButton(titolo, id, inUsoType,
+				 CostantiControlStation.LABEL_PROPRIETA_OGGETTO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
+					CostantiControlStation.LABEL_PROPRIETA_OGGETTO_BODY_HEADER_INFORMAZIONI, 
+					true, true);
+	}
+	private void addComandoProprietaOggettoElementoButton(String titolo, String id, InUsoType inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {
+		this.pd.addComandoInUsoElementoButton(UtilsCostanti.SERVLET_NAME_PROPRIETA_OGGETTO,
+				titolo, id, inUsoType.toString(),
+				tooltip, icon, headerRiga1, 
+				resizable, draggable);
+	}
+	
+	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico p, String descrizione) {
+		return (p!=null &&
+					(
+							(p.getUtenteRichiedente()!=null && StringUtils.isNotEmpty(p.getUtenteRichiedente())) 
+							|| 
+							p.getDataCreazione()!=null 
+							||
+							(p.getUtenteUltimaModifica()!=null && StringUtils.isNotEmpty(p.getUtenteUltimaModifica()))  
+							|| 
+							p.getDataUltimaModifica()!=null
+					)
+				)
+				||
+				(descrizione!=null && StringUtils.isNotEmpty(descrizione));
+	}
+	protected boolean existsProprietaOggetto(org.openspcoop2.core.registry.ProprietaOggetto p, String descrizione) {
+		return (p!=null &&
+				(
+						(p.getUtenteRichiedente()!=null && StringUtils.isNotEmpty(p.getUtenteRichiedente())) 
+						|| 
+						p.getDataCreazione()!=null 
+						||
+						(p.getUtenteUltimaModifica()!=null && StringUtils.isNotEmpty(p.getUtenteUltimaModifica()))  
+						|| 
+						p.getDataUltimaModifica()!=null
+				)
+			)
+			||
+			(descrizione!=null && StringUtils.isNotEmpty(descrizione));
+	}
+	protected boolean existsProprietaOggetto(org.openspcoop2.core.config.ProprietaOggetto p, String descrizione) {
+		return (p!=null &&
+				(
+						(p.getUtenteRichiedente()!=null && StringUtils.isNotEmpty(p.getUtenteRichiedente())) 
+						|| 
+						p.getDataCreazione()!=null 
+						||
+						(p.getUtenteUltimaModifica()!=null && StringUtils.isNotEmpty(p.getUtenteUltimaModifica()))  
+						|| 
+						p.getDataUltimaModifica()!=null
+				)
+			)
+			||
+			(descrizione!=null && StringUtils.isNotEmpty(descrizione));
+	}
+	
+	
+	
 	public void addComandoVerificaCertificatiButton(List<DataElement> e, String nomeElementoSuCuiEffettuareLaVerifica, String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
 			parameters = new ArrayList<>();
 		}
 
+		if(nomeElementoSuCuiEffettuareLaVerifica!=null) {
+			// nop
+		}
 		this.addAzioneButton(e, DataElementType.IMAGE,  CostantiControlStation.ICONA_VERIFICA_CERTIFICATI_TOOLTIP,
 //				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareLaVerifica),
 				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
@@ -21526,6 +21633,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		parameters.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
 		
+		if(nomeElementoSuCuiEffettuareIlReset!=null) {
+			// nop
+		}
 		this.addAzioneButton(e, DataElementType.IMAGE,  Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP,
 //				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareIlReset),
 				Costanti.ICONA_RESET_CACHE_ELEMENTO, servletName,parameters);
@@ -21547,7 +21657,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de = new DataElement();
 		de.setType(deType);
 		de.setToolTip(tooltip);
-		if(parameters != null && parameters.size() >0) {
+		if(parameters != null && !parameters.isEmpty()) {
 			de.setUrl(servletName, parameters.toArray(new Parameter[parameters.size()]));
 		} else {
 			de.setUrl(servletName);
@@ -22065,7 +22175,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 				}
 				DataElement deLABEL = new DataElement();
-				deLABEL.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI+"__LABEL");
+				deLABEL.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				deLABEL.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_CONTATORI);
 				deLABEL.setValue(label);
 				deLABEL.setType(DataElementType.TEXT);
@@ -23303,4 +23413,137 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		return this.getParameter(parameterName);
 	}
+	
+	public void addProprietaOggetto(List<DataElement> dati, org.openspcoop2.core.registry.ProprietaOggetto pOggetto) {
+		if(pOggetto!=null) {
+			// Creazione
+			if(pOggetto.getDataCreazione()!=null || pOggetto.getUtenteRichiedente()!=null) {
+				addProprietaOggettoCreazione(dati, pOggetto.getDataCreazione(), pOggetto.getUtenteRichiedente());
+			}
+			
+			// Aggiornamento
+			if(pOggetto.getDataUltimaModifica()!=null || pOggetto.getUtenteUltimaModifica()!=null) {
+				addProprietaOggettoAggiornamento(dati, pOggetto.getDataUltimaModifica(), pOggetto.getUtenteUltimaModifica());
+			}
+		}
+	}
+	public void addProprietaOggetto(List<DataElement> dati, org.openspcoop2.core.config.ProprietaOggetto pOggetto) {
+		if(pOggetto!=null) {
+			// Creazione
+			if(pOggetto.getDataCreazione()!=null || pOggetto.getUtenteRichiedente()!=null) {
+				addProprietaOggettoCreazione(dati, pOggetto.getDataCreazione(), pOggetto.getUtenteRichiedente());
+			}
+			
+			// Aggiornamento
+			if(pOggetto.getDataUltimaModifica()!=null || pOggetto.getUtenteUltimaModifica()!=null) {
+				addProprietaOggettoAggiornamento(dati, pOggetto.getDataUltimaModifica(), pOggetto.getUtenteUltimaModifica());
+			}
+		}
+	}
+	private void addProprietaOggettoCreazione(List<DataElement> dati, Date dataCreazione, String utenteRichiedente) {
+		DataElement de = new DataElement();
+		de.setType(DataElementType.IMAGE);
+		de.setLabel(CostantiControlStation.LABEL_CREAZIONE);
+		if(dataCreazione!=null) {
+			String data = CostantiControlStation.formatDateMinute(dataCreazione);
+			String dataMs = CostantiControlStation.formatDateMs(dataCreazione);
+			de.addInfoAuditDataCreazione(dataMs, data);
+		}
+		if(utenteRichiedente!=null) {
+			de.addInfoAuditUtente(utenteRichiedente, utenteRichiedente);
+		}
+		dati.add(de);
+	}
+	private void addProprietaOggettoAggiornamento(List<DataElement> dati, Date dataUltimaModifica, String utenteUltimaModifica) {
+		DataElement de = new DataElement();
+		de.setType(DataElementType.IMAGE);
+		de.setLabel(CostantiControlStation.LABEL_ULTIMA_MODIFICA);
+		if(dataUltimaModifica!=null) {
+			String data = CostantiControlStation.formatDateMinute(dataUltimaModifica);
+			String dataMs = CostantiControlStation.formatDateMs(dataUltimaModifica);
+			de.addInfoAuditDataAggiornamento(dataMs, data);
+		}
+		if(utenteUltimaModifica!=null) {
+			de.addInfoAuditUtente(utenteUltimaModifica, utenteUltimaModifica);
+		}
+		dati.add(de);
+	}
+	
+	public ProprietaOggetto convertToProprietaOggettoRegistro(org.openspcoop2.core.config.ProprietaOggetto pConfig) {
+		ProprietaOggetto p = null;
+		if(pConfig!=null) {
+			p = new ProprietaOggetto();
+			p.setDataCreazione(pConfig.getDataCreazione());
+			p.setDataUltimaModifica(pConfig.getDataUltimaModifica());
+			p.setUtenteRichiedente(pConfig.getUtenteRichiedente());
+			p.setUtenteUltimaModifica(pConfig.getUtenteUltimaModifica());
+		}
+		return p;
+	}
+	
+	public ProprietaOggetto mergeProprietaOggetto(ProprietaOggetto pRegistry, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta, boolean consideraDataCreazioneComeDataModifica) {
+		ProprietaOggetto p = null;
+		if(pRegistry!=null &&
+			(pRegistry.getDataCreazione()!=null || pRegistry.getUtenteRichiedente()!=null ||
+					pRegistry.getDataUltimaModifica()!=null || pRegistry.getUtenteUltimaModifica()!=null) 
+			){
+			p = new ProprietaOggetto();
+			p.setDataCreazione(pRegistry.getDataCreazione());
+			p.setUtenteRichiedente(pRegistry.getUtenteRichiedente());
+			p.setDataUltimaModifica(pRegistry.getDataUltimaModifica());
+			p.setUtenteUltimaModifica(pRegistry.getUtenteUltimaModifica());
+		}
+		
+		return mergeProprietaOggettoEngine(p, pConfigPorta, consideraDataCreazioneComeDataModifica);
+	}
+	
+	private ProprietaOggetto mergeProprietaOggettoEngine(ProprietaOggetto p, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta, boolean consideraDataCreazioneComeDataModifica) {
+		if(pConfigPorta!=null &&
+			(pConfigPorta.getDataUltimaModifica()!=null) 
+			){
+			mergeProprietaOggettoEngineInitUpdate(p, pConfigPorta);
+		}
+		else if(consideraDataCreazioneComeDataModifica && pConfigPorta!=null &&
+				(pConfigPorta.getDataUltimaModifica()==null) &&
+				(pConfigPorta.getDataCreazione()!=null)
+				){
+			mergeProprietaOggettoEngineInitCreate(p, pConfigPorta);
+		}
+		return p;
+	}
+	private ProprietaOggetto mergeProprietaOggettoEngineInit(ProprietaOggetto p, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta) {
+		if(p==null) {
+			p = new ProprietaOggetto();
+			p.setDataCreazione(pConfigPorta.getDataCreazione());
+			p.setUtenteRichiedente(pConfigPorta.getUtenteRichiedente());
+			p.setDataUltimaModifica(pConfigPorta.getDataUltimaModifica());
+			p.setUtenteUltimaModifica(pConfigPorta.getUtenteUltimaModifica());
+		}
+		return p;
+	}
+	private ProprietaOggetto mergeProprietaOggettoEngineInitUpdate(ProprietaOggetto p, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta){
+		if(p==null) {
+			p = mergeProprietaOggettoEngineInit(p, pConfigPorta);
+		}
+		else if(p.getDataUltimaModifica()==null || p.getDataUltimaModifica().before(pConfigPorta.getDataUltimaModifica())) {
+			p.setDataUltimaModifica(pConfigPorta.getDataUltimaModifica());
+			if(pConfigPorta.getUtenteUltimaModifica()!=null) {
+				p.setUtenteUltimaModifica(pConfigPorta.getUtenteUltimaModifica());
+			}
+		}
+		return p;
+	}
+	private ProprietaOggetto mergeProprietaOggettoEngineInitCreate(ProprietaOggetto p, org.openspcoop2.core.config.ProprietaOggetto pConfigPorta){
+		if(p==null) {
+			p = mergeProprietaOggettoEngineInit(p, pConfigPorta);
+		}
+		else if(p.getDataUltimaModifica()==null || p.getDataUltimaModifica().before(pConfigPorta.getDataCreazione())) {
+			p.setDataUltimaModifica(pConfigPorta.getDataCreazione());
+			if(pConfigPorta.getUtenteRichiedente()!=null) {
+				p.setUtenteUltimaModifica(pConfigPorta.getUtenteRichiedente());
+			}
+		}
+		return p;
+	}
+	
 }

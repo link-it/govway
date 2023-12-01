@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryPa
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -172,13 +173,13 @@ public class DriverConfigurazioneDB_porteDriver {
 						ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
 						
 						regola.setId(risultato.getLong("id"));
-						int status_min = risultato.getInt("status_min");
-						int status_max = risultato.getInt("status_max");
-						if(status_min>0) {
-							regola.setReturnCodeMin(status_min);
+						int statusMin = risultato.getInt("status_min");
+						int statusMax = risultato.getInt("status_max");
+						if(statusMin>0) {
+							regola.setReturnCodeMin(statusMin);
 						}
-						if(status_max>0) {
-							regola.setReturnCodeMax(status_max);
+						if(statusMax>0) {
+							regola.setReturnCodeMax(statusMax);
 						}
 
 						int fault = risultato.getInt("fault");
@@ -221,16 +222,16 @@ public class DriverConfigurazioneDB_porteDriver {
 	protected boolean existsPortaApplicativaResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaApplicativaResponseCachingConfigurazioneRegola";
 		boolean delegata = false;
-		return _existsResponseCachingConfigurazioneRegola(idPA, statusMin, statusMax, fault, nomeMetodo, delegata);
+		return existsResponseCachingConfigurazioneRegolaEngine(idPA, statusMin, statusMax, fault, nomeMetodo, delegata);
 	}
 	
 	protected boolean existsPortaDelegataResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaDelegataResponseCachingConfigurazioneRegola";
 		boolean delegata = true;
-		return _existsResponseCachingConfigurazioneRegola(idPA, statusMin, statusMax, fault, nomeMetodo, delegata);
+		return existsResponseCachingConfigurazioneRegolaEngine(idPA, statusMin, statusMax, fault, nomeMetodo, delegata);
 	}
 	
-	private boolean _existsResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault,String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private boolean existsResponseCachingConfigurazioneRegolaEngine(long idPA, Integer statusMin, Integer statusMax, boolean fault,String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -273,11 +274,7 @@ public class DriverConfigurazioneDB_porteDriver {
 				sqlQueryObject.addWhereIsNullCondition("status_max");
 			}
 			
-			//if(fault) {
-			//	sqlQueryObject.addWhereCondition("fault = ?");
-			//} else {
 			sqlQueryObject.addWhereCondition("fault = ?");
-			//}
 			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
@@ -452,27 +449,27 @@ public class DriverConfigurazioneDB_porteDriver {
 			
 			configurazione.setControl(new ResponseCachingConfigurazioneControl());
 			
-			int response_cache_control_nocache = rs.getInt("response_cache_control_nocache");
-			if(CostantiDB.TRUE == response_cache_control_nocache) {
+			int responseCacheControlNoCache = rs.getInt("response_cache_control_nocache");
+			if(CostantiDB.TRUE == responseCacheControlNoCache) {
 				configurazione.getControl().setNoCache(true);
 			}
-			else if(CostantiDB.FALSE == response_cache_control_nocache) {
+			else if(CostantiDB.FALSE == responseCacheControlNoCache) {
 				configurazione.getControl().setNoCache(false);
 			}
 			
-			int response_cache_control_maxage = rs.getInt("response_cache_control_maxage");
-			if(CostantiDB.TRUE == response_cache_control_maxage) {
+			int responseCacheControlMaxAge = rs.getInt("response_cache_control_maxage");
+			if(CostantiDB.TRUE == responseCacheControlMaxAge) {
 				configurazione.getControl().setMaxAge(true);
 			}
-			else if(CostantiDB.FALSE == response_cache_control_maxage) {
+			else if(CostantiDB.FALSE == responseCacheControlMaxAge) {
 				configurazione.getControl().setMaxAge(false);
 			}
 			
-			int response_cache_control_nostore = rs.getInt("response_cache_control_nostore");
-			if(CostantiDB.TRUE == response_cache_control_nostore) {
+			int responseCacheControlNoStore = rs.getInt("response_cache_control_nostore");
+			if(CostantiDB.TRUE == responseCacheControlNoStore) {
 				configurazione.getControl().setNoStore(true);
 			}
-			else if(CostantiDB.FALSE == response_cache_control_nostore) {
+			else if(CostantiDB.FALSE == responseCacheControlNoStore) {
 				configurazione.getControl().setNoStore(false);
 			}
 			
@@ -506,13 +503,13 @@ public class DriverConfigurazioneDB_porteDriver {
 					ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
 					
 					regola.setId(rsRegole.getLong("id"));
-					int status_min = rsRegole.getInt("status_min");
-					int status_max = rsRegole.getInt("status_max");
-					if(status_min>0) {
-						regola.setReturnCodeMin(status_min);
+					int statusMin = rsRegole.getInt("status_min");
+					int statusMax = rsRegole.getInt("status_max");
+					if(statusMin>0) {
+						regola.setReturnCodeMin(statusMin);
 					}
-					if(status_max>0) {
-						regola.setReturnCodeMax(status_max);
+					if(statusMax>0) {
+						regola.setReturnCodeMax(statusMax);
 					}
 
 					int fault = rsRegole.getInt("fault");
@@ -538,5 +535,55 @@ public class DriverConfigurazioneDB_porteDriver {
 			}
 		}
 
+	}
+	
+	
+	protected void updateProprietaOggetto(String nome, String user, String tabella) throws DriverConfigurazioneException {
+		
+		String nomeMetodo = "updateProprietaOggetto_"+tabella;
+		
+		Connection con = null;
+		if (this.driver.atomica) {
+			try {
+				con = this.driver.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.driver.globalConnection;
+
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		
+		PreparedStatement stm = null;
+		try {
+
+			ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObjectUpdate.addUpdateTable(tabella);
+			sqlQueryObjectUpdate.addUpdateField("utente_ultima_modifica", "?");
+			sqlQueryObjectUpdate.addUpdateField("data_ultima_modifica", "?");
+			sqlQueryObjectUpdate.addWhereCondition("nome_porta=?");
+			String updateString = sqlQueryObjectUpdate.createSQLUpdate();
+			stm = con.prepareStatement(updateString);
+			int index = 1;
+			stm.setString(index++, user);
+			stm.setTimestamp(index++, DateManager.getTimestamp());
+			stm.setString(index, nome);
+			int n=stm.executeUpdate();
+			stm.close();
+			this.driver.logDebug("Aggiornata "+n+" entry per l'operazione di ultima modifica della tabella '"+tabella+"' con nome: "+nome);
+		} catch (SQLException e) {
+			this.driver.logError("Errore SQL", e);
+			throw new DriverConfigurazioneException(e);
+		}catch (Exception e) {
+			this.driver.logError("Errore", e);
+			throw new DriverConfigurazioneException(e);
+		} finally {
+			JDBCUtilities.closeResources(stm);
+
+			this.driver.closeConnection(con);
+		}
 	}
 }

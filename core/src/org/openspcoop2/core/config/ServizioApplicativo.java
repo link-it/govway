@@ -43,6 +43,7 @@ import java.util.List;
  * 			&lt;element name="risposta-asincrona" type="{http://www.openspcoop2.org/core/config}risposta-asincrona" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/config}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/config}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
  * 		&lt;attribute name="tipo-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -70,7 +71,8 @@ import java.util.List;
   	"invocazioneServizio",
   	"rispostaAsincrona",
   	"proprieta",
-  	"protocolProperty"
+  	"protocolProperty",
+  	"proprietaOggetto"
   }
 )
 
@@ -159,6 +161,14 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBeanWit
 
   public int sizeProtocolPropertyList() {
     return this.protocolProperty.size();
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -326,6 +336,9 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBeanWit
   public int sizeProtocolProperty() {
   	return this.sizeProtocolPropertyList();
   }
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

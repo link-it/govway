@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.govway.struts.action.Action;
+import org.govway.struts.action.ActionForm;
+import org.govway.struts.action.ActionForward;
+import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.pdd.core.keystore.RemoteStore;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreKeyEntry;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -74,7 +74,7 @@ public class RemoteStoresKeysChange extends Action {
 			String labelNomeEntry = remoteStoreKeyEntry.getClientId() != null ? remoteStoreKeyEntry.getClientId() : remoteStoreKeyEntry.getKid();
 			
 			// setto la barra del titolo
-			ServletUtils.setPageDataTitle_ServletChange(pd, labelNomeCache, RemoteStoresCostanti.SERVLET_NAME_REMOTE_STORES_KEYS_LIST, labelNomeEntry);
+			ServletUtils.setPageDataTitleServletChange(pd, labelNomeCache, RemoteStoresCostanti.SERVLET_NAME_REMOTE_STORES_KEYS_LIST, labelNomeEntry);
 			
 			// preparo i campi
 			List<DataElement> dati = new ArrayList<>();

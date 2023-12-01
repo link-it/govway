@@ -37,8 +37,10 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -270,7 +272,15 @@ public final class PorteApplicativeConnettoriMultipliProprietaAdd extends Action
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
+			if(datiConnettore.getProprietaOggetto()==null) {
+				datiConnettore.setProprietaOggetto(new ProprietaOggetto());
+			}
+			datiConnettore.getProprietaOggetto().setUtenteUltimaModifica(userLogin);
+			datiConnettore.getProprietaOggetto().setDataUltimaModifica(DateManager.getDate());
+			
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+			
+			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
 			
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			

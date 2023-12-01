@@ -4,7 +4,7 @@ CREATE TABLE soggetti
 (
 	nome_soggetto VARCHAR(255) NOT NULL,
 	tipo_soggetto VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(4000),
 	identificativo_porta VARCHAR(255),
 	-- 1/0 (true/false) Indicazione se il soggetto svolge è quello di default per il protocollo
 	is_default INT DEFAULT 0,
@@ -28,6 +28,12 @@ CREATE TABLE soggetti
 	cn_issuer VARCHAR(255),
 	certificate MEDIUMBLOB,
 	cert_strict_verification INT,
+	utente_richiedente VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_creazione TIMESTAMP(3) DEFAULT 0,
+	utente_ultima_modifica VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ultima_modifica TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints

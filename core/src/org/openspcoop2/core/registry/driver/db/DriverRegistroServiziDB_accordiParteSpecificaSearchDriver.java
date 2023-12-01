@@ -732,12 +732,12 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		if((filtroCORS!=null && "".equals(filtroCORS))) {
 			filtroCORS=null;
 		}
-		String filtroCORS_origin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONFIGURAZIONE_CORS_ORIGIN);
-		if((filtroCORS_origin!=null && "".equals(filtroCORS_origin))) {
-			filtroCORS_origin=null;
+		String filtroCORSorigin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONFIGURAZIONE_CORS_ORIGIN);
+		if((filtroCORSorigin!=null && "".equals(filtroCORSorigin))) {
+			filtroCORSorigin=null;
 		}
-		if((filtroCORS_origin!=null && !Filtri.FILTRO_CONFIGURAZIONE_CORS_TIPO_VALORE_RIDEFINITO_ABILITATO.equals(filtroCORS))) {
-			filtroCORS_origin=null;
+		if((filtroCORSorigin!=null && !Filtri.FILTRO_CONFIGURAZIONE_CORS_TIPO_VALORE_RIDEFINITO_ABILITATO.equals(filtroCORS))) {
+			filtroCORSorigin=null;
 		}
 		
 		String filtroConnettoreTipo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
@@ -851,7 +851,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		this.driver.logDebug("filtroCorrelazioneApplicativa : " + filtroCorrelazioneApplicativa);
 		this.driver.logDebug("filtroConfigurazioneDumpTipo : " + filtroConfigurazioneDumpTipo);
 		this.driver.logDebug("filtroCORS : " + filtroCORS);
-		this.driver.logDebug("filtroCORS_origin : " + filtroCORS_origin);
+		this.driver.logDebug("filtroCORS_origin : " + filtroCORSorigin);
 		this.driver.logDebug("filtroConnettoreTipo : " + filtroConnettoreTipo);
 		this.driver.logDebug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
 		this.driver.logDebug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
@@ -995,7 +995,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroTrasformazione,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
-								filtroCORS, filtroCORS_origin);
+								filtroCORS, filtroCORSorigin);
 					}					
 				}
 				if(gestioneErogatori) {
@@ -1046,7 +1046,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroTrasformazione,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
-								filtroCORS, filtroCORS_origin);
+								filtroCORS, filtroCORSorigin);
 					}
 				}
 				sqlQueryObject.addSelectCountField("*", "cont");
@@ -1203,7 +1203,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroTrasformazione,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
-								filtroCORS, filtroCORS_origin);
+								filtroCORS, filtroCORSorigin);
 					}
 				}
 				if(gestioneErogatori) {
@@ -1254,7 +1254,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroTrasformazione,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
-								filtroCORS, filtroCORS_origin);
+								filtroCORS, filtroCORSorigin);
 					}
 				}
 				sqlQueryObject.addSelectCountField("*", "cont");
@@ -1442,7 +1442,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroTrasformazione,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
-								filtroCORS, filtroCORS_origin);
+								filtroCORS, filtroCORSorigin);
 					}
 				}
 				if(gestioneErogatori) {
@@ -1493,7 +1493,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroTrasformazione,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
-								filtroCORS, filtroCORS_origin);
+								filtroCORS, filtroCORSorigin);
 					}
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
@@ -1680,7 +1680,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroTrasformazione,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
-								filtroCORS, filtroCORS_origin);
+								filtroCORS, filtroCORSorigin);
 					}
 				}
 				if(gestioneErogatori) {
@@ -1731,7 +1731,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 								filtroTrasformazione,
 								filtroCorrelazioneApplicativa,
 								filtroConfigurazioneDumpTipo,
-								filtroCORS, filtroCORS_origin);
+								filtroCORS, filtroCORSorigin);
 					}
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
@@ -1884,10 +1884,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 				serv.setPortType(risultato.getString("port_type"));
 				serv.setIdSoggetto(risultato.getLong("idSoggettoErogatore"));
 				serv.setIdAccordo(risultato.getLong("id_accordo"));
-				String servizio_correlato = risultato.getString("servizio_correlato");
-				if( (servizio_correlato != null) && 
-						(servizio_correlato.equalsIgnoreCase(CostantiRegistroServizi.ABILITATO.toString()) ||
-								TipologiaServizio.CORRELATO.toString().equals(servizio_correlato))){
+				String servizioCorrelato = risultato.getString("servizio_correlato");
+				if( (servizioCorrelato != null) && 
+						(servizioCorrelato.equalsIgnoreCase(CostantiRegistroServizi.ABILITATO.toString()) ||
+								TipologiaServizio.CORRELATO.toString().equals(servizioCorrelato))){
 					serv.setTipologiaServizio(TipologiaServizio.CORRELATO);
 				}else{
 					serv.setTipologiaServizio(TipologiaServizio.NORMALE);

@@ -179,7 +179,9 @@ public class PorteApplicativeConfigurazioneChange extends Action {
 			}
 			
 			mappingErogazionePortaApplicativa.setDescrizione(nomeGruppo); 
-			porteApplicativeCore.aggiornaDescrizioneMappingErogazionePortaApplicativa(mappingErogazionePortaApplicativa);
+			
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			porteApplicativeCore.aggiornaDescrizioneMappingErogazionePortaApplicativa(mappingErogazionePortaApplicativa, userLogin);
 			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

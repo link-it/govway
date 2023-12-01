@@ -44,6 +44,7 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new Field("connettore",org.openspcoop2.core.registry.Connettore.class,"fruitore",Fruitore.class));
 		this.CONFIGURAZIONE_AZIONE = new org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneModel(new Field("configurazione-azione",org.openspcoop2.core.registry.ConfigurazioneServizioAzione.class,"fruitore",Fruitore.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"fruitore",Fruitore.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new Field("proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"fruitore",Fruitore.class));
 		this.STATO_PACKAGE = new Field("stato-package",java.lang.String.class,"fruitore",Fruitore.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_EROGATORE = new Field("byte-wsdl-implementativo-erogatore",byte[].class,"fruitore",Fruitore.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_FRUITORE = new Field("byte-wsdl-implementativo-fruitore",byte[].class,"fruitore",Fruitore.class);
@@ -54,6 +55,7 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 		this.WSDL_IMPLEMENTATIVO_EROGATORE = new Field("wsdl-implementativo-erogatore",java.lang.String.class,"fruitore",Fruitore.class);
 		this.WSDL_IMPLEMENTATIVO_FRUITORE = new Field("wsdl-implementativo-fruitore",java.lang.String.class,"fruitore",Fruitore.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"fruitore",Fruitore.class);
+		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"fruitore",Fruitore.class);
 	
 	}
 	
@@ -65,6 +67,7 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new ComplexField(father,"connettore",org.openspcoop2.core.registry.Connettore.class,"fruitore",Fruitore.class));
 		this.CONFIGURAZIONE_AZIONE = new org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneModel(new ComplexField(father,"configurazione-azione",org.openspcoop2.core.registry.ConfigurazioneServizioAzione.class,"fruitore",Fruitore.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"fruitore",Fruitore.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new ComplexField(father,"proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"fruitore",Fruitore.class));
 		this.STATO_PACKAGE = new ComplexField(father,"stato-package",java.lang.String.class,"fruitore",Fruitore.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_EROGATORE = new ComplexField(father,"byte-wsdl-implementativo-erogatore",byte[].class,"fruitore",Fruitore.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_FRUITORE = new ComplexField(father,"byte-wsdl-implementativo-fruitore",byte[].class,"fruitore",Fruitore.class);
@@ -75,6 +78,7 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 		this.WSDL_IMPLEMENTATIVO_EROGATORE = new ComplexField(father,"wsdl-implementativo-erogatore",java.lang.String.class,"fruitore",Fruitore.class);
 		this.WSDL_IMPLEMENTATIVO_FRUITORE = new ComplexField(father,"wsdl-implementativo-fruitore",java.lang.String.class,"fruitore",Fruitore.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"fruitore",Fruitore.class);
+		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"fruitore",Fruitore.class);
 	
 	}
 	
@@ -87,6 +91,8 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 	public org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneModel CONFIGURAZIONE_AZIONE = null;
 	 
 	public org.openspcoop2.core.registry.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
+	 
+	public org.openspcoop2.core.registry.model.ProprietaOggettoModel PROPRIETA_OGGETTO = null;
 	 
 	public IField STATO_PACKAGE = null;
 	 
@@ -107,6 +113,8 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 	public IField WSDL_IMPLEMENTATIVO_FRUITORE = null;
 	 
 	public IField ORA_REGISTRAZIONE = null;
+	 
+	public IField DESCRIZIONE = null;
 	 
 
 	@Override

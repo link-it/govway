@@ -234,6 +234,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String PARAMETRO_APS_PORT_TYPE = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_PARAMETRO_APS_PORT_TYPE;
 	public static final String PARAMETRO_APS_PORT_TYPE_OLD = "port_type_old";
 	public static final String PARAMETRO_APS_DESCRIZIONE = "descrizione";
+	public static final String PARAMETRO_APS_DESCRIZIONE_MODIFICA = "descModifica";
 	public static final String PARAMETRO_APS_PRIVATO = "privato";
 	public static final String PARAMETRO_APS_VERSIONE = "versione";
 	public static final String PARAMETRO_APS_RUOLO = "ruolo";
@@ -285,6 +286,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String PARAMETRO_APS_GESTIONE_CONFIGURAZIONI = "gestioneConfigurazioni";
 	public static final String PARAMETRO_APS_MODIFICA_API = "modificaAPI";
 	public static final String PARAMETRO_APS_MODIFICA_PROFILO = "modificaProfilo";
+	public static final String PARAMETRO_APS_MODIFICA_DESCRIZIONE = "modificaDescrizione";
 	public static final String PARAMETRO_APS_CAMBIA_API = "cambiaAPI";
 	public static final String PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE = "cambiaErogatore";
 	public static final String PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO = "backToConfermaModificaDatiServizio";
@@ -440,7 +442,13 @@ public class AccordiServizioParteSpecificaCostanti {
 	//
 	// Se si vuole gestire questa funzionalità si dovrà aggiornare i mapping delle fruizioni o erogazioni esistenti aggiornando gli id verso il nuovo accordo di servizio parte specifica
 	// e si dovrà eliminare il vecchio accordo parte specifica o il vecchio fruitore se rimane inutilizzato in seguito all'aggiornamento.
-	public static final boolean MODIFICA_DATI_IDENTIFICATIVI_VERSO_APS_ESISTENTE = false;
+	private static boolean modificaDatiIdentificativiVersoApsEsistente = false;
+	public static boolean isModificaDatiIdentificativiVersoApsEsistente() {
+		return modificaDatiIdentificativiVersoApsEsistente;
+	}
+	public static void setModificaDatiIdentificativiVersoApsEsistente(boolean p) {
+		modificaDatiIdentificativiVersoApsEsistente = p;
+	}
 	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_ESISTE_FRUIZIONE = "I dati identificativi forniti indirizzano una API {0} per la quale esiste già una fruizione; attualmente non è supportato questo tipo di aggiornamento.";
 	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_ESISTE_EROGAZIONE = "I dati identificativi forniti indirizzano una API {0} per la quale esiste già una erogazione; attualmente non è supportato questo tipo di aggiornamento.";
 

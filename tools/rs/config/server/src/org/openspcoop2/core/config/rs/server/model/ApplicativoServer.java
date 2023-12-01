@@ -31,6 +31,9 @@ public class ApplicativoServer  {
   @Schema(required = true, description = "")
   private String nome = null;
   
+  @Schema(example = "descrizione dell'applicativo", description = "")
+  private String descrizione = null;
+  
   @Schema(description = "")
   private List<Proprieta4000> proprieta = null;
   
@@ -63,6 +66,25 @@ public class ApplicativoServer  {
 
   public ApplicativoServer nome(String nome) {
     this.nome = nome;
+    return this;
+  }
+
+ /**
+   * Get descrizione
+   * @return descrizione
+  **/
+  @JsonProperty("descrizione")
+  @Valid
+ @Size(max=4000)  public String getDescrizione() {
+    return this.descrizione;
+  }
+
+  public void setDescrizione(String descrizione) {
+    this.descrizione = descrizione;
+  }
+
+  public ApplicativoServer descrizione(String descrizione) {
+    this.descrizione = descrizione;
     return this;
   }
 
@@ -116,6 +138,7 @@ public class ApplicativoServer  {
     sb.append("class ApplicativoServer {\n");
     
     sb.append("    nome: ").append(ApplicativoServer.toIndentedString(this.nome)).append("\n");
+    sb.append("    descrizione: ").append(ApplicativoServer.toIndentedString(this.descrizione)).append("\n");
     sb.append("    proprieta: ").append(ApplicativoServer.toIndentedString(this.proprieta)).append("\n");
     sb.append("    connettore: ").append(ApplicativoServer.toIndentedString(this.connettore)).append("\n");
     sb.append("}");

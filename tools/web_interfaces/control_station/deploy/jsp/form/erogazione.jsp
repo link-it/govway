@@ -119,14 +119,15 @@
 											DataElement de = (DataElement) listaComandi.get(idxLink);
 											String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
 											String classLink = "";
+											String numeroLink = numeroEntry + "_" + idxLink;
 											
 											// gestione link che visualizzano la finestra modale
 											if(de.getInfo() != null || de.getDialog() != null){
 												if(de.getInfo() != null) {
 													DataElementInfo deInfo = de.getInfo();
-													String idDivIconInfo = "divIconInfo_"+numeroEntry;
-													String idIconInfo = "iconInfo_"+numeroEntry; 
-													String idSpanInfo = "spanIconInfoBoxList_"+numeroEntry;
+													String idDivIconInfo = "divIconInfo_"+numeroLink;
+													String idIconInfo = "iconInfo_"+numeroLink; 
+													String idSpanInfo = "spanIconInfoBoxList_"+numeroLink;
 											%>
 											<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 						   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
@@ -136,15 +137,15 @@
 												
 												if(de.getDialog() != null) {
 													Dialog dialog = de.getDialog();
-													String idDivIconUso = "divIconUso_"+numeroEntry;
-													String idIconUso = "iconUso_"+numeroEntry; 
-													String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
+													String idDivIconUso = "divIconUso_"+numeroLink;
+													String idIconUso = "iconUso_"+numeroLink; 
+													String idSpanUso = "spanIconUsoBoxList_"+numeroLink;
 													
 													BodyElement urlElement = dialog.getUrlElement();
 													
-													request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+													request.setAttribute("idFinestraModale_"+numeroLink, de.getDialog());
 													
-													String identificativoFinestraModale = "idFinestraModale_" + numeroEntry;
+													String identificativoFinestraModale = "idFinestraModale_" + numeroLink;
 												%>
 												<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
 												<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
@@ -169,7 +170,7 @@
 														DataElement de = (DataElement) listaComandi.get(idxLink);
 														String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
 														String classLink = "";
-														
+														String numeroLink = numeroEntry + "_" + idxLink;
 														
 														if(de.getInfo() != null || de.getDialog() != null){
 															
@@ -180,34 +181,34 @@
 																
 																if(de.getInfo() != null) {
 																	%>
-												    				var labelM_<%=numeroEntry %> = $("#hidden_title_iconInfo_<%= numeroEntry %>").val();
-																	var bodyM_<%=numeroEntry %> = $("#hidden_body_iconInfo_<%= numeroEntry %>").val();
-																	mostraDataElementInfoModal(labelM_<%=numeroEntry %>,bodyM_<%=numeroEntry %>);
+												    				var labelM_<%=numeroLink %> = $("#hidden_title_iconInfo_<%= numeroLink %>").val();
+																	var bodyM_<%=numeroLink %> = $("#hidden_body_iconInfo_<%= numeroLink %>").val();
+																	mostraDataElementInfoModal(labelM_<%=numeroLink %>,bodyM_<%=numeroLink %>);
 													    			<%
 																}
 																
 																if(de.getDialog() != null) {
 																	Dialog dialog = de.getDialog();
-																	request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+																	request.setAttribute("idFinestraModale_"+numeroLink, de.getDialog());
 																	
 																	%>
-																	var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_<%= numeroEntry %>").val();
+																	var urlD_<%= numeroLink %> = $("#hidden_title_iconUso_<%= numeroLink %>").val();
 																	// addTabID
-																	urlD_<%= numeroEntry %> = addTabIdParam(urlD_<%= numeroEntry %>,true);
+																	urlD_<%= numeroLink %> = addTabIdParam(urlD_<%= numeroLink %>,true);
 												    				// chiamata al servizio
 												    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 												    				
 												    				$.ajax({
-											    							url : urlD_<%= numeroEntry %>,
+											    							url : urlD_<%= numeroLink %>,
 											    							method: 'GET',
 											    							async : false,
 											    							success: function(data, textStatus, jqXHR){
 											    								// inserimento del valore nella text area
-															    				$("textarea[id^='idFinestraModale_<%=numeroEntry %>_txtA']").val(data);
+															    				$("textarea[id^='idFinestraModale_<%=numeroLink %>_txtA']").val(data);
 															    				
 															    				<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
 															    				// apertura modale
-															    				var idToOpen = '#' + 'idFinestraModale_<%= numeroEntry %>';
+															    				var idToOpen = '#' + 'idFinestraModale_<%= numeroLink %>';
 															    				$(idToOpen).dialog("open");
 											    							},
 											    							error: function(data, textStatus, jqXHR){
@@ -648,7 +649,83 @@
 															<% 
 															firstText = false;
 														} else { // else button
+															if (type.equals("image")){
+							                					%>
+							                					<tr class="">
+																	<td class="tdTextRiepilogo labelRiepilogo">
+																		<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																	</td>
+																	<td class="tdTextRiepilogo <%= stile %>">
+																		<div class="<%=classDivNoEdit %>"> 																	
+																			<%
+					                          									String [] values = de.getStatusValues();
+					                                        					if (values != null) {
+					                            									String [] labels = de.getLabels();
+					                            									for (int y = 0; y < values.length; y++) {
+					                            										String statusType = de.getStatusTypes()!=null && de.getStatusTypes().length>0 ? de.getStatusTypes()[y] : null; // valore icona
+					                            										
+					                            										String statusTooltip = de.getStatusToolTips()!=null && de.getStatusToolTips().length>0 ?  de.getStatusToolTips()[y] : null; // tooltip
+					                            										String statusTooltipTitleAttribute = statusTooltip != null && !statusTooltip.equals("") ? " title=\"" + statusTooltip + "\"" : "";
+														                				
+					                            										String lab = values[y]; // testo configurazione
+					                            										
+					                            											%>
+					                            												<span class="<%=classSpanNoEdit %>-image-msval" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>_<%=y%>">
+					                            													<span class="icon-box">
+																										<i class="material-icons md-18"><%= statusType %></i>
+																									</span>
+																								</span>
+																								<span class="<%=classSpanNoEdit %>-msval" <%= statusTooltipTitleAttribute %> ><%= lab %></span>
+																							<%
+					                            									} //end for values
+					                                        					}
+				                          									%>
+																	
+																			<% 
+																				if(!de.getImage().isEmpty()){
+																					for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+																						DataElementImage image = de.getImage().get(idxLink);
+																						String classLink = "";
+																						String deIconName = image.getImage(); 
+											                					
+																						String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+											                							
+											                							String deTarget = " ";
+																				  		if (!image.getTarget().equals("")) {
+																				  			deTarget = " target=\""+ image.getTarget() +"\"";
+																				  		}
+																				  		
+																				  		if (!image.getUrl().equals("")) {
+																							image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																						}
+																				  		
+																				  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+																				  		String id = "form-image-link_" + i + "_" + idxLink;
+												                					%>
+												                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
+												                						<span class="icon-box">
+																							<i class="material-icons md-18"><%= deIconName %></i>
+																						</span>
+												                					</a>
+												                					<script type="text/javascript" nonce="<%= randomNonce %>">
+																				      	 $(document).ready(function(){
+																								$('#<%=id %>').click(function() {
+																									<%= visualizzaAjaxStatus %>return true;
+																								});
+																							});
+																					</script>
+													                				<%
+																					}// end for-edit-link
+																				} // end edit-link
+																			%>
+							                							</div>
+																	</td>
+																</tr>
+																<% 
+																firstText = false;
+															} else { // else image
 															
+															} // end else image
 														} // end else button
 						                			} // end else multi-select
 						                		} // end else checkbox					                			

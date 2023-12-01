@@ -55,8 +55,8 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 			this.servizioComposto = new AccordoServizioParteComuneServizioCompostoSintetico(apc.getServizioComposto());
 		}
 		if(apc.sizeAzioneList()>0) {
-			for (Azione azione : apc.getAzioneList()) {
-				this.azione.add(new AzioneSintetica(azione));
+			for (Azione azioneParam : apc.getAzioneList()) {
+				this.azione.add(new AzioneSintetica(azioneParam));
 			}
 		}
 		if(apc.sizePortTypeList()>0) {
@@ -73,6 +73,9 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 			for (GruppoAccordo gruppoAccordo : apc.getGruppi().getGruppoList()) {
 				this.gruppo.add(new GruppoSintetico(gruppoAccordo));
 			}
+		}
+		if(apc.getProprietaOggetto()!=null) {
+			this.proprietaOggetto = new ProprietaOggettoSintetico(apc.getProprietaOggetto());
 		}
 		this.superUser = apc.getSuperUser();
 		this.statoPackage = apc.getStatoPackage();
@@ -103,13 +106,15 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 
 	private AccordoServizioParteComuneServizioCompostoSintetico servizioComposto;
 
-	private List<AzioneSintetica> azione = new ArrayList<AzioneSintetica>();
+	private List<AzioneSintetica> azione = new ArrayList<>();
 
-	private List<PortTypeSintetico> portType = new ArrayList<PortTypeSintetico>();
+	private List<PortTypeSintetico> portType = new ArrayList<>();
 
-	private List<ResourceSintetica> resource = new ArrayList<ResourceSintetica>();
+	private List<ResourceSintetica> resource = new ArrayList<>();
 	
-	private List<GruppoSintetico> gruppo = new ArrayList<GruppoSintetico>();
+	private List<GruppoSintetico> gruppo = new ArrayList<>();
+	
+	private ProprietaOggettoSintetico proprietaOggetto;
 
 	private java.lang.String superUser;
 
@@ -202,6 +207,13 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 	}
 	public void setGruppo(List<GruppoSintetico> gruppo) {
 		this.gruppo = gruppo;
+	}
+	
+	public ProprietaOggettoSintetico getProprietaOggetto() {
+		return this.proprietaOggetto;
+	}
+	public void setProprietaOggetto(ProprietaOggettoSintetico proprietaOggetto) {
+		this.proprietaOggetto = proprietaOggetto;
 	}
 	
 	public java.lang.String getSuperUser() {

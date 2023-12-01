@@ -51,6 +51,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
@@ -120,6 +121,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.slf4j.Logger;
 
@@ -3223,12 +3225,18 @@ public class ConfigurazionePdD  {
 	}
 	
 	public String updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return _updateStatoConnettoreMultiplo(connectionPdD,idPA, nomeConnettore, stato, false);
+		return updateStatoConnettoreMultiploEngine(connectionPdD,idPA, nomeConnettore, null, stato, false);
+	}
+	public String updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, String user, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return updateStatoConnettoreMultiploEngine(connectionPdD,idPA, nomeConnettore, user, stato, false);
 	}
 	public String updateSchedulingConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return _updateStatoConnettoreMultiplo(connectionPdD,idPA, nomeConnettore, stato, true);
+		return updateStatoConnettoreMultiploEngine(connectionPdD,idPA, nomeConnettore, null,stato,  true);
 	}
-	public String _updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato, boolean scheduling) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public String updateSchedulingConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, String user, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return updateStatoConnettoreMultiploEngine(connectionPdD,idPA, nomeConnettore, user, stato, true);
+	}
+	private String updateStatoConnettoreMultiploEngine(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, String user, StatoFunzionalita stato, boolean scheduling) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 			
 		if(this.cache==null){
 			return null;
@@ -3292,6 +3300,14 @@ public class ConfigurazionePdD  {
 						}
 						else {
 							paSA.getDatiConnettore().setStato(stato);
+						}
+						
+						if(user!=null) {
+							if(paSA.getDatiConnettore().getProprietaOggetto()==null) {
+								paSA.getDatiConnettore().setProprietaOggetto(new ProprietaOggetto());
+							}
+							paSA.getDatiConnettore().getProprietaOggetto().setUtenteUltimaModifica(user);
+							paSA.getDatiConnettore().getProprietaOggetto().setDataUltimaModifica(DateManager.getDate());
 						}
 					}
 					break;

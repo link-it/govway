@@ -81,6 +81,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
+import org.openspcoop2.protocol.basic.config.SubscriptionConfiguration;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
@@ -156,19 +157,23 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, 
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
-			String autorizzazione_token, String autorizzazione_tokenOptions,
+			String autorizzazioneToken, String autorizzazioneTokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
 			String messageEngine, String canale,
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
 			String autorizzazioneAutenticatiToken, String urlAutorizzazioneAutenticatiToken, int numAutenticatiToken,
 			String autorizzazioneRuoliToken,  String urlAutorizzazioneRuoliToken, int numRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
-			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
-			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
+			String ctHeaderHttp, String ctHeaderHttpLimit, String ctHeaderHttpRemaining, String ctHeaderHttpReset,
+			String ctHeaderHttpRetryAfter, String ctHeaderHttpRetryAfterBackoff) throws Exception {
 
+		if(sp!=null && tiposp!=null && patternErogatore!=null && servizio!=null && tiposervizio!=null && versioneServizio!=null &&
+				patternServizio!=null && totAzioni>0 && statoMessageSecurity!=null && statoMTOM!=null){
+			// nop
+		}
+		
 		boolean multitenant = this.pddCore.isMultitenant();
 
-//		Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
@@ -178,12 +183,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		boolean isConfigurazione = parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE; 
 		
 		boolean datiInvocazione = false;
+		boolean modificaDescrizione = false;
 		boolean datiAltroPorta = false;
 		boolean datiAltroApi = false; // indipendente dalla porta (viene utilizzata sempre la porta di default)
 		if(isConfigurazione) {
 			if(usataInConfigurazioneDefault) {
 				datiInvocazione = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 			}
+			modificaDescrizione = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DESCRIZIONE));
 			datiAltroPorta = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA));
 			datiAltroApi = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API));
 			
@@ -191,6 +198,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(datiInvocazione+"");
+			dati.add(de);
+			
+			de = new DataElement();
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DESCRIZIONE);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(modificaDescrizione+"");
 			dati.add(de);
 			
 			de = new DataElement();
@@ -234,6 +247,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			de = new DataElement();
 			if(datiInvocazione) {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);
+			}
+			else if(modificaDescrizione) {
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DESCRIZIONE);
 			}
 			else {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI);
@@ -285,11 +301,23 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
-		de.setValue(descr);
-		if(isConfigurazione) {
+		if(modificaDescrizione && SubscriptionConfiguration.isDescriptionDefault(descr)) {
+			de.setValue(null);
+		}
+		else {
+			de.setValue(descr);
+		}
+		if(isConfigurazione && !modificaDescrizione) {
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			de.setType(DataElementType.TEXT_EDIT);
+			if(modificaDescrizione) {
+				de.setType(DataElementType.TEXT_AREA);
+				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
+				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
+			}
+			else {
+				de.setType(DataElementType.TEXT_EDIT);
+			}
 		}
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 		de.setSize(alternativeSize);
@@ -497,7 +525,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE+"__LABEL");
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setType(DataElementType.TEXT);
 				if(visualizzazioneSpecialeSoapPerEssereUgualeARest) {
 					de.setValue(this.getPortaDelegataAzioneIdentificazioneLabel(PortaDelegataAzioneIdentificazione.INTERFACE_BASED.getValue()));
@@ -831,7 +859,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
-					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+					autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 					null, 0, null, 0,
 					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 					autorizzazioneAutenticatiToken, urlAutorizzazioneAutenticatiToken, numAutenticatiToken,
@@ -960,8 +988,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					true,
 					nascondiSezioneOpzioniAvanzate,
 					ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
-					ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
-					ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+					ctHeaderHttp, ctHeaderHttpLimit, ctHeaderHttpRemaining, ctHeaderHttpReset,
+					ctHeaderHttpRetryAfter, ctHeaderHttpRetryAfterBackoff);
 		}
 		
 		
@@ -1781,7 +1809,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String nomePD = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
 			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
-			// String descr = this.getParameter("descr");
+			String descr = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 			String autenticazione = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 			String autenticazioneOpzionale = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
@@ -1874,6 +1902,16 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			// descrizione
+			if( (tipoOp.equals(TipoOperazione.CHANGE)) 
+					&&
+				(descr!=null && StringUtils.isNotEmpty(descr)) 
+				    &&
+				(!this.checkLength4000(descr, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE)) 
+				){
+				return false;
+			}
+			
 			// integrazione metadati
 			if(tipoOp == TipoOperazione.CHANGE && datiAltroPorta) {
 				boolean validazioneIntegrazione = this.validaIntegrazioneMetadati();

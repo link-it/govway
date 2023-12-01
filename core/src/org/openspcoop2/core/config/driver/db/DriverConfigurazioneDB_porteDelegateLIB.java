@@ -27,6 +27,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.openspcoop2.core.commons.DBUtils;
@@ -63,6 +64,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CRUDType;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -103,7 +105,6 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata] Tipo proprietario della Porta Delegata non valido.");
 
 		PreparedStatement stm = null;
-		//PreparedStatement stm1 = null;
 		String sqlQuery;
 		ResultSet rs = null;
 
@@ -127,57 +128,57 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 
 		PortaDelegataSoggettoErogatore soggErogatore = aPD.getSoggettoErogatore();
 		long idSoggettoErogatore = ((soggErogatore != null && soggErogatore.getId() != null) ? soggErogatore.getId() : -1);
-		//System.out.println("PRIMA PD SOGGETTO: "+idSoggettoErogatore);
-		// SEMPRE, VA AGGIORNATO ANCHE IN UPDATE if(idSoggettoErogatore<=0 &&
+		/**System.out.println("PRIMA PD SOGGETTO: "+idSoggettoErogatore);*/
+		/** SEMPRE, VA AGGIORNATO ANCHE IN UPDATE if(idSoggettoErogatore<=0 &&*/
 		if(
 				soggErogatore!=null && soggErogatore.getTipo()!=null && soggErogatore.getNome()!=null) {
 			try {
 				idSoggettoErogatore = DBUtils.getIdSoggetto(soggErogatore.getNome(), soggErogatore.getTipo(), con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
-				//System.out.println("DOPO PD SOGGETTO: "+idSoggettoErogatore);
-			} catch (Throwable e1) {
-				DriverConfigurazioneDBLib.log.debug(e1.getMessage(),e1); // potrebbe non esistere la tabella
+				/**System.out.println("DOPO PD SOGGETTO: "+idSoggettoErogatore);*/
+			} catch (Exception e1) {
+				DriverConfigurazioneDBLib.logDebug(e1.getMessage(),e1); // potrebbe non esistere la tabella
 			}
 		}
 		
 		PortaDelegataServizio servizio = aPD.getServizio();
 		long idServizioPD = ((servizio != null && servizio.getId() != null) ? servizio.getId() : -1);
-		//System.out.println("PRIMA PD: "+idServizioPD);
-		// SEMPRE, VA AGGIORNATO ANCHE IN UPDATE if(idServizioPD<=0 &&
+		/**System.out.println("PRIMA PD: "+idServizioPD);*/
+		/** SEMPRE, VA AGGIORNATO ANCHE IN UPDATE if(idServizioPD<=0 &&*/
 		if(
 				idSoggettoErogatore>0 && servizio!=null && servizio.getTipo()!=null && servizio.getNome()!=null && servizio.getVersione()!=null && servizio.getVersione()>0) {
 			try {
 				idServizioPD = DBUtils.getIdServizio(servizio.getNome(), servizio.getTipo(), servizio.getVersione(), idSoggettoErogatore, con, DriverConfigurazioneDBLib.tipoDB,DriverConfigurazioneDBLib.tabellaSoggetti);
-				//System.out.println("DOPO PD: "+idServizioPD);
-			} catch (Throwable e1) {
-				DriverConfigurazioneDBLib.log.debug(e1.getMessage(),e1); // potrebbe non esistere la tabella
+				/**System.out.println("DOPO PD: "+idServizioPD);*/
+			} catch (Exception e1) {
+				DriverConfigurazioneDBLib.logDebug(e1.getMessage(),e1); // potrebbe non esistere la tabella
 			}
 		}
 
 		MtomProcessor mtomProcessor = aPD.getMtomProcessor();
-		MTOMProcessorType mtomMode_request = null;
-		MTOMProcessorType mtomMode_response = null;
+		MTOMProcessorType mtomModeRequest = null;
+		MTOMProcessorType mtomModeResponse = null;
 		if(mtomProcessor!=null){
 			if(mtomProcessor.getRequestFlow()!=null){
-				mtomMode_request = mtomProcessor.getRequestFlow().getMode();
+				mtomModeRequest = mtomProcessor.getRequestFlow().getMode();
 			}
 			if(mtomProcessor.getResponseFlow()!=null){
-				mtomMode_response = mtomProcessor.getResponseFlow().getMode();
+				mtomModeResponse = mtomProcessor.getResponseFlow().getMode();
 			}
 		}
 		
 		MessageSecurity messageSecurity = aPD.getMessageSecurity();
 		String messageSecurityStatus = aPD.getStatoMessageSecurity();
-		StatoFunzionalita messageSecurityApplyMtom_request = null;
-		StatoFunzionalita messageSecurityApplyMtom_response = null;
+		StatoFunzionalita messageSecurityApplyMtomRequest = null;
+		StatoFunzionalita messageSecurityApplyMtomResponse = null;
 		String securityRequestMode = null;
 		String securityResponseMode = null;
 		if(messageSecurity!=null){
 			if(messageSecurity.getRequestFlow()!=null){
-				messageSecurityApplyMtom_request = messageSecurity.getRequestFlow().getApplyToMtom();
+				messageSecurityApplyMtomRequest = messageSecurity.getRequestFlow().getApplyToMtom();
 				securityRequestMode = messageSecurity.getRequestFlow().getMode();
 			}
 			if(messageSecurity.getResponseFlow()!=null){
-				messageSecurityApplyMtom_response = messageSecurity.getResponseFlow().getApplyToMtom();
+				messageSecurityApplyMtomResponse = messageSecurity.getResponseFlow().getApplyToMtom();
 				securityResponseMode = messageSecurity.getResponseFlow().getMode();
 			}
 		}
@@ -185,36 +186,36 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 		CorrelazioneApplicativa corrApp = aPD.getCorrelazioneApplicativa();
 		CorrelazioneApplicativaRisposta corrAppRisposta = aPD.getCorrelazioneApplicativaRisposta();
 		
-		String msg_diag_severita = null;
-		String tracciamento_esiti = null;
+		String msgDiagSeverita = null;
+		String tracciamentoEsiti = null;
 		if(aPD.getTracciamento()!=null){
-			msg_diag_severita = DriverConfigurazioneDBLib.getValue(aPD.getTracciamento().getSeverita());
-			tracciamento_esiti = aPD.getTracciamento().getEsiti();
+			msgDiagSeverita = DriverConfigurazioneDBLib.getValue(aPD.getTracciamento().getSeverita());
+			tracciamentoEsiti = aPD.getTracciamento().getEsiti();
 		}
 		
 		CorsConfigurazione corsConfigurazione = aPD.getGestioneCors();
-		String cors_stato = null;
-		String cors_tipo = null; 
-		String cors_all_allow_origins = null; 
-		String cors_all_allow_methods = null; 
-		String cors_all_allow_headers = null; 
-		String cors_allow_credentials = null; 
-		int cors_allow_max_age = CostantiDB.FALSE;
-		Integer cors_allow_max_age_seconds = null;
-		String cors_allow_origins = null; 
-		String cors_allow_headers = null; 
-		String cors_allow_methods = null; 
-		String cors_allow_expose_headers = null; 
+		String corsStato = null;
+		String corsTipo = null; 
+		String corsAllAllowOrigins = null; 
+		String corsAllAllowMethods = null; 
+		String corsAllAllowHeaders = null; 
+		String corsAllowCredentials = null; 
+		int corsAllowMaxAge = CostantiDB.FALSE;
+		Integer corsAllowMaxAgeSeconds = null;
+		String corsAllowOrigins = null; 
+		String corsAllowHeaders = null; 
+		String corsAllowMethods = null; 
+		String corsAllowExposeHeaders = null; 
 		if(corsConfigurazione!=null) {
-			cors_stato = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getStato());
-			cors_tipo = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getTipo());
-			cors_all_allow_origins = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
-			cors_all_allow_methods = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowMethods());
-			cors_all_allow_headers = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowHeaders());
-			cors_allow_credentials = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllowCredentials());
+			corsStato = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getStato());
+			corsTipo = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getTipo());
+			corsAllAllowOrigins = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
+			corsAllAllowMethods = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowMethods());
+			corsAllAllowHeaders = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllAllowHeaders());
+			corsAllowCredentials = DriverConfigurazioneDBLib.getValue(corsConfigurazione.getAccessControlAllowCredentials());
 			if(corsConfigurazione.getAccessControlMaxAge()!=null) {
-				cors_allow_max_age = CostantiDB.TRUE;
-				cors_allow_max_age_seconds = corsConfigurazione.getAccessControlMaxAge();	
+				corsAllowMaxAge = CostantiDB.TRUE;
+				corsAllowMaxAgeSeconds = corsConfigurazione.getAccessControlMaxAge();	
 			}
 			if(corsConfigurazione.getAccessControlAllowOrigins()!=null && corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList()>0) {
 				StringBuilder bf = new StringBuilder();
@@ -224,7 +225,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					}
 					bf.append(corsConfigurazione.getAccessControlAllowOrigins().getOrigin(i));
 				}
-				cors_allow_origins = bf.toString();
+				corsAllowOrigins = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowHeaders()!=null && corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList()>0) {
 				StringBuilder bf = new StringBuilder();
@@ -234,7 +235,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					}
 					bf.append(corsConfigurazione.getAccessControlAllowHeaders().getHeader(i));
 				}
-				cors_allow_headers = bf.toString();
+				corsAllowHeaders = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowMethods()!=null && corsConfigurazione.getAccessControlAllowMethods().sizeMethodList()>0) {
 				StringBuilder bf = new StringBuilder();
@@ -244,7 +245,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					}
 					bf.append(corsConfigurazione.getAccessControlAllowMethods().getMethod(i));
 				}
-				cors_allow_methods = bf.toString();
+				corsAllowMethods = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlExposeHeaders()!=null && corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList()>0) {
 				StringBuilder bf = new StringBuilder();
@@ -254,67 +255,67 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					}
 					bf.append(corsConfigurazione.getAccessControlExposeHeaders().getHeader(i));
 				}
-				cors_allow_expose_headers = bf.toString();
+				corsAllowExposeHeaders = bf.toString();
 			}
 		}
 		
 		ResponseCachingConfigurazione responseCachingConfigurazone = aPD.getResponseCaching();
-		String response_cache_stato = null;
-		Integer response_cache_seconds = null;
-		Long response_cache_max_msg_size = null;
-		String response_cache_hash_url = null;
-		String response_cache_hash_query = null;
-		String response_cache_hash_query_list = null;
-		String response_cache_hash_headers = null;
-		String response_cache_hash_headers_list = null;
-		String response_cache_hash_payload = null;
-		boolean response_cache_noCache = true;
-		boolean response_cache_maxAge = true;
-		boolean response_cache_noStore = true;
-		List<ResponseCachingConfigurazioneRegola> response_cache_regole = null;
+		String responseCacheStato = null;
+		Integer responseCacheSeconds = null;
+		Long responseCacheMaxMsgSize = null;
+		String responseCacheHashUrl = null;
+		String responseCacheHashQuery = null;
+		String responseCacheHashQueryList = null;
+		String responseCacheHashHeaders = null;
+		String responseCacheHashHeadersList = null;
+		String responseCacheHashPayload = null;
+		boolean responseCacheNoCache = true;
+		boolean responseCacheMaxAge = true;
+		boolean responseCacheNoStore = true;
+		List<ResponseCachingConfigurazioneRegola> responseCacheRegole = null;
 		if(responseCachingConfigurazone!=null) {
-			response_cache_stato = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getStato());
-			response_cache_seconds = responseCachingConfigurazone.getCacheTimeoutSeconds();
-			response_cache_max_msg_size = responseCachingConfigurazone.getMaxMessageSize();
+			responseCacheStato = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getStato());
+			responseCacheSeconds = responseCachingConfigurazone.getCacheTimeoutSeconds();
+			responseCacheMaxMsgSize = responseCachingConfigurazone.getMaxMessageSize();
 			if(responseCachingConfigurazone.getControl()!=null) {
-				response_cache_noCache = responseCachingConfigurazone.getControl().getNoCache();
-				response_cache_maxAge = responseCachingConfigurazone.getControl().getMaxAge();
-				response_cache_noStore = responseCachingConfigurazone.getControl().getNoStore();
+				responseCacheNoCache = responseCachingConfigurazone.getControl().getNoCache();
+				responseCacheMaxAge = responseCachingConfigurazone.getControl().getMaxAge();
+				responseCacheNoStore = responseCachingConfigurazone.getControl().getNoStore();
 			}
 			if(responseCachingConfigurazone.getHashGenerator()!=null) {
-				response_cache_hash_url = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
+				responseCacheHashUrl = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
 				
-				response_cache_hash_query = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getQueryParameters());
-				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getHashGenerator().getQueryParameters())) {
-					if(responseCachingConfigurazone.getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList()>0) {
-						StringBuilder bf = new StringBuilder();
-						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList(); i++) {
-							if(i>0) {
-								bf.append(",");
-							}
-							bf.append(responseCachingConfigurazone.getHashGenerator().getQueryParameter(i));
+				responseCacheHashQuery = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getQueryParameters());
+				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getHashGenerator().getQueryParameters()) &&
+					(responseCachingConfigurazone.getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList()>0) 
+					){
+					StringBuilder bf = new StringBuilder();
+					for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList(); i++) {
+						if(i>0) {
+							bf.append(",");
 						}
-						response_cache_hash_query_list = bf.toString();
+						bf.append(responseCachingConfigurazone.getHashGenerator().getQueryParameter(i));
 					}
+					responseCacheHashQueryList = bf.toString();
 				}
 				
-				response_cache_hash_headers = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
-				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getHashGenerator().getHeaders())) {
-					if(responseCachingConfigurazone.getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getHashGenerator().sizeHeaderList()>0) {
-						StringBuilder bf = new StringBuilder();
-						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeHeaderList(); i++) {
-							if(i>0) {
-								bf.append(",");
-							}
-							bf.append(responseCachingConfigurazone.getHashGenerator().getHeader(i));
+				responseCacheHashHeaders = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
+				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getHashGenerator().getHeaders()) &&
+					(responseCachingConfigurazone.getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getHashGenerator().sizeHeaderList()>0) 
+					){
+					StringBuilder bf = new StringBuilder();
+					for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeHeaderList(); i++) {
+						if(i>0) {
+							bf.append(",");
 						}
-						response_cache_hash_headers_list = bf.toString();
+						bf.append(responseCachingConfigurazone.getHashGenerator().getHeader(i));
 					}
+					responseCacheHashHeadersList = bf.toString();
 				}
 				
-				response_cache_hash_payload = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
+				responseCacheHashPayload = DriverConfigurazioneDBLib.getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
 			}
-			response_cache_regole = responseCachingConfigurazone.getRegolaList();
+			responseCacheRegole = responseCachingConfigurazone.getRegolaList();
 		}
 		
 		ConfigurazionePortaHandler configHandlers = aPD.getConfigurazioneHandler();
@@ -378,6 +379,26 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					default:
 						break;
 					}
+				}
+				
+				String utenteRichiedente = null;
+				if(aPD.getProprietaOggetto()!=null && aPD.getProprietaOggetto().getUtenteRichiedente()!=null) {
+					utenteRichiedente = aPD.getProprietaOggetto().getUtenteRichiedente();
+				}
+				else {
+					utenteRichiedente = DBUtils.getSuperUserServizioSafe(DriverConfigurazioneDBLib.log, "CRUDPortaApplicativa",
+							idServizioPD, con, DriverConfigurazioneDBLib.tipoDB);
+				}
+				
+				Timestamp dataCreazione = null;
+				if(aPD.getProprietaOggetto()!=null && aPD.getProprietaOggetto().getDataCreazione()!=null) {
+					dataCreazione = new Timestamp(aPD.getProprietaOggetto().getDataCreazione().getTime());
+				}
+				else if(aPD.getOraRegistrazione()!=null){
+					dataCreazione = new Timestamp(aPD.getOraRegistrazione().getTime());
+				}
+				else {
+					dataCreazione = DateManager.getTimestamp();
 				}
 
 				// create
@@ -480,6 +501,12 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				sqlQueryObject.addInsertField("options", "?");
 				// options
 				sqlQueryObject.addInsertField("canale", "?");
+				if(utenteRichiedente!=null) {
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, "?");
+				}
+				if(dataCreazione!=null) {
+					sqlQueryObject.addInsertField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, "?");
+				}
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 				int index = 1;
@@ -529,12 +556,12 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setString(index++, autorizzazioneXacmlPolicy);
 				stm.setString(index++, autorizzazioneContenuto);
 				// mtom
-				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomMode_request));
-				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomMode_response));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomModeRequest));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomModeResponse));
 				// messageSecurity
 				stm.setString(index++, messageSecurityStatus);
-				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtom_request));
-				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtom_response));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtomRequest));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtomResponse));
 				stm.setString(index++, securityRequestMode);
 				stm.setString(index++, securityResponseMode);
 				// proprietario
@@ -590,54 +617,54 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDBLib.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
 				
 				// Tracciamento
-				stm.setString(index++, msg_diag_severita);
-				stm.setString(index++, tracciamento_esiti);
+				stm.setString(index++, msgDiagSeverita);
+				stm.setString(index++, tracciamentoEsiti);
 				
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDBLib.getValue(aPD.getStato()) : null);
 				
 				// cors
-				stm.setString(index++, cors_stato);
-				stm.setString(index++, cors_tipo);
-				stm.setString(index++, cors_all_allow_origins);
-				stm.setString(index++, cors_all_allow_methods);
-				stm.setString(index++, cors_all_allow_headers);
-				stm.setString(index++, cors_allow_credentials);
-				stm.setInt(index++, cors_allow_max_age);
-				if(cors_allow_max_age_seconds!=null) {
-					stm.setInt(index++, cors_allow_max_age_seconds);
+				stm.setString(index++, corsStato);
+				stm.setString(index++, corsTipo);
+				stm.setString(index++, corsAllAllowOrigins);
+				stm.setString(index++, corsAllAllowMethods);
+				stm.setString(index++, corsAllAllowHeaders);
+				stm.setString(index++, corsAllowCredentials);
+				stm.setInt(index++, corsAllowMaxAge);
+				if(corsAllowMaxAgeSeconds!=null) {
+					stm.setInt(index++, corsAllowMaxAgeSeconds);
 				}
 				else {
 					stm.setNull(index++, java.sql.Types.INTEGER);
 				}
-				stm.setString(index++, cors_allow_origins);
-				stm.setString(index++, cors_allow_headers);
-				stm.setString(index++, cors_allow_methods);
-				stm.setString(index++, cors_allow_expose_headers);
+				stm.setString(index++, corsAllowOrigins);
+				stm.setString(index++, corsAllowHeaders);
+				stm.setString(index++, corsAllowMethods);
+				stm.setString(index++, corsAllowExposeHeaders);
 				
 				// responseCaching
-				stm.setString(index++, response_cache_stato);
-				if(response_cache_seconds!=null) {
-					stm.setInt(index++, response_cache_seconds);
+				stm.setString(index++, responseCacheStato);
+				if(responseCacheSeconds!=null) {
+					stm.setInt(index++, responseCacheSeconds);
 				}
 				else {
 					stm.setNull(index++, java.sql.Types.INTEGER);
 				}
-				if(response_cache_max_msg_size!=null) {
-					stm.setLong(index++, response_cache_max_msg_size);
+				if(responseCacheMaxMsgSize!=null) {
+					stm.setLong(index++, responseCacheMaxMsgSize);
 				}
 				else {
 					stm.setNull(index++, java.sql.Types.BIGINT);
 				}
-				stm.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
-				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
-				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
-				stm.setString(index++, response_cache_hash_url);
-				stm.setString(index++, response_cache_hash_query);
-				stm.setString(index++, response_cache_hash_query_list);
-				stm.setString(index++, response_cache_hash_headers);
-				stm.setString(index++, response_cache_hash_headers_list);
-				stm.setString(index++, response_cache_hash_payload);
+				stm.setInt(index++, responseCacheNoCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, responseCacheMaxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, responseCacheNoStore ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setString(index++, responseCacheHashUrl);
+				stm.setString(index++, responseCacheHashQuery);
+				stm.setString(index++, responseCacheHashQueryList);
+				stm.setString(index++, responseCacheHashHeaders);
+				stm.setString(index++, responseCacheHashHeadersList);
+				stm.setString(index++, responseCacheHashPayload);
 				
 				//idaccordo
 				stm.setLong(index++, aPD.getIdAccordo()!=null ? aPD.getIdAccordo() : -1L);
@@ -649,7 +676,15 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				// canale
 				stm.setString(index++, aPD.getCanale());
 				
-				DriverConfigurazioneDBLib.log.debug("eseguo query: " + 
+				if(utenteRichiedente!=null) {
+					stm.setString(index++, utenteRichiedente);
+				}
+				
+				if(dataCreazione!=null) {
+					stm.setTimestamp(index++, dataCreazione);
+				}
+				
+				DriverConfigurazioneDBLib.logDebug("eseguo query: " + 
 						DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, 
 								idSoggettoErogatore, tipoSoggErogatore, nomeSoggErogatore, 
 								idServizioPD, tipoServizio, nomeServizio, 
@@ -668,8 +703,8 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 								((gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? gestioneToken.getAutenticazione().getUsername() : null),
 								((gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? gestioneToken.getAutenticazione().getEmail() : null),
 								autorizzazione, autorizzazioneXacmlPolicy, autorizzazioneContenuto,
-								mtomMode_request, mtomMode_response,
-								messageSecurityStatus, messageSecurityApplyMtom_request, messageSecurityApplyMtom_response, securityRequestMode, securityResponseMode,
+								mtomModeRequest, mtomModeResponse,
+								messageSecurityStatus, messageSecurityApplyMtomRequest, messageSecurityApplyMtomResponse, securityRequestMode, securityResponseMode,
 								idSoggettoProprietario,
 								aPD.getRicevutaAsincronaSimmetrica(),aPD.getRicevutaAsincronaAsimmetrica(),aPD.getIntegrazione(),
 								(aPD.getCorrelazioneApplicativa()!=null ? aPD.getCorrelazioneApplicativa().getScadenza() : null),
@@ -693,22 +728,22 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 								(aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
 										aPD.getScope().getMatch().getValue() : null),
 								aPD.getRicercaPortaAzioneDelegata(),
-								msg_diag_severita,tracciamento_esiti,
+								msgDiagSeverita,tracciamentoEsiti,
 								aPD.getStato(),
-								cors_stato, cors_tipo, cors_all_allow_origins, cors_all_allow_methods, cors_all_allow_headers, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
-								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
-								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
-								(response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE),
-								(response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
-								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
-								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
+								corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowMethods, corsAllAllowHeaders, corsAllowCredentials, corsAllowMaxAge, corsAllowMaxAgeSeconds,
+								corsAllowOrigins, corsAllowHeaders, corsAllowMethods, corsAllowExposeHeaders,
+								responseCacheStato, responseCacheSeconds, responseCacheMaxMsgSize, 
+								(responseCacheNoCache ? CostantiDB.TRUE : CostantiDB.FALSE),
+								(responseCacheMaxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
+								(responseCacheNoStore ? CostantiDB.TRUE : CostantiDB.FALSE),
+								responseCacheHashUrl, responseCacheHashQuery, responseCacheHashQueryList, responseCacheHashHeaders, responseCacheHashHeadersList, responseCacheHashPayload,
 								aPD.getIdAccordo(),aPD.getIdPortType(),
 								aPD.getOptions(),
 								aPD.getCanale()));
 				n = stm.executeUpdate();
 				stm.close();
 
-				DriverConfigurazioneDBLib.log.debug("Inserted " + n + " row(s).");
+				DriverConfigurazioneDBLib.logDebug("Inserted " + n + " row(s).");
 
 				// recupero l'id della porta delegata appena inserita
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -763,7 +798,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						}	
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " mtom request flow con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " mtom request flow con id=" + idPortaDelegata);
 
 					MtomProcessorFlowParameter resParam = null;
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -791,12 +826,12 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " mtom response flow con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " mtom response flow con id=" + idPortaDelegata);
 					
 				}
 				
 				// se security abilitato setto la lista
-				//if ((messageSecurity != null) && CostantiConfigurazione.ABILITATO.toString().equals(messageSecurityStatus) )  {
+				/**if ((messageSecurity != null) && CostantiConfigurazione.ABILITATO.toString().equals(messageSecurityStatus) )  {*/
 				// Devo settarli sempre se ci sono, in modo che lo switch abilitato-disabilitato funzioni
 				if ((messageSecurity != null) )  {
 					MessageSecurityFlowParameter reqParam = null;
@@ -821,7 +856,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						}	
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " request flow con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " request flow con id=" + idPortaDelegata);
 
 					MessageSecurityFlowParameter resParam = null;
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -845,7 +880,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " response flow con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " response flow con id=" + idPortaDelegata);
 				}
 
 				// la lista di correlazioni applicative contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
@@ -878,7 +913,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " correlazione applicativa con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " correlazione applicativa con id=" + idPortaDelegata);
 				}
 				
 				// la lista di correlazioni applicative contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
@@ -909,7 +944,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " correlazione applicativa risposta con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " correlazione applicativa risposta con id=" + idPortaDelegata);
 				}
 				
 				// serviziapplicativi
@@ -943,7 +978,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " associazioni ServizioApplicativo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inseriti " + i + " associazioni ServizioApplicativo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
 
 				// set prop autenticazione
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -961,7 +996,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolPropAutenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inseriti " + i + " SetProtocolPropAutenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// set prop autorizzazione
@@ -980,7 +1015,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inseriti " + i + " SetProtocolPropAutorizzazione associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// set prop autorizzazione contenuto
@@ -999,7 +1034,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazioneContenuto associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inseriti " + i + " SetProtocolPropAutorizzazioneContenuto associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -1019,7 +1054,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolPropRateLimiting associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inseriti " + i + " SetProtocolPropRateLimiting associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -1041,7 +1076,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inseriti " + i + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// Ruoli
 				n=0;
@@ -1059,11 +1094,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunto ruolo[" + ruolo.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunti " + n + " ruoli alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// Scope
 				n=0;
@@ -1081,11 +1116,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunto scope[" + scope.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " scope alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunti " + n + " scope alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// serviziapplicativi (token)
@@ -1121,7 +1156,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " associazioni ServizioApplicativo<->PortaDelegata (token) associati alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Inseriti " + i + " associazioni ServizioApplicativo<->PortaDelegata (token) associati alla PortaDelegata[" + idPortaDelegata + "]");
 				}
 				
 				// Ruoli (Token)
@@ -1141,11 +1176,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli (token) alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunti " + n + " ruoli (token) alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// Azioni
 				n=0;
@@ -1163,18 +1198,18 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunto azione delegata [" + azioneDelegata + "] alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunto azione delegata [" + azioneDelegata + "] alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " azioni delegate alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " azioni delegate alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// Cache Regole
 				n=0;
-				if(response_cache_regole!=null && response_cache_regole.size()>0){
-					for (int j = 0; j < response_cache_regole.size(); j++) {
-						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+				if(responseCacheRegole!=null && responseCacheRegole.size()>0){
+					for (int j = 0; j < responseCacheRegole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = responseCacheRegole.get(j);
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
 						sqlQueryObject.addInsertField("id_porta", "?");
@@ -1205,11 +1240,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunta regola di cache alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunta regola di cache alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " regole di cache alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " regole di cache alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// AttributeAuthority
@@ -1243,11 +1278,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunto A.A.[" + aa.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunto A.A.[" + aa.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " A.A. alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " A.A. alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// dumpConfigurazione
@@ -1275,7 +1310,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						}
 					}
 				}
-				DriverConfigurazioneDBLib.log.debug("Inseriti " + i + " associazioni ExtendedInfo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inseriti " + i + " associazioni ExtendedInfo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				break;
 
@@ -1337,14 +1372,14 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				if(aPD.getOldIDPortaDelegataForUpdate()!=null){
 					oldNomePD = aPD.getOldIDPortaDelegataForUpdate().getNome();
 				}
-				DriverConfigurazioneDBLib.log.debug("OLD-PD["+oldNomePD+"] PD["+nomePorta+"]");
+				DriverConfigurazioneDBLib.logDebug("OLD-PD["+oldNomePD+"] PD["+nomePorta+"]");
 				
 				if (oldNomePD == null || oldNomePD.equals("")){
-					DriverConfigurazioneDBLib.log.debug("old nomePD is null, assegno: "+nomePorta);
+					DriverConfigurazioneDBLib.logDebug("old nomePD is null, assegno: "+nomePorta);
 					oldNomePD = nomePorta;
 				}
 
-				// if(aPD.getId() == null || aPD.getId()<=0) throw new
+				/** if(aPD.getId() == null || aPD.getId()<=0) throw new*/
 				// DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata(UPDATE)]
 				// L'id della porta e' necessario per effettuare l'UPDATE.");
 				idPortaDelegata = DBUtils.getIdPortaDelegata(oldNomePD, con, DriverConfigurazioneDBLib.tipoDB);
@@ -1356,6 +1391,18 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata(UPDATE)] id porta delegata non trovato nome["+oldNomePD+"]");
 				aPD.setId(idPortaDelegata);
 				
+				String utenteUltimaModifica = null;
+				if(aPD.getProprietaOggetto()!=null && aPD.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
+					utenteUltimaModifica = aPD.getProprietaOggetto().getUtenteUltimaModifica();
+				}
+				
+				Timestamp dataUltimaModifica = null;
+				if(aPD.getProprietaOggetto()!=null && aPD.getProprietaOggetto().getDataUltimaModifica()!=null) {
+					dataUltimaModifica = new Timestamp(aPD.getProprietaOggetto().getDataUltimaModifica().getTime());
+				}
+				else {
+					dataUltimaModifica = DateManager.getTimestamp();
+				}
 				
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -1457,6 +1504,14 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				sqlQueryObject.addUpdateField("options", "?");
 				// canale
 				sqlQueryObject.addUpdateField("canale", "?");
+				
+				if(utenteUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
+				}
+				if(dataUltimaModifica!=null) {
+					sqlQueryObject.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
+				}
+				
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLUpdate();
@@ -1507,12 +1562,12 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setString(index++, autorizzazioneXacmlPolicy);
 				stm.setString(index++, autorizzazioneContenuto);
 				// mtom
-				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomMode_request));
-				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomMode_response));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomModeRequest));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(mtomModeResponse));
 				// messageSecurity
 				stm.setString(index++, messageSecurityStatus);
-				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtom_request));
-				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtom_response));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtomRequest));
+				stm.setString(index++, DriverConfigurazioneDBLib.getValue(messageSecurityApplyMtomResponse));
 				stm.setString(index++, securityRequestMode);
 				stm.setString(index++, securityResponseMode);
 				// soggettoProprietario
@@ -1559,52 +1614,52 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				// RicercaPortaAzioneDelegata
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDBLib.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
 				// Tracciamento
-				stm.setString(index++, msg_diag_severita);
-				stm.setString(index++, tracciamento_esiti);
+				stm.setString(index++, msgDiagSeverita);
+				stm.setString(index++, tracciamentoEsiti);
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDBLib.getValue(aPD.getStato()) : null);
 				// cors
-				stm.setString(index++, cors_stato);
-				stm.setString(index++, cors_tipo);
-				stm.setString(index++, cors_all_allow_origins);
-				stm.setString(index++, cors_all_allow_methods);
-				stm.setString(index++, cors_all_allow_headers);
-				stm.setString(index++, cors_allow_credentials);
-				stm.setInt(index++, cors_allow_max_age);
-				if(cors_allow_max_age_seconds!=null) {
-					stm.setInt(index++, cors_allow_max_age_seconds);
+				stm.setString(index++, corsStato);
+				stm.setString(index++, corsTipo);
+				stm.setString(index++, corsAllAllowOrigins);
+				stm.setString(index++, corsAllAllowMethods);
+				stm.setString(index++, corsAllAllowHeaders);
+				stm.setString(index++, corsAllowCredentials);
+				stm.setInt(index++, corsAllowMaxAge);
+				if(corsAllowMaxAgeSeconds!=null) {
+					stm.setInt(index++, corsAllowMaxAgeSeconds);
 				}
 				else {
 					stm.setNull(index++, java.sql.Types.INTEGER);
 				}
-				stm.setString(index++, cors_allow_origins);
-				stm.setString(index++, cors_allow_headers);
-				stm.setString(index++, cors_allow_methods);
-				stm.setString(index++, cors_allow_expose_headers);
+				stm.setString(index++, corsAllowOrigins);
+				stm.setString(index++, corsAllowHeaders);
+				stm.setString(index++, corsAllowMethods);
+				stm.setString(index++, corsAllowExposeHeaders);
 				
 				// responseCaching
-				stm.setString(index++, response_cache_stato);
-				if(response_cache_seconds!=null) {
-					stm.setInt(index++, response_cache_seconds);
+				stm.setString(index++, responseCacheStato);
+				if(responseCacheSeconds!=null) {
+					stm.setInt(index++, responseCacheSeconds);
 				}
 				else {
 					stm.setNull(index++, java.sql.Types.INTEGER);
 				}
-				if(response_cache_max_msg_size!=null) {
-					stm.setLong(index++, response_cache_max_msg_size);
+				if(responseCacheMaxMsgSize!=null) {
+					stm.setLong(index++, responseCacheMaxMsgSize);
 				}
 				else {
 					stm.setNull(index++, java.sql.Types.BIGINT);
 				}
-				stm.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
-				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
-				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
-				stm.setString(index++, response_cache_hash_url);
-				stm.setString(index++, response_cache_hash_query);
-				stm.setString(index++, response_cache_hash_query_list);
-				stm.setString(index++, response_cache_hash_headers);
-				stm.setString(index++, response_cache_hash_headers_list);
-				stm.setString(index++, response_cache_hash_payload);
+				stm.setInt(index++, responseCacheNoCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, responseCacheMaxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, responseCacheNoStore ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setString(index++, responseCacheHashUrl);
+				stm.setString(index++, responseCacheHashQuery);
+				stm.setString(index++, responseCacheHashQueryList);
+				stm.setString(index++, responseCacheHashHeaders);
+				stm.setString(index++, responseCacheHashHeadersList);
+				stm.setString(index++, responseCacheHashPayload);
 				//idAccordo
 				stm.setLong(index++,aPD.getIdAccordo() != null ? aPD.getIdAccordo() : -1L);
 				stm.setLong(index++, aPD.getIdPortType() != null ? aPD.getIdPortType() : -1L);
@@ -1613,17 +1668,25 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				// canale
 				stm.setString(index++, aPD.getCanale());
 				
+				if(utenteUltimaModifica!=null) {
+					stm.setString(index++, utenteUltimaModifica);
+				}
+				
+				if(dataUltimaModifica!=null) {
+					stm.setTimestamp(index++, dataUltimaModifica);
+				}
+				
 				// where
 				stm.setLong(index++, idPortaDelegata);
 
-				//DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, 
+				/**DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, 
 				// soggErogatore.getId(), soggErogatore.getTipo(), soggErogatore.getNome(), soggErogatore.getIdentificazione(), servizio.getId(), 
 				// servizio.getTipo(), servizio.getNome(), servizio.getIdentificazione(), azione.getId(), azione.getNome(), azione.getIdentificazione(), 
-				// autenticazione, autorizzazione, messageSecurityStatus, idSoggettoProprietario, idPortaDelegata));
+				// autenticazione, autorizzazione, messageSecurityStatus, idSoggettoProprietario, idPortaDelegata));*/
 
 				n = stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Updated " + n + " row(s).");
+				DriverConfigurazioneDBLib.logDebug("Updated " + n + " row(s).");
 
 				
 				
@@ -1675,7 +1738,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						}	
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " mtom request flow con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " mtom request flow con id=" + idPortaDelegata);
 	
 					MtomProcessorFlowParameter resParam = null;
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -1703,7 +1766,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " mtom response flow con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " mtom response flow con id=" + idPortaDelegata);
 					
 				}
 				
@@ -1711,7 +1774,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				
 				// se security abilitato setto la lista
 				// la lista contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
-				//if ((messageSecurity != null) && CostantiConfigurazione.ABILITATO.toString().equals(messageSecurityStatus) )  {
+				/**if ((messageSecurity != null) && CostantiConfigurazione.ABILITATO.toString().equals(messageSecurityStatus) )  {*/
 				// Devo settarli sempre se ci sono, in modo che lo switch abilitato-disabilitato funzioni
 				if ((messageSecurity != null) )  {
 
@@ -1755,7 +1818,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " request flow con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " request flow con id=" + idPortaDelegata);
 
 					MessageSecurityFlowParameter resParam = null;
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -1778,7 +1841,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						}
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " response flow con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " response flow con id=" + idPortaDelegata);
 				}
 
 
@@ -1820,7 +1883,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " correlazione applicativa con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " correlazione applicativa con id=" + idPortaDelegata);
 				}
 
 				// la lista di correlazioni applicative risposta contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
@@ -1859,7 +1922,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDBLib.log.debug("Inserted " + i + " correlazione applicativa risposta con id=" + idPortaDelegata);
+					DriverConfigurazioneDBLib.logDebug("Inserted " + i + " correlazione applicativa risposta con id=" + idPortaDelegata);
 				}
 				
 				/*Sincronizzazione servizi applicativi*/
@@ -1867,7 +1930,6 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				//quindi nel db devono essere presenti tutti e solo quelli presenti nella lista
 				//se la lista e' vuota allora i servizi applicativi vanno cancellati
 
-				//TODO possibile ottimizzazione in termini di tempo
 				//cancello i servizi applicativi associati alla porta e inserisco tutti e soli quelli presenti in lista
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_SA);
@@ -1877,7 +1939,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" servizi applicativi associati alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" servizi applicativi associati alla Porta Delegata "+idPortaDelegata);
 				//scrivo la lista nel db
 				n=0;
 				for (i = 0; i < aPD.sizeServizioApplicativoList(); i++) {
@@ -1913,10 +1975,10 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.executeUpdate();
 					stm.close();
 					n++;
-					DriverConfigurazioneDBLib.log.debug("Aggiunta associazione PortaDelegata<->ServizioApplicativo [" + idPortaDelegata + "]<->[" + idSA + "]");
+					DriverConfigurazioneDBLib.logDebug("Aggiunta associazione PortaDelegata<->ServizioApplicativo [" + idPortaDelegata + "]<->[" + idSA + "]");
 				}
 
-				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " associazioni PortaDelegata<->ServizioApplicativo associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunti " + n + " associazioni PortaDelegata<->ServizioApplicativo associati alla PortaDelegata[" + idPortaDelegata + "]");
 
 				
 				
@@ -1932,7 +1994,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta di autenticazione associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Eliminate "+n+" proprieta di autenticazione associate alla Porta Delegata "+idPortaDelegata);
 				// set prop
 				int newProps = 0;
 				for (i = 0; i < aPD.sizeProprietaAutenticazioneList(); i++) {
@@ -1953,7 +2015,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolProp Autenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inserted " + newProps + " SetProtocolProp Autenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -1969,7 +2031,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta di autorizzazione associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Eliminate "+n+" proprieta di autorizzazione associate alla Porta Delegata "+idPortaDelegata);
 				// set prop
 				newProps = 0;
 				for (i = 0; i < aPD.sizeProprietaAutorizzazioneList(); i++) {
@@ -1990,7 +2052,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolProp Autorizzazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inserted " + newProps + " SetProtocolProp Autorizzazione associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -2007,7 +2069,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta di autorizzazione contenuti associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Eliminate "+n+" proprieta di autorizzazione contenuti associate alla Porta Delegata "+idPortaDelegata);
 				// set prop
 				newProps = 0;
 				for (i = 0; i < aPD.sizeProprietaAutorizzazioneContenutoList(); i++) {
@@ -2028,7 +2090,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolProp AutorizzazioneContenuto associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inserted " + newProps + " SetProtocolProp AutorizzazioneContenuto associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -2046,7 +2108,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta di rate limiting associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Eliminate "+n+" proprieta di rate limiting associate alla Porta Delegata "+idPortaDelegata);
 				// set prop
 				newProps = 0;
 				for (i = 0; i < aPD.sizeProprietaRateLimitingList(); i++) {
@@ -2067,7 +2129,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolPropRateLimiting associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inserted " + newProps + " SetProtocolPropRateLimiting associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -2086,7 +2148,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Eliminate "+n+" proprieta associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Eliminate "+n+" proprieta associate alla Porta Delegata "+idPortaDelegata);
 				// set prop
 				newProps = 0;
 				for (i = 0; i < aPD.sizeProprietaList(); i++) {
@@ -2107,7 +2169,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 					stm.close();
 					newProps++;
 				}
-				DriverConfigurazioneDBLib.log.debug("Inserted " + newProps + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Inserted " + newProps + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// Ruoli
@@ -2120,7 +2182,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" ruoli associati alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" ruoli associati alla Porta Delegata "+idPortaDelegata);
 				
 				n=0;
 				if(aPD.getRuoli()!=null && aPD.getRuoli().sizeRuoloList()>0){
@@ -2137,11 +2199,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunto ruolo[" + ruolo.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunti " + n + " ruoli alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -2155,7 +2217,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" scope associati alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" scope associati alla Porta Delegata "+idPortaDelegata);
 				
 				n=0;
 				if(aPD.getScope()!=null && aPD.getScope().sizeScopeList()>0){
@@ -2172,11 +2234,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunto scope[" + scope.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " scope alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunti " + n + " scope alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -2186,7 +2248,6 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				//quindi nel db devono essere presenti tutti e solo quelli presenti nella lista
 				//se la lista e' vuota allora i servizi applicativi vanno cancellati
 
-				//TODO possibile ottimizzazione in termini di tempo
 				//cancello i servizi applicativi associati alla porta e inserisco tutti e soli quelli presenti in lista
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TOKEN_SA);
@@ -2196,7 +2257,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" servizi applicativi (token) associati alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" servizi applicativi (token) associati alla Porta Delegata "+idPortaDelegata);
 			
 				// serviziapplicativi (token)
 				if(aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getServiziApplicativi()!=null &&
@@ -2236,10 +2297,10 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunta associazione PortaDelegata<->ServizioApplicativo (token) [" + idPortaDelegata + "]<->[" + idSA + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunta associazione PortaDelegata<->ServizioApplicativo (token) [" + idPortaDelegata + "]<->[" + idSA + "]");
 					}
 	
-					DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " associazioni PortaDelegata<->ServizioApplicativo (token) associati alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Aggiunti " + n + " associazioni PortaDelegata<->ServizioApplicativo (token) associati alla PortaDelegata[" + idPortaDelegata + "]");
 				}
 				
 				
@@ -2254,7 +2315,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" ruoli (token) associati alla Porta Delegata "+idPortaDelegata);
 				
 				n=0;
 				if(aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getRuoli()!=null &&
@@ -2272,11 +2333,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunti " + n + " ruoli (token) alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunti " + n + " ruoli (token) alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// Azioni
@@ -2289,7 +2350,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" azioni delegate associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" azioni delegate associate alla Porta Delegata "+idPortaDelegata);
 				
 				n=0;
 				if(aPD.getAzione()!=null && aPD.getAzione().sizeAzioneDelegataList()>0){
@@ -2306,11 +2367,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunta azione delegata [" + azioneDelegata + "] alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunta azione delegata [" + azioneDelegata + "] alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " azioni delegate alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " azioni delegate alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -2325,12 +2386,12 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" regole di cache associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" regole di cache associate alla Porta Delegata "+idPortaDelegata);
 				
 				n=0;
-				if(response_cache_regole!=null && response_cache_regole.size()>0){
-					for (int j = 0; j < response_cache_regole.size(); j++) {
-						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+				if(responseCacheRegole!=null && responseCacheRegole.size()>0){
+					for (int j = 0; j < responseCacheRegole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = responseCacheRegole.get(j);
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
 						sqlQueryObject.addInsertField("id_porta", "?");
@@ -2361,11 +2422,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunta regola di cache alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunta regola di cache alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " regole di cache alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " regole di cache alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -2379,7 +2440,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellate "+n+" A.A. associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellate "+n+" A.A. associate alla Porta Delegata "+idPortaDelegata);
 				
 				n=0;
 				if(aPD.sizeAttributeAuthorityList()>0){
@@ -2411,11 +2472,11 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 						stm.executeUpdate();
 						stm.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunta A.A.[" + aa.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+						DriverConfigurazioneDBLib.logDebug("Aggiunta A.A.[" + aa.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " A.A. alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " A.A. alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				
@@ -2439,14 +2500,14 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				}
 				
 				i=0;
-				if(aPD.sizeExtendedInfoList()>0){
-					if(extInfoConfigurazioneDriver!=null){
-						for (i = 0; i < aPD.sizeExtendedInfoList(); i++) {
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDBLib.log, aPD, aPD.getExtendedInfo(i), CRUDType.UPDATE);
-						}
+				if(aPD.sizeExtendedInfoList()>0 &&
+					(extInfoConfigurazioneDriver!=null)
+					){
+					for (i = 0; i < aPD.sizeExtendedInfoList(); i++) {
+						extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDBLib.log, aPD, aPD.getExtendedInfo(i), CRUDType.UPDATE);
 					}
 				}
-				DriverConfigurazioneDBLib.log.debug("Aggiunte " + i + " associazioni ExtendedInfo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Aggiunte " + i + " associazioni ExtendedInfo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				break;
@@ -2476,7 +2537,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellate "+n+" A.A. associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellate "+n+" A.A. associate alla Porta Delegata "+idPortaDelegata);
 				
 				// Cache Regole
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2487,7 +2548,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" regole di cache associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" regole di cache associate alla Porta Delegata "+idPortaDelegata);
 				
 				// azioni delegate
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2498,7 +2559,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" azioni delegate associate alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" azioni delegate associate alla Porta Delegata "+idPortaDelegata);
 				
 				// ruoli (token)
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2509,7 +2570,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" ruoli (token) associati alla Porta Delegata "+idPortaDelegata);
 				
 				// servizi applicativi (token)
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2520,7 +2581,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " associazioni PortaDelegata<->ServizioApplicativo (token) associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Deleted " + n + " associazioni PortaDelegata<->ServizioApplicativo (token) associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// ruoli
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2531,7 +2592,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" ruoli associati alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" ruoli associati alla Porta Delegata "+idPortaDelegata);
 				
 				// scope
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2542,7 +2603,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" scope associati alla Porta Delegata "+idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" scope associati alla Porta Delegata "+idPortaDelegata);
 				
 				// mtom
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2553,7 +2614,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " request flow con id=" + idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Deleted " + n + " request flow con id=" + idPortaDelegata);
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_MTOM_RESPONSE);
@@ -2563,7 +2624,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " response flow con id=" + idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Deleted " + n + " response flow con id=" + idPortaDelegata);
 
 				
 				// message security
@@ -2576,7 +2637,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " request flow con id=" + idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Deleted " + n + " request flow con id=" + idPortaDelegata);
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE);
@@ -2586,7 +2647,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " response flow con id=" + idPortaDelegata);
+				DriverConfigurazioneDBLib.logDebug("Deleted " + n + " response flow con id=" + idPortaDelegata);
 				//}
 
 				// servizi applicativi
@@ -2598,7 +2659,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " associazioni PortaDelegata<->ServizioApplicativo associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDBLib.logDebug("Deleted " + n + " associazioni PortaDelegata<->ServizioApplicativo associati alla PortaDelegata[" + idPortaDelegata + "]");
 
 				// cancello anche le flow di request/response associate a questa
 				// porta applicativa
@@ -2611,7 +2672,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " security_request flow associate alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Deleted " + n + " security_request flow associate alla PortaDelegata[" + idPortaDelegata + "]");
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE);
@@ -2622,7 +2683,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " security_response flow associate alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Deleted " + n + " security_response flow associate alla PortaDelegata[" + idPortaDelegata + "]");
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_CORRELAZIONE);
@@ -2634,7 +2695,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				n = stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " correlazione associate alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Deleted " + n + " correlazione associate alla PortaDelegata[" + idPortaDelegata + "]");
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_CORRELAZIONE_RISPOSTA);
@@ -2646,7 +2707,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				n = stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " correlazione per la rispsota associate alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Deleted " + n + " correlazione per la rispsota associate alla PortaDelegata[" + idPortaDelegata + "]");
 
 				// cancello le prop
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2658,7 +2719,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Deleted " + n + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// cancello le prop di rate limiting
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2670,7 +2731,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolPropRateLimiting associati alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Deleted " + n + " SetProtocolPropRateLimiting associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// cancello le prop di autorizzazione contenuti
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2682,7 +2743,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolPropAutorizzazioneContenuto associati alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Deleted " + n + " SetProtocolPropAutorizzazioneContenuto associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// cancello le prop di autorizzazione
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2694,7 +2755,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolPropAutorizzazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Deleted " + n + " SetProtocolPropAutorizzazione associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// cancello le prop di autenticazione
@@ -2707,7 +2768,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDBLib.log.debug("Deleted " + n + " SetProtocolPropAutenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDBLib.logDebug("Deleted " + n + " SetProtocolPropAutenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
@@ -2720,10 +2781,10 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				sqlQuery = sqlQueryObject.createSQLDelete();
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idPortaDelegata);
-				DriverConfigurazioneDBLib.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPortaDelegata));
+				DriverConfigurazioneDBLib.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPortaDelegata));
 				n=stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDBLib.log.debug("Deleted " + n + " row(s).");
+				DriverConfigurazioneDBLib.logDebug("Deleted " + n + " row(s).");
 
 
 				break;

@@ -59,6 +59,7 @@ import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
@@ -99,11 +100,13 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 	private DriverConfigurazioneDB driver = null;
 	private DriverConfigurazioneDB_porteDriver porteDriver = null;
 	private DriverConfigurazioneDBSoggetti soggettiDriver = null;
+	private DriverConfigurazioneDBUtils utilsDriver = null;
 	
 	protected DriverConfigurazioneDB_porteDelegateDriver(DriverConfigurazioneDB driver) {
 		this.driver = driver;
 		this.porteDriver = new DriverConfigurazioneDB_porteDriver(driver);
 		this.soggettiDriver = new DriverConfigurazioneDBSoggetti(driver);
+		this.utilsDriver = new DriverConfigurazioneDBUtils(driver);
 	}
 	
 	protected IDPortaDelegata getIDPortaDelegata(String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -561,6 +564,10 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addSelectField("options");
 			sqlQueryObject.addSelectField("canale");
+			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE,CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE,CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_RICHIEDENTE);
+			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE,CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE,CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_CREAZIONE);
+			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE,CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA,CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_ULTIMA_MODIFICA);
+			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE,CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA,CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_ULTIMA_MODIFICA);
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.driver.tabellaSoggetti+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -597,22 +604,22 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 					gestioneToken.setOptions(rs.getString("token_options"));
 					
 					
-					String token_authn_issuer = rs.getString("token_authn_issuer");
-					String token_authn_client_id = rs.getString("token_authn_client_id");
-					String token_authn_subject = rs.getString("token_authn_subject");
-					String token_authn_username = rs.getString("token_authn_username");
-					String token_authn_email = rs.getString("token_authn_email");
-					if(token_authn_issuer!=null ||
-							token_authn_client_id!=null ||
-									token_authn_subject!=null ||
-											token_authn_username!=null ||
-													token_authn_email!=null) {
+					String tokenAuthnIssuer = rs.getString("token_authn_issuer");
+					String tokenAuthnClientId = rs.getString("token_authn_client_id");
+					String tokenAuthnSubject = rs.getString("token_authn_subject");
+					String tokenAuthnUsername = rs.getString("token_authn_username");
+					String tokenAuthnEmail = rs.getString("token_authn_email");
+					if(tokenAuthnIssuer!=null ||
+							tokenAuthnClientId!=null ||
+									tokenAuthnSubject!=null ||
+											tokenAuthnUsername!=null ||
+													tokenAuthnEmail!=null) {
 						gestioneToken.setAutenticazione(new GestioneTokenAutenticazione());
-						gestioneToken.getAutenticazione().setIssuer(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(token_authn_issuer));
-						gestioneToken.getAutenticazione().setClientId(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(token_authn_client_id));
-						gestioneToken.getAutenticazione().setSubject(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(token_authn_subject));
-						gestioneToken.getAutenticazione().setUsername(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(token_authn_username));
-						gestioneToken.getAutenticazione().setEmail(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(token_authn_email));
+						gestioneToken.getAutenticazione().setIssuer(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(tokenAuthnIssuer));
+						gestioneToken.getAutenticazione().setClientId(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(tokenAuthnClientId));
+						gestioneToken.getAutenticazione().setSubject(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(tokenAuthnSubject));
+						gestioneToken.getAutenticazione().setUsername(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(tokenAuthnUsername));
+						gestioneToken.getAutenticazione().setEmail(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(tokenAuthnEmail));
 					}
 					
 					pd.setGestioneToken(gestioneToken);
@@ -646,13 +653,13 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 						this.driver.logDebug(e.getMessage(),e);
 					}
 				}
-				PortaDelegataSoggettoErogatore SoggettoErogatore = null;
+				PortaDelegataSoggettoErogatore soggettoErogatorePD = null;
 				if(idSoggErogatore>0){
-					SoggettoErogatore = new PortaDelegataSoggettoErogatore();
-					SoggettoErogatore.setId(idSoggErogatore);
-					SoggettoErogatore.setNome(nomeSoggettoErogatore);
-					SoggettoErogatore.setTipo(tipoSoggettoErogatore);
-					pd.setSoggettoErogatore(SoggettoErogatore);
+					soggettoErogatorePD = new PortaDelegataSoggettoErogatore();
+					soggettoErogatorePD.setId(idSoggErogatore);
+					soggettoErogatorePD.setNome(nomeSoggettoErogatore);
+					soggettoErogatorePD.setTipo(tipoSoggettoErogatore);
+					pd.setSoggettoErogatore(soggettoErogatorePD);
 				}else{
 					throw new DriverConfigurazioneException("Soggetto Erogatore della Porta Delegata ["+pd.getNome()+"] non presente.");
 				}
@@ -672,7 +679,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 					} catch (Exception e) {
 						// NON Abilitare il log, poiche' la tabella servizi puo' non esistere per il driver di configurazione 
 						// in un database che non ' quello della controlstation ma quello pdd.
-						//this.driver.logDebug(e);
+						/**this.driver.logDebug(e);*/
 					}
 				}
 				PortaDelegataServizio pdServizio = null;
@@ -737,7 +744,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 					cae.setNome(rsCorrApp.getString("nome_elemento"));
 					String modeCA = rsCorrApp.getString("mode_correlazione");
 					cae.setIdentificazione(DriverConfigurazioneDBLib.getEnumCorrelazioneApplicativaRichiestaIdentificazione(modeCA));
-					//if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
+					/**if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))*/
 					cae.setPattern(rsCorrApp.getString("pattern"));
 					cae.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(rsCorrApp.getString("identificazione_fallita")));
 					cae.setRiusoIdentificativo(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rsCorrApp.getString("riuso_id")));
@@ -748,7 +755,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 				if(corr!=null && scadenzaCorrelazione!=null && !scadenzaCorrelazione.equals(""))
 					corr.setScadenza(scadenzaCorrelazione);
 				pd.setCorrelazioneApplicativa(corr);
-				/*
+				/**
 				  if(scadenzaCorrelazione!=null && !scadenzaCorrelazione.equals("")) {
 				  CorrelazioneApplicativa corr= new CorrelazioneApplicativa();
 				  corr.setScadenza(scadenzaCorrelazione);
@@ -777,7 +784,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 					cae.setNome(rsCorrApp.getString("nome_elemento"));
 					String modeCA = rsCorrApp.getString("mode_correlazione");
 					cae.setIdentificazione(DriverConfigurazioneDBLib.getEnumCorrelazioneApplicativaRispostaIdentificazione(modeCA));
-					//if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
+					/**if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))*/
 					cae.setPattern(rsCorrApp.getString("pattern"));
 					cae.setIdentificazioneFallita(DriverConfigurazioneDBLib.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(rsCorrApp.getString("identificazione_fallita")));
 					corrApplRisposta.addElemento(cae);
@@ -789,36 +796,36 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 				
 				//mtom
 				MtomProcessor mtomProcessor = null;
-				String mtom_request = rs.getString("mtom_request_mode");
-				String mtom_response = rs.getString("mtom_response_mode");
-				if( (mtom_request!=null && !mtom_request.equals(""))  ||  (mtom_response!=null && !mtom_response.equals("")) ){
+				String mtomRequest = rs.getString("mtom_request_mode");
+				String mtomResponse = rs.getString("mtom_response_mode");
+				if( (mtomRequest!=null && !mtomRequest.equals(""))  ||  (mtomResponse!=null && !mtomResponse.equals("")) ){
 					mtomProcessor = new MtomProcessor();
-					if((mtom_request!=null && !mtom_request.equals(""))  ){
+					if((mtomRequest!=null && !mtomRequest.equals(""))  ){
 						mtomProcessor.setRequestFlow(new MtomProcessorFlow());
-						mtomProcessor.getRequestFlow().setMode(DriverConfigurazioneDBLib.getEnumMTOMProcessorType(mtom_request));
+						mtomProcessor.getRequestFlow().setMode(DriverConfigurazioneDBLib.getEnumMTOMProcessorType(mtomRequest));
 					}
-					if((mtom_response!=null && !mtom_response.equals(""))  ){
+					if((mtomResponse!=null && !mtomResponse.equals(""))  ){
 						mtomProcessor.setResponseFlow(new MtomProcessorFlow());
-						mtomProcessor.getResponseFlow().setMode(DriverConfigurazioneDBLib.getEnumMTOMProcessorType(mtom_response));
+						mtomProcessor.getResponseFlow().setMode(DriverConfigurazioneDBLib.getEnumMTOMProcessorType(mtomResponse));
 					}
 				}
 				
 
 				//validazione xsd
-				String validazioneContenuti_stato = rs.getString("validazione_contenuti_stato");
-				String validazioneContenuti_tipo = rs.getString("validazione_contenuti_tipo");
-				String validazioneContenuti_mtom = rs.getString("validazione_contenuti_mtom");
-				if(  (validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals(""))  
+				String validazioneContenutiStato = rs.getString("validazione_contenuti_stato");
+				String validazioneContenutiTipo = rs.getString("validazione_contenuti_tipo");
+				String validazioneContenutiMtom = rs.getString("validazione_contenuti_mtom");
+				if(  (validazioneContenutiStato!=null && !validazioneContenutiStato.equals(""))  
 						||
-						(validazioneContenuti_tipo!=null && !validazioneContenuti_tipo.equals(""))  	)
+						(validazioneContenutiTipo!=null && !validazioneContenutiTipo.equals(""))  	)
 				{
 					ValidazioneContenutiApplicativi val = new ValidazioneContenutiApplicativi();
-					if((validazioneContenuti_stato!=null && !validazioneContenuti_stato.equals(""))  )
-						val.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalitaConWarning(validazioneContenuti_stato));
-					if((validazioneContenuti_tipo!=null && !validazioneContenuti_tipo.equals(""))  )
-						val.setTipo(DriverConfigurazioneDBLib.getEnumValidazioneContenutiApplicativiTipo(validazioneContenuti_tipo));
-					if((validazioneContenuti_mtom!=null && !validazioneContenuti_mtom.equals(""))  )
-						val.setAcceptMtomMessage(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(validazioneContenuti_mtom));
+					if((validazioneContenutiStato!=null && !validazioneContenutiStato.equals(""))  )
+						val.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalitaConWarning(validazioneContenutiStato));
+					if((validazioneContenutiTipo!=null && !validazioneContenutiTipo.equals(""))  )
+						val.setTipo(DriverConfigurazioneDBLib.getEnumValidazioneContenutiApplicativiTipo(validazioneContenutiTipo));
+					if((validazioneContenutiMtom!=null && !validazioneContenutiMtom.equals(""))  )
+						val.setAcceptMtomMessage(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(validazioneContenutiMtom));
 					pd.setValidazioneContenutiApplicativi(val);
 				}
 
@@ -848,12 +855,12 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 				}
 				
 				// Tracciamento
-				String msg_diag_severita = rs.getString("msg_diag_severita");
-				String tracciamento_esiti = rs.getString("tracciamento_esiti");
-				if(msg_diag_severita!=null || tracciamento_esiti!=null) {
+				String msgDiagSeverita = rs.getString("msg_diag_severita");
+				String tracciamentoEsiti = rs.getString("tracciamento_esiti");
+				if(msgDiagSeverita!=null || tracciamentoEsiti!=null) {
 					PortaTracciamento tracciamento = new PortaTracciamento();
-					tracciamento.setSeverita(DriverConfigurazioneDBLib.getEnumSeverita(msg_diag_severita));
-					tracciamento.setEsiti(tracciamento_esiti);
+					tracciamento.setSeverita(DriverConfigurazioneDBLib.getEnumSeverita(msgDiagSeverita));
+					tracciamento.setEsiti(tracciamentoEsiti);
 					pd.setTracciamento(tracciamento);
 				}
 				
@@ -865,44 +872,44 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 
 				// messageSecurity			
 				String security = rs.getString("security");
-				String security_mtom_req = rs.getString("security_mtom_req");
-				String security_mtom_res = rs.getString("security_mtom_res");
-				String security_request_mode = rs.getString("security_request_mode");
-				String security_response_mode = rs.getString("security_response_mode");
+				String securityMtomReq = rs.getString("security_mtom_req");
+				String securityMtomRes = rs.getString("security_mtom_res");
+				String securityRequestMode = rs.getString("security_request_mode");
+				String securityResponseMode = rs.getString("security_response_mode");
 				MessageSecurity messageSecurity = null;
-				if(  (security_mtom_req!=null && !security_mtom_req.equals(""))  
+				if(  (securityMtomReq!=null && !securityMtomReq.equals(""))  
 						||
-						(security_request_mode!=null && !security_request_mode.equals(""))  
+						(securityRequestMode!=null && !securityRequestMode.equals(""))  
 						||
-						(security_mtom_res!=null && !security_mtom_res.equals(""))  	
+						(securityMtomRes!=null && !securityMtomRes.equals(""))  	
 						||
-						(security_response_mode!=null && !security_response_mode.equals("")) 
+						(securityResponseMode!=null && !securityResponseMode.equals("")) 
 						)
 				{
 					messageSecurity = new MessageSecurity();
-					if((security_mtom_req!=null && !security_mtom_req.equals(""))  ){
+					if((securityMtomReq!=null && !securityMtomReq.equals(""))  ){
 						if(messageSecurity.getRequestFlow()==null) {
 							messageSecurity.setRequestFlow(new MessageSecurityFlow());	
 						}
-						messageSecurity.getRequestFlow().setApplyToMtom(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(security_mtom_req));
+						messageSecurity.getRequestFlow().setApplyToMtom(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(securityMtomReq));
 					}
-					if((security_mtom_res!=null && !security_mtom_res.equals(""))  ){
+					if((securityMtomRes!=null && !securityMtomRes.equals(""))  ){
 						if(messageSecurity.getResponseFlow()==null) {
 							messageSecurity.setResponseFlow(new MessageSecurityFlow());	
 						}
-						messageSecurity.getResponseFlow().setApplyToMtom(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(security_mtom_res));
+						messageSecurity.getResponseFlow().setApplyToMtom(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(securityMtomRes));
 					}
-					if((security_request_mode!=null && !security_request_mode.equals(""))  ){
+					if((securityRequestMode!=null && !securityRequestMode.equals(""))  ){
 						if(messageSecurity.getRequestFlow()==null) {
 							messageSecurity.setRequestFlow(new MessageSecurityFlow());	
 						}
-						messageSecurity.getRequestFlow().setMode(security_request_mode);
+						messageSecurity.getRequestFlow().setMode(securityRequestMode);
 					}
-					if((security_response_mode!=null && !security_response_mode.equals(""))  ){
+					if((securityResponseMode!=null && !securityResponseMode.equals(""))  ){
 						if(messageSecurity.getResponseFlow()==null) {
 							messageSecurity.setResponseFlow(new MessageSecurityFlow());	
 						}
-						messageSecurity.getResponseFlow().setMode(security_response_mode);
+						messageSecurity.getResponseFlow().setMode(securityResponseMode);
 					}
 				}
 
@@ -975,6 +982,9 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 				// Canali
 				String canale = rs.getString("canale");
 				pd.setCanale(canale);
+				
+				// Proprieta Oggetto
+				pd.setProprietaOggetto(this.utilsDriver.readProprietaOggetto(rs, true));
 				
 				rs.close();
 				stm.close();
@@ -1492,7 +1502,7 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
 				if(extInfoConfigurazioneDriver!=null){
 					List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, this.driver.log, pd);
-					if(listExtInfo!=null && listExtInfo.size()>0){
+					if(listExtInfo!=null && !listExtInfo.isEmpty()){
 						for (Object object : listExtInfo) {
 							pd.addExtendedInfo(object);
 						}
@@ -2420,5 +2430,81 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			this.driver.closeConnection(con);
 		}
 		
+	}
+	
+	
+	protected ProprietaOggetto getProprietaOggetto(IDPortaDelegata idPD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		String nomeMetodo = "getProprietaOggetto";
+		
+		if (idPD == null || idPD.getNome()==null)
+			throw new DriverConfigurazioneException("["+nomeMetodo+"] Parametro Non Valido");
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.driver.atomica) {
+			try {
+				con = this.driver.getConnectionFromDatasource(nomeMetodo);
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.driver.globalConnection;
+
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
+			sqlQueryObject.addWhereCondition("nome_porta = ?");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			stm.setString(1, idPD.getNome());
+
+			this.driver.logDebug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPD.getNome()));
+			rs = stm.executeQuery();
+
+			ProprietaOggetto proprieta = null;
+			if (rs.next()) {			
+				proprieta = this.utilsDriver.readProprietaOggetto(rs,false);
+			}
+			else{
+				throw new DriverConfigurazioneNotFound("PortaDelegata ["+idPD.getNome()+"] non esistente");
+			}
+
+			return proprieta;
+
+		} catch (SQLException se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] SqlException: " + se.getMessage(),se);
+		} catch (Exception se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception: " + se.getMessage(),se);
+		}
+		finally {
+
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
+		}
+	}
+	
+	
+	protected void updateProprietaOggetto(IDPortaDelegata idPD, String user) throws DriverConfigurazioneException {
+		if(idPD==null || idPD.getNome()==null) {
+			throw new DriverConfigurazioneException("Identificativo non fornito");
+		}
+		this.porteDriver.updateProprietaOggetto(idPD.getNome(), user, CostantiDB.PORTE_DELEGATE);
 	}
 }

@@ -52,6 +52,7 @@ import java.util.List;
  * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="gruppi" type="{http://www.openspcoop2.org/core/registry}gruppi-accordo" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/registry}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -106,7 +107,8 @@ import java.util.List;
   	"allegato",
   	"specificaSemiformale",
   	"protocolProperty",
-  	"gruppi"
+  	"gruppi",
+  	"proprietaOggetto"
   }
 )
 
@@ -291,6 +293,14 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   public void setGruppi(GruppiAccordo gruppi) {
     this.gruppi = gruppi;
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.String getSuperUser() {
@@ -858,6 +868,9 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   @XmlElement(name="gruppi",required=false,nillable=false)
   protected GruppiAccordo gruppi;
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

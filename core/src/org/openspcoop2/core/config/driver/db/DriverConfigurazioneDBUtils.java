@@ -21,9 +21,12 @@ package org.openspcoop2.core.config.driver.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.utils.UtilsMultiException;
@@ -704,5 +707,25 @@ public class DriverConfigurazioneDBUtils {
 				JDBCUtilities.closeResources(stmtTest);
 			}
 		}
+	}
+	
+	
+	public ProprietaOggetto readProprietaOggetto(ResultSet rs, boolean useAlias) throws SQLException {
+		ProprietaOggetto p = null;
+		// Proprieta Oggetto
+		if(rs!=null) {
+			String utenteRichiedente = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_RICHIEDENTE : CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			java.util.Date dataCreazione  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_CREAZIONE : CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			String utenteUltimaModifica = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			java.util.Date dataUltimaModifica  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
+			if(utenteRichiedente!=null || dataCreazione!=null || utenteUltimaModifica!=null || dataUltimaModifica!=null) {
+				p = new ProprietaOggetto();
+				p.setUtenteRichiedente(utenteRichiedente);
+				p.setDataCreazione(dataCreazione);
+				p.setUtenteUltimaModifica(utenteUltimaModifica);
+				p.setDataUltimaModifica(dataUltimaModifica);
+			}
+		}
+		return p;
 	}
 }

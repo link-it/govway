@@ -93,6 +93,7 @@ import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -160,24 +161,29 @@ public class ApplicativiApiHelper {
 	
 	public static ServizioApplicativo applicativoToServizioApplicativo(
 			ApplicativoServer applicativo,
-			String tipo_protocollo,
+			String tipoProtocollo,
 			String soggetto,
-			ControlStationCore stationCore) throws UtilsException, Exception {
+			ControlStationCore stationCore) throws UtilsException, DriverControlStationException, ProtocolException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
 
 		ServerProperties serverProperties = ServerProperties.getInstance();
 	
+		if(stationCore!=null) {
+			// nop
+		}
 		
-		ControlStationCore core = new ControlStationCore(true, serverProperties.getConfDirectory(),tipo_protocollo); 
+		ControlStationCore core = new ControlStationCore(true, serverProperties.getConfDirectory(),tipoProtocollo); 
 		SoggettiCore soggettiCore = new SoggettiCore(core);	
 
-		String tipo_soggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(tipo_protocollo);
-		IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto,soggetto);
+		String tipoSoggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(tipoProtocollo);
+		IDSoggetto idSoggetto = new IDSoggetto(tipoSoggetto,soggetto);
 		Soggetto soggettoRegistro = soggettiCore.getSoggettoRegistro(idSoggetto);
 		
 	
 		//soggettoRegistro.get
 	    ServizioApplicativo sa = new ServizioApplicativo();
 	
+	    sa.setDescrizione(applicativo.getDescrizione());
+	    
 	    sa.setNome(applicativo.getNome());
 	    sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
 	    sa.setTipo(CostantiConfigurazione.SERVER);
@@ -263,25 +269,27 @@ public class ApplicativiApiHelper {
 	
 	public static ServizioApplicativo applicativoToServizioApplicativo(
 			Applicativo applicativo,
-			String tipo_protocollo,
+			String tipoProtocollo,
 			String soggetto,
 			ControlStationCore stationCore, 
-			ApiKeyInfo keyInfo) throws UtilsException, Exception {
+			ApiKeyInfo keyInfo) throws UtilsException, DriverControlStationException, ProtocolException, DriverRegistroServiziException, DriverRegistroServiziNotFound, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 		ServerProperties serverProperties = ServerProperties.getInstance();
 	
 		
-		ControlStationCore core = new ControlStationCore(true, serverProperties.getConfDirectory(),tipo_protocollo); 
+		ControlStationCore core = new ControlStationCore(true, serverProperties.getConfDirectory(),tipoProtocollo); 
 		SoggettiCore soggettiCore = new SoggettiCore(core);	
 
-		String tipo_soggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(tipo_protocollo);
-		IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto,soggetto);
+		String tipoSoggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(tipoProtocollo);
+		IDSoggetto idSoggetto = new IDSoggetto(tipoSoggetto,soggetto);
 		Soggetto soggettoRegistro = soggettiCore.getSoggettoRegistro(idSoggetto);
 		
 	
 		//soggettoRegistro.get
 	    ServizioApplicativo sa = new ServizioApplicativo();
 	
+	    sa.setDescrizione(applicativo.getDescrizione());
+	    
 	    sa.setNome(applicativo.getNome());
 	    sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
 	    sa.setTipo(CostantiConfigurazione.CLIENT);
@@ -367,6 +375,7 @@ public class ApplicativiApiHelper {
 		
 		ret.setNome(sa.getNome());
 
+		ret.setDescrizione(sa.getDescrizione());
 		
 		InvocazionePorta invPorta = sa.getInvocazionePorta();
 		if (invPorta != null) {
@@ -400,6 +409,7 @@ public class ApplicativiApiHelper {
 		
 		ret.setNome(sa.getNome());
 
+		ret.setDescrizione(sa.getDescrizione());
 		
 		ret.setConnettore(ConnettoreAPIHelper.getConnettoreApplicativoServer(sa));
 			

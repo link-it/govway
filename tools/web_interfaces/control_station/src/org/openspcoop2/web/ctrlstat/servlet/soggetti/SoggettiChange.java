@@ -57,6 +57,7 @@ import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
@@ -124,7 +125,7 @@ public final class SoggettiChange extends Action {
 			
 			strutsBean.id = soggettiHelper.getParametroLong(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			if(strutsBean.id==null) {
-				throw new Exception("Identificativo soggetto non fornito");
+				throw new ControlStationCoreException("Identificativo soggetto non fornito");
 			}
 			long idSogg = Long.parseLong(strutsBean.id);
 			strutsBean.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
@@ -180,15 +181,15 @@ public final class SoggettiChange extends Action {
 			String tipoCredenzialiSSLAliasCertificatoNotBefore= soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
 			String tipoCredenzialiSSLAliasCertificatoNotAfter = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER); 
 			String tipoCredenzialiSSLVerificaTuttiICampi = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-			if ( (tipoCredenzialiSSLVerificaTuttiICampi == null || StringUtils.isEmpty(tipoCredenzialiSSLVerificaTuttiICampi))
+			if ( ((tipoCredenzialiSSLVerificaTuttiICampi == null || StringUtils.isEmpty(tipoCredenzialiSSLVerificaTuttiICampi))
 					||
 					 SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO.equalsIgnoreCase(soggettiHelper.getPostBackElementName())
 					 ||
 					 SoggettiCostanti.PARAMETRO_SOGGETTO_TIPOLOGIA.equalsIgnoreCase(soggettiHelper.getPostBackElementName())
-					) {
-				if(soggettiHelper.isEditModeInProgress() && soggettiHelper.getPostBackElementName()==null) { // prima volta
-					tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
-				}
+					) &&
+				(soggettiHelper.isEditModeInProgress() && soggettiHelper.getPostBackElementName()==null) 
+				){ // prima volta
+				tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 			}
 			String tipoCredenzialiSSLConfigurazioneManualeSelfSigned= soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED);
 			if (tipoCredenzialiSSLConfigurazioneManualeSelfSigned == null) {
@@ -244,10 +245,10 @@ public final class SoggettiChange extends Action {
 			UtentiCore utentiCore = new UtentiCore(soggettiCore);
 
 			String nomePddGestioneLocale = null;
-			if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
+			if(!pddCore.isGestionePddAbilitata(soggettiHelper)){
 				nomePddGestioneLocale = pddCore.getNomePddOperativa();
 				if(nomePddGestioneLocale==null) {
-					throw new Exception("Non è stata rilevata una pdd di tipologia 'operativo'");
+					throw new ControlStationCoreException("Non è stata rilevata una pdd di tipologia 'operativo'");
 				}
 			}
 
@@ -324,53 +325,53 @@ public final class SoggettiChange extends Action {
 				numSA = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO);
 			}
 
-			if(soggettiCore.isSinglePdD()){
-				if(soggettiCore.isRegistroServiziLocale()){
-					// Prendo la lista di pdd e la metto in un array
-					// In pratica se un soggetto e' associato ad una PdD Operativa,
-					// e possiede gia' delle PD o PA o SA,
-					// non e' piu' possibile cambiargli la porta di dominio in una esterna.
+			if(soggettiCore.isSinglePdD() &&
+				(soggettiCore.isRegistroServiziLocale())
+				){
+				// Prendo la lista di pdd e la metto in un array
+				// In pratica se un soggetto e' associato ad una PdD Operativa,
+				// e possiede gia' delle PD o PA o SA,
+				// non e' piu' possibile cambiargli la porta di dominio in una esterna.
 
-					boolean pddOperativa = false;
-					if(soggettoRegistry.getPortaDominio()!=null && !"".equals(soggettoRegistry.getPortaDominio())){
-						PdDControlStation pddCtrlstat = pddCore.getPdDControlStation(soggettoRegistry.getPortaDominio());
-						pddOperativa = PddTipologia.OPERATIVO.toString().equals(pddCtrlstat.getTipo());
-					}
+				boolean pddOperativa = false;
+				if(soggettoRegistry.getPortaDominio()!=null && !"".equals(soggettoRegistry.getPortaDominio())){
+					PdDControlStation pddCtrlstat = pddCore.getPdDControlStation(soggettoRegistry.getPortaDominio());
+					pddOperativa = PddTipologia.OPERATIVO.toString().equals(pddCtrlstat.getTipo());
+				}
 
-					List<PdDControlStation> lista = new ArrayList<>();
-					if( (numPA<=0 && numPD<=0 && numSA<=0) || !pddOperativa ){
-						
-						List<String> pddEsterne = new ArrayList<>();
-						pddEsterne.add("-");
-						
-						// aggiungo un elemento di comodo
-						PdDControlStation tmp = new PdDControlStation();
-						tmp.setNome("-");
-						lista.add(tmp);
-						// aggiungo gli altri elementi
-						if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-							lista.addAll(pddCore.pddList(null, new ConsoleSearch(true)));
-						}else{
-							lista.addAll(pddCore.pddList(userLogin, new ConsoleSearch(true)));
-						}
-						pddList = new String[lista.size()];
-						int i = 0;
-						for (PdDControlStation pddTmp : lista) {
-							pddList[i] = pddTmp.getNome();
-							i++;
-							
-							if(PddTipologia.ESTERNO.toString().equals(pddTmp.getTipo())){
-								pddEsterne.add(pddTmp.getNome());
-							}
-						}
-						
-						pddEsterneList = pddEsterne.toArray(new String[1]);
+				List<PdDControlStation> lista = new ArrayList<>();
+				if( (numPA<=0 && numPD<=0 && numSA<=0) || !pddOperativa ){
+					
+					List<String> pddEsterne = new ArrayList<>();
+					pddEsterne.add("-");
+					
+					// aggiungo un elemento di comodo
+					PdDControlStation tmp = new PdDControlStation();
+					tmp.setNome("-");
+					lista.add(tmp);
+					// aggiungo gli altri elementi
+					if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+						lista.addAll(pddCore.pddList(null, new ConsoleSearch(true)));
+					}else{
+						lista.addAll(pddCore.pddList(userLogin, new ConsoleSearch(true)));
 					}
-					else{
-						// non posso modificare la pdd. Lascio solo quella operativa
-						pddList = new String[1];
-						pddList[0] = soggettoRegistry.getPortaDominio();
+					pddList = new String[lista.size()];
+					int i = 0;
+					for (PdDControlStation pddTmp : lista) {
+						pddList[i] = pddTmp.getNome();
+						i++;
+						
+						if(PddTipologia.ESTERNO.toString().equals(pddTmp.getTipo())){
+							pddEsterne.add(pddTmp.getNome());
+						}
 					}
+					
+					pddEsterneList = pddEsterne.toArray(new String[1]);
+				}
+				else{
+					// non posso modificare la pdd. Lascio solo quella operativa
+					pddList = new String[1];
+					pddList[0] = soggettoRegistry.getPortaDominio();
 				}
 			}
 
@@ -418,7 +419,6 @@ public final class SoggettiChange extends Action {
 			String labelButtonSalva = Costanti.LABEL_MONITOR_BUTTON_INVIA;
 
 			// Controllo se ho modificato il protocollo, ricalcolo il default della versione del protocollo
-			@SuppressWarnings("unused")
 			boolean postBackTipoAuthSoggetto = false;
 			if(postBackElementName != null ){
 				// tipo autenticazione
@@ -602,6 +602,9 @@ public final class SoggettiChange extends Action {
 					appId = null;
 					apiKey = null;
 				}
+			}
+			if(postBackTipoAuthSoggetto) {
+				// nop
 			}
 			
 			// reset elemento dalla cache
@@ -838,10 +841,10 @@ public final class SoggettiChange extends Action {
 							idSoggetto!=null && 
 							idSoggetto.getTipo()!=null && !"".equals(idSoggetto.getTipo()) && 
 							idSoggetto.getNome()!=null && !"".equals(idSoggetto.getNome());
-					if(appId==null || "".equals(appId)) {
-						if(soggettoDefined) {
-							appId = soggettiCore.toAppId(strutsBean.protocollo, idSoggetto, multipleApiKeysEnabled);
-						}
+					if( (appId==null || "".equals(appId)) 
+							&&
+						soggettoDefined){
+						appId = soggettiCore.toAppId(strutsBean.protocollo, idSoggetto, multipleApiKeysEnabled);
 					}
 				}
 			}

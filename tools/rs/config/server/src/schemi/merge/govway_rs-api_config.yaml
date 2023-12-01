@@ -1647,6 +1647,72 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/descrizione:
+    get:
+      tags:
+      - "erogazioni"
+      summary: "Restituisce la descrizione di una erogazione"
+      description: "Questa operazione consente di ottenere la descrizione di una erogazione\
+        \ identificata dal nome e dalla versione"
+      operationId: "getErogazioneDescrizione"
+      responses:
+        "200":
+          description: "Dati della descrizione restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiDescrizione"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni"
+      summary: "Consente di modificare la descrizione di una erogazione"
+      description: "Questa operazione consente di aggiornare la descrizione di una\
+        \ erogazione identificata dal nome e dalla versione"
+      operationId: "updateErogazioneDescrizione"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApiDescrizione"
+        required: true
+      responses:
+        "204":
+          description: "La descrizione è stato aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/allegati:
     get:
       tags:
@@ -2348,6 +2414,71 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_gruppo"
     - $ref: "#/components/parameters/id_nome_azione"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/descrizione:
+    get:
+      tags:
+      - "erogazioni-gruppi"
+      summary: "Restituisce la descrizione del gruppo"
+      description: "Questa operazione consente di ottenere la descrizione del gruppo"
+      operationId: "getErogazioneDescrizioneGruppo"
+      responses:
+        "200":
+          description: "Dati della descrizione restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiDescrizione"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni-gruppi"
+      summary: "Consente di modificare la descrizione del gruppo"
+      description: "Questa operazione consente di aggiornare la descrizione del gruppo"
+      operationId: "updateErogazioneDescrizioneGruppo"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApiDescrizione"
+        required: true
+      responses:
+        "204":
+          description: "La descrizione è stato aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/id_nome_gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/stato:
     get:
@@ -4452,6 +4583,73 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/descrizione:
+    get:
+      tags:
+      - "fruizioni"
+      summary: "Restituisce la descrizione di una fruizione"
+      description: "Questa operazione consente di ottenere la descrizione di una fruizione\
+        \ identificata dall'erogatore, dal nome e dalla versione"
+      operationId: "getFruizioneDescrizione"
+      responses:
+        "200":
+          description: "Dati della descrizione restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiDescrizione"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni"
+      summary: "Consente di modificare la descrizione di una fruizione"
+      description: "Questa operazione consente di aggiornare la descrizione di una\
+        \ erogazione identificata dall'erogatore, dal nome e dalla versione"
+      operationId: "updateFruizioneDescrizione"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApiDescrizione"
+        required: true
+      responses:
+        "204":
+          description: "La descrizione è stato aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/modi:
     get:
       tags:
@@ -5236,6 +5434,72 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_gruppo"
     - $ref: "#/components/parameters/id_nome_azione"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/descrizione:
+    get:
+      tags:
+      - "fruizioni-gruppi"
+      summary: "Restituisce la descrizione del gruppo"
+      description: "Questa operazione consente di ottenere la descrizione del gruppo"
+      operationId: "getFruizioneDescrizioneGruppo"
+      responses:
+        "200":
+          description: "Dati della descrizione restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiDescrizione"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni-gruppi"
+      summary: "Consente di modificare la descrizione del gruppo"
+      description: "Questa operazione consente di aggiornare la descrizione del gruppo"
+      operationId: "updateFruizioneDescrizioneGruppo"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApiDescrizione"
+        required: true
+      responses:
+        "204":
+          description: "La descrizione è stato aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/id_nome_gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/stato:
     get:
@@ -7952,12 +8216,10 @@ components:
             - $ref: "#/components/schemas/ApiInterfacciaRest"
             - $ref: "#/components/schemas/ApiInterfacciaSoap"
     ApiDescrizione:
-      required:
-      - "descrizione"
       type: "object"
       properties:
         descrizione:
-          maxLength: 255
+          maxLength: 4000
           type: "string"
           example: "descrizione API"
     ApiTags:
@@ -8169,6 +8431,7 @@ components:
       - type: "object"
         properties:
           descrizione:
+            maxLength: 4000
             type: "string"
           erogazione_nome:
             $ref: "#/components/schemas/NCName"
@@ -8214,6 +8477,7 @@ components:
         type: "object"
         properties:
           descrizione:
+            maxLength: 4000
             type: "string"
           fruizione_nome:
             $ref: "#/components/schemas/NCName"
@@ -8279,7 +8543,7 @@ components:
           dominio:
             $ref: "#/components/schemas/DominioEnum"
           descrizione:
-            maxLength: 255
+            maxLength: 4000
             type: "string"
             example: "descrizione del soggetto EnteEsterno"
           ruoli:
@@ -8333,6 +8597,10 @@ components:
         properties:
           nome:
             $ref: "#/components/schemas/NCName"
+          descrizione:
+            maxLength: 4000
+            type: "string"
+            example: "descrizione dell'applicativo"
           ruoli:
             type: "array"
             example:
@@ -8388,6 +8656,10 @@ components:
       properties:
         nome:
           $ref: "#/components/schemas/NCName"
+        descrizione:
+          maxLength: 4000
+          type: "string"
+          example: "descrizione dell'applicativo"
         proprieta:
           type: "array"
           items:
@@ -8444,7 +8716,7 @@ components:
         nome:
           $ref: "#/components/schemas/NCName"
         descrizione:
-          maxLength: 255
+          maxLength: 4000
           type: "string"
           example: "descrizione del ruolo"
         fonte:
@@ -8488,7 +8760,7 @@ components:
         nome:
           $ref: "#/components/schemas/NCName"
         descrizione:
-          maxLength: 255
+          maxLength: 4000
           type: "string"
           example: "descrizione dello scope"
         identificativo_esterno:
@@ -8705,7 +8977,7 @@ components:
         nome:
           $ref: "#/components/schemas/NCName"
         descrizione:
-          maxLength: 255
+          maxLength: 4000
           type: "string"
           example: "descrizione API"
         versione:

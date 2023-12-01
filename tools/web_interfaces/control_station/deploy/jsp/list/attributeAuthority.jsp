@@ -115,14 +115,15 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 						DataElement de = (DataElement) listImmagini.get(idxLink);
 						String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
 						String classLink = "";
+						String numeroLink = numeroEntryS + "_" + idxLink;
 						
 						// gestione link che visualizzano la finestra modale
 						if(de.getInfo() != null || de.getDialog() != null){
 							if(de.getInfo() != null) {
 								DataElementInfo deInfo = de.getInfo();
-								String idDivIconInfo = "divIconInfo_"+numeroEntry;
-								String idIconInfo = "iconInfo_"+numeroEntry; 
-								String idSpanInfo = "spanIconInfoBoxList_"+numeroEntry;
+								String idDivIconInfo = "divIconInfo_"+numeroLink;
+								String idIconInfo = "iconInfo_"+numeroLink; 
+								String idSpanInfo = "spanIconInfoBoxList_"+numeroLink;
 						%>
 						<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 	   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
@@ -132,15 +133,15 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 							
 							if(de.getDialog() != null) {
 								Dialog dialog = de.getDialog();
-								String idDivIconUso = "divIconUso_"+numeroEntry;
-								String idIconUso = "iconUso_"+numeroEntry; 
-								String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
+								String idDivIconUso = "divIconUso_"+numeroLink;
+								String idIconUso = "iconUso_"+numeroLink; 
+								String idSpanUso = "spanIconUsoBoxList_"+numeroLink;
 								
 								BodyElement urlElement = dialog.getUrlElement();
 								
-								request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+								request.setAttribute("idFinestraModale_"+numeroLink, de.getDialog());
 								
-								String identificativoFinestraModale = "idFinestraModale_" + numeroEntry;
+								String identificativoFinestraModale = "idFinestraModale_" + numeroLink;
 							%>
 							<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
 							<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
@@ -166,6 +167,7 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 								DataElement de = (DataElement) listImmagini.get(idxLink);
 								String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
 								String classLink = "";
+								String numeroLink = numeroEntryS + "_" + idxLink;
 								
 								
 								if(de.getInfo() != null || de.getDialog() != null){
@@ -177,35 +179,35 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 										
 										if(de.getInfo() != null) {
 											%>
-						    				var labelM_<%=numeroEntry %> = $("#hidden_title_iconInfo_"+ <%= numeroEntry %>).val();
-											var bodyM_<%=numeroEntry %> = $("#hidden_body_iconInfo_"+ <%= numeroEntry %>).val();
-											mostraDataElementInfoModal(labelM_<%=numeroEntry %>,bodyM_<%=numeroEntry %>);
+						    				var labelM_<%=numeroLink %> = $("#hidden_title_iconInfo_"+ '<%= numeroLink %>').val();
+											var bodyM_<%=numeroLink %> = $("#hidden_body_iconInfo_"+ '<%= numeroLink %>').val();
+											mostraDataElementInfoModal(labelM_<%=numeroLink %>,bodyM_<%=numeroLink %>);
 							    			<%
 										}
 										
 										if(de.getDialog() != null) {
 											Dialog dialog = de.getDialog();
-											request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+											request.setAttribute("idFinestraModale_"+numeroLink, de.getDialog());
 											
 											%>
-											var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_"+ <%= numeroEntry %>).val();
+											var urlD_<%= numeroLink %> = $("#hidden_title_iconUso_"+ '<%= numeroLink %>').val();
 											
 											// addTabID
-											urlD_<%= numeroEntry %> = addTabIdParam(urlD_<%= numeroEntry %>,true);
+											urlD_<%= numeroLink %> = addTabIdParam(urlD_<%= numeroLink %>,true);
 						    				// chiamata al servizio
 						    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 						    				
 						    				$.ajax({
-					    							url : urlD_<%= numeroEntry %>,
+					    							url : urlD_<%= numeroLink %>,
 					    							method: 'GET',
 					    							async : false,
 					    							success: function(data, textStatus, jqXHR){
 					    								// inserimento del valore nella text area
-									    				$("textarea[id^='idFinestraModale_<%=numeroEntryS %>_txtA']").val(data);
+									    				$("textarea[id^='idFinestraModale_<%=numeroLink %>_txtA']").val(data);
 									    				
 									    				<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
 									    				// apertura modale
-									    				var idToOpen = '#' + 'idFinestraModale_<%= numeroEntry %>';
+									    				var idToOpen = '#' + 'idFinestraModale_<%= numeroLink %>';
 									    				$(idToOpen).dialog("open");
 					    							},
 					    							error: function(data, textStatus, jqXHR){

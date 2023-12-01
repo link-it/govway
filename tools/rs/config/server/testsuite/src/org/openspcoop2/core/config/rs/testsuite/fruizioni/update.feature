@@ -58,6 +58,10 @@ Background:
 * def info_generali = read('informazioni_generali_petstore.json')
 * def erogazione_versione = read('api_versione3.json')
 
+* def descrizione_4000 = read('../api/api_descrizione_4000.json')
+* def descrizione_4001 = read('../api/api_descrizione_4001.json')
+* def descrizione_null = read('../api/api_descrizione_null.json')
+
 * def getExpectedConnettore =
 """
 function(connettore) {
@@ -595,3 +599,53 @@ Scenario: Update Fruizioni 404
     And params query_params
     When method put
     Then status 404
+
+@UpdateDescrizione
+Scenario: Fruizioni Update Descrizione 204
+    
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key , 'descrizione'
+    And header Authorization = govwayConfAuth
+    And request descrizione_4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key , 'descrizione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == descrizione_4000.descrizione
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key , 'descrizione'
+    And header Authorization = govwayConfAuth
+    And request descrizione_4001
+    When method put
+    Then status 400
+
+    * match response.detail contains 'Max length is \'4000\', found \'4001\''
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key , 'descrizione'
+    And header Authorization = govwayConfAuth
+    And request descrizione_null
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key , 'descrizione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == '#notpresent'
+        
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })

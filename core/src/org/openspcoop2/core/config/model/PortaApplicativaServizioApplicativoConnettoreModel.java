@@ -42,6 +42,7 @@ public class PortaApplicativaServizioApplicativoConnettoreModel extends Abstract
 	
 		this.FILTRO = new Field("filtro",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.config.model.ProprietaOggettoModel(new Field("proprieta-oggetto",org.openspcoop2.core.config.ProprietaOggetto.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class));
 		this.NOME = new Field("nome",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.NOTIFICA = new Field("notifica",boolean.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
@@ -59,6 +60,7 @@ public class PortaApplicativaServizioApplicativoConnettoreModel extends Abstract
 	
 		this.FILTRO = new ComplexField(father,"filtro",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.config.model.ProprietaOggettoModel(new ComplexField(father,"proprieta-oggetto",org.openspcoop2.core.config.ProprietaOggetto.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class));
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.NOTIFICA = new ComplexField(father,"notifica",boolean.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
@@ -75,6 +77,8 @@ public class PortaApplicativaServizioApplicativoConnettoreModel extends Abstract
 	public IField FILTRO = null;
 	 
 	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA = null;
+	 
+	public org.openspcoop2.core.config.model.ProprietaOggettoModel PROPRIETA_OGGETTO = null;
 	 
 	public IField NOME = null;
 	 

@@ -190,9 +190,9 @@ public class ConfigurazioneUtilities {
 			oneOnlyConfig = true;
 			String tipo = _getAttivazionePolicyTipo(policies.get(0));
 			for (int i = 1; i < policies.size(); i++) {
-				AttivazionePolicy attivazionePolicy_i = policies.get(i);
-				String tipo_i = _getAttivazionePolicyTipo(attivazionePolicy_i);
-				if(!tipo_i.equals(tipo)) {
+				AttivazionePolicy attivazionePolicyI = policies.get(i);
+				String tipoI = _getAttivazionePolicyTipo(attivazionePolicyI);
+				if(!tipoI.equals(tipo)) {
 					oneOnlyConfig = false;
 					break;
 				}
@@ -236,7 +236,7 @@ public class ConfigurazioneUtilities {
 					nomePorta = attivazionePolicy.getFiltro().getNomePorta();
 				}
 				
-				// throw new NotImplementedException("Da implementare quando verranno aggiunti gli allarmi."); 
+				/** throw new NotImplementedException("Da implementare quando verranno aggiunti gli allarmi."); */ 
 				List<Allarme> allarmiObjectUtilizzanoPolicy = confCore.allarmiForPolicyRateLimiting(attivazionePolicy.getIdActivePolicy(),ruoloPorta,nomePorta);
 				List<String> allarmiUtilizzanoPolicy = null;
 				if(allarmiObjectUtilizzanoPolicy!=null && !allarmiObjectUtilizzanoPolicy.isEmpty()) {
@@ -253,7 +253,7 @@ public class ConfigurazioneUtilities {
 					}
 				}
 				
-				if(allarmiUtilizzanoPolicy!=null && allarmiUtilizzanoPolicy.size()>0){
+				if(allarmiUtilizzanoPolicy!=null && !allarmiUtilizzanoPolicy.isEmpty()){
 					StringBuilder bf = new StringBuilder();
 					bf.append(newLine);
 					bf.append("La policy '"+attivazionePolicy.getAlias()+"' risulta utilizzata da ");
@@ -272,9 +272,7 @@ public class ConfigurazioneUtilities {
 					}
 					bf.append(": ");
 					for (int j = 0; j < allarmiUtilizzanoPolicy.size(); j++) {
-						//if(j>0){
 						bf.append(newLine);
-						//}
 						bf.append("- ").append(allarmiUtilizzanoPolicy.get(j));
 					}
 					
@@ -294,7 +292,7 @@ public class ConfigurazioneUtilities {
 		}
 		
 		if(deleteMessage.length()>0){
-			if(policiesRimosse.size()>0){
+			if(!policiesRimosse.isEmpty()){
 				inUsoMessage.append("Non è stato possibile completare l'eliminazione di tutti gli elementi selezionati:"+newLine+deleteMessage.toString());
 			}
 			else{
@@ -302,7 +300,7 @@ public class ConfigurazioneUtilities {
 			}
 		}
 		
-		if(policiesRimosse .size() > 0) {
+		if(!policiesRimosse .isEmpty()) {
 //		 	eseguo delete
 			confCore.performDeleteOperation(userLogin, confHelper.smista(), (Object[]) policiesRimosse.toArray(new AttivazionePolicy[1])); 
 		}

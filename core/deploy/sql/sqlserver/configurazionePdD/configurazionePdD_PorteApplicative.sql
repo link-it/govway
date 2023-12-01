@@ -3,7 +3,7 @@
 CREATE TABLE porte_applicative
 (
 	nome_porta VARCHAR(2000) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(4000),
 	-- Soggetto Virtuale
 	id_soggetto_virtuale BIGINT,
 	tipo_soggetto_virtuale VARCHAR(255),
@@ -127,6 +127,10 @@ CREATE TABLE porte_applicative
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
 	options VARCHAR(4000),
 	canale VARCHAR(255),
+	utente_richiedente VARCHAR(255),
+	data_creazione DATETIME2,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica DATETIME2,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
@@ -157,6 +161,10 @@ CREATE TABLE porte_applicative_sa
 	connettore_coda VARCHAR(10) DEFAULT 'DEFAULT',
 	connettore_priorita VARCHAR(10) DEFAULT 'DEFAULT',
 	connettore_max_priorita INT DEFAULT 0,
+	utente_richiedente VARCHAR(255),
+	data_creazione DATETIME2,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica DATETIME2,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

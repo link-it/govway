@@ -28,6 +28,7 @@ import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +81,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.utils.ConfigUtils;
+import org.openspcoop2.core.config.utils.UpdateProprietaOggetto;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -88,6 +90,8 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -104,6 +108,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
@@ -953,6 +958,8 @@ public class ControlStationCore {
 	private List<String> getApiResourcePathQualsiasiSpecialChar;
 	private boolean isApiOpenAPIValidateUriReferenceAsUrl;
 	private boolean isApiRestResourceRepresentationMessageTypeOverride;
+	private boolean isApiDescriptionTruncate255;
+	private boolean isApiDescriptionTruncate4000;
 	public boolean isApiResourcePathValidatorEnabled() {
 		return this.isApiResourcePathValidatorEnabled;
 	}
@@ -967,6 +974,12 @@ public class ControlStationCore {
 	}
 	public boolean isApiRestResourceRepresentationMessageTypeOverride() {
 		return this.isApiRestResourceRepresentationMessageTypeOverride;
+	}
+	public boolean isApiDescriptionTruncate255() {
+		return  this.isApiDescriptionTruncate255;
+	}
+	public boolean isApiDescriptionTruncate4000() {
+		return  this.isApiDescriptionTruncate4000;
 	}
 	
 	/** Accordi di Cooperazione */
@@ -2485,6 +2498,8 @@ public class ControlStationCore {
 		this.getApiResourcePathQualsiasiSpecialChar = core.getApiResourcePathQualsiasiSpecialChar;
 		this.isApiOpenAPIValidateUriReferenceAsUrl = core.isApiOpenAPIValidateUriReferenceAsUrl;
 		this.isApiRestResourceRepresentationMessageTypeOverride = core.isApiRestResourceRepresentationMessageTypeOverride;
+		this.isApiDescriptionTruncate255 = core.isApiDescriptionTruncate255;
+		this.isApiDescriptionTruncate4000 = core.isApiDescriptionTruncate4000;
 		
 		/** Accordi di Cooperazione */
 		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
@@ -2930,6 +2945,8 @@ public class ControlStationCore {
 			this.getApiResourcePathQualsiasiSpecialChar = consoleProperties.getApiResourcePathQualsiasiSpecialChar();
 			this.isApiOpenAPIValidateUriReferenceAsUrl = consoleProperties.isApiOpenAPIValidateUriReferenceAsUrl();
 			this.isApiRestResourceRepresentationMessageTypeOverride = consoleProperties.isApiRestResourceRepresentationMessageTypeOverride();
+			this.isApiDescriptionTruncate255 = consoleProperties.isApiDescriptionTruncate255();
+			this.isApiDescriptionTruncate4000 = consoleProperties.isApiDescriptionTruncate4000();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
 			this.isErogazioniVerificaCertificati = consoleProperties.isErogazioniVerificaCertificati();
 			this.isFruizioniVerificaCertificati = consoleProperties.isFruizioniVerificaCertificati();
@@ -3740,6 +3757,8 @@ public class ControlStationCore {
 					if(oggetto instanceof AttivazionePolicy) {
 						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
 						driver.createAttivazionePolicy(policy);
+						
+						updateProprietaOggettoPorta(policy, superUser, driver);
 					}
 					
 					/***********************************************************
@@ -3779,6 +3798,8 @@ public class ControlStationCore {
 					if(oggetto instanceof Allarme) {
 						Allarme allarme = (Allarme) oggetto;
 						driver.createAllarme(allarme);
+						
+						updateProprietaOggettoPorta(allarme, superUser, driver);
 					}
 					// Allarmi History
 					if(oggetto instanceof AllarmeHistory) {
@@ -3806,6 +3827,24 @@ public class ControlStationCore {
 						driver.updatePdDControlStation(pdd);
 					}
 
+					
+					/***********************************************************
+					 * Caso Speciale di update di proprieta oggetto *
+					 **********************************************************/
+					if (oggetto instanceof UpdateProprietaOggetto) {
+						UpdateProprietaOggetto update = (UpdateProprietaOggetto) oggetto;
+						
+						if(update.getIdPortaApplicativa()!=null) {
+							driver.getDriverConfigurazioneDB().updateProprietaOggetto(update.getIdPortaApplicativa(), superUser);
+						}
+						else if(update.getIdPortaDelegata()!=null) {
+							driver.getDriverConfigurazioneDB().updateProprietaOggetto(update.getIdPortaDelegata(), superUser);
+						}
+						else if(update.getIdServizioApplicativo()!=null) {
+							driver.getDriverConfigurazioneDB().updateProprietaOggetto(update.getIdServizioApplicativo(), superUser);
+						}
+					}
+					
 
 					/***********************************************************
 					 * Caso Speciale dei Soggetti *
@@ -3821,8 +3860,6 @@ public class ControlStationCore {
 						if(this.registroServiziLocale){
 							driver.getDriverRegistroServiziDB().updateSoggetto(soggetto.getSoggettoReg());
 						}
-
-						// driver.getDriverConfigurazioneDB().updateSoggetto(soggetto.getSoggettoConf());
 
 						Soggetto sogConf = soggetto.getSoggettoConf();
 						// imposto i valori old del soggetto configurazione
@@ -3996,7 +4033,7 @@ public class ControlStationCore {
 					// PortType
 					if (oggetto instanceof PortType) {
 						PortType pt = (PortType) oggetto;
-						driver.getDriverRegistroServiziDB().updatePortType(pt);
+						driver.getDriverRegistroServiziDB().updatePortType(pt, superUser);
 					}
 
 					/***********************************************************
@@ -4044,6 +4081,8 @@ public class ControlStationCore {
 					if(oggetto instanceof AttivazionePolicy) {
 						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
 						driver.updateAttivazionePolicy(policy);
+						
+						updateProprietaOggettoPorta(policy, superUser, driver);
 					}
 					
 					/***********************************************************
@@ -4087,6 +4126,8 @@ public class ControlStationCore {
 					if(oggetto instanceof Allarme) {
 						Allarme allarme = (Allarme) oggetto;
 						driver.updateAllarme(allarme);
+						
+						updateProprietaOggettoPorta(allarme, superUser, driver);
 					}
 					
 					/***********************************************************
@@ -4113,11 +4154,19 @@ public class ControlStationCore {
 					if (oggetto instanceof MappingFruizionePortaDelegata) {
 						MappingFruizionePortaDelegata mapping = (MappingFruizionePortaDelegata) oggetto;
 						driver.deleteMappingFruizionePortaDelegata(mapping);
+						
+						if(mapping.getIdServizio()!=null && mapping.getIdFruitore()!=null) {
+							driver.updateProprietaOggettoFruizione(mapping.getIdServizio(), mapping.getIdFruitore() ,superUser ,false);
+						}
 					}
 					
 					if (oggetto instanceof MappingErogazionePortaApplicativa) {
 						MappingErogazionePortaApplicativa mapping = (MappingErogazionePortaApplicativa) oggetto;
 						driver.deleteMappingErogazionePortaApplicativa(mapping);
+						
+						if(mapping.getIdServizio()!=null) {
+							driver.updateProprietaOggettoErogazione(mapping.getIdServizio() ,superUser ,false);
+						}
 					}
 					
 					
@@ -4322,6 +4371,8 @@ public class ControlStationCore {
 								// ignore
 							}
 						}
+						
+						updateProprietaOggettoPorta(policy, superUser, driver);
 					}
 					
 					/***********************************************************
@@ -4363,6 +4414,8 @@ public class ControlStationCore {
 						// Il file importato potrebbe avere un identificativo diverso da quello effettivamente salvato
 						if(allarme.getAlias()==null) {
 							driver.deleteAllarme(allarme);
+							
+							updateProprietaOggettoPorta(allarme, superUser, driver);
 						}
 						else {
 							try {
@@ -4370,6 +4423,8 @@ public class ControlStationCore {
 										(allarme.getFiltro()!=null) ? allarme.getFiltro().getRuoloPorta() : null,
 										(allarme.getFiltro()!=null) ? allarme.getFiltro().getNomePorta() : null);
 								driver.deleteAllarme(all); 
+								
+								updateProprietaOggettoPorta(all, superUser, driver);
 							}catch(DriverControlStationNotFound notFound) {
 								// ignore
 							}
@@ -4386,11 +4441,10 @@ public class ControlStationCore {
 					/***********************************************************
 					 * Operazioni su Remote Store Keys *
 					 **********************************************************/
-					// Allarmi
+					// RemoteStoreKeys
 					if(oggetto instanceof RemoteStoreKeyEntry) {
 						RemoteStoreKeyEntry entry = (RemoteStoreKeyEntry) oggetto;
 						RemoteStoreProviderDriverUtils.deleteRemoteStoreKeyEntry(driver.getDriverConfigurazioneDB(), entry.getIdRemoteStore(), entry.getId());
-						doSetDati = false;
 					}
 										
 					break;
@@ -4439,12 +4493,15 @@ public class ControlStationCore {
 		ControlStationCore.logInfo(getPrefixMethod(nomeMetodo)+"performing operation on objects " + this.getClassNames(oggetti));
 		Tipologia[] tipoOperazione = new Tipologia[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
-			if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_CREATE)
+			if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_CREATE) {
 				tipoOperazione[i] = Tipologia.ADD;
-			else if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_UPDATE)
+			}
+			else if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_UPDATE) {
 				tipoOperazione[i] = Tipologia.CHANGE;
-			else
+			}
+			else {
 				tipoOperazione[i] = Tipologia.DEL;
+			}
 		}
 
 		this.cryptPassword(tipoOperazione, oggetti);
@@ -4491,6 +4548,8 @@ public class ControlStationCore {
 
 		this.cryptPassword(tipoOperazione, oggetti);
 		
+		this.setProprietaOggetto(superUser, tipoOperazione, oggetti);
+		
 		IDOperazione [] idOperazione = null;
 		boolean auditDisabiltato = false;
 		try{
@@ -4533,6 +4592,8 @@ public class ControlStationCore {
 		}
 
 		this.cryptPassword(tipoOperazione, oggetti);
+		
+		this.setProprietaOggetto(superUser, tipoOperazione, oggetti);
 		
 		IDOperazione [] idOperazione = null;
 		boolean auditDisabiltato = false;
@@ -7128,6 +7189,339 @@ public class ControlStationCore {
 					this._cryptPassword(sa);
 				}
 				
+			}
+		}
+	}
+	
+	public void setProprietaOggetto(String superUser, Tipologia[] operationTypes, Object ... oggetti) {
+		if(oggetti!=null && oggetti.length>0) {
+			for (int i = 0; i < oggetti.length; i++) {
+				Object oggetto = oggetti[i];
+				Tipologia operationType = operationTypes[i];
+				
+				boolean create = Tipologia.ADD.equals(operationType);
+				boolean update = Tipologia.CHANGE.equals(operationType);
+				
+				if(!create && !update) {
+					continue;
+				}
+				
+				setProprietaOggettoSoggetto(superUser, oggetto, create, update);
+				
+				setProprietaOggettoAccordoServizioParteComune(superUser, oggetto, create, update);
+				
+				setProprietaOggettoAccordoServizioParteSpecifica(superUser, oggetto, create, update);
+				
+				setProprietaOggettoRuolo(superUser, oggetto, create, update);
+				
+				setProprietaOggettoScope(superUser, oggetto, create, update);
+				
+				setProprietaOggettoGruppo(superUser, oggetto, create, update);
+				
+				setProprietaOggettoPortaDelegata(superUser, oggetto, create, update);
+				
+				setProprietaOggettoPortaApplicativa(superUser, oggetto, create, update);
+				
+				setProprietaOggettoServizioApplicativo(superUser, oggetto, create, update);
+				
+				setProprietaOggettoGenericProperties(superUser, oggetto, create, update);
+				
+			}
+		}
+	}
+	private void setProprietaOggettoSoggetto(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof SoggettoCtrlStat) {
+			SoggettoCtrlStat soggetto = (SoggettoCtrlStat) oggetto;
+			if(soggetto.getSoggettoReg()!=null) {
+				if(create && soggetto.getSoggettoReg().getProprietaOggetto()==null) {
+					soggetto.getSoggettoReg().setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+				}
+				pOggetto = soggetto.getSoggettoReg().getProprietaOggetto();
+			}
+		}
+		else if (oggetto instanceof org.openspcoop2.core.registry.Soggetto) {
+			org.openspcoop2.core.registry.Soggetto sogReg = (org.openspcoop2.core.registry.Soggetto) oggetto;
+			if(create && sogReg.getProprietaOggetto()==null) {
+				sogReg.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = sogReg.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoAccordoServizioParteComune(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof AccordoServizioParteComune) {
+			AccordoServizioParteComune a = (AccordoServizioParteComune) oggetto;
+			if(create && a.getProprietaOggetto()==null) {
+				a.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = a.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoAccordoServizioParteSpecifica(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof AccordoServizioParteSpecifica) {
+			AccordoServizioParteSpecifica a = (AccordoServizioParteSpecifica) oggetto;
+			
+			// per gli aggiornamenti i casi da gestire sono:
+			// modifica solo dei dati di un fruizione (si usa setDataAggiornamentoFruitore)
+			// modifica solo dei dati di una erogazione (si usa setDataAggiornamentoServizio)
+			// modifica effettuata in una fruizione o in una erogazione che comunque impatta su tutte le fruizioni/erogazioni esistenti
+			
+			boolean isFruitoreSingolo = setProprietaOggettoAccordoServizioParteSpecificaFruitore(superUser, a);
+			
+			if(!isFruitoreSingolo) {
+				if(create && a.getProprietaOggetto()==null) {
+					a.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+				}
+				pOggetto = a.getProprietaOggetto();
+				
+				if(isDataAggiornamentoServizio(a) ) {
+					setProprietaOggettoAccordoServizioParteSpecificaResetFruitori(a);
+				}
+			}
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoAccordoServizioParteSpecificaResetFruitori(AccordoServizioParteSpecifica a) {
+		if(a.sizeFruitoreList()>0) {
+			for (Fruitore fr : a.getFruitoreList()) {
+				fr.setProprietaOggetto(null); // per non far aggiornare visto che la modifica non riguarda il fruitore
+			}
+		}
+	}
+	
+	private static final Date DATA_CREAZIONE = new Date(0);
+	public void setDataCreazioneFruitore(Fruitore fr) {
+		if(fr!=null) {
+			if(fr.getProprietaOggetto()==null) {
+				fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			fr.getProprietaOggetto().setDataCreazione(DATA_CREAZIONE);
+		}
+	}
+	private boolean isDataCreazioneFruitore(Fruitore fr) {
+		return fr!=null && fr.getProprietaOggetto()!=null &&
+				fr.getProprietaOggetto().getDataCreazione()!=null && 
+				DATA_CREAZIONE.equals(fr.getProprietaOggetto().getDataCreazione());
+	}
+	
+	private static final Date DATA_AGGIORNAMENTO = new Date(0);
+	private boolean isDataAggiornamentoServizio(AccordoServizioParteSpecifica asps) {
+		return asps!=null && asps.getProprietaOggetto()!=null &&
+				asps.getProprietaOggetto().getDataUltimaModifica()!=null && 
+				DATA_AGGIORNAMENTO.equals(asps.getProprietaOggetto().getDataUltimaModifica());
+	}
+	public void setDataAggiornamentoServizio(AccordoServizioParteSpecifica asps) {
+		if(asps!=null) {
+			if(asps.getProprietaOggetto()==null) {
+				asps.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			asps.getProprietaOggetto().setDataUltimaModifica(DATA_AGGIORNAMENTO);
+		}
+	}
+	public void setDataAggiornamentoFruitore(Fruitore fr) {
+		if(fr!=null) {
+			if(fr.getProprietaOggetto()==null) {
+				fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			fr.getProprietaOggetto().setDataUltimaModifica(DATA_AGGIORNAMENTO);
+		}
+	}
+	private boolean isDataAggiornamentoFruitore(Fruitore fr) {
+		return fr!=null && fr.getProprietaOggetto()!=null &&
+				fr.getProprietaOggetto().getDataUltimaModifica()!=null && 
+				DATA_AGGIORNAMENTO.equals(fr.getProprietaOggetto().getDataUltimaModifica());
+	}
+	
+	private boolean setProprietaOggettoAccordoServizioParteSpecificaFruitore(String superUser, AccordoServizioParteSpecifica a) {
+		boolean isFruitoreSingolo = false;
+		if(a.sizeFruitoreList()>0) {
+			isFruitoreSingolo = setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(superUser, a);
+		}
+		if(!isFruitoreSingolo && a.sizeFruitoreList()>0) {
+			// se comunque esistono dei fruitori, si tratta di un aggiornamento massivo
+			for (Fruitore fr : a.getFruitoreList()) {
+				if(fr.getProprietaOggetto()==null) {
+					fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+				}
+				setProprietaOggetto(superUser, fr.getProprietaOggetto(), false, true);
+			}
+		}
+		return isFruitoreSingolo;
+	}
+	private boolean setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(String superUser, AccordoServizioParteSpecifica a) {
+		boolean isFruitoreSingolo = isProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(a);
+		for (Fruitore fr : a.getFruitoreList()) {
+			if(fr!=null) {
+				setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(superUser, fr, isFruitoreSingolo);
+			}
+		}
+		return isFruitoreSingolo;
+	}
+	private void setProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(String superUser, Fruitore fr, boolean isFruitoreSingolo) {
+		if(isDataAggiornamentoFruitore(fr)) {
+			if(fr.getProprietaOggetto()==null) {
+				fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			setProprietaOggetto(superUser, fr.getProprietaOggetto(), false, true);
+		}
+		else if(isDataCreazioneFruitore(fr)) {
+			if(fr.getProprietaOggetto()==null) {
+				fr.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());
+			}
+			setProprietaOggetto(superUser, fr.getProprietaOggetto(), true, false);
+		}
+		else if(isFruitoreSingolo && fr!=null){
+			fr.setProprietaOggetto(null); // per non far aggiornare visto che la modifica non riguarda il fruitore
+		}
+	}
+	private boolean isProprietaOggettoAccordoServizioParteSpecificaSingoloFruitore(AccordoServizioParteSpecifica a) {
+		boolean isFruitoreSingolo = false;
+		for (Fruitore fr : a.getFruitoreList()) {
+			if(fr!=null &&
+				(isDataAggiornamentoFruitore(fr) || isDataCreazioneFruitore(fr)) 
+				){
+				isFruitoreSingolo = true;
+				break;
+			}
+		}
+		return isFruitoreSingolo;
+	}
+	private void setProprietaOggettoRuolo(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof Ruolo) {
+			Ruolo r = (Ruolo) oggetto;
+			if(create && r.getProprietaOggetto()==null) {
+				r.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = r.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoScope(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof Scope) {
+			Scope s = (Scope) oggetto;
+			if(create && s.getProprietaOggetto()==null) {
+				s.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = s.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoGruppo(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.registry.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof Gruppo) {
+			Gruppo g = (Gruppo) oggetto;
+			if(create && g.getProprietaOggetto()==null) {
+				g.setProprietaOggetto(new org.openspcoop2.core.registry.ProprietaOggetto());	
+			}
+			pOggetto = g.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoPortaDelegata(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof PortaDelegata) {
+			PortaDelegata p = (PortaDelegata) oggetto;
+			if(create && p.getProprietaOggetto()==null) {
+				p.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
+			}
+			pOggetto = p.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoPortaApplicativa(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof PortaApplicativa) {
+			PortaApplicativa p = (PortaApplicativa) oggetto;
+			if(create && p.getProprietaOggetto()==null) {
+				p.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
+			}
+			pOggetto = p.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoServizioApplicativo(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof ServizioApplicativo) {
+			ServizioApplicativo s = (ServizioApplicativo) oggetto;
+			if(create && s.getProprietaOggetto()==null) {
+				s.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
+			}
+			pOggetto = s.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggettoGenericProperties(String superUser, Object oggetto, boolean create, boolean update) {
+		org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+		if (oggetto instanceof GenericProperties) {
+			GenericProperties gp = (GenericProperties) oggetto;
+			if(
+				//create && 
+				gp.getProprietaOggetto()==null) {
+				gp.setProprietaOggetto(new org.openspcoop2.core.config.ProprietaOggetto());	
+			}
+			pOggetto = gp.getProprietaOggetto();
+		}
+		setProprietaOggetto(superUser, pOggetto, create, update);
+	}
+	private void setProprietaOggetto(String superUser, Object oggetto, boolean create, boolean update) {
+		if(oggetto instanceof org.openspcoop2.core.registry.ProprietaOggetto) {
+			org.openspcoop2.core.registry.ProprietaOggetto p = (org.openspcoop2.core.registry.ProprietaOggetto) oggetto;
+			if(create) {
+				p.setDataCreazione(DateManager.getDate());
+				p.setUtenteRichiedente(superUser);
+			}
+			else if(update) {
+				p.setDataUltimaModifica(DateManager.getDate());
+				p.setUtenteUltimaModifica(superUser);
+			}
+		}
+		else if(oggetto instanceof org.openspcoop2.core.config.ProprietaOggetto) {
+			org.openspcoop2.core.config.ProprietaOggetto p = (org.openspcoop2.core.config.ProprietaOggetto) oggetto;
+			if(create) {
+				p.setDataCreazione(DateManager.getDate());
+				p.setUtenteRichiedente(superUser);
+			}
+			else if(update) {
+				p.setDataUltimaModifica(DateManager.getDate());
+				p.setUtenteUltimaModifica(superUser);
+			}
+		}
+	}
+	
+	private void updateProprietaOggettoPorta(AttivazionePolicy policy, String superUser, DriverControlStationDB driver) throws DriverConfigurazioneException {		
+		if(policy.getFiltro()!=null && policy.getFiltro().getEnabled() && policy.getFiltro().getRuoloPorta()!=null && 
+				policy.getFiltro().getNomePorta()!=null && StringUtils.isNotEmpty(policy.getFiltro().getNomePorta())) {
+			if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.APPLICATIVA.equals(policy.getFiltro().getRuoloPorta())) {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(policy.getFiltro().getNomePorta());
+				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPA, superUser);
+			}
+			else if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.DELEGATA.equals(policy.getFiltro().getRuoloPorta())) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(policy.getFiltro().getNomePorta());
+				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPD, superUser);
+			}
+		}
+	}
+	
+	private void updateProprietaOggettoPorta(Allarme allarme, String superUser, DriverControlStationDB driver) throws DriverConfigurazioneException {		
+		if(allarme!=null && allarme.getFiltro()!=null && allarme.getFiltro().getEnabled() && allarme.getFiltro().getRuoloPorta()!=null && 
+				allarme.getFiltro().getNomePorta()!=null && StringUtils.isNotEmpty(allarme.getFiltro().getNomePorta())) {
+			if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.APPLICATIVA.equals(allarme.getFiltro().getRuoloPorta())) {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(allarme.getFiltro().getNomePorta());
+				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPA, superUser);
+			}
+			else if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.DELEGATA.equals(allarme.getFiltro().getRuoloPorta())) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(allarme.getFiltro().getNomePorta());
+				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPD, superUser);
 			}
 		}
 	}

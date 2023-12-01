@@ -72,6 +72,15 @@ public final class CostantiDB {
     public static final String SOGGETTI_COLUMN_NOME_SOGGETTO_VIRTUALE = "nome_soggetto_virtuale";
     public static final String SOGGETTI_COLUMN_SUPERUSER = "superuser";
     
+    public static final String PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE = "utente_richiedente";
+    public static final String PROPRIETA_OGGETTO_DATA_CREAZIONE = "data_creazione";
+    public static final String PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA = "utente_ultima_modifica";
+    public static final String PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA = "data_ultima_modifica";
+    public static final String PROPRIETA_OGGETTO_ALIAS_UTENTE_RICHIEDENTE = "prop_obj_ur";
+    public static final String PROPRIETA_OGGETTO_ALIAS_DATA_CREAZIONE = "prop_obj_dc";
+    public static final String PROPRIETA_OGGETTO_ALIAS_UTENTE_ULTIMA_MODIFICA = "prop_obj_um";
+    public static final String PROPRIETA_OGGETTO_ALIAS_DATA_ULTIMA_MODIFICA = "prop_obj_dm";
+    
     /*REGSERV*/
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";
     public static final String PDD = "pdd";

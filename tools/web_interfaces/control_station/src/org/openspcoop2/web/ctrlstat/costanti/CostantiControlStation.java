@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.costanti;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.commons.Filtri;
@@ -41,6 +42,7 @@ import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -56,6 +58,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  * 
  */
 public class CostantiControlStation {
+	
+	private CostantiControlStation() {}
 	
 	public static final String DEFAULT_OPENSPCOOP2_PREFIX_LOCAL_PATH = "console";
 	public static final String DEFAULT_OPENSPCOOP2_PROPERTIES_NAME = "CONSOLE";
@@ -130,6 +134,26 @@ public class CostantiControlStation {
 	
 	
 	/** LABEL GENERALI */
+	
+	public static final String LABEL_DATA_CREAZIONE = "Data Creazione";
+	public static final String LABEL_UTENTE_RICHIEDENTE = "Utente Richiedente";
+	public static final String LABEL_DATA_ULTIMA_MODIFICA = "Data Ultima Modifica";
+	public static final String LABEL_UTENTE_ULTIMA_MODIFICA = "Utente Ultima Modifica";
+	
+	public static final String LABEL_PROPRIETA_DESCRIZIONE = "Descrizione";
+	public static final String LABEL_PROPRIETA_DESCRIZIONE_EMPTY = "";
+	public static final int TEXT_AREA_DESCRIZIONE_ROWS = 15;
+	
+	public static final String LABEL_CREAZIONE = "Creazione";
+	public static final String LABEL_ULTIMA_MODIFICA = "Ultima Modifica";
+	private static final String DATE_FORMAT_MINUTE = "yyyy/MM/dd HH:mm";
+	public static String formatDateMinute(Date date) {
+		return DateUtils.getSimpleDateFormat(DATE_FORMAT_MINUTE).format(date);
+	}
+	private static final String DATE_FORMAT_MILLISECOND = "yyyy/MM/dd HH:mm:ss.SSS";
+	public static String formatDateMs(Date date) {
+		return DateUtils.getSimpleDateFormat(DATE_FORMAT_MILLISECOND).format(date);
+	}
 	
 	public static final String LABEL_PARAMETRO_PROTOCOLLO_DI = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI;
 	public static final String LABEL_PARAMETRO_PROTOCOLLO = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO;
@@ -817,6 +841,12 @@ public class CostantiControlStation {
 	public static final String LABEL_IN_USO_INFORMAZIONI_TOOLTIP = "Visualizza dettagli della configurazione";
 	public static final String LABEL_IN_USO_BODY_HEADER_INFORMAZIONI = "Dettagli della configurazione";
 	
+	public static final String LABEL_PROPRIETA_OGGETTO_COLONNA_HEADER = "Proprietà";
+	public static final String LABEL_PROPRIETA_OGGETTO_TOOLTIP = "Proprietà";
+	public static final String LABEL_PROPRIETA_OGGETTO_BODY_HEADER_RISULTATI = "Proprietà";
+	public static final String LABEL_PROPRIETA_OGGETTO_INFORMAZIONI_TOOLTIP = "Visualizza proprietà della configurazione";
+	public static final String LABEL_PROPRIETA_OGGETTO_BODY_HEADER_INFORMAZIONI = "Proprietà della configurazione";
+	
 	public static final String LABEL_CONFIGURAZIONE_CANALE_DEFAULT = "Configurazione di default del Gateway";
 	public static final String LABEL_CONFIGURAZIONE_CANALE_DEFAULT_API = "Configurazione di default dell'API";
 	public static final String LABEL_CONFIGURAZIONE_CANALE_RIDEFINITO_API = "Configurazione ridefinita per l'API";
@@ -882,6 +912,9 @@ public class CostantiControlStation {
 	};
 	
 	/** PARAMETERS **/
+	
+	public static final String PARAMETRO_SUFFIX_LABEL = "__label";
+	public static final String PARAMETRO_PREFIX = "param_";
 	
 	public static final String PARAMETRO_ID = "id";
 	public static final String PARAMETRO_ID_SOGGETTO = "idsogg";
@@ -1065,6 +1098,7 @@ public class CostantiControlStation {
 	public static final String PARAMETRO_API_PAGE_INFO = "fromApiPageInfo";
 	
 	public static final String PARAMETRO_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
+	public static final String PARAMETRO_CONFIGURAZIONE_DESCRIZIONE = "configurazioneDescrizione";
 	public static final String PARAMETRO_CONFIGURAZIONE_ALTRO_PORTA = "configurazioneAltroPorta";
 	public static final String PARAMETRO_CONFIGURAZIONE_ALTRO_API = "configurazioneAltroApi";
 	public static final String PARAMETRO_CONNETTORE_DA_LISTA_APS = "connettoreDaListaAps";
@@ -1920,7 +1954,12 @@ public class CostantiControlStation {
 	
 	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI = "Non è stato selezionato nessun gruppo di metadati";
 	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO = "Non è stato selezionato nessun valore per il gruppo di metadati {0}";
+	
 	/** ICONE E TOOLTIP */
+	
+	public static final String ICONA_AGGIUNGI_DESCRIZIONE = "&#xE873;";
+	public static final String AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO = "Aggiungi {0}";
+	
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE = "&#xE3C9;";
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = "Modifica";
 	public static final String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Modifica {0}";

@@ -164,6 +164,7 @@ public class ServiziApplicativiCostanti {
 	public static final String PARAMETRO_SERVIZI_APPLICATIVI_ID = "id";
 	public static final String PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO = "idsil";
 	public static final String PARAMETRO_SERVIZI_APPLICATIVI_NOME = "nome";
+	public static final String PARAMETRO_SERVIZI_APPLICATIVI_DESCRIZIONE = "descr";
 	public static final String PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO = "nomeservizioApplicativo";
 	public static final String PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS = CostantiControlStation.PARAMETRO_ID_ASPS;
 	public static final String PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA = CostantiControlStation.PARAMETRO_ID_PORTA;
@@ -207,6 +208,7 @@ public class ServiziApplicativiCostanti {
 	/* LABEL PARAMETRI */
 	
 	public static final String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME = "Nome";
+	public static final String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DESCRIZIONE = "Descrizione";
 	public static final String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI = "Soggetti";
 	public static final String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER = "Soggetto";
 	public static final String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;

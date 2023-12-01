@@ -27,16 +27,15 @@ import jakarta.validation.Valid;
 
 public class ApiDescrizione  {
   
-  @Schema(example = "descrizione API", required = true, description = "")
+  @Schema(example = "descrizione API", description = "")
   private String descrizione = null;
  /**
    * Get descrizione
    * @return descrizione
   **/
   @JsonProperty("descrizione")
-  @NotNull
   @Valid
- @Size(max=255)  public String getDescrizione() {
+ @Size(max=4000)  public String getDescrizione() {
     return this.descrizione;
   }
 

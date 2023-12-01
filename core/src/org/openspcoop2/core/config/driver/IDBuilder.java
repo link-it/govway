@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -45,6 +46,8 @@ import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.config.utils.UpdateProprietaOggetto;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.utils.serialization.IOException;
 
 
@@ -174,6 +177,37 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 					return "[UrlInvocazioneRegola] "+ id;
 				}else{
 					return id;
+				}
+			}else if(o instanceof ConfigurazioneUrlInvocazione){ 
+				return "Configurazione UrlInvocazione";
+			}
+			else if(o instanceof UpdateProprietaOggetto) {
+				UpdateProprietaOggetto up = (UpdateProprietaOggetto) o;
+				if(up.getIdPortaApplicativa()!=null) {
+					if(this.prefix){
+						return "[UpdateProprietaOggettoPortaApplicativa] "+ up.getIdPortaApplicativa().getNome();
+					}else{
+						return "PA-"+up.getIdPortaApplicativa().getNome();
+					}
+				}
+				else if(up.getIdPortaDelegata()!=null) {
+					if(this.prefix){
+						return "[UpdateProprietaOggettoPortaDelegata] "+ up.getIdPortaDelegata().getNome();
+					}else{
+						return "PD-"+up.getIdPortaDelegata().getNome();
+					}
+				}
+				else if(up.getIdServizioApplicativo()!=null) {
+					IDSoggetto idSog = up.getIdServizioApplicativo().getIdSoggettoProprietario();
+					String idSA = idSog.getTipo()+"/"+idSog.getNome()+"_"+up.getIdServizioApplicativo().getNome();
+					if(this.prefix){
+						return "[UpdateProprietaOggettoServizioApplicativo] "+ idSA;
+					}else{
+						return "SA-"+idSA;
+					}
+				}
+				else {
+					throw new IOException("Tipo di Oggetto gestito ["+o.getClass().getName()+"] senza id");
 				}
 			}
 						
@@ -325,6 +359,11 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
+			}else if(o instanceof ConfigurazioneUrlInvocazione){ 
+				return null; // oggetto non modificabile nei dati identificativi
+			}
+			else if(o instanceof UpdateProprietaOggetto) {
+				return null; // oggetto non modificabile nei dati identificativi
 			}
 						
 		}catch(Exception e){
@@ -368,6 +407,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(RegistroPlugin.class.getSimpleName());
 			oggetti.add(RegistroPluginArchivio.class.getSimpleName());
 			oggetti.add(ConfigurazioneUrlInvocazioneRegola.class.getSimpleName());
+			oggetti.add(ConfigurazioneUrlInvocazione.class.getSimpleName());
+			oggetti.add(UpdateProprietaOggetto.class.getSimpleName());
 		}
 		else{
 			oggetti.add(Soggetto.class.getName());
@@ -391,6 +432,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(RegistroPlugin.class.getName());
 			oggetti.add(RegistroPluginArchivio.class.getName());	
 			oggetti.add(ConfigurazioneUrlInvocazioneRegola.class.getName());	
+			oggetti.add(ConfigurazioneUrlInvocazione.class.getName());	
+			oggetti.add(UpdateProprietaOggetto.class.getName());	
 		}
 		
 		String[]tmp = new String[1];

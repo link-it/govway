@@ -34,6 +34,8 @@ import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.utils.UpdateProprietaOggetto;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -302,7 +304,11 @@ public class PorteDelegateConnettoreRidefinito  extends Action {
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), asps);
+			IDPortaDelegata idPD = new IDPortaDelegata();
+			idPD.setNome(portaDelegata.getNome());
+			UpdateProprietaOggetto updateProprietaOggetto = new UpdateProprietaOggetto(idPD, userLogin);
+			
+			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), asps, updateProprietaOggetto);
 			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

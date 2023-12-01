@@ -87,7 +87,7 @@ public class Soggetto extends BaseCredenziali {
   **/
   @JsonProperty("descrizione")
   @Valid
- @Size(max=255)  public String getDescrizione() {
+ @Size(max=4000)  public String getDescrizione() {
     return this.descrizione;
   }
 

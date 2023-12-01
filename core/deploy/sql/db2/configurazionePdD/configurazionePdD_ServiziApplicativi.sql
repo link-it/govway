@@ -5,7 +5,7 @@ CREATE TABLE servizi_applicativi
 	nome VARCHAR(2000) NOT NULL,
 	tipo VARCHAR(255),
 	as_client INT,
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(4000),
 	-- * Risposta Asincrona *
 	-- valori 0/1 indicano rispettivamente FALSE/TRUE
 	sbustamentorisp INT DEFAULT 0,
@@ -54,6 +54,10 @@ CREATE TABLE servizi_applicativi
 	tipologia_fruizione VARCHAR(255),
 	tipologia_erogazione VARCHAR(255),
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	utente_richiedente VARCHAR(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints

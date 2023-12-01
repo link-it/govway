@@ -346,6 +346,10 @@ public class Costanti {
 	public static final String ICON_USO = "find_in_page";//"location_searching";
 	public static final String ICON_USO_INFO = INFO_BUTTON_ICON; //"info";
 	
+	public static final String ICON_PERSON = "person";
+	public static final String ICON_UPDATE = "update";
+	public static final String ICON_SCHEDULE = "schedule";
+	
 	public static final String ICONA_RESET_CACHE_ELEMENTO = "&#xE863;";
 	public static final String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP = "Rimuovi dalla cache";
 	public static final String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO = "Rimuovi {0} dalla cache";

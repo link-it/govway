@@ -25,6 +25,11 @@ Background:
 * def api_soap_piu_azioni_path = 'api/' + soap_piu_azioni_key
 * def erogazione_soap_piu_azioni_path = 'erogazioni/' + soap_piu_azioni_key
 
+* def erogazione_petstore_descrizione4000 = read('erogazione_petstore_descrizione4000.json')
+* eval erogazione_petstore_descrizione4000.api_nome = api_petstore.nome
+* eval erogazione_petstore_descrizione4000.api_versione = api_petstore.versione
+* def petstore_key_descrizione4000 = erogazione_petstore_descrizione4000.api_nome + '/' + erogazione_petstore_descrizione4000.api_versione
+
 @FindAll200
 Scenario: Erogazioni FindAll 200 OK
 
@@ -160,3 +165,19 @@ Scenario: Erogazioni FindAll di Api con indicazione della uri implementata
 * call delete ({ resourcePath: api_petstore_path })
 
 
+@Descrizione
+Scenario: Erogazioni creazione e lettura descrizione
+
+* call create ({ resourcePath: 'api', body: api_petstore })
+* call create ({ resourcePath: 'erogazioni', body: erogazione_petstore_descrizione4000 })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key_descrizione4000, 'descrizione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == erogazione_petstore_descrizione4000.descrizione
+
+* call delete ({ resourcePath: 'erogazioni/' + petstore_key_descrizione4000 })
+* call delete ({ resourcePath: api_petstore_path })

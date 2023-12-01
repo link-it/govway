@@ -58,6 +58,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -114,7 +115,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 
 	protected List<IDServizio> getAllIdServizi(FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		
-		List<IDServizio> list = new ArrayList<IDServizio>();
+		List<IDServizio> list = new ArrayList<>();
 		_fillAllIdServiziEngine("getAllIdServizi", filtroRicerca, list);
 		return list;
 		
@@ -416,7 +417,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 					listReturn.add((T)idServ);
 				}
 			}
-			if(listReturn.size()<=0){
+			if(listReturn.isEmpty()){
 				String msgFiltro = "Elementi non trovati che rispettano il filtro di ricerca selezionato: ";
 				if(filtroFruizioni!=null){
 					throw new DriverRegistroServiziNotFound(msgFiltro+filtroFruizioni.toString());
@@ -474,14 +475,14 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, idSoggetto);
 			rs = stm.executeQuery();
-			List<IDServizio> idServizi = new ArrayList<IDServizio>();
+			List<IDServizio> idServizi = new ArrayList<>();
 			while (rs.next()) {
 				IDSoggetto idSoggettoErogatore = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 				IDServizio idServ = this.driver.idServizioFactory.getIDServizioFromValues(rs.getString("tipo_servizio"),rs.getString("nome_servizio"), 
 						idSoggettoErogatore, rs.getInt("versione_servizio"));
 				idServizi.add(idServ);
 			}
-			if(idServizi.size()==0){
+			if(idServizi.isEmpty()){
 				throw new DriverRegistroServiziNotFound("Servizi non trovati per il soggetto con id: "+idSoggetto);
 			}else{
 				IDServizio[] res = new IDServizio[1];
@@ -1053,7 +1054,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 
 				// porttype
 				String tmp = rs.getString("port_type");
-				if(tmp!=null && ("".equals(tmp)==false))
+				if(tmp!=null && (!"".equals(tmp)))
 					accordoServizioParteSpecifica.setPortType(tmp);
 
 				// Profilo 
@@ -1074,6 +1075,9 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				// MessageType
 				tmp = rs.getString("message_type");
 				accordoServizioParteSpecifica.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				// Proprieta Oggetto
+				accordoServizioParteSpecifica.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs,false));
 				
 			}else{
 				throw new DriverRegistroServiziNotFound("Servizio ["+tipoServizio+"/"+nomeServizio+":"+versioneServizio+"] erogato dal soggetto ["+tipoSoggEr+"/"+nomeSoggEr+"] non esiste");
@@ -1118,6 +1122,12 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				// Stato Documento
 				fruitore.setStatoPackage(rs.getString("stato"));
 
+				// Descrizione
+				fruitore.setDescrizione(rs.getString("descrizione"));
+				
+				// Proprieta Oggetto
+				fruitore.setProprietaOggetto(DriverRegistroServiziDB_utilsDriver.readProprietaOggetto(rs,false));
+				
 				// recupero informazioni del soggetto fruitore
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
@@ -1145,7 +1155,7 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 				// Protocol Properties
 				try{
 					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(fruitore.getId(), ProprietariProtocolProperty.FRUITORE, con, this.driver.tipoDB);
-					if(listPP!=null && listPP.size()>0){
+					if(listPP!=null && !listPP.isEmpty()){
 						for (ProtocolProperty protocolProperty : listPP) {
 							fruitore.addProtocolProperty(protocolProperty);
 						}
@@ -1714,4 +1724,133 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		}
 	}
 
+	
+	
+	
+	
+	
+	protected void updateProprietaOggettoErogazione(IDServizio idServizioObject, String user) throws DriverRegistroServiziException {
+		
+		String nomeMetodo = "updateProprietaOggettoErogazione";
+		Connection con = null;
+		long idServizio = -1;
+		try {
+			if (this.driver.atomica) {
+				try {
+					con = this.driver.getConnectionFromDatasource(nomeMetodo);
+
+				} catch (Exception e) {
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
+
+				}
+
+			} else {
+				con = this.driver.globalConnection;
+			}
+
+			this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
+			
+			idServizio = DBUtils.getIdAccordoServizioParteSpecifica(idServizioObject, con, DriverRegistroServiziDB_LIB.tipoDB);
+
+			if(idServizio<=0) {
+				throw new DriverRegistroServiziException("Servizio con id '"+idServizioObject+"' non esistente");
+			}
+			
+		} catch (Exception e) {
+			DriverRegistroServiziDB_LIB.logError("Errore", e);
+			throw new DriverRegistroServiziException(e);
+		} finally {
+			this.driver.closeConnection(con);
+		}
+		updateProprietaOggettoEngine(idServizio, user, CostantiDB.SERVIZI);
+	}
+	protected void updateProprietaOggettoErogazione(long idServizio, String user) throws DriverRegistroServiziException {
+		updateProprietaOggettoEngine(idServizio, user, CostantiDB.SERVIZI);
+	}
+	protected void updateProprietaOggettoFruizione(IDServizio idServizioObject, IDSoggetto idFruitore, String user) throws DriverRegistroServiziException {
+		
+		String nomeMetodo = "updateProprietaOggettoFruizione";
+		Connection con = null;
+		long idFruizione = -1;
+		try {
+			if (this.driver.atomica) {
+				try {
+					con = this.driver.getConnectionFromDatasource(nomeMetodo);
+
+				} catch (Exception e) {
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
+
+				}
+
+			} else {
+				con = this.driver.globalConnection;
+			}
+
+			this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
+			
+			idFruizione = DBUtils.getIdFruizioneServizio(idServizioObject, idFruitore, con, DriverRegistroServiziDB_LIB.tipoDB);
+
+			if(idFruizione<=0) {
+				throw new DriverRegistroServiziException("Servizio con id '"+idServizioObject+"' non esistente");
+			}
+			
+		} catch (Exception e) {
+			DriverRegistroServiziDB_LIB.logError("Errore", e);
+			throw new DriverRegistroServiziException(e);
+		} finally {
+			this.driver.closeConnection(con);
+		}
+		updateProprietaOggettoEngine(idFruizione, user, CostantiDB.SERVIZI_FRUITORI);
+	}
+	protected void updateProprietaOggettoFruizione(long idFruizione, String user) throws DriverRegistroServiziException {
+		updateProprietaOggettoEngine(idFruizione, user, CostantiDB.SERVIZI_FRUITORI);
+	}
+	private void updateProprietaOggettoEngine(long id, String user, String tabella) throws DriverRegistroServiziException {
+		
+		String nomeMetodo = "updateProprietaOggetto_"+tabella;
+		
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			if (this.driver.atomica) {
+				try {
+					con = this.driver.getConnectionFromDatasource(nomeMetodo);
+
+				} catch (Exception e) {
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
+
+				}
+
+			} else {
+				con = this.driver.globalConnection;
+			}
+
+			this.driver.logDebug("operazione this.atomica = " + this.driver.atomica);
+			
+			ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObjectUpdate.addUpdateTable(tabella);
+			sqlQueryObjectUpdate.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
+			sqlQueryObjectUpdate.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
+			sqlQueryObjectUpdate.addWhereCondition("id=?");
+			String updateString = sqlQueryObjectUpdate.createSQLUpdate();
+			stm = con.prepareStatement(updateString);
+			int index = 1;
+			stm.setString(index++, user);
+			stm.setTimestamp(index++, DateManager.getTimestamp());
+			stm.setLong(index, id);
+			int n=stm.executeUpdate();
+			stm.close();
+			DriverRegistroServiziDB_LIB.logDebug("Aggiornata "+n+" entry per l'operazione di ultima modifica della tabella '"+tabella+"' con id: "+id);
+		} catch (SQLException e) {
+			DriverRegistroServiziDB_LIB.logError("Errore SQL", e);
+			throw new DriverRegistroServiziException(e);
+		}catch (Exception e) {
+			DriverRegistroServiziDB_LIB.logError("Errore", e);
+			throw new DriverRegistroServiziException(e);
+		} finally {
+			JDBCUtilities.closeResources(stm);
+
+			this.driver.closeConnection(con);
+		}
+	}
 }

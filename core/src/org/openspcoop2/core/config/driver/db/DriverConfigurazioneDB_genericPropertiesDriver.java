@@ -50,9 +50,11 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 public class DriverConfigurazioneDB_genericPropertiesDriver {
 
 	private DriverConfigurazioneDB driver = null;
+	private DriverConfigurazioneDBUtils utilsDriver = null;
 	
 	protected DriverConfigurazioneDB_genericPropertiesDriver(DriverConfigurazioneDB driver) {
 		this.driver = driver;
+		this.utilsDriver = new DriverConfigurazioneDBUtils(driver);
 	}
 	
 	/**
@@ -237,13 +239,13 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 		
 		List<GenericProperties> genericPropertiesList = new ArrayList<>();
 		
-		if(listIdLong.size()>0) {
+		if(!listIdLong.isEmpty()) {
 			for (Long id : listIdLong) {
 				genericPropertiesList.add(this.getGenericProperties(id));
 			}
 		}
 
-		if((genericPropertiesList==null || genericPropertiesList.size()<=0) && throwNotFoundException)
+		if((genericPropertiesList==null || genericPropertiesList.isEmpty()) && throwNotFoundException)
 			throw new DriverConfigurazioneNotFound("Generic Properties non presenti");
 		
 		return genericPropertiesList;
@@ -396,6 +398,9 @@ public class DriverConfigurazioneDB_genericPropertiesDriver {
 				genericProperties.setDescrizione(rs.getString("descrizione"));
 				genericProperties.setTipologia(rs.getString("tipologia"));
 				genericProperties.setTipo(rs.getString("tipo"));
+				
+				// Proprieta Oggetto
+				genericProperties.setProprietaOggetto(this.utilsDriver.readProprietaOggetto(rs,false));
 				
 				long idP = rs.getLong("id");
 				genericProperties.setId(idP);

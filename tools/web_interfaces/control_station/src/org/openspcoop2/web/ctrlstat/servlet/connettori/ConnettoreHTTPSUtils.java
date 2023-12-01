@@ -31,6 +31,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -585,7 +586,7 @@ public class ConnettoreHTTPSUtils {
 						de.setType(DataElementType.TEXT);
 						deLABEL.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 						deLABEL.setValue(label);
-						deLABEL.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY+"__LABEL");
+						deLABEL.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						dati.add(deLABEL);
 					}
 				}

@@ -22,6 +22,7 @@ package org.openspcoop2.core.registry;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.id.IDScope;
@@ -35,6 +36,9 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="scope"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/registry}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="tipologia" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -53,7 +57,11 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "scope")
+@XmlType(name = "scope", 
+  propOrder = {
+  	"proprietaOggetto"
+  }
+)
 
 @XmlRootElement(name = "scope")
 
@@ -68,6 +76,14 @@ public class Scope extends org.openspcoop2.utils.beans.BaseBeanWithId implements
 
   public void setOldIDScopeForUpdate(IDScope oldIDScopeForUpdate) {
     this.oldIDScopeForUpdate=oldIDScopeForUpdate;
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.String getNome() {
@@ -156,6 +172,9 @@ public class Scope extends org.openspcoop2.utils.beans.BaseBeanWithId implements
 
   @jakarta.xml.bind.annotation.XmlTransient
   protected IDScope oldIDScopeForUpdate;
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

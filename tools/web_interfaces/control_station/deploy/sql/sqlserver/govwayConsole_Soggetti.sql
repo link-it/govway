@@ -4,7 +4,7 @@ CREATE TABLE soggetti
 (
 	nome_soggetto VARCHAR(255) NOT NULL,
 	tipo_soggetto VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(4000),
 	identificativo_porta VARCHAR(255),
 	-- 1/0 (true/false) Indicazione se il soggetto svolge è quello di default per il protocollo
 	is_default INT DEFAULT 0,
@@ -27,6 +27,10 @@ CREATE TABLE soggetti
 	cn_issuer VARCHAR(255),
 	certificate VARBINARY(MAX),
 	cert_strict_verification INT,
+	utente_richiedente VARCHAR(255),
+	data_creazione DATETIME2,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica DATETIME2,
 	pd_url_prefix_rewriter VARCHAR(255),
 	pa_url_prefix_rewriter VARCHAR(255),
 	-- fk/pk columns

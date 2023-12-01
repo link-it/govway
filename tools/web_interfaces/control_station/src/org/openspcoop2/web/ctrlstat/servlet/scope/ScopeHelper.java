@@ -27,10 +27,12 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -69,7 +71,12 @@ public class ScopeHelper extends ConsoleHelper{
 	}
 
 	public List<DataElement> addScopeToDati(TipoOperazione tipoOP, Long scopeId, String nome, String descrizione, String tipologia,
-			String nomeEsterno, String contesto, List<DataElement> dati, String oldNomeScope) {
+			String nomeEsterno, String contesto, List<DataElement> dati, String oldNomeScope) throws DriverConfigurazioneException {
+		
+		Scope scope = null;
+		if(TipoOperazione.CHANGE.equals(tipoOP) && oldNomeScope!=null && StringUtils.isNotEmpty(oldNomeScope)){
+			scope = this.scopeCore.getScope(oldNomeScope);
+		}
 		
 		if(TipoOperazione.CHANGE.equals(tipoOP)){
 			
@@ -78,7 +85,7 @@ public class ScopeHelper extends ConsoleHelper{
 			listaParametriChange.add(pId);
 			
 			// In Uso Button
-			this.addComandoInUsoButton(dati, nome,
+			this.addComandoInUsoButton(nome,
 					nome,
 					InUsoType.SCOPE);
 			
@@ -88,7 +95,12 @@ public class ScopeHelper extends ConsoleHelper{
 				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
 				this.pd.addComandoResetCacheElementoButton(ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE, listaParametriChange);
 			}		
-						
+					
+			// Proprieta Button
+			if(scope!=null && this.existsProprietaOggetto(scope.getProprietaOggetto(), scope.getDescrizione())) {
+				this.addComandoProprietaOggettoButton(nome,
+						nome, InUsoType.SCOPE);
+			}
 		}
 		
 		DataElement de = new DataElement();
@@ -118,7 +130,8 @@ public class ScopeHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE);
 		de.setValue(descrizione);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(2);
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
 		de.setSize( getSize());
 		dati.add(de);
@@ -188,7 +201,7 @@ public class ScopeHelper extends ConsoleHelper{
 			}
 			
 			if(descrizione!=null && !"".equals(descrizione) &&
-				!this.checkLength255(descrizione, ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE)) {
+				!this.checkLength4000(descrizione, ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE)) {
 				return false;
 			}
 			if(nomeEsterno!=null && !"".equals(nomeEsterno) &&
@@ -506,7 +519,13 @@ public class ScopeHelper extends ConsoleHelper{
 		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
 			this.addComandoResetCacheButton(e, scope.getNome(), ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE, listaParametriChange);
 		}
-
+		
+		// Proprieta Button
+		/**if(this.existsProprietaOggetto(scope.getProprietaOggetto(), scope.getDescrizione())) {
+		 * ** la lista non riporta le proprietà. Ma esistono e poi sarà la servlet a gestirlo
+		 */
+		this.addProprietaOggettoButton(e, scope.getNome(), scope.getNome(), InUsoType.SCOPE);
+		
 		return e;
 	}
 }

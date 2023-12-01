@@ -96,7 +96,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyDel extends Action 
 			// Elimino i filtri dal db
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 
-			List<AttivazionePolicy> policyDaEliminare = new ArrayList<AttivazionePolicy>();
+			List<AttivazionePolicy> policyDaEliminare = new ArrayList<>();
 			StringBuilder inUsoMessage = new StringBuilder();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
@@ -108,14 +108,14 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyDel extends Action 
 				
 			}
 				
-			List<AttivazionePolicy> policyRimosse = new ArrayList<AttivazionePolicy>();
+			List<AttivazionePolicy> policyRimosse = new ArrayList<>();
 			ConfigurazioneUtilities.deleteAttivazionePolicy(policyDaEliminare, confHelper, confCore, userLogin, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, policyRimosse);
 			
 			String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.DEL, ruoloPorta, nomePorta);
 			
 			if(msgCompletato!=null && !"".equals(msgCompletato)){
 				if(inUsoMessage.length()>0){
-					if(policyRimosse.size()>0){
+					if(!policyRimosse.isEmpty()){
 						msgCompletato = msgCompletato+"<br/><br/>"+inUsoMessage.toString();
 					}
 					else{

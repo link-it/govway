@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.api;
 
+import org.openspcoop2.core.config.rs.server.model.ApiDescrizione;
 import org.openspcoop2.core.config.rs.server.model.ApiImplAllegato;
 import org.openspcoop2.core.config.rs.server.model.ApiImplInformazioniGenerali;
 import org.openspcoop2.core.config.rs.server.model.ApiImplInformazioniGeneraliView;
@@ -289,6 +290,27 @@ public interface ErogazioniApi  {
     public ConnettoreErogazione getErogazioneConnettore(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
 
     /**
+     * Restituisce la descrizione di una erogazione
+     *
+     * Questa operazione consente di ottenere la descrizione di una erogazione identificata dal nome e dalla versione
+     *
+     */
+    @GET
+    @Path("/erogazioni/{nome}/{versione}/descrizione")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Restituisce la descrizione di una erogazione", tags={ "erogazioni" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Dati della descrizione restituiti con successo", content = @Content(schema = @Schema(implementation = ApiDescrizione.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ApiDescrizione getErogazioneDescrizione(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
+
+    /**
      * Restituisce le informazioni generali di un'erogazione di API
      *
      * Questa operazione consente di ottenere le informazioni generali di un'erogazione di API identificata dal nome e dalla versione
@@ -416,6 +438,28 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = Problem.class))) })
     public void updateErogazioneConnettore(@Valid ConnettoreErogazione body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
+
+    /**
+     * Consente di modificare la descrizione di una erogazione
+     *
+     * Questa operazione consente di aggiornare la descrizione di una erogazione identificata dal nome e dalla versione
+     *
+     */
+    @PUT
+    @Path("/erogazioni/{nome}/{versione}/descrizione")
+    @Consumes({ "application/json" })
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Consente di modificare la descrizione di una erogazione", tags={ "erogazioni" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "La descrizione è stato aggiornata correttamente"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void updateErogazioneDescrizione(@Valid ApiDescrizione body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
 
     /**
      * Consente di modificare le informazioni generali di un'erogazione di API
