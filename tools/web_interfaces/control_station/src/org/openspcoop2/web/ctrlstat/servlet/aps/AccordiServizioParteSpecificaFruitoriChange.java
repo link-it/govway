@@ -43,11 +43,13 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.utils.UpdateProprietaOggetto;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -156,7 +158,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			strutsBean.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 
 			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			long idServizioLong = Long.valueOf(idServizio);
+			long idServizioLong = Long.parseLong(idServizio);
 			String idServizioFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);// id della fruizione
 			long idServizioFruitoreInt = Long.parseLong(idServizioFruitore);
 
@@ -1489,10 +1491,24 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			//imposto properties custom
 			fruitore.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(strutsBean.protocolProperties, strutsBean.consoleOperationType, oldProtocolPropertyList));
-			
+					
 			serviziosp.addFruitore(fruitore);
+			apsCore.setDataAggiornamentoFruitore(fruitore);
+			
 			String superUser = ServletUtils.getUserLoginFromSession(session);
-			apsCore.performUpdateOperation(superUser, apsHelper.smista(), serviziosp);
+			
+			UpdateProprietaOggetto updateProprietaOggetto = null;
+			
+			if(azioneConnettoreIdPorta!=null && !"".equals(azioneConnettoreIdPorta)){
+				updateProprietaOggetto = getUpdateProprietaOggettoSafe(apsCore, azioneConnettoreIdPorta, superUser);
+			}
+			
+			if(updateProprietaOggetto!=null) {
+				apsCore.performUpdateOperation(superUser, apsHelper.smista(), serviziosp, updateProprietaOggetto);
+			}
+			else {
+				apsCore.performUpdateOperation(superUser, apsHelper.smista(), serviziosp);
+			}
 
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -1566,5 +1582,20 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					ForwardParams.CHANGE());
 		} 
+	}
+	
+	private UpdateProprietaOggetto getUpdateProprietaOggettoSafe(AccordiServizioParteSpecificaCore apsCore, String azioneConnettoreIdPorta, String superUser) {
+		try {
+			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
+			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(azioneConnettoreIdPorta));
+			if(portaDelegata!=null) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(portaDelegata.getNome());
+				return new UpdateProprietaOggetto(idPD, superUser);
+			}
+		}catch(Exception e) {
+			ControlStationCore.logError(e.getMessage(),e);
+		}
+		return null;
 	}
 }

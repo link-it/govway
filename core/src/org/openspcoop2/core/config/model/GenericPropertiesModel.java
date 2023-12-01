@@ -41,6 +41,7 @@ public class GenericPropertiesModel extends AbstractModel<GenericProperties> {
 		super();
 	
 		this.PROPERTY = new org.openspcoop2.core.config.model.PropertyModel(new Field("property",org.openspcoop2.core.config.Property.class,"generic-properties",GenericProperties.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.config.model.ProprietaOggettoModel(new Field("proprieta-oggetto",org.openspcoop2.core.config.ProprietaOggetto.class,"generic-properties",GenericProperties.class));
 		this.NOME = new Field("nome",java.lang.String.class,"generic-properties",GenericProperties.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"generic-properties",GenericProperties.class);
 		this.TIPOLOGIA = new Field("tipologia",java.lang.String.class,"generic-properties",GenericProperties.class);
@@ -53,6 +54,7 @@ public class GenericPropertiesModel extends AbstractModel<GenericProperties> {
 		super(father);
 	
 		this.PROPERTY = new org.openspcoop2.core.config.model.PropertyModel(new ComplexField(father,"property",org.openspcoop2.core.config.Property.class,"generic-properties",GenericProperties.class));
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.config.model.ProprietaOggettoModel(new ComplexField(father,"proprieta-oggetto",org.openspcoop2.core.config.ProprietaOggetto.class,"generic-properties",GenericProperties.class));
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"generic-properties",GenericProperties.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"generic-properties",GenericProperties.class);
 		this.TIPOLOGIA = new ComplexField(father,"tipologia",java.lang.String.class,"generic-properties",GenericProperties.class);
@@ -63,6 +65,8 @@ public class GenericPropertiesModel extends AbstractModel<GenericProperties> {
 	
 
 	public org.openspcoop2.core.config.model.PropertyModel PROPERTY = null;
+	 
+	public org.openspcoop2.core.config.model.ProprietaOggettoModel PROPRIETA_OGGETTO = null;
 	 
 	public IField NOME = null;
 	 

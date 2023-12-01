@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/registroServizi/2023-11-10-patch.sql

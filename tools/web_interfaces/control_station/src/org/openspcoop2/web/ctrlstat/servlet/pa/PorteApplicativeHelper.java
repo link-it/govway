@@ -33,6 +33,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -88,6 +89,7 @@ import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
@@ -115,6 +117,7 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCon
 import org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
+import org.openspcoop2.protocol.basic.config.ImplementationConfiguration;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -123,8 +126,8 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -177,7 +180,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String nomePorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
-			// String descr = this.getParameter("descr");
+			String descr = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
 			String soggvirt = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE);
 			if (soggvirt == null) {
 				soggvirt = "-";
@@ -251,6 +254,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						return false;
 					}
 				}
+			}
+			
+			// descrizione
+			if( (tipoOp.equals(TipoOperazione.CHANGE)) 
+					&&
+				(descr!=null && StringUtils.isNotEmpty(descr)) 
+				    &&
+				(!this.checkLength4000(descr, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE)) 
+				){
+				return false;
 			}
 			
 			// integrazione metadati
@@ -1095,16 +1108,20 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String gestioneTokenPolicy, String gestioneTokenOpzionale,
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
-			String autorizzazione_token, String autorizzazione_tokenOptions,
+			String autorizzazioneToken, String autorizzazioneTokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String messageEngine,String canalePorta,
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
 			String autorizzazioneAutenticatiToken, String urlAutorizzazioneAutenticatiToken, int numAutenticatiToken,
 			String autorizzazioneRuoliToken,  String urlAutorizzazioneRuoliToken, int numRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
-			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
-			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
+			String ctHeaderHttp, String ctHeaderHttpLimit, String ctHeaderHttpRemaining, String ctHeaderHttpReset,
+			String ctHeaderHttpRetryAfter, String ctHeaderHttpRetryAfterBackoff) throws Exception {
 
+		if(numSA>0 && statoMessageSecurity!=null && statoMTOM!=null && servizioApplicativoList!=null && servizioApplicativo!=null && idSa!=null) {
+			// nop
+		}
+		
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 		// Soggetto virtuale?
@@ -1119,12 +1136,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		boolean isConfigurazione = parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE; 
 		
 		boolean datiInvocazione = false;
+		boolean modificaDescrizione = false;
 		boolean datiAltroPorta = false;
 		boolean datiAltroApi = false; // indipendente dalla porta (viene utilizzata sempre la porta di default)
 		if(isConfigurazione) {
 			if(usataInConfigurazioneDefault) {
 				datiInvocazione = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 			}
+			modificaDescrizione = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DESCRIZIONE));
 			datiAltroPorta = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA));
 			datiAltroApi = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API));
 			
@@ -1132,6 +1151,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(datiInvocazione+"");
+			dati.add(de);
+			
+			de = new DataElement();
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DESCRIZIONE);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(modificaDescrizione+"");
 			dati.add(de);
 			
 			de = new DataElement();
@@ -1168,6 +1193,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			DataElement de = new DataElement();
 			if(datiInvocazione) {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE);
+			}
+			else if(modificaDescrizione) {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DESCRIZIONE);
 			}
 			else {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI);
@@ -1213,11 +1241,23 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
-		de.setValue(descr);
-		if(isConfigurazione) {
+		if(modificaDescrizione && ImplementationConfiguration.isDescriptionDefault(descr)) {
+			de.setValue(null);
+		}
+		else {
+			de.setValue(descr);
+		}
+		if(isConfigurazione && !modificaDescrizione) {
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			de.setType(DataElementType.TEXT_EDIT);
+			if(modificaDescrizione) {
+				de.setType(DataElementType.TEXT_AREA);
+				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
+				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
+			}
+			else {
+				de.setType(DataElementType.TEXT_EDIT);
+			}
 		}
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
 		dati.add(de);
@@ -1420,7 +1460,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE);
-				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE+"__LABEL");
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setType(DataElementType.TEXT);
 				if(visualizzazioneSpecialeSoapPerEssereUgualeARest) {
 					de.setValue(this.getPortaApplicativaAzioneIdentificazioneLabel(PortaApplicativaAzioneIdentificazione.INTERFACE_BASED.getValue()));
@@ -1832,7 +1872,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-					gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+					gestioneToken, gestioneTokenPolicy, autorizzazioneToken, autorizzazioneTokenOptions,allegatoXacmlPolicy,
 					urlAutorizzazioneErogazioneApplicativiAutenticati, 0, urlAutorizzazioneErogazioneCustomPropertiesList , 0,
 					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
 					autorizzazioneAutenticatiToken, urlAutorizzazioneAutenticatiToken, numAutenticatiToken,
@@ -1954,8 +1994,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					true,
 					nascondiSezioneOpzioniAvanzate, 
 					ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
-					ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
-					ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+					ctHeaderHttp, ctHeaderHttpLimit, ctHeaderHttpRemaining, ctHeaderHttpReset,
+					ctHeaderHttpRetryAfter, ctHeaderHttpRetryAfterBackoff);
 		}
 		
 		
@@ -8159,7 +8199,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	public void preparePorteAppConnettoriMultipliList(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa) throws Exception {
-		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+		this.preparePorteAppConnettoriMultipliListEngine(nomePorta, ricerca, 
 				listaFiltrata,
 				pa, 
 				false,
@@ -8171,7 +8211,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			String nomeConnettoreAdd) throws Exception {
-		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+		this.preparePorteAppConnettoriMultipliListEngine(nomePorta, ricerca, 
 				listaFiltrata,
 				pa, 
 				true,
@@ -8183,7 +8223,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			String nomeConnettoreChanged) throws Exception {
-		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+		this.preparePorteAppConnettoriMultipliListEngine(nomePorta, ricerca, 
 				listaFiltrata,
 				pa, 
 				false,
@@ -8194,7 +8234,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	public void preparePorteAppConnettoriMultipliList_fromDeleteConnettore(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa) throws Exception {
-		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+		this.preparePorteAppConnettoriMultipliListEngine(nomePorta, ricerca, 
 				listaFiltrata,
 				pa, 
 				false,
@@ -8203,7 +8243,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				null);
 	}
 	
-	private void _preparePorteAppConnettoriMultipliList(String nomePorta, ConsoleSearch ricerca, 
+	private void preparePorteAppConnettoriMultipliListEngine(String nomePorta, ConsoleSearch ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			boolean fromAdd, 
@@ -8246,7 +8286,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			ServletUtils.disabledPageDataSearch(this.pd); // disabilito il campo search sostituito dal filtro nome
-//			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+/**			String search = ServletUtils.getSearchFromSession(ricerca, idLista);*/
 			
 			// filtro tab N.B. impostare sempre come primo! poi aggiornare il valore
 			String tabSelezionato = SearchUtils.getFilter(ricerca, idLista, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO);
@@ -8294,7 +8334,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
-//			this.pd.setLabelBottoneFiltra(CostantiControlStation.LABEL_BOTTONE_INDIVIDUA_CONNETTORE);
+/**			this.pd.setLabelBottoneFiltra(CostantiControlStation.LABEL_BOTTONE_INDIVIDUA_CONNETTORE);*/
 			
 			boolean accessoDaListaAPS = false;
 			
@@ -8305,7 +8345,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			boolean isModalitaCompleta = this.isModalitaCompleta();
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request).getValue();
 			
-			//PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			/**PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));*/
 			
 			TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 			
@@ -8362,7 +8402,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setSearchDescription("");
 			lstParam.add(new Parameter(labelPerPorta,null));
 			
-//			if(search.equals("")){
+/**			if(search.equals("")){
 //				this.pd.setSearchDescription("");
 //				lstParam.add(new Parameter(labelPerPorta,null));
 //			}else{
@@ -8378,24 +8418,24 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, 
 //						listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
 //				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
-//			}
+//			}*/
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam );	
 			
 			// controllo eventuali risultati ricerca
-//			if (!search.equals("")) {
+/**			if (!search.equals("")) {
 //				ServletUtils.enabledPageDataSearch(this.pd, ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, search);
-//			}
+//			}*/
 			
 			// preparo i dati
 			List<List<DataElement>> dati = new ArrayList<>();
 			
 			int idTab = 0;
 			
-//			if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
+/**			if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
 //				pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro);
-//			}
+//			}*/
 			
 			Parameter pConfigurazioneDatiGenerali = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConfigurazioneDescrizione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
@@ -8403,7 +8443,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			Parameter pConfigurazioneConnettore = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE, Costanti.CHECK_BOX_ENABLED_TRUE);
 			
 			// controllo che ci sia almeno un risultato altrimenti visualizzo un messaggio di info/errore
-			if(listaFiltrata.size() == 0) {
+			if(listaFiltrata.isEmpty()) {
 				if(!fromDelete) {
 					this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_RICERCA_CONNETTORI_MULTIPLI_NO_RISULTATI);
 				} else {
@@ -8413,7 +8453,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 			// Colleziono prima i nomi dei connettori per ordinarli in ordine alfatebito, lasciando in testa il connettore di default
-			HashMap<String, PortaApplicativaServizioApplicativo> paList = new HashMap<String, PortaApplicativaServizioApplicativo>();
+			HashMap<String, PortaApplicativaServizioApplicativo> paList = new HashMap<>();
 			PortaApplicativaServizioApplicativo paDefault = null;
 			Iterator<PortaApplicativaServizioApplicativo> it = listaFiltrata.iterator();
 			while (it.hasNext()) {
@@ -8427,7 +8467,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					paList.put(nomeConnettore, paSA);
 				}
 			}
-			List<PortaApplicativaServizioApplicativo> listOrdinata = new ArrayList<PortaApplicativaServizioApplicativo>();
+			List<PortaApplicativaServizioApplicativo> listOrdinata = new ArrayList<>();
 			if(paDefault!=null) {
 				listOrdinata.add(paDefault);
 			}	
@@ -8445,14 +8485,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			int tab = 0; // primo a sx 
 			
 			if(StringUtils.isBlank(tabSelezionato) || ((fromAdd || fromChange) && StringUtils.isNotBlank(nomeConnettoreProcessed))) {
-				if( (fromAdd || fromChange) && StringUtils.isNotBlank(nomeConnettoreProcessed)){
-					if(listOrdinata!=null && !listOrdinata.isEmpty()) {
-						for (int i = 0; i < listOrdinata.size(); i++) {
-							String tabSelezionatoCheck =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(i));
-							if(nomeConnettoreProcessed.equals(tabSelezionatoCheck)) {
-								tabSelezionato = nomeConnettoreProcessed;
-								break;
-							}
+				if( 
+					((fromAdd || fromChange) && StringUtils.isNotBlank(nomeConnettoreProcessed))
+					&&
+					(listOrdinata!=null && !listOrdinata.isEmpty()) 
+					){
+					for (int i = 0; i < listOrdinata.size(); i++) {
+						String tabSelezionatoCheck =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(i));
+						if(nomeConnettoreProcessed.equals(tabSelezionatoCheck)) {
+							tabSelezionato = nomeConnettoreProcessed;
+							break;
 						}
 					}
 				}
@@ -8468,14 +8510,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							if(idConnTab>=0 && listOrdinata!=null && listOrdinata.size()>idConnTab) {
 								tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(idConnTab));
 							}
-						}catch(Throwable t) {}
+						}catch(Exception t) {
+							// ignore
+						}
 					}
 				}
 			}
 			
 			ServletUtils.setObjectIntoSession(this.request, this.session, tab+"", CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			if(StringUtils.isBlank(tabSelezionato)) {
-				if(listOrdinata.size() > 0) {
+				if(!listOrdinata.isEmpty()) {
 					tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(0));
 				}
 			} else {
@@ -8544,14 +8588,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				boolean showCambiaStati = urlCambiaStato;
 				boolean showCambiaScheduling = false; 
-				if(pa.sizeServizioApplicativoList()>1) {	
+				if(pa.sizeServizioApplicativoList()>1 &&
+					showCambiaStati) {
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) {
+						showCambiaStati = false;
+					}
 					if(showCambiaStati) {
-						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) {
-							showCambiaStati = false;
-						}
-						if(showCambiaStati) {
-							showCambiaScheduling = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) || TipoBehaviour.CONSEGNA_MULTIPLA.equals(behaviourType);
-						}
+						showCambiaScheduling = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) || TipoBehaviour.CONSEGNA_MULTIPLA.equals(behaviourType);
 					}
 				}
 				
@@ -8562,20 +8605,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				org.openspcoop2.core.config.InvocazioneServizio is = sa.getInvocazioneServizio();
 				org.openspcoop2.core.config.Connettore connettore = is!=null ? is.getConnettore() : null;
 				
-				if(showCambiaScheduling) {
-					if(is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
-						if(connettore!=null && connettore.getTipo()!=null) {
-							String tipo = connettore.getTipo();
-							TipiConnettore tipoC = TipiConnettore.toEnumFromName(tipo);
-							if(TipiConnettore.DISABILITATO.equals(tipoC)) {
-								showCambiaScheduling = false;
-							}
-						}
-						else {
+				if(showCambiaScheduling &&
+					(is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) 
+					){
+					if(connettore!=null && connettore.getTipo()!=null) {
+						String tipo = connettore.getTipo();
+						TipiConnettore tipoC = TipiConnettore.toEnumFromName(tipo);
+						if(TipiConnettore.DISABILITATO.equals(tipoC)) {
 							showCambiaScheduling = false;
 						}
 					}
+					else {
+						showCambiaScheduling = false;
+					}
 				}
+				
+				boolean descrizioneEmpty = datiConnettore==null || datiConnettore.getDescrizione()==null || StringUtils.isEmpty(datiConnettore.getDescrizione());
 				
 				// Nome / Stato
 				DataElement de = new DataElement();
@@ -8600,7 +8645,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
 				de.setValue(nomeConnettore);
 				
-//					if(!connettoreDefault) { 
+
 				DataElementImage image = new DataElementImage();
 				
 				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pConfigurazioneDatiGenerali,
@@ -8609,7 +8654,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 				
 				de.addImage(image );
-//					}
+				
+				if(descrizioneEmpty) {
+					
+					image = new DataElementImage();
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneDescrizione, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
+					image.setToolTip(MessageFormat.format(CostantiControlStation.AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE));
+					image.setImage(CostantiControlStation.ICONA_AGGIUNGI_DESCRIZIONE);
+					
+					de.addImage(image);
+				}
 							
 				if(pa.sizeServizioApplicativoList()>1) {	
 					if(!connettoreDefault) 
@@ -8643,32 +8697,30 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				e.add(de);
 				
 				// Descrizione
-				String descrizioneOrig = (datiConnettore != null && datiConnettore.getDescrizione() != null) ? datiConnettore.getDescrizione() : "";
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE);
-				int length = 150;
-				String descrizione = null;
-				if(descrizioneOrig !=null && descrizioneOrig.length()>length) {
-					descrizione = descrizioneOrig.substring(0, (length-4)) + " ...";
+				if(!descrizioneEmpty) {
+					String descrizioneOrig = (datiConnettore != null && datiConnettore.getDescrizione() != null) ? datiConnettore.getDescrizione() : "";
+					
+					de = new DataElement();
+					de.setType(DataElementType.TEXT);
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE);
+					
+					int length = 150;
+					String descrizione = descrizioneOrig;
+					if(descrizione!=null && descrizione.length()>length) {
+						descrizione = descrizione.substring(0, (length-4)) + " ...";
+					}
+					de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+					de.setToolTip(descrizioneOrig);
+										
+					image = new DataElementImage();
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneDescrizione, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
+					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE));
+					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+					
+					de.addImage(image );
+					
+					e.add(de);
 				}
-				else {
-					descrizione = descrizioneOrig;
-				}
-				if(StringUtils.isBlank(descrizione))
-					descrizione = " ";
-				
-				de.setValue(descrizione);
-				de.setToolTip(descrizioneOrig);
-				
-				image = new DataElementImage();
-				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneDescrizione, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
-				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE));
-				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
-				
-				de.addImage(image );
-				
-				e.add(de);
 				
 				// Connettore
 				de = new DataElement();
@@ -8681,9 +8733,6 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				image = new DataElementImage();
 				
 				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneConnettore, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
-//				image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,pIdProvider, pIdPortaPerSA, pIdAsps, pIdTAb, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM,
-//						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, paSA.getNome()),
-//						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSA.getId()+""));
 				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
 				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 				
@@ -8707,10 +8756,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				// Filtri
 				boolean showFiltri = behaviourConFiltri;
-				if(showFiltri) {
-					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) {
-						showFiltri = false;
-					}
+				if(showFiltri &&
+					(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) 
+					){
+					showFiltri = false;
 				}
 				if(showFiltri) {
 					de = new DataElement();
@@ -8877,6 +8926,27 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.add(de);
 				}
 				
+				
+				// Proprieta
+				org.openspcoop2.core.config.ProprietaOggetto pOggetto = null;
+				if(paSA.getDatiConnettore() != null && paSA.getDatiConnettore().getProprietaOggetto()!=null) {
+					pOggetto = paSA.getDatiConnettore().getProprietaOggetto();
+				}
+				ProprietaOggetto p = convertToProprietaOggettoRegistro(pOggetto);
+				if(sa!=null && !ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+					boolean consideraDataCreazioneComeDataModifica  = true;
+					p = this.mergeProprietaOggetto(p, sa.getProprietaOggetto(), !consideraDataCreazioneComeDataModifica);
+					
+				}
+				if(p!=null) {
+					if(p.getUtenteUltimaModifica()==null && p.getDataUltimaModifica()!=null && 
+							connettoreDefault &&
+							pa!=null && pa.getProprietaOggetto()!=null) {
+						p.setUtenteUltimaModifica(pa.getProprietaOggetto().getUtenteUltimaModifica());
+					}
+					this.addProprietaOggetto(e, p);
+				}
+
 				dati.add(e);
 				idTab ++;
 			}
@@ -8884,10 +8954,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setDati(dati);
 			this.pd.setSelect(true);
 			this.pd.setAddButton(true);
-			if(pa.sizeServizioApplicativoList() > 1)
-				this.pd.setRemoveButton(true);
-			else 
-				this.pd.setRemoveButton(false);
+			this.pd.setRemoveButton(pa.sizeServizioApplicativoList() > 1);
 			
 		}  catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -9320,6 +9387,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDescrizione)) {
 			de.setType(DataElementType.TEXT_AREA);
+			if((tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDescrizione)) {
+				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
+				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
+			}
 			de.setValue(descrizione);
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -9463,12 +9534,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			boolean visualizzaDescrizione = ServletUtils.isCheckBoxEnabled(vDescrizione);
 			
-			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDescrizione)) {
-				if(StringUtils.isNotEmpty(descrizione)) {
-					if(this.checkLength4000(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE)==false) {
-						return false;
-					}
-				}
+			if( (tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDescrizione)) 
+					&&
+				(StringUtils.isNotEmpty(descrizione)) 
+				    &&
+				(!this.checkLength4000(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE)) 
+				){
+				return false;
 			}
 			
 			// check univocita' del nome
@@ -11132,7 +11204,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				DataElement deLABEL = new DataElement();
 				deLABEL.setType(DataElementType.TEXT);
-				deLABEL.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA+"__LABEL");
+				deLABEL.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				deLABEL.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA);
 				deLABEL.setValue(this.porteApplicativeCore.getConsegnaNotificaConfigurazionePriorita(priorita).getLabel());
 				dati.add(deLABEL);

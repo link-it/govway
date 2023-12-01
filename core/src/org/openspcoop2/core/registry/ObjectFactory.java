@@ -242,6 +242,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ProprietaOggetto }
+     */
+    public ProprietaOggetto createProprietaOggetto() {
+        return new ProprietaOggetto();
+    }
+
+    /**
      * Create an instance of {@link RuoloSoggetto }
      */
     public RuoloSoggetto createRuoloSoggetto() {

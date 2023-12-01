@@ -436,6 +436,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			}
 			
 			newSa.setNome(tmpSa.getNome());
+			newSa.setDescrizione(tmpSa.getDescrizione());
 			newSa.setIdSoggetto(tmpSa.getIdSoggetto());
 			newSa.setNomeSoggettoProprietario(tmpSa.getNomeSoggettoProprietario());
 			newSa.setTipoSoggettoProprietario(tmpSa.getTipoSoggettoProprietario());		

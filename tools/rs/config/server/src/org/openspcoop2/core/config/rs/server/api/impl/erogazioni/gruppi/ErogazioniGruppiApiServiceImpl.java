@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
+import org.openspcoop2.core.config.rs.server.model.ApiDescrizione;
 import org.openspcoop2.core.config.rs.server.model.Gruppo;
 import org.openspcoop2.core.config.rs.server.model.GruppoAzioni;
 import org.openspcoop2.core.config.rs.server.model.GruppoEreditaConfigurazione;
@@ -515,6 +516,52 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
     }
     
     /**
+     * Restituisce la descrizione del gruppo
+     *
+     * Questa operazione consente di ottenere la descrizione del gruppo
+     *
+     */
+	@Override
+    public ApiDescrizione getErogazioneDescrizioneGruppo(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+			
+			final IDPortaApplicativa idPa = BaseHelper.supplyOrNotFound( 
+					() -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore)
+					, "Gruppo per l'erogazione scelta"
+				);
+			
+			final PortaApplicativa pa = BaseHelper.supplyOrNotFound( 
+					() -> env.paCore.getPortaApplicativa(idPa)
+					, "Gruppo per l'erogazione scelta"
+				);
+			
+			ApiDescrizione descr = new ApiDescrizione();
+			descr.setDescrizione(pa.getDescrizione());
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return descr;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+    /**
      * Restituisce azioni/risorse associate al gruppo identificato dal nome
      *
      * Questa operazione consente di ottenere le azioni associate al gruppo identificato dal nome
@@ -552,6 +599,52 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+    /**
+     * Consente di modificare la descrizione del gruppo
+     *
+     * Questa operazione consente di aggiornare la descrizione del gruppo
+     *
+     */
+	@Override
+    public void updateErogazioneDescrizioneGruppo(ApiDescrizione body, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+			
+			final IDPortaApplicativa idPa = BaseHelper.supplyOrNotFound( 
+					() -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore)
+					, "Gruppo per l'erogazione scelta"
+				);
+			
+			final PortaApplicativa pa = BaseHelper.supplyOrNotFound( 
+					() -> env.paCore.getPortaApplicativa(idPa)
+					, "Gruppo per l'erogazione scelta"
+				);        
+			
+			pa.setDescrizione(body.getDescrizione());
+			
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+			
+			context.getLogger().info("Invocazione completata con successo");
+        
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -601,7 +694,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			
 			mappingErogazionePortaApplicativa.setDescrizione(body.getNome());
 			
-			env.paCore.aggiornaDescrizioneMappingErogazionePortaApplicativa( mappingErogazionePortaApplicativa );
+			env.paCore.aggiornaDescrizioneMappingErogazionePortaApplicativa( mappingErogazionePortaApplicativa, env.userLogin );
 								
 			context.getLogger().info("Invocazione completata con successo");
         

@@ -26,6 +26,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
@@ -421,6 +423,11 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					this.addComandoResetCacheButton(e, labelAccordo, ApiCostanti.SERVLET_NAME_APC_API_CHANGE, listaParametriChange);
 				}
 
+				// Proprieta Button
+				if(this.existsProprietaOggetto(accordoServizio.getProprietaOggetto(), accordoServizio.getDescrizione())) {
+					this.addProprietaOggettoButton(e, labelAccordo, accordoServizio.getId()+"", InUsoType.ACCORDO_SERVIZIO_PARTE_COMUNE);
+				}
+				
 				// aggiungo entry
 				dati.add(e);
 			}
@@ -618,7 +625,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		listParametersApi.add(pTipoAccordo);
 		
 		// In Uso Button
-		this.addComandoInUsoButton(dati, labelAccordo, as.getId()+"", InUsoType.ACCORDO_SERVIZIO_PARTE_COMUNE);
+		this.addComandoInUsoButton(labelAccordo, as.getId()+"", InUsoType.ACCORDO_SERVIZIO_PARTE_COMUNE);
 
 		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
 		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
@@ -630,19 +637,33 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			this.pd.addComandoResetCacheElementoButton(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, listaParametriChange);
 		}
 		
+		// Proprieta Button
+		if(this.existsProprietaOggetto(as.getProprietaOggetto(), as.getDescrizione())) {
+			this.addComandoProprietaOggettoButton(labelAccordo, as.getId()+"", InUsoType.ACCORDO_SERVIZIO_PARTE_COMUNE);
+		}
+		
 		// Titolo API
 		DataElement de = new DataElement();
 		de.setType(DataElementType.CHECKBOX);
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 		de.setValue(getLabelIdAccordoSenzaReferente(tipoProtocollo, idAccordo));
 		de.setStatusValue(getLabelIdAccordoSenzaReferente(tipoProtocollo, idAccordo));
-		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI);
+				
 		DataElementImage image = new DataElementImage();
-		
+		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI);
 		image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
 		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_APS_INFO_GENERALI));
 		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
-		de.setImage(image);
+		de.addImage(image);
+		
+		if(as.getDescrizione()==null || StringUtils.isEmpty(as.getDescrizione())) {
+			image = new DataElementImage();
+			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
+			image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE));
+			image.setImage(ApiCostanti.APC_API_ICONA_AGGIUNGI_DESCRIZIONE);
+			de.addImage(image);
+		}
 		
 		ConsoleSearch searchForCount = new ConsoleSearch(true);
 		switch (serviceBinding) {
@@ -852,30 +873,33 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		
 		
 		// Descrizione
-		de = new DataElement();
-		de.setType(DataElementType.TEXT);
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
-		int length = 150;
-		String descrizione = null;
-		if(as.getDescrizione()!=null && as.getDescrizione().length()>length) {
-			descrizione = as.getDescrizione().substring(0, (length-4)) + " ...";
+		if(as.getDescrizione()!=null && StringUtils.isNotEmpty(as.getDescrizione())) {
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+			int length = 150;
+			String descrizione = null;
+			if(as.getDescrizione()!=null && as.getDescrizione().length()>length) {
+				descrizione = as.getDescrizione().substring(0, (length-4)) + " ...";
+			}
+			else {
+				descrizione =  as.getDescrizione() ;
+			}
+			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+			de.setToolTip(as.getDescrizione());
+			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
+			de.setIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+			
+			image = new DataElementImage();
+			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
+			image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE));
+			image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+			de.setImage(image);
+			
+			dati.add(de);
 		}
-		else {
-			descrizione =  as.getDescrizione() ;
-		}
-		de.setValue(descrizione);
-		de.setToolTip(as.getDescrizione());
-		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
-		de.setIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 		
-		image = new DataElementImage();
-		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
-		image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE));
-		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
-		de.setImage(image);
-		
-		dati.add(de);
 		
 		// Gruppi 
 		de = new DataElement();
@@ -939,6 +963,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			
 			dati.add(de);
 		}
+		
+		// Proprieta Oggetto
+		this.addProprietaOggetto(dati, as.getProprietaOggetto());
+
 		
 		// link
 		// 1. risorse/servizi

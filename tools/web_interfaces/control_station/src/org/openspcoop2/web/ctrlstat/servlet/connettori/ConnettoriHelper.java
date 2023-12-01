@@ -2071,7 +2071,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(!modificaApiKey) {
 						DataElement deLabel = new DataElement();
 						deLabel.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
-						deLabel.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS+"__LABEL");
+						deLabel.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						if(!multipleApiKeysEnabled) {
 							deLabel.setType(DataElementType.TEXT);
 						}
@@ -2115,7 +2115,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				if(change && !modificaApiKey && !encryptPassword && !passwordCifrata) {
 					de = new DataElement();
-					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+"__LABEL");
+					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setRows(3);
@@ -2652,7 +2652,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(forcePDND || forceOAuth) {
 						de = new DataElement();
 						de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
-						de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO+"__LABEL");
+						de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						de.setType(DataElementType.TEXT);
 						if(forcePDND) {
 							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_PDND);
@@ -2940,7 +2940,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(forcePDND || forceOAuth) {
 						de = new DataElement();
 						de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
-						de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO+"__LABEL");
+						de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 						de.setType(DataElementType.TEXT);
 						if(forcePDND) {
 							de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_BEARER_MODI_PDND);

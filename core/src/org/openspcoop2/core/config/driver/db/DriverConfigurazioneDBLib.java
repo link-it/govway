@@ -81,6 +81,16 @@ public class DriverConfigurazioneDBLib {
 			log.debug(msg);
 		}
 	}
+	public static void logDebug(String msg, Throwable e) {
+		if(log!=null) {
+			log.debug(msg, e);
+		}
+	}
+	public static void logError(String msg, Throwable e) {
+		if(log!=null) {
+			log.error(msg, e);
+		}
+	}
 
 	// Tipo database e tabella Soggetto PDD ereditato da DriverConfigurazioneDB
 	static String tipoDB = null;

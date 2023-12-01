@@ -551,9 +551,13 @@ CREATE SEQUENCE seq_generic_properties start 1 increment 1 maxvalue 922337203685
 CREATE TABLE generic_properties
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(4000),
 	tipologia VARCHAR(255) NOT NULL,
 	tipo VARCHAR(255) NOT NULL,
+	utente_richiedente VARCHAR(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_generic_properties') NOT NULL,
 	-- unique constraints

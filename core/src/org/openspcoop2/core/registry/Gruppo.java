@@ -22,6 +22,7 @@ package org.openspcoop2.core.registry;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.id.IDGruppo;
@@ -35,6 +36,9 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="gruppo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/registry}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="service-binding" type="{http://www.openspcoop2.org/core/registry}ServiceBinding" use="optional"/&gt;
@@ -51,7 +55,11 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "gruppo")
+@XmlType(name = "gruppo", 
+  propOrder = {
+  	"proprietaOggetto"
+  }
+)
 
 @XmlRootElement(name = "gruppo")
 
@@ -66,6 +74,14 @@ public class Gruppo extends org.openspcoop2.utils.beans.BaseBeanWithId implement
 
   public void setOldIDGruppoForUpdate(IDGruppo oldIDGruppoForUpdate) {
     this.oldIDGruppoForUpdate=oldIDGruppoForUpdate;
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.String getNome() {
@@ -138,6 +154,9 @@ public class Gruppo extends org.openspcoop2.utils.beans.BaseBeanWithId implement
 
   @javax.xml.bind.annotation.XmlTransient
   protected IDGruppo oldIDGruppoForUpdate;
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

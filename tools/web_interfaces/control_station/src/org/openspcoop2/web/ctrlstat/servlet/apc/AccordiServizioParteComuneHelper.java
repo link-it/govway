@@ -93,6 +93,7 @@ import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.utils.rest.api.ApiUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
@@ -456,7 +457,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			this.pd.setSelect(false);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -575,7 +576,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -752,7 +753,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			return dati;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -856,7 +857,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -1061,7 +1062,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -1525,7 +1526,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			return dati;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -1671,7 +1672,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -1749,7 +1750,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -2187,7 +2188,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			return dati;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -2297,7 +2298,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				this.pd.setSelect(true);
 			}
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -2393,7 +2394,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -3101,22 +3102,25 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			IProtocolFactory<?> protocolFactory,
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType,
 			String gruppi, List<String> elencoGruppi,
-			boolean gestioneNuovaVersione, int gestioneNuovaVersione_min, boolean gestioneNuovaVersione_ridefinisciInterfaccia, long gestioneNuovaVersione_oldIdApc,
+			boolean gestioneNuovaVersione, int gestioneNuovaVersioneMin, boolean gestioneNuovaVersioneRidefinisciInterfaccia, long gestioneNuovaVersioneOldIdApc,
 			boolean confirm, String canaleStato, String canale, List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled
 			) throws Exception {
 
-		Boolean showAccordiAzioni = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
-		Boolean showAccordiCooperazione = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
+		Boolean showAccordiAzioniObject = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
+		boolean showAccordiAzioni = showAccordiAzioniObject!=null && showAccordiAzioniObject.booleanValue();
+		Boolean showAccordiCooperazioneObject = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
+		boolean showAccordiCooperazione = showAccordiCooperazioneObject != null && showAccordiCooperazioneObject.booleanValue();
 		boolean isInterfacciaAvanzata = this.isModalitaAvanzata();
 		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumentiRipristinoStatoOperativoDaFinale();
 
 		
 		boolean modificheAbilitate = false;
-		if( tipoOperazione.equals(TipoOperazione.ADD) ){
-			modificheAbilitate = true;
-		}else if(this.isShowGestioneWorkflowStatoDocumenti()==false){
-			modificheAbilitate = true;
-		}else if(StatiAccordo.finale.toString().equals(oldStato)==false){
+		if( tipoOperazione.equals(TipoOperazione.ADD)
+				||
+			(!this.isShowGestioneWorkflowStatoDocumenti())
+				||
+			(!StatiAccordo.finale.toString().equals(oldStato))
+			){
 			modificheAbilitate = true;
 		}
 
@@ -3145,7 +3149,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		
 		boolean gestioneInformazioniGenerali = false;
-		@SuppressWarnings("unused")
 		boolean gestioneInformazioniProfilo = false;
 		boolean gestioneSoggettoReferente = false;
 		boolean gestioneDescrizione = false;
@@ -3153,7 +3156,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		boolean gestioneInformazioniProtocollo = false;
 		boolean gestioneGruppi = false;
 		boolean gestioneCanale = false;
-		if(TipoOperazione.ADD.equals(tipoOperazione) || isModalitaVistaApiCustom==null || !isModalitaVistaApiCustom) {
+		if(TipoOperazione.ADD.equals(tipoOperazione) || isModalitaVistaApiCustom==null || 
+				(isModalitaVistaApiCustom==null || !isModalitaVistaApiCustom.booleanValue())
+			) {
 			gestioneInformazioniGenerali = true;
 			gestioneInformazioniProfilo = true;
 			gestioneSoggettoReferente = true;
@@ -3190,6 +3195,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		}
 		
+		if(gestioneInformazioniProfilo) {
+			// nop
+		}
+		
 		if(gestioneNuovaVersione) {
 			de = new DataElement();
 			de.setValue(gestioneNuovaVersione+"");
@@ -3199,14 +3208,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.add(de);
 			
 			de = new DataElement();
-			de.setValue(gestioneNuovaVersione_min+"");
+			de.setValue(gestioneNuovaVersioneMin+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_MIN);
 			de.setSize(this.getSize());
 			dati.add(de);
 			
 			de = new DataElement();
-			de.setValue(gestioneNuovaVersione_oldIdApc+"");
+			de.setValue(gestioneNuovaVersioneOldIdApc+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_OLD_ID_APC);
 			de.setSize(this.getSize());
@@ -3228,19 +3237,19 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setType(DataElementType.TITLE);
 			dati.add(de);
 		}
-		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom && gestioneSoggettoReferente) {
+		if(TipoOperazione.CHANGE.equals(tipoOperazione) && (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom) && gestioneSoggettoReferente) {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
 			de.setType(DataElementType.TITLE);
 			dati.add(de);
 		}
-		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom && gestioneDescrizione) {
+		if(TipoOperazione.CHANGE.equals(tipoOperazione) && (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom) && gestioneDescrizione) {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
 			de.setType(DataElementType.TITLE);
 			dati.add(de);
 		}
-		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom && gestioneGruppi) {
+		if(TipoOperazione.CHANGE.equals(tipoOperazione) && (isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom) && gestioneGruppi) {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
 			de.setType(DataElementType.TITLE);
@@ -3261,14 +3270,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 
 			if( gestioneInformazioniGenerali && (listaTipiProtocollo != null && listaTipiProtocollo.size() > 1) ){
-				boolean usedCheckForProtocollo = used;
+				boolean usedCheckForProtocollo;
+				/**usedCheckForProtocollo = used;*/
 				usedCheckForProtocollo = true; // forzo l'indicazione in modo che il protocollo in change informazioni generali non sia modificabile
 				if(usedCheckForProtocollo){
 					
 					DataElement deLABEL = new DataElement();
 					deLABEL.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 					deLABEL.setType(DataElementType.TEXT);
-					deLABEL.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO+"__label");
+					deLABEL.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 					deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
 					dati.add(deLABEL);
 					
@@ -3346,7 +3356,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		
 		de = new DataElement();
-		if(TipoOperazione.ADD.equals(tipoOperazione) || isModalitaVistaApiCustom==null || !isModalitaVistaApiCustom) {
+		if(TipoOperazione.ADD.equals(tipoOperazione) || isModalitaVistaApiCustom==null || (!isModalitaVistaApiCustom.booleanValue()) ) {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
 		}
 		else {
@@ -3356,10 +3366,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		if(showReferente) {
 			de.setPostBack(true);
 			Soggetto sogg = null;
-			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-				if(Integer.parseInt(referente)>0){
-					sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
-				}
+			if (referente != null && !"".equals(referente) && !"-".equals(referente) &&
+				(Integer.parseInt(referente)>0)
+				){
+				sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
 			}
 			if( modificheAbilitate && modificaAbilitataServizioComposto && !gestioneNuovaVersione && !confirm ){
 	
@@ -3371,7 +3381,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}else{
 					de.setSelected("-");
 				}
-				//if(this.core.isBackwardCompatibilityAccordo11()==false){
+				/**if(this.core.isBackwardCompatibilityAccordo11()==false){*/
 				de.setRequired(true);
 	
 			}else{
@@ -3437,7 +3447,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 		de.setValue(nome);
-		//if (tipoOp.equals("add")) {
 		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneInformazioniGenerali && modificheAbilitate) ){
 			if(gestioneNuovaVersione) {
 				de.setType(DataElementType.TEXT);
@@ -3463,6 +3472,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setValue(StringEscapeUtils.escapeHtml(descr));
 		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneDescrizione && modificheAbilitate)){
 			de.setType(DataElementType.TEXT_AREA);
+			if(gestioneDescrizione && !tipoOperazione.equals(TipoOperazione.ADD)) {
+				de.setRows(CostantiControlStation.TEXT_AREA_DESCRIZIONE_ROWS);
+				de.setLabel(CostantiControlStation.LABEL_PROPRIETA_DESCRIZIONE_EMPTY);
+			}
 		}else{
 			if(gestioneDescrizione) {
 				de.setType(DataElementType.TEXT);
@@ -3534,7 +3547,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE, 
 					versione, false);
 			if(gestioneNuovaVersione) {
-				de.setMinValue(gestioneNuovaVersione_min);
+				de.setMinValue(gestioneNuovaVersioneMin);
 			}
 		}else{
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
@@ -3592,7 +3605,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setSelected(isServizioComposto ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true);
-				//de.setOnClick("CambiaAccordoCooperazione(\"" + tipoOp + "\")");
 			}else{
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -3605,16 +3617,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE);
 		if(this.isShowGestioneWorkflowStatoDocumenti()){
 			if( tipoOperazione.equals(TipoOperazione.ADD)){
-				//				if(isInterfacciaAvanzata)
+				/**				if(isInterfacciaAvanzata)
 				//					de.setType(DataElementType.TEXT);
 				//				else 
 				// Lascio sempre HIDDEN in ADD tanto poi se viene caricato il wsdl viene automaticamente impostato ad operativo
-				// altrimenti in edit sara' possibile modificarlo.
+				// altrimenti in edit sara' possibile modificarlo.*/
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(StatiAccordo.bozza.toString());
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_STATO_PACKAGE);
 			} 
-			else if(StatiAccordo.finale.toString().equals(oldStato)==false && gestioneInformazioniGenerali ){
+			else if(!StatiAccordo.finale.toString().equals(oldStato) && gestioneInformazioniGenerali ){
 				de.setType(DataElementType.SELECT);
 				de.setValues(StatiAccordo.toArray());
 				de.setLabels(StatiAccordo.toLabel());
@@ -3627,7 +3639,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					deLabel.setType(DataElementType.TEXT);
 					deLabel.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE);
 					deLabel.setValue(StatiAccordo.upper(StatiAccordo.finale.toString()));
-					deLabel.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_STATO_PACKAGE+"__label");
+					deLabel.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_STATO_PACKAGE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 					dati.add(deLabel);
 				}
 				
@@ -3679,7 +3691,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		DataElement deValidazione = new DataElement();
 		deValidazione.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA);
 		deValidazione.setValue(""+validazioneDocumenti);
-		//if ( tipoOperazione.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) ) {
 		if ( tipoOperazione.equals(TipoOperazione.ADD) && this.isModalitaAvanzata() ) {
 			deValidazione.setType(DataElementType.CHECKBOX);
 			deValidazione.setSelected(validazioneDocumenti);
@@ -3697,9 +3708,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.add(deValidazione);
 		}
 
-		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+		Boolean contaListeObject = ServletUtils.getContaListeFromSession(this.session);
+		boolean contaListe = contaListeObject!=null && contaListeObject.booleanValue();
 		
-		if (tipoOperazione.equals(TipoOperazione.ADD) == false) {
+		if (!tipoOperazione.equals(TipoOperazione.ADD)) {
 
 			if(this.isModalitaCompleta()) {
 				switch(serviceBinding) {
@@ -3712,7 +3724,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 						if(contaListe){
 							// BugFix OP-674
-							// int num = this.apcCore.accordiAzioniList(Integer.parseInt(id), new Search(true)).size();
+							/** int num = this.apcCore.accordiAzioniList(Integer.parseInt(id), new Search(true)).size();*/
 							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.apcCore.accordiResourceList(Integer.parseInt(id), searchForCount);
 							int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES);
@@ -3733,7 +3745,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 						if(contaListe){
 							// BugFix OP-674
-							// int num = this.apcCore.accordiAzioniList(Integer.parseInt(id), new Search(true)).size();
+							/** int num = this.apcCore.accordiAzioniList(Integer.parseInt(id), new Search(true)).size();*/
 							ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 							this.apcCore.accordiAzioniList(Integer.parseInt(id), searchForCount);
 							int num = searchForCount.getNumEntries(Liste.ACCORDI_AZIONI);
@@ -3753,7 +3765,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 					if(contaListe){
 						// BugFix OP-674
-						//int num = this.apcCore.accordiPorttypeList(Integer.parseInt(id), new Search(true)).size();
+						/** int num = this.apcCore.accordiPorttypeList(Integer.parseInt(id), new Search(true)).size();*/
 						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.apcCore.accordiPorttypeList(Integer.parseInt(id), searchForCount);
 						int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE);
@@ -3774,7 +3786,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 				if(contaListe){
 					// BugFix OP-674
-					//int num = this.apcCore.accordiAllegatiList(Integer.parseInt(id), new Search(true)).size();
+					/** int num = this.apcCore.accordiAllegatiList(Integer.parseInt(id), new Search(true)).size(); */
 					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apcCore.accordiAllegatiList(Integer.parseInt(id), searchForCount);
 					int num = searchForCount.getNumEntries(Liste.ACCORDI_ALLEGATI);
@@ -3793,7 +3805,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome));
 				if(contaListe){
 					// BugFix OP-674
-					//int num = this.apcCore.accordiComponentiList(Integer.parseInt(id), new Search(true)).size();
+					/** int num = this.apcCore.accordiComponentiList(Integer.parseInt(id), new Search(true)).size(); */
 					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.apcCore.accordiComponentiList(Integer.parseInt(id), searchForCount);
 					int num = searchForCount.getNumEntries(Liste.ACCORDI_COMPONENTI);
@@ -3813,9 +3825,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID,id),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
 					AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-			if (tipoOperazione.equals(TipoOperazione.ADD) == false) {
+			if (!tipoOperazione.equals(TipoOperazione.ADD)) {
 				// BugFix OP-674
-				//int num = this.apcCore.accordiErogatoriList(Integer.parseInt(id), new Search(true)).size();
+				/** int num = this.apcCore.accordiErogatoriList(Integer.parseInt(id), new Search(true)).size(); */
 				ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 				this.apcCore.accordiErogatoriList(Integer.parseInt(id), searchForCount);
 				int num = searchForCount.getNumEntries(Liste.ACCORDI_EROGATORI);
@@ -3826,7 +3838,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.add(de);
 		}
 
-		if(gestioneNuovaVersione && !gestioneNuovaVersione_ridefinisciInterfaccia) {
+		if(gestioneNuovaVersione && !gestioneNuovaVersioneRidefinisciInterfaccia) {
 			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_INTERFACCE);
@@ -3837,7 +3849,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
 			de.setType(DataElementType.CHECKBOX);
-			de.setSelected(gestioneNuovaVersione_ridefinisciInterfaccia);
+			de.setSelected(gestioneNuovaVersioneRidefinisciInterfaccia);
 			de.setPostBack(true);
 			dati.add(de);
 			
@@ -3848,7 +3860,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			// interfacetype
 			DataElement deInterfaceType = this.getInterfaceTypeDataElement(tipoOperazione,protocolFactory, serviceBinding,interfaceType);
-			if(interfaceTypeList == null || interfaceTypeList.size() == 0) {
+			if(interfaceTypeList == null || interfaceTypeList.isEmpty()) {
 				dati.add(deInterfaceType);
 			} else {
 				
@@ -3864,7 +3876,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
 					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(gestioneNuovaVersione_ridefinisciInterfaccia);
+					de.setSelected(gestioneNuovaVersioneRidefinisciInterfaccia);
 					de.setPostBack(true);
 					dati.add(de);
 				}
@@ -4176,30 +4188,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					dati.add(wsblservcorr.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE, "", getSize()));
 					dati.addAll(wsblservcorr.getFileNameDataElement());
 					dati.add(wsblservcorr.getFileIdDataElement());
-					
-	//				de = new DataElement();
-	//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
-	//				de.setValue("");
-	//				de.setType(DataElementType.FILE);
-	//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
-	//				de.setSize(this.getSize());
-	//				dati.add(de);
-	//
-	//				de = new DataElement();
-	//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
-	//				de.setValue("");
-	//				de.setType(DataElementType.FILE);
-	//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
-	//				de.setSize(this.getSize());
-	//				dati.add(de);
-	//
-	//				de = new DataElement();
-	//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
-	//				de.setValue("");
-	//				de.setType(DataElementType.FILE);
-	//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
-	//				de.setSize(this.getSize());
-	//				dati.add(de);
 	
 				} else {
 	
@@ -4241,7 +4229,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 
 		Boolean gestioneInfoProtocollo = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
-				//&& !serviceBinding.equals(ServiceBinding.REST);
 		boolean isSoap = serviceBinding.equals(ServiceBinding.SOAP);
 
 		boolean filtroDuplicatiSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI);
@@ -4257,21 +4244,20 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				consegnaInOrdineSupportato ||
 				scadenzaSupportato;	
 		
-		if(gestioneInfoProtocollo!=null && gestioneInfoProtocollo) {
-			if(!gestioneInformazioniProtocollo) {
-				gestioneInfoProtocollo = false;
-			}
+		if(gestioneInfoProtocollo!=null && gestioneInfoProtocollo &&
+			(!gestioneInformazioniProtocollo) 
+			){
+			gestioneInfoProtocollo = false;
 		}
 		
 		de = new DataElement();
-		//if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom) {
 		if(isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom) {
 			de.setLabel(ApiCostanti.APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE);
 		}
 		else {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
 		}
-		if ( (gestioneInfoProtocollo!=null) && gestioneInfoProtocollo && (almostOneSupported || isSoap) ) { // se soap sicuramente c'è il protocollo di collaborazione
+		if ( (gestioneInfoProtocollo!=null) && gestioneInfoProtocollo.booleanValue() && (almostOneSupported || isSoap) ) { // se soap sicuramente c'è il protocollo di collaborazione
 			de.setType(DataElementType.TITLE);
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -4328,11 +4314,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				if ( ServletUtils.isCheckBoxEnabled(filtrodup) || CostantiRegistroServizi.ABILITATO.equals(filtrodup) ) {
 					de.setValue(CostantiRegistroServizi.ABILITATO.toString());
 				}else{
-					//if(modificheAbilitate){
-					//	de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
-					//}else{
 					de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
-					//}
 				}
 			}	
 		} else {
@@ -4366,13 +4348,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			//if(confermaRicezioneSupportato) {
-				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+			/**if(confermaRicezioneSupportato) {
+				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default */
 				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			//}
+			/**}
 			//else {
 			//	de.setValue(Costanti.CHECK_BOX_DISABLED);
-			//}
+			//}*/
 		}
 		dati.add(de);
 
@@ -4395,13 +4377,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			//if(collaborazioneSupportato) {
-				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+			/**if(collaborazioneSupportato) {
+				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default*/
 			de.setValue(Costanti.CHECK_BOX_DISABLED);
-			//}
+			/**}
 			//else {
 			//	de.setValue(Costanti.CHECK_BOX_DISABLED);
-			//}
+			//}*/
 		}
 		dati.add(de);
 		
@@ -4424,13 +4406,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			//if(idRiferimentoRichiestaSupportato) {
-				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+			/**if(idRiferimentoRichiestaSupportato) {
+				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default*/
 				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			//}
+			/**}
 			//else {
 			//	de.setValue(Costanti.CHECK_BOX_DISABLED);
-			//}
+			//}*/
 		}
 		dati.add(de);
 
@@ -4453,13 +4435,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			//if(consegnaInOrdineSupportato) {
-				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+			/**if(consegnaInOrdineSupportato) {
+				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default*/
 				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			//}
+			/**}
 			//else {
 			//	de.setValue(Costanti.CHECK_BOX_DISABLED);
-			//}
+			//}*/
 		}
 		dati.add(de);
 
@@ -4480,7 +4462,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 		
 		
-		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom && gestioneSpecificaInterfacce) {
+		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom.booleanValue() && gestioneSpecificaInterfacce) {
 			this.pd.disableEditMode();
 		}
 		
@@ -4902,7 +4884,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -4918,7 +4900,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String tipoProtocollo, String backToStato,
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica,
 			boolean checkReferente, String gruppi, String canaleStato, String canale, boolean gestioneCanaliEnabled)
-					throws Exception {
+					throws ControlStationCoreException {
 		try {
 			int idInt = 0;
 			if (tipoOperazione.equals(TipoOperazione.CHANGE)) {
@@ -4938,19 +4920,19 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Nome");
 				return false;
 			}
-			//if(this.core.isBackwardCompatibilityAccordo11()==false){
 			if (versione==null || versione.equals("")) {
 				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare una Versione dell'accordo");
 				return false;
 			}
-			if(referente==null || referente.equals("") || referente.equals("-")){
-				if(!TipoOperazione.ADD.equals(tipoOperazione) || checkReferente) {
-					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Soggetto Referente");
-					return false;
-				}
+			if( 
+				(referente==null || referente.equals("") || referente.equals("-"))
+				&&
+				(!TipoOperazione.ADD.equals(tipoOperazione) || checkReferente) 
+				){
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Soggetto Referente");
+				return false;
 			}
-			//}
-			
+		
 			// service binding
 			if (serviceBinding ==null) {
 				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare un Service Binding");
@@ -4974,17 +4956,24 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// Check lunghezza
-			if(this.checkLength255(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false) {
+			if(!this.checkLength255(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)) {
 				return false;
 			}
-			if(descr!=null && !"".equals(descr)) {
-				if(this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE)==false) {
+			if( descr!=null && !"".equals(descr) ) {
+				boolean valid = true;
+				if(this.apcCore.isApiDescriptionTruncate255()) {
+					valid = this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+				}
+				else if(this.apcCore.isApiDescriptionTruncate4000()) {
+					valid = this.checkLength4000(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+				}
+				if(!valid) {
 					return false;
 				}
-			}
+			} 
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-			if(this.checkNCName(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
+			if(!this.checkNCName(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)){
 				return false;
 			}
 			
@@ -5004,10 +4993,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// La versione deve contenere solo lettere e numeri e '.'
-			/*if (!versione.equals("") && !this.procToCall.isOk("^[1-9]+[\\.][0-9]+[0-9A-Za-z]*$", versione)  && !this.procToCall.isOk("^[0-9]+$",versione)) {
-					this.pd.setMessage("La versione dev'essere scritto come MajorVersion[.MinorVersion*] (MajorVersion [1-9]) (MinorVersion [0-9]) (* [0-9A-Za-z]) ");
-					return false;
-				}*/
 			if (!versione.equals("") && !this.checkNumber(versione, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE, false)) {
 				return false;
 			}
@@ -5055,7 +5040,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				this.pd.setMessage("L'accordo di cooperazione e' richiesto.");
 				return false;
 			}
-			if("-".equals(accordoCooperazione)==false && "".equals(accordoCooperazione)==false  && accordoCooperazione!=null){
+			if("-".equals(accordoCooperazione)==false && !"".equals(accordoCooperazione)  && accordoCooperazione!=null){
 				// Visibilita rispetto all'accordo
 				boolean nonVisibile = true;
 				boolean visibile = false;
@@ -5071,7 +5056,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// providers disponibili
 			IDSoggetto soggettoReferente = null;
 			Soggetto sRef = null;
-			//if (gestioneWSBL.equals(Costanti.CHECK_BOX_ENABLED)) {
 			if(checkReferente) {
 				if(referente!=null && !referente.equals("") && !referente.equals("-")){
 					boolean trovatoProv = this.soggettiCore.existsSoggetto(Integer.parseInt(referente));
@@ -5082,11 +5066,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						sRef = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
 						// Visibilita rispetto all'accordo
 						boolean visibile = false;
-						if(visibilitaAccordoServizio==visibile){
-							if(sRef.getPrivato()!=null && sRef.getPrivato()==true){
-								this.pd.setMessage("Non e' possibile utilizzare un soggetto referente con visibilita' privata, in un accordo di servizio con visibilita' pubblica.");
-								return false;
-							}
+						if(visibilitaAccordoServizio==visibile &&
+							(sRef.getPrivato()!=null && sRef.getPrivato())
+							){
+							this.pd.setMessage("Non e' possibile utilizzare un soggetto referente con visibilita' privata, in un accordo di servizio con visibilita' pubblica.");
+							return false;
 						}
 						soggettoReferente = new IDSoggetto(sRef.getTipo(),sRef.getNome());
 					}
@@ -5095,7 +5079,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			else {
 				soggettoReferente = this.apcCore.getSoggettoOperativoDefault(ServletUtils.getUserLoginFromSession(this.session), tipoProtocollo);
 			}
-			//	}
 
 			// Controllo che non esistano altri accordi con stesso nome
 			// Se tipoOp = change, devo fare attenzione a non escludere nome
@@ -5163,11 +5146,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			ValidazioneResult v = this.apcCore.validazione(accordoServizioParteComune, tipoProtocollo);
 			if(!v.isEsito()){
-				this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
+				this.pd.setMessage(getValidazionePrefixErrorMessage(tipoProtocollo, v.getMessaggioErrore()));
 				if(v.getException()!=null)
-					this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore(),v.getException());
+					this.logError(getValidazionePrefixErrorMessage(tipoProtocollo, v.getMessaggioErrore()),v.getException());
 				else
-					this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
+					this.logError(getValidazionePrefixErrorMessage(tipoProtocollo, v.getMessaggioErrore()));
 				return false;
 			}	
 
@@ -5217,11 +5200,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					if(msgErroreHTML!=null) {
 						msgErroreHTML = msgErroreHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
-					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+msgErroreHTML);
+					this.pd.setMessage(getValidazionePrefixErrorMessage(tipoProtocollo, msgErroreHTML));
 					if(v.getException()!=null)
-						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore(),v.getException());
+						this.logError(getValidazionePrefixErrorMessage(tipoProtocollo, v.getMessaggioErrore()),v.getException());
 					else
-						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
+						this.logError(getValidazionePrefixErrorMessage(tipoProtocollo, v.getMessaggioErrore()));
 					return false;
 				}
 				else if(v.getMessaggioWarning()!=null && StringUtils.isNotEmpty(v.getMessaggioWarning())) {
@@ -5229,11 +5212,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					if(msgWarningHTML!=null) {
 						msgWarningHTML = msgWarningHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
-					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+msgWarningHTML, org.openspcoop2.web.lib.mvc.MessageType.WARN);
+					this.pd.setMessage(getValidazionePrefixErrorMessage(tipoProtocollo, msgWarningHTML), org.openspcoop2.web.lib.mvc.MessageType.WARN);
 					if(v.getException()!=null)
-						this.log.warn("[validazione-"+tipoProtocollo+"] "+v.getMessaggioWarning(),v.getException());
+						this.log.warn(getValidazionePrefixErrorMessage(tipoProtocollo, v.getMessaggioWarning()),v.getException());
 					else
-						this.log.warn("[validazione-"+tipoProtocollo+"] "+v.getMessaggioWarning());
+						this.log.warn(getValidazionePrefixErrorMessage(tipoProtocollo, v.getMessaggioWarning()));
 				}
 
 				v = this.apcCore.validaSpecificaConversazione(accordoServizioParteComune, tipoProtocollo);
@@ -5242,11 +5225,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					if(msgErroreHTML!=null) {
 						msgErroreHTML = msgErroreHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
-					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+msgErroreHTML);
+					this.pd.setMessage(getValidazionePrefixErrorMessage(tipoProtocollo, msgErroreHTML));
 					if(v.getException()!=null)
-						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore(),v.getException());
+						this.logError(getValidazionePrefixErrorMessage(tipoProtocollo, v.getMessaggioErrore()),v.getException());
 					else
-						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
+						this.logError(getValidazionePrefixErrorMessage(tipoProtocollo, v.getMessaggioErrore()));
 					return false;
 				}
 
@@ -5255,9 +5238,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new ControlStationCoreException(e);
 		}
+	}
+	private String getValidazionePrefixErrorMessage(String tipoProtocollo, String msg) {
+		return "[validazione-"+tipoProtocollo+"] "+msg;
 	}
 	
 	public  IDAccordo getIDAccordoFromValues(String nome, String referente, String versione,boolean visibilitaAccordoServizio) throws Exception {
@@ -5748,7 +5734,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -5769,7 +5755,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -5876,7 +5862,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -6034,7 +6020,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -6236,7 +6222,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -6546,7 +6532,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -7047,7 +7033,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			return dati;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -7238,7 +7224,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 		
@@ -7430,7 +7416,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -7485,7 +7471,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -7643,7 +7629,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -7817,7 +7803,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -7887,7 +7873,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setType(DataElementType.TEXT_EDIT);
 			} else {
 				de.setType(DataElementType.TEXT);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+"__LABEL");
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				
 				DataElement deValue = new DataElement();
 				deValue.setType(DataElementType.HIDDEN);
@@ -7988,7 +7974,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			return dati;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -8279,7 +8265,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 		return dati;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -8333,7 +8319,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 		
@@ -8503,7 +8489,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 		return dati;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}
@@ -8578,7 +8564,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
 	}

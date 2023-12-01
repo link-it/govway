@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_porte_delegate MINVALUE 1 MAXVALUE 9223372036854775807 START
 CREATE TABLE porte_delegate
 (
 	nome_porta VARCHAR2(2000) NOT NULL,
-	descrizione VARCHAR2(255),
+	descrizione VARCHAR2(4000),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
 	-- id utilizzato in caso di registryInput
@@ -139,6 +139,10 @@ CREATE TABLE porte_delegate
 	ora_registrazione TIMESTAMP,
 	options VARCHAR2(4000),
 	canale VARCHAR2(255),
+	utente_richiedente VARCHAR2(255),
+	data_creazione TIMESTAMP,
+	utente_ultima_modifica VARCHAR2(255),
+	data_ultima_modifica TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

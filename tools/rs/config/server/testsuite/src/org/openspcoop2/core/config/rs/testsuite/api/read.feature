@@ -5,6 +5,7 @@ Background:
 * call read('classpath:crud_commons.feature')
 
 * def api = read('api.json') 
+* def apiDescrizione4000 = read('api_descrizione4000.json') 
 * eval randomize(api, ["nome"])
 
 @FindAll200
@@ -80,7 +81,24 @@ Scenario: Api Get Api Descrizione
     When method get
     Then status 200
 
+    * match response.descrizione == api.descrizione
+
     * call delete ( { resourcePath: "api/" + api.nome + "/" + api.versione })
+
+@GetDescrizione4000
+Scenario: Api Get Api Descrizione4000
+
+    * call create ( { resourcePath: "api", body: apiDescrizione4000 } )
+    
+    Given url configUrl
+    And path 'api', apiDescrizione4000.nome, apiDescrizione4000.versione, 'descrizione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == apiDescrizione4000.descrizione
+
+    * call delete ( { resourcePath: "api/" + apiDescrizione4000.nome + "/" + apiDescrizione4000.versione })
     
 @GetTags
 Scenario: Api Get Api Tags

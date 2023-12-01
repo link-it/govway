@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.TipoBehaviour;
@@ -64,7 +65,9 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -268,11 +271,6 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
 
-			boolean forceEnableConnettore = false;
-			if( (!porteApplicativeHelper.isModalitaCompleta())) {
-				forceEnableConnettore = true;
-			}
-
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_PORTA_APPLICATIVA_ADD, porteApplicativeHelper, 
@@ -300,7 +298,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			if(pa==null) {
-				throw new Exception("PortaApplicativa con id '"+idInt+"' non trovata");
+				throw new ControlStationCoreException("PortaApplicativa con id '"+idInt+"' non trovata");
 			}
 			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, ControlStationCore.getLog());
 			String idporta = pa.getNome();
@@ -332,10 +330,9 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			String nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
 			
 			// Lista dei servizi applicativi per la creazione automatica
-			List<IDServizioApplicativoDB> listaIdSAServer = null;
-			//String [] saSoggetti = null;	
+			List<IDServizioApplicativoDB> listaIdSAServer = null;	
 			if ((idsogg != null) && !idsogg.equals("")) {
-				long idErogatore = Long.valueOf(idsogg);
+				long idErogatore = Long.parseLong(idsogg);
 
 				// I servizi applicativi da visualizzare sono quelli che hanno
 				// -Integration Manager (getMessage abilitato)
@@ -347,16 +344,16 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
 			
 			boolean initConnettore = false;
-			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER)){
-					// devo resettare il connettore se passo da SA Server a Default
-					if(!erogazioneServizioApplicativoServerEnabled) {
-						tipoauthRichiesta = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
-						initConnettore = true;
-					} 
-				}
+			if(postBackElementName != null &&
+				postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER) &&
+				// devo resettare il connettore se passo da SA Server a Default
+				(!erogazioneServizioApplicativoServerEnabled)
+				) {
+				tipoauthRichiesta = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
+				initConnettore = true;
 			}
 			
+			boolean forceEnableConnettore = false;
 			if(getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				forceEnableConnettore = false;
 			}
@@ -467,16 +464,13 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 					httpspwdprivatekey = "";
 	
 					if(endpointtype==null) {
-						if(porteApplicativeHelper.isModalitaCompleta()==false) {
+						if(!porteApplicativeHelper.isModalitaCompleta()) {
 							endpointtype = TipiConnettore.HTTP.getNome();
 						}
 						else {
 							endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
 						}
 					}
-		
-					tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
-					tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 	
 					autenticazioneHttp = porteApplicativeHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 	
@@ -500,11 +494,11 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 					}
 					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
-						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+						/**httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;*/
 						httpshostverify = true;
 					}
 					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
-						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+						/**httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;*/
 						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
 					}
 				}
@@ -675,6 +669,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						ForwardParams.ADD());
 			}
 
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			List<Object> listaOggettiDaCreare = new ArrayList<>();
 			List<Object> listaOggettiDaModificare = new ArrayList<>();
@@ -702,13 +697,19 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 				}
 			}
 			
+			if(datiConnettore.getProprietaOggetto()==null) {
+				datiConnettore.setProprietaOggetto(new ProprietaOggetto());
+			}
+			datiConnettore.getProprietaOggetto().setUtenteRichiedente(userLogin);
+			datiConnettore.getProprietaOggetto().setDataCreazione(DateManager.getDate());
+			
 			PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
 			paSA.setDatiConnettore(datiConnettore);
 			
 			boolean secret = false;
-			String secret_password  = null;
-			String secret_user = null;
-			boolean secret_appId = false;
+			String secretPassword  = null;
+			String secretUser = null;
+			boolean secretAppId = false;
 			
 			if(erogazioneServizioApplicativoServerEnabled) {
 				paSA.setNome(erogazioneServizioApplicativoServer);
@@ -718,7 +719,6 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 				
 				// Connettore
 				connettore = new Connettore();
-				// this.nomeservizio);
 				if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
 					connettore.setTipo(tipoconn);
 				else
@@ -830,9 +830,9 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 					}
 					
 					if(secret) {
-						secret_user = c.getUser();
-						secret_password = c.getPassword();
-						secret_appId = c.isAppId();
+						secretUser = c.getUser();
+						secretPassword = c.getPassword();
+						secretAppId = c.isAppId();
 					}
 					
 					invocazionePorta.addCredenziali(c);
@@ -847,8 +847,6 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			
 			listaOggettiDaModificare.add(pa);
 			
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			
 			porteApplicativeCore.performCreateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaCreare.toArray(new Object[listaOggettiDaCreare.size()]));
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaModificare.toArray(new Object[listaOggettiDaModificare.size()]));
 			
@@ -857,7 +855,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			
 			// Messaggio 'Please Copy'
 			if(secret) {
-				porteApplicativeHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.CONNETTORE_MULTIPLO, nomeConnettore);
+				porteApplicativeHelper.setSecretPleaseCopy(secretPassword, secretUser, secretAppId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.CONNETTORE_MULTIPLO, nomeConnettore);
 			}
 			
 			// Preparo la lista

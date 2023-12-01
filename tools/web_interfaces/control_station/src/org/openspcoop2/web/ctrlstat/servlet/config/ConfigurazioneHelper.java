@@ -194,9 +194,9 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DAOConsoleFactory;
-import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
@@ -717,7 +717,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -767,7 +767,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -838,7 +838,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -894,7 +894,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -967,7 +967,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1025,7 +1025,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1098,7 +1098,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1137,7 +1137,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1208,7 +1208,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1247,7 +1247,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1345,7 +1345,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1401,7 +1401,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1472,7 +1472,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1553,7 +1553,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1648,7 +1648,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1735,7 +1735,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1818,7 +1818,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1838,7 +1838,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(CostantiPdD.JMX_REGISTRO_SERVIZI, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -1898,7 +1898,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2007,7 +2007,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2087,7 +2087,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2183,7 +2183,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2237,7 +2237,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2437,7 +2437,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2501,7 +2501,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2540,7 +2540,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2558,7 +2558,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(CostantiPdD.JMX_CONFIGURAZIONE_PDD, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2576,7 +2576,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(CostantiPdD.JMX_AUTORIZZAZIONE, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2594,7 +2594,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(CostantiPdD.JMX_AUTENTICAZIONE, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2612,7 +2612,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(CostantiPdD.JMX_TOKEN, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2630,7 +2630,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(CostantiPdD.JMX_ATTRIBUTE_AUTHORITY, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2659,7 +2659,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2677,7 +2677,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2695,7 +2695,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(CostantiPdD.JMX_LOAD_BALANCER, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2713,7 +2713,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return checkDatiCache(CostantiPdD.JMX_RESPONSE_CACHING, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2788,7 +2788,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2827,7 +2827,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2898,7 +2898,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -2954,7 +2954,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -3034,7 +3034,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -3084,7 +3084,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -3152,7 +3152,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -3210,7 +3210,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -3928,7 +3928,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!editModeEnabled) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE+"__LABEL");
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				String multi = MultitenantSoggettiFruizioni.SOLO_SOGGETTI_ESTERNI.getValue();
 				try {
 					multi = MultitenantSoggettiFruizioni.valueOf(multitenantSoggettiFruizioni).getValue();
@@ -3969,7 +3969,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!editModeEnabled) {
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI+"__LABEL");
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				String multi = MultitenantSoggettiErogazioni.SOLO_SOGGETTI_ESTERNI.getValue();
 				try {
 					multi = MultitenantSoggettiErogazioni.valueOf(multitenantSoggettiErogazioni).getValue();
@@ -4722,7 +4722,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								throw new DriverControlStationException("Stato ["+stato+"] sconosciuto");
 							}
 						}catch(Exception e){
-							this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+							this.logError("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
 							stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 						}
 						
@@ -4874,7 +4874,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						throw new DriverControlStationException("Stato ["+stato+"] sconosciuto");
 					}
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 				
@@ -4915,7 +4915,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				versionePdD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura della versione della PdD (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura della versione della PdD (jmxResourcePdD): "+e.getMessage(),e);
 			versionePdD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(versionePdD!=null){
@@ -4940,7 +4940,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura della versione della base dati (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura della versione della base dati (jmxResourcePdD): "+e.getMessage(),e);
 			versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(versioneBaseDati!=null){
@@ -4967,7 +4967,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura della directory di configurazione (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura della directory di configurazione (jmxResourcePdD): "+e.getMessage(),e);
 			confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(confDir!=null){
@@ -4994,7 +4994,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				vendorJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul vendor di java (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul vendor di java (jmxResourcePdD): "+e.getMessage(),e);
 			vendorJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(vendorJava!=null){
@@ -5019,7 +5019,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura della versione di java (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura della versione di java (jmxResourcePdD): "+e.getMessage(),e);
 			versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(versioneJava!=null){
@@ -5046,7 +5046,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura della message factory (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura della message factory (jmxResourcePdD): "+e.getMessage(),e);
 			messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		/**if(messageFactory!=null){
@@ -5088,7 +5088,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato del servizio Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sullo stato del servizio Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
 		}
 		
@@ -5110,7 +5110,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato del servizio Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sullo stato del servizio Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
 		}
 			
@@ -5132,7 +5132,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato del servizio Integration Manager (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sullo stato del servizio Integration Manager (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
 		}
 		
@@ -5164,7 +5164,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul livello dei diagnostici (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul livello dei diagnostici (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 		}
 		
@@ -5193,7 +5193,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul livello dei diagnostici log4j (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul livello dei diagnostici log4j (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 		}
 		
@@ -5213,7 +5213,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_diagnostici.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sullo stato di log del file govway_diagnostici.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL);
 		}
 		
@@ -5233,7 +5233,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sullo stato di log del file govway.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL);
 		}
 		
@@ -5253,7 +5253,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sullo stato di log del file govway_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL);
 		}
 
@@ -5297,7 +5297,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul tracciamento (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul tracciamento (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 		}
 			
@@ -5320,7 +5320,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul dump binario sulla Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL);
 		}
 		
@@ -5343,7 +5343,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul dump binario sulla Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL);
 		}
 					
@@ -5363,7 +5363,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sullo stato di log del file govway_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL);
 		}
 		
@@ -5383,7 +5383,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.add(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_dump.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sullo stato di log del file govway_dump.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL);
 		}
 		
@@ -5438,7 +5438,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul FileTrace (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul FileTrace (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL);
 		}
 		
@@ -5479,7 +5479,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST+")";
-			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST);
 		}
 		
@@ -5509,7 +5509,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE+")";
-			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE);
 		}
 		
@@ -5536,7 +5536,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR+")";
-			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR);
 		}
 		
@@ -5565,7 +5565,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE+")";
-			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE);
 		}
 		
@@ -5589,7 +5589,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT+")";
-			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT);
 		}
 		
@@ -5618,7 +5618,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS+")";
-			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS);
 		}
 		
@@ -5647,7 +5647,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID+")";
-			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID);
 		}
 		
@@ -5676,7 +5676,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}catch(Exception e){
 			String tipo = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP+" ("+
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE+")";
-			this.log.error("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni (jmxResourcePdD) ["+tipo+"]: "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE);
 		}
 		
@@ -5699,7 +5699,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			infoDatabase = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoDatabase==null || infoDatabase.length<=0){
 			addInformazioneNonDisponibile(dati, "");
@@ -5726,7 +5726,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSize(this.getSize());
 					dati.add(de);
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
 				}
 			}
 		}
@@ -5879,7 +5879,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de.setSize(this.getSize());
 							dati.add(de);
 						}catch(Exception e){
-							this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
+							this.logError("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
 						}
 					}
 				}
@@ -5907,7 +5907,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			infoSSL = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoSSL==null || infoSSL.length<=0){
 			addInformazioneNonDisponibile(dati, "");
@@ -5934,7 +5934,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSize(this.getSize());
 					dati.add(de);
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
 				}
 			}
 		}
@@ -5959,7 +5959,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				infoCryptoKeyLength = tmp!=null ? tmp.split("\n") : null;
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
 			}
 			if(infoCryptoKeyLength==null || infoCryptoKeyLength.length<=0){
 				addInformazioneNonDisponibile(dati, "");
@@ -5986,7 +5986,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setSize(this.getSize());
 						dati.add(de);
 					}catch(Exception e){
-						this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
+						this.logError("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
 					}
 				}
 			}
@@ -6018,7 +6018,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			infoCharset = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoCharset==null || infoCharset.length<=0){
 			addInformazioneNonDisponibile(dati, "");
@@ -6049,7 +6049,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSize(this.getSize());
 					dati.add(de);
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura delle informazioni sul charset (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura delle informazioni sul charset (jmxResourcePdD): "+e.getMessage(),e);
 				}
 			}
 		}
@@ -6080,7 +6080,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			infoInternazionalizzazione = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoInternazionalizzazione==null || infoInternazionalizzazione.length<=0){
 			addInformazioneNonDisponibile(dati, "");
@@ -6111,7 +6111,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSize(this.getSize());
 					dati.add(de);
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
 				}
 			}
 		}
@@ -6140,7 +6140,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			infoTimezone = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoTimezone==null || infoTimezone.length<=0){
 			addInformazioneNonDisponibile(dati, "");
@@ -6171,7 +6171,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSize(this.getSize());
 					dati.add(de);
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
 				}
 			}
 		}
@@ -6197,7 +6197,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			infoJavaNet = tmp!=null ? tmp.split("\n") : null;
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni di Java Networking (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni di Java Networking (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoJavaNet==null || infoJavaNet.length<=0){
 			addInformazioneNonDisponibile(dati, "");
@@ -6239,7 +6239,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSize(this.getSize());
 					dati.add(de);
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura delle informazioni di Java Networking (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura delle informazioni di Java Networking (jmxResourcePdD): "+e.getMessage(),e);
 				}
 			}
 		}
@@ -6263,7 +6263,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					this.confCore.getJmxPdDConfigurazioneSistemaNomeMetodoPluginProtocols(alias));
 			infoProtocolli = tmp.split("\n");
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sui protocolli (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sui protocolli (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoProtocolli==null || infoProtocolli.length<=0){
 			addInformazioneNonDisponibile(dati, "");
@@ -6286,7 +6286,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						map.put(protocol, context);
 					}
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura delle informazioni sui protocolli (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura delle informazioni sui protocolli (jmxResourcePdD): "+e.getMessage(),e);
 				}
 				
 			}
@@ -6361,7 +6361,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						throw new DriverControlStationException("Stato ["+stato+"] sconosciuto");
 					}
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 								
@@ -6412,7 +6412,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								this.confCore.getJmxPdDCacheNomeMetodoStatoCache(alias));
 						params = tmp.split("\n");
 					}catch(Exception e){
-						this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+						this.logError("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
 						stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 					}
 					
@@ -6505,7 +6505,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								}
 									
 							}catch(Exception e){
-								this.log.error("Errore durante la lettura dello stato della cache ["+cache+"]: "+e.getMessage(),e);
+								this.logError("Errore durante la lettura dello stato della cache ["+cache+"]: "+e.getMessage(),e);
 							}
 						}
 						
@@ -6562,7 +6562,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura dello stato delle connessioni al database (jmxResourcePdD): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura dello stato delle connessioni al database (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 			
@@ -6626,7 +6626,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura dello stato delle connessioni JMS (jmxResourcePdD): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura dello stato delle connessioni JMS (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 			
@@ -6670,7 +6670,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura degli identificativi delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura degli identificativi delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 			
@@ -6703,7 +6703,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura degli identificativi di protocollo delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura degli identificativi di protocollo delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 			
@@ -6754,7 +6754,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PD (jmxResourcePdD): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura dello stato delle connessioni http verso le PD (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 			
@@ -6789,7 +6789,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 			}catch(Exception e){
-				this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PA (jmxResourcePdD): "+e.getMessage(),e);
+				this.logError("Errore durante la lettura dello stato delle connessioni http verso le PA (jmxResourcePdD): "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 			
@@ -6862,7 +6862,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 					}
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura dello stato del thread pool per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura dello stato del thread pool per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 				
@@ -6891,7 +6891,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						configurazioneCoda = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 					}
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura della configurazione del thread pool '"+labelCoda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura della configurazione del thread pool '"+labelCoda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
 					configurazioneCoda = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 				
@@ -6920,7 +6920,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						connettoriPrioritari = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 					}
 				}catch(Exception e){
-					this.log.error("Errore durante la lettura dei connettori prioritari del thread pool '"+labelCoda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+					this.logError("Errore durante la lettura dei connettori prioritari del thread pool '"+labelCoda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
 					connettoriPrioritari = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
 				
@@ -7100,7 +7100,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try{
 				stato = AllarmiUtils.getActiveThreadImages(this.log, alarmEngineConfig);
 			}catch(Exception e){
-				this.log.error("Riscontrato errore durante la lettura dello stato degli allarmi attivi: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura dello stato degli allarmi attivi: "+e.getMessage(),e);
 				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 			
@@ -7214,7 +7214,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return !TimerState.OFF.equals(timerState);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul '"+nomeAttributo+"' (jmxResourcePdD): "+e.getMessage(),e);
+			this.logError("Errore durante la lettura delle informazioni sul '"+nomeAttributo+"' (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, labelParametro);
 			return false;
 		}
@@ -7222,7 +7222,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 	public boolean isErroreHttp(String stato, String risorsa){
 		if(stato!=null && stato.startsWith("[httpCode ")){
-			this.log.error("Errore durante la lettura della risorsa ["+risorsa+"]: "+stato);
+			this.logError("Errore durante la lettura della risorsa ["+risorsa+"]: "+stato);
 			return true;
 		}
 		return false;
@@ -8574,7 +8574,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -9180,7 +9180,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -9530,7 +9530,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				policy.setId(l);
 			}catch(Exception e){
 				String messaggio = "Il valore ("+id+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
-				this.log.error(messaggio,e);
+				this.logError(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
 		}
@@ -9545,7 +9545,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				policy.setSimultanee(this.isTipoRisorsaNumeroRichiesteSimultanee(valoreDataElementRisorsa));
 			}catch(Exception e){
 				String messaggio = "Il valore ("+valoreDataElementRisorsa+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA+"' non è tra i tipi di risorsa gestiti";
-				this.log.error(messaggio,e);
+				this.logError(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
 		}
@@ -9578,7 +9578,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			tipoRisorsa = TipoRisorsa.toEnumConstant(policy.getRisorsa(), true);
 		}catch(Exception e){
 			String messaggio = "Il valore ("+policy.getRisorsa()+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA+"' non è tra le risorse gestite";
-			this.log.error(messaggio,e);
+			this.logError(messaggio,e);
 			this.addParsingError(sbParsingError,messaggio);
 		}
 		
@@ -9597,7 +9597,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}catch(Exception e){
 				String label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TIPO_BANDA;
 				String messaggio = "Il valore ("+tipoBanda+") indicato in '"+label+"' non rientra tra i tipi conosciuti";
-				this.log.error(messaggio,e);
+				this.logError(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
 		}
@@ -9626,7 +9626,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_TIPO_LATENZA;
 				}
 				String messaggio = "Il valore ("+tipoLatenza+") indicato in '"+label+"' non rientra tra i tipi conosciuti";
-				this.log.error(messaggio,e);
+				this.logError(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
 		}
@@ -9647,7 +9647,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}catch(Exception e){
 					String label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RISPOSTA_LABEL;
 					String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
-					this.log.error(messaggio,e);
+					this.logError(messaggio,e);
 					this.addParsingError(sbParsingError,messaggio);
 				}
 			}
@@ -9673,7 +9673,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL;
 					}
 					String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
-					this.log.error(messaggio,e);
+					this.logError(messaggio,e);
 					this.addParsingError(sbParsingError,messaggio);
 				}
 			}
@@ -9707,7 +9707,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 				}catch(Exception e){
 					String messaggio = "Il valore ("+modalitaControllo+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_CONTROLLO+"' non rientra tra le modalità conosciute";
-					this.log.error(messaggio,e);
+					this.logError(messaggio,e);
 					this.addParsingError(sbParsingError,messaggio);
 				}
 			}
@@ -9729,7 +9729,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							}catch(Exception eInterno){
 								// NOTA: Viene registrato volutamente l'errore più esterno
 								String messaggio = "Il valore ("+tipoControlloPeriodo+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_PERIODO+"' non rientra tra gli intervalli conosciuti";
-								this.log.error(messaggio,e);
+								this.logError(messaggio,e);
 								this.addParsingError(sbParsingError,messaggio);
 							}
 						}
@@ -9746,7 +9746,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							}catch(Exception eInterno){
 								// NOTA: Viene registrato volutamente l'errore più esterno
 								String messaggio = "Il valore ("+tipoControlloPeriodo+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_PERIODO+"' non rientra tra gli intervalli conosciuti";
-								this.log.error(messaggio,e);
+								this.logError(messaggio,e);
 								this.addParsingError(sbParsingError,messaggio);
 							}
 						}
@@ -9769,7 +9769,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							labelPeriodo = this.getLabel(policy.getTipoIntervalloOsservazioneStatistico());
 						}
 						String messaggio = "Il valore ("+periodo+") indicato in '"+labelPeriodo+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
-						this.log.error(messaggio,e);
+						this.logError(messaggio,e);
 						this.addParsingError(sbParsingError,messaggio);
 					}
 				}
@@ -9804,7 +9804,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							policy.setFinestraOsservazione(TipoFinestra.toEnumConstant(finestraPeriodo, true));
 						}catch(Exception e){
 							String messaggio = "Il valore ("+finestraPeriodo+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_FINESTRA_PERIODO+"' non rientra tra le finestre conosciute";
-							this.log.error(messaggio,e);
+							this.logError(messaggio,e);
 							this.addParsingError(sbParsingError,messaggio);
 						}
 					}
@@ -9847,7 +9847,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}catch(Exception e){
 					String label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RICHIESTA_LABEL;
 					String messaggio = "Il valore ("+valore2+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
-					this.log.error(messaggio,e);
+					this.logError(messaggio,e);
 					this.addParsingError(sbParsingError,messaggio);
 				}				
 			}
@@ -9969,7 +9969,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}catch(Exception e){
 				String messaggio = "Il valore ("+modalitaControllo+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_CONTROLLO+"' non rientra tra le modalità conosciute";
-				this.log.error(messaggio,e);
+				this.logError(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
 					
@@ -9987,7 +9987,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}catch(Exception e){
 				String messaggio = "Il valore ("+tipoLatenza+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_LATENZA+"' non rientra tra i tipi conosciuti";
-				this.log.error(messaggio,e);
+				this.logError(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
 
@@ -10006,7 +10006,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}catch(Exception eInterno){
 							// NOTA: Viene registrato volutamente l'errore più esterno
 							String messaggio = "Il valore ("+tipoControlloPeriodo+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_PERIODO+"' non rientra tra gli intervalli conosciuti";
-							this.log.error(messaggio,e);
+							this.logError(messaggio,e);
 							this.addParsingError(sbParsingError,messaggio);
 						}
 					}
@@ -10023,7 +10023,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}catch(Exception eInterno){
 							// NOTA: Viene registrato volutamente l'errore più esterno
 							String messaggio = "Il valore ("+tipoControlloPeriodo+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_PERIODO+"' non rientra tra gli intervalli conosciuti";
-							this.log.error(messaggio,e);
+							this.logError(messaggio,e);
 							this.addParsingError(sbParsingError,messaggio);
 						}
 					}
@@ -10059,7 +10059,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						labelIntervallo = this.getLabel(policy.getDegradoAvgTimeTipoIntervalloOsservazioneStatistico());
 					}
 					String messaggio = "Il valore ("+periodo+") indicato in '"+labelIntervallo+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
-					this.log.error(messaggio,e);
+					this.logError(messaggio,e);
 					this.addParsingError(sbParsingError,messaggio);
 				}
 			}
@@ -10094,7 +10094,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						policy.setDegradoAvgTimeFinestraOsservazione(TipoFinestra.toEnumConstant(finestraPeriodo, true));
 					}catch(Exception e){
 						String messaggio = "Il valore ("+finestraPeriodo+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_FINESTRA_PERIODO+"' non rientra tra le finestre conosciute";
-						this.log.error(messaggio,e);
+						this.logError(messaggio,e);
 						this.addParsingError(sbParsingError,messaggio);
 					}
 				}
@@ -10161,7 +10161,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}catch(Exception e){
 					String messaggio = "Lo stato ("+stato+") selezionato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO+
 							"' non risulta tra quelli gestiti";
-					this.log.error(messaggio,e);
+					this.logError(messaggio,e);
 					this.addParsingError(sbParsingError,messaggio);
 				}
 			}
@@ -11700,7 +11700,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 			}catch(Exception eError){
-				this.log.error(eError.getMessage(),eError);
+				this.logError(eError.getMessage(),eError);
 			}
 		}
 		if(allarmi_id==null){
@@ -12112,7 +12112,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 			}catch(Exception eError){
-				this.log.error(eError.getMessage(),eError);
+				this.logError(eError.getMessage(),eError);
 			}
 
 			if(allarmi==null || allarmi.size()<=0){
@@ -12147,7 +12147,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				policy.setId(l);
 			}catch(Exception e){
 				String messaggio = "Il valore ("+id+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
-				this.log.error(messaggio,e);
+				this.logError(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
 		}
@@ -12212,7 +12212,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}catch(Exception e){
 						String label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RISPOSTA_LABEL;
 						String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
-						this.log.error(messaggio,e);
+						this.logError(messaggio,e);
 						this.addParsingError(sbParsingError,messaggio);
 					}
 				}
@@ -12238,7 +12238,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL;
 						}
 						String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
-						this.log.error(messaggio,e);
+						this.logError(messaggio,e);
 						this.addParsingError(sbParsingError,messaggio);
 					}
 				}
@@ -12262,7 +12262,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}catch(Exception e){
 						String label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RICHIESTA_LABEL;
 						String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
-						this.log.error(messaggio,e);
+						this.logError(messaggio,e);
 						this.addParsingError(sbParsingError,messaggio);
 					}
 				}
@@ -12312,7 +12312,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					policy.getFiltro().setRuoloPorta(RuoloPolicy.toEnumConstant(ruoloPdD, true));
 				}catch(Exception e){
 					String messaggio = "Il valore ("+ruoloPdD+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD+"' non è tra i ruoli gestiti";
-					this.log.error(messaggio,e);
+					this.logError(messaggio,e);
 					this.addParsingError(sbParsingError,messaggio);
 				}
 			}
@@ -12792,7 +12792,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				dati.add(de);
 				
 				de = new DataElement();
-				de.setName(parametroRisorsaNome+"__LABEL");
+				de.setName(parametroRisorsaNome+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO);
 				de.setType(DataElementType.TEXT);
 				String labelRisorsaPolicyAttiva = this.getLabelTipoRisorsaPolicyAttiva(valoreRisorsa);
@@ -13332,15 +13332,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					String modalitaRisorsaConvertValue = this.getDataElementValueRisorsa(infoPolicy.getTipoRisorsa(), infoPolicy.isCheckRichiesteSimultanee());
 					String modalitaEsitiConvertValue = this.getDataElementValueRisorsaEsiti(infoPolicy.getTipoRisorsa());
 					addDataElementRisorsa(dati, 
-							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_RISORSA+"__label", modalitaRisorsaConvertValue, 
-							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ESITI+"__label", modalitaEsitiConvertValue,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_RISORSA+CostantiControlStation.PARAMETRO_SUFFIX_LABEL, modalitaRisorsaConvertValue, 
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ESITI+CostantiControlStation.PARAMETRO_SUFFIX_LABEL, modalitaEsitiConvertValue,
 							false);
 					
 					if(!TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(modalitaRisorsaConvertValue)) {
 					
 						if(!infoPolicy.isCheckRichiesteSimultanee()) {
 							de = new DataElement();
-							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO+"__label");
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 							de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
 							de.setType(DataElementType.TEXT);
 							if(infoPolicy.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo()!=null) {
@@ -13358,7 +13358,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						if(infoPolicy.isControlloCongestione()) {
 							de = new DataElement();
-							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE+"__label");
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 							de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
 							de.setType(DataElementType.TEXT);
 							dati.add(de);
@@ -13366,7 +13366,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						if(infoPolicy.isDegradoPrestazione()) {
 							de = new DataElement();
-							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO+"__label");
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 							de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
 							de.setType(DataElementType.TEXT);
 							dati.add(de);
@@ -13377,7 +13377,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				else {
 					
 					de = new DataElement();
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID+"__label");
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
 					de.setType(DataElementType.TEXT);
 					de.setValue(infoPolicy.getIdPolicy());
@@ -16642,7 +16642,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}catch(Exception e){
 					String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
 							CostantiPdD.JMX_CONFIGURAZIONE_PDD+"] (param:"+idAllPolicy+"): "+e.getMessage();
-					this.log.error(errorMessage,e);
+					this.logError(errorMessage,e);
 					resultReset = errorMessage;
 				}
 				
@@ -16658,7 +16658,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}catch(Exception e){
 					String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
 							CostantiPdD.JMX_CONFIGURAZIONE_PDD+"] (param:"+idAllPolicy+"): "+e.getMessage();
-					this.log.error(errorMessage,e);
+					this.logError(errorMessage,e);
 					resultReset = errorMessage;
 				}
 				
@@ -16674,7 +16674,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}catch(Exception e){
 						String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
 								CostantiPdD.JMX_CONFIGURAZIONE_PDD+"] (param:"+idPolicy+"): "+e.getMessage();
-						this.log.error(errorMessage,e);
+						this.logError(errorMessage,e);
 						resultReset = errorMessage;
 					}
 				}
@@ -16705,13 +16705,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}catch(Exception e){
 					String errorMessage = "Errore durante l'invocazione dell'operazione ["+methodName+"] sulla risorsa ["+
 							risorsa+"] (params:"+params+"): "+e.getMessage();
-					this.log.error(errorMessage,e);
+					this.logError(errorMessage,e);
 					resultReset = errorMessage;
 				}
 				
 			}
 		}catch(Exception e){
-			this.log.error("ResetCache:"+e.getMessage(), e);
+			this.logError("ResetCache:"+e.getMessage(), e);
 		}
 		
 		return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_SENZA_RIAVVIO_RICHIESTO;
@@ -16781,15 +16781,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			List<String> lstLabels = new ArrayList<>();
 			
-//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
-//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
 			boolean forceId = attributeAuthority ?
 					this.core.isAttributeAuthorityForceIdEnabled() :
 					this.core.isTokenPolicyForceIdEnabled();
-//			if(!forceId) {
-//				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
-//			}
-//			lstLabels.add(CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER); // inuso
 			
 			lstLabels.add(label);
 			
@@ -16814,42 +16808,42 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setAddButton(true);
 			
 			// preparo bottoni
-			if(lista!=null && lista.size()>0){
-				if (this.core.isShowPulsantiImportExport()) {
+			if(lista!=null && !lista.isEmpty() &&
+				(this.core.isShowPulsantiImportExport()) 
+				){
 
-					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					org.openspcoop2.protocol.sdk.constants.ArchiveType archiveType = attributeAuthority ?
-							org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
-							org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
-					if(exporterUtils.existsAtLeastOneExportMode(archiveType, this.request, this.session)){
+				ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+				org.openspcoop2.protocol.sdk.constants.ArchiveType archiveType = attributeAuthority ?
+						org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
+						org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
+				if(exporterUtils.existsAtLeastOneExportMode(archiveType, this.request, this.session)){
 
-						List<AreaBottoni> bottoni = new ArrayList<>();
+					List<AreaBottoni> bottoni = new ArrayList<>();
 
-						AreaBottoni ab = new AreaBottoni();
-						List<DataElement> otherbott = new ArrayList<>();
-						DataElement de = new DataElement();
-						if(attributeAuthority) {
-							de.setValue(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI);
-							de.setOnClick(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI_ONCLICK);
-						}
-						else {
-							de.setValue(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI);
-							de.setOnClick(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
-						}
-						de.setDisabilitaAjaxStatus();
-						otherbott.add(de);
-						ab.setBottoni(otherbott);
-						bottoni.add(ab);
-
-						this.pd.setAreaBottoni(bottoni);
-
+					AreaBottoni ab = new AreaBottoni();
+					List<DataElement> otherbott = new ArrayList<>();
+					DataElement de = new DataElement();
+					if(attributeAuthority) {
+						de.setValue(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI_ONCLICK);
 					}
+					else {
+						de.setValue(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
+					}
+					de.setDisabilitaAjaxStatus();
+					otherbott.add(de);
+					ab.setBottoni(otherbott);
+					bottoni.add(ab);
+
+					this.pd.setAreaBottoni(bottoni);
 
 				}
+
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -16971,13 +16965,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						String labelValidazione = policyGestioneToken.getAzioniGestioneToken();
 						labelValidazione = labelValidazione.replace("JWT", "ValidazioneJWT");
-						labelValidazione = labelValidazione.replaceAll(",", " - ").trim();
+						labelValidazione = labelValidazione.replace(",", " - ").trim();
 						
 						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
 						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_MODALITA, labelValidazione));
 					
 						String labelForward = policyGestioneToken.getAzioniForwardToken();
-						labelForward = labelForward.replaceAll(",", " - ").trim();
+						labelForward = labelForward.replace(",", " - ").trim();
 						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
 						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_FORWARD, labelForward));
 						
@@ -16985,8 +16979,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							verificaConnettivita = false;
 						}
 						
-					}catch(Throwable t) {
-						this.log.error(t.getMessage(),t);
+					}catch(Exception t) {
+						this.logError(t.getMessage(),t);
 					}
 				
 					if(StringUtils.isNotBlank(policy.getDescrizione())) {
@@ -17002,8 +16996,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						String labelModalita = policyNegoziazione.getLabelGrant();
 						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
 						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_MODALITA, labelModalita));
-					}catch(Throwable t) {
-						this.log.error(t.getMessage(),t);
+					}catch(Exception t) {
+						this.logError(t.getMessage(),t);
 					}
 					
 					if(StringUtils.isNotBlank(policy.getDescrizione())) {
@@ -17089,6 +17083,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.addComandoResetCacheButton(e,policy.getNome(), ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, listaParametriChange);
 		}
 		
+		// Proprieta Button
+		/**if(this.existsProprietaOggetto(policy.getProprietaOggetto(), policy.getDescrizione())) {
+		 * la lista non riporta le proprietà. Ma esistono e poi sarà la servlet a gestirlo
+		 */
+		this.addProprietaOggettoButton(e, policy.getNome(), policy.getId()+"", inUsoType);
+		
 		return e;
 		
 	}
@@ -17123,14 +17123,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(!policyGestioneToken.isIntrospection() && !policyGestioneToken.isUserInfo()) {
 						verificaConnettivita = false;
 					}
-				}catch(Throwable t) {
-					this.log.error(t.getMessage(),t);
+				}catch(Exception t) {
+					this.logError(t.getMessage(),t);
 				}
 			}
 			
 			// In Uso Button
 			InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
-			this.addComandoInUsoButton(dati, nome,
+			this.addComandoInUsoButton(nome,
 					id,
 					inUsoType);
 			
@@ -17152,6 +17152,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
 				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
 				this.pd.addComandoResetCacheElementoButton(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, listaParametriChange);
+			}
+			
+			// Proprieta Button
+			if(this.existsProprietaOggetto(genericProperties.getProprietaOggetto(), genericProperties.getDescrizione())) {
+				this.addComandoProprietaOggettoButton(nome,
+						id, 
+						inUsoType);
 			}
 		}
 		
@@ -17197,7 +17204,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO+"__LABEL");
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO+CostantiControlStation.PARAMETRO_SUFFIX_LABEL);
 				de.setType(DataElementType.TEXT);
 				if(propConfigPolicyGestioneTokenList!=null && propConfigPolicyGestioneTokenList.length>0) {
 					boolean found = false;
@@ -17240,7 +17247,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(2);
 		de.setValue(descrizione);
 		dati.add(de);
 
@@ -17248,7 +17256,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 
-	public boolean policyGestioneTokenCheckData(TipoOperazione tipoOperazione, String nome, String descrizione,	String tipo,String tipologia) throws Exception {
+	public boolean policyGestioneTokenCheckData(TipoOperazione tipoOperazione, String nome, String descrizione,	String tipo,String tipologia) throws DriverControlStationException {
 		
 		if(tipoOperazione.equals(TipoOperazione.ADD)) {
 			// Nome
@@ -17272,13 +17280,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		
 			// Lunghezze
-			if(this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME)==false) {
+			if(!this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME)) {
 				return false;
-			}
-			if(descrizione!=null && !"".equals(descrizione)) {
-				if(this.checkLength255(descrizione, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE)==false) {
-					return false;
-				}
 			}
 			
 			try {
@@ -17290,9 +17293,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			} catch(DriverConfigurazioneNotFound e) {
 				// ok
 			} catch(Exception e) {
-				throw e;
+				throw new DriverControlStationException(e.getMessage(),e);
 			}
 		}
+		
+		// Anche in change
+		if(descrizione!=null && !"".equals(descrizione) &&
+				!this.checkLength4000(descrizione, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE)) {
+			return false;
+		}
+		
+		if(tipoOperazione.equals(TipoOperazione.ADD)) {
+			// nop
+		}
+		
 		return true;
 	}
 	
@@ -17471,7 +17485,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -17607,7 +17621,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -17753,7 +17767,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 		
@@ -17824,7 +17838,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -17923,7 +17937,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 		
@@ -18054,7 +18068,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -18256,7 +18270,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -18487,7 +18501,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -18584,7 +18598,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -18727,7 +18741,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setRemoveButton(visualizzaElimina);
 			this.pd.setSelect(visualizzaElimina);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -18893,7 +18907,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -19148,7 +19162,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -19177,7 +19191,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.addFilter(Filtri.FILTRO_TIPO_PLUGIN_CLASSI, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN, tipoPlugin, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -19206,7 +19220,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.addFilter(Filtri.FILTRO_TIPO_PLUGIN_CLASSI, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN, tipoPlugin, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -19346,7 +19360,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -19853,7 +19867,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										NamingUtils.getLabelAccordoServizioParteSpecifica(protocollo, mappingPA.getIdServizio())+
 										suffixGruppo;
 							}catch(Exception e) {
-								this.log.error("Identificazione erogazione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
+								this.logError("Identificazione erogazione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
 								descrPorta = existsAllarmeBean.getFiltro().getNomePorta();
 							}
 							
@@ -19878,7 +19892,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										" (Fruitore:"+NamingUtils.getLabelSoggetto(protocollo, new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()))+")"+
 										suffixGruppo;
 							}catch(Exception e) {
-								this.log.error("Identificazione fruizione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
+								this.logError("Identificazione fruizione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
 								descrPorta = existsAllarmeBean.getFiltro().getNomePorta();
 							}
 						
@@ -19897,7 +19911,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	} 
@@ -19990,7 +20004,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					try {
 						allarme.setPeriodo(Integer.parseInt(periodoS));
 					}catch(Throwable t) {
-						this.log.error("Periodo indicato non è un intero ["+periodoS+"]: "+t.getMessage(),t);
+						this.logError("Periodo indicato non è un intero ["+periodoS+"]: "+t.getMessage(),t);
 					}
 				}
 				
@@ -20129,7 +20143,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					policy.getFiltro().setRuoloPorta(RuoloPorta.toEnumConstant(ruoloPdD, true));
 				}catch(Exception e){
 					String messaggio = "Il valore ("+ruoloPdD+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD+"' non è tra i ruoli gestiti";
-					this.log.error(messaggio,e);
+					this.logError(messaggio,e);
 					this.addParsingError(sbParsingError,messaggio);
 				}
 			}
@@ -23717,7 +23731,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setRemoveButton(false);
 			this.pd.setSelect(false);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -23951,7 +23965,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}
@@ -24257,7 +24271,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			return true;
 		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
+			this.logError("Exception: " + e.getMessage(), e);
 			throw new DriverControlStationException(e);
 		}
 	}

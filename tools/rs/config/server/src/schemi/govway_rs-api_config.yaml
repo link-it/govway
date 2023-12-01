@@ -1617,6 +1617,71 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /erogazioni/{nome}/{versione}/descrizione:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni
+      summary: Restituisce la descrizione di una erogazione
+      operationId: getErogazioneDescrizione
+      description: Questa operazione consente di ottenere la descrizione di una erogazione identificata dal nome e dalla versione
+      responses:
+        "200":
+          description: Dati della descrizione restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiDescrizione"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni
+      summary: Consente di modificare la descrizione di una erogazione
+      operationId: updateErogazioneDescrizione
+      description: Questa operazione consente di aggiornare la descrizione di una erogazione identificata dal nome e dalla versione
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiDescrizione'
+      responses: 
+        "204":
+          description: La descrizione è stato aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /erogazioni/{nome}/{versione}/allegati:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -2290,6 +2355,72 @@ paths:
       responses: 
         "204":
           description: Azione eliminate con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/descrizione:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-gruppi
+      summary: Restituisce la descrizione del gruppo
+      operationId: getErogazioneDescrizioneGruppo
+      description: Questa operazione consente di ottenere la descrizione del gruppo
+      responses:
+        "200":
+          description: Dati della descrizione restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiDescrizione"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni-gruppi
+      summary: Consente di modificare la descrizione del gruppo
+      operationId: updateErogazioneDescrizioneGruppo
+      description: Questa operazione consente di aggiornare la descrizione del gruppo
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiDescrizione'
+      responses: 
+        "204":
+          description: La descrizione è stato aggiornata correttamente
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -4355,6 +4486,72 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /fruizioni/{erogatore}/{nome}/{versione}/descrizione:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"    
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni
+      summary: Restituisce la descrizione di una fruizione
+      operationId: getFruizioneDescrizione
+      description: Questa operazione consente di ottenere la descrizione di una fruizione identificata dall'erogatore, dal nome e dalla versione
+      responses:
+        "200":
+          description: Dati della descrizione restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiDescrizione"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni
+      summary: Consente di modificare la descrizione di una fruizione
+      operationId: updateFruizioneDescrizione
+      description: Questa operazione consente di aggiornare la descrizione di una erogazione identificata dall'erogatore, dal nome e dalla versione
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiDescrizione'
+      responses: 
+        "204":
+          description: La descrizione è stato aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /fruizioni/{erogatore}/{nome}/{versione}/modi:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -5120,6 +5317,73 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
             
+  /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/descrizione:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_gruppo"         
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-gruppi
+      summary: Restituisce la descrizione del gruppo
+      operationId: getFruizioneDescrizioneGruppo
+      description: Questa operazione consente di ottenere la descrizione del gruppo
+      responses:
+        "200":
+          description: Dati della descrizione restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiDescrizione"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni-gruppi
+      summary: Consente di modificare la descrizione del gruppo
+      operationId: updateFruizioneDescrizioneGruppo
+      description: Questa operazione consente di aggiornare la descrizione del gruppo
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiDescrizione'
+      responses: 
+        "204":
+          description: La descrizione è stato aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/stato:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -7789,12 +8053,10 @@ components:
                     'soap': 'govway_rs-api_config-commons.yaml#/components/schemas/ApiInterfacciaSoap'
     ApiDescrizione:
       type: object
-      required:
-        - descrizione
       properties:
         descrizione:
           type: string
-          maxLength: 255
+          maxLength: 4000
           example: 'descrizione API'
           
     ApiTags:
@@ -8014,6 +8276,7 @@ components:
           properties:
             descrizione:
                 type: string
+                maxLength: 4000
             erogazione_nome:
                 $ref: 'govway_core.yaml#/components/schemas/NCName'
             erogazione_versione:
@@ -8061,6 +8324,7 @@ components:
           properties:
             descrizione:
                 type: string
+                maxLength: 4000
             fruizione_nome:
                 $ref: 'govway_core.yaml#/components/schemas/NCName'
             fruizione_versione:
@@ -8128,7 +8392,7 @@ components:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/DominioEnum'
             descrizione:
               type: string
-              maxLength: 255
+              maxLength: 4000
               example: 'descrizione del soggetto EnteEsterno'
             ruoli:
               type: array
@@ -8180,7 +8444,11 @@ components:
             - nome
           properties:
             nome:
-              $ref: 'govway_core.yaml#/components/schemas/NCName'            
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+            descrizione:
+              type: string
+              maxLength: 4000
+              example: "descrizione dell'applicativo"             
             ruoli:
               type: array
               items:
@@ -8236,6 +8504,10 @@ components:
       properties:
         nome:
           $ref: 'govway_core.yaml#/components/schemas/NCName'            
+        descrizione:
+          type: string
+          maxLength: 4000
+          example: "descrizione dell'applicativo"  
         proprieta:
           type: array
           items:
@@ -8295,7 +8567,7 @@ components:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         descrizione:
           type: string
-          maxLength: 255
+          maxLength: 4000
           example: 'descrizione del ruolo' 
         fonte:
           $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FonteEnum'
@@ -8341,7 +8613,7 @@ components:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         descrizione:
           type: string
-          maxLength: 255
+          maxLength: 4000
           example: 'descrizione dello scope' 
         identificativo_esterno:
           type: string

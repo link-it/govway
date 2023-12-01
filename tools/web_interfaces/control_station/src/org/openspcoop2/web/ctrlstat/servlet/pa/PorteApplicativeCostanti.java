@@ -599,6 +599,7 @@ public class PorteApplicativeCostanti {
 	public static final String LABEL_PA_MENU_VISUALE_AGGREGATA = "Porte Applicative";
 	
 	public static final String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE = "URL Invocazione";
+	public static final String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";
 	public static final String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI = "Dati Generali";
 	public static final String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_SERVIZIO = "Dati Servizio";
 	public static final String LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA = "Abilitato";
@@ -618,6 +619,7 @@ public class PorteApplicativeCostanti {
 	public static final String PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO = "nomeprov";
 	
 	public static final String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_DATI_INVOCAZIONE;
+	public static final String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DESCRIZIONE = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_DESCRIZIONE;
 	public static final String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_ALTRO_PORTA;
 	public static final String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API = CostantiControlStation.PARAMETRO_CONFIGURAZIONE_ALTRO_API;
 	public static final String PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS = CostantiControlStation.PARAMETRO_CONNETTORE_DA_LISTA_APS;
@@ -890,6 +892,7 @@ public class PorteApplicativeCostanti {
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI = "Opzioni Avanzate di ";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";
+	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE_DI = "Descrizione di ";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI_EROGATORI = "Applicativi Erogatori";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_EROGATORE = "Applicativo Erogatore";
 	public static final String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE = "Valore";

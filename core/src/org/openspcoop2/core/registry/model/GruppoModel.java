@@ -40,6 +40,7 @@ public class GruppoModel extends AbstractModel<Gruppo> {
 	
 		super();
 	
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new Field("proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"gruppo",Gruppo.class));
 		this.NOME = new Field("nome",java.lang.String.class,"gruppo",Gruppo.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"gruppo",Gruppo.class);
 		this.SERVICE_BINDING = new Field("service-binding",java.lang.String.class,"gruppo",Gruppo.class);
@@ -52,6 +53,7 @@ public class GruppoModel extends AbstractModel<Gruppo> {
 	
 		super(father);
 	
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new ComplexField(father,"proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"gruppo",Gruppo.class));
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"gruppo",Gruppo.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"gruppo",Gruppo.class);
 		this.SERVICE_BINDING = new ComplexField(father,"service-binding",java.lang.String.class,"gruppo",Gruppo.class);
@@ -62,6 +64,8 @@ public class GruppoModel extends AbstractModel<Gruppo> {
 	
 	
 
+	public org.openspcoop2.core.registry.model.ProprietaOggettoModel PROPRIETA_OGGETTO = null;
+	 
 	public IField NOME = null;
 	 
 	public IField DESCRIZIONE = null;

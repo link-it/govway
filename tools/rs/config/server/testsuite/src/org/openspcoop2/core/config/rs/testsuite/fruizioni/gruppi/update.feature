@@ -21,9 +21,12 @@ Background:
 * def fruizione_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.api_nome + '/' + fruizione_petstore.api_versione
 * def fruizione_petstore_path = 'fruizioni/' + fruizione_key
 
-
 * def gruppo_petstore = read('gruppo_petstore.json')
 * def gruppo_update = read('gruppo_nome.json')
+
+* def descrizione_4000 = read('../../api/api_descrizione_4000.json')
+* def descrizione_4001 = read('../../api/api_descrizione_4001.json')
+* def descrizione_null = read('../../api/api_descrizione_null.json')
 
 @Update204
 Scenario: Update Gruppi Fruizioni 204
@@ -52,3 +55,54 @@ Scenario: Update Gruppi Fruizioni 404
     * call delete ({ resourcePath: api_petstore_path })
 
 
+@UpdateDescrizione
+Scenario: Gruppi Fruizioni Update Descrizione 204
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+    * call create ({ resourcePath: fruizione_petstore_path + '/gruppi', body: gruppo_petstore })
+
+    Given url configUrl
+    And path fruizione_petstore_path, 'gruppi', gruppo_petstore.nome , 'descrizione'
+    And header Authorization = govwayConfAuth
+    And request descrizione_4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path fruizione_petstore_path, 'gruppi', gruppo_petstore.nome , 'descrizione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == descrizione_4000.descrizione
+
+    Given url configUrl
+    And path fruizione_petstore_path, 'gruppi', gruppo_petstore.nome , 'descrizione'
+    And header Authorization = govwayConfAuth
+    And request descrizione_4001
+    When method put
+    Then status 400
+
+    * match response.detail contains 'Max length is \'4000\', found \'4001\''
+
+    Given url configUrl
+    And path fruizione_petstore_path, 'gruppi', gruppo_petstore.nome , 'descrizione'
+    And header Authorization = govwayConfAuth
+    And request descrizione_null
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path fruizione_petstore_path, 'gruppi', gruppo_petstore.nome , 'descrizione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == '#notpresent'
+    
+    * call delete ({ resourcePath: fruizione_petstore_path + '/gruppi/' + gruppo_petstore.nome})
+    * call delete ({ resourcePath: fruizione_petstore_path })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })

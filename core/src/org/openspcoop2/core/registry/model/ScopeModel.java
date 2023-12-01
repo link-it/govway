@@ -40,6 +40,7 @@ public class ScopeModel extends AbstractModel<Scope> {
 	
 		super();
 	
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new Field("proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"scope",Scope.class));
 		this.NOME = new Field("nome",java.lang.String.class,"scope",Scope.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"scope",Scope.class);
 		this.TIPOLOGIA = new Field("tipologia",java.lang.String.class,"scope",Scope.class);
@@ -54,6 +55,7 @@ public class ScopeModel extends AbstractModel<Scope> {
 	
 		super(father);
 	
+		this.PROPRIETA_OGGETTO = new org.openspcoop2.core.registry.model.ProprietaOggettoModel(new ComplexField(father,"proprieta-oggetto",org.openspcoop2.core.registry.ProprietaOggetto.class,"scope",Scope.class));
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"scope",Scope.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"scope",Scope.class);
 		this.TIPOLOGIA = new ComplexField(father,"tipologia",java.lang.String.class,"scope",Scope.class);
@@ -66,6 +68,8 @@ public class ScopeModel extends AbstractModel<Scope> {
 	
 	
 
+	public org.openspcoop2.core.registry.model.ProprietaOggettoModel PROPRIETA_OGGETTO = null;
+	 
 	public IField NOME = null;
 	 
 	public IField DESCRIZIONE = null;

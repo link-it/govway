@@ -13,6 +13,9 @@ Background:
 * eval randomize( info_generali, ["nome"])
 
 * def descrizione = read('api_descrizione.json')
+* def descrizione_4000 = read('api_descrizione_4000.json')
+* def descrizione_4001 = read('api_descrizione_4001.json')
+* def descrizione_null = read('api_descrizione_null.json')
 
 * def tags = read('api_tags.json')
 
@@ -30,6 +33,58 @@ Scenario: Api Update Info Generali 204
 Scenario: Api Update Descrizione 204
 
     * call update_204 ( { resourcePath: 'api', body: api, body_update: descrizione, key: api.nome + '/' + api.versione + '/descrizione', delete_key: api.nome + '/' + api.versione } )
+
+@UpdateDescrizione204_4000
+Scenario: Api Update Descrizione 204 (4000 characters)
+
+    * call update_204 ( { resourcePath: 'api', body: api, body_update: descrizione_4000, key: api.nome + '/' + api.versione + '/descrizione', delete_key: api.nome + '/' + api.versione } )
+
+@UpdateDescrizione
+Scenario: Api Update Descrizione dove si imposta 4000 e poi null
+
+    * call create ({ resourcePath: 'api', body: api })
+
+    Given url configUrl
+    And path 'api', api.nome + '/' + api.versione , 'descrizione'
+    And header Authorization = govwayConfAuth
+    And request descrizione_4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'api', api.nome + '/' + api.versione , 'descrizione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == descrizione_4000.descrizione
+
+    Given url configUrl
+    And path 'api', api.nome + '/' + api.versione , 'descrizione'
+    And header Authorization = govwayConfAuth
+    And request descrizione_null
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'api', api.nome + '/' + api.versione , 'descrizione'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == '#notpresent'
+
+    * def api_path = 'api/' + api.nome + '/' + api.versione
+    * call delete ({ resourcePath: api_path } )
+
+@UpdateDescrizione400_4001
+Scenario: Api Update Descrizione 400 (4001 characters)
+
+    * call create ({ resourcePath: 'api', body: api })
+    * call update_400 ( { resourcePath: 'api/' +api.nome + '/' + api.versione + '/descrizione', body: descrizione_4001 } )
+    * match response.detail contains 'Max length is \'4000\', found \'4001\''
+    * def api_path = 'api/' + api.nome + '/' + api.versione
+    * call delete ({ resourcePath: api_path } )
 
 @UpdateTags204
 Scenario: Api Update Tags 204

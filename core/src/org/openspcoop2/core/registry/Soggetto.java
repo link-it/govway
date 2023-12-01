@@ -44,6 +44,7 @@ import java.util.List;
  * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/registry}credenziali-soggetto" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/registry}ruoli-soggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="accordo-servizio-parte-specifica" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-specifica" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/registry}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/&gt;
@@ -72,7 +73,8 @@ import java.util.List;
   	"protocolProperty",
   	"credenziali",
   	"ruoli",
-  	"accordoServizioParteSpecifica"
+  	"accordoServizioParteSpecifica",
+  	"proprietaOggetto"
   }
 )
 
@@ -201,6 +203,14 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
 
   public int sizeAccordoServizioParteSpecificaList() {
     return this.accordoServizioParteSpecifica.size();
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.String getSuperUser() {
@@ -415,6 +425,9 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   public int sizeAccordoServizioParteSpecifica() {
   	return this.sizeAccordoServizioParteSpecificaList();
   }
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

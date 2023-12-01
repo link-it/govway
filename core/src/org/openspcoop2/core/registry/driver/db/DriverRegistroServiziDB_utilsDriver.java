@@ -24,11 +24,14 @@ package org.openspcoop2.core.registry.driver.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.registry.ProprietaOggetto;
+import org.openspcoop2.core.registry.beans.ProprietaOggettoSintetico;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -774,5 +777,43 @@ public class DriverRegistroServiziDB_utilsDriver {
 				JDBCUtilities.closeResources(stmtTest);
 			}
 		}
+	}
+	
+	public static ProprietaOggetto readProprietaOggetto(ResultSet rs, boolean useAlias) throws SQLException {
+		ProprietaOggetto p = null;
+		// Proprieta Oggetto
+		if(rs!=null) {
+			String utenteRichiedente = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_RICHIEDENTE : CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			java.util.Date dataCreazione  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_CREAZIONE : CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			String utenteUltimaModifica = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			java.util.Date dataUltimaModifica  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
+			if(utenteRichiedente!=null || dataCreazione!=null || utenteUltimaModifica!=null || dataUltimaModifica!=null) {
+				p = new ProprietaOggetto();
+				p.setUtenteRichiedente(utenteRichiedente);
+				p.setDataCreazione(dataCreazione);
+				p.setUtenteUltimaModifica(utenteUltimaModifica);
+				p.setDataUltimaModifica(dataUltimaModifica);
+			}
+		}
+		return p;
+	}
+	
+	public static ProprietaOggettoSintetico readProprietaOggettoSintetico(ResultSet rs, boolean useAlias) throws SQLException {
+		ProprietaOggettoSintetico p = null;
+		// Proprieta Oggetto
+		if(rs!=null) {
+			String utenteRichiedente = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_RICHIEDENTE : CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			java.util.Date dataCreazione  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_CREAZIONE : CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			String utenteUltimaModifica = rs.getString(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_UTENTE_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			java.util.Date dataUltimaModifica  = rs.getTimestamp(useAlias ? CostantiDB.PROPRIETA_OGGETTO_ALIAS_DATA_ULTIMA_MODIFICA : CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
+			if(utenteRichiedente!=null || dataCreazione!=null || utenteUltimaModifica!=null || dataUltimaModifica!=null) {
+				p = new ProprietaOggettoSintetico();
+				p.setUtenteRichiedente(utenteRichiedente);
+				p.setDataCreazione(dataCreazione);
+				p.setUtenteUltimaModifica(utenteUltimaModifica);
+				p.setDataUltimaModifica(dataUltimaModifica);
+			}
+		}
+		return p;
 	}
 }

@@ -1039,4 +1039,15 @@ public class DataElement implements Serializable {
 		
 		return false;
 	}
+	
+	public void addInfoAuditDataCreazione(String tooltip, String value) {
+		this.addStatus(tooltip, value, Costanti.ICON_SCHEDULE);
+	}
+	public void addInfoAuditDataAggiornamento(String tooltip, String value) {
+		this.addStatus(tooltip, value, Costanti.ICON_UPDATE);
+	}
+	public void addInfoAuditUtente(String tooltip, String value) {
+		this.addStatus(tooltip, value, Costanti.ICON_PERSON);
+	}
+	
 }

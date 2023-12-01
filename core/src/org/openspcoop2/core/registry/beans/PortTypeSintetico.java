@@ -61,7 +61,7 @@ public class PortTypeSintetico extends org.openspcoop2.utils.beans.BaseBean impl
 	
 	private Long id;
 
-	private List<OperationSintetica> azione = new ArrayList<OperationSintetica>();
+	private List<OperationSintetica> azione = new ArrayList<>();
 
 	private java.lang.String profiloPT;
 

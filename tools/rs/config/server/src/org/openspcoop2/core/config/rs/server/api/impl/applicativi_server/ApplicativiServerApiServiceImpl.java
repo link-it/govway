@@ -409,6 +409,7 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 			final ServizioApplicativo newSa = ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore);
 			
 			newSa.setNome(tmpSa.getNome());
+			newSa.setDescrizione(tmpSa.getDescrizione());
 			newSa.setIdSoggetto(tmpSa.getIdSoggetto());
 			newSa.setNomeSoggettoProprietario(tmpSa.getNomeSoggettoProprietario());
 			newSa.setTipoSoggettoProprietario(tmpSa.getTipoSoggettoProprietario());		

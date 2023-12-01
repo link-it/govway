@@ -27,10 +27,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -67,7 +69,12 @@ public class RuoliHelper extends ConsoleHelper{
 	}
 
 	public List<DataElement> addRuoloToDati(TipoOperazione tipoOP, Long ruoloId, String nome, String descrizione, String tipologia,
-			String nomeEsterno, String contesto, List<DataElement> dati, String oldNomeRuolo) {
+			String nomeEsterno, String contesto, List<DataElement> dati, String oldNomeRuolo) throws DriverConfigurazioneException {
+		
+		Ruolo ruolo = null;
+		if(TipoOperazione.CHANGE.equals(tipoOP) && oldNomeRuolo!=null && StringUtils.isNotEmpty(oldNomeRuolo)){
+			ruolo = this.ruoliCore.getRuolo(oldNomeRuolo);
+		}
 		
 		if(TipoOperazione.CHANGE.equals(tipoOP)){
 		
@@ -76,7 +83,7 @@ public class RuoliHelper extends ConsoleHelper{
 			listaParametriChange.add(pId);
 			
 			// In Uso Button
-			this.addComandoInUsoButton(dati, nome,
+			this.addComandoInUsoButton(nome,
 					nome,
 					InUsoType.RUOLO);
 			
@@ -86,7 +93,12 @@ public class RuoliHelper extends ConsoleHelper{
 				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
 				this.pd.addComandoResetCacheElementoButton(RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE, listaParametriChange);
 			}		
-						
+					
+			// Proprieta Button
+			if(ruolo!=null && this.existsProprietaOggetto(ruolo.getProprietaOggetto(), ruolo.getDescrizione())) {
+				this.addComandoProprietaOggettoButton(nome,
+						nome, InUsoType.RUOLO);
+			}
 		}
 		
 		
@@ -117,7 +129,8 @@ public class RuoliHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE);
 		de.setValue(descrizione);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(2);
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
 		de.setSize( getSize());
 		dati.add(de);
@@ -198,7 +211,7 @@ public class RuoliHelper extends ConsoleHelper{
 			}
 			
 			if(descrizione!=null && !"".equals(descrizione) &&
-				!this.checkLength255(descrizione, RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE)) {
+				!this.checkLength4000(descrizione, RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE)) {
 				return false;
 			}
 			if(nomeEsterno!=null && !"".equals(nomeEsterno) &&
@@ -527,6 +540,12 @@ public class RuoliHelper extends ConsoleHelper{
 			this.addComandoResetCacheButton(e, ruolo.getNome(), RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE, listaParametriChange);
 		}
 		
+		// Proprieta Button
+		/**if(this.existsProprietaOggetto(ruolo.getProprietaOggetto(), ruolo.getDescrizione())) {
+		 * ** la lista non riporta le proprietà. Ma esistono e poi sarà la servlet a gestirlo
+		 */
+		this.addProprietaOggettoButton(e, ruolo.getNome(), ruolo.getNome(), InUsoType.RUOLO);
+				
 		return e;
 	}
 	

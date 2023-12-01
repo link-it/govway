@@ -28,6 +28,7 @@ import java.util.Map;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -99,6 +100,34 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverConfigurazioneDB().getServizioApplicativo(idServizioApplicativo);
+
+		} 
+		catch (DriverConfigurazioneNotFound  e) {
+			// Lasciare DEBUG, usato anche in servizio API RS
+			ControlStationCore.logDebug("[ControlStationCore::" + nomeMetodo + "] ExceptionNotFound :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(),e);
+		}
+		catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public ProprietaOggetto getProprietaOggetto(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getProprietaOggetto(IDServizioApplicativo)";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getProprietaOggetto(idServizioApplicativo);
 
 		} 
 		catch (DriverConfigurazioneNotFound  e) {

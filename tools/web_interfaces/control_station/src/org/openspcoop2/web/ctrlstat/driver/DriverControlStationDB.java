@@ -83,6 +83,7 @@ import org.openspcoop2.core.plugins.utils.handlers.HandlersDriverUtils;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -138,6 +139,16 @@ public class DriverControlStationDB  {
 
 	/** Logger utilizzato per debug. */
 	private org.slf4j.Logger log = null;
+	public void logDebug(String msg) {
+		if(this.log!=null) {
+			this.log.debug(msg);
+		}
+	}
+	public void logDebug(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.debug(msg,e);
+		}
+	}
 
 	// Tipo database passato al momento della creazione dell'oggetto
 	private String tipoDB = null;
@@ -276,7 +287,7 @@ public class DriverControlStationDB  {
 	private void releaseConnection(Connection con) {
 		try {
 			if (this.atomica) {
-				this.log.debug("rilascio connessioni al db...");
+				this.logDebug("rilascio connessioni al db...");
 				con.close();
 			}
 		} catch (Exception e) {
@@ -295,7 +306,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -316,7 +327,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -338,7 +349,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -563,7 +574,7 @@ public class DriverControlStationDB  {
 			}
 			try {
 				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
+					this.logDebug("rilascio connessioni al db...");
 					con.close();
 				}
 
@@ -789,7 +800,7 @@ public class DriverControlStationDB  {
 			}
 			try {
 				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
+					this.logDebug("rilascio connessioni al db...");
 					con.close();
 				}
 
@@ -808,7 +819,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "soggettiWithServer";
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			SoggettoCtrlStat scs = null;
@@ -871,7 +882,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -893,7 +904,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -914,7 +925,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -935,7 +946,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -956,7 +967,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -977,7 +988,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -998,7 +1009,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1020,7 +1031,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1043,7 +1054,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1064,7 +1075,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1085,7 +1096,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1106,7 +1117,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1127,7 +1138,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1148,7 +1159,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1165,7 +1176,7 @@ public class DriverControlStationDB  {
 	private void initMappingErogazione_releaseConnectionGestioneErrore(boolean error, Connection con) {
 		try {
 			if (error && this.atomica) {
-				this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+				this.logDebug("eseguo rollback a causa di errori e rilascio connessioni...");
 				if(con!=null) {
 					con.rollback();
 					con.setAutoCommit(true);
@@ -1173,7 +1184,7 @@ public class DriverControlStationDB  {
 				}
 
 			} else if (!error && this.atomica) {
-				this.log.debug("eseguo commit e rilascio connessioni...");
+				this.logDebug("eseguo commit e rilascio connessioni...");
 				if(con!=null) {
 					con.commit();
 					con.setAutoCommit(true);
@@ -1268,7 +1279,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1289,7 +1300,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1310,7 +1321,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1331,7 +1342,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1454,7 +1465,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1493,7 +1504,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1512,7 +1523,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1532,7 +1543,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1551,7 +1562,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -1679,7 +1690,7 @@ public class DriverControlStationDB  {
 			}
 			try {
 				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
+					this.logDebug("rilascio connessioni al db...");
 					con.close();
 				}
 
@@ -1705,7 +1716,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		ConfigurazioneGenerale config = null;
 		try {
 			config = ControlloTrafficoDriverUtils.getConfigurazioneControlloTraffico(con, this.log, this.tipoDB);
@@ -1729,7 +1740,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			ControlloTrafficoDriverUtils.updateConfigurazioneControlloTraffico(configurazioneControlloTraffico, con, this.log, this.tipoDB);
@@ -1747,7 +1758,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		List<Proprieta> l = null;
 		try {
 			l = ControlloTrafficoDriverUtils.getProprietaRateLimiting(con, this.log, this.tipoDB);
@@ -1772,7 +1783,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		long count = 0;
 		try {
 			count = ControlloTrafficoDriverUtils.countConfigurazioneControlloTrafficoConfigurazionePolicy(ricerca, con, this.log, this.tipoDB);
@@ -1798,7 +1809,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		long count = 0;
 		try {
 			count = ControlloTrafficoDriverUtils.countConfigurazioneControlloTrafficoAttivazionePolicy(ricerca, ruoloPorta, nomePorta, con, this.log, this.tipoDB);
@@ -1818,7 +1829,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		List<ConfigurazionePolicy> listaPolicy = new ArrayList<ConfigurazionePolicy>();
 		
 		try {
@@ -1840,7 +1851,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		List<ConfigurazionePolicy> listaPolicy = new ArrayList<ConfigurazionePolicy>();
 		
 		try {
@@ -1862,7 +1873,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			ControlloTrafficoDriverUtils.updatePosizioneAttivazionePolicy(infoPolicy, policy,
@@ -1913,7 +1924,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		List<AttivazionePolicy> listaPolicy = null;
 		List<TipoRisorsaPolicyAttiva> listaTipoRisorsa = null;
 		
@@ -1954,7 +1965,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		AttivazionePolicy policy = null;
 		
 		try {
@@ -1979,7 +1990,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		List<InfoPolicy> listaPolicy = new ArrayList<InfoPolicy>();
 		
 		try {
@@ -2000,7 +2011,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		List<AttivazionePolicy> listaPolicy = new ArrayList<AttivazionePolicy>();
 		
 		try {
@@ -2021,7 +2032,7 @@ public class DriverControlStationDB  {
 
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try {
 			return ControlloTrafficoDriverUtils.countInUseAttivazioni(idPolicy, escludiDisabilitate, con, this.log, this.tipoDB);
 		} catch (Exception qe) {
@@ -2036,7 +2047,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		ConfigurazionePolicy policy = null;
 		
 		try {
@@ -2057,7 +2068,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		ConfigurazionePolicy policy = null;
 		
 		try {
@@ -2078,7 +2089,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try {
 			ControlloTrafficoDriverUtils.createConfigurazionePolicy(policy, con, this.log, this.tipoDB);
 		} catch (Exception qe) {
@@ -2093,7 +2104,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try {
 			ControlloTrafficoDriverUtils.createAttivazionePolicy(policy, con, this.log, this.tipoDB);		
 		} catch (Exception qe) {
@@ -2108,7 +2119,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try {
 			ControlloTrafficoDriverUtils.updateConfigurazionePolicy(policy, con, this.log, this.tipoDB);
 		}catch (NotFoundException e) {
@@ -2125,7 +2136,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try {
 			ControlloTrafficoDriverUtils.updateAttivazionePolicy(policy, con, this.log, this.tipoDB);
 		}catch (NotFoundException e) {
@@ -2142,7 +2153,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try {
 			ControlloTrafficoDriverUtils.deleteConfigurazionePolicy(policy, con, this.log, this.tipoDB);			
 		} catch (Exception qe) {
@@ -2157,7 +2168,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try {
 			ControlloTrafficoDriverUtils.deleteAttivazionePolicy(policy, con, this.log, this.tipoDB);
 		} catch (Exception qe) {
@@ -2172,7 +2183,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		AttivazionePolicy policy = null;
 		
 		try {
@@ -2193,7 +2204,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		AttivazionePolicy policy = null;
 		
 		try {
@@ -2214,7 +2225,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try{
 			return ControlloTrafficoDriverUtils.getNextPolicyInstanceSerialId(policyId, con, this.log, this.tipoDB);		
@@ -2231,7 +2242,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			return ControlloTrafficoDriverUtils.getPolicy(policyId, filtroParam, groupBy,
 					ruoloPorta, nomePorta, con, this.log, this.tipoDB);
@@ -2250,7 +2261,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			return ControlloTrafficoDriverUtils.getPolicyByAlias(alias,
 					ruoloPorta, nomePorta, con, this.log, this.tipoDB);
@@ -2268,7 +2279,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			return ControlloTrafficoDriverUtils.getPolicyByServizioApplicativo(idServizioApplicativo, con, this.log, this.tipoDB);
 		}catch (NotFoundException e) {
@@ -2287,7 +2298,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return ControlloTrafficoDriverUtils.usedInConfigurazioneControlloTrafficoAttivazionePolicy(ruoloPorta, nomePorta, azione, con, this.log, this.tipoDB);			
@@ -2304,7 +2315,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con); 
@@ -2327,7 +2338,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			if(protocolloSelezionato!=null) {
@@ -2348,7 +2359,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			if(protocolloSelezionato!=null) {
@@ -2369,7 +2380,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			if(protocolloSelezionato!=null) {
@@ -2393,7 +2404,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			if(protocolloSelezionato!=null) {
@@ -2417,7 +2428,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			if(protocolloSelezionato!=null) {
@@ -2438,7 +2449,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			if(protocolloSelezionato!=null) {
@@ -2463,7 +2474,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			if(protocolloSelezionato!=null) {
@@ -2490,7 +2501,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			if(protocolloSelezionato!=null) {
@@ -2513,7 +2524,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			if(protocolloSelezionato!=null) {
@@ -2549,7 +2560,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			return RegistroCore.getErogazioni(serviceManager, protocolli, gruppo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, nomeAzione);
@@ -2580,7 +2591,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
 			return RegistroCore.getFruizioni(serviceManager, protocolli, gruppo, tipoSoggetto, nomeSoggetto, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, nomeAzione);
@@ -2597,7 +2608,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -2616,7 +2627,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -2635,7 +2646,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -2654,7 +2665,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -2673,7 +2684,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 
@@ -2703,7 +2714,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return PluginsDriverUtils.numeroPluginsClassiList(con, this.log, this.tipoDB);
@@ -2731,7 +2742,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return PluginsDriverUtils.pluginsClassiList(ricerca, con, this.log, this.tipoDB);
@@ -2759,7 +2770,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			PluginsDriverUtils.createPluginClassi(plugin, con, this.log, this.tipoDB);
@@ -2787,7 +2798,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			PluginsDriverUtils.updatePluginClassi(plugin, con, this.log, this.tipoDB);		
@@ -2815,7 +2826,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			PluginsDriverUtils.deletePluginClassi(plugin, con, this.log, this.tipoDB);		
@@ -2842,7 +2853,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return PluginsDriverUtils.existsPlugin(tipoPlugin, tipo, label, className, con, this.log, this.tipoDB);
@@ -2869,7 +2880,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return PluginsDriverUtils.existsPluginConTipo(tipoPlugin, tipo, con, this.log, this.tipoDB);
@@ -2896,7 +2907,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return PluginsDriverUtils.existsPluginConLabel(tipoPlugin, label, con, this.log, this.tipoDB);
@@ -2923,7 +2934,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return PluginsDriverUtils.existsPluginConClassName(tipoPlugin, className, con, this.log, this.tipoDB);
@@ -2950,7 +2961,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return PluginsDriverUtils.getPlugin(idPlugin, con, this.log, this.tipoDB);
@@ -2977,7 +2988,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return PluginsDriverUtils.getPlugin(tipoPlugin, tipo, throwNotFound, con, this.log, this.tipoDB);
@@ -2998,7 +3009,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return DBOggettiInUsoUtils.isPluginInUso(con, this.tipoDB, className, label, tipoPlugin, tipo, whereIsInUso, normalizeObjectIds);
@@ -3026,7 +3037,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return org.openspcoop2.monitor.engine.alarm.utils.AllarmiDriverUtils.allarmiList(ricerca, ruoloPorta, nomePorta, con, this.log, this.tipoDB);
@@ -3054,7 +3065,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.allarmiList(ricerca, ruoloPorta, nomePorta, con, this.log, this.tipoDB);
@@ -3082,7 +3093,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.existsAllarmi(tipoAllarme, con, this.log, this.tipoDB);
@@ -3110,7 +3121,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.countAllarmi(tipoAllarme, con, this.log, this.tipoDB);
@@ -3138,7 +3149,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.createAllarme(allarme, con, this.log, this.tipoDB);			
@@ -3166,7 +3177,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.updateAllarme(allarme, con, this.log, this.tipoDB);
@@ -3194,7 +3205,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.deleteAllarme(allarme, con,  this.log, this.tipoDB);
@@ -3221,7 +3232,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.existsAllarme(nome, con, this.log, this.tipoDB);
@@ -3249,7 +3260,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.createHistoryAllarme(allarme, con, this.log, this.tipoDB);
@@ -3277,7 +3288,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.getAllarme(id, con, this.log, this.tipoDB);
@@ -3304,7 +3315,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.getAllarme(nome, con, this.log, this.tipoDB);
@@ -3331,7 +3342,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return org.openspcoop2.monitor.engine.alarm.utils.AllarmiDriverUtils.getAllarme(id, con, this.log, this.tipoDB);
@@ -3358,7 +3369,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return org.openspcoop2.monitor.engine.alarm.utils.AllarmiDriverUtils.getAllarme(nome, con, this.log, this.tipoDB);
@@ -3385,7 +3396,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return org.openspcoop2.monitor.engine.alarm.utils.AllarmiDriverUtils.getAllarme(allarme, con, this.log, this.tipoDB);
@@ -3413,7 +3424,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return AllarmiDriverUtils.getAllarmeByAlias(alias,
@@ -3444,7 +3455,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return org.openspcoop2.monitor.engine.alarm.utils.AllarmiDriverUtils.allarmiHistoryList(ricerca, idAllarme, con, this.log, this.tipoDB);
@@ -3461,7 +3472,7 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try{
 			return AllarmiDriverUtils.getNextAlarmInstanceSerialId(tipoPlugin, con, this.log, this.tipoDB);		
@@ -3498,7 +3509,7 @@ public class DriverControlStationDB  {
 		
 		con = getConnection(nomeMetodo);
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		List<ConfigurazioneAllarmeBean> listaAllarmi = null;
 		
 		try {
@@ -3537,7 +3548,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.allarmiForPolicyRateLimiting(activeIdPolicy, ruoloPorta, nomePorta, con, this.log, this.tipoDB);
@@ -3578,7 +3589,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 
 		try {
 			return HandlersDriverUtils.numeroHandlerList(tipologia, ruoloPorta, idPorta, tipoPlugin, nomeMetodo, con, this.log, this.tipoDB); 
@@ -3623,7 +3634,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return HandlersDriverUtils.handlerList(ricerca, tipologia, ruoloPorta, idPorta, nomeMetodo, idLista, tipoPlugin, con, this.log, this.tipoDB);
@@ -3665,7 +3676,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return HandlersDriverUtils.getMaxPosizioneHandlers(tipologia, ruoloPorta, idPorta, nomeMetodo, tipoPlugin, con, this.log, this.tipoDB);
@@ -3707,7 +3718,7 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return HandlersDriverUtils.existsHandler(tipologia, ruoloPorta, idPorta, nomeMetodo, tipoPlugin, tipo, con, this.log, this.tipoDB);
@@ -3749,12 +3760,157 @@ public class DriverControlStationDB  {
 			con = this.globalConnection;
 		}
 
-		this.log.debug("operazione this.atomica = " + this.atomica);
+		this.logDebug("operazione this.atomica = " + this.atomica);
 		
 		try {
 			return HandlersDriverUtils.getHandler(tipologia, ruoloPorta, idPorta, idHandler, nomeMetodo, tipoPlugin, con, this.log, this.tipoDB);
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			releaseConnection(con);
+		}
+	}
+	
+	public void updateProprietaOggettoErogazione(IDServizio idServizio, String user, boolean throwException) throws DriverRegistroServiziException{
+		Connection con = null;
+		String nomeMetodo = "updateProprietaOggettoErogazione";
+		DriverRegistroServiziDB driver = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+		
+		try {
+
+			this.logDebug("operazione this.atomica = " + this.atomica);
+			
+			// istanzio il driver
+			driver = new DriverRegistroServiziDB(con, this.log, this.tipoDB);
+
+			driver.updateProprietaOggettoErogazione(idServizio,user);
+			
+		} catch (Exception e) {
+			String msgError = "[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + e.getMessage();
+			ControlStationCore.logError(msgError, e);
+			if(throwException) {
+				throw new DriverRegistroServiziException(msgError, e);
+			}
+		} finally {
+			releaseConnection(con);
+		}
+	}
+	public void updateProprietaOggettoErogazione(long idServizio, String user, boolean throwException) throws DriverRegistroServiziException{
+		Connection con = null;
+		String nomeMetodo = "updateProprietaOggettoErogazione";
+		DriverRegistroServiziDB driver = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+		
+		try {
+
+			this.logDebug("operazione this.atomica = " + this.atomica);
+			
+			// istanzio il driver
+			driver = new DriverRegistroServiziDB(con, this.log, this.tipoDB);
+
+			driver.updateProprietaOggettoErogazione(idServizio,user);
+			
+		} catch (Exception e) {
+			String msgError = "[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + e.getMessage();
+			ControlStationCore.logError(msgError, e);
+			if(throwException) {
+				throw new DriverRegistroServiziException(msgError, e);
+			}
+		} finally {
+			releaseConnection(con);
+		}
+	}
+	public void updateProprietaOggettoFruizione(IDServizio idServizio, IDSoggetto idFruitore, String user, boolean throwException) throws DriverRegistroServiziException{
+		Connection con = null;
+		String nomeMetodo = "updateProprietaOggettoFruizione";
+		DriverRegistroServiziDB driver = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+		
+		try {
+
+			this.logDebug("operazione this.atomica = " + this.atomica);
+			
+			// istanzio il driver
+			driver = new DriverRegistroServiziDB(con, this.log, this.tipoDB);
+
+			driver.updateProprietaOggettoFruizione(idServizio,idFruitore,user);
+			
+		} catch (Exception e) {
+			String msgError = "[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + e.getMessage();
+			ControlStationCore.logError(msgError, e);
+			if(throwException) {
+				throw new DriverRegistroServiziException(msgError, e);
+			}
+		} finally {
+			releaseConnection(con);
+		}
+	}
+	public void updateProprietaOggettoFruizione(long idFruizione, String user, boolean throwException) throws DriverRegistroServiziException{
+		Connection con = null;
+		String nomeMetodo = "updateProprietaOggettoFruizione";
+		DriverRegistroServiziDB driver = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+		
+		try {
+
+			this.logDebug("operazione this.atomica = " + this.atomica);
+			
+			// istanzio il driver
+			driver = new DriverRegistroServiziDB(con, this.log, this.tipoDB);
+
+			driver.updateProprietaOggettoFruizione(idFruizione,user);
+			
+		} catch (Exception e) {
+			String msgError = "[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + e.getMessage();
+			ControlStationCore.logError(msgError, e);
+			if(throwException) {
+				throw new DriverRegistroServiziException(msgError, e);
+			}
 		} finally {
 			releaseConnection(con);
 		}

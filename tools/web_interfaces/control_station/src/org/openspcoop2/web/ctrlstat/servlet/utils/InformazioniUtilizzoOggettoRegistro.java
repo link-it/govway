@@ -35,6 +35,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDAccordo;
@@ -237,18 +238,18 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 				}
 				break;
 			case EROGAZIONE_INFO:{
-				String uriAPS_erogata = identificativoOggetto;
-				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uriAPS_erogata);
+				String uriAPSerogata = identificativoOggetto;
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uriAPSerogata);
 				risultatiRicerca.add(ErogazioniDetailsUtilities.getDetailsErogazione(idServizio, soggettiCore, registroHelper));
 				break;
 			}
 			case FRUIZIONE_INFO:{
-				String uriAPS_fruita = identificativoOggetto;
-				if(uriAPS_fruita.contains("@")) {
-					String tipoNomeFruitore = uriAPS_fruita.split("@")[1];
-					uriAPS_fruita = uriAPS_fruita.split("@")[0];
+				String uriAPSfruita = identificativoOggetto;
+				if(uriAPSfruita.contains("@")) {
+					String tipoNomeFruitore = uriAPSfruita.split("@")[1];
+					uriAPSfruita = uriAPSfruita.split("@")[0];
 					IDSoggetto idSoggettoFruitore = new IDSoggetto(tipoNomeFruitore.split("/")[0], tipoNomeFruitore.split("/")[1]);
-					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uriAPS_fruita);
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uriAPSfruita);
 					risultatiRicerca.add(ErogazioniDetailsUtilities.getDetailsFruizione(idServizio, idSoggettoFruitore, soggettiCore, registroHelper));
 				}
 				else {
@@ -265,7 +266,7 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 			case PDD:
 			case PORTA_APPLICATIVA:
 			case PORTA_DELEGATA:
-				throw new Exception("TipoOggetto non gestito.");
+				throw new CoreException("TipoOggetto non gestito.");
 			}
 
 			ServletOutputStream outputStream = response.getOutputStream();
@@ -280,7 +281,7 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 				response.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 				outputStream.write(StringUtils.join(risultatiRicerca.toArray(new String[1])).getBytes());
 			} else {
-				throw new Exception("TipoRiposta non gestito.");
+				throw new CoreException("TipoRiposta non gestito.");
 			}
 			
 

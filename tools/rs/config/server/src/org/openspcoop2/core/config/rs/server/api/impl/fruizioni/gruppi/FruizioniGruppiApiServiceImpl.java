@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
+import org.openspcoop2.core.config.rs.server.model.ApiDescrizione;
 import org.openspcoop2.core.config.rs.server.model.Gruppo;
 import org.openspcoop2.core.config.rs.server.model.GruppoAzioni;
 import org.openspcoop2.core.config.rs.server.model.GruppoEreditaConfigurazione;
@@ -522,6 +523,53 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
     }
+
+    /**
+     * Restituisce la descrizione del gruppo
+     *
+     * Questa operazione consente di ottenere la descrizione del gruppo
+     *
+     */
+	@Override
+    public ApiDescrizione getFruizioneDescrizioneGruppo(String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
+			
+			// ricevo come parametro l'id della pa associata al mapping da cancellare
+			final IDPortaDelegata idPortaDelegata = BaseHelper.supplyOrNotFound( 
+					() -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore)
+					, "Gruppo per la fruizione scelta"
+				);
+			final PortaDelegata pd = BaseHelper.supplyOrNotFound(
+					() -> env.pdCore.getPortaDelegata(idPortaDelegata)
+					, "Gruppo per la fruizione scelta"
+				);  
+			
+			ApiDescrizione descr = new ApiDescrizione();
+			descr.setDescrizione(pd.getDescrizione());
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return descr;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
     
     /**
      * Restituisce azioni/risorse associate al gruppo identificato dal nome
@@ -571,6 +619,53 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
     }
+
+    /**
+     * Consente di modificare la descrizione del gruppo
+     *
+     * Questa operazione consente di aggiornare la descrizione del gruppo
+     *
+     */
+	@Override
+    public void updateFruizioneDescrizioneGruppo(ApiDescrizione body, String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
+			
+			// ricevo come parametro l'id della pa associata al mapping da cancellare
+			final IDPortaDelegata idPortaDelegata = BaseHelper.supplyOrNotFound( 
+					() -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore)
+					, "Gruppo per la fruizione scelta"
+				);
+			final PortaDelegata pd = BaseHelper.supplyOrNotFound(
+					() -> env.pdCore.getPortaDelegata(idPortaDelegata)
+					, "Gruppo per la fruizione scelta"
+				);  
+		
+			pd.setDescrizione(body.getDescrizione());
+
+			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+			
+			context.getLogger().info("Invocazione completata con successo");
+        
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
     
     /**
      * Consente di modificare il nome del gruppo
@@ -613,7 +708,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			
 			mapping.setDescrizione(body.getNome());
 			
-			env.pdCore.aggiornaDescrizioneMappingFruizionePortaDelegata( mapping );
+			env.pdCore.aggiornaDescrizioneMappingFruizionePortaDelegata( mapping, env.userLogin );
 			                        
         
 			context.getLogger().info("Invocazione completata con successo");

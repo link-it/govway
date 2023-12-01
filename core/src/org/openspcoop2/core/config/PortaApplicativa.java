@@ -68,6 +68,7 @@ import java.util.List;
  * 			&lt;element name="behaviour" type="{http://www.openspcoop2.org/core/config}porta-applicativa-behaviour" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="configurazione-handler" type="{http://www.openspcoop2.org/core/config}configurazione-porta-handler" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="attribute-authority" type="{http://www.openspcoop2.org/core/config}attribute-authority" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/config}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
@@ -134,7 +135,8 @@ import java.util.List;
   	"trasformazioni",
   	"behaviour",
   	"configurazioneHandler",
-  	"attributeAuthority"
+  	"attributeAuthority",
+  	"proprietaOggetto"
   }
 )
 
@@ -519,6 +521,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
 
   public int sizeAttributeAuthorityList() {
     return this.attributeAuthority.size();
+  }
+
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -1130,6 +1140,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBeanWithId
   public int sizeAttributeAuthority() {
   	return this.sizeAttributeAuthorityList();
   }
+
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

@@ -37,7 +37,7 @@ CREATE INDEX INDEX_DOC_SEARCH ON documenti (id_proprietario);
 CREATE TABLE accordi
 (
 	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(4000),
 	service_binding VARCHAR(255) NOT NULL,
 	message_type VARCHAR(255),
 	profilo_collaborazione VARCHAR(255),
@@ -67,6 +67,12 @@ CREATE TABLE accordi
 	ora_registrazione TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	canale VARCHAR(255),
+	utente_richiedente VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_creazione TIMESTAMP(3) DEFAULT 0,
+	utente_ultima_modifica VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ultima_modifica TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints
@@ -392,9 +398,15 @@ CREATE TABLE servizi
 	ora_registrazione TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
 	port_type VARCHAR(255),
 	profilo VARCHAR(255),
-	descrizione VARCHAR(255),
+	descrizione VARCHAR(4000),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	message_type VARCHAR(255),
+	utente_richiedente VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_creazione TIMESTAMP(3) DEFAULT 0,
+	utente_ultima_modifica VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ultima_modifica TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints
@@ -460,6 +472,13 @@ CREATE TABLE servizi_fruitori
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ora_registrazione TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
+	descrizione VARCHAR(4000),
+	utente_richiedente VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_creazione TIMESTAMP(3) DEFAULT 0,
+	utente_ultima_modifica VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ultima_modifica TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints

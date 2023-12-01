@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.IdScope;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProprietaOggetto;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
@@ -2650,6 +2651,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Fruitore fruitore,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Fruitore.class, fruitore, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: proprieta-oggetto
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>proprietaOggetto</var>
+	 * @param proprietaOggetto Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ProprietaOggetto proprietaOggetto) throws SerializerException {
+		this.objToXml(fileName, ProprietaOggetto.class, proprietaOggetto, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>proprietaOggetto</var>
+	 * @param proprietaOggetto Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ProprietaOggetto proprietaOggetto,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ProprietaOggetto.class, proprietaOggetto, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param file Xml file to serialize the object <var>proprietaOggetto</var>
+	 * @param proprietaOggetto Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ProprietaOggetto proprietaOggetto) throws SerializerException {
+		this.objToXml(file, ProprietaOggetto.class, proprietaOggetto, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param file Xml file to serialize the object <var>proprietaOggetto</var>
+	 * @param proprietaOggetto Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ProprietaOggetto proprietaOggetto,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ProprietaOggetto.class, proprietaOggetto, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param out OutputStream to serialize the object <var>proprietaOggetto</var>
+	 * @param proprietaOggetto Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ProprietaOggetto proprietaOggetto) throws SerializerException {
+		this.objToXml(out, ProprietaOggetto.class, proprietaOggetto, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param out OutputStream to serialize the object <var>proprietaOggetto</var>
+	 * @param proprietaOggetto Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ProprietaOggetto proprietaOggetto,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ProprietaOggetto.class, proprietaOggetto, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param proprietaOggetto Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ProprietaOggetto proprietaOggetto) throws SerializerException {
+		return this.objToXml(ProprietaOggetto.class, proprietaOggetto, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param proprietaOggetto Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ProprietaOggetto proprietaOggetto,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ProprietaOggetto.class, proprietaOggetto, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param proprietaOggetto Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ProprietaOggetto proprietaOggetto) throws SerializerException {
+		return this.objToXml(ProprietaOggetto.class, proprietaOggetto, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>proprietaOggetto</var> of type {@link org.openspcoop2.core.registry.ProprietaOggetto}
+	 * 
+	 * @param proprietaOggetto Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ProprietaOggetto proprietaOggetto,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ProprietaOggetto.class, proprietaOggetto, prettyPrint).toString();
 	}
 	
 	

@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -95,7 +96,7 @@ public final class PorteApplicativeConnettoriMultipliProprietaList extends Actio
 				}
 			}
 			if(oldPaSA==null) {
-				throw new Exception("PortaApplicativaServizioApplicativo con nome '"+nomeSAConnettore+"' non trovato");
+				throw new ControlStationCoreException("PortaApplicativaServizioApplicativo con nome '"+nomeSAConnettore+"' non trovato");
 			}
 			
 			long idPaSa = oldPaSA.getId();

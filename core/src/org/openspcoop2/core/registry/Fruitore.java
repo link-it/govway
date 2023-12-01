@@ -41,6 +41,7 @@ import java.util.List;
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="configurazione-azione" type="{http://www.openspcoop2.org/core/registry}configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-oggetto" type="{http://www.openspcoop2.org/core/registry}proprieta-oggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="byte-wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
@@ -52,6 +53,7 @@ import java.util.List;
  * 		&lt;attribute name="wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="wsdl-implementativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -67,7 +69,8 @@ import java.util.List;
   	"servizioApplicativo",
   	"connettore",
   	"configurazioneAzione",
-  	"protocolProperty"
+  	"protocolProperty",
+  	"proprietaOggetto"
   }
 )
 
@@ -158,6 +161,14 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
     return this.protocolProperty.size();
   }
 
+  public ProprietaOggetto getProprietaOggetto() {
+    return this.proprietaOggetto;
+  }
+
+  public void setProprietaOggetto(ProprietaOggetto proprietaOggetto) {
+    this.proprietaOggetto = proprietaOggetto;
+  }
+
   public java.lang.String getStatoPackage() {
     return this.statoPackage;
   }
@@ -236,6 +247,14 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
 
   public void setOraRegistrazione(java.util.Date oraRegistrazione) {
     this.oraRegistrazione = oraRegistrazione;
+  }
+
+  public java.lang.String getDescrizione() {
+    return this.descrizione;
+  }
+
+  public void setDescrizione(java.lang.String descrizione) {
+    this.descrizione = descrizione;
   }
 
   private static final long serialVersionUID = 1L;
@@ -327,6 +346,9 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   	return this.sizeProtocolPropertyList();
   }
 
+  @XmlElement(name="proprieta-oggetto",required=false,nillable=false)
+  protected ProprietaOggetto proprietaOggetto;
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="stato-package",required=false)
   protected java.lang.String statoPackage;
@@ -365,5 +387,9 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlAttribute(name="ora-registrazione",required=false)
   protected java.util.Date oraRegistrazione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="descrizione",required=false)
+  protected java.lang.String descrizione;
 
 }

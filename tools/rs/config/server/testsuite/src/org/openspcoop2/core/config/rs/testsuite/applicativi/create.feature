@@ -33,6 +33,9 @@ Background:
 * def applicativo_esterno = read('classpath:bodies/applicativo_esterno.json') 
 * eval randomize(applicativo_esterno, ["nome", "credenziali.userid" ])
 
+* def applicativo_esterno_descrizione4000 = read('classpath:bodies/applicativo_esterno_descrizione4000.json') 
+* eval randomize(applicativo_esterno_descrizione4000, ["nome", "credenziali.userid" ])
+
 @Create204
 Scenario: Applicativi Creazione 204 OK
 
@@ -123,4 +126,18 @@ Scenario: Applicativi Creazione 204 OK (dominio esterno)
     * call delete ({ resourcePath: 'soggetti/' + soggetto_esterno.nome})
 
 
+@CreateDescrizione4000
+Scenario: Creazione Applicativo descrizione 4000 204 OK
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo_esterno_descrizione4000)' }
+
+    Given url configUrl
+    And path 'applicativi', applicativo_esterno_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == applicativo_esterno_descrizione4000.descrizione
+
+    * call delete ( { resourcePath: 'applicativi' + '/' + applicativo_esterno_descrizione4000.nome } )
 

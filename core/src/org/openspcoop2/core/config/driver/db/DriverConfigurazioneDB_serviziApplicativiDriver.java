@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.ProtocolProperty;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Ruolo;
@@ -72,6 +73,7 @@ import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
@@ -94,11 +96,13 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 	private DriverConfigurazioneDB driver = null;
 	private DriverConfigurazioneDBSoggetti soggettiDriver = null;
 	private DriverConfigurazioneDB_protocolPropertiesDriver protocolPropertiesDriver = null;
+	private DriverConfigurazioneDBUtils utilsDriver = null;
 	
 	protected DriverConfigurazioneDB_serviziApplicativiDriver(DriverConfigurazioneDB driver) {
 		this.driver = driver;
 		this.soggettiDriver = new DriverConfigurazioneDBSoggetti(driver);
 		this.protocolPropertiesDriver = new DriverConfigurazioneDB_protocolPropertiesDriver(driver);
+		this.utilsDriver = new DriverConfigurazioneDBUtils(driver);
 	}
 	
 
@@ -980,6 +984,9 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 					}
 						
 				}	
+				
+				// Proprieta Oggetto
+				sa.setProprietaOggetto(this.utilsDriver.readProprietaOggetto(rs,false));
 				
 				rs.close();
 				stm.close();
@@ -2819,5 +2826,140 @@ public class DriverConfigurazioneDB_serviziApplicativiDriver {
 			this.driver.closeConnection(con);
 		}
 		
+	}
+	
+	protected ProprietaOggetto getProprietaOggetto(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		String nomeMetodo = "getProprietaOggetto";
+		
+		IDSoggetto idSoggetto = idServizioApplicativo.getIdSoggettoProprietario();
+		if(idSoggetto==null)throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Soggetto Fruitore non Impostato.");
+		if(idServizioApplicativo.getNome()==null || "".equals(idServizioApplicativo.getNome()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Nome Servizio Applicativo non Impostato.");
+		if(idSoggetto.getNome()==null || "".equals(idSoggetto.getNome()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Nome Soggetto Fruitore non Impostato.");
+		if(idSoggetto.getTipo()==null || "".equals(idSoggetto.getTipo()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Tipo Soggetto Fruitore non Impostato.");
+
+		
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.driver.atomica) {
+			try {
+				con = this.driver.getConnectionFromDatasource(nomeMetodo);
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.driver.globalConnection;
+
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+
+		try {
+			long idSog=DBUtils.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo(), con, this.driver.tipoDB,this.driver.tabellaSoggetti);
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA);
+			sqlQueryObject.addSelectField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA);
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.addWhereCondition("id_soggetto = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, idServizioApplicativo.getNome());
+			stm.setLong(2, idSog);
+			this.driver.logDebug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idServizioApplicativo.getNome(), idSog));
+			
+			rs = stm.executeQuery();
+
+			ProprietaOggetto proprieta = null;
+			if (rs.next()) {			
+				proprieta = this.utilsDriver.readProprietaOggetto(rs,false);
+			}
+			else{
+				throw new DriverConfigurazioneNotFound("ServizioApplicativo ["+idServizioApplicativo.getNome()+"] non esistente");
+			}
+
+			return proprieta;
+
+		} catch (SQLException se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] SqlException: " + se.getMessage(),se);
+		} catch (Exception se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception: " + se.getMessage(),se);
+		}
+		finally {
+
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(rs, stm);
+			this.driver.closeConnection(con);
+		}
+	}
+	
+	protected void updateProprietaOggetto(IDServizioApplicativo idServizioApplicativo, String user) throws DriverConfigurazioneException {
+		
+		String nomeMetodo = "updateProprietaOggettoServizioApplicativo";
+		
+		IDSoggetto idSoggetto = idServizioApplicativo.getIdSoggettoProprietario();
+		if(idSoggetto==null)throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Soggetto Fruitore non Impostato.");
+		if(idServizioApplicativo.getNome()==null || "".equals(idServizioApplicativo.getNome()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Nome Servizio Applicativo non Impostato.");
+		if(idSoggetto.getNome()==null || "".equals(idSoggetto.getNome()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Nome Soggetto Fruitore non Impostato.");
+		if(idSoggetto.getTipo()==null || "".equals(idSoggetto.getTipo()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Tipo Soggetto Fruitore non Impostato.");
+
+		
+		Connection con = null;
+		if (this.driver.atomica) {
+			try {
+				con = this.driver.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.driver.globalConnection;
+
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+		
+		PreparedStatement stm = null;
+		try {
+			long idSog=DBUtils.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo(), con, this.driver.tipoDB,this.driver.tabellaSoggetti);
+			
+			ISQLQueryObject sqlQueryObjectUpdate = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObjectUpdate.addUpdateTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlQueryObjectUpdate.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, "?");
+			sqlQueryObjectUpdate.addUpdateField(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, "?");
+			sqlQueryObjectUpdate.addWhereCondition("nome = ?");
+			sqlQueryObjectUpdate.addWhereCondition("id_soggetto = ?");
+			sqlQueryObjectUpdate.setANDLogicOperator(true);
+			String updateString = sqlQueryObjectUpdate.createSQLUpdate();
+			stm = con.prepareStatement(updateString);
+			int index = 1;
+			stm.setString(index++, user);
+			stm.setTimestamp(index++, DateManager.getTimestamp());
+			stm.setString(index++, idServizioApplicativo.getNome());
+			stm.setLong(index++, idSog);
+			int n=stm.executeUpdate();
+			stm.close();
+			this.driver.logDebug("Aggiornata "+n+" entry per l'operazione di ultima modifica della tabella '"+CostantiDB.SERVIZI_APPLICATIVI+"' con idSA: "+idServizioApplicativo);
+		} catch (SQLException e) {
+			this.driver.logError("Errore SQL", e);
+			throw new DriverConfigurazioneException(e);
+		}catch (Exception e) {
+			this.driver.logError("Errore", e);
+			throw new DriverConfigurazioneException(e);
+		} finally {
+			JDBCUtilities.closeResources(stm);
+
+			this.driver.closeConnection(con);
+		}
 	}
 }

@@ -27,6 +27,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +80,7 @@ import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CRUDType;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKey;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
@@ -86,6 +88,7 @@ import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
  * DriverConfigurazioneDB_configLIB
@@ -133,7 +136,7 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(4, user);
 				updateStmt.setString(5, password);
 
-				DriverConfigurazioneDBLib.log.debug("eseguo query: " + DBUtils.formatSQLString(updateQuery, nome, location, tipo, user, password));
+				DriverConfigurazioneDBLib.logDebug("eseguo query: " + DBUtils.formatSQLString(updateQuery, nome, location, tipo, user, password));
 
 				n = updateStmt.executeUpdate();
 
@@ -178,7 +181,7 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(5, registro.getPassword());
 				updateStmt.setLong(6, idRegistro);
 
-				DriverConfigurazioneDBLib.log.debug("eseguo query: " + DBUtils.formatSQLString(updateQuery, nome, location, tipo, user, password, idRegistro));
+				DriverConfigurazioneDBLib.logDebug("eseguo query: " + DBUtils.formatSQLString(updateQuery, nome, location, tipo, user, password, idRegistro));
 				n = updateStmt.executeUpdate();
 
 				break;
@@ -193,7 +196,7 @@ public class DriverConfigurazioneDB_configLIB {
 				String sqlQuery = sqlQueryObject.createSQLDelete();
 				updateStmt = con.prepareStatement(sqlQuery);
 				updateStmt.setLong(1, idRegistro);
-				DriverConfigurazioneDBLib.log.debug("eseguo query: " + DBUtils.formatSQLString(updateQuery, idRegistro));
+				DriverConfigurazioneDBLib.logDebug("eseguo query: " + DBUtils.formatSQLString(updateQuery, idRegistro));
 				n=updateStmt.executeUpdate();
 				updateStmt.close();
 
@@ -224,7 +227,6 @@ public class DriverConfigurazioneDB_configLIB {
 		PreparedStatement updateStmt = null;
 		String updateQuery = "";
 		PreparedStatement selectStmt = null;
-		//String selectQuery = "";
 		ResultSet selectRS = null;
 
 		long idRegistro = 0;
@@ -266,7 +268,7 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(4, idlecache);
 				updateStmt.setString(5, lifecache);
 
-				DriverConfigurazioneDBLib.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, statoCache, dimensionecache, algoritmocache, idlecache, lifecache));
+				DriverConfigurazioneDBLib.logDebug("eseguo query :" + DBUtils.formatSQLString(updateQuery, statoCache, dimensionecache, algoritmocache, idlecache, lifecache));
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
@@ -276,9 +278,9 @@ public class DriverConfigurazioneDB_configLIB {
 				sqlQueryObject.addDeleteTable(CostantiDB.REGISTRI);
 				String sqlQuery = sqlQueryObject.createSQLDelete();
 				updateStmt = con.prepareStatement(sqlQuery);
-				DriverConfigurazioneDBLib.log.debug("eseguo query: " + DBUtils.formatSQLString(updateQuery));
+				DriverConfigurazioneDBLib.logDebug("eseguo query: " + DBUtils.formatSQLString(updateQuery));
 				int risultato = updateStmt.executeUpdate();
-				DriverConfigurazioneDBLib.log.debug("eseguo query risultato["+risultato+"]: " + DBUtils.formatSQLString(updateQuery));
+				DriverConfigurazioneDBLib.logDebug("eseguo query risultato["+risultato+"]: " + DBUtils.formatSQLString(updateQuery));
 				updateStmt.close();
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -303,7 +305,7 @@ public class DriverConfigurazioneDB_configLIB {
 					updateStmt.setString(3, tipo);
 					updateStmt.setString(4, utente);
 					updateStmt.setString(5, password);
-					DriverConfigurazioneDBLib.log.debug("eseguo query INSERT INTO " + CostantiDB.REGISTRI + "(nome, location, tipo, utente, password) VALUES ("+
+					DriverConfigurazioneDBLib.logDebug("eseguo query INSERT INTO " + CostantiDB.REGISTRI + "(nome, location, tipo, utente, password) VALUES ("+
 							nome+", "+location+", "+tipo+", "+utente+", "+password+")");
 					updateStmt.executeUpdate();
 					updateStmt.close();
@@ -381,7 +383,7 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(4, idlecache);
 				updateStmt.setString(5, lifecache);
 
-				DriverConfigurazioneDBLib.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, statoCache, dimensionecache, algoritmocache, idlecache, lifecache));
+				DriverConfigurazioneDBLib.logDebug("eseguo query :" + DBUtils.formatSQLString(updateQuery, statoCache, dimensionecache, algoritmocache, idlecache, lifecache));
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
@@ -452,7 +454,7 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(4, idlecache);
 				updateStmt.setString(5, lifecache);
 
-				DriverConfigurazioneDBLib.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, statoCache, dimensionecache, algoritmocache, idlecache, lifecache));
+				DriverConfigurazioneDBLib.logDebug("eseguo query :" + DBUtils.formatSQLString(updateQuery, statoCache, dimensionecache, algoritmocache, idlecache, lifecache));
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
@@ -484,7 +486,6 @@ public class DriverConfigurazioneDB_configLIB {
 		PreparedStatement updateStmt = null;
 		String updateQuery = "";
 		PreparedStatement selectStmt = null;
-		//String selectQuery = "";
 		ResultSet selectRS = null;
 		
 
@@ -498,18 +499,18 @@ public class DriverConfigurazioneDB_configLIB {
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_PDD_FILTRI);
 				String sqlQuery = sqlQueryObject.createSQLDelete();
 				updateStmt = con.prepareStatement(sqlQuery);
-				DriverConfigurazioneDBLib.log.debug("eseguo query: " + DBUtils.formatSQLString(updateQuery));
+				DriverConfigurazioneDBLib.logDebug("eseguo query: " + DBUtils.formatSQLString(updateQuery));
 				int risultato = updateStmt.executeUpdate();
-				DriverConfigurazioneDBLib.log.debug("eseguo query risultato["+risultato+"]: " + DBUtils.formatSQLString(updateQuery));
+				DriverConfigurazioneDBLib.logDebug("eseguo query risultato["+risultato+"]: " + DBUtils.formatSQLString(updateQuery));
 				updateStmt.close();
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_PDD);
 				sqlQuery = sqlQueryObject.createSQLDelete();
 				updateStmt = con.prepareStatement(sqlQuery);
-				DriverConfigurazioneDBLib.log.debug("eseguo query: " + DBUtils.formatSQLString(updateQuery));
+				DriverConfigurazioneDBLib.logDebug("eseguo query: " + DBUtils.formatSQLString(updateQuery));
 				risultato = updateStmt.executeUpdate();
-				DriverConfigurazioneDBLib.log.debug("eseguo query risultato["+risultato+"]: " + DBUtils.formatSQLString(updateQuery));
+				DriverConfigurazioneDBLib.logDebug("eseguo query risultato["+risultato+"]: " + DBUtils.formatSQLString(updateQuery));
 				updateStmt.close();
 				
 				// Ricreo
@@ -579,7 +580,6 @@ public class DriverConfigurazioneDB_configLIB {
 		PreparedStatement updateStmt = null;
 		String updateQuery = "";
 		PreparedStatement selectStmt = null;
-		//String selectQuery = "";
 		ResultSet selectRS = null;
 		
 
@@ -592,7 +592,7 @@ public class DriverConfigurazioneDB_configLIB {
 			sqlQueryObject.addInsertField("stato", "?");
 			updateQuery = sqlQueryObject.createSQLInsert();
 			updateStmt = con.prepareStatement(updateQuery);
-			DriverConfigurazioneDBLib.log.debug("eseguo query INSERT INTO " + CostantiDB.SERVIZI_PDD + "(componente, stato) VALUES ('"+
+			DriverConfigurazioneDBLib.logDebug("eseguo query INSERT INTO " + CostantiDB.SERVIZI_PDD + "(componente, stato) VALUES ('"+
 					componente+"', "+stato+")");
 			updateStmt.setString(1, componente);
 			updateStmt.setInt(2, stato);
@@ -607,7 +607,7 @@ public class DriverConfigurazioneDB_configLIB {
 			sqlQueryObject.addWhereCondition("componente=?");
 			updateQuery = sqlQueryObject.createSQLQuery();
 			selectStmt = con.prepareStatement(updateQuery);
-			DriverConfigurazioneDBLib.log.debug("eseguo query ["+updateQuery+"] per il componente ["+componente+"]");
+			DriverConfigurazioneDBLib.logDebug("eseguo query ["+updateQuery+"] per il componente ["+componente+"]");
 			selectStmt.setString(1, componente);
 			selectRS = selectStmt.executeQuery();
 			if(selectRS.next()){
@@ -720,7 +720,6 @@ public class DriverConfigurazioneDB_configLIB {
 		PreparedStatement updateStmt = null;
 		String updateQuery = "";
 		PreparedStatement selectStmt = null;
-		//String selectQuery = "";
 		ResultSet selectRS = null;
 		
 
@@ -731,9 +730,9 @@ public class DriverConfigurazioneDB_configLIB {
 			sqlQueryObject.addDeleteTable(CostantiDB.SYSTEM_PROPERTIES_PDD);
 			String sqlQuery = sqlQueryObject.createSQLDelete();
 			updateStmt = con.prepareStatement(sqlQuery);
-			DriverConfigurazioneDBLib.log.debug("eseguo query: " + DBUtils.formatSQLString(updateQuery));
+			DriverConfigurazioneDBLib.logDebug("eseguo query: " + DBUtils.formatSQLString(updateQuery));
 			int risultato = updateStmt.executeUpdate();
-			DriverConfigurazioneDBLib.log.debug("eseguo query risultato["+risultato+"]: " + DBUtils.formatSQLString(updateQuery));
+			DriverConfigurazioneDBLib.logDebug("eseguo query risultato["+risultato+"]: " + DBUtils.formatSQLString(updateQuery));
 			updateStmt.close();
 			
 			switch (type) {
@@ -754,7 +753,7 @@ public class DriverConfigurazioneDB_configLIB {
 					sqlQueryObject.addInsertField("valore", "?");
 					updateQuery = sqlQueryObject.createSQLInsert();
 					updateStmt = con.prepareStatement(updateQuery);
-					DriverConfigurazioneDBLib.log.debug("eseguo query INSERT INTO " + CostantiDB.SYSTEM_PROPERTIES_PDD + "(nome, valore) VALUES ('"+
+					DriverConfigurazioneDBLib.logDebug("eseguo query INSERT INTO " + CostantiDB.SYSTEM_PROPERTIES_PDD + "(nome, valore) VALUES ('"+
 							nome+"', "+valore+")");
 					updateStmt.setString(1, nome);
 					updateStmt.setString(2, valore);
@@ -771,7 +770,7 @@ public class DriverConfigurazioneDB_configLIB {
 					sqlQueryObject.addWhereCondition("valore=?");
 					updateQuery = sqlQueryObject.createSQLQuery();
 					selectStmt = con.prepareStatement(updateQuery);
-					DriverConfigurazioneDBLib.log.debug("eseguo query ["+updateQuery+"] per la prop nome["+nome+"] valore["+valore+"]");
+					DriverConfigurazioneDBLib.logDebug("eseguo query ["+updateQuery+"] per la prop nome["+nome+"] valore["+valore+"]");
 					selectStmt.setString(1, nome);
 					selectStmt.setString(2, valore);
 					selectRS = selectStmt.executeQuery();
@@ -815,7 +814,6 @@ public class DriverConfigurazioneDB_configLIB {
 		PreparedStatement updateStmt = null;
 		String updateQuery = "";
 		PreparedStatement selectStmt = null;
-		//String selectQuery = "";
 		ResultSet selectRS = null;
 		
 
@@ -874,7 +872,36 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.executeUpdate();
 				updateStmt.close();
 			}
+
+			String utenteRichiedente = null;
+			Timestamp dataCreazione = null;
+			if(type == CostantiDB.CREATE || type == CostantiDB.UPDATE) {
+				if(genericProperties.getProprietaOggetto()!=null && genericProperties.getProprietaOggetto().getUtenteRichiedente()!=null) {
+					utenteRichiedente = genericProperties.getProprietaOggetto().getUtenteRichiedente();
+				}
+				
+				if(genericProperties.getProprietaOggetto()!=null && genericProperties.getProprietaOggetto().getDataCreazione()!=null) {
+					dataCreazione = new Timestamp(genericProperties.getProprietaOggetto().getDataCreazione().getTime());
+				}
+				else {
+					dataCreazione = DateManager.getTimestamp();
+				}
+			}
 			
+			String utenteUltimaModifica = null;
+			Timestamp dataUltimaModifica = null;
+			if(type == CostantiDB.UPDATE) {
+				if(genericProperties.getProprietaOggetto()!=null && genericProperties.getProprietaOggetto().getUtenteUltimaModifica()!=null) {
+					utenteUltimaModifica = genericProperties.getProprietaOggetto().getUtenteUltimaModifica();
+				}
+				
+				if(genericProperties.getProprietaOggetto()!=null && genericProperties.getProprietaOggetto().getDataUltimaModifica()!=null) {
+					dataUltimaModifica = new Timestamp(genericProperties.getProprietaOggetto().getDataUltimaModifica().getTime());
+				}
+				else {
+					dataUltimaModifica = DateManager.getTimestamp();
+				}
+			}
 
 			switch (type) {
 			case CREATE:
@@ -888,12 +915,29 @@ public class DriverConfigurazioneDB_configLIB {
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipologia", genericProperties.getTipologia() , InsertAndGeneratedKeyJDBCType.STRING) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", genericProperties.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
 				
+				if(type == CostantiDB.CREATE || type == CostantiDB.UPDATE) {
+					if(utenteRichiedente!=null) {
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.PROPRIETA_OGGETTO_UTENTE_RICHIEDENTE, utenteRichiedente , InsertAndGeneratedKeyJDBCType.STRING) );
+					}
+					if(dataCreazione!=null) {
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.PROPRIETA_OGGETTO_DATA_CREAZIONE, dataCreazione , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
+					}
+				}
+				if(type == CostantiDB.UPDATE) {
+					if(utenteUltimaModifica!=null) {
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.PROPRIETA_OGGETTO_UTENTE_ULTIMA_MODIFICA, utenteUltimaModifica , InsertAndGeneratedKeyJDBCType.STRING) );
+					}
+					if(dataUltimaModifica!=null) {
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.PROPRIETA_OGGETTO_DATA_ULTIMA_MODIFICA, dataUltimaModifica , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
+					}
+				}
+				
 				long idProperties = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDBLib.tipoDB), 
 						new CustomKeyGeneratorObject(CostantiDB.CONFIG_GENERIC_PROPERTIES, CostantiDB.CONFIG_GENERIC_PROPERTIES_COLUMN_ID, 
 								CostantiDB.CONFIG_GENERIC_PROPERTIES_SEQUENCE, CostantiDB.CONFIG_GENERIC_PROPERTIES_TABLE_FOR_ID),
 						listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 				if(idProperties<=0){
-					throw new Exception("ID (Generic Properties) autoincrementale non ottenuto");
+					throw new DriverConfigurazioneException("ID (Generic Properties) autoincrementale non ottenuto");
 				}
 
 				for(int l=0; l<genericProperties.sizePropertyList();l++){
@@ -932,7 +976,7 @@ public class DriverConfigurazioneDB_configLIB {
 	}
 	
 
-	private static void _createUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola, Connection con) throws Exception {
+	private static void createUrlInvocazioneRegolaEngine(ConfigurazioneUrlInvocazioneRegola regola, Connection con) throws SQLQueryObjectException, SQLException {
 		PreparedStatement updateStmt = null;
 		
 
@@ -986,7 +1030,6 @@ public class DriverConfigurazioneDB_configLIB {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDUrlInvocazioneRegola] La regola non può essere NULL");
 		PreparedStatement updateStmt = null;
 		String updateQuery = "";
-		//String selectQuery = "";
 		
 
 		try {
@@ -1027,11 +1070,13 @@ public class DriverConfigurazioneDB_configLIB {
 		
 				// insert
 
-				_createUrlInvocazioneRegola(regola, con);
+				createUrlInvocazioneRegolaEngine(regola, con);
 
 				break;
 			case DELETE:
 				// non rimuovo in quanto gia fatto sopra.
+				break;
+			default:
 				break;
 			}
 
@@ -1073,7 +1118,7 @@ public class DriverConfigurazioneDB_configLIB {
 				config.getIntegrationManager()==null &&
 				config.getStatoServiziPdd()==null &&
 				config.getSystemProperties()==null && 
-				(config.getGenericPropertiesList()==null || config.getGenericPropertiesList().size()<=0) &&
+				(config.getGenericPropertiesList()==null || config.getGenericPropertiesList().isEmpty()) &&
 				config.getGestioneCors()==null && 
 				config.getResponseCaching()==null &&
 				config.getGestioneCanali()==null &&
@@ -1097,12 +1142,13 @@ public class DriverConfigurazioneDB_configLIB {
 					case DELETE:
 						crudType = CRUDType.DELETE;
 						break;
+					default:
+						break;
 					}
 					
 					switch (type) {
 					case CREATE:
 					case UPDATE:
-						//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, crudType);												
 						if(config.sizeExtendedInfoList()>0){
 							for(int l=0; l<config.sizeExtendedInfoList();l++){
 								extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), crudType);
@@ -1111,12 +1157,13 @@ public class DriverConfigurazioneDB_configLIB {
 						}
 						break;
 					case DELETE:
-						//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, crudType);
 						if(config.sizeExtendedInfoList()>0){
 							for(int l=0; l<config.sizeExtendedInfoList();l++){
 								extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), crudType);
 							}
 						}
+						break;
+					default:
 						break;
 					}
 				}catch (Exception se) {
@@ -1870,7 +1917,7 @@ public class DriverConfigurazioneDB_configLIB {
 								configurazioneCanaliStato,
 								datiRichiesteStatoCache, datiRichiesteDimensioneCache, datiRichiesteAlgoritmoCache, datiRichiesteIdleCache, datiRichiesteLifeCache
 								);
-				DriverConfigurazioneDBLib.log.debug(msgDebug);
+				DriverConfigurazioneDBLib.logDebug(msgDebug);
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
@@ -1908,7 +1955,7 @@ public class DriverConfigurazioneDB_configLIB {
 					if(config.getUrlInvocazione().sizeRegolaList()>0){
 						for(int k=0; k<config.getUrlInvocazione().sizeRegolaList();k++){
 							ConfigurazioneUrlInvocazioneRegola configUrlInvocazioneRegola = config.getUrlInvocazione().getRegola(k);
-							_createUrlInvocazioneRegola(configUrlInvocazioneRegola, con);
+							createUrlInvocazioneRegolaEngine(configUrlInvocazioneRegola, con);
 						}
 					}
 				}
@@ -1942,7 +1989,7 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.MSG_DIAGN_APPENDER_SEQUENCE, CostantiDB.MSG_DIAGN_APPENDER_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idMsgDiagAppender<=0){
-							throw new Exception("ID (msg diag appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (msg diag appender) autoincrementale non ottenuto");
 						}
 						
 						for(int l=0; l<appender.sizePropertyList();l++){
@@ -1992,7 +2039,7 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.TRACCIAMENTO_APPENDER_SEQUENCE, CostantiDB.TRACCIAMENTO_APPENDER_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idTracceAppender<=0){
-							throw new Exception("ID (tracce appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (tracce appender) autoincrementale non ottenuto");
 						}
 
 						for(int l=0; l<appender.sizePropertyList();l++){
@@ -2043,7 +2090,7 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.DUMP_APPENDER_SEQUENCE, CostantiDB.DUMP_APPENDER_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idDumpAppender<=0){
-							throw new Exception("ID (dump appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (dump appender) autoincrementale non ottenuto");
 						}
 
 						for(int l=0; l<appender.sizePropertyList();l++){
@@ -2097,11 +2144,11 @@ public class DriverConfigurazioneDB_configLIB {
 						updateStmt.executeUpdate();
 						updateStmt.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunta regola di cache");
+						DriverConfigurazioneDBLib.logDebug("Aggiunta regola di cache");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " regole di cache");
+				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " regole di cache");
 				
 				// dumpConfigurazione
 				
@@ -2146,7 +2193,7 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.MSG_DIAGN_DS_SEQUENCE, CostantiDB.MSG_DIAGN_DS_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idMsgDsAppender<=0){
-							throw new Exception("ID (msgdiag ds appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (msgdiag ds appender) autoincrementale non ottenuto");
 						}
 
 						for(int l=0; l<ds.sizePropertyList();l++){
@@ -2198,7 +2245,7 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.TRACCIAMENTO_DS_SEQUENCE, CostantiDB.TRACCIAMENTO_DS_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idTracceDsAppender<=0){
-							throw new Exception("ID (tracciamento ds appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (tracciamento ds appender) autoincrementale non ottenuto");
 						}
 
 						for(int l=0; l<ds.sizePropertyList();l++){
@@ -2238,15 +2285,11 @@ public class DriverConfigurazioneDB_configLIB {
 				}
 				
 				// ExtendedInfo
-				if(extInfoConfigurazioneDriver!=null){
-					
-					//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, CRUDType.CREATE);
-										
-					if(config.sizeExtendedInfoList()>0){
-						for(int l=0; l<config.sizeExtendedInfoList();l++){
-							extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), CRUDType.CREATE);
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), CRUDType.CREATE);
-						}
+				if(extInfoConfigurazioneDriver!=null &&			
+					config.sizeExtendedInfoList()>0){
+					for(int l=0; l<config.sizeExtendedInfoList();l++){
+						extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), CRUDType.CREATE);
+						extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), CRUDType.CREATE);
 					}
 				}
 
@@ -2507,7 +2550,7 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(index++, datiRichiesteIdleCache);
 				updateStmt.setString(index++, datiRichiesteLifeCache);
 				
-				DriverConfigurazioneDBLib.log.debug("eseguo query :" + 
+				DriverConfigurazioneDBLib.logDebug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
 								cadenzaInoltro, 
 								valStato, valControllo, 
@@ -2574,7 +2617,7 @@ public class DriverConfigurazioneDB_configLIB {
 					if(config.getUrlInvocazione().sizeRegolaList()>0){
 						for(int k=0; k<config.getUrlInvocazione().sizeRegolaList();k++){
 							ConfigurazioneUrlInvocazioneRegola configUrlInvocazioneRegola = config.getUrlInvocazione().getRegola(k);
-							_createUrlInvocazioneRegola(configUrlInvocazioneRegola, con);
+							createUrlInvocazioneRegolaEngine(configUrlInvocazioneRegola, con);
 						}
 					}
 				}
@@ -2608,11 +2651,11 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.MSG_DIAGN_APPENDER_SEQUENCE, CostantiDB.MSG_DIAGN_APPENDER_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idMsgDiagAppender<=0){
-							throw new Exception("ID (msg diag appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (msg diag appender) autoincrementale non ottenuto");
 						}
 
 						for(int l=0; l<appender.sizePropertyList();l++){
-							DriverConfigurazioneDBLib.log.debug("INSERT INTO "+CostantiDB.MSG_DIAGN_APPENDER_PROP+" (id_appender,nome,valore) VALUES ("+idMsgDiagAppender+","+appender.getProperty(l).getNome()+","+appender.getProperty(l).getValore()+")");
+							DriverConfigurazioneDBLib.logDebug("INSERT INTO "+CostantiDB.MSG_DIAGN_APPENDER_PROP+" (id_appender,nome,valore) VALUES ("+idMsgDiagAppender+","+appender.getProperty(l).getNome()+","+appender.getProperty(l).getValore()+")");
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 							sqlQueryObject.addInsertTable(CostantiDB.MSG_DIAGN_APPENDER_PROP);
 							sqlQueryObject.addInsertField("id_appender", "?");
@@ -2659,11 +2702,11 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.TRACCIAMENTO_APPENDER_SEQUENCE, CostantiDB.TRACCIAMENTO_APPENDER_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idTracceAppender<=0){
-							throw new Exception("ID (tracce appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (tracce appender) autoincrementale non ottenuto");
 						}
 
 						for(int l=0; l<appender.sizePropertyList();l++){
-							DriverConfigurazioneDBLib.log.debug("INSERT INTO "+CostantiDB.TRACCIAMENTO_APPENDER_PROP+" (id_appender,nome,valore) VALUES ("+idTracceAppender+","+appender.getProperty(l).getNome()+","+appender.getProperty(l).getValore()+")");
+							DriverConfigurazioneDBLib.logDebug("INSERT INTO "+CostantiDB.TRACCIAMENTO_APPENDER_PROP+" (id_appender,nome,valore) VALUES ("+idTracceAppender+","+appender.getProperty(l).getNome()+","+appender.getProperty(l).getValore()+")");
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 							sqlQueryObject.addInsertTable(CostantiDB.TRACCIAMENTO_APPENDER_PROP);
 							sqlQueryObject.addInsertField("id_appender", "?");
@@ -2711,7 +2754,7 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.DUMP_APPENDER_SEQUENCE, CostantiDB.DUMP_APPENDER_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idDumpAppender<=0){
-							throw new Exception("ID (dump appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (dump appender) autoincrementale non ottenuto");
 						}
 
 						for(int l=0; l<appender.sizePropertyList();l++){
@@ -2740,10 +2783,10 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt = con.prepareStatement(sqlQuery);
 				n=updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverConfigurazioneDBLib.log.debug("Cancellati "+n+" regole di cache");
+				DriverConfigurazioneDBLib.logDebug("Cancellati "+n+" regole di cache");
 				
 				n=0;
-				if(responseCacheRegole!=null && responseCacheRegole.size()>0){
+				if(responseCacheRegole!=null && !responseCacheRegole.isEmpty()){
 					for (int j = 0; j < responseCacheRegole.size(); j++) {
 						ResponseCachingConfigurazioneRegola regola = responseCacheRegole.get(j);
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
@@ -2774,11 +2817,11 @@ public class DriverConfigurazioneDB_configLIB {
 						updateStmt.executeUpdate();
 						updateStmt.close();
 						n++;
-						DriverConfigurazioneDBLib.log.debug("Aggiunta regola di cache");
+						DriverConfigurazioneDBLib.logDebug("Aggiunta regola di cache");
 					}
 				}
 				
-				DriverConfigurazioneDBLib.log.debug("Aggiunte " + n + " regole di cache");
+				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " regole di cache");
 				
 				// dumpConfigurazione
 				
@@ -2823,7 +2866,7 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.MSG_DIAGN_DS_SEQUENCE, CostantiDB.MSG_DIAGN_DS_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idMsgDsAppender<=0){
-							throw new Exception("ID (msgdiag ds appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (msgdiag ds appender) autoincrementale non ottenuto");
 						}
 
 						for(int l=0; l<ds.sizePropertyList();l++){
@@ -2875,7 +2918,7 @@ public class DriverConfigurazioneDB_configLIB {
 										CostantiDB.TRACCIAMENTO_DS_SEQUENCE, CostantiDB.TRACCIAMENTO_DS_TABLE_FOR_ID),
 								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
 						if(idTracceDsAppender<=0){
-							throw new Exception("ID (tracciamento ds appender) autoincrementale non ottenuto");
+							throw new DriverConfigurazioneException("ID (tracciamento ds appender) autoincrementale non ottenuto");
 						}
 
 						for(int l=0; l<ds.sizePropertyList();l++){
@@ -2907,15 +2950,11 @@ public class DriverConfigurazioneDB_configLIB {
 
 				
 				// ExtendedInfo
-				if(extInfoConfigurazioneDriver!=null){
-					
-					//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, CRUDType.UPDATE);
-										
-					if(config.sizeExtendedInfoList()>0){
-						for(int l=0; l<config.sizeExtendedInfoList();l++){
-							extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
-						}
+				if(extInfoConfigurazioneDriver!=null &&
+						config.sizeExtendedInfoList()>0){
+					for(int l=0; l<config.sizeExtendedInfoList();l++){
+						extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
+						extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
 					}
 				}
 				
@@ -2924,7 +2963,6 @@ public class DriverConfigurazioneDB_configLIB {
 
 			case DELETE:
 				
-				//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, CRUDType.DELETE);
 				if(config.sizeExtendedInfoList()>0){
 					for(int l=0; l<config.sizeExtendedInfoList();l++){
 						extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDBLib.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);

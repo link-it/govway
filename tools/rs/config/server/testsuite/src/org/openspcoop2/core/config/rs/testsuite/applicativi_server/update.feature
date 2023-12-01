@@ -166,3 +166,80 @@ Scenario Outline: Applicativi Server Aggiornamento Connettore 400
 Examples:
 |nome|error|
 |connettore_applicativo_server_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato|
+
+
+@UpdateDescrizione4000
+Scenario: Aggiornamento ApplicativoServer descrizione 4000 204 OK
+
+    * def applicativo_server_descrizione4000 = read('applicativo_descrizione4000.json') 
+
+    * call create { resourcePath: 'applicativi-server', body: '#(applicativo_server_descrizione4000)' }
+
+
+    Given url configUrl
+    And path 'applicativi-server', applicativo_server_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == applicativo_server_descrizione4000.descrizione
+
+    # UPDATE 1
+
+    * eval descr4000=applicativo_server_descrizione4000.descrizione
+    * eval applicativo_server_descrizione4000.descrizione='descrModificata'
+
+    Given url configUrl
+    And path 'applicativi-server/' + applicativo_server_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    And request applicativo_server_descrizione4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'applicativi-server', applicativo_server_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == 'descrModificata'
+
+    # UPDATE 2
+
+    * remove applicativo_server_descrizione4000.descrizione
+
+    Given url configUrl
+    And path 'applicativi-server/' + applicativo_server_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    And request applicativo_server_descrizione4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'applicativi-server', applicativo_server_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == '#notpresent'
+
+    # UPDATE 3
+
+    * eval applicativo_server_descrizione4000.descrizione=descr4000
+
+    Given url configUrl
+    And path 'applicativi-server/' + applicativo_server_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    And request applicativo_server_descrizione4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'applicativi-server', applicativo_server_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == descr4000
+
+    * call delete ( { resourcePath: 'applicativi-server' + '/' + applicativo_server_descrizione4000.nome } )

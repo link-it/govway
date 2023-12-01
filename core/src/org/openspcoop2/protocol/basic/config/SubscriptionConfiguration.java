@@ -65,6 +65,15 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		super(integrationConfiguration);
 	}
 
+	public static boolean isDescriptionDefault(String descrizione) {
+		return descrizione!=null &&
+				(descrizione.startsWith(SubscriptionConfiguration.SUBSCRIPTION_PREFIX) ||
+				descrizione.startsWith(SubscriptionConfiguration.SUBSCRIPTION_PREFIX_2)||
+				descrizione.startsWith(SubscriptionConfiguration.INTERNAL_SUBSCRIPTION_PREFIX));
+	}
+	
+	private static final String SUBSCRIPTION_PREFIX = "Subscription from ";
+	private static final String SUBSCRIPTION_PREFIX_2 = "Subscription for service ";
 	public ProtocolSubscription createDefaultSubscription(IDSoggetto idFruitore, IDServizio idServizio) throws ProtocolException {
 		
 		ProtocolSubscription subscription = new ProtocolSubscription();
@@ -72,9 +81,9 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		PortaDelegata portaDelegata = new PortaDelegata();
 		portaDelegata.setNome(this.getNome(idServizio, idFruitore, null, null, 
 				this.integrationConfiguration.getName().getParamList()));
-		portaDelegata.setDescrizione("Subscription from "+idFruitore.toString()+" for service "+idServizio.toString());
+		portaDelegata.setDescrizione(SUBSCRIPTION_PREFIX+idFruitore.toString()+" for service "+idServizio.toString());
 		if(portaDelegata.getDescrizione().length()>255) {
-			portaDelegata.setDescrizione("Subscription for service "+idServizio.toString());
+			portaDelegata.setDescrizione(SUBSCRIPTION_PREFIX_2+idServizio.toString());
 		}
 		if(portaDelegata.getDescrizione().length()>255) {
 			portaDelegata.setDescrizione(null);
@@ -139,14 +148,13 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 	}
 	
 	public List<PortaDelegataAzioneIdentificazione> supportedIdentificationModes(ConsoleInterfaceType consoleType) throws ProtocolException{
-		List<PortaDelegataAzioneIdentificazione> list = new ArrayList<PortaDelegataAzioneIdentificazione>();
+		List<PortaDelegataAzioneIdentificazione> list = new ArrayList<>();
 		for (IntegrationConfigurationResourceIdentificationMode mode : 
 			this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getModeList()) {
 			
-			if(mode.isOnlyAdvancedMode()) {
-				if(ConsoleInterfaceType.STANDARD.equals(consoleType)) {
-					continue;
-				}
+			if(mode.isOnlyAdvancedMode() &&
+				ConsoleInterfaceType.STANDARD.equals(consoleType)) {
+				continue;
 			}
 			
 			ResourceIdentificationType type = mode.getName();
@@ -183,6 +191,7 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 				portaDelegataDefault, null, 
 				ruleName, description, azione);
 	}
+	private static final String INTERNAL_SUBSCRIPTION_PREFIX = "Internal Subscription '"; 
 	public ProtocolSubscription createSubscription(IConfigIntegrationReader configIntegrationReader, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaClonare,
 			String ruleName, String description, String ... azione ) throws ProtocolException {
@@ -194,9 +203,9 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		String nomePortaDelegante = portaDelegataDefault.getNome();
 		String nomeNuovaPortaDelegata = this.getNome(idServizio, idFruitore, nomePortaDelegante, ruleName, 
 				this.integrationConfiguration.getResourceIdentification().getSpecificResource().getName().getParamList());
-		String descrizioneNuovaPortaDelegata = "Internal Subscription '"+ruleName+"' for "+nomePortaDelegante;	
+		String descrizioneNuovaPortaDelegata = INTERNAL_SUBSCRIPTION_PREFIX+ruleName+"' for "+nomePortaDelegante;	
 		if(descrizioneNuovaPortaDelegata.length()>255) {
-			descrizioneNuovaPortaDelegata = "Internal Subscription '"+ruleName+"'";
+			descrizioneNuovaPortaDelegata = INTERNAL_SUBSCRIPTION_PREFIX+ruleName+"'";
 		}
 		if(descrizioneNuovaPortaDelegata.length()>255) {
 			descrizioneNuovaPortaDelegata = null;
@@ -246,7 +255,7 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 							apCloned.setIdActivePolicy(idActive);
 							
 							if(subscription.getRateLimitingPolicies()==null) {
-								subscription.setRateLimitingPolicies(new ArrayList<AttivazionePolicy>());
+								subscription.setRateLimitingPolicies(new ArrayList<>());
 							}
 							subscription.getRateLimitingPolicies().add(apCloned);
 							
@@ -284,7 +293,7 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 							allarmeCloned.setNome(uniqueName);
 							
 							if(subscription.getAllarmi()==null) {
-								subscription.setAllarmi(new ArrayList<Allarme>());
+								subscription.setAllarmi(new ArrayList<>());
 							}
 							subscription.getAllarmi().add(allarmeCloned);
 							

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 
@@ -70,13 +71,16 @@ public class ApiCostanti {
 	public static final String MESSAGE_METADATI_APC_API_LIST_CON_CANALE = "API {0}, Canale: {1}";
 	public static final String MESSAGE_METADATI_APC_API_CON_CANALE_CON_PROFILO = "API {0}, Canale: {1}, Profilo Interoperabilit&agrave;: {2}";
 	
-	public static final String APC_API_ICONA_MODIFICA_API = "&#xE3C9;";
-	public static final String APC_API_ICONA_MODIFICA_API_TOOLTIP = "Modifica";
-	public static final String APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO = "Modifica {0}";
+	public static final String APC_API_ICONA_MODIFICA_API = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE;
+	public static final String APC_API_ICONA_MODIFICA_API_TOOLTIP = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP;
+	public static final String APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO;
 	
-	public static final String APC_API_ICONA_VISUALIZZA = "&#xE89E;";
-	public static final String APC_API_ICONA_VISUALIZZA_TOOLTIP = "Visualizza";
-	public static final String APC_API_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = "Visualizza {0}";
+	public static final String APC_API_ICONA_AGGIUNGI_DESCRIZIONE = CostantiControlStation.ICONA_AGGIUNGI_DESCRIZIONE;
+	public static final String APC_API_ICONA_AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO = CostantiControlStation.AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO;
+	
+	public static final String APC_API_ICONA_VISUALIZZA = CostantiControlStation.ICONA_VISUALIZZA;
+	public static final String APC_API_ICONA_VISUALIZZA_TOOLTIP = CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP;
+	public static final String APC_API_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO;
 	
 	public static final String APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA = "&#xE884;";
 	public static final String APC_API_ICONA_DOWNLOAD_DOCUMENTO_ARCHIVE = "&#xE149;";

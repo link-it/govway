@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneToken;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
@@ -360,6 +361,51 @@ public class PorteApplicativeCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
+	}
+	
+	public ProprietaOggetto getProprietaOggetto(IDPortaApplicativa idPA) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getProprietaOggetto";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getProprietaOggetto(idPA);
+
+		} catch (DriverConfigurazioneNotFound de) {
+			ControlStationCore.logDebug(getPrefixError(nomeMetodo,  de),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public void updateProprietaOggetto(IDPortaApplicativa idPA, String user) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "updateProprietaOggetto";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPA, user);
+
+		} catch (Exception e) {
+			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
+			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
 	}
 	
 
@@ -1126,7 +1172,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
-	public void aggiornaDescrizioneMappingErogazionePortaApplicativa(MappingErogazionePortaApplicativa mapping) throws DriverConfigurazioneException {
+	public void aggiornaDescrizioneMappingErogazionePortaApplicativa(MappingErogazionePortaApplicativa mapping, String user) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "aggiornaDescrizioneMappingErogazionePortaApplicativa";
 		try {
@@ -1135,6 +1181,10 @@ public class PorteApplicativeCore extends ControlStationCore {
 			
 			DBMappingUtils.updateMappingErogazione(mapping.getTableId(), mapping.getDescrizione(), con, this.tipoDB);
 
+			if(mapping.getIdPortaApplicativa()!=null) {
+				this.updateProprietaOggetto(mapping.getIdPortaApplicativa(), user);
+			}
+			
 		} catch (Exception e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo,  e),e);

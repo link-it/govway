@@ -45,6 +45,12 @@
 	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.InformazioniUtilizzoOggettoRegistro</servlet-class>
   </servlet>
 
+  <!-- Servlet per il Supporto delle proprietà degli elementi del registro -->
+  <servlet>
+    <servlet-name>proprietaOggettoRegistro</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.ProprietaOggettoRegistro</servlet-class>
+  </servlet>
+
 
   <!-- Servlet per il download dei documenti -->
   <servlet-mapping>
@@ -74,6 +80,12 @@
   <servlet-mapping>
     <servlet-name>informazioniUtilizzoOggettoRegistro</servlet-name>
 	<url-pattern>/informazioniUtilizzoOggettoRegistro</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet per il Supporto delle proprietà degli elementi del registro -->
+  <servlet-mapping>
+    <servlet-name>proprietaOggettoRegistro</servlet-name>
+	<url-pattern>/proprietaOggettoRegistro</url-pattern>
   </servlet-mapping>
 
   <!-- Action Servlet Mapping -->

@@ -279,6 +279,8 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			}
 
 			asps.addFruitore(myFru);
+			apsCore.setDataAggiornamentoFruitore(myFru);
+			
 			String superUser =  ServletUtils.getUserLoginFromSession(session);
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), asps);
 
