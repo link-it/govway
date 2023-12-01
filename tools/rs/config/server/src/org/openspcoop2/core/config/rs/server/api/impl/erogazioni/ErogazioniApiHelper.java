@@ -473,22 +473,22 @@ public class ErogazioniApiHelper {
 			if(erogazione.getErogazioneNome()!=null && !"".equals(erogazione.getErogazioneNome())) {
 				ret.setNome(erogazione.getErogazioneNome());
 			}
-			if(env.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(env.tipo_protocollo)) {
-				if(erogazione.getErogazioneVersione()!=null && erogazione.getErogazioneVersione()>0) {
-					ret.setVersione(erogazione.getErogazioneVersione());
-				}
+			if(env.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(env.tipo_protocollo) &&
+				erogazione.getErogazioneVersione()!=null && erogazione.getErogazioneVersione()>0) {
+				ret.setVersione(erogazione.getErogazioneVersione());
 			}
+			ret.setDescrizione(erogazione.getDescrizione());
 		}
 		else if(impl instanceof Fruizione) {
 			Fruizione fruizione = (Fruizione) impl;
 			if(fruizione.getFruizioneNome()!=null && !"".equals(fruizione.getFruizioneNome())) {
 				ret.setNome(fruizione.getFruizioneNome());
 			}
-			if(env.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(env.tipo_protocollo)) {
-				if(fruizione.getFruizioneVersione()!=null && fruizione.getFruizioneVersione()>0) {
-					ret.setVersione(fruizione.getFruizioneVersione());
-				}
+			if(env.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(env.tipo_protocollo) &&
+				fruizione.getFruizioneVersione()!=null && fruizione.getFruizioneVersione()>0) {
+				ret.setVersione(fruizione.getFruizioneVersione());
 			}
+			// descrizione deve essere impostata sul fruitore
 		}
 
 		ret.setIdSoggetto(soggErogatore.getId());

@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.applicativi.ApplicativiEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
+import org.openspcoop2.core.config.rs.server.model.ApiDescrizione;
 import org.openspcoop2.core.config.rs.server.model.ApiImplAllegato;
 import org.openspcoop2.core.config.rs.server.model.ApiImplInformazioniGenerali;
 import org.openspcoop2.core.config.rs.server.model.ApiImplInformazioniGeneraliView;
@@ -669,6 +670,42 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		}
 	}
 
+    /**
+     * Restituisce la descrizione di una erogazione
+     *
+     * Questa operazione consente di ottenere la descrizione di una erogazione identificata dal nome e dalla versione
+     *
+     */
+	@Override
+    public ApiDescrizione getErogazioneDescrizione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			
+			ApiDescrizione descr = new ApiDescrizione();
+			descr.setDescrizione(asps.getDescrizione());
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return descr;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
 	/**
 	 * Restituisce le informazioni generali di un'erogazione di API
 	 *
@@ -1218,7 +1255,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		case JMS:
 			return TipiConnettore.JMS.getNome();
 		case MESSAGE_BOX:
-			break; //BOH
+			break; 
 		case NULL:
 			return TipiConnettore.NULL.getNome();
 		case PLUGIN:
@@ -1226,9 +1263,47 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		default:
 			break;}
 		
-		//TODO definire i tipi di cui non so
 		return TipiConnettore.DISABILITATO.getNome();
 	}
+
+    /**
+     * Consente di modificare la descrizione di una erogazione
+     *
+     * Questa operazione consente di aggiornare la descrizione di una erogazione identificata dal nome e dalla versione
+     *
+     */
+	@Override
+    public void updateErogazioneDescrizione(ApiDescrizione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			
+			asps.setDescrizione(body.getDescrizione());
+			
+			IDServizio oldIDServizioForUpdate = env.idServizioFactory.getIDServizioFromAccordo(asps);
+			asps.setOldIDServizioForUpdate(oldIDServizioForUpdate);
+			
+			env.apsCore.performUpdateOperation(env.userLogin, false, asps);
+			
+			context.getLogger().info("Invocazione completata con successo");       
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
 
 	/**
 	 * Consente di modificare le informazioni generali di un'erogazione di API

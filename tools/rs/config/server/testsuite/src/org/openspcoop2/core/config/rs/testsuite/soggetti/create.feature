@@ -26,6 +26,9 @@ Background:
 * eval soggetto_https_multipleCertificate.ruoli = [ ruolo.nome ]
 * eval soggetto_proprieta.ruoli = [ ruolo.nome ]
 
+* def soggetto_descrizione4000 = read('classpath:bodies/soggetto-esterno-descrizione4000.json')
+* eval randomize(soggetto_descrizione4000, ["nome", "credenziali.username"])
+
 @CreateCredHttp
 Scenario: Creazione Soggetti 204 OK
 
@@ -94,4 +97,22 @@ Scenario: Soggetti Creazione 204 OK (presenza di proprieta')
     * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
     * call create_201 { resourcePath: 'soggetti', body: '#(soggetto_proprieta)', key: '#(soggetto_proprieta.nome)' }
     * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
+
+@CreateDescrizione4000
+Scenario: Creazione Soggetti descrizione 4000 204 OK
+
+    * call create { resourcePath: 'soggetti', body: '#(soggetto_descrizione4000)' }
+
+    Given url configUrl
+    And path 'soggetti', soggetto_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == soggetto_descrizione4000.descrizione
+
+    * call delete ( { resourcePath: 'soggetti' + '/' + soggetto_descrizione4000.nome } )
+
+
+
 

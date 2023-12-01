@@ -43,6 +43,10 @@ Background:
     * def applicativo_esterno_update = read('applicativo_esterno_update.json') 
     * eval applicativo_esterno_update.nome = applicativo_esterno.nome
 
+    * def applicativo_esterno_descrizione4000 = read('classpath:bodies/applicativo_esterno_descrizione4000.json') 
+    * eval randomize(applicativo_esterno_descrizione4000, ["nome", "credenziali.userid" ])
+
+
 @Update204
 Scenario: Applicativi Aggiornamento 204 OK
 
@@ -370,3 +374,78 @@ Scenario: Applicativi Aggiornamento Credenziali per un applicativo esterno
     * call delete ( { resourcePath: 'applicativi/' + applicativo_esterno.nome, query_params: query_param_applicativi } )
 
     * call delete ({ resourcePath: 'soggetti/' + soggetto_esterno.nome})
+
+
+@UpdateDescrizione4000
+Scenario: Aggiornamento Applicativo descrizione 4000 204 OK
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo_esterno_descrizione4000)' }
+
+
+    Given url configUrl
+    And path 'applicativi', applicativo_esterno_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == applicativo_esterno_descrizione4000.descrizione
+
+    # UPDATE 1
+
+    * eval descr4000=applicativo_esterno_descrizione4000.descrizione
+    * eval applicativo_esterno_descrizione4000.descrizione='descrModificata'
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo_esterno_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    And request applicativo_esterno_descrizione4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'applicativi', applicativo_esterno_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == 'descrModificata'
+
+    # UPDATE 2
+
+    * remove applicativo_esterno_descrizione4000.descrizione
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo_esterno_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    And request applicativo_esterno_descrizione4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'applicativi', applicativo_esterno_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == '#notpresent'
+
+    # UPDATE 3
+
+    * eval applicativo_esterno_descrizione4000.descrizione=descr4000
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo_esterno_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    And request applicativo_esterno_descrizione4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'applicativi', applicativo_esterno_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == descr4000
+
+    * call delete ( { resourcePath: 'applicativi' + '/' + applicativo_esterno_descrizione4000.nome } )

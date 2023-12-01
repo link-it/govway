@@ -36,6 +36,10 @@ Background:
 * eval randomize(soggetto_proprieta, ["nome", "credenziali.userid" ])
 * eval soggetto_proprieta.ruoli = []
 
+* def soggetto_descrizione4000 = read('classpath:bodies/soggetto-esterno-descrizione4000.json')
+* eval randomize(soggetto_descrizione4000, ["nome", "credenziali.username"])
+
+
 @Update204
 Scenario: Aggiornamento Soggetto 204
 
@@ -265,3 +269,76 @@ Scenario: Soggetti Aggiornamento Proprieta
     And match response contains { 'proprieta': '#notpresent' }
 
     * call delete ( { resourcePath: 'soggetti/' + soggetto_proprieta.nome } )
+
+@UpdateDescrizione4000
+Scenario: Aggiornamento Soggetti descrizione 4000 204 OK
+
+    * call create { resourcePath: 'soggetti', body: '#(soggetto_descrizione4000)' }
+
+    Given url configUrl
+    And path 'soggetti', soggetto_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == soggetto_descrizione4000.descrizione
+
+    # UPDATE 1
+
+    * eval descr4000=soggetto_descrizione4000.descrizione
+    * eval soggetto_descrizione4000.descrizione='descrModificata'
+
+    Given url configUrl
+    And path 'soggetti/' + soggetto_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    And request soggetto_descrizione4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'soggetti', soggetto_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == 'descrModificata'
+
+    # UPDATE 2
+
+    * remove soggetto_descrizione4000.descrizione
+
+    Given url configUrl
+    And path 'soggetti/' + soggetto_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    And request soggetto_descrizione4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'soggetti', soggetto_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == '#notpresent'
+
+    # UPDATE 3
+
+    * eval soggetto_descrizione4000.descrizione=descr4000
+
+    Given url configUrl
+    And path 'soggetti/' + soggetto_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    And request soggetto_descrizione4000
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'soggetti', soggetto_descrizione4000.nome
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+    * match response.descrizione == descr4000
+
+    * call delete ( { resourcePath: 'soggetti' + '/' + soggetto_descrizione4000.nome } )

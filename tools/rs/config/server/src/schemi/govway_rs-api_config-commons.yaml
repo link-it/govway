@@ -276,7 +276,7 @@ components:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         descrizione:
           type: string
-          maxLength: 255
+          maxLength: 4000
           example: 'descrizione API'
         versione:
           $ref: 'govway_core.yaml#/components/schemas/Versione'

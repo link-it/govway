@@ -51,7 +51,7 @@ public class Erogazione extends APIImpl {
   **/
   @JsonProperty("descrizione")
   @Valid
-  public String getDescrizione() {
+ @Size(max=4000)  public String getDescrizione() {
     return this.descrizione;
   }
 

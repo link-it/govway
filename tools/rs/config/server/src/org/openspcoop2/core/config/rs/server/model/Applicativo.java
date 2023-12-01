@@ -31,6 +31,9 @@ public class Applicativo extends BaseCredenziali {
   @Schema(required = true, description = "")
   private String nome = null;
   
+  @Schema(example = "descrizione dell'applicativo", description = "")
+  private String descrizione = null;
+  
   @Schema(example = "[\"ruolo1\",\"ruolo2\"]", description = "")
   private List<String> ruoli = null;
   
@@ -60,6 +63,25 @@ public class Applicativo extends BaseCredenziali {
 
   public Applicativo nome(String nome) {
     this.nome = nome;
+    return this;
+  }
+
+ /**
+   * Get descrizione
+   * @return descrizione
+  **/
+  @JsonProperty("descrizione")
+  @Valid
+ @Size(max=4000)  public String getDescrizione() {
+    return this.descrizione;
+  }
+
+  public void setDescrizione(String descrizione) {
+    this.descrizione = descrizione;
+  }
+
+  public Applicativo descrizione(String descrizione) {
+    this.descrizione = descrizione;
     return this;
   }
 
@@ -137,6 +159,7 @@ public class Applicativo extends BaseCredenziali {
     sb.append("class Applicativo {\n");
     sb.append("    ").append(Applicativo.toIndentedString(super.toString())).append("\n");
     sb.append("    nome: ").append(Applicativo.toIndentedString(this.nome)).append("\n");
+    sb.append("    descrizione: ").append(Applicativo.toIndentedString(this.descrizione)).append("\n");
     sb.append("    ruoli: ").append(Applicativo.toIndentedString(this.ruoli)).append("\n");
     sb.append("    proprieta: ").append(Applicativo.toIndentedString(this.proprieta)).append("\n");
     sb.append("    modi: ").append(Applicativo.toIndentedString(this.modi)).append("\n");
