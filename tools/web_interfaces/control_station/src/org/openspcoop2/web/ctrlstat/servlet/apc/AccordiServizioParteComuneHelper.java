@@ -3137,8 +3137,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		boolean gestioneInformazioniProtocollo = false;
 		boolean gestioneGruppi = false;
 		boolean gestioneCanale = false;
-		if(TipoOperazione.ADD.equals(tipoOperazione) || isModalitaVistaApiCustom==null || 
-				(isModalitaVistaApiCustom==null || !isModalitaVistaApiCustom.booleanValue())
+		if(TipoOperazione.ADD.equals(tipoOperazione) || 
+				(isModalitaVistaApiCustom==null) || 
+				(!isModalitaVistaApiCustom.booleanValue())
 			) {
 			gestioneInformazioniGenerali = true;
 			gestioneInformazioniProfilo = true;

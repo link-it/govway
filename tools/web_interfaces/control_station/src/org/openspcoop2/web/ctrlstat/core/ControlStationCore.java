@@ -7513,12 +7513,12 @@ public class ControlStationCore {
 	private void updateProprietaOggettoPorta(Allarme allarme, String superUser, DriverControlStationDB driver) throws DriverConfigurazioneException {		
 		if(allarme!=null && allarme.getFiltro()!=null && allarme.getFiltro().getEnabled() && allarme.getFiltro().getRuoloPorta()!=null && 
 				allarme.getFiltro().getNomePorta()!=null && StringUtils.isNotEmpty(allarme.getFiltro().getNomePorta())) {
-			if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.APPLICATIVA.equals(allarme.getFiltro().getRuoloPorta())) {
+			if(org.openspcoop2.core.allarmi.constants.RuoloPorta.APPLICATIVA.equals(allarme.getFiltro().getRuoloPorta())) {
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(allarme.getFiltro().getNomePorta());
 				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPA, superUser);
 			}
-			else if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.DELEGATA.equals(allarme.getFiltro().getRuoloPorta())) {
+			else if(org.openspcoop2.core.allarmi.constants.RuoloPorta.DELEGATA.equals(allarme.getFiltro().getRuoloPorta())) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(allarme.getFiltro().getNomePorta());
 				driver.getDriverConfigurazioneDB().updateProprietaOggetto(idPD, superUser);

@@ -8595,7 +8595,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 				idServizioApplicativo.setNome(paSA.getNome());
 				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
-				org.openspcoop2.core.config.InvocazioneServizio is = sa.getInvocazioneServizio();
+				org.openspcoop2.core.config.InvocazioneServizio is = sa!=null ? sa.getInvocazioneServizio() : null;
 				org.openspcoop2.core.config.Connettore connettore = is!=null ? is.getConnettore() : null;
 				
 				if(showCambiaScheduling &&
@@ -8934,7 +8934,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				if(p!=null) {
 					if(p.getUtenteUltimaModifica()==null && p.getDataUltimaModifica()!=null && 
 							connettoreDefault &&
-							pa!=null && pa.getProprietaOggetto()!=null) {
+							pa.getProprietaOggetto()!=null) {
 						p.setUtenteUltimaModifica(pa.getProprietaOggetto().getUtenteUltimaModifica());
 					}
 					this.addProprietaOggetto(e, p);
