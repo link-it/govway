@@ -26,7 +26,7 @@
 		<hamcrest.version>1.3</hamcrest.version>
 		<picocli.version>4.2.0</picocli.version>
 		<spring.version>${module.spring.version}</spring.version>
-		<logback.version>1.4.4</logback.version>
+		<logback.version>1.4.14</logback.version>
 		<slf4j-testng.version>2.0.0</slf4j-testng.version>
 
 	</properties>
