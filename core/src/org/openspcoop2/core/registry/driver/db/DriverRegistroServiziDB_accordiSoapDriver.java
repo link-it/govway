@@ -774,7 +774,7 @@ public class DriverRegistroServiziDB_accordiSoapDriver {
 			stm.setLong(1, portType.getId());
 			int n=stm.executeUpdate();
 			stm.close();
-			this.driver.logDebug("Cancellate "+n+" azioni associate al portType "+portType.getNome()+ " dell'accordo: "+as.getNome());
+			this.driver.logDebug("Cancellate "+n+" azioni associate al portType "+portType.getNome()+ " dell'accordo: "+(as!=null ? as.getNome() : null));
 			
 			for (int i = 0; i < portType.sizeAzioneList(); i++) {
 				Operation azione = portType.getAzione(i);			
