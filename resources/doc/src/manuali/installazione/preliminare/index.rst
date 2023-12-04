@@ -17,7 +17,7 @@ mancanti.
    Server. Si raccomanda una configurazione minima dei parametri della
    JVM, come segue:
 
-   -  -XX:MaxMetaspaceSize=516m -Xmx1024m
+   -  -XX:MaxMetaspaceSize=512m -Xmx1024m
 
    Verificare inoltre che il charset utilizzato dalla JVM sia UTF-8:
 

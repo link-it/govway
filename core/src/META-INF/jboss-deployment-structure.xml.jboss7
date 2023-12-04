@@ -88,6 +88,8 @@
 			<module name="org.jboss.logging"/>
 		</exclusions>
 	</sub-deployment>
+	<!-- NOTA: non inserire commenti dentro il sub-deployment di govwaySec -->
+	<!-- start govwaySec -->
 	<sub-deployment name="govwaySec.war">
 		<exclusions>
 			<module name="org.apache.log4j"/>
@@ -96,7 +98,8 @@
 			<module name="org.log4j"/>
 			<module name="org.jboss.logging"/>
 		</exclusions>
-	</sub-deployment>	
+	</sub-deployment>
+	<!-- end govwaySec -->	
 	<sub-deployment name="govway.jar">
 		<exclusions>
 			<module name="org.apache.log4j"/>

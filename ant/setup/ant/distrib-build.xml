@@ -2066,6 +2066,18 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 				</antcall>
 			</then>
 		</if>
+		<if>
+			<isfalse value="${build_openspcoop_sec_archive}" />
+			<then>
+				<replace file="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" token="&lt;!-- start govwaySec -->" value="&lt;!-- start govwaySec"/>
+				<replace file="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" token="&lt;!-- end govwaySec -->" value="end govwaySec -->"/>
+				<antcall target="dos2unix">
+					<param name="dir" value="${dist}/archivi/OpenSPCoop2/META-INF"/>
+				    <param name="file" value="jboss-deployment-structure.xml"/>
+				</antcall>
+			</then>
+		</if>
+
 
 		<!-- ** correggo manifest ** -->
 
