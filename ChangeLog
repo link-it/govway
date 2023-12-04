@@ -1,3 +1,10 @@
+2023-12-04  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Aggiunta funzionalità OP-1673
+	Eliminata la generazione dell'archivio 'govwaySec' prodotto per default sugli archivi generati per l'application server WildFly.
+	L'archivio è nuovamente generabile abilitando l'opzione specifica utilizzando l'installer in modalità avanzata.
+
 2023-12-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, ApiRsConfigurazione]

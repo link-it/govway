@@ -245,37 +245,14 @@
 	</if>
 	<if>
 		<or>
-			<equals arg1="${antinstaller_sec_container}" arg2="false" />
-			<equals arg1="${antinstaller_sec_container}" arg2="" />
-			<equals arg1="${antinstaller_sec_container}" arg2="$${antinstaller_sec_container}" />
+			<equals arg1="${antinstaller_sec_container}" arg2="true" />
 		</or>
 		<then>
-			<if>
-				<or>
-					<equals arg1="${antinstaller_sec_container}" arg2="" />
-					<equals arg1="${antinstaller_sec_container}" arg2="$${antinstaller_sec_container}" />
-				</or>
-				<then>
-					<!-- Abilitato per Default su wildfly -->
-					<if>
-						<or>
-							<matches string="${build_for_as}" pattern="wildfly.*"/>
-						</or>
-						<then>	
-							<var name="build_openspcoop_sec_archive" value="true"/>
-						</then>
-						<else>
-							<var name="build_openspcoop_sec_archive" value="false"/>
-						</else>
-					</if>
-				</then>
-				<else>
-					<var name="build_openspcoop_sec_archive" value="false"/>
-				</else>
-			</if>
+			<var name="build_openspcoop_sec_archive" value="true"/>
 		</then>
 		<else>
-			<var name="build_openspcoop_sec_archive" value="true"/>
+			<!-- per default lascio disabilitato -->
+			<var name="build_openspcoop_sec_archive" value="false"/>
 		</else>
 	</if>
 

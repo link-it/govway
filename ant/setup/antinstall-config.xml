@@ -585,7 +585,7 @@
 
 	<comment displayText=""/>
 	<comment bold="true" displayText="Endpoint protetto tramite Security Constraint"/>
-	<checkbox defaultValue="true" property="antinstaller_sec_container" displayText="Contesto 'govwaySec'"/>
+	<checkbox defaultValue="false" property="antinstaller_sec_container" displayText="Contesto 'govwaySec'"/>
 
     </page>
 
