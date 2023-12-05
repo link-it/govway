@@ -30,20 +30,23 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.dao.IConfigurazioniGeneraliService;
 import org.openspcoop2.web.monitor.statistiche.export.ConfigurazioniCsvExporter;
+import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
+import org.slf4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * ConfigurazioniExporter
@@ -114,6 +117,7 @@ public class ConfigurazioniExporter extends HttpServlet{
 			String idtransazioni=req.getParameter(CostantiConfigurazioni.PARAMETER_IDS);
 			String[] ids = StringUtils.split(idtransazioni, ",");
 			String ruoloS =req.getParameter(CostantiConfigurazioni.PARAMETER_RUOLO);
+			String formato =req.getParameter(CostantiExport.PARAMETER_FORMATO_EXPORT);
 
 			//Check Parametri di export
 			HttpSession sessione = req.getSession();
@@ -122,17 +126,20 @@ public class ConfigurazioniExporter extends HttpServlet{
 			Boolean isAllFromSession = (Boolean) sessione.getAttribute(CostantiConfigurazioni.PARAMETER_IS_ALL_ORIGINALE);
 			String idTransazioniFromSession = (String) sessione.getAttribute(CostantiConfigurazioni.PARAMETER_IDS_ORIGINALI);
 			String ruoloSFromSession = (String) sessione.getAttribute(CostantiConfigurazioni.PARAMETER_RUOLO_ORIGINALE);
+			String formatoFromSession = (String) sessione.getAttribute(CostantiExport.PARAMETER_FORMATO_EXPORT_ORIGINALE);
 
 			//Rimuovo i parametri utilizzati dalla sessione
 			sessione.removeAttribute(CostantiConfigurazioni.PARAMETER_IS_ALL_ORIGINALE);
 			sessione.removeAttribute(CostantiConfigurazioni.PARAMETER_IDS_ORIGINALI);
 			sessione.removeAttribute(CostantiConfigurazioni.PARAMETER_RUOLO_ORIGINALE);
+			sessione.removeAttribute(CostantiExport.PARAMETER_FORMATO_EXPORT_ORIGINALE); 
 
 			String[] idsFromSession = StringUtils.split(idTransazioniFromSession, ",");
 			PddRuolo ruolo = PddRuolo.toEnumConstant(ruoloS);
 
 			//I parametri in sessione devono coincidere con quelli della request
-			boolean exportConsentito = ConfigurazioniExporter.checkParametri(isAll,isAllFromSession,ids,idsFromSession,ruoloS,ruoloSFromSession);
+			boolean exportConsentito = ConfigurazioniExporter.checkParametri(isAll,isAllFromSession,ids,idsFromSession,ruoloS,ruoloSFromSession)
+					&& ConfigurazioniExporter.checkFormatoExport(formato, formatoFromSession);
 
 			if(!exportConsentito){
 				String msg_errore = "L'utente non dispone dei permessi necessari per effettuare l'export delle configurazioni.";
@@ -142,7 +149,7 @@ public class ConfigurazioniExporter extends HttpServlet{
 				return;
 			}
 			
-			export(req, response, isAllFromSession, service, idsFromSession, ruolo);
+			export(req, response, isAllFromSession, service, idsFromSession, ruolo, formato);
 			
 		}catch(Throwable e){
 			log.error(e.getMessage(),e);
@@ -151,7 +158,7 @@ public class ConfigurazioniExporter extends HttpServlet{
 	}
 	
 	public static void export(HttpServletRequest req, HttpServletResponse response, Boolean isAll, IConfigurazioniGeneraliService service,
-			String[] ids, PddRuolo ruolo) throws ServletException,IOException{
+			String[] ids, PddRuolo ruolo, String formato) throws ServletException,IOException{
 		try{
 			
 			// fase 1 lettura delle configurazioni
@@ -189,7 +196,9 @@ public class ConfigurazioniExporter extends HttpServlet{
 			}
 
 			if(lst.size() > 0) {
-				String fileName = "ConfigurazioneServizi.csv";
+				String mimeType = MimeTypes.getInstance().getMimeType(formato);
+				String ext = MimeTypeUtils.fileExtensionForMIMEType(mimeType);
+				String fileName = "ConfigurazioneServizi" +"."+ ext;
 
 				// Setto Proprietà Export File
 				HttpUtilities.setOutputFile(response, true, fileName);
@@ -198,7 +207,7 @@ public class ConfigurazioniExporter extends HttpServlet{
 				response.setStatus(200);
 				response.flushBuffer();
 				
-				ConfigurazioniCsvExporter exporter = new ConfigurazioniCsvExporter(log,ruolo);
+				ConfigurazioniCsvExporter exporter = new ConfigurazioniCsvExporter(log,ruolo, formato);
 				
 				exporter.exportConfigurazioni(lst, response.getOutputStream());
 			} else {
@@ -261,5 +270,13 @@ public class ConfigurazioniExporter extends HttpServlet{
 			return false;
 		
 		return true;
+	}
+	
+	public static boolean checkFormatoExport(String formato, String formatoFromSession){
+		
+		if(formato == null ||  formatoFromSession == null)
+			return false;
+		
+		return formato.equals(formatoFromSession);
 	}
 }

@@ -89,12 +89,16 @@ import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA.DettaglioSA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioRateLimiting;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
+import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.IgnoreCaseComp;
+import org.openspcoop2.web.monitor.transazioni.exporter.ExportException;
 import org.slf4j.Logger;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.jasper.builder.export.JasperCsvExporterBuilder;
+import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
+import net.sf.dynamicreports.report.builder.DynamicReports;
 import net.sf.dynamicreports.report.builder.column.ColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
@@ -114,10 +118,12 @@ public class ConfigurazioniCsvExporter {
 	private List<String> chiaviColonne = null;
 	private List<String> labelColonne = null;
 	private PddRuolo ruolo = null;
+	private String formato;
 
-	public ConfigurazioniCsvExporter(Logger log, PddRuolo ruolo) {
+	public ConfigurazioniCsvExporter(Logger log, PddRuolo ruolo, String formato) {
 		this.log = log;
 		this.ruolo = ruolo;
+		this.formato = formato;
 		this.chiaviColonne = new ArrayList<>();
 		this.labelColonne = new ArrayList<>();
 		this.init();
@@ -562,11 +568,42 @@ public class ConfigurazioniCsvExporter {
 
 		JasperReportBuilder reportBuilder = creaReportBuilder(dataSource, this.log);
 
-		this.esportaCsv(out, reportBuilder, this.chiaviColonne, this.labelColonne);
+		if(this.formato.equals(CostantiExporter.FORMATO_CSV_VALUE)){
+			this.esportaCsv(out, reportBuilder, this.chiaviColonne, this.labelColonne);
+		} else if(this.formato.equals(CostantiExporter.FORMATO_XLS_VALUE)){
+			this.esportaXls(out, reportBuilder, this.chiaviColonne, this.labelColonne);
+		} else {
+			throw new ExportException("Formato export ["+this.formato+"] non valido.");
+		}
 
 		return errMsg;
 	}
 
+	public void esportaXls(OutputStream outputStream, JasperReportBuilder report,List<String> chiaviColonne, List<String> labelColonne) throws Exception{
+		JasperXlsExporterBuilder builder = DynamicReports.export.xlsExporter(outputStream).setDetectCellType(true).setIgnorePageMargins(true)
+				.setWhitePageBackground(false)
+				.setRemoveEmptySpaceBetweenColumns(true);
+
+		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();
+
+		// generazione delle label delle colonne
+		for (int i = 0; i < labelColonne.size(); i++) {
+			String label = labelColonne.get(i);
+			String keyColonna = chiaviColonne.get(i);
+			TextColumnBuilder<String> nomeColumn = col.column(label, keyColonna, type.stringType());
+			colonne.add(nomeColumn);
+		}
+
+		report
+		.setColumnTitleStyle(Templates.columnTitleStyle)
+		.addProperty("net.sf.jasperreports.export.csv.exclude.origin.keep.first.band.1", "columnHeader")
+		//		.addProperty(JasperProperty.EXPORT_XLS_FREEZE_ROW, "2")
+		.ignorePageWidth()
+		.ignorePagination()
+		.columns(colonne.toArray(new ColumnBuilder[colonne.size()]));
+
+		report.toXls(builder);
+	}
 
 	public void esportaCsv(OutputStream outputStream, JasperReportBuilder report,List<String> chiaviColonne, List<String> labelColonne) throws Exception{
 		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();

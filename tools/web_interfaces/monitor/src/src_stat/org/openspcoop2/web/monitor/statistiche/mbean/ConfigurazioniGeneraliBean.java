@@ -21,11 +21,7 @@ package org.openspcoop2.web.monitor.statistiche.mbean;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -49,8 +45,8 @@ import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
+import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 import org.openspcoop2.web.monitor.statistiche.dao.IConfigurazioniGeneraliService;
-import org.openspcoop2.web.monitor.statistiche.utils.IgnoreCaseComp;
 import org.slf4j.Logger;
 
 /**
@@ -75,13 +71,12 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	private String labelInformazioniServizi = CostantiConfigurazioni.LABEL_SERVIZI;
 	private boolean includiInformazioniDettaglio = false;
 	private ConfigurazioneGeneralePK selectedId = null;
+	private String exportCsvErrorMessage = null;
+	private List<SelectItem> exportDisponibili = null;
+	private String tipoExport = CostantiExporter.FORMATO_CSV_VALUE;
 
 	public ConfigurazioniGeneraliBean(){
 		super();
-		try {
-		}catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
 	}
 
 	public String submit() {
@@ -90,8 +85,6 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 
 	public String filtra() {
 		return this.search.filtra();
-		
-//		return "configurazioniGenerali";
 	}
 
 	public ConfigurazioneGeneralePK getSelectedId() {
@@ -102,7 +95,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		this.selectedId = selectedId;
 
 		if(this.selectedId != null) {
-			log.debug("Lettura del dettaglio per l'elemento: [" + this.selectedId + "]");
+			log.debug("Lettura del dettaglio per l'elemento: [{}]", this.selectedId);
 			ConfigurazioneGenerale findById = this.service.findById(this.selectedId);
 			this.setSelectedElement(findById); 			
 		}
@@ -120,34 +113,22 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	@Override
 	public List<SelectItem> getSoggetti()  throws Exception{
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 		
-		//PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
-		
-		//if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
-			//return _getSoggetti(false,true,null);
-			// bug fix: devo usare sempre i soggetti operativi
-			return _getSoggetti(true,false,null);
-		//} else {
-		//	return _getSoggetti(true,false,null);
-		//}
+		// bug fix: devo usare sempre i soggetti operativi
+		return _getSoggetti(true,false,null);
 	}
 	
 	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiErogatoreAutoComplete(Object val) throws Exception{
-		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaSoggetti = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaSoggetti = new ArrayList<>();
 		List<SelectItem> listaSoggettiTmp = new ArrayList<>();
 		if(val==null || StringUtils.isEmpty((String)val)) {
+			//donothing
 		}else{
 			if(this.search!=null){
-				//PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
-				//if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
-					//listaSoggettiTmp = _getSoggetti(false,true,(String)val);
-					// bug fix: devo usare sempre i soggetti operativi
-					listaSoggettiTmp = _getSoggetti(true,false,(String)val);
-				//} else {
-				//	listaSoggettiTmp = _getSoggetti(true,false,(String)val);
-				//}
+				// bug fix: devo usare sempre i soggetti operativi
+				listaSoggettiTmp = _getSoggetti(true,false,(String)val);
 			}
 		}
 		
@@ -172,7 +153,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	@Override
 	protected List<SelectItem> _getServizi(String input) throws Exception {
 		if(this.search==null){
-			return new ArrayList<SelectItem>();
+			return new ArrayList<>();
 		}
 		if(!this.serviziSelectItemsWidthCheck){
 			this.servizi = new ArrayList<SelectItem>();
@@ -212,7 +193,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 			log.error("Errore durante la lettura delle configurazioni generali: "+e.getMessage(), e);
 		}
 
-		return new ArrayList<ConfigurazioneGenerale>();
+		return new ArrayList<>();
 	}
 
 	public List<ConfigurazioneGenerale> getListaConfigurazioniServizi(){
@@ -222,7 +203,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 			log.error("Errore durante la lettura delle configurazioni servizi: "+e.getMessage(), e);
 		}
 
-		return new ArrayList<ConfigurazioneGenerale>();
+		return new ArrayList<>();
 	}
 
 	public String getLabelInformazioniGenerali() {
@@ -276,36 +257,57 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	public void initExportListener(ActionEvent ae) {
 		super.initExportListener(ae);
 		this.includiInformazioniDettaglio = false;
+		this.tipoExport = CostantiExporter.FORMATO_CSV_VALUE;
 	}
 
 	public String exportSelected() {
 		try {
+			String formatoExport = this.getTipoExport();
+			
 			// recupero lista diagnostici
 			List<String> idReport = new ArrayList<>();
 
 			// se nn sono in select all allore prendo solo quelle selezionate
-			if (!this.isSelectedAll()) {
-
+//			if (!this.isSelectedAll()) {
+//
+//				// NOTA: Al massimo sono selezionate 25 report
+//				// NOTA2: le configurazioni sono ordinate per nome
+//				List<String> orderFix = new ArrayList<>();
+//				Map<String, String> mapIds = new HashMap<>();
+//
+//				Iterator<ConfigurazioneGenerale> it = this.selectedIds.keySet().iterator();
+//				while (it.hasNext()) {
+//					ConfigurazioneGenerale bean = it.next();
+//					if (this.selectedIds.get(bean).booleanValue()) {
+//						orderFix.add(bean.getLabel());
+//						mapIds.put(bean.getLabel(), bean.getId().toString());
+//						it.remove();
+//					}
+//				}
+//
+//				Collections.sort(orderFix, new IgnoreCaseComp()); // per adeguarsi ai db
+//				for (String nomeConfigurazione : orderFix) {
+//					idReport.add(mapIds.get(nomeConfigurazione));	
+//				}
+//				
+//			}
+			
+			// se nn sono in select all allore prendo solo quelle selezionate
+			if (this.elencoID != null && this.elencoID.length() > 0) {
+				String [] split = this.elencoID.split(",");
+				
 				// NOTA: Al massimo sono selezionate 25 report
-				// NOTA2: le configurazioni sono ordinate per nome
+				// NOTA2: i report esportate sono sempre ordinate per data
 				List<String> orderFix = new ArrayList<>();
-				Map<String, String> mapIds = new HashMap<>();
-
-				Iterator<ConfigurazioneGenerale> it = this.selectedIds.keySet().iterator();
-				while (it.hasNext()) {
-					ConfigurazioneGenerale bean = it.next();
-					if (this.selectedIds.get(bean).booleanValue()) {
-						orderFix.add(bean.getLabel());
-						mapIds.put(bean.getLabel(), bean.getId().toString());
-						it.remove();
-					}
-				}
-
-				Collections.sort(orderFix, new IgnoreCaseComp()); // per adeguarsi ai db
-				for (String nomeConfigurazione : orderFix) {
-					idReport.add(mapIds.get(nomeConfigurazione));	
+				
+				// j_id170:tableReport_tbl:19:tableReport_column_ckb
+				for (String idString : split) {
+					String tmpId = idString.substring(0, idString.lastIndexOf(":"));
+					tmpId = tmpId.substring(tmpId.lastIndexOf(":")+1);
+					orderFix.add(tmpId); 
 				}
 				
+				idReport.addAll(orderFix);
 			}
 
 			// We must get first our context
@@ -321,7 +323,8 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 			sessione.setAttribute(CostantiConfigurazioni.PARAMETER_IDS_ORIGINALI, StringUtils.join(idReport, ","));
 			sessione.setAttribute(CostantiConfigurazioni.PARAMETER_IS_ALL_ORIGINALE, this.isSelectedAll());
 			sessione.setAttribute(CostantiConfigurazioni.PARAMETER_RUOLO_ORIGINALE, ((ConfigurazioniGeneraliSearchForm)this.search).get_value_tipologiaTransazioni());
-
+			sessione.setAttribute(CostantiExporter.PARAMETER_FORMATO_EXPORT_ORIGINALE, formatoExport);
+			
 			response.sendRedirect(context.getExternalContext()
 					.getRequestContextPath()
 					+ "/" + CostantiConfigurazioni.CONFIGURAZIONI_EXPORTER_SERVLET_NAME + "?" + CostantiConfigurazioni.PARAMETER_IS_ALL + "="
@@ -330,6 +333,8 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 					+ StringUtils.join(idReport, ",")
 					+ "&" + CostantiConfigurazioni.PARAMETER_RUOLO + "="
 					+ ((ConfigurazioniGeneraliSearchForm)this.search).get_value_tipologiaTransazioni()
+					+ "&" + CostantiExporter.PARAMETER_FORMATO_EXPORT + "="
+					+ formatoExport
 					);
 
 			context.responseComplete();
@@ -348,4 +353,41 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		return Utility.isMultitenantAbilitato();
 	}
 	
+	public void esportazioneSelectListener(ActionEvent ae){
+		// donothing
+	}
+	
+	public String visualizzaExportCsv(){
+		return null;
+	}
+
+	public String getExportCsvErrorMessage() {
+		return this.exportCsvErrorMessage;
+	}
+
+	public void setExportCsvErrorMessage(String exportCsvErrorMessage) {
+		this.exportCsvErrorMessage = exportCsvErrorMessage;
+	}
+
+	public List<SelectItem> getExportDisponibili() {
+		if(this.exportDisponibili == null) {
+			this.exportDisponibili = new ArrayList<>();
+			this.exportDisponibili.add(new SelectItem(CostantiExporter.FORMATO_CSV_VALUE));
+			this.exportDisponibili.add(new SelectItem(CostantiExporter.FORMATO_XLS_VALUE));
+		}
+
+		return this.exportDisponibili;
+	}
+
+	public void setExportDisponibili(List<SelectItem> exportDisponibili) {
+		this.exportDisponibili = exportDisponibili;
+	}
+	
+	public String getTipoExport() {
+		return this.tipoExport;
+	}
+
+	public void setTipoExport(String tipoExport) {
+		this.tipoExport = tipoExport;
+	}
 }

@@ -243,7 +243,8 @@ public class CostantiExporter {
 		CLAIMS.add(CLAIM_CLIENT_ID);
 	}
 	
-	
-	
-	
+	public static final String FORMATO_XLS_VALUE = "XLS";
+	public static final String FORMATO_CSV_VALUE = "CSV";
+	public static final String PARAMETER_FORMATO_EXPORT = "fEx";
+	public static final String PARAMETER_FORMATO_EXPORT_ORIGINALE = "fExOriginali";
 }

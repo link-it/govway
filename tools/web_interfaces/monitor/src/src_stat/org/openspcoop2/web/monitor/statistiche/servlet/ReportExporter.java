@@ -282,14 +282,17 @@ public class ReportExporter extends HttpServlet{
 			}
 			searchForm.saveProtocollo();
 			
-			
+			String formatoExport = req.getParameter(CostantiExporter.PARAMETER_FORMATO_EXPORT);
+			if(formatoExport == null){
+				throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.PARAMETER_FORMATO_EXPORT+"' non fornito");
+			}
 			
 			StringBuffer bf = new StringBuffer();
 			ReflectionToStringBuilder builder = new ReflectionToStringBuilder(searchForm, ToStringStyle.MULTI_LINE_STYLE, bf, null, false, false);
 			builder.toString();
 			ReportExporter.log.debug("Lettura parametri completata, search form: "+bf.toString());
 			
-			ConfigurazioniExporter.export(req, resp, true, service, null, searchForm.getTipologiaTransazioni());
+			ConfigurazioniExporter.export(req, resp, true, service, null, searchForm.getTipologiaTransazioni(), formatoExport);
 			
 		}catch(Throwable e){
 			ReportExporter.log.error(e.getMessage(),e);
