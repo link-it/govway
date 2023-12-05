@@ -16,7 +16,7 @@ UPDATE servizi SET utente_richiedente=superuser;
 UPDATE servizi SET data_creazione=ora_registrazione;
 
 
-ALTER TABLE servizi_fruitori ALTER COLUMN descrizione VARCHAR(4000);
+ALTER TABLE servizi_fruitori ADD descrizione VARCHAR(4000);
 ALTER TABLE servizi_fruitori ADD utente_richiedente VARCHAR(255);
 ALTER TABLE servizi_fruitori ADD data_creazione DATETIME2;
 ALTER TABLE servizi_fruitori ADD utente_ultima_modifica VARCHAR(255);

@@ -2076,7 +2076,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
 					if(forcePDND) {
 						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(true, false, 
-								false); // alla posizione 0 NON viene aggiunto -
+								false, // alla posizione 0 NON viene aggiunto -
+								null, TipoOperazione.ADD);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty() &&
 							(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy)) 
 						){
@@ -2085,7 +2086,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					else {
 						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(false, true, 
-								false); // alla posizione 0 NON viene aggiunto -
+								false, // alla posizione 0 NON viene aggiunto -
+								null, TipoOperazione.ADD);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty() &&
 							(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy)) 
 						){

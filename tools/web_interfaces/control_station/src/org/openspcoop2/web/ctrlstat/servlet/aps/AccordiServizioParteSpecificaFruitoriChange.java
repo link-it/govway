@@ -72,6 +72,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -401,15 +402,15 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 				if (idSoggettoErogatoreDelServizio == null || idSoggettoErogatoreDelServizio.equals("")) {
 					IDSoggetto idSE = new IDSoggetto(tipoSoggettoErogatore, nomeSoggettoErogatore);
-					Soggetto SE = soggettiCore.getSoggettoRegistro(idSE);
-					idSoggettoErogatoreDelServizio = "" + SE.getId();
+					Soggetto se = soggettiCore.getSoggettoRegistro(idSE);
+					idSoggettoErogatoreDelServizio = "" + se.getId();
 				}
 			}
 
 			if( correlato == null){
-				correlato = ((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
+				correlato = TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
 						AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
-							AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
+							AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE;
 			}
 			
 			// setto i dati come campi hidden nel pd per portarmeli dietro
@@ -427,7 +428,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				//				profiloSoggettoFruitore = soggetto.getVersioneProtocollo();
 			}*/
 			if(soggettoFruitore==null) {
-				throw new Exception("Fruitore con id '"+idSoggettoFruitore+"' non trovato");
+				throw new ControlStationCoreException("Fruitore con id '"+idSoggettoFruitore+"' non trovato");
 			}
 
 			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(tiposervizio);
@@ -563,7 +564,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// setto la barra del titolo
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pdOld, session);
 			// Per il titolo utilizzo sempre e comunque il tipo PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE
-			//List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(parentPD, idSoggettoFruitore,idServizio, idServizioFruitore);
 			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, idSoggettoFruitore,idServizio, idServizioFruitore);
 
 			if(viewOnlyConnettore) {

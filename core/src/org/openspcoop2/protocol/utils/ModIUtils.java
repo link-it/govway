@@ -698,14 +698,16 @@ public class ModIUtils {
 		else {
 			if(fruizione) {
 				String stato = getBooleanValueAsStato(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE);
-				map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_VERIFICA_AUDIENCE, stato);
-				if(StatoFunzionalita.ABILITATO.getValue().equals(stato)) {
-					
-					audit = true;
-					
-					String v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE_VALORE);
-					if(v!=null && StringUtils.isNotEmpty(v)) {
-						map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_AUDIENCE, v);
+				if(stato!=null && StringUtils.isNotEmpty(stato)) {
+					map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_VERIFICA_AUDIENCE, stato);
+					if(StatoFunzionalita.ABILITATO.getValue().equals(stato)) {
+						
+						audit = true;
+						
+						String v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE_VALORE);
+						if(v!=null && StringUtils.isNotEmpty(v)) {
+							map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_AUDIENCE, v);
+						}
 					}
 				}
 			}
@@ -878,8 +880,22 @@ public class ModIUtils {
 						CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_FRUIZIONE);
 			}
 			else {
-				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, 
-						CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_APPLICATIVO);
+				// verifico di non essere nel caso di API con pattern ID_AUTH_REST_01 via PDND dove la modalità di scelta non viene indicata.
+				if(v==null || StringUtils.isEmpty(v)) {
+					String idFruizioneKeystoreMode = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE;
+					String vMode = getStringValue(protocolPropertyList, idFruizioneKeystoreMode);
+					if(CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(vMode)) {
+						keystoreDefinitoInFruizione = true;
+					}
+				}
+				if(keystoreDefinitoInFruizione) {
+					map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, 
+							CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_FRUIZIONE);
+				}
+				else {
+					map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, 
+							CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_APPLICATIVO);
+				}
 			}
 			
 			if(keystoreDefinitoInFruizione) {
@@ -1329,7 +1345,9 @@ public class ModIUtils {
 		
 		if(checkModeFruizioneKeystoreId) {
 			String v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE);
-			if(!CostantiDB.MODIPA_KEYSTORE_FRUIZIONE.equals(v)) {
+			if(
+					v!=null && !StringUtils.isEmpty(v) && // aggiungo questo controllo per evitare che nel caso di API con solo pattern ID_AUTH_REST_01 via PDND dove non viene visualizzato 'MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE' si esca e non si controlli i certificati
+					!CostantiDB.MODIPA_KEYSTORE_FRUIZIONE.equals(v)) {
 				return null;
 			}
 		}

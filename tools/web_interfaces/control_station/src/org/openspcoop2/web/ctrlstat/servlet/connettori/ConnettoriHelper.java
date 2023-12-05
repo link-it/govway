@@ -1137,10 +1137,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 	
 
 	
-	public List<DataElement> addTokenPolicy(List<DataElement> dati, String tokenPolicy, boolean forcePDND, boolean forceOAuth) throws DriverConfigurazioneException{
+	public List<DataElement> addTokenPolicy(List<DataElement> dati, String tokenPolicy, boolean forcePDND, boolean forceOAuth, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
 	
 		List<String> policyFiltered = getTokenPolicyNegoziazione(forcePDND, forceOAuth, 
-				true);
+				true,
+				tokenPolicy, tipoOperazione);
 		if(!policyFiltered.contains(tokenPolicy)) {
 			tokenPolicy = null;
 		}
@@ -2731,7 +2732,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Token Autenticazione
 				if (autenticazioneToken) {
-					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth);
+					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth, tipoOperazione);
 				}
 				
 				
@@ -3028,7 +3029,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Token Autenticazione
 				if (autenticazioneToken) {
-					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth);
+					this.addTokenPolicy(dati, tokenPolicy, forcePDND, forceOAuth, tipoOperazione);
 				}
 				
 				// Custom

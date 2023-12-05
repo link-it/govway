@@ -7768,7 +7768,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					
 					if(forcePDND) {
 						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, 
-								false); // alla posizione 0 NON viene aggiunto -
+								false, // alla posizione 0 NON viene aggiunto -
+								gestioneTokenPolicy, tipoOp); 
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
 								gestioneTokenPolicy = tokenPolicies.get(0); 
@@ -7779,7 +7780,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					else {
 						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, 
-								false); // alla posizione 0 NON viene aggiunto -
+								false, // alla posizione 0 NON viene aggiunto -
+								gestioneTokenPolicy, tipoOp); 
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
 								gestioneTokenPolicy = tokenPolicies.get(0); 
@@ -9723,7 +9725,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					
 					if(forcePDND) {
 						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, 
-								false); // alla posizione 0 NON viene aggiunto -
+								false, // alla posizione 0 NON viene aggiunto -
+								gestioneTokenPolicy, tipoOperazione);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
 								gestioneTokenPolicy = tokenPolicies.get(0); 
@@ -9734,7 +9737,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					else {
 						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, 
-								false); // alla posizione 0 NON viene aggiunto -
+								false, // alla posizione 0 NON viene aggiunto -
+								gestioneTokenPolicy, tipoOperazione);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							if(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(gestioneTokenPolicy)) {
 								gestioneTokenPolicy = tokenPolicies.get(0); 
