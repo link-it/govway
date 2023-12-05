@@ -390,9 +390,21 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String [] policyLabels = null;
 			String [] policyValues = null;
 			if(forcePDND || forceOAuth) {
+				
+				String policyConfigurata = null;
+				if(gestioneTokenPolicy==null && porteApplicativeHelper.isEditModeInProgress() && !applicaModifica && gestioneToken == null) {
+					if(pa.getGestioneToken() != null) {
+						policyConfigurata = pa.getGestioneToken().getPolicy();
+					}
+				}
+				else {
+					policyConfigurata = gestioneTokenPolicy;
+				}
+				
 				if(forcePDND) {
 					List<String> tokenPolicies = porteApplicativeHelper.getTokenPolicyGestione(true, false, 
-							true);
+							true,
+							policyConfigurata, TipoOperazione.CHANGE);
 					if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 						policyLabels = tokenPolicies.toArray(new String[1]);
 						policyValues = tokenPolicies.toArray(new String[1]);
@@ -400,7 +412,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 				else {
 					List<String> tokenPolicies = porteApplicativeHelper.getTokenPolicyGestione(false, true, 
-							true);
+							true,
+							policyConfigurata, TipoOperazione.CHANGE);
 					if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 						policyLabels = tokenPolicies.toArray(new String[1]);
 						policyValues = tokenPolicies.toArray(new String[1]);

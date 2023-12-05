@@ -1,3 +1,14 @@
+2023-12-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, ProtocolloModIPA]
+	Risolto Bug OP-1677
+	La verifica dei certificati su una fruizione di una API configurata con pattern di sicurezza messaggio 'ID_AUTH_REST_01' e 'Generazione Token' via PDND non veniva effettuata.
+	La console indicava che tutti i certificati erano validi anche quando non lo erano.
+	Inoltre la configurazione fornita dalla funzionalità 'Visualizza dettagli della configurazione', presente nelle opzioni di una fruizione, 
+	non visualizzava le informazioni corrette su eventuali keystore definite nella fruizione stessa.
+	Infine nel caso si configurava una API senza pattern di sicurezza messaggio con relativa fruizione e successivamente si modificava l'API impostando 'ID_AUTH_REST_01' e 'Generazione Token' via PDND, 
+	entrando nella maschera di configurazione del connettore della fruizione si otteneva una informazione errata sulla token policy che sembrava assegnata anche se in realtà non lo era.
+
 2023-12-04  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

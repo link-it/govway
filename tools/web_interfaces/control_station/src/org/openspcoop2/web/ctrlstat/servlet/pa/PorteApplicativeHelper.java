@@ -1827,7 +1827,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					if(forcePDND) {
 						List<String> tokenPolicies = this.getTokenPolicyGestione(true, false, 
-								true);
+								true,
+								gestioneTokenPolicy, tipoOp);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
 							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);
@@ -1835,7 +1836,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					else {
 						List<String> tokenPolicies = this.getTokenPolicyGestione(false, true, 
-								true);
+								true,
+								gestioneTokenPolicy, tipoOp);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty()) {
 							gestioneTokenPolicyLabels = tokenPolicies.toArray(new String[1]);
 							gestioneTokenPolicyValues = tokenPolicies.toArray(new String[1]);

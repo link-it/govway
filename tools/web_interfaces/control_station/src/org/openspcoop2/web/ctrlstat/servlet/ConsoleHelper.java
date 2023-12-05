@@ -12520,17 +12520,22 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 
 	public List<String> getTokenPolicyGestione(boolean forcePDND, boolean forceOAuth,
-			boolean addElementNonSelezionatoSeMaggioreUno) throws DriverConfigurazioneException{
+			boolean addElementNonSelezionatoSeMaggioreUno,
+			String checkTokenPolicyConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
 		return getTokenPolicy(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, forcePDND, forceOAuth,
-				addElementNonSelezionatoSeMaggioreUno);
+				addElementNonSelezionatoSeMaggioreUno,
+				checkTokenPolicyConfigurataPresente, tipoOperazione);
 	}
 	public List<String> getTokenPolicyNegoziazione(boolean forcePDND, boolean forceOAuth,
-			boolean addElementNonSelezionatoSeMaggioreUno) throws DriverConfigurazioneException{
+			boolean addElementNonSelezionatoSeMaggioreUno,
+			String checkTokenPolicyConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
 		return getTokenPolicy(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, forcePDND, forceOAuth,
-				addElementNonSelezionatoSeMaggioreUno);
+				addElementNonSelezionatoSeMaggioreUno,
+				checkTokenPolicyConfigurataPresente, tipoOperazione);
 	}
 	private List<String> getTokenPolicy(String tipologia, boolean forcePDND, boolean forceOAuth,
-			boolean addElementNonSelezionatoSeMaggioreUno) throws DriverConfigurazioneException{
+			boolean addElementNonSelezionatoSeMaggioreUno,
+			String checkTokenPolicyConfigurataPresente, TipoOperazione tipoOperazione) throws DriverConfigurazioneException{
 		List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, tipologia, null);
 		
 		boolean retrieve = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(tipologia);
@@ -12538,7 +12543,20 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		List<String> returnList = new ArrayList<>();
 		if(!l.isEmpty()) {
-			if(addElementNonSelezionatoSeMaggioreUno && l.size()>1) {
+			
+			boolean forceValueNonSelezionato = TipoOperazione.CHANGE.equals(tipoOperazione) && 
+					(
+							checkTokenPolicyConfigurataPresente==null
+							||
+							StringUtils.isEmpty(checkTokenPolicyConfigurataPresente)
+							||
+							(!l.contains(checkTokenPolicyConfigurataPresente))
+					);
+			if(
+					(addElementNonSelezionatoSeMaggioreUno && l.size()>1)
+					||
+					(forceValueNonSelezionato)
+			) {
 				returnList.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
 			}
 			returnList.addAll(l);

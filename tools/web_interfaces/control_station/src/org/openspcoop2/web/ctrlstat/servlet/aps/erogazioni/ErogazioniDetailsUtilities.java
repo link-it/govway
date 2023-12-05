@@ -2359,16 +2359,19 @@ public class ErogazioniDetailsUtilities {
 			if(fruizione) {
 				
 				audit = true;
-				
-				sb.append(newLine);
-				String label = rest ? CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_REST_LABEL :  CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_SOAP_LABEL;
-				sb.append(label);
-				sb.append(separator);
-				sb.append(map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_VERIFICA_AUDIENCE));
+
+				String verificaAud = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_VERIFICA_AUDIENCE);
+				if(StringUtils.isNotEmpty(verificaAud)) {
+					sb.append(newLine);
+					String label = rest ? CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_REST_LABEL :  CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_SOAP_LABEL;
+					sb.append(label);
+					sb.append(separator);
+					sb.append(verificaAud);
+				}
 		
 				String vAud = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_AUDIENCE);
 				if(StringUtils.isNotEmpty(vAud)) {
-					label = rest ? CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_REST_LABEL :  CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_SOAP_LABEL;
+					String label = rest ? CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_REST_LABEL :  CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_SOAP_LABEL;
 					sb.append(newLine);
 					sb.append(label);
 					sb.append(separator);

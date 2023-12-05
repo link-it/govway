@@ -890,7 +890,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					
 					if(forcePDND) {
 						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(true, false, 
-								false); // alla posizione 0 NON viene aggiunto -
+								false, // alla posizione 0 NON viene aggiunto -
+								gestioneTokenPolicy, TipoOperazione.ADD);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty() &&
 							(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy)) 
 							){
@@ -899,7 +900,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					}
 					else {
 						List<String> tokenPolicies = apsHelper.getTokenPolicyGestione(false, true, 
-								false); // alla posizione 0 NON viene aggiunto -
+								false, // alla posizione 0 NON viene aggiunto -
+								gestioneTokenPolicy, TipoOperazione.ADD);
 						if(tokenPolicies!=null && !tokenPolicies.isEmpty() &&
 							(gestioneTokenPolicy==null || StringUtils.isEmpty(gestioneTokenPolicy)) 
 						){
