@@ -216,6 +216,7 @@
 				<include name="bcprov-ext-jdk18on-1.76.jar"/>
 				<include name="bcutil-jdk18on-1.76.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
+				<include name="nimbus-jose-jwt-9.31.jar"/>
 			</lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>
