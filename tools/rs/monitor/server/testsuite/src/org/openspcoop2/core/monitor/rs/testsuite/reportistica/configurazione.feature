@@ -94,13 +94,37 @@ Scenario: Esportazione Configurazione API
     And params ({tipo: 'erogazione', nome_servizio: setup.erogazione_petstore.api_nome, versione_servizio: setup.erogazione_petstore.api_versione})
     When method get
     Then status 200
+    Then match karate.toString(response) contains "Tipo API,API,PortType,Erogatore,Implementazione API"
 
     Given path 'esporta'
     And request ({tipo: 'erogazione'})
     When method post
     Then status 200
+    Then match karate.toString(response) contains "Tipo API,API,PortType,Erogatore,Implementazione API"
 
     Given path 'esporta'
     And request ({tipo: 'fruizione'})
     When method post
     Then status 200
+    Then match karate.toString(response) contains "Tipo API,API,PortType,Fruitore,Erogatore,Implementazione API"
+
+@EsportaConfigurazioneApiExcel
+Scenario: Esportazione Configurazione API in formato excel
+
+    Given path 'esporta'
+    And params ({tipo: 'erogazione', nome_servizio: setup.erogazione_petstore.api_nome, versione_servizio: setup.erogazione_petstore.api_versione, formato_report: 'xls'})
+    When method get
+    Then status 200
+    Then match karate.toString(response) contains "Erogatore"
+
+    Given path 'esporta'
+    And request ({tipo: 'erogazione',formato: 'xls'})
+    When method post
+    Then status 200
+    Then match karate.toString(response) contains "Erogatore"
+
+    Given path 'esporta'
+    And request ({tipo: 'fruizione',formato: 'xls'})
+    When method post
+    Then status 200
+    Then match karate.toString(response) contains "Fruitore"

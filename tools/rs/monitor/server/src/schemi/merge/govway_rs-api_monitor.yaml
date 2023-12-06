@@ -1350,7 +1350,7 @@ paths:
       - "Reportistica"
       summary: "Recupera la configurazione di un servizio"
       description: "Consente di recuperare la configurazione di un servizio esportandola\
-        \ in formato csv"
+        \ in formato csv, xls"
       operationId: "exportConfigurazioneApiBySimpleSearch"
       parameters:
       - $ref: "#/components/parameters/tipo_transazione_config"
@@ -1358,6 +1358,7 @@ paths:
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
+      - $ref: "#/components/parameters/formato_report_config"
       responses:
         "200":
           $ref: "#/components/responses/200ReportConfigurazioni"
@@ -1380,7 +1381,7 @@ paths:
       - "Reportistica"
       summary: "Recupera la configurazione di un servizio"
       description: "Consente di recuperare la configurazione di un servizio esportandola\
-        \ in formato csv"
+        \ in formato csv, xls"
       operationId: "exportConfigurazioneApiByFullSearch"
       requestBody:
         content:
@@ -2093,6 +2094,8 @@ components:
           $ref: "#/components/schemas/TransazioneRuoloEnum"
         api:
           $ref: "#/components/schemas/FiltroApiSoggetti"
+        formato:
+          $ref: "#/components/schemas/FormatoReportConfigEnum"
     FiltroTemporale:
       required:
       - "data_fine"
@@ -2326,6 +2329,12 @@ components:
       - "xls"
       - "xml"
       - "json"
+    FormatoReportConfigEnum:
+      type: "string"
+      example: "csv"
+      enum:
+      - "csv"
+      - "xls"
     UnitaTempoReportEnum:
       type: "string"
       example: "orario"
@@ -3359,6 +3368,13 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/FormatoReportEnum"
+    formato_report_config:
+      name: "formato_report"
+      in: "query"
+      description: "Indica la modalità di esportazione (csv, ...) del report statistico"
+      required: false
+      schema:
+        $ref: "#/components/schemas/FormatoReportConfigEnum"
     unita_tempo_report:
       name: "unita_tempo"
       in: "query"

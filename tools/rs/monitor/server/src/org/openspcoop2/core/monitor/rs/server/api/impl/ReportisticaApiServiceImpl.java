@@ -38,6 +38,7 @@ import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearch
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
+import org.openspcoop2.core.monitor.rs.server.model.FormatoReportConfigEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaRiepilogoApi;
@@ -131,7 +132,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] exportConfigurazioneApiBySimpleSearch(TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto,
-			String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio) {
+			String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, FormatoReportConfigEnum formatoReport) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -143,6 +144,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 						
 			RicercaConfigurazioneApi ricerca = new RicercaConfigurazioneApi();
 			ricerca.setTipo(tipo);
+			ricerca.setFormato(formatoReport);
 			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,
 					env, null));
 						

@@ -33,6 +33,9 @@ public class RicercaConfigurazioneApi  {
   
   @Schema(description = "")
   private FiltroApiSoggetti api = null;
+  
+  @Schema(description = "")
+  private FormatoReportConfigEnum formato = null;
  /**
    * Get tipo
    * @return tipo
@@ -72,6 +75,25 @@ public class RicercaConfigurazioneApi  {
     return this;
   }
 
+ /**
+   * Get formato
+   * @return formato
+  **/
+  @JsonProperty("formato")
+  @Valid
+  public FormatoReportConfigEnum getFormato() {
+    return this.formato;
+  }
+
+  public void setFormato(FormatoReportConfigEnum formato) {
+    this.formato = formato;
+  }
+
+  public RicercaConfigurazioneApi formato(FormatoReportConfigEnum formato) {
+    this.formato = formato;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -80,6 +102,7 @@ public class RicercaConfigurazioneApi  {
     
     sb.append("    tipo: ").append(RicercaConfigurazioneApi.toIndentedString(this.tipo)).append("\n");
     sb.append("    api: ").append(RicercaConfigurazioneApi.toIndentedString(this.api)).append("\n");
+    sb.append("    formato: ").append(RicercaConfigurazioneApi.toIndentedString(this.formato)).append("\n");
     sb.append("}");
     return sb.toString();
   }
