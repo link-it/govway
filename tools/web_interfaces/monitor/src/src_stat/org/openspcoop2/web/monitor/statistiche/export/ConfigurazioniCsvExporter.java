@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.monitor.statistiche.export;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.AutorizzazioneScope;
@@ -571,8 +573,27 @@ public class ConfigurazioniCsvExporter {
 		return errMsg;
 	}
 
-	public void esportaXls(OutputStream outputStream, ReportDataSource datasource, List<String> chiaviColonne, List<String> labelColonne) throws UtilsException {
-		 // TODO		
+	public void esportaXls(OutputStream outputStream, ReportDataSource datasource, List<String> chiaviColonne, List<String> labelColonne) throws UtilsException, IOException {
+		List<Colonna> colonne = new ArrayList<>();
+		
+		// generazione delle label delle colonne
+		for (int i = 0; i < labelColonne.size(); i++) {
+			String label = labelColonne.get(i);
+			String keyColonna = chiaviColonne.get(i);
+			colonne.add(new Colonna(keyColonna, label, HorizontalAlignment.CENTER));
+		}
+		
+		// imposto le label
+		datasource.setColonne(colonne);
+		
+		try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+			List<String> labelColonna = datasource.getLabelColonne();
+			List<List<String>> dati = datasource.getDati();
+			Templates.writeDataIntoXls(dati, labelColonna, workbook);
+			workbook.write(outputStream);
+		}
+		
+		this.log.debug("Scrittura XLS Configurazioni completata.");
 	}
 
 	public void esportaCsv(OutputStream outputStream, ReportDataSource datasource, List<String> chiaviColonne, List<String> labelColonne) throws UtilsException {
