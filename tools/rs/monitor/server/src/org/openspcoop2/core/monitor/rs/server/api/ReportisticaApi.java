@@ -23,6 +23,7 @@ import org.joda.time.DateTime;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
 import java.io.File;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
+import org.openspcoop2.core.monitor.rs.server.model.FormatoReportConfigEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaRiepilogoApi;
@@ -68,7 +69,7 @@ public interface ReportisticaApi  {
     /**
      * Recupera la configurazione di un servizio
      *
-     * Consente di recuperare la configurazione di un servizio esportandola in formato csv
+     * Consente di recuperare la configurazione di un servizio esportandola in formato csv, xls
      *
      */
     @POST
@@ -90,7 +91,7 @@ public interface ReportisticaApi  {
     /**
      * Recupera la configurazione di un servizio
      *
-     * Consente di recuperare la configurazione di un servizio esportandola in formato csv
+     * Consente di recuperare la configurazione di un servizio esportandola in formato csv, xls
      *
      */
     @GET
@@ -106,7 +107,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = Problem.class))) })
-    public byte[] exportConfigurazioneApiBySimpleSearch(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggettoRemoto, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio);
+    public byte[] exportConfigurazioneApiBySimpleSearch(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggettoRemoto, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("formato_report") FormatoReportConfigEnum formatoReport);
 
     /**
      * Consente di recuperare l'elenco delle erogazioni o fruizioni che coinvolgono il soggetto scelto

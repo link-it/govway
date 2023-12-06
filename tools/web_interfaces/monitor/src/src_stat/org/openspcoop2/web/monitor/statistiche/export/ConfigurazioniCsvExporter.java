@@ -88,8 +88,10 @@ import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA.DettaglioSA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioRateLimiting;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
+import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.IgnoreCaseComp;
+import org.openspcoop2.web.monitor.transazioni.exporter.ExportException;
 import org.slf4j.Logger;
 
 import be.quodlibet.boxable.HorizontalAlignment;
@@ -108,10 +110,12 @@ public class ConfigurazioniCsvExporter {
 	private List<String> chiaviColonne = null;
 	private List<String> labelColonne = null;
 	private PddRuolo ruolo = null;
+	private String formato;
 
-	public ConfigurazioniCsvExporter(Logger log, PddRuolo ruolo) {
+	public ConfigurazioniCsvExporter(Logger log, PddRuolo ruolo, String formato) {
 		this.log = log;
 		this.ruolo = ruolo;
+		this.formato = formato;
 		this.chiaviColonne = new ArrayList<>();
 		this.labelColonne = new ArrayList<>();
 		this.init();
@@ -556,11 +560,20 @@ public class ConfigurazioniCsvExporter {
 		ReportDataSource dataSource = new ReportDataSource(this.chiaviColonne);
 		dataSource.setDati(dati);
 
-		this.esportaCsv(out, dataSource, this.chiaviColonne, this.labelColonne);
+		if(this.formato.equals(CostantiExporter.TIPO_FORMATO_CONFIGURAZIONE_CSV)){
+			this.esportaCsv(out, dataSource, this.chiaviColonne, this.labelColonne);
+		} else if(this.formato.equals(CostantiExporter.TIPO_FORMATO_CONFIGURAZIONE_XLS)){
+			this.esportaXls(out, dataSource, this.chiaviColonne, this.labelColonne);
+		} else {
+			throw new ExportException("Formato export ["+this.formato+"] non valido.");
+		}
 
 		return errMsg;
 	}
 
+	public void esportaXls(OutputStream outputStream, ReportDataSource datasource, List<String> chiaviColonne, List<String> labelColonne) throws UtilsException {
+		 // TODO		
+	}
 
 	public void esportaCsv(OutputStream outputStream, ReportDataSource datasource, List<String> chiaviColonne, List<String> labelColonne) throws UtilsException {
 		List<Colonna> colonne = new ArrayList<>();
@@ -705,7 +718,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 
 		// AZIONE
-		if(StringUtils.isNotEmpty(portaApplicativa.getNomeAzione())){  
+		if(StringUtils.isNotEmpty(portaApplicativa.getNomeAzione())){
 			oneLine.add(portaApplicativa.getNomeAzione());
 		}
 		else{

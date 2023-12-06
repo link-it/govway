@@ -115,7 +115,8 @@ public class SearchFormUtilities {
 	}
 	
 	public HttpRequestWrapper getHttpRequestWrapper(IContext context, ProfiloEnum profilo, String soggetto, FiltroRicercaRuoloTransazioneEnum ruolo, 
-			FormatoReportEnum formato, TipoReport tipo) throws Exception {
+			FormatoReportEnum formato, boolean formatoStat,
+			TipoReport tipo) throws Exception {
 		HttpRequestWrapper request = new HttpRequestWrapper(context.getServletRequest());
 		request.overrideParameter(CostantiExporter.TIPO_DISTRIBUZIONE, tipo.getValue());
 		String protocollo = Converter.toProtocollo(profilo);
@@ -146,21 +147,28 @@ public class SearchFormUtilities {
 				break;
 			}
 		}
+		String nomeParametroTipoFormato = null;
+		if(formatoStat) {
+			nomeParametroTipoFormato = CostantiExporter.TIPO_FORMATO;
+		}
+		else {
+			nomeParametroTipoFormato = CostantiExporter.TIPO_FORMATO_CONFIGURAZIONE;
+		}
 		switch (formato) {
 		case CSV:
-			request.overrideParameter(CostantiExporter.TIPO_FORMATO, CostantiExporter.TIPO_FORMATO_CSV);
+			request.overrideParameter(nomeParametroTipoFormato, CostantiExporter.TIPO_FORMATO_CSV);
 			break;
 		case PDF:
-			request.overrideParameter(CostantiExporter.TIPO_FORMATO, CostantiExporter.TIPO_FORMATO_PDF);
+			request.overrideParameter(nomeParametroTipoFormato, CostantiExporter.TIPO_FORMATO_PDF);
 			break;
 		case XLS:
-			request.overrideParameter(CostantiExporter.TIPO_FORMATO, CostantiExporter.TIPO_FORMATO_XLS);
+			request.overrideParameter(nomeParametroTipoFormato, CostantiExporter.TIPO_FORMATO_XLS);
 			break;
 		case XML:
-			request.overrideParameter(CostantiExporter.TIPO_FORMATO, CostantiExporter.TIPO_FORMATO_XML);
+			request.overrideParameter(nomeParametroTipoFormato, CostantiExporter.TIPO_FORMATO_XML);
 			break;
 		case JSON:
-			request.overrideParameter(CostantiExporter.TIPO_FORMATO, CostantiExporter.TIPO_FORMATO_JSON);
+			request.overrideParameter(nomeParametroTipoFormato, CostantiExporter.TIPO_FORMATO_JSON);
 			break;
 		default:
 			break;
@@ -168,9 +176,10 @@ public class SearchFormUtilities {
 		return request;
 	}
 	public HttpRequestWrapper getHttpRequestWrapper(IContext context, ProfiloEnum profilo, String soggetto, TransazioneRuoloEnum ruolo, 
-			FormatoReportEnum formato, TipoReport tipo) throws Exception {
+			FormatoReportEnum formato, boolean formatoStat, 
+			TipoReport tipo) throws Exception {
 		FiltroRicercaRuoloTransazioneEnum ruoloNull = null;
-		HttpRequestWrapper wrapper = getHttpRequestWrapper(context, profilo, soggetto, ruoloNull, formato, tipo);
+		HttpRequestWrapper wrapper = getHttpRequestWrapper(context, profilo, soggetto, ruoloNull, formato, formatoStat, tipo);
 		if(ruolo!=null) {
 			switch (ruolo) {
 			case FRUIZIONE:

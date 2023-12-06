@@ -37,7 +37,7 @@ curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwa
 
 CONFIGURAZIONE
 
-curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/configurazione-api/esporta?tipo=erogazione"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/configurazione-api/esporta?tipo=erogazione&formato_report=xls"
 
 #Esporta i dati di una specifica erogazione.
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/configurazione-api/esporta?tipo=erogazione&nome_servizio=PetStore&versione_servizio=1"

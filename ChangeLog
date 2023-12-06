@@ -1,3 +1,9 @@
+2023-12-06  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1675
+	Nella funzionalità "Configurazione API" delle statitstiche è adesso possibile esportare il report oltre che nel formato 'csv' anche nel formato 'xls'.
+
 2023-12-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, ProtocolloModIPA]

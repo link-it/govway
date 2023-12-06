@@ -33,6 +33,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
@@ -84,16 +85,36 @@ public class ReportExporter extends HttpServlet{
 
 	private static final long serialVersionUID = 1272767433184676700L;
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
+	private static void logError(String msg) {
+		logError(msg, null);
+	}
+	private static void logError(String msg, Exception e) {
+		if(log!=null) {
+			if(e!=null) {
+				log.error(msg,e);
+			}
+			else {
+				log.error(msg);
+			}
+		}
+	}
+	private static void logDebug(String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
 
 	private static boolean serviceEnabled = false;
-
+	public static void setServiceEnabled(boolean serviceEnabled) {
+		ReportExporter.serviceEnabled = serviceEnabled;
+	}
 	@Override
 	public void init() throws ServletException {
 		try{
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(ReportExporter.log);
-			serviceEnabled = govwayMonitorProperties.isStatisticheAttivoServizioEsportazioneReport();
+			ReportExporter.setServiceEnabled(govwayMonitorProperties.isStatisticheAttivoServizioEsportazioneReport());
 		}catch(Exception e){
-			ReportExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
+			ReportExporter.logError("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
 	}
 
@@ -110,13 +131,16 @@ public class ReportExporter extends HttpServlet{
 		this.processRequest(req,resp);		
 	}
 
+	private static final String AUTENTICAZIONE_FALLITA = "Autenticazione fallita";
+	private static final String SEND_ERROR = "sendError '";
 
 	private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
 		
 		StringBuilder bfSource = new StringBuilder("");
+		String mittentePrefix = "";
 		try{
 
-			if(serviceEnabled==false){
+			if(!serviceEnabled){
 				resp.sendError(CostantiExporter.ERRORE_SERVER, "Servizio non attivo");
 				return;
 			}
@@ -137,10 +161,11 @@ public class ReportExporter extends HttpServlet{
 				password = req.getParameter(CostantiExporter.PASSWORD);
 			}
 			if(username==null && password==null){
-				log.error("Credenziali non fornita, mittente: "+bfSource.toString());
+				ReportExporter.logError("Credenziali non fornita, mittente: "+bfSource.toString());
 				resp.sendError(CostantiExporter.CREDENZIALI_NON_FORNITE, "Autenticazione richiesta");
 				return;
 			}
+			mittentePrefix = "[mittente: "+bfSource.toString()+"] ";
 			
 			DBLoginDAO loginService = new DBLoginDAO();
 			UserDetailsBean user = null;
@@ -148,24 +173,24 @@ public class ReportExporter extends HttpServlet{
 				try{
 					user = loginService.loadUserByUsername(principal);
 				}catch(NotFoundException notFound){
-					log.error("[mittente: "+bfSource.toString()+"] Autenticazione fallita con il principal ottenuto ["+principal+"]: "+notFound.getMessage(),notFound);
-					resp.sendError(CostantiExporter.AUTENTICAZIONE_FALLITA, "Autenticazione fallita");
+					ReportExporter.logError(mittentePrefix+"Autenticazione fallita con il principal ottenuto ["+principal+"]: "+notFound.getMessage(),notFound);
+					resp.sendError(CostantiExporter.AUTENTICAZIONE_FALLITA, AUTENTICAZIONE_FALLITA);
 					return;
 				}
 			}
 			else{
 				boolean check = loginService.login(username, password);
-				if(check==false){
-					log.error("[mittente: "+bfSource.toString()+"] Autenticazione fallita con le credenziali fornite user["+username+"] password["+password+"]");
-					resp.sendError(CostantiExporter.AUTENTICAZIONE_FALLITA, "Autenticazione fallita");
+				if(!check){
+					ReportExporter.logError(mittentePrefix+"Autenticazione fallita con le credenziali fornite user["+username+"] password["+password+"]");
+					resp.sendError(CostantiExporter.AUTENTICAZIONE_FALLITA, AUTENTICAZIONE_FALLITA);
 					return;
 				}
 				else{
 					try{
 						user = loginService.loadUserByUsername(username);
 					}catch(NotFoundException notFound){
-						log.error("[mittente: "+bfSource.toString()+"] Autenticazione fallita con lo username ["+username+"]: "+notFound.getMessage(),notFound);
-						resp.sendError(CostantiExporter.AUTENTICAZIONE_FALLITA, "Autenticazione fallita");
+						ReportExporter.logError(mittentePrefix+"Autenticazione fallita con lo username ["+username+"]: "+notFound.getMessage(),notFound);
+						resp.sendError(CostantiExporter.AUTENTICAZIONE_FALLITA, AUTENTICAZIONE_FALLITA);
 						return;
 					}
 				}
@@ -176,44 +201,41 @@ public class ReportExporter extends HttpServlet{
 			if("config".equals(r)){
 				ConfigurazioniGeneraliService service = new ConfigurazioniGeneraliService();
 				generaConfigurazione(req, resp, user, service);
-				ReportExporter.log.debug("[mittente: "+bfSource.toString()+"] richiesta report configurazione completata");
+				ReportExporter.logDebug(mittentePrefix+"richiesta report configurazione completata");
 			}
 			else if("stat".equals(r)){
 				org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService service =
 						new org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService();
 				generaStatistiche(req, resp, user, service);
-				ReportExporter.log.debug("[mittente: "+bfSource.toString()+"] richiesta report statistica completata");
+				ReportExporter.logDebug(mittentePrefix+"richiesta report statistica completata");
 			}
 			else{
-				throw new Exception("InitParameter 'resource' with unknown resource ["+r+"]");
+				throw new CoreException("InitParameter 'resource' with unknown resource ["+r+"]");
 			}
 			
 		}
 		catch(ParameterUncorrectException e){
-			ReportExporter.log.error("[mittente: "+bfSource.toString()+"] "+e.getMessage(),e);
-			//throw new ServletException(e.getMessage(),e);
+			ReportExporter.logError(mittentePrefix+""+e.getMessage(),e);
 			try {
 				resp.sendError(CostantiExporter.DATI_NON_CORRETTI, e.getMessage());
-			}catch(Throwable t) {
-				ReportExporter.log.error("[mittente: "+bfSource.toString()+"] sendError '"+CostantiExporter.DATI_NON_CORRETTI+"' "+e.getMessage(),e);
+			}catch(Exception t) {
+				ReportExporter.logError(mittentePrefix+SEND_ERROR+CostantiExporter.DATI_NON_CORRETTI+"' "+e.getMessage(),e);
 			}
 		}
 		catch(NotFoundException e){
-			ReportExporter.log.error("[mittente: "+bfSource.toString()+"] "+e.getMessage(),e);
-			//throw new ServletException(e.getMessage(),e);
+			ReportExporter.logError(mittentePrefix+""+e.getMessage(),e);
 			try {
 				resp.sendError(CostantiExporter.DATI_NON_TROVATI, e.getMessage());
-			}catch(Throwable t) {
-				ReportExporter.log.error("[mittente: "+bfSource.toString()+"] sendError '"+CostantiExporter.DATI_NON_TROVATI+"' "+e.getMessage(),e);
+			}catch(Exception t) {
+				ReportExporter.logError(mittentePrefix+SEND_ERROR+CostantiExporter.DATI_NON_TROVATI+"' "+e.getMessage(),e);
 			}
 		}
-		catch(Throwable e){
-			ReportExporter.log.error("[mittente: "+bfSource.toString()+"] "+e.getMessage(),e);
-			//throw new ServletException(e.getMessage(),e);
+		catch(Exception e){
+			ReportExporter.logError(mittentePrefix+""+e.getMessage(),e);
 			try {
 				resp.sendError(CostantiExporter.ERRORE_SERVER, e.getMessage());
-			}catch(Throwable t) {
-				ReportExporter.log.error("[mittente: "+bfSource.toString()+"] sendError '"+CostantiExporter.ERRORE_SERVER+"' "+e.getMessage(),e);
+			}catch(Exception t) {
+				ReportExporter.logError(mittentePrefix+SEND_ERROR+CostantiExporter.ERRORE_SERVER+"' "+e.getMessage(),e);
 			}
 		}
 			
@@ -264,7 +286,7 @@ public class ReportExporter extends HttpServlet{
 				List<String> l = new ArrayList<>();
 				l.add(CostantiExporter.TIPOLOGIA_EROGAZIONE);
 				l.add(CostantiExporter.TIPOLOGIA_FRUIZIONE);
-				if(l.contains(tipologiaTransazione) == false){
+				if(!l.contains(tipologiaTransazione)){
 					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPOLOGIA+"' fornito possiede un valore '"+tipologiaTransazione
 							+"' sconosciuto. I tipi supportati sono: "+l);
 				}
@@ -282,17 +304,26 @@ public class ReportExporter extends HttpServlet{
 			}
 			searchForm.saveProtocollo();
 			
-			
+			// Identificazione tipo documentato da esportare
+			String formatoExport = req.getParameter(CostantiExporter.TIPO_FORMATO_CONFIGURAZIONE);
+			if(formatoExport == null){
+				throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.TIPO_FORMATO_CONFIGURAZIONE+"' non fornito");
+			}
+			formatoExport=formatoExport.trim();
+			if(!CostantiExporter.getTipiFormatoConfigurazione().contains(formatoExport)){
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_FORMATO_CONFIGURAZIONE+"' fornito possiede un valore '"+formatoExport
+						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getTipiFormatoConfigurazione());
+			}
 			
 			StringBuffer bf = new StringBuffer();
 			ReflectionToStringBuilder builder = new ReflectionToStringBuilder(searchForm, ToStringStyle.MULTI_LINE_STYLE, bf, null, false, false);
 			builder.toString();
-			ReportExporter.log.debug("Lettura parametri completata, search form: "+bf.toString());
+			ReportExporter.logDebug("Lettura parametri completata, search form: "+bf.toString());
 			
-			ConfigurazioniExporter.export(req, resp, true, service, null, searchForm.getTipologiaTransazioni());
+			ConfigurazioniExporter.export(req, resp, true, service, null, searchForm.getTipologiaTransazioni(), formatoExport);
 			
-		}catch(Throwable e){
-			ReportExporter.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			ReportExporter.logError(e.getMessage(),e);
 			throw e;
 		}
 	}
@@ -310,9 +341,9 @@ public class ReportExporter extends HttpServlet{
 				throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.TIPO_DISTRIBUZIONE+"' non fornito");
 			}
 			tipoDistribuzioneReport=tipoDistribuzioneReport.trim();
-			if(CostantiExporter.TIPI_DISTRIBUZIONE.contains(tipoDistribuzioneReport) == false){
+			if(!CostantiExporter.getTipiDistribuzione().contains(tipoDistribuzioneReport)){
 				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_DISTRIBUZIONE+"' fornito possiede un valore '"+tipoDistribuzioneReport
-						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_DISTRIBUZIONE);
+						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getTipiDistribuzione());
 			}
 			
 			// Identificazione tipo documentato da esportare
@@ -321,9 +352,9 @@ public class ReportExporter extends HttpServlet{
 				throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.TIPO_FORMATO+"' non fornito");
 			}
 			tipoFormato=tipoFormato.trim();
-			if(CostantiExporter.TIPI_FORMATO.contains(tipoFormato) == false){
+			if(!CostantiExporter.getTipiFormato().contains(tipoFormato)){
 				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_FORMATO+"' fornito possiede un valore '"+tipoFormato
-						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_FORMATO);
+						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getTipiFormato());
 			}
 			
 			// Tipo applicativo
@@ -334,9 +365,9 @@ public class ReportExporter extends HttpServlet{
 					throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO+"' non fornito");
 				}
 				tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo.trim();
-				if(CostantiExporter.TIPI_IDENTIFICAZIONE_APPLICATIVO.contains(tipoIdentificazioneApplicativo) == false){
+				if(!CostantiExporter.getTipiIdentificazioneApplicativo().contains(tipoIdentificazioneApplicativo)){
 					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO+"' fornito possiede un valore '"+tipoIdentificazioneApplicativo
-							+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_IDENTIFICAZIONE_APPLICATIVO);
+							+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getTipiIdentificazioneApplicativo());
 				}
 				if(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO.equals(tipoIdentificazioneApplicativo)) {
 					identificazioneApplicativo = Costanti.IDENTIFICAZIONE_TRASPORTO_KEY;	
@@ -354,9 +385,9 @@ public class ReportExporter extends HttpServlet{
 					throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.CLAIM+"' non fornito");
 				}
 				claim=claim.trim();
-				if(CostantiExporter.CLAIMS.contains(claim) == false){
+				if(!CostantiExporter.getClaims().contains(claim)){
 					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.CLAIM+"' fornito possiede un valore '"+claim
-							+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.CLAIMS);
+							+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getClaims());
 				}
 				if(CostantiExporter.CLAIM_ISSUER.equals(claim)) {
 					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_issuer;
@@ -387,8 +418,11 @@ public class ReportExporter extends HttpServlet{
 			statSearchForm.setAction(tipoDistribuzioneReport);
 			
 			String protocollo = setProtocolParametersInSearchForm(req, statSearchForm);
+			if(protocollo!=null) {
+				// nop
+			}
 
-			ReportExporter.log.debug("Inizializzazione bean ["+tipoDistribuzioneReport+"] in corso ...");
+			ReportExporter.logDebug("Inizializzazione bean ["+tipoDistribuzioneReport+"] in corso ...");
 						
 			BaseStatsMBean<?, ?, ?> bean = null;
 			if(CostantiExporter.TIPO_DISTRIBUZIONE_TEMPORALE.equals(tipoDistribuzioneReport)){
@@ -520,19 +554,19 @@ public class ReportExporter extends HttpServlet{
 				((StatsPersonalizzateBean) bean).getSearch().initSearchListener(null);
 			}
 			
-			ReportExporter.log.debug("Inizializzazione bean ["+tipoDistribuzioneReport+"] completata");
+			ReportExporter.logDebug("Inizializzazione bean ["+tipoDistribuzioneReport+"] completata");
 
-			ReportExporter.log.debug("Imposto parametri di ricerca nel search form ...");
+			ReportExporter.logDebug("Imposto parametri di ricerca nel search form ...");
 			protocollo = setProtocolParametersInSearchForm(req, statSearchForm);
 			setParametersInSearchForm(req, statSearchForm, protocollo);
 			
 			StringBuffer bf = new StringBuffer();
 			ReflectionToStringBuilder builder = new ReflectionToStringBuilder(statSearchForm, ToStringStyle.MULTI_LINE_STYLE, bf, null, false, false);
 			builder.toString();
-			ReportExporter.log.debug("Lettura parametri completata, search form: "+bf.toString());
+			ReportExporter.logDebug("Lettura parametri completata, search form: "+bf.toString());
 			
 			
-			ReportExporter.log.debug("Esportazione["+tipoFormato+"] tramite bean ["+tipoDistribuzioneReport+"] in corso ...");
+			ReportExporter.logDebug("Esportazione["+tipoFormato+"] tramite bean ["+tipoDistribuzioneReport+"] in corso ...");
 			
 			if(CostantiExporter.TIPO_FORMATO_CSV.equals(tipoFormato)){
 				bean.esportaCsv(resp);
@@ -550,10 +584,10 @@ public class ReportExporter extends HttpServlet{
 				bean.esportaJson(resp);
 			}
 			
-			ReportExporter.log.debug("Esportazione["+tipoFormato+"] tramite bean ["+tipoDistribuzioneReport+"] completata");
+			ReportExporter.logDebug("Esportazione["+tipoFormato+"] tramite bean ["+tipoDistribuzioneReport+"] completata");
 			
-		}catch(Throwable e){
-			ReportExporter.log.error(e.getMessage(),e);
+		}catch(Exception e){
+			ReportExporter.logError(e.getMessage(),e);
 			throw e;
 		}
 	}
@@ -656,9 +690,9 @@ public class ReportExporter extends HttpServlet{
 		String tipologiaTransazione = req.getParameter(CostantiExporter.TIPOLOGIA);
 		if(tipologiaTransazione!=null){
 			tipologiaTransazione = tipologiaTransazione.trim();
-			if(CostantiExporter.TIPOLOGIE.contains(tipologiaTransazione) == false){
+			if(!CostantiExporter.getTipologie().contains(tipologiaTransazione)){
 				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPOLOGIA+"' fornito possiede un valore '"+tipologiaTransazione
-						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPOLOGIE);
+						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getTipologie());
 			}
 		}
 		else{
@@ -754,9 +788,9 @@ public class ReportExporter extends HttpServlet{
 		String tipoRicercaMittente = req.getParameter(CostantiExporter.TIPO_RICERCA_MITTENTE);
 		if(tipoRicercaMittente!=null){
 			tipoRicercaMittente = tipoRicercaMittente.trim();
-			if(CostantiExporter.TIPI_RICERCA_MITTENTE.contains(tipoRicercaMittente) == false){
+			if(!CostantiExporter.getTipiRicercaMittente().contains(tipoRicercaMittente)){
 				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' fornito possiede un valore '"+tipoRicercaMittente
-						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_RICERCA_MITTENTE);
+						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getTipiRicercaMittente());
 			}
 			statSearchForm.setRiconoscimento(tipoRicercaMittente);
 			
@@ -785,9 +819,9 @@ public class ReportExporter extends HttpServlet{
 				String tipoIdentificazioneApplicativo = req.getParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO);
 				if(tipoIdentificazioneApplicativo!=null){
 					tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo.trim();
-					if(CostantiExporter.TIPI_IDENTIFICAZIONE_APPLICATIVO.contains(tipoIdentificazioneApplicativo) == false){
+					if(!CostantiExporter.getTipiIdentificazioneApplicativo().contains(tipoIdentificazioneApplicativo)){
 						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO+"' fornito possiede un valore '"+tipoIdentificazioneApplicativo
-								+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_IDENTIFICAZIONE_APPLICATIVO);
+								+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getTipiIdentificazioneApplicativo());
 					}
 					if(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO.equals(tipoIdentificazioneApplicativo)) {
 						statSearchForm.setIdentificazione(Costanti.IDENTIFICAZIONE_TRASPORTO_KEY);	
@@ -820,9 +854,9 @@ public class ReportExporter extends HttpServlet{
 					String tipoAutenticazione = req.getParameter(CostantiExporter.TIPO_AUTENTICAZIONE);
 					if(tipoAutenticazione!=null){
 						tipoAutenticazione = tipoAutenticazione.trim();
-						if(CostantiExporter.TIPI_AUTENTICAZIONE.contains(tipoAutenticazione) == false){
+						if(!CostantiExporter.getTipiAutenticazione().contains(tipoAutenticazione)){
 							throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_AUTENTICAZIONE+"' fornito possiede un valore '"+tipoAutenticazione
-									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_AUTENTICAZIONE);
+									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getTipiAutenticazione());
 						}
 						statSearchForm.setAutenticazione(tipoAutenticazione);
 					}
@@ -835,9 +869,9 @@ public class ReportExporter extends HttpServlet{
 					String tipoIndirizzoIP = req.getParameter(CostantiExporter.TIPO_INDIRIZZO_IP);
 					if(tipoIndirizzoIP!=null){
 						tipoIndirizzoIP = tipoIndirizzoIP.trim();
-						if(CostantiExporter.TIPI_INDIRIZZI_IP.contains(tipoIndirizzoIP) == false){
+						if(!CostantiExporter.getTipiIndirizzoIp().contains(tipoIndirizzoIP)){
 							throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_INDIRIZZO_IP+"' fornito possiede un valore '"+tipoIndirizzoIP
-									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_INDIRIZZI_IP);
+									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getTipiIndirizzoIp());
 						}
 						statSearchForm.setClientAddressMode(tipoIndirizzoIP);
 					}
@@ -850,9 +884,9 @@ public class ReportExporter extends HttpServlet{
 					String tipoClaim = req.getParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM);
 					if(tipoClaim!=null){
 						tipoClaim = tipoClaim.trim();
-						if(CostantiExporter.CLAIMS.contains(tipoClaim) == false){
+						if(!CostantiExporter.getClaims().contains(tipoClaim)){
 							throw new ParameterUncorrectException("Parametro '"+CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM+"' fornito possiede un valore '"+tipoClaim
-									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.CLAIMS);
+									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getClaims());
 						}
 						TipoCredenzialeMittente tokenClaim = null;
 						if(CostantiExporter.CLAIM_ISSUER.equals(tipoClaim)) {
@@ -956,9 +990,9 @@ public class ReportExporter extends HttpServlet{
 		String esitoGruppo = req.getParameter(CostantiExporter.ESITO_GRUPPO);
 		if(esitoGruppo!=null){
 			esitoGruppo = esitoGruppo.trim();
-			if(CostantiExporter.ESITI_GRUPPO.contains(esitoGruppo) == false){
+			if(!CostantiExporter.getEsitiGruppo().contains(esitoGruppo)){
 				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.ESITO_GRUPPO+"' fornito possiede un valore '"+esitoGruppo
-						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.ESITO_GRUPPO);
+						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.getEsitiGruppo());
 			}
 			if(CostantiExporter.ESITO_GRUPPO_OK.equals(esitoGruppo)){
 				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_OK_VALUE);
@@ -1012,7 +1046,7 @@ public class ReportExporter extends HttpServlet{
 					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.ESITO+"' fornito possiede un valore '"+split[i]
 							+"' non corretto: "+e.getMessage(),e);
 				}
-				if(esitiProperties.existsEsitoCode(intValueEsito)==false){
+				if(!esitiProperties.existsEsitoCode(intValueEsito)){
 					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.ESITO+"' fornito possiede un valore '"+split[i]
 							+"' sconosciuto. I valori supportati sono: "+esitiProperties.getEsitiCode());
 				}	
@@ -1031,7 +1065,7 @@ public class ReportExporter extends HttpServlet{
 		String esitoContestoTmp = req.getParameter(CostantiExporter.ESITO_CONTESTO);
 		if(esitoContestoTmp!=null){
 			esitoContestoTmp = esitoContestoTmp.trim();
-			if(esitiProperties.getEsitiTransactionContextCode().contains(esitoContestoTmp)==false){
+			if(!esitiProperties.getEsitiTransactionContextCode().contains(esitoContestoTmp)){
 				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.ESITO_CONTESTO+"' fornito possiede un valore '"+esitoContestoTmp
 						+"' sconosciuto. I tipi supportati sono: "+esitiProperties.getEsitiTransactionContextCode());
 			}
@@ -1049,7 +1083,7 @@ public class ReportExporter extends HttpServlet{
 		if(CostantiExporter.TIPO_DISTRIBUZIONE_TEMPORALE.equals(statSearchForm.getAction())){
 			tipoReportEnum = CostantiExporter.TIPO_REPORT_DISTRIBUZIONE_TEMPORALE_DEFAULT;
 		}
-//		String tipoReport = req.getParameter(CostantiExporter.TIPO_REPORT);
+/**		String tipoReport = req.getParameter(CostantiExporter.TIPO_REPORT);
 //		if(tipoReport!=null){
 //			tipoReport = tipoReport.trim();
 //			tipoReportEnum = TipoReport.toEnumConstant(tipoReport);
@@ -1076,7 +1110,7 @@ public class ReportExporter extends HttpServlet{
 //							+"' non permesso per la distribuzione di report richiesta: "+statSearchForm.getAction());
 //				}
 //			}
-//		}
+//		}*/
 		statSearchForm.setTipoReport(tipoReportEnum);
 		
 		

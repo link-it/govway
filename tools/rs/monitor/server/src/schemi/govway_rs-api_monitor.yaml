@@ -1444,13 +1444,14 @@ paths:
       summary: Recupera la configurazione di un servizio
       operationId: exportConfigurazioneApiBySimpleSearch
       description: >-
-        Consente di recuperare la configurazione di un servizio esportandola in formato csv
+        Consente di recuperare la configurazione di un servizio esportandola in formato csv, xls
       parameters:
         - $ref: '#/components/parameters/tipo_transazione_config'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: "#/components/parameters/formato_report_config"
       responses:
         "200":
           $ref: '#/components/responses/200ReportConfigurazioni'
@@ -1475,7 +1476,7 @@ paths:
       summary: Recupera la configurazione di un servizio
       operationId: exportConfigurazioneApiByFullSearch
       description: >-
-        Consente di recuperare la configurazione di un servizio esportandola in formato csv
+        Consente di recuperare la configurazione di un servizio esportandola in formato csv, xls
       requestBody:
         content:
           application/json:
@@ -1744,6 +1745,14 @@ components:
       schema: 
         $ref: '#/components/schemas/FormatoReportEnum'
       required: true
+
+    formato_report_config:
+      in: query
+      name: formato_report
+      description: Indica la modalità di esportazione (csv, ...) del report statistico
+      schema: 
+        $ref: '#/components/schemas/FormatoReportConfigEnum'
+      required: false
 
     unita_tempo_report:
       in: query
@@ -2533,7 +2542,8 @@ components:
           $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
         api:
           $ref: '#/components/schemas/FiltroApiSoggetti'
-
+        formato:
+          $ref: '#/components/schemas/FormatoReportConfigEnum'
 
     # Filtri
 
@@ -2784,6 +2794,13 @@ components:
         - xls
         - xml
         - json
+      example: csv
+
+    FormatoReportConfigEnum:
+      type: string
+      enum:
+        - csv
+        - xls
       example: csv
       
     UnitaTempoReportEnum:

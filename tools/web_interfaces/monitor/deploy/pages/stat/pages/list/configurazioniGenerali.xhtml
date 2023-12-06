@@ -31,7 +31,7 @@
 						<rich:toolTip for="closeMarkerPnl" value="#{msg['commons.search.filtroRicerca.nascondi.tooltip']}" />
 					</a4j:outputPanel>
 				</f:facet>
-	
+				<a4j:keepAlive beanName="configurazioniGeneraliBean" />
 				<div class="form-container noborder">
 					<h:form prependId="false">
 						<div class="subtitle">
@@ -169,7 +169,16 @@
 				   }
 				 //]]>	
 				</script>
-				<h:form>
+				<h:form id="formExportListaConfigurazioni">
+					<input type="hidden" id="_csrfFormExportListaConfigurazioni" name="_csrf" value="#{loginBean.csrf}"/>
+					<a4j:outputPanel layout="block" ajaxRendered="false">
+						<a4j:jsFunction name="preparaFormModale" reRender="panelFormExportCsvContainer" actionListener="#{configurazioniGeneraliBean.initExportListener}" limitToList="true">
+							<a4j:actionparam name="param1" assignTo="#{configurazioniGeneraliBean.elencoID}"  />
+							<a4j:actionparam name="param2" assignTo="#{configurazioniGeneraliBean.selectedAll}"  />
+			        	</a4j:jsFunction>
+		        	</a4j:outputPanel>
+		        </h:form>
+		        <a4j:form id="formListaConfigurazioni" prependId="false">
 					<input type="hidden" id="_csrfFormTabellaConfigurazioni" name="_csrf" value="#{loginBean.csrf}"/>
 					<link:dataTable value="#{configurazioniDM}" id="tableConfigurazioni"
 						mBean="#{configurazioniGeneraliBean}" showSelectAll="true" mostraComandiFooter="true"
@@ -200,17 +209,68 @@
 						</rich:column>
 						
 						<ui:define name="buttons">
-							<h:commandLink id="export-iconLink"
-											target="_blank" 
-											styleClass="icon-compress" 
-											action="#{configurazioniGeneraliBean.exportSelected}" 
-											onclick="return checkSelection('tableConfigurazioni','tableConfigurazioni_checkSelection');">
+							<h:commandLink id="exportCsv-iconLink" 
+											styleClass="icon-csv" 
+					onclick="if(checkSelection('tableConfigurazioni','tableConfigurazioni_checkSelection')){ preparaFormModale(getSelectedRows('tableConfigurazioni'),getSelectedAllValue('tableConfigurazioni')); Richfaces.showModalPanel('exportCsvModalPnl'); } return false;" >
 								<h:outputText value="Esporta" />
 							</h:commandLink>
 						</ui:define>
 					</link:dataTable>
-				</h:form>
+				</a4j:form>
 			</a4j:outputPanel>
+			
+			<rich:modalPanel id="exportCsvModalPnl" showWhenRendered="false" width="800" styleClass="overflow-auto" autosized="true">
+					<f:facet name="header">
+						<h:outputText id="exportCsvModalPnlHeaderText" value="Export Configurazioni" />
+					</f:facet>
+					<f:facet name="controls">	
+						<h:panelGroup id="panelChiudiExportCsv">
+			                <h:graphicImage value="/images/tema_link/clear_white.png" id="hidelinkplugin"/>
+			                <rich:componentControl id="componentPlugin" for="exportCsvModalPnl" attachTo="hidelinkplugin" operation="hide" event="onclick"/>
+			            </h:panelGroup>
+					</f:facet>
+					<a4j:outputPanel id="fileExportCsvCtr" ajaxRendered="true">
+						<h:panelGroup  styleClass="errors" layout="block" rendered="#{not empty configurazioniGeneraliBean.exportCsvErrorMessage}">
+								<h:panelGroup rendered="#{not empty configurazioniGeneraliBean.exportCsvErrorMessage}">
+										<p>
+											<em>
+												<h:outputText value="Si sono verificati degli errori:"/>
+											</em>
+										</p>
+									<div class="errorsSpacer"/>
+									</h:panelGroup>
+								<div class="errorsSpacer"/>
+										<rich:messages id="errorExportCsvMessages">
+										</rich:messages>
+								<h:outputText id="exportCsvErrors"  
+									value="#{configurazioniGeneraliBean.exportCsvErrorMessage}"
+									rendered="#{not configurazioniGeneraliBean.exportCsvErrorMessage}" />
+						</h:panelGroup>
+					</a4j:outputPanel>
+					<p class="legend">
+						<strong>Note:</strong> (<em>*</em>) Campi obbligatori
+					</p>
+					<h:form id="formExportReport" prependId="false">
+						<a4j:outputPanel layout="block" id="panelFormExportCsvContainer" ajaxRendered="false">
+							<input type="hidden" id="_csrfFormExportReport" name="_csrf" value="#{loginBean.csrf}"/>
+							<div class="form-container noborder"> 
+								<link:fieldset legend="Configura Export" collapsible="false">
+									<link:prop label="Tipologia di Documento" required="true">
+										<h:selectOneMenu id="selectTipoExport" rendered="true" value="#{configurazioniGeneraliBean.tipoExport}" styleClass="inputLink width-412">
+											<f:selectItems value="#{configurazioniGeneraliBean.exportDisponibili}" />
+										</h:selectOneMenu>
+									</link:prop>
+									</link:fieldset>
+									<div class="buttonrowmodal">
+										<a4j:htmlCommandLink id="esportaCsvButton-iconLink" styleClass="icon-csv positive" target="_blank" title="Esporta CSV"
+										 value="Esporta" action="#{configurazioniGeneraliBean.exportSelected}"  ajaxSingle="true" onclick="#{rich:component('exportCsvModalPnl')}.hide();">
+												<f:setPropertyActionListener value="#{configurazioniGeneraliBean.elencoID}" target="#{configurazioniGeneraliBean.elencoID}" />
+										</a4j:htmlCommandLink>
+									</div>
+								</div>
+						</a4j:outputPanel>
+					</h:form>
+				</rich:modalPanel>
 		</a4j:outputPanel>
 	</ui:define>
 </ui:composition>

@@ -899,7 +899,7 @@ public class ReportisticaHelper {
 
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper request = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.api);
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, TipoReport.api);
 
 		ReportisticaHelper.overrideRicercaBaseStatistica(body, request, env);
 		// Api Implementata
@@ -946,7 +946,7 @@ public class ReportisticaHelper {
 			MonitoraggioEnv env) throws Exception {
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.applicativo);
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, TipoReport.applicativo);
 		
 		if (body.getAzione() != null && body.getApi() == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Se viene specificato il filtro 'azione' è necessario specificare anche il filtro Api");
@@ -987,7 +987,7 @@ public class ReportisticaHelper {
 	public static final byte[] getReportDistribuzioneAzione(RicercaStatisticaDistribuzioneAzione body,MonitoraggioEnv env) throws Exception {
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.azione);
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, TipoReport.azione);
 
 		ReportisticaHelper.overrideRicercaBaseStatisticaSoggetti(body, wrap, env);
 		ReportisticaHelper.overrideFiltroEsito(body.getEsito(), wrap, env);
@@ -1013,7 +1013,7 @@ public class ReportisticaHelper {
 	public static final byte[] getReportDistribuzioneErrori(RicercaStatisticaDistribuzioneErrori body,MonitoraggioEnv env) throws Exception {
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.errori);
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, TipoReport.errori);
 
 		if(body.getEsito()==null) {
 			body.setEsito(new FiltroEsito());
@@ -1057,7 +1057,7 @@ public class ReportisticaHelper {
 		
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.esiti);
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, TipoReport.esiti);
 
 		ReportisticaHelper.overrideRicercaBaseStatisticaSoggetti(body, wrap, env);
 		ReportisticaHelper.overrideOpzioniGenerazioneReport(body.getReport(), wrap, env);
@@ -1083,7 +1083,7 @@ public class ReportisticaHelper {
 			MonitoraggioEnv env) throws Exception {
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(),
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, 
 				TipoReport.identificativo_autenticato);
 
 		ReportisticaHelper.overrideRicercaStatisticaDistribuzioneApplicativo(body, wrap, env);
@@ -1095,7 +1095,7 @@ public class ReportisticaHelper {
 			MonitoraggioEnv env) throws Exception {
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(),
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, 
 				TipoReport.indirizzo_ip);
 
 		ReportisticaHelper.overrideRicercaStatisticaDistribuzioneApplicativo(body, wrap, env);
@@ -1112,7 +1112,7 @@ public class ReportisticaHelper {
 		}
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.soggetto_remoto);
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, TipoReport.soggetto_remoto);
 		ReportisticaHelper.overrideRicercaBaseStatistica(body, wrap, env);
 		ReportisticaHelper.overrideOpzioniGenerazioneReport(body.getReport(), wrap, env);
 		switch (body.getTipo()) {
@@ -1155,7 +1155,7 @@ public class ReportisticaHelper {
 		
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.temporale);
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, TipoReport.temporale);
 
 		ReportisticaHelper.overrideRicercaBaseStatisticaSoggetti(body, wrap, env);
 		ReportisticaHelper.overrideOpzioniGenerazioneReportMultiLine(body.getReport(), wrap, env);
@@ -1182,7 +1182,7 @@ public class ReportisticaHelper {
 			MonitoraggioEnv env) throws Exception {
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
-				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.token_info);
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, TipoReport.token_info);
 
 		ReportisticaHelper.overrideRicercaStatisticaDistribuzioneApplicativo(body, wrap, env);
 		wrap.overrideParameter(CostantiExporter.CLAIM, Enums.toClaim.get(body.getClaim()).toString());
@@ -1209,7 +1209,7 @@ public class ReportisticaHelper {
 		
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo, null,
-				body.getTipo(), body.getReport().getFormato(), TipoReport.soggetto_locale);
+				body.getTipo(), body.getReport().getFormato(), true, TipoReport.soggetto_locale);
 
 		ReportisticaHelper.overrideRicercaBaseStatisticaSoggetti(body, wrap, env);
 		ReportisticaHelper.overrideFiltroEsito(body.getEsito(), wrap, env);
@@ -1280,8 +1280,25 @@ public class ReportisticaHelper {
 			ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 			configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp, LoggerProperties.getLoggerDAO());
 			searchFormUtilities = new SearchFormUtilities();
+			FormatoReportEnum formatoReport = null;
+			if(body.getFormato()!=null) {
+				switch (body.getFormato()) {
+				case CSV:
+					formatoReport = FormatoReportEnum.CSV;
+					break;
+				case XLS:
+					formatoReport = FormatoReportEnum.XLS;
+					break;
+				default:
+					formatoReport = FormatoReportEnum.CSV;
+					break;
+				}
+			}
+			else {
+				formatoReport = FormatoReportEnum.CSV;
+			}
 			request = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo, env.nomeSoggettoLocale,
-					body.getTipo(), FormatoReportEnum.CSV, TipoReport.api);
+					body.getTipo(), formatoReport, false, TipoReport.api);
 		}
 		catch (Exception e) {
 			dbManager.releaseConnectionConfig(connection);
