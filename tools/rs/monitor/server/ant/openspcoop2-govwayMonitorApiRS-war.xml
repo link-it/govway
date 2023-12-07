@@ -40,6 +40,25 @@
 			</then>
 		</if>
 		
+		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
+		<delete dir="${build_govwayMonitorApiRS}/tmp" />
+		<mkdir dir="${build_govwayMonitorApiRS}/tmp" />
+		<var name="mailapi_jar" value="" />
+		<if>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<then>
+				<unzip src="${required_lib}/jakarta/jakarta.mail-api-2.1.2.jar" dest="${build_govwayMonitorApiRS}/tmp/mailapi"/>
+				<concat destfile="${build_govwayMonitorApiRS}/tmp/mailapi/META-INF/mailcap" append="yes">
+					<filelist dir="${data_content_handler_dir}"
+		                           files="mailcap"/>
+				</concat>
+				<jar jarfile="${build_govwayMonitorApiRS}/tmp/jakarta.mail-api-2.1.2.gw.jar" manifest="${build_govwayMonitorApiRS}/tmp/mailapi/META-INF/MANIFEST.MF">
+					<zipfileset dir="${build_govwayMonitor}/tmp/mailapi"/>
+				</jar>
+				<var name="mailapi_jar" value="jakarta.mail-api-2.1.2.gw.jar" />
+			</then>
+		</if>
+
 		<war destfile="${dist_govwayMonitorApiRS}/govwayAPIMonitor.war" webxml="${src_govwayMonitorApiRS}/WEB-INF/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
@@ -160,6 +179,10 @@
 				<include name="pdfbox-2.0.27.jar"/>
 				<include name="fontbox-2.0.27.jar"/>	
 				<include name="boxable-1.7.0.jar"/>
+			</lib>
+			<!-- Mail api esteso con activation data handler openspcoop -->
+			<lib dir="${build_govwayMonitorApiRS}/tmp">
+				<include name="${mailapi_jar}" />
 			</lib>
 			<classes dir="${build_govwayMonitorApiRS}/properties">
 				<include name="rs-api-monitor.datasource.properties"/>

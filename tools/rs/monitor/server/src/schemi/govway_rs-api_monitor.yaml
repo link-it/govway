@@ -1550,6 +1550,10 @@ components:
           schema:
             type: string
             format: binary
+        application/vnd.ms-excel:
+          schema:
+            type: string
+            format: binary
 
   parameters:
 

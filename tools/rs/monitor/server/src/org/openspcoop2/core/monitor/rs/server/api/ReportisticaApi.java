@@ -75,7 +75,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/configurazione-api/esporta")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/problem+json" })
+    @Produces({ "text/csv", "application/vnd.ms-excel", "application/problem+json" })
     @Operation(summary = "Recupera la configurazione di un servizio", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report delle configurazioni generato correttamente", content = @Content(mediaType = "text/csv", schema = @Schema(implementation = File.class))),
@@ -96,7 +96,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/configurazione-api/esporta")
-    @Produces({ "text/csv", "application/problem+json" })
+    @Produces({ "text/csv", "application/vnd.ms-excel", "application/problem+json" })
     @Operation(summary = "Recupera la configurazione di un servizio", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report delle configurazioni generato correttamente", content = @Content(mediaType = "text/csv", schema = @Schema(implementation = File.class))),

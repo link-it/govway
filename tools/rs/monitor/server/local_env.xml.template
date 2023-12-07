@@ -12,6 +12,7 @@
       <property name="required_lib_govwayMonitorApiRS" location="${openspcoop2}/lib/"/>
       <property name="required_lib" value="${required_lib_govwayMonitorApiRS}"/>
       <property name="openspcoop2.lib" location="${required_lib_govwayMonitorApiRS}"/>
+      <property name="data_content_handler_dir" value="${openspcoop2}/core/deploy/data_content_handler" />
 
       <!-- Build-Options -->
       <property name="buildAsRelease" value="false"/>
