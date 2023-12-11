@@ -44,6 +44,9 @@ public class Evento  {
   
   @Schema(description = "")
   private String origine = null;
+  
+  @Schema(description = "")
+  private String descrizione = null;
  /**
    * Get id
    * @return id
@@ -158,6 +161,25 @@ public class Evento  {
     return this;
   }
 
+ /**
+   * Get descrizione
+   * @return descrizione
+  **/
+  @JsonProperty("descrizione")
+  @Valid
+  public String getDescrizione() {
+    return this.descrizione;
+  }
+
+  public void setDescrizione(String descrizione) {
+    this.descrizione = descrizione;
+  }
+
+  public Evento descrizione(String descrizione) {
+    this.descrizione = descrizione;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -170,6 +192,7 @@ public class Evento  {
     sb.append("    tipo: ").append(Evento.toIndentedString(this.tipo)).append("\n");
     sb.append("    codice: ").append(Evento.toIndentedString(this.codice)).append("\n");
     sb.append("    origine: ").append(Evento.toIndentedString(this.origine)).append("\n");
+    sb.append("    descrizione: ").append(Evento.toIndentedString(this.descrizione)).append("\n");
     sb.append("}");
     return sb.toString();
   }
