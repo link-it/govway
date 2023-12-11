@@ -1,5 +1,11 @@
 2023-12-11  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole, ProtocolloModIPA]
+	Risolto Bug OP-1681
+	La registrazione di una erogazione di API con pattern di sicurezza canale 'ID_AUTH_CHANNEL_02' creava un controllo accessi non corretto poichè l'autenticazione canale veniva configurata come opzionale.
+
+2023-12-11  Andrea Poli <apoli@link.it>
+
 	* [ApiRsMonitoraggio]
 	Risolto Bug OP-1679
 	Api di monitoraggio non ritornano la descrizione di un evento
