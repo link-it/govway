@@ -20764,6 +20764,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String value = pp.getValue();
 				if(CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02.equals(value)) {
 					forceHttpsClient.setValue(true);
+					return;
 				} 
 				break;
 			}
