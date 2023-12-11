@@ -1911,6 +1911,8 @@ components:
           type: string
         origine:
           type: string
+        descrizione:
+          type: string
 
 
     # Statistiche
