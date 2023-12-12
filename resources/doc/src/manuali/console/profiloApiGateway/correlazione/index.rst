@@ -98,6 +98,10 @@ indicare i seguenti dati:
    specificata. Nel caso sia stato indicato *blocca*, tali richieste non
    verranno accettate con restituzione di un errore al mittente;
 
+   .. note::
+
+	L'estrazione di un identificativo nullo o stringa vuota viene trattato come processo d'identificazione fallito. È possibile modificare questo comportamento seguendo le indicazioni fornite nella sezione :ref:`correlazione_extractedIdentifier`.
+
 -  *Riuso ID*: opzione per abilitare/disabilitare il riuso
    dell'identificatore del messaggio (assegnato dal gateway) nel caso in
    cui vengano inviati messaggi con identificatori applicativi già
@@ -108,5 +112,6 @@ indicare i seguenti dati:
 
    truncate
    ruleNotFound
+   extractedIdentifier
 
 
