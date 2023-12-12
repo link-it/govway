@@ -2023,12 +2023,20 @@ public class ValidazioneSemantica {
 				if ((identificazione != null) && !identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO) && 
 						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_URL_BASED) && 
 						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED) && 
-						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED)){
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED) && 
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_HEADER_BASED) && 
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_TEMPLATE) && 
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_FREEMARKER_TEMPLATE) && 
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_VELOCITY_TEMPLATE)){
 					this.errori.add("La modalita d'identificazione della correlazione applicativa ("+(j+1)+") nella "+identificativoRisorsa+" deve assumere uno dei seguente valori: "+
 							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO+","+
 							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_URL_BASED+","+
 							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED+" o "+
-							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED);
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED+" o "+
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_HEADER_BASED+" o "+
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_TEMPLATE+" o "+
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_FREEMARKER_TEMPLATE+" o "+
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_VELOCITY_TEMPLATE);
 				}
 				if(identificazione==null){
 					identificazione = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED;
@@ -2103,11 +2111,19 @@ public class ValidazioneSemantica {
 				CorrelazioneApplicativaRispostaIdentificazione identificazione = cae.getIdentificazione();
 				if ((identificazione != null) && !identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_DISABILITATO)  && 
 						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED) && 
-						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED)){
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED) && 
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_HEADER_BASED) && 
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_TEMPLATE) && 
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_FREEMARKER_TEMPLATE) && 
+						!identificazione.equals(CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_VELOCITY_TEMPLATE)){
 					this.errori.add("La modalita d'identificazione della correlazione applicativa ("+(j+1)+") nella "+identificativoRisorsa+" deve assumere uno dei seguente valori: "+
 							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_DISABILITATO+","+
 							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED+" o "+
-							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED);
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED+" o "+
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_HEADER_BASED+" o "+
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_TEMPLATE+" o "+
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_FREEMARKER_TEMPLATE+" o "+
+							CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_VELOCITY_TEMPLATE);
 				}
 				if(identificazione==null){
 					identificazione = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED;
