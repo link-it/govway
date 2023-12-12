@@ -550,6 +550,10 @@ public class OpenSPCoop2Properties {
 			this.getMaxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate();
 			this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione();
 			this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata();
+			this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullConsideraErrore();
+			this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullConsideraErrore();
+			this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyConsideraErrore();
+			this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyConsideraErrore();
 			this.isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca();
 			this.isRepositoryCorrelazioneApplicativaRispostaRegolaCorrelazioneNonTrovataBlocca();
 			
@@ -7491,6 +7495,112 @@ public class OpenSPCoop2Properties {
 		
 		return this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata;
 	}
+	
+
+	private Boolean isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullConsideraErrore = null;
+	public boolean isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullConsideraErrore() {	
+		
+		String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.richiesta.identificativoEstrattoIsNull.consideraErrore";
+		if(this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullConsideraErrore==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				
+				if(name!=null){
+					name = name.trim();
+					this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullConsideraErrore = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullConsideraErrore = true;
+				}
+	
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullConsideraErrore = true;
+			}    
+		}
+		
+		return this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsNullConsideraErrore;
+	}
+	
+	private Boolean isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullConsideraErrore = null;
+	public boolean isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullConsideraErrore() {	
+		
+		String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.risposta.identificativoEstrattoIsNull.consideraErrore";
+		if(this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullConsideraErrore==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				
+				if(name!=null){
+					name = name.trim();
+					this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullConsideraErrore = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullConsideraErrore = true;
+				}
+	
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullConsideraErrore = true;
+			}    
+		}
+		
+		return this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsNullConsideraErrore;
+	}
+	
+	private Boolean isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyConsideraErrore = null;
+	public boolean isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyConsideraErrore() {	
+		
+		String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.richiesta.identificativoEstrattoIsEmpty.consideraErrore";
+		if(this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyConsideraErrore==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				
+				if(name!=null){
+					name = name.trim();
+					this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyConsideraErrore = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyConsideraErrore = true;
+				}
+	
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyConsideraErrore = true;
+			}    
+		}
+		
+		return this.isRepositoryCorrelazioneApplicativaRichiestaIdentificativoEstrattoIsEmptyConsideraErrore;
+	}
+	
+	private Boolean isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyConsideraErrore = null;
+	public boolean isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyConsideraErrore() {	
+		
+		String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.risposta.identificativoEstrattoIsEmpty.consideraErrore";
+		if(this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyConsideraErrore==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				
+				if(name!=null){
+					name = name.trim();
+					this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyConsideraErrore = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyConsideraErrore = true;
+				}
+	
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyConsideraErrore = true;
+			}    
+		}
+		
+		return this.isRepositoryCorrelazioneApplicativaRispostaIdentificativoEstrattoIsEmptyConsideraErrore;
+	}
+	
 	
 	private Boolean isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca = null;
 	public boolean isRepositoryCorrelazioneApplicativaRichiestaRegolaCorrelazioneNonTrovataBlocca() {	

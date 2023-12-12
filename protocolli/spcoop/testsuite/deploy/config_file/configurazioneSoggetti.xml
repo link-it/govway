@@ -3423,6 +3423,45 @@
         </porta-delegata>
         
         <!-- Correlazione Applicativa tra IDApplicativo e IDeGov -->
+
+        <porta-delegata gestione-manifest="abilitato" nome="CorrelazioneApplicativaHeaderBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazione" />
+            <correlazione-applicativa>
+                <elemento 
+                    identificazione="headerBased" pattern="correlazione-applicativa" identificazione-fallita="blocca" riuso-identificativo="abilitato" />
+            </correlazione-applicativa>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="CorrelazioneApplicativaHeaderBased_acceptEmptyValue" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazione" />
+	    <proprieta nome="correlation.request.extractedIdentifierIsEmpty.abortTransaction" valore="false"/>
+            <correlazione-applicativa>
+                <elemento 
+                    identificazione="headerBased" pattern="correlazione-applicativa" identificazione-fallita="blocca" />
+            </correlazione-applicativa>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="CorrelazioneApplicativaHeaderBased_accettaSeErrore" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazione" />
+            <correlazione-applicativa>
+                <elemento 
+                    identificazione="headerBased" pattern="correlazione-applicativa" identificazione-fallita="accetta" />
+            </correlazione-applicativa>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="CorrelazioneApplicativaHeaderBasedSenzaRiusoIDEGov" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazione" />
+            <correlazione-applicativa>
+                <elemento 
+                    identificazione="headerBased" pattern="correlazione-applicativa" identificazione-fallita="blocca" />
+            </correlazione-applicativa>
+        </porta-delegata>
+
         <porta-delegata gestione-manifest="abilitato" nome="CorrelazioneApplicativaUrlBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
@@ -3450,6 +3489,7 @@
                     identificazione="urlBased" pattern=".+correlazioneApplicativa=([^&amp;]*).*" identificazione-fallita="blocca" />
             </correlazione-applicativa>
         </porta-delegata>
+
         <porta-delegata gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
