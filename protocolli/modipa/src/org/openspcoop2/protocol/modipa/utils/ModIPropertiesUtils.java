@@ -1043,37 +1043,43 @@ public class ModIPropertiesUtils {
 	}
 	public static boolean isTokenPolicySignedJWT(IConfigIntegrationReader configIntegrationReader, String tokenPolicy) throws ProtocolException {
 		try {
-			boolean jwt = false;
 			GenericProperties gp = configIntegrationReader.getTokenPolicyNegoziazione(tokenPolicy);
-			if(gp!=null && gp.sizePropertyList()>0) {
-				for (int i = 0; i < gp.sizePropertyList(); i++) {
-					if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_MODE.equals(gp.getProperty(i).getNome())){
-						String v = gp.getProperty(i).getValore();
-						jwt = org.openspcoop2.pdd.core.token.Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(v);
-					}
-				}
-			}
-			return jwt;
+			return isTokenPolicySignedJWT(gp);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	public static boolean isTokenPolicyPdnd(IConfigIntegrationReader configIntegrationReader, String tokenPolicy) throws ProtocolException {
-		try {
-			boolean pdnd = false;
-			GenericProperties gp = configIntegrationReader.getTokenPolicyNegoziazione(tokenPolicy);
-			if(gp!=null && gp.sizePropertyList()>0) {
-				for (int i = 0; i < gp.sizePropertyList(); i++) {
-					if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND.equals(gp.getProperty(i).getNome())){
-						String v = gp.getProperty(i).getValore();
-						pdnd = isEnabled(v); 
-					}
+	public static boolean isTokenPolicySignedJWT(GenericProperties gp) {
+		boolean jwt = false;
+		if(gp!=null && gp.sizePropertyList()>0) {
+			for (int i = 0; i < gp.sizePropertyList(); i++) {
+				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_MODE.equals(gp.getProperty(i).getNome())){
+					String v = gp.getProperty(i).getValore();
+					jwt = org.openspcoop2.pdd.core.token.Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(v);
 				}
 			}
-			return pdnd;
+		}
+		return jwt;
+	}
+	public static boolean isTokenPolicyPdnd(IConfigIntegrationReader configIntegrationReader, String tokenPolicy) throws ProtocolException {
+		try {
+			GenericProperties gp = configIntegrationReader.getTokenPolicyNegoziazione(tokenPolicy);
+			return isTokenPolicyPdnd(gp);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
+	}
+	public static boolean isTokenPolicyPdnd(GenericProperties gp) {
+		boolean pdnd = false;
+		if(gp!=null && gp.sizePropertyList()>0) {
+			for (int i = 0; i < gp.sizePropertyList(); i++) {
+				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND.equals(gp.getProperty(i).getNome())){
+					String v = gp.getProperty(i).getValore();
+					pdnd = isEnabled(v); 
+				}
+			}
+		}
+		return pdnd;
 	}
 	public static String getTokenPolicyPdndPurposeId(IConfigIntegrationReader configIntegrationReader, String tokenPolicy) throws ProtocolException {
 		try {

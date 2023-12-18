@@ -143,7 +143,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		}
 		else if(fruizione && request) {
 			// keystore
-			ModIDynamicConfigurationKeystoreUtilities.addTrustStoreKeystoreFruizioneConfigChoice(configuration);
+			ModIDynamicConfigurationKeystoreUtilities.addTrustStoreKeystoreFruizioneConfigChoice(configuration, tokenNonLocale);
 		}
 
 		

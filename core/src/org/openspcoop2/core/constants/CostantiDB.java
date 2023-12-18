@@ -963,6 +963,7 @@ public final class CostantiDB {
     
     public static final String MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO = "applicativo";
     public static final String MODIPA_KEYSTORE_FRUIZIONE = "fruizione";
+    public static final String MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY = "token";
     
     
     /**

@@ -1,3 +1,9 @@
+2023-12-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1685
+	Aggiunto scenario di fruizione ModI in cui è possibile utilizzare il materiale crittografico definito nella token policy per firmare i token di AUDIT e di INTEGRITY.
+
 2023-12-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

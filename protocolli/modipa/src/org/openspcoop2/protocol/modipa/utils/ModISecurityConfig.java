@@ -136,7 +136,9 @@ public class ModISecurityConfig {
 			String patternCorniceSicurezza, String schemaCorniceSicurezza, 
 			Busta busta, Busta bustaRichiesta,
 			Boolean multipleHeaderAuthorizationConfig,
-			boolean keystoreDefinitoInFruizione, boolean kidMode,
+			boolean keystoreDefinitoInFruizione, 
+			boolean keystoreDefinitoInTokenPolicy, String tokenPolicyKid, String tokenPolicyClientId, 
+			boolean kidMode,
 			boolean addSecurity, boolean addAudit) throws ProtocolException {
 		
 		// METODO USATO IN IMBUSTAMENTO
@@ -194,7 +196,7 @@ public class ModISecurityConfig {
 			
 			/* Opzioni REST */
 						
-			this.initSharedRest(modiProperties, this.listProtocolPropertiesInternal,sa,fruizione,request,keystoreDefinitoInFruizione);
+			this.initSharedRest(modiProperties, this.listProtocolPropertiesInternal,sa,fruizione,request,keystoreDefinitoInFruizione, keystoreDefinitoInTokenPolicy);
 			
 			// HTTP Header da firmare
 			
@@ -322,7 +324,7 @@ public class ModISecurityConfig {
 				}
 			}
 			if(this.clientId==null) {
-				if(keystoreDefinitoInFruizione) {
+				if(keystoreDefinitoInFruizione || keystoreDefinitoInTokenPolicy) {
 					try {
 						this.clientId = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio).replace(" ", "/");
 					}catch(Exception e) {
@@ -343,10 +345,12 @@ public class ModISecurityConfig {
 			
 			
 			/* OAuth - ClientId */
-			
 			if(this.tokenClientId==null) {
 				if(keystoreDefinitoInFruizione) {
 					this.tokenClientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_IDENTIFICATIVO);
+				}
+				else if(keystoreDefinitoInTokenPolicy) {
+					this.tokenClientId = tokenPolicyClientId;
 				}
 				else if(sa!=null) {
 					this.tokenClientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
@@ -358,6 +362,9 @@ public class ModISecurityConfig {
 			if(this.tokenKid==null) {
 				if(keystoreDefinitoInFruizione) {
 					this.tokenKid = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this.listProtocolPropertiesInternal, ModICostanti.MODIPA_PROFILO_SICUREZZA_OAUTH_KID);
+				}
+				else if(keystoreDefinitoInTokenPolicy) {
+					this.tokenKid = tokenPolicyKid;
 				}
 				else if(sa!=null) {
 					this.tokenKid = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_SICUREZZA_TOKEN_KID_ID);
@@ -387,7 +394,7 @@ public class ModISecurityConfig {
 						this.issuer = valore;
 					}
 					else {
-						if(keystoreDefinitoInFruizione) {
+						if(keystoreDefinitoInFruizione || keystoreDefinitoInTokenPolicy) {
 							this.issuer = NamingUtils.getLabelSoggetto(soggettoFruitore);
 						}
 						else if(sa!=null) {
@@ -418,7 +425,7 @@ public class ModISecurityConfig {
 						this.subject = valore;
 					}
 					else {
-						if(keystoreDefinitoInFruizione) {
+						if(keystoreDefinitoInFruizione || keystoreDefinitoInTokenPolicy) {
 							this.subject = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio).replace(" ", "/");
 						}
 						else if(sa!=null) {
@@ -1001,7 +1008,7 @@ public class ModISecurityConfig {
 		}
 		
 		if(rest) {
-			this.initSharedRest(modiProperties, this.listProtocolPropertiesInternal,null, fruizione,request,false);
+			this.initSharedRest(modiProperties, this.listProtocolPropertiesInternal,null, fruizione,request,false,false);
 		}
 		else {
 			this.initSharedSoap(this.listProtocolPropertiesInternal,fruizione,request);
@@ -1182,7 +1189,8 @@ public class ModISecurityConfig {
 	}
 	
 	
-	private void initSharedRest(ModIProperties modiProperties, List<ProtocolProperty> listProtocolProperties, ServizioApplicativo sa, boolean fruizione, boolean request, boolean keystoreDefinitoInFruizione) throws ProtocolException {
+	private void initSharedRest(ModIProperties modiProperties, List<ProtocolProperty> listProtocolProperties, ServizioApplicativo sa, boolean fruizione, boolean request, 
+			boolean keystoreDefinitoInFruizione, boolean keystoreDefinitoInTokenPolicy) throws ProtocolException {
 		
 		if(fruizione) {
 			if(request) {
@@ -1265,7 +1273,7 @@ public class ModISecurityConfig {
 			if(vX509.contains(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5U)) {
 				this.x5u = true;
 				if(fruizione && request) {
-					if(keystoreDefinitoInFruizione) {
+					if(keystoreDefinitoInFruizione || keystoreDefinitoInTokenPolicy) {
 						try {
 							this.x5url = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_X509_VALUE_X5URL);
 						}catch(Exception e) {

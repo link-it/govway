@@ -1425,7 +1425,15 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 		}
 		return false;
 	}
-	static boolean isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(AccordoServizioParteComune api, String portType) {
+	static boolean isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(AccordoServizioParteComune api, String portType, boolean rest) {
+		if(rest) {
+			return isProfiloSicurezzaMessaggioRestConSorgenteTokenNonLocale(api, portType);
+		}
+		else {
+			return isProfiloSicurezzaMessaggioSoapConSorgenteTokenNonLocale(api, portType);
+		}
+	}
+	static boolean isProfiloSicurezzaMessaggioRestConSorgenteTokenNonLocale(AccordoServizioParteComune api, String portType) {
 		List<String> tmp = getPropertySicurezzaMessaggioEngine(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID, 
 				ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID, 
 				api, portType, false);
@@ -1439,6 +1447,17 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					return true;
 				}		
 			}
+		}
+		return false;
+	}
+	static boolean isProfiloSicurezzaMessaggioSoapConSorgenteTokenNonLocale(AccordoServizioParteComune api, String portType) {
+		List<String> tmp = getPropertySicurezzaMessaggioEngine(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_ID, 
+				api, portType, false);
+		if(tmp!=null && !tmp.isEmpty()) {
+			String sorgenteToken = tmp.get(0);
+			if(!isSicurezzaMessaggioGenerazioneTokenIdAuthLocale(sorgenteToken) ) {
+				return true;
+			}		
 		}
 		return false;
 	}

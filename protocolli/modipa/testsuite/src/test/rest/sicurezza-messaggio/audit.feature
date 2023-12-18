@@ -3301,3 +3301,42 @@ Examples:
 | tipo-test | tipo-test-minuscolo | nome-api-impl | path1 | path2 | auditPattern | sicurezzaPattern | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
 | JWK | jwk-01-verifica-cache-elemento-optional-not-cacheable-non-usato | RestBlockingAuditRest01TokenAuditClaimOptionalNotCacheable | idar01 | oauth | AUDIT_REST_01 | IDAR01 | servizio che genera una risposta tramite jwk. Anche la validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
 
+
+
+
+
+@negoziazioneViaTokenPolicySecurityOk
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore JWK definito nella token policy
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaAuditViaTokenPolicy/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'FruizioneAuditViaTokenPolicy'
+And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+
+@negoziazioneViaTokenPolicySecurityConIntegrityOk
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore JWK definito nella token policy, anche con integrity
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaIntegrityAuditViaTokenPolicy/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'FruizioneIntegrityAuditViaTokenPolicy'
+And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'

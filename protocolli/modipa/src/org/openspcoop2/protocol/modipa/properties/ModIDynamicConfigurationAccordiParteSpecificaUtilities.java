@@ -124,12 +124,15 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			boolean headerDuplicati = false;
 			boolean riferimentoX509 = false;
 			boolean kidMode = false;
-			boolean tokenNonLocale = true;
 			if(rest) {
 				headerDuplicati = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
 				riferimentoX509 = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioRiferimentoX509Required(api, portType);
 				kidMode =  ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioKidModeSupported(api, portType);
-				tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType);
+			}
+			
+			boolean tokenNonLocale = true;
+			if(rest || fruizioni) {
+				tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType, rest);	
 			}
 			
 			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRichiesta(api, portType, true)) {
@@ -165,6 +168,11 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 					
 				boolean forceRest = true;
 				
+				boolean tokenNonLocale = false;
+				if(fruizioni) {
+					tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType, rest);	
+				}
+				
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addSicurezzaMessaggio(modiProperties,
 						configuration, forceRest, fruizioni, true, casoSpecialeModificaNomeFruizione, 
 						false,  // digest
@@ -174,7 +182,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 						false, // riferimentoX509
 						false, // kidMode
 						true, // audit
-						false // tokenNonLocale
+						tokenNonLocale // tokenNonLocale
 						); 
 				
 				return configuration; // NOTA: contiene già i dati richiesti in sicurezza OAuth
@@ -273,7 +281,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			
 			boolean kidMode = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioKidModeSupported(api, portType);
 			
-			boolean tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType);
+			boolean tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType, rest);
 			
 			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRichiesta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateSicurezzaMessaggio(modiProperties,

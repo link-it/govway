@@ -292,11 +292,16 @@ public class GestoreToken {
 	}
 	static final String CONNETTORE_RISPOSTA_NON_PERVENUTA = "; non è pervenuta alcuna risposta";
 	
-	static final String KEY_ALIAS_UNDEFINED = "JWT Signature key alias undefined";
-	static final String KEY_PASSWORD_UNDEFINED = "JWT Signature key password undefined";
-	static final String KEYSTORE_TYPE_UNDEFINED = "JWT Signature keystore type undefined";
-	static final String KEYSTORE_KEYPAIR_UNDEFINED = "JWT Signature keyPair undefined";
-	static final String KEYSTORE_KEYSTORE_UNDEFINED = "JWT Signature keystore undefined";
+	public static final String KEY_ALIAS_UNDEFINED = "JWT Signature key alias undefined";
+	public static final String KEY_PASSWORD_UNDEFINED = "JWT Signature key password undefined";
+	public static final String KEYSTORE_TYPE_UNDEFINED = "JWT Signature keystore type undefined";
+	public static final String KEYSTORE_KEYPAIR_UNDEFINED = "JWT Signature keyPair undefined";
+	public static final String KEYSTORE_KEYSTORE_UNDEFINED = "JWT Signature keystore undefined";
+	public static final String KEYSTORE_KEYSTORE_FILE_UNDEFINED = "JWT Signature keystore file undefined";
+	public static final String KEYSTORE_KEYSTORE_PASSWORD_UNDEFINED = "JWT Signature keystore password undefined";
+	public static final String KEYSTORE_PRIVATE_KEY_UNDEFINED = "JWT Signature private key file undefined";
+	public static final String KEYSTORE_PUBLIC_KEY_UNDEFINED = "JWT Signature public key file undefined";
+	public static final String KEYSTORE_KEY_PAIR_ALGORITHM_UNDEFINED = "JWT Signature key pair algorithm undefined";
 	
 	/** Connettore Utils */
 	static void addProperties(ConnettoreMsg connettoreMsg, Properties p) {

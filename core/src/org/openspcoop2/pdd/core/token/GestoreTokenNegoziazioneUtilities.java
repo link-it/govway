@@ -81,6 +81,7 @@ import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.json.JSONUtils;
@@ -1002,7 +1003,74 @@ public class GestoreTokenNegoziazioneUtilities {
 		return jsonUtils.toString(jwtPayload);
 	}
 	
-
+	public static KeystoreParams readKeystoreParams(PolicyNegoziazioneToken policyNegoziazioneToken) throws TokenException {
+		
+		KeystoreParams kp = new KeystoreParams();
+		
+		String keystoreType = policyNegoziazioneToken.getJwtSignKeystoreType();
+		if(keystoreType==null) {
+			throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
+		}
+		kp.setType(keystoreType);
+		
+		String keystoreFile = null;
+		String keystoreFilePublicKey = null;
+		String keyPairAlgorithm = null;
+		if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
+			keystoreFile = policyNegoziazioneToken.getJwtSignKeystoreFile();
+			if(keystoreFile==null) {
+				throw new TokenException(GestoreToken.KEYSTORE_PRIVATE_KEY_UNDEFINED);
+			}
+			kp.setPath(keystoreFile);
+			
+			keystoreFilePublicKey = policyNegoziazioneToken.getJwtSignKeystoreFilePublicKey();
+			if(keystoreFilePublicKey==null) {
+				throw new TokenException(GestoreToken.KEYSTORE_PUBLIC_KEY_UNDEFINED);
+			}
+			kp.setKeyPairPublicKeyPath(keystoreFilePublicKey);
+			
+			keyPairAlgorithm = policyNegoziazioneToken.getJwtSignKeyPairAlgorithm();
+			if(keyPairAlgorithm==null) {
+				throw new TokenException(GestoreToken.KEYSTORE_KEY_PAIR_ALGORITHM_UNDEFINED);
+			}
+			kp.setKeyPairAlgorithm(keyPairAlgorithm);
+		}
+		else {
+			keystoreFile = policyNegoziazioneToken.getJwtSignKeystoreFile();
+			if(keystoreFile==null) {
+				throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_FILE_UNDEFINED);
+			}
+			kp.setPath(keystoreFile);
+		}
+		
+		String keystorePassword = policyNegoziazioneToken.getJwtSignKeystorePassword();
+		if(keystorePassword==null && 
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_PASSWORD_UNDEFINED);
+		}
+		kp.setPassword(keystorePassword);
+		
+		String keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
+		if(keyAlias==null && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
+		}
+		kp.setKeyAlias(keyAlias);
+		
+		String keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
+		if(keyPassword==null && 
+				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
+				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
+			throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
+		}
+		kp.setKeyPassword(keyPassword);
+		
+		return kp;
+	}
 	
 	private static String signJwt(PolicyNegoziazioneToken policyNegoziazioneToken, String payload, String contentType,
 			NegoziazioneTokenDynamicParameters dynamicParameters,
@@ -1099,57 +1167,16 @@ public class GestoreTokenNegoziazioneUtilities {
 				}
 			}
 			else {
-				String keystoreType = policyNegoziazioneToken.getJwtSignKeystoreType();
-				if(keystoreType==null) {
-					throw new TokenException(GestoreToken.KEYSTORE_TYPE_UNDEFINED);
-				}
+				KeystoreParams kp = readKeystoreParams(policyNegoziazioneToken);
 				
-				String keystoreFile = null;
-				String keystoreFilePublicKey = null;
-				String keyPairAlgorithm = null;
-				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
-					keystoreFile = policyNegoziazioneToken.getJwtSignKeystoreFile();
-					if(keystoreFile==null) {
-						throw new TokenException("JWT Signature private key file undefined");
-					}
-					keystoreFilePublicKey = policyNegoziazioneToken.getJwtSignKeystoreFilePublicKey();
-					if(keystoreFilePublicKey==null) {
-						throw new TokenException("JWT Signature public key file undefined");
-					}
-					keyPairAlgorithm = policyNegoziazioneToken.getJwtSignKeyPairAlgorithm();
-					if(keyPairAlgorithm==null) {
-						throw new TokenException("JWT Signature key pair algorithm undefined");
-					}
-				}
-				else {
-					keystoreFile = policyNegoziazioneToken.getJwtSignKeystoreFile();
-					if(keystoreFile==null) {
-						throw new TokenException("JWT Signature keystore file undefined");
-					}
-				}
+				String keystoreType = kp.getType();	
+				String keystoreFile = kp.getPath();
+				String keystoreFilePublicKey = kp.getKeyPairPublicKeyPath();
+				String keyPairAlgorithm = kp.getKeyPairAlgorithm();
+				String keystorePassword = kp.getPassword();
 				
-				String keystorePassword = policyNegoziazioneToken.getJwtSignKeystorePassword();
-				if(keystorePassword==null && 
-						!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
-						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
-						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-					throw new TokenException("JWT Signature keystore password undefined");
-				}
-				
-				keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
-				if(keyAlias==null && 
-						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
-						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-					throw new TokenException(GestoreToken.KEY_ALIAS_UNDEFINED);
-				}
-				
-				keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
-				if(keyPassword==null && 
-						!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
-						!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
-						!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-					throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
-				}
+				keyAlias = kp.getKeyAlias();				
+				keyPassword = kp.getKeyPassword();
 				
 				if(SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
 					keyPairStore = GestoreKeystoreCache.getKeyPairStore(requestInfo, keystoreFile, keystoreFilePublicKey, keyPassword, keyPairAlgorithm);

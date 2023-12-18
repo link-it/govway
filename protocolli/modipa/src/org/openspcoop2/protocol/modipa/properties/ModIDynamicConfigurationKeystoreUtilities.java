@@ -690,26 +690,38 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 	
 	static void addTrustStoreSSLConfigChoice(ConsoleConfiguration configuration, boolean x5u) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, true, false, 
-				false, false, false, x5u);
+				false, 
+				false, false, false, 
+				x5u);
 	}
 	static void addTrustStoreCertificatiConfigChoice(ConsoleConfiguration configuration, boolean x5u) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, false, true, 
-				false, false, false, x5u);
+				false, 
+				false, false, false, 
+				x5u);
 	}
 	static void addTrustStoreKeystoreErogazioneConfigChoice(ConsoleConfiguration configuration) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, false, false, 
-				true, false, false, false);
+				true, 
+				false, false, false, 
+				false);
 	}
-	static void addTrustStoreKeystoreFruizioneConfigChoice(ConsoleConfiguration configuration) throws ProtocolException {
+	static void addTrustStoreKeystoreFruizioneConfigChoice(ConsoleConfiguration configuration, boolean tokenNonLocale) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, false, false, 
-				false, true, false, false);
+				false, 
+				true, tokenNonLocale, false, 
+				false);
 	}
 	static void addTrustStoreKeystoreFruizioneOAuthConfigChoice(ConsoleConfiguration configuration) throws ProtocolException {
 		addTrustStoreConfigChoice(configuration, false, false, 
-				false, false, true, false);
+				false, 
+				false, false, true, 
+				false);
 	}
 	private static void addTrustStoreConfigChoice(ConsoleConfiguration configuration, boolean ssl, boolean truststore, 
-			boolean keystoreErogazione, boolean keystoreFruizione, boolean keystoreFruizioneOauthNoSicurezzaMessaggio, boolean x5u) throws ProtocolException {
+			boolean keystoreErogazione, 
+			boolean keystoreFruizione, boolean tokenNonLocale, boolean keystoreFruizioneOauthNoSicurezzaMessaggio, 
+			boolean x5u) throws ProtocolException {
 		
 		if(keystoreErogazione) {
 			// nop
@@ -724,6 +736,10 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 					ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO);
 			modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_FRUIZIONE,
 					ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE);
+			if(tokenNonLocale) {
+				modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_TOKEN_POLICY,
+						ModIConsoleCostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY);
+			}
 			modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_DEFAULT_VALUE);
 			modeItem.setReloadOnChange(true);
 			configuration.addConsoleItem(modeItem);

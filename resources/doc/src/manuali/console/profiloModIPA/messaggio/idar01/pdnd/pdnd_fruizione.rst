@@ -201,12 +201,7 @@ Di seguito vengono riportati tutte le informazioni da registrare nella policy:
 
 	- Time to Live (secondi): consente di indicare la durate del token di richiesta inviato alla PDND (es. 100 sec);
 
-	- Purpose ID: identificativo univoco della finalità, ottenuto dalla PDND, per cui si intende fruire di un servizio. Il valore può essere fornito staticamente o può contenere una keyword risolta a runtime in modo da valorizzare il claim purposeId con un valore prelevato dai dati della richiesta. Ad esempio se il censimento dei purposeId viene mantenuto a livello applicativo può essere indicato un header HTTP con cui il richiedente può fornire a GovWay il valore da utilizzare (es. ${header:NOME_HEADER_HTTP}). Si rimanda alla sezione ':ref:`valoriDinamici`' per le varie modalità dinamiche utilizzabili; di seguito vengono invece fornite alcune indicazioni per mantenere la registrazione del purposeId sul registro di GovWay supportando differenti scenari (per maggiori dettagli si rimanda alla sezione :ref:`avanzate_dynamic_config`): 
-
-		- *1-1 con la fruizione*: registrazione come proprietà 'purposeId' della fruizione e riferito nella token policy tramite il valore '${config:purposeId}';
-		- *1-1 con l'applicativo fruitore*: registrazione come proprietà 'purposeId' di un applicativo fruitore e riferito nella token policy tramite il valore '${clientApplicationConfig:purposeId}';
-		- *N applicativi fruitore censiti sulla fruzione*:  registrazione di N proprietà '<clientApplicationName>.purposeId' sulla fruizione, una per ogni applicativo fruitore il cui nome va indicato come prefisso della proprietà; nella token policy deve essere utilizzato il valore '${dynamicConfig:apiSearchByClientApplication(purposeId)}';
-		- *N fruizioni censite sull'applicativo fruitore*:  registrazione di N proprietà '<nomeApiImpl>.v<nomeApiImpl>.purposeId' sull'applicativo, una per ogni fruizione di API che l'applicativo deve fruitore il cui nome va indicato come prefisso della proprietà; nella token policy deve essere utilizzato il valore '${dynamicConfig:clientApplicationSearch(purposeId)}'.
+	- Purpose ID: identificativo univoco della finalità, ottenuto dalla PDND, per cui si intende fruire di un servizio. La modalità di configurazione varia a seconda dello scenario che si desidera supportare come descritto nella sezione ':ref:`modipa_sicurezza_avanzate_fruizione_purposeId_scenari`'.
 
 	- Informazioni Sessione: consente di valorizzare il claim 'sessionInfo' previsto dalla PDND. La valorizzazione può essere statica o formata da parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
 
@@ -275,7 +270,7 @@ Maggiori dettagli sulla configurazione del keystore nella fruizione vengono forn
 
 La registrazione dell'applicativo avviene come già descritto nella sez. :ref:`applicativo`. 
 
-Le ulteriori configurazioni descritte di seguito sono necessarie solamente se si intende associare all'applicativo richiedente il keystore utilizzato per la firma del token di sicurezza. Non sono invece necessari ulteriori passi di configurazione se il keystore viene definito nella fruizione e si rimanda alla sezione ':ref:`modipa_sicurezza_avanzate_fruizione_keystore`' per ulteriori dettagli di questo scenario.
+Le ulteriori configurazioni descritte di seguito sono necessarie solamente se si intende associare all'applicativo richiedente il keystore utilizzato per la firma del token di sicurezza. Non sono invece necessari ulteriori passi di configurazione se il keystore viene definito nella fruizione o nella token policy e si rimanda rispettivamente alle sezioni ':ref:`modipa_sicurezza_avanzate_fruizione_keystore`' e ':ref:`modipa_sicurezza_avanzate_fruizione_token_policy_keystore`' per ulteriori dettagli di questi scenari.
 
 In questo contesto sarà necessario specificare il dominio "Interno" dell'applicativo e procedere all'inserimento dei dati nel form "ModI - Sicurezza Messaggio - KeyStore" (:numref:`modi_applicativo_interno_fig`).
 
