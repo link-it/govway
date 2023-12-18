@@ -399,3 +399,114 @@ Then status 503
 * def result = get_diagnostici(tid) 
 
 * match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND-datiInFruizione\' è utilizzabile solamente con il profilo di interoperabilità \'ModI\''
+
+
+
+
+
+
+
+
+
+@negoziazioneViaTokenPolicySecurity03Ok
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore PKCS12 definito nella token policy, su una integrity 01'
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaMessaggio03ViaTokenPolicy/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione03ViaTokenPolicy'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+
+@negoziazioneViaTokenPolicySecurity04JWKOk
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore JWKS definito nella token policy, su una integrity 02'
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaMessaggio04ViaTokenPolicy-JWK/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicy'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+
+@negoziazioneViaTokenPolicySecurity04KeyPairOk
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore key pair definito nella token policy, su una integrity 02'
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaMessaggio04ViaTokenPolicy-KeyPair/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicyKeyPair'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+
+@negoziazioneViaTokenPolicySecurity04KeyPairClientIdKIDugualiOk
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore key pair definito nella token policy, su una integrity 02', dove nella token policy il kid è definito uguale al clientId
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaMessaggio04ViaTokenPolicy-KeyPair-ClientIdKIDuguali/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicyKeyPair-ClientIdKIDuguali'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+
+@negoziazioneViaTokenPolicySecurityKeystoreDefinitoFruizioneErrore
+Scenario: Test negoziazione ko tramite l'utilizzo di un keystore definito nella token policy, su una integrity 02'; nella token policy il keystore viene indicato come definito nella fruizione (loop)
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaMessaggio04ViaTokenPolicy-DefinitoFruizione/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicyFruizioneErrore'
+When method post
+Then status 400
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici(tid) 
+
+* match result[0].MESSAGGIO contains 'Il profilo di sicurezza richiesto \'idam0401\' richiede l\'assegnazione di una token policy di negoziazione al connettore\; la policy indicata \'MODI-NegoziazioneTokenPDND-datiInPolicy-keystoreFruizione\' non è utilizzabile essendo configurata con una modalità di keystore \'Definito nella fruizione ModI\''
+
+
+
+@negoziazioneViaTokenPolicySecurityKeystoreDefinitoApplicativoErrore
+Scenario: Test negoziazione ko tramite l'utilizzo di un keystore definito nella token policy, su una integrity 02'; nella token policy il keystore viene indicato come definito nell'applicativo
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaMessaggio04ViaTokenPolicy-DefinitoApplicativo/v1"
+And path 'test'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione04ViaTokenPolicyApplicativoErrore'
+When method post
+Then status 400
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_diagnostici(tid) 
+
+* match result[0].MESSAGGIO contains 'Il profilo di sicurezza richiesto \'idam0401\' richiede l\'assegnazione di una token policy di negoziazione al connettore\; la policy indicata \'MODI-NegoziazioneTokenPDND-datiInPolicy-keystoreApplicativo\' non è utilizzabile essendo configurata con una modalità di keystore \'Definito nell\'applicativo ModI\''
+
+
+
+
+

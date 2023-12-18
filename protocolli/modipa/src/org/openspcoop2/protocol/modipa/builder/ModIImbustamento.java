@@ -43,6 +43,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -65,6 +66,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.MapKey;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -370,7 +372,13 @@ public class ModIImbustamento {
 				ModISecurityConfig securityConfig = null;
 				ModISecurityConfig securityConfigAudit = null;
 				ModIKeystoreConfig keystoreConfig = null;
+				
 				boolean keystoreDefinitoInFruizione = false;
+				
+				boolean keystoreDefinitoInTokenPolicy = false;
+				String tokenPolicyKid = null;
+				String tokenPolicyClientId = null;
+				
 				
 				String headerTokenRest = null;
 				String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
@@ -418,11 +426,43 @@ public class ModIImbustamento {
 					}
 					
 					// modalita Keystore
+					KeystoreParams tokenPolicyKeystore = null;
 					if(isRichiesta) {
 						
 						keystoreDefinitoInFruizione = ModIKeystoreConfig.isKeystoreDefinitoInFruizione(idSoggettoMittente, asps);
+						if(!keystoreDefinitoInFruizione) {
+							keystoreDefinitoInTokenPolicy = ModIKeystoreConfig.isKeystoreDefinitoInTokenPolicy(idSoggettoMittente, asps);
+						}
 						
-						if((!keystoreDefinitoInFruizione) && sa==null) {
+						StringBuilder sbRequired = new StringBuilder();
+						if(keystoreDefinitoInTokenPolicy) {
+							PolicyNegoziazioneToken pnt = ImbustamentoUtils.readPolicyNegoziazioneToken(this.log, state, idSoggettoMittente, idServizio, azione, requestInfo, sbRequired);
+							if(pnt!=null) {
+								tokenPolicyKeystore = ImbustamentoUtils.readKeystoreParams(this.log, pnt, sbRequired);
+								if(sbRequired.length()<=0) {
+									tokenPolicyClientId = ImbustamentoUtils.readClientId(this.log, pnt, sbRequired);
+								}
+								if(sbRequired.length()<=0) {
+									tokenPolicyKid = ImbustamentoUtils.readKID(this.log, pnt, tokenPolicyClientId, tokenPolicyKeystore, sbRequired);
+								}
+								if(sbRequired.length()>0) {
+									tokenPolicyKeystore=null; // almeno dopo segnalo l'errore registrato in sbRequired
+								}
+							}
+						}
+						
+						boolean erroreTP=false;
+						boolean erroreSA=false;
+						if(keystoreDefinitoInTokenPolicy) {
+							if(tokenPolicyKeystore==null) {
+								erroreTP= true;
+							}
+						}
+						else if((!keystoreDefinitoInFruizione) && sa==null) {
+							erroreSA=true;
+						}
+							
+						if(erroreTP || erroreSA) {
 							boolean auditMsg = addAudit && patternCorniceSicurezza!=null && StringUtils.isNotEmpty(patternCorniceSicurezza);
 							StringBuilder sb = new StringBuilder("'");
 							if(securityMessageProfile!=null && StringUtils.isNotEmpty(securityMessageProfile)) {
@@ -438,7 +478,10 @@ public class ModIImbustamento {
 								sb.append("-");
 							}
 							sb.append("'");
-							ProtocolException pe = new ProtocolException("Il profilo di sicurezza richiesto "+sb.toString()+" richiede l'identificazione di un applicativo");
+							
+							String descrizioneErrore = erroreTP ? sbRequired.toString() : "l'identificazione di un applicativo";
+							
+							ProtocolException pe = new ProtocolException("Il profilo di sicurezza richiesto "+sb.toString()+" richiede "+descrizioneErrore);
 							pe.setInteroperabilityError(true);
 							throw pe;
 						}
@@ -453,18 +496,22 @@ public class ModIImbustamento {
 								patternCorniceSicurezza, schemaCorniceSicurezza,
 								busta, bustaRichiesta, 
 								multipleHeaderAuthorizationConfig,
-								keystoreDefinitoInFruizione, keystoreKidMode,
+								keystoreDefinitoInFruizione, 
+								keystoreDefinitoInTokenPolicy, tokenPolicyKid, tokenPolicyClientId,
+								keystoreKidMode,
 								addSecurity, addAudit);
 					}
 					
 					boolean keystoreKidModeSecurityToken = keystoreKidMode;
-					if(rest && headerTokenRestIntegrity==null) {
+					if(rest && headerTokenRestIntegrity==null &&
 						// un solo header
-						if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)
+						(
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)
 								||
-								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile)) {
-							keystoreKidModeSecurityToken = false;
-						}
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile)
+						) 
+					){
+						keystoreKidModeSecurityToken = false;
 					}
 					
 					securityConfig = new ModISecurityConfig(msg, context, protocolFactory, state, requestInfo, 
@@ -473,7 +520,9 @@ public class ModIImbustamento {
 							patternCorniceSicurezza, schemaCorniceSicurezza,
 							busta, bustaRichiesta, 
 							multipleHeaderAuthorizationConfig,
-							keystoreDefinitoInFruizione, keystoreKidModeSecurityToken,
+							keystoreDefinitoInFruizione, 
+							keystoreDefinitoInTokenPolicy, tokenPolicyKid, tokenPolicyClientId,
+							keystoreKidModeSecurityToken,
 							addSecurity, addAudit);
 					
 					// keystore
@@ -482,6 +531,9 @@ public class ModIImbustamento {
 					
 						if(keystoreDefinitoInFruizione) {
 							keystoreConfig = new ModIKeystoreConfig(fruizione, idSoggettoMittente, asps, securityMessageProfile);
+						}
+						else if(keystoreDefinitoInTokenPolicy) {
+							keystoreConfig = new ModIKeystoreConfig(tokenPolicyKeystore);
 						}
 						else {
 							keystoreConfig = new ModIKeystoreConfig(sa, securityMessageProfile);
@@ -644,7 +696,9 @@ public class ModIImbustamento {
 											patternCorniceSicurezza, schemaCorniceSicurezza,
 											busta, bustaRichiesta, 
 											false,
-											keystoreDefinitoInFruizione, keystoreKidModeIntegrity,
+											keystoreDefinitoInFruizione, 
+											keystoreDefinitoInTokenPolicy, tokenPolicyKid, tokenPolicyClientId,
+											keystoreKidModeIntegrity,
 											addSecurity, addAudit);
 									modiTokenIntegrity = imbustamentoRest.addToken(msg, isRichiesta, context, keystoreConfig, securityConfigIntegrity, busta, 
 											securityMessageProfile, false, headerTokenRestIntegrity, 

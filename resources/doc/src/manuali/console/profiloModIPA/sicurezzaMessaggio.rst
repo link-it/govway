@@ -28,7 +28,7 @@ Vedremo nelle sezioni seguenti come si possono effettuare le configurazioni rela
 
 **Fruizioni di API**
 
-Per quanto concerne le fruizioni, le richieste che provengono dagli applicativi interni del dominio e sono dirette verso altre amministrazioni vengono arricchite del token di sicurezza 'ModI' associato all'operazione invocata. Gli applicativi vengono identificati attraverso una delle modalità di autenticazione previste da GovWay (vedi sez. :ref:`apiGwAutenticazione`) ed una volta identificato viene utilizzato il materiale crittografico (keystore pkcs12, jks, jwk, private and public key) associatogli per effettuare la firma dei token di sicurezza 'ModI' (:numref:`FruizioneModIPA`). In alternativa il materiale crittografico da utilizzare per la firma può essere definito direttamente nella fruizione.
+Per quanto concerne le fruizioni, le richieste che provengono dagli applicativi interni del dominio e sono dirette verso altre amministrazioni vengono arricchite del token di sicurezza 'ModI' associato all'operazione invocata. Gli applicativi vengono identificati attraverso una delle modalità di autenticazione previste da GovWay (vedi sez. :ref:`apiGwAutenticazione`) ed una volta identificato viene utilizzato il materiale crittografico (keystore pkcs12, jks, jwk, private and public key) associatogli per effettuare la firma dei token di sicurezza 'ModI' (:numref:`FruizioneModIPA`). In alternativa il materiale crittografico da utilizzare per la firma può essere definito direttamente nella fruizione o nella token policy.
 
 Nella figura ':numref:`FruizioneModIPA-PDND`' viene raffigurato lo scenario di fruizione in cui il trust avviene tramite la PDND.
 

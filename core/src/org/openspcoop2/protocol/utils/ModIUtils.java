@@ -879,6 +879,10 @@ public class ModIUtils {
 				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, 
 						CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_FRUIZIONE);
 			}
+			else if(CostantiDB.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY.equals(v)) {
+				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, 
+						CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE_LABEL_TOKEN_POLICY);
+			}
 			else {
 				// verifico di non essere nel caso di API con pattern ID_AUTH_REST_01 via PDND dove la modalità di scelta non viene indicata.
 				if(v==null || StringUtils.isEmpty(v)) {

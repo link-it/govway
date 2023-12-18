@@ -233,3 +233,42 @@ Examples:
 
 
 
+
+
+
+@negoziazioneViaTokenPolicySecurityOk
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore JWK definito nella token policy
+
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaAuditViaTokenPolicySOAP/v1"
+And path 'test'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'FruizioneAuditViaTokenPolicy'
+And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 200
+And match response == read("request.xml")
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+
+@negoziazioneViaTokenPolicySecurityConIntegrityOk
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore JWK definito nella token policy, anche con integrity (fallisce poichè il kid nell'audit non è presente nel truststore)
+
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaIntegrityAuditViaTokenPolicySOAP/v1"
+And path 'test'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'FruizioneIntegrityAuditViaTokenPolicy'
+And header GovWay-Audit-User = "utente-token"
+And header GovWay-Audit-UserLocation = "ip-utente-token"
+And header GovWay-Audit-LoA = "livello-autenticazione-utente-token"
+When method post
+Then status 500
+And match response == read('error-bodies/audit_via_token_policy_kid_non_valido.xml')
+
