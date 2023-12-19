@@ -104,6 +104,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
+			// Rimuovo l'eventuale lista per evitare che in presenza di connettori multipli ridefiniti su un gruppo, lo switch tra gruppi diversi faccia trovare in sessione la lista dei connettori errati
+			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 	
