@@ -28,6 +28,14 @@
     <CookieProcessor className="org.apache.tomcat.util.http.LegacyCookieProcessor" />
   </Context>
 
+- Deve essere abilitato il TRACE METHOD http, altrimenti risulta '405 Not Allowed'
+  Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto in tutti gli http e https listener:
+     <http-listener name="default" socket-binding="http" redirect-socket="https" disallowed-methods=""/>
+     <https-listener name="httpsNoClientAuth" socket-binding="httpsNoClientAuth" record-request-start-time="true" ssl-context="openspcoop2noClientAuthSSC" disallowed-methods=""/>
+  Per farlo su tomcat aggiungere l'attributo allowTrace="true" nel'elemento Connector:
+     <Connector port="8080" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" allowTrace="true" />
+     <Connector port="8445" protocol="HTTP/1.1" SSLEnabled="true" ... allowTrace="true"/>
+
 - Impostare a <15> il massimo numero di richieste simultanee generali nella console di govway sotto 
 		
 		Configurazione->Controllo del Traffico->Limitazione Numero di Richieste Complessive

@@ -606,8 +606,20 @@ public class HttpUtilities {
 				//java.net.ProtocolException: HTTP method PATCH doesn't support output
 				//	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1081)
 				try {
-					// Change protected field called "method" of public class HttpURLConnection
-					_setProtectedFieldValue(HttpURLConnection.class, "method", httpConn, httpMethod.name());
+					Object objectModifyMethodField = httpConn;
+					
+					 Class<?> classHttpsUrlConnectionImpl = getClassHttpsURLConnectionImpl(); // all'interno c'e' un delegate su cui deve essere impostato il metodo http
+					
+					// Change protected field "method" of public class HttpURLConnection
+					// Nella classe  HttpsURLConnectionImpl il field "method" non viene ereditato dalla superclasse ma deve essere modificato nell'oggetto 'delegate'
+					if(classHttpsUrlConnectionImpl!=null && httpConn.getClass().isAssignableFrom(classHttpsUrlConnectionImpl)) {
+						// Devo gestire il delegate
+						/**System.out.println("GESTIONE HTTPS");*/
+						objectModifyMethodField = readDelegateHttpsURLConnection(classHttpsUrlConnectionImpl, httpConn);
+					}
+					
+					setProtectedFieldValue(HttpURLConnection.class, "method", objectModifyMethodField, httpMethod.name());
+					/**System.out.println("DOPO '"+httpConn.getRequestMethod()+"'");*/
 				} catch (Throwable ex) {
 					throw new Exception("Unsupported Method '"+httpMethod+"' and set by reflection error: "+ex.getMessage(),ex);
 				}
@@ -616,8 +628,18 @@ public class HttpUtilities {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	private static void _setProtectedFieldValue(Class<?> clazz, String fieldName, Object object, Object newValue) throws Exception {
+	private static void setProtectedFieldValue(Class<?> clazz, String fieldName, Object object, Object newValue) throws Exception {
 				
+		/**System.out.println("SET IN '"+object.getClass().getName()+"'");*/
+		
+		Field field = getField(clazz, fieldName);
+
+		field.setAccessible(true);
+		field.set(object, newValue);
+		
+		/**System.out.println("SET OK IN '"+object.getClass().getName()+"' (field:"+field.getName()+"): "+field.get(object));*/
+	}
+	private static Field getField(Class<?> clazz, String fieldName) throws UtilsException {
 		Field field = null;
 		try {
 			field = clazz.getDeclaredField(fieldName);
@@ -632,10 +654,35 @@ public class HttpUtilities {
 			for (int i = 0; i < f.length; i++) {
 				System.out.println("NOME["+f[i].getName()+"] TIPO["+f[i].getType()+"]");
 			}
-			throw e;
+			throw new UtilsException(e.getMessage(),e);
 		}
+		return field;
+	}
+	private static Class<?> classHttpsURLConnectionImpl = null;
+	private static Boolean classHttpsURLConnectionImplRead = null;
+	private static synchronized void initClassHttpsURLConnectionImpl() {
+		if(classHttpsURLConnectionImplRead==null) {
+			try {
+				classHttpsURLConnectionImpl = Class.forName("sun.net.www.protocol.https.HttpsURLConnectionImpl");
+			}catch(Exception e) {
+				System.out.println("Classe 'sun.net.www.protocol.https.HttpsURLConnectionImpl' non esistente: "+e.getMessage());
+			} finally {
+				classHttpsURLConnectionImplRead = true;
+			}
+		}
+	}
+	private static Class<?> getClassHttpsURLConnectionImpl() {
+		if(classHttpsURLConnectionImplRead==null) {
+			initClassHttpsURLConnectionImpl();
+		}
+		return classHttpsURLConnectionImpl;
+	}
+	private static Object readDelegateHttpsURLConnection(Class<?> classHttpsUrlConnectionImpl, HttpURLConnection httpConn) throws IllegalArgumentException, IllegalAccessException, UtilsException {
+		Field field = getField(classHttpsUrlConnectionImpl, "delegate");
 		field.setAccessible(true);
-		field.set(object, newValue);
+		Object fieldInstance = field.get(httpConn);
+		/**System.out.println("Delegate '"+fieldInstance.getClass().getName()+"'");*/
+		return fieldInstance;
 	}
 
 
