@@ -10704,6 +10704,8 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModIKeyStoreDefault"
           - $ref: "#/components/schemas/ModIKeyStoreRidefinito"
+        keystore_token_policy:
+          type: "boolean"
         includi_signature_token:
           type: "boolean"
         time_to_live:
@@ -10804,6 +10806,8 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModIKeyStoreDefault"
           - $ref: "#/components/schemas/ModIKeyStoreRidefinito"
+        keystore_token_policy:
+          type: "boolean"
         time_to_live:
           type: "integer"
           format: "int32"

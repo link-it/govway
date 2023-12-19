@@ -1,5 +1,11 @@
 2023-12-19  Andrea Poli <apoli@link.it>
 
+	* [ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1685
+	Aggiunto scenario di fruizione ModI in cui è possibile utilizzare il materiale crittografico definito nella token policy per firmare i token di AUDIT e di INTEGRITY.
+
+2023-12-19  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Risolto Bug OP-1687
 	Le richieste contenenti metodi http 'PATCH', 'LINK' e 'UNLINK' venivano inoltrate al backend erroneamente come metodo POST se la connessione era https.

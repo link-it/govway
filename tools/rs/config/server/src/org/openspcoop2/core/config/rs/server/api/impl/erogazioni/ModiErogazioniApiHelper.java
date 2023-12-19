@@ -1036,7 +1036,12 @@ public class ModiErogazioniApiHelper {
 			}
 		}
 		else {
-			// nop: definito sull'applicativo
+			if(ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY.equals(keystoreMode)) {
+				sicurezzaMessaggioRichiesta.setKeystoreTokenPolicy(true);
+			}
+			else {
+				// nop: definito sull'applicativo
+			}
 		}
 		
 		
@@ -1191,7 +1196,12 @@ public class ModiErogazioniApiHelper {
 			}
 		}
 		else {
-			// nop: definito sull'applicativo
+			if(ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY.equals(keystoreMode)) {
+				sicurezzaMessaggioRichiesta.setKeystoreTokenPolicy(true);
+			}
+			else {
+				// 	nop: definito sull'applicativo
+			}
 		}
 		
 		// info utente
@@ -2175,7 +2185,12 @@ public class ModiErogazioniApiHelper {
 		}
 		else {
 			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO);
+			if(sicurezzaMessaggioRichiesta.isKeystoreTokenPolicy()!=null && sicurezzaMessaggioRichiesta.isKeystoreTokenPolicy().booleanValue()) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY);
+			}
+			else {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO);
+			}
 			
 		}
 		
@@ -2897,7 +2912,12 @@ public class ModiErogazioniApiHelper {
 		}
 		else {
 			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO);
+			if(sicurezzaMessaggioRichiesta.isKeystoreTokenPolicy()!=null && sicurezzaMessaggioRichiesta.isKeystoreTokenPolicy().booleanValue()) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY);
+			}
+			else {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_FRUIZIONE_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO);
+			}
 			
 		}
 		

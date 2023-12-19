@@ -51,6 +51,9 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
   private OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore keystore = null;
   
   @Schema(description = "")
+  private Boolean keystoreTokenPolicy = null;
+  
+  @Schema(description = "")
   private Boolean includiSignatureToken = null;
   
   @Schema(description = "")
@@ -186,6 +189,25 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
 
   public FruizioneModISoapRichiestaSicurezzaMessaggio keystore(OneOfFruizioneModISoapRichiestaSicurezzaMessaggioKeystore keystore) {
     this.keystore = keystore;
+    return this;
+  }
+
+ /**
+   * Get keystoreTokenPolicy
+   * @return keystoreTokenPolicy
+  **/
+  @JsonProperty("keystore_token_policy")
+  @Valid
+  public Boolean isKeystoreTokenPolicy() {
+    return this.keystoreTokenPolicy;
+  }
+
+  public void setKeystoreTokenPolicy(Boolean keystoreTokenPolicy) {
+    this.keystoreTokenPolicy = keystoreTokenPolicy;
+  }
+
+  public FruizioneModISoapRichiestaSicurezzaMessaggio keystoreTokenPolicy(Boolean keystoreTokenPolicy) {
+    this.keystoreTokenPolicy = keystoreTokenPolicy;
     return this;
   }
 
@@ -334,6 +356,7 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
     sb.append("    riferimentoX509: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    certificateChain: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.certificateChain)).append("\n");
     sb.append("    keystore: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.keystore)).append("\n");
+    sb.append("    keystoreTokenPolicy: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.keystoreTokenPolicy)).append("\n");
     sb.append("    includiSignatureToken: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.includiSignatureToken)).append("\n");
     sb.append("    timeToLive: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    wsaTo: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.wsaTo)).append("\n");

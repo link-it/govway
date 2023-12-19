@@ -2053,6 +2053,8 @@ components:
             mapping:
               'default': '#/components/schemas/ModIKeyStoreDefault'
               'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
+        keystore_token_policy:
+          type: boolean
         includi_signature_token:
           type: boolean
         time_to_live:
@@ -2155,6 +2157,8 @@ components:
             mapping:
               'default': '#/components/schemas/ModIKeyStoreDefault'
               'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
+        keystore_token_policy:
+          type: boolean
         time_to_live:
           type: integer
           format: int32
