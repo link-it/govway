@@ -179,6 +179,7 @@ Examples:
 |fruizione_modi_soap_keystore_fruizione_ridefinito_archivio.json|
 |fruizione_modi_soap_keystore_fruizione_ridefinito_hsm.json|
 |fruizione_modi_soap_keystore_fruizione_dati_oauth.json|
+|fruizione_modi_soap_keystore_fruizione_definito_token_policy.json|
 
 
 
@@ -305,6 +306,7 @@ Examples:
 |fruizione_modi_rest_keystore_fruizione_ridefinito_archivio.json|
 |fruizione_modi_rest_keystore_fruizione_ridefinito_hsm.json|
 |fruizione_modi_rest_keystore_fruizione_dati_oauth.json|
+|fruizione_modi_rest_keystore_fruizione_definito_token_policy.json|
 
 
 @CreateFruizione_204_modi_REST_contemporaneita

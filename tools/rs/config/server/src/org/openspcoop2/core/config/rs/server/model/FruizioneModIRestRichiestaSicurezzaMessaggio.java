@@ -49,6 +49,9 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   private OneOfFruizioneModIRestRichiestaSicurezzaMessaggioKeystore keystore = null;
   
   @Schema(description = "")
+  private Boolean keystoreTokenPolicy = null;
+  
+  @Schema(description = "")
   private Integer timeToLive = 300;
   
   @Schema(description = "")
@@ -177,6 +180,25 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
 
   public FruizioneModIRestRichiestaSicurezzaMessaggio keystore(OneOfFruizioneModIRestRichiestaSicurezzaMessaggioKeystore keystore) {
     this.keystore = keystore;
+    return this;
+  }
+
+ /**
+   * Get keystoreTokenPolicy
+   * @return keystoreTokenPolicy
+  **/
+  @JsonProperty("keystore_token_policy")
+  @Valid
+  public Boolean isKeystoreTokenPolicy() {
+    return this.keystoreTokenPolicy;
+  }
+
+  public void setKeystoreTokenPolicy(Boolean keystoreTokenPolicy) {
+    this.keystoreTokenPolicy = keystoreTokenPolicy;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio keystoreTokenPolicy(Boolean keystoreTokenPolicy) {
+    this.keystoreTokenPolicy = keystoreTokenPolicy;
     return this;
   }
 
@@ -348,6 +370,7 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
     sb.append("    riferimentoX509: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    certificateChain: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.certificateChain)).append("\n");
     sb.append("    keystore: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.keystore)).append("\n");
+    sb.append("    keystoreTokenPolicy: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.keystoreTokenPolicy)).append("\n");
     sb.append("    timeToLive: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    audience: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.audience)).append("\n");
     sb.append("    informazioniUtenteCodiceEnte: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteCodiceEnte)).append("\n");
