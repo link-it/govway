@@ -33,13 +33,21 @@ import org.openspcoop2.utils.UtilsException;
 public abstract class AbstractCredenziale {
 
 	protected TipoCredenzialeMittente tipo;
+	protected Long referenceId;
 	
-	public AbstractCredenziale(TipoCredenzialeMittente tipo) {
+	protected AbstractCredenziale(TipoCredenzialeMittente tipo) {
 		this.tipo = tipo;
 	}
+	protected AbstractCredenziale(TipoCredenzialeMittente tipo, Long referenceId) {
+		this.tipo = tipo;
+		this.referenceId = referenceId;
+	}
 	
-	public String getTipo() throws UtilsException {
-		return this.tipo.name();
+	public String getTipo() {
+		return this.tipo.getRawValue();
+	}
+	public Long getReferenceId() {
+		return this.referenceId;
 	}
 	
 	public abstract String getCredenziale() throws UtilsException;

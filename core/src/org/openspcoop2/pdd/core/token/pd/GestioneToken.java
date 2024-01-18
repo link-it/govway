@@ -81,7 +81,7 @@ public class GestioneToken {
     	try {
     	
     		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, 
-    				this.pddContext, 
+    				this.pddContext, this.protocolFactory, 
     				token, GestoreToken.PORTA_DELEGATA);
     		
         	if(esito.getEccezioneProcessamento()!=null) {

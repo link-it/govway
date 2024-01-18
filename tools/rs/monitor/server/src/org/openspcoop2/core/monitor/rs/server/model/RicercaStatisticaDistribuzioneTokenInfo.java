@@ -28,7 +28,7 @@ import javax.validation.Valid;
 public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDistribuzioneApplicativo {
   
   @Schema(required = true, description = "")
-  private TokenClaimEnum claim = null;
+  private TokenClaimDistribuzioneStatisticaEnum claim = null;
   
   @Schema(description = "")
   private BaseOggettoWithSimpleName soggetto = null;
@@ -39,15 +39,15 @@ public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDi
   @JsonProperty("claim")
   @NotNull
   @Valid
-  public TokenClaimEnum getClaim() {
+  public TokenClaimDistribuzioneStatisticaEnum getClaim() {
     return this.claim;
   }
 
-  public void setClaim(TokenClaimEnum claim) {
+  public void setClaim(TokenClaimDistribuzioneStatisticaEnum claim) {
     this.claim = claim;
   }
 
-  public RicercaStatisticaDistribuzioneTokenInfo claim(TokenClaimEnum claim) {
+  public RicercaStatisticaDistribuzioneTokenInfo claim(TokenClaimDistribuzioneStatisticaEnum claim) {
     this.claim = claim;
     return this;
   }

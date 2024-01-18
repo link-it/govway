@@ -20,6 +20,9 @@
 				<xsd:element name="ora-registrazione" type="xsd:dateTime">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="ref-credenziale" type="xsd:unsignedLong">
+					
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>

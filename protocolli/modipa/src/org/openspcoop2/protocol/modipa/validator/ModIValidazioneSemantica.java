@@ -22,12 +22,9 @@
 
 package org.openspcoop2.protocol.modipa.validator;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -46,9 +43,8 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.PDNDResolver;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.pdd.core.keystore.KeystoreException;
-import org.openspcoop2.pdd.core.keystore.RemoteStoreProvider;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -64,8 +60,6 @@ import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
-import org.openspcoop2.protocol.sdk.PDNDTokenInfoDetails;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
@@ -77,21 +71,13 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
-import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.SortedMap;
-import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
-import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.digest.DigestEncoding;
-import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 
 
@@ -306,7 +292,8 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 							isRichiesta, prefixAuthorization,
 							checkAudienceByModIConfig);
 					
-					rsc = enrichTokenInfo(requestInfo, sicurezzaMessaggio, sicurezzaAudit, idSoggetto);
+					PDNDResolver pdndResolver = new PDNDResolver(this.context, this.modiProperties.getRemoteStoreConfig());
+					rsc = pdndResolver.enrichTokenInfo(requestInfo, sicurezzaMessaggio, sicurezzaAudit, idSoggetto);
 				
 				}
 				
@@ -1108,162 +1095,6 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		return digestValue;
 	}
 	
-	private RemoteStoreConfig enrichTokenInfo(RequestInfo requestInfo, boolean sicurezzaMessaggio, boolean sicurezzaAudit, IDSoggetto idSoggetto) throws ProtocolException {
-	
-		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-		RemoteStoreConfig rsc = null;
-		try {
-			if(op2Properties.isGestoreChiaviPDNDclientInfoEnabled()) {
-			
-				rsc = getRemoteStoreConfig(idSoggetto);
-				if(rsc==null) {
-					return rsc;
-				}
-				
-				SecurityToken securityTokenForContext = SecurityTokenUtilities.readSecurityToken(this.context);
-										
-				Object oInformazioniTokenNormalizzate = null;
-				if(this.context!=null) {
-					oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
-				}
-				InformazioniToken informazioniTokenNormalizzate = null;
-				String clientId = null;
-				if(oInformazioniTokenNormalizzate instanceof InformazioniToken) {
-					informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
-					clientId = informazioniTokenNormalizzate.getClientId();
-				}
-				if(clientId==null) {
-					return rsc;
-				}
-				
-				// NOTA: il kid DEVE essere preso dall'eventuale token di integrità, poichè il kid nell'access token è sempre uguale ed è quello della PDND
-				String kid = readKid(sicurezzaMessaggio, sicurezzaAudit, securityTokenForContext, clientId);
-				
-				enrichTokenInfo(securityTokenForContext, informazioniTokenNormalizzate, requestInfo, rsc,
-						kid, clientId);
-			}
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
-		
-		return rsc;
-	}
-	private String readKid(boolean sicurezzaMessaggio, boolean sicurezzaAudit, SecurityToken securityTokenForContext, String clientId) throws UtilsException {
-		// NOTA: il kid DEVE essere preso dall'eventuale token di integrità, poichè il kid nell'access token è sempre uguale ed è quello della PDND
-		String kid = null;
-		if(sicurezzaMessaggio) {
-			kid = readKidFromTokenIntegrity(securityTokenForContext);
-		}
-		if(kid==null && sicurezzaAudit) {
-			kid = readKidFromTokenAudit(securityTokenForContext);
-		}
-		if(kid==null) {
-			// Altrimenti utilizzo la struttura dati per ospitare le informazioni sul clientId
-			kid = "ClientId--"+clientId;
-		}
-		return kid;
-	}
-	private RemoteStoreConfig getRemoteStoreConfig(IDSoggetto idSoggetto) throws ProtocolException {
-		Object oTokenPolicy = null;
-		if(this.context!=null) {
-			oTokenPolicy = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_POLICY);
-		}
-		String tokenPolicy = null;
-		if(oTokenPolicy instanceof String) {
-			tokenPolicy = (String) oTokenPolicy;
-		}
-		if(tokenPolicy==null) {
-			return null;
-		}
-		
-		return this.modiProperties.getRemoteStoreConfigByTokenPolicy(tokenPolicy, idSoggetto);
-	}
-	private String readKidFromTokenIntegrity(SecurityToken securityTokenForContext) throws UtilsException {
-		String kid = null;
-		if(securityTokenForContext!=null && securityTokenForContext.getIntegrity()!=null) {
-			kid = securityTokenForContext.getIntegrity().getKid();
-			if(kid==null) {
-				kid = securityTokenForContext.getIntegrity().getHeaderClaim("kid");
-			}
-		}
-		return kid;
-	}
-	private String readKidFromTokenAudit(SecurityToken securityTokenForContext) throws UtilsException {
-		String kid = null;
-		if(securityTokenForContext!=null && securityTokenForContext.getAudit()!=null) {
-			kid = securityTokenForContext.getAudit().getKid();
-			if(kid==null) {
-				kid = securityTokenForContext.getAudit().getHeaderClaim("kid");
-			}
-		}
-		return kid;
-	}
-	private void enrichTokenInfo(SecurityToken securityTokenForContext, InformazioniToken informazioniTokenNormalizzate, RequestInfo requestInfo, RemoteStoreConfig rsc,
-			String kid, String clientId) throws KeystoreException, SecurityException, UtilsException {
-		RemoteKeyType keyType = RemoteKeyType.JWK; // ignored
-		RemoteStoreProvider remoteStoreProvider = new RemoteStoreProvider(requestInfo, keyType);
-		RemoteStoreClientInfo rsci = GestoreKeystoreCache.getRemoteStoreClientInfo(requestInfo, kid, clientId, rsc, remoteStoreProvider);
-		if(rsci!=null &&
-			(rsci.getClientDetails()!=null || rsci.getOrganizationId()!=null || rsci.getOrganizationDetails()!=null) 
-			){
-			if(informazioniTokenNormalizzate.getPdnd()==null) {
-				informazioniTokenNormalizzate.setPdnd(new HashMap<>());
-			}
-			if(rsci.getClientDetails()!=null) {
-				JSONUtils jsonUtils = JSONUtils.getInstance();
-				if(jsonUtils.isJson(rsci.getClientDetails())) {
-					JsonNode root = jsonUtils.getAsNode(rsci.getClientDetails());
-					PDNDTokenInfoDetails info = new PDNDTokenInfoDetails();
-					info.setId(rsci.getClientId());
-					info.setDetails(rsci.getClientDetails());
-					enrichTokenInfoAddInClaims(jsonUtils, securityTokenForContext, informazioniTokenNormalizzate, root, PDNDTokenInfo.CLIENT_INFO, info);
-				}
-			}
-			if(rsci.getOrganizationDetails()!=null) {
-				JSONUtils jsonUtils = JSONUtils.getInstance();
-				if(jsonUtils.isJson(rsci.getOrganizationDetails())) {
-					JsonNode root = jsonUtils.getAsNode(rsci.getOrganizationDetails());
-					PDNDTokenInfoDetails info = new PDNDTokenInfoDetails();
-					info.setId(rsci.getOrganizationId());
-					info.setDetails(rsci.getOrganizationDetails());
-					enrichTokenInfoAddInClaims(jsonUtils, securityTokenForContext, informazioniTokenNormalizzate, root, PDNDTokenInfo.ORGANIZATION_INFO, info);
-				}
-			}
-		}
-	}
-	private void enrichTokenInfoAddInClaims(JSONUtils jsonUtils, SecurityToken securityTokenForContext, InformazioniToken informazioniTokenNormalizzate, JsonNode root, String type,
-			PDNDTokenInfoDetails info) {
-		Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
-		if(!readClaims.isEmpty()) {
-			enrichTokenInfoAddInClaims(securityTokenForContext, informazioniTokenNormalizzate,
-					type, info,
-					readClaims);
-		}
-	}
-	private void enrichTokenInfoAddInClaims(SecurityToken securityTokenForContext, InformazioniToken informazioniTokenNormalizzate,
-			String type, PDNDTokenInfoDetails info,
-			Map<String, Object> readClaims) {
-		informazioniTokenNormalizzate.getPdnd().put(type,readClaims);
-		String prefix = "pdnd."+type+".";
-		Map<String, Serializable> readClaimsSerializable = new HashMap<>(); 
-		if(informazioniTokenNormalizzate.getClaims()!=null) {
-			for (Map.Entry<String,Object> entry : readClaims.entrySet()) {
-				String key = prefix+entry.getKey();
-				if(!informazioniTokenNormalizzate.getClaims().containsKey(key)) {
-					informazioniTokenNormalizzate.getClaims().put(key, entry.getValue());
-				}
-				if(entry.getValue() instanceof Serializable) {
-					readClaimsSerializable.put(entry.getKey(), (Serializable) entry.getValue());
-				}
-			}
-		}
-		
-		info.setClaims(readClaimsSerializable);
-		if(securityTokenForContext.getPdnd()==null) {
-			securityTokenForContext.setPdnd(new PDNDTokenInfo());
-		}
-		securityTokenForContext.getPdnd().setInfo(type, info);
-	}
 	
 	private void validateTokenAuthorizationId(OpenSPCoop2Message msg,
 			String prefixAuthorization,

@@ -27,6 +27,7 @@
 -- DROP INDEX INDEX_TR_FULL ON transazioni ;
 -- DROP INDEX INDEX_TR_MEDIUM ON transazioni ;
 -- DROP INDEX INDEX_TR_ENTRY ON transazioni ;
+-- DROP INDEX CREDENZIALE_INTERNAL_REF ON credenziale_mittente ;
 -- DROP INDEX CREDENZIALE_ORAREG ON credenziale_mittente ;
 DROP TABLE dump_contenuti;
 DROP TABLE dump_header_allegato;

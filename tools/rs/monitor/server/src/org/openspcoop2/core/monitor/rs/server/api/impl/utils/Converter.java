@@ -35,6 +35,9 @@ import org.openspcoop2.core.monitor.rs.server.model.DetailTransazione;
 import org.openspcoop2.core.monitor.rs.server.model.Evento;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ItemTransazione;
+import org.openspcoop2.core.monitor.rs.server.model.PDNDOrganizationExternalId;
+import org.openspcoop2.core.monitor.rs.server.model.PDNDOrganizationInfo;
+import org.openspcoop2.core.monitor.rs.server.model.PDNDOrganizationInfoItemTransazione;
 import org.openspcoop2.core.monitor.rs.server.model.Riepilogo;
 import org.openspcoop2.core.monitor.rs.server.model.RiepilogoApiItem;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -222,6 +225,30 @@ public class Converter {
 			detail.setLatenzaTotale(dataRisposta-dataRichiesta);
 		}
 		
+		String pdndOrganizationName = transazioneDB.getPdndOrganizationName();
+		String pdndOrganizationCategory = transazioneDB.getPdndOrganizationCategory();
+		String pdndExternalId = transazioneDB.getPdndOrganizationExternalId();
+		if(StringUtils.isNotEmpty(pdndOrganizationName) || StringUtils.isNotEmpty(pdndOrganizationCategory) || StringUtils.isNotEmpty(pdndExternalId)) {
+			PDNDOrganizationInfo pdndOrganizationInfo = new PDNDOrganizationInfo();
+			pdndOrganizationInfo.setNome(pdndOrganizationName);
+			pdndOrganizationInfo.setCategoria(pdndOrganizationCategory);
+			if(StringUtils.isNotEmpty(pdndExternalId) && pdndExternalId.contains(" ")) {
+				try {
+					int indexOf = pdndExternalId.indexOf(" ");
+					String origin = pdndExternalId.substring(0, indexOf);
+					String code = pdndExternalId.replaceFirst(origin+" ","");
+					PDNDOrganizationExternalId extId = new PDNDOrganizationExternalId();
+					extId.setOrigine(origin);
+					extId.setCodice(code);
+					pdndOrganizationInfo.setExternalId(extId);
+				}
+				catch(Exception e) {
+					// ignore
+				}
+			}
+			detail.setPdndOrganization(pdndOrganizationInfo);
+		}
+		
 		String richiedente = transazioneDB.getLabelRichiedenteConFruitore();
 		if(StringUtils.isNotEmpty(richiedente)) {
 			detail.setRichiedente(richiedente);
@@ -235,6 +262,7 @@ public class Converter {
 		metodiEsclusi.add(new BlackListElement("setData", DateTime.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
+		metodiEsclusi.add(new BlackListElement("setPdndOrganization", PDNDOrganizationInfo.class));
 		metodiEsclusi.add(new BlackListElement("setRichiedente", String.class));
 		metodiEsclusi.add(new BlackListElement("setDettaglioErrore", String.class));
 		org.openspcoop2.utils.beans.BeanUtils.copy(log, detail, transazioneExt, metodiEsclusi, true);
@@ -321,6 +349,14 @@ public class Converter {
 			long dataRichiesta = transazione.getRichiesta().getDataAccettazione().getMillis(); 
 			item.setLatenzaTotale(dataRisposta-dataRichiesta);
 		}
+		
+		String pdndOrganizationName = transazioneDB.getPdndOrganizationName();
+		if(StringUtils.isNotEmpty(pdndOrganizationName)) {
+			PDNDOrganizationInfoItemTransazione pdndOrganizationInfo = new PDNDOrganizationInfoItemTransazione();
+			pdndOrganizationInfo.setNome(pdndOrganizationName);
+			item.setPdndOrganization(pdndOrganizationInfo);
+		}
+		
 		String richiedente = transazioneDB.getLabelRichiedenteConFruitore();
 		if(StringUtils.isNotEmpty(richiedente)) {
 			item.setRichiedente(richiedente);
@@ -330,6 +366,7 @@ public class Converter {
 		metodiEsclusi.add(new BlackListElement("setData", DateTime.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
+		metodiEsclusi.add(new BlackListElement("setPdndOrganization", PDNDOrganizationInfoItemTransazione.class));
 		metodiEsclusi.add(new BlackListElement("setRichiedente", String.class));
 		org.openspcoop2.utils.beans.BeanUtils.copy(log, item, transazione, metodiEsclusi, true );
 				
@@ -346,12 +383,12 @@ public class Converter {
 		if(transazioneDB.getTokenSubjectLabel()!=null) {
 			CredenzialeMittente credenziale = new CredenzialeMittente();
 			credenziale.setCredenziale(transazioneDB.getTokenSubjectLabel());
-			credenzialiMittente.setToken_subject(credenziale);
+			credenzialiMittente.setTokenSubject(credenziale);
 		}
 		if(transazioneDB.getTokenIssuerLabel()!=null) {
 			CredenzialeMittente credenziale = new CredenzialeMittente();
 			credenziale.setCredenziale(transazioneDB.getTokenIssuerLabel());
-			credenzialiMittente.setToken_issuer(credenziale);
+			credenzialiMittente.setTokenIssuer(credenziale);
 		}
 		if(transazioneDB.getTokenClientIdLabel()!=null) {
 			CredenzialeMittente credenziale = new CredenzialeMittente();
@@ -368,17 +405,17 @@ public class Converter {
 			else {
 				credenziale.setCredenziale(clientId);
 			}
-			credenzialiMittente.setToken_clientId(credenziale);
+			credenzialiMittente.setTokenClientId(credenziale);
 		}
 		if(transazioneDB.getTokenUsernameLabel()!=null) {
 			CredenzialeMittente credenziale = new CredenzialeMittente();
 			credenziale.setCredenziale(transazioneDB.getTokenUsernameLabel());
-			credenzialiMittente.setToken_username(credenziale);
+			credenzialiMittente.setTokenUsername(credenziale);
 		}
 		if(transazioneDB.getTokenMailLabel()!=null) {
 			CredenzialeMittente credenziale = new CredenzialeMittente();
 			credenziale.setCredenziale(transazioneDB.getTokenMailLabel());
-			credenzialiMittente.setToken_eMail(credenziale);
+			credenzialiMittente.setTokenEMail(credenziale);
 		}
 		return credenzialiMittente;
 	}

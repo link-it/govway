@@ -1,3 +1,22 @@
+2024-01-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor, ApiRsMonitoraggio, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1689
+	Migliorato tracciamento per le richieste contenenti credenziali non valide, token scaduti o non autorizzati. Vengono adesso registrate:
+	- le informazioni sui claim principali presenti nel token (clientId, subject/issuer, username, eMail); 
+        - le informazioni recuperate tramite le API PDND (es. nome e categoria dell'organizzazione);
+	- l'identificativo autenticato a livello trasporto (principal).
+        È stata inoltre rivisto il concetto di richiedente di una richiesta di servizio al fine di considerare anche il nome dell'organizzazione recuperata tramite le API PDND,
+	in modo da visualizzarla al posto del clientId durante la consultazione dello storico delle transazioni.
+	Sono stati introdotti i seguenti miglioramenti alla console di monitoraggio (govwayMonitor) alle API (govwayAPIMonitor):
+	- nello storico delle transazioni è adesso possibile effettuare una ricerca per nome dell'organizzazione individuata tramite le API PDND;
+	- i dati dei report statistici possono essere filtrati per nome dell'organizzazione individuata tramite le API PDND;
+	- è possibile adesso ottenere una distribuzione per clientId contenente anche le informazioni recuperate tramite le API PDND.
+	Le informazioni raccolte tramite le API PDND sono inoltre state aggiunte alla base dati di tracciamento in modo da consentirne l'estrazione tramite viste personalizzate.
+	Sono stati introdotti i seguenti miglioramenti nella funzionalità 'fileTrace' che consentono di accedere:
+	- alle informazioni del token ModI di audit 'Agid-JWT-TrackingEvidence';
+	- alle informazioni recuperate tramite le API PDND.
+	
 2023-12-19  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]

@@ -100,13 +100,13 @@ public class GestoreAutorizzazione {
 	//private static final Boolean semaphoreAutorizzazioneContenutiPD = true;
 	//private static final Boolean semaphoreAutorizzazioneContenutiPA = true;
 	
-	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazionePD = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazionePD = new HashMap<>(); 
 	private static synchronized org.openspcoop2.utils.Semaphore initLockAutorizzazionePD(String tipoAutorizzazione){
 		org.openspcoop2.utils.Semaphore s = _lockAutorizzazionePD.get(tipoAutorizzazione);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazione_lock_permits(tipoAutorizzazione);
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneLockPermits(tipoAutorizzazione);
 			if(permits==null) {
-				permits = OpenSPCoop2Properties.getInstance().getAutorizzazione_lock_permits();
+				permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneLockPermits();
 			}
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneFruizioni_"+tipoAutorizzazione, permits);
@@ -126,13 +126,13 @@ public class GestoreAutorizzazione {
 		return s;
 	}
 	
-	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazionePA = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazionePA = new HashMap<>(); 
 	private static synchronized org.openspcoop2.utils.Semaphore initLockAutorizzazionePA(String tipoAutorizzazione){
 		org.openspcoop2.utils.Semaphore s = _lockAutorizzazionePA.get(tipoAutorizzazione);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazione_lock_permits(tipoAutorizzazione);
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneLockPermits(tipoAutorizzazione);
 			if(permits==null) {
-				permits = OpenSPCoop2Properties.getInstance().getAutorizzazione_lock_permits();
+				permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneLockPermits();
 			}
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneErogazioni_"+tipoAutorizzazione, permits);
@@ -152,13 +152,13 @@ public class GestoreAutorizzazione {
 		return s;
 	}
 	
-	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazioneContenutiPD = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazioneContenutiPD = new HashMap<>(); 
 	private static synchronized org.openspcoop2.utils.Semaphore initLockAutorizzazioneContenutiPD(String tipoAutorizzazioneContenuti){
 		org.openspcoop2.utils.Semaphore s = _lockAutorizzazioneContenutiPD.get(tipoAutorizzazioneContenuti);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenuti_lock_permits(tipoAutorizzazioneContenuti);
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenutiLockPermits(tipoAutorizzazioneContenuti);
 			if(permits==null) {
-				permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenuti_lock_permits();
+				permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenutiLockPermits();
 			}
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneContenutiFruizioni_"+tipoAutorizzazioneContenuti, permits);
@@ -178,13 +178,13 @@ public class GestoreAutorizzazione {
 		return s;
 	}
 	
-	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazioneContenutiPA = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazioneContenutiPA = new HashMap<>(); 
 	private static synchronized org.openspcoop2.utils.Semaphore initLockAutorizzazioneContenutiPA(String tipoAutorizzazioneContenuti){
 		org.openspcoop2.utils.Semaphore s = _lockAutorizzazioneContenutiPA.get(tipoAutorizzazioneContenuti);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenuti_lock_permits(tipoAutorizzazioneContenuti);
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenutiLockPermits(tipoAutorizzazioneContenuti);
 			if(permits==null) {
-				permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenuti_lock_permits();
+				permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenutiLockPermits();
 			}
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneContenutiErogazioni_"+tipoAutorizzazioneContenuti, permits);

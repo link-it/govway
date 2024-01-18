@@ -311,6 +311,7 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 	- tokenUsername: username presente nel token;
 	- tokenClient: identificativo dell'applicativo identificato tramite il clientId presente nel token;
+        - pdndOrganizationName: nome dell’organizzazione del client ottenuto risolvendo il clientId presente nel token tramite la consultazione delle API PDND;
 	- application: identificativo dell'applicativo richiedente identificato tramite l'autenticazione di trasporto;
 	- tokenClientId: clientId presente nel token nel caso di client credentials grant type (claims clientId e sub presentano lo stesso valore);
 	- tokenSubject[@tokenIssuer]: subject presente nel token; viene aggiunto anche un suffisso @tokenIssuer se è presente anche un issuer nel token;
@@ -453,6 +454,8 @@ I tipi di token disponibili sono:
 
 - Integrity: security token ricevuto nell'header HTTP 'Agid-JWT-Signature';
 
+- Audit: security token ricevuto nell'header HTTP 'Agid-JWT-TrackingEvidence';
+
 - Soap: security token ricevuto nell'header SOAP;
 
 Per i tipi di token 'Authorization' e 'Integrity', relativi ad API di tipo REST, sono disponibili anche le seguenti informazioni:
@@ -476,6 +479,26 @@ Per i tipi di token 'Authorization' e 'Integrity', relativi ad API di tipo REST,
 - tokenModI<tokenType>PayloadClaims(): claims (nome=valore) presenti nel payload del security token;
 	
 - tokenModI<tokenType>PayloadClaims(claimSeparator, nameValueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+**PDND**
+
+Di seguito le indicazioni su come accedere alle informazioni riguardanti il client e l'organizzazione recuperate tramite le API PDND.
+
+- pdndOrganizationName: nome dell'organizzazione a cui appartiene il client; 
+
+- pdndOrganizationId: identificativo PDND (uuid) dell'organizzazione a cui appartiene il client; 
+
+- pdndOrganizationCategory: categoria in cui è stata classificata dalla PDND l'organizzazione a cui appartiene il client; 
+
+- pdndOrganizationExternalId e pdndOrganizationExternalOrigin: rispettivamente identificativo dell'organizzazione e tipo di repository esterno a cui l'identificativo appartiene; 
+
+- pdndOrganizationJson: consente di ottenere la risposta json ottenuta dalla PDND invocando l'operazione 'GET /organizations/{organizationId}'.
+
+- pdndClientId: identificativo PDND (uuid) del client; 
+
+- pdndClientConsumerId: identificativo PDND (uuid) dell'organizzazione a cui appartiene il client; 
+
+- pdndClientJson: consente di ottenere la risposta json ottenuta dalla PDND invocando l'operazione 'GET /clients/{clientId}'; 
 
 
 **Messaggi**

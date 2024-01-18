@@ -1467,6 +1467,8 @@ components:
             $ref: "#/components/schemas/TransazioneExtInformazioniApiBase"
           mittente:
             $ref: "#/components/schemas/TransazioneExtInformazioniMittenteBase"
+          pdnd_organization:
+            $ref: "#/components/schemas/PDNDOrganizationInfoItemTransazione"
           richiedente:
             type: "string"
     DetailTransazione:
@@ -1488,10 +1490,33 @@ components:
             type: "integer"
             format: "int64"
             example: 20
+          pdnd_organization:
+            $ref: "#/components/schemas/PDNDOrganizationInfo"
           richiedente:
             type: "string"
           dettaglio_errore:
             type: "string"
+    PDNDOrganizationInfoItemTransazione:
+      type: "object"
+      properties:
+        nome:
+          type: "string"
+    PDNDOrganizationInfo:
+      type: "object"
+      properties:
+        nome:
+          type: "string"
+        categoria:
+          type: "string"
+        external_id:
+          $ref: "#/components/schemas/PDNDOrganizationExternalId"
+    PDNDOrganizationExternalId:
+      type: "object"
+      properties:
+        codice:
+          type: "string"
+        origine:
+          type: "string"
     ListaEventi:
       type: "object"
       allOf:
@@ -2084,7 +2109,7 @@ components:
         type: "object"
         properties:
           claim:
-            $ref: "#/components/schemas/TokenClaimEnum"
+            $ref: "#/components/schemas/TokenClaimDistribuzioneStatisticaEnum"
           soggetto:
             $ref: "#/components/schemas/BaseOggettoWithSimpleName"
     RicercaConfigurazioneApi:
@@ -2239,7 +2264,7 @@ components:
       type: "object"
       properties:
         claim:
-          $ref: "#/components/schemas/TokenClaimEnum"
+          $ref: "#/components/schemas/TokenClaimSearchEnum"
     FiltroMittenteIndirizzoIP:
       type: "object"
       allOf:
@@ -2370,6 +2395,24 @@ components:
       - "latenza_totale"
       - "latenza_servizio"
       - "latenza_gateway"
+    TokenClaimSearchEnum:
+      type: "string"
+      enum:
+      - "subject"
+      - "issuer"
+      - "client_id"
+      - "username"
+      - "email"
+      - "pdnd_organization_name"
+    TokenClaimDistribuzioneStatisticaEnum:
+      type: "string"
+      enum:
+      - "subject"
+      - "issuer"
+      - "client_id"
+      - "client_id_pdnd_informazioni"
+      - "username"
+      - "email"
     TransazioneExt:
       type: "object"
       allOf:
@@ -3417,7 +3460,7 @@ components:
       description: "Specifica il claim che deve essere presente nel jwt di una transazione"
       required: true
       schema:
-        $ref: "#/components/schemas/TokenClaimEnum"
+        $ref: "#/components/schemas/TokenClaimDistribuzioneStatisticaEnum"
     profilo:
       name: "profilo"
       in: "query"

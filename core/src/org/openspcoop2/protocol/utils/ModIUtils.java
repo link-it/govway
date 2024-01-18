@@ -1114,11 +1114,19 @@ public class ModIUtils {
 	private static final String CLASS_MODIPA_PROPERTIES = "org.openspcoop2.protocol.modipa.config.ModIProperties";
 	private static final String CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD = "getInstance";
 	
-	private static String getHeaderModI() throws ProtocolException {
+	public static Object getModiProperties() throws ProtocolException {
 		try {
 			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
 			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			return mGetInstance.invoke(null);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
+	private static String getHeaderModI() throws ProtocolException {
+		try {
+			Object instance = getModiProperties();
 			Method mGetRestSecurityTokenHeaderModI = instance.getClass().getMethod("getRestSecurityTokenHeaderModI");
 			return (String) mGetRestSecurityTokenHeaderModI.invoke(instance);
 		}catch(Exception e) {
@@ -1129,9 +1137,7 @@ public class ModIUtils {
 	@SuppressWarnings("unchecked")
 	public static List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGetRemoteStoreConfig = instance.getClass().getMethod("getRemoteStoreConfig");
 			return (List<RemoteStoreConfig>) mGetRemoteStoreConfig.invoke(instance);
 		}catch(Exception e) {
@@ -1141,9 +1147,7 @@ public class ModIUtils {
 	
 	public static RemoteKeyType getRemoteKeyType(String name) throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGetRemoteKey = instance.getClass().getMethod("getRemoteKeyType",String.class);
 			return (RemoteKeyType) mGetRemoteKey.invoke(instance,name);
 		}catch(Exception e) {
@@ -1153,9 +1157,7 @@ public class ModIUtils {
 	
 	private static KeystoreParams getSicurezzaMessaggioCertificatiTrustStore() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiTrustStore");
 			return (KeystoreParams) mGet.invoke(instance);
 		}catch(Exception e) {
@@ -1165,9 +1167,7 @@ public class ModIUtils {
 	
 	private static KeystoreParams getSicurezzaMessaggioSslTrustStore() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioSslTrustStore");
 			return (KeystoreParams) mGet.invoke(instance);
 		}catch(Exception e) {
@@ -1177,9 +1177,7 @@ public class ModIUtils {
 	
 	private static KeystoreParams getSicurezzaMessaggioCertificatiKeyStore() throws ProtocolException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			Object instance = mGetInstance.invoke(null);
+			Object instance = getModiProperties();
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyStore");
 			return (KeystoreParams) mGet.invoke(instance);
 		}catch(Exception e) {

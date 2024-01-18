@@ -61,7 +61,7 @@ public class Utilities extends ConfigLoader {
 	
 	public static HttpResponse _test(Logger logCore, String api, String operazione,
 			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
-			List<String> mapExpectedTokenInfo) throws Exception {
+			CredenzialiMittenteVerifier credenzialiMittente, List<String> mapExpectedTokenInfo) throws Exception {
 		
 		String contentType = HttpConstants.CONTENT_TYPE_JSON;
 		byte[]content = Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
@@ -179,7 +179,7 @@ public class Utilities extends ConfigLoader {
 					
 		if(!ForwardInformazioniTest.forward.equals(api) && !ForwardInformazioniTest.forwardAlternativeSigner.equals(api)) {
 			DBVerifier.verify(idTransazione, esitoExpected, msgError,
-					mapExpectedTokenInfo);
+					credenzialiMittente, mapExpectedTokenInfo);
 		}
 		
 		return response;
@@ -225,6 +225,26 @@ public class Utilities extends ConfigLoader {
 	}
 	
 	public static final String username = "Utente di Prova";
+	public static final String username_invalid = "usernameErrato";
+	
+	public static final String client_id = "18192.apps";
+	public static final String client_id_invalid = "18192.apps.invalid";
+	
+	public static final String issuer = "testAuthEnte";
+	public static final String subject = "10623542342342323";
+	
+	public static final String email = "mariorossi@govway.org";
+	
+	public static CredenzialiMittenteVerifier credenzialiMittente = new CredenzialiMittenteVerifier(subject, issuer, client_id, username, email);
+	
+	public static CredenzialiMittenteVerifier credenzialiMittente_subjectNull = new CredenzialiMittenteVerifier(null, issuer, client_id, username, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_issuerNull = new CredenzialiMittenteVerifier(subject, null, client_id, username, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_clientIdNull = new CredenzialiMittenteVerifier(subject, issuer, null, username, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_usernameNull = new CredenzialiMittenteVerifier(subject, issuer, client_id, null, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_emailNull = new CredenzialiMittenteVerifier(subject, issuer, client_id, username, null);
+	
+	public static CredenzialiMittenteVerifier credenzialiMittente_clientIdInvalid = new CredenzialiMittenteVerifier(subject, issuer, client_id_invalid, username, email);
+	public static CredenzialiMittenteVerifier credenzialiMittente_usernameInvalid = new CredenzialiMittenteVerifier(subject, issuer, client_id, username_invalid, email);
 	
 	public static final String s1 = "https://userinfo.email";
 	public static final String s2 = "https://userinfo.profile";
@@ -244,9 +264,9 @@ public class Utilities extends ConfigLoader {
 			List<String> mapExpectedTokenInfo,
 			String prefix) throws Exception {
 			
-		String cliendId = "18192.apps";
+		String cliendId = client_id;
 		if(invalidClientId) {
-			cliendId = "18192.apps.invalid";
+			cliendId = client_id_invalid;
 		}
 		String audience = "23223.apps";
 		String audience2 = "7777.apps";
@@ -255,8 +275,6 @@ public class Utilities extends ConfigLoader {
 			audience2 = "7777.apps.invalid";
 		}
 		
-		String issuer = "testAuthEnte";
-		String subject = "10623542342342323";
 		String jti = "33aa1676-1f9e-34e2-8515-0cfca111a188";
 		Date now = DateManager.getDate();
 		Date campione = new Date( (now.getTime()/1000)*1000);
@@ -278,7 +296,6 @@ public class Utilities extends ConfigLoader {
 		String firstName = "Mario";
 		String middleName = "Bianchi";
 		String familyName = "Rossi";
-		String email = "mariorossi@govway.org";
 		
 		String aud = "\""+prefix+"aud\":[\""+audience+"\",\""+audience2+"\"]";
 		String jsonInput = 
@@ -313,7 +330,7 @@ public class Utilities extends ConfigLoader {
 				}
 			}
 			if(requiredClaims_username) {
-				String u = "\""+prefix+"username\":\""+(invalidUsername ? "usernameErrato" : username)+"\"";
+				String u = "\""+prefix+"username\":\""+(invalidUsername ? username_invalid : username)+"\"";
 				String name = "\""+prefix+"name\":\""+fullName+"\"";
 				jsonInput = jsonInput+
 						u+" ,"+

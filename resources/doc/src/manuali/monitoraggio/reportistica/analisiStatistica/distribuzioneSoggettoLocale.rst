@@ -7,7 +7,7 @@ Questo report, disponibile se attiva la modalità multi-tenant, mostra
 come si distribuiscono le transazioni registrate dal gateway sui
 soggetti locali. Di seguito alcuni esempi di reports generabili.
 
-Tabella:
+**Tabella:**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoTabella.png
     :scale: 50%
@@ -16,7 +16,7 @@ Tabella:
 
     Esempio di report tabellare di distribuzione per soggetto locale
 
-**Grafico 'Pie Chart' sul numero di transazioni**:
+**Grafico 'Pie Chart' sul numero di transazioni**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoPie.png
     :scale: 50%

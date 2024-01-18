@@ -34,7 +34,7 @@ import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 public class CredenzialeEventi extends AbstractCredenzialeList {
 
 	public CredenzialeEventi(List<String> values) {
-		super(TipoCredenzialeMittente.eventi, values);
+		super(TipoCredenzialeMittente.EVENTI, values);
 	}
 
 }

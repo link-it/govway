@@ -67,6 +67,8 @@ import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
  * @version $Rev$, $Date$
  */
 public class InterceptorPolicyUtilities {
+	
+	private InterceptorPolicyUtilities() {}
 
 
 	public static IDUnivocoGroupByPolicy convertToID(Logger log,DatiTransazione datiTransazione, AttivazionePolicyRaggruppamento policyGroupBy,
@@ -104,10 +106,9 @@ public class InterceptorPolicyUtilities {
 			groupBy.setErogatore(datiTransazione.getIdServizio().getSoggettoErogatore().toString());
 		}
 		
-		if(TipoPdD.APPLICATIVA.equals(datiTransazione.getTipoPdD())){
-			if(policyGroupBy.isServizioApplicativoErogatore()){
-				groupBy.setServizioApplicativoErogatore(datiTransazione.getServiziApplicativiErogatoreAsString());
-			}
+		if(TipoPdD.APPLICATIVA.equals(datiTransazione.getTipoPdD()) &&
+			policyGroupBy.isServizioApplicativoErogatore()){
+			groupBy.setServizioApplicativoErogatore(datiTransazione.getServiziApplicativiErogatoreAsString());
 		}
 		
 		if(policyGroupBy.isServizio()){
@@ -144,9 +145,9 @@ public class InterceptorPolicyUtilities {
 			}
 			if(token!=null && token.length>0) {
 				for (int i = 0; i < token.length; i++) {
-					TipoCredenzialeMittente claim = TipoCredenzialeMittente.valueOf(token[i]);
+					TipoCredenzialeMittente claim = TipoCredenzialeMittente.toEnumConstant(token[i], true);
 					switch (claim) {
-					case token_subject:
+					case TOKEN_SUBJECT:
 						if(datiTransazione.getTokenSubject()!=null) {
 							groupBy.setTokenSubject(datiTransazione.getTokenSubject());
 						}
@@ -154,7 +155,7 @@ public class InterceptorPolicyUtilities {
 							groupBy.setTokenSubject(nonDisponibile);
 						}
 						break;
-					case token_issuer:
+					case TOKEN_ISSUER:
 						if(datiTransazione.getTokenIssuer()!=null) {
 							groupBy.setTokenIssuer(datiTransazione.getTokenIssuer());
 						}
@@ -162,7 +163,7 @@ public class InterceptorPolicyUtilities {
 							groupBy.setTokenIssuer(nonDisponibile);
 						}
 						break;
-					case token_clientId:
+					case TOKEN_CLIENT_ID:
 						if(datiTransazione.getTokenClientId()!=null) {
 							groupBy.setTokenClientId(datiTransazione.getTokenClientId());
 						}
@@ -170,7 +171,7 @@ public class InterceptorPolicyUtilities {
 							groupBy.setTokenClientId(nonDisponibile);
 						}
 						break;
-					case token_username:
+					case TOKEN_USERNAME:
 						if(datiTransazione.getTokenUsername()!=null) {
 							groupBy.setTokenUsername(datiTransazione.getTokenUsername());
 						}
@@ -178,7 +179,7 @@ public class InterceptorPolicyUtilities {
 							groupBy.setTokenUsername(nonDisponibile);
 						}
 						break;
-					case token_eMail:
+					case TOKEN_EMAIL:
 						if(datiTransazione.getTokenEMail()!=null) {
 							groupBy.setTokenEMail(datiTransazione.getTokenEMail());
 						}

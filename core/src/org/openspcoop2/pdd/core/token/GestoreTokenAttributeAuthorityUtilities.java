@@ -654,7 +654,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			 **/
 			Long old = null;
 			try {
-				old = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_milliseconds();
+				old = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckMilliseconds();
 			}catch(Exception e) {
 				throw new TokenException(e.getMessage(),e);
 			}
@@ -669,7 +669,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			}
 			Long future = null;
 			try {
-				future = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_futureTolerance_milliseconds();
+				future = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
 			}catch(Exception e) {
 				throw new TokenException(e.getMessage(),e);
 			}

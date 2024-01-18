@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.gestore_credenziali.CredenzialeTrasporto;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 
@@ -54,7 +55,10 @@ public class AutenticazioneTest extends ConfigLoader {
 				headers,
 				"SoggettoEsternoTest",
 				"ApplicativoSoggettoEsternoTestFruitoreBasic",
-				"BasicUsername 'ApplicativoSoggettoEsternoTestFruitoreBasic'",
+				new CredenzialeTrasporto(
+						"BasicUsername 'ApplicativoSoggettoEsternoTestFruitoreBasic'", 
+						"basic",
+						"ApplicativoSoggettoEsternoTestFruitoreBasic"),
 				null,
 				null);
 	}
@@ -74,7 +78,10 @@ public class AutenticazioneTest extends ConfigLoader {
 				headers,
 				"SoggettoEsternoTest",
 				"ApplicativoSoggettoEsternoTestFruitorePrincipal",
-				"Principal (http) 'TEST-PRINCIPAL: ApplicativoSoggettoEsternoTestFruitorePrincipal'",
+				new CredenzialeTrasporto(
+					"Principal (http) 'TEST-PRINCIPAL: ApplicativoSoggettoEsternoTestFruitorePrincipal'", 
+					"principal",
+					"ApplicativoSoggettoEsternoTestFruitorePrincipal"),
 				null,
 				null);
 	}
@@ -98,7 +105,10 @@ public class AutenticazioneTest extends ConfigLoader {
 				headers,
 				"SoggettoEsternoTest",
 				"ApplicativoSoggettoEsternoTestFruitoreHttps",
-				"SSL-Subject 'CN=applicativoDominioEsterno, OU=DominioEsterno, L=Pisa, ST=Italy, C=IT'\nSSL-Issuer 'CN=applicativoDominioEsterno, OU=DominioEsterno, L=Pisa, ST=Italy, C=IT'\nSSL-ClientCert-SerialNumber '1657887859'",
+				new CredenzialeTrasporto(
+					"SSL-Subject 'CN=applicativoDominioEsterno, OU=DominioEsterno, L=Pisa, ST=Italy, C=IT'\nSSL-Issuer 'CN=applicativoDominioEsterno, OU=DominioEsterno, L=Pisa, ST=Italy, C=IT'\nSSL-ClientCert-SerialNumber '1657887859'",
+					"ssl",
+					"/st=Italy/c=IT/ou=DominioEsterno/cn=applicativoDominioEsterno/l=Pisa/"),
 				null,
 				null);
 	}
@@ -118,7 +128,10 @@ public class AutenticazioneTest extends ConfigLoader {
 				headers,
 				"SoggettoEsternoTest",
 				"ApplicativoSoggettoEsternoTestFruitoreApiKey",
-				"ApiKey (http) 'X-API-KEY'",
+				new CredenzialeTrasporto(
+						"ApiKey (http) 'X-API-KEY'",
+						"apikey",
+						"ApplicativoSoggettoEsternoTestFruitoreApiKey@DAELIMINARE.gw"),
 				null,
 				null);
 	}
@@ -139,7 +152,10 @@ public class AutenticazioneTest extends ConfigLoader {
 				headers,
 				"SoggettoEsternoTest",
 				"ApplicativoSoggettoEsternoTestFruitoreApiKeyAppID",
-				"ApiKey (http) 'X-API-KEY'\nAppId (http) 'X-APP-ID: ApplicativoSoggettoEsternoTestFruitoreApiKeyAppID@DAELIMINARE.gw'",
+				new CredenzialeTrasporto(
+						"ApiKey (http) 'X-API-KEY'\nAppId (http) 'X-APP-ID: ApplicativoSoggettoEsternoTestFruitoreApiKeyAppID@DAELIMINARE.gw'",
+						"apikey",
+						"ApplicativoSoggettoEsternoTestFruitoreApiKeyAppID@DAELIMINARE.gw"),
 				null,
 				null);
 	}

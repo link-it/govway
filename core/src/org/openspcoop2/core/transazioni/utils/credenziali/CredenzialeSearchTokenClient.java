@@ -23,6 +23,10 @@ package org.openspcoop2.core.transazioni.utils.credenziali;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.utils.UtilsException;
@@ -41,7 +45,7 @@ public class CredenzialeSearchTokenClient extends AbstractSearchCredenziale {
 	private boolean andOperator;
 	
 	public CredenzialeSearchTokenClient(boolean clientId, boolean application, boolean and) { 
-		super(TipoCredenzialeMittente.token_clientId);
+		super(TipoCredenzialeMittente.TOKEN_CLIENT_ID);
 		this.clientId = clientId;
 		this.application = application;
 		this.andOperator = and;
@@ -62,99 +66,21 @@ public class CredenzialeSearchTokenClient extends AbstractSearchCredenziale {
 			String credentialClientId = this.convertToDBValue ? CredenzialeTokenClient.getClientIdDBValue(credentialParam, ricercaEsatta) : credentialParam;
 			String credentialApplication = this.convertToDBValue ? CredenzialeTokenClient.getApplicationDBValue(credentialParam, ricercaEsatta) : credentialParam;
 			
-			pagExpression.equals(CredenzialeMittente.model().TIPO, this.tipo.name());
+			pagExpression.equals(CredenzialeMittente.model().TIPO, this.tipo.getRawValue());
 			
-			if(ricercaEsatta && caseSensitive) {
-				if(this.clientId && this.application) {
-					
-					IPaginatedExpression pagExpressionClientId = credenzialeMittentiService.newPaginatedExpression();
-					if(this.convertToDBValue) {
-						pagExpressionClientId.like(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
-					}
-					else {
-						pagExpressionClientId.equals(CredenzialeMittente.model().CREDENZIALE, credentialClientId); // utilizzato da govway dove credentialSocket=credentialTransport
-					}
-					
-					IPaginatedExpression pagExpressionApplication = credenzialeMittentiService.newPaginatedExpression();
-					if(this.convertToDBValue) {
-						pagExpressionApplication.like(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
-					}
-					else {
-						pagExpressionApplication.equals(CredenzialeMittente.model().CREDENZIALE, credentialApplication); // utilizzato da govway dove credentialSocket=credentialTransport
-					}
-					
-					if(this.andOperator) {
-						pagExpression.and(pagExpressionClientId, pagExpressionApplication);
-					}
-					else {
-						pagExpression.or(pagExpressionClientId, pagExpressionApplication);
-					}
+			if(ricercaEsatta) {
+				if(caseSensitive) {
+					setLikeConditionRicercaEsattaCaseSensitive(credenzialeMittentiService,
+							pagExpression,
+							credentialClientId, credentialApplication, credentialParam);
 				}
-				else if(this.clientId) {
-					if(this.convertToDBValue) {
-						IPaginatedExpression pagExpressionOr = credenzialeMittentiService.newPaginatedExpression();
-						pagExpressionOr.like(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
-						pagExpressionOr.or();
-						pagExpressionOr.equals(CredenzialeMittente.model().CREDENZIALE, credentialParam); // per backward compatibility sulle transazioni create prima della gestione dell'applicativo
-						pagExpression.and(pagExpressionOr);
-					}
-					else {
-						pagExpression.equals(CredenzialeMittente.model().CREDENZIALE, credentialClientId);
-					}
-				}
-				else if(this.application) {
-					if(this.convertToDBValue) {
-						pagExpression.like(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
-					}
-					else {
-						pagExpression.equals(CredenzialeMittente.model().CREDENZIALE, credentialApplication);
-					}
+				else {
+					setLikeConditionRicercaEsattaCaseInsensitive(credenzialeMittentiService,
+							pagExpression,
+							credentialClientId, credentialApplication);
 				}
 			}
-			else if(ricercaEsatta && !caseSensitive) {
-				if(this.clientId && this.application) {
-					
-					IPaginatedExpression pagExpressionClientId = credenzialeMittentiService.newPaginatedExpression();
-					if(this.convertToDBValue) {
-						pagExpressionClientId.ilike(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
-					}
-					else {
-						pagExpressionClientId.ilike(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.EXACT); // utilizzato da govway dove credentialSocket=credentialTransport
-					}
-					
-					IPaginatedExpression pagExpressionApplication = credenzialeMittentiService.newPaginatedExpression();
-					if(this.convertToDBValue) {
-						pagExpressionApplication.ilike(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
-					}
-					else {
-						pagExpressionApplication.ilike(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.EXACT); // utilizzato da govway dove credentialSocket=credentialTransport
-					}
-						
-					if(this.andOperator) {
-						pagExpression.and(pagExpressionClientId, pagExpressionApplication);
-					}
-					else {
-						pagExpression.or(pagExpressionClientId, pagExpressionApplication);
-					}
-				}
-				else if(this.clientId) {
-					if(this.convertToDBValue) {
-						pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
-					}
-					else {
-						pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.EXACT);
-					}
-				}
-				else if(this.application) {
-					if(this.convertToDBValue) {
-						pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
-					}
-					else {
-						pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.EXACT);
-					}
-				}
-			}
-			else if(!ricercaEsatta && !caseSensitive) {
+			else if(!caseSensitive) {
 				pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialParam, LikeMode.ANYWHERE); // non si differenzia tra socket e transport
 			}
 			else { // !ricercaEsatta && caseSensitive
@@ -167,6 +93,114 @@ public class CredenzialeSearchTokenClient extends AbstractSearchCredenziale {
 			throw new UtilsException(e.getMessage(), e);
 		}
 		
+	}
+	
+	private void setLikeConditionRicercaEsattaCaseSensitive(ICredenzialeMittenteService credenzialeMittentiService,
+			IPaginatedExpression pagExpression,
+			String credentialClientId, String credentialApplication, String credentialParam) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		if(this.clientId && this.application) {
+			setLikeConditionRicercaEsattaCaseSensitiveBoth(credenzialeMittentiService,
+					pagExpression,
+					credentialClientId, credentialApplication);
+		}
+		else if(this.clientId) {
+			if(this.convertToDBValue) {
+				IPaginatedExpression pagExpressionOr = credenzialeMittentiService.newPaginatedExpression();
+				pagExpressionOr.like(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
+				pagExpressionOr.or();
+				pagExpressionOr.equals(CredenzialeMittente.model().CREDENZIALE, credentialParam); // per backward compatibility sulle transazioni create prima della gestione dell'applicativo
+				pagExpression.and(pagExpressionOr);
+			}
+			else {
+				pagExpression.equals(CredenzialeMittente.model().CREDENZIALE, credentialClientId);
+			}
+		}
+		else if(this.application) {
+			if(this.convertToDBValue) {
+				pagExpression.like(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
+			}
+			else {
+				pagExpression.equals(CredenzialeMittente.model().CREDENZIALE, credentialApplication);
+			}
+		}
+	}
+	private void setLikeConditionRicercaEsattaCaseSensitiveBoth(ICredenzialeMittenteService credenzialeMittentiService,
+			IPaginatedExpression pagExpression,
+			String credentialClientId, String credentialApplication) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		IPaginatedExpression pagExpressionClientId = credenzialeMittentiService.newPaginatedExpression();
+		if(this.convertToDBValue) {
+			pagExpressionClientId.like(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
+		}
+		else {
+			pagExpressionClientId.equals(CredenzialeMittente.model().CREDENZIALE, credentialClientId); // utilizzato da govway dove credentialSocket=credentialTransport
+		}
+		
+		IPaginatedExpression pagExpressionApplication = credenzialeMittentiService.newPaginatedExpression();
+		if(this.convertToDBValue) {
+			pagExpressionApplication.like(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
+		}
+		else {
+			pagExpressionApplication.equals(CredenzialeMittente.model().CREDENZIALE, credentialApplication); // utilizzato da govway dove credentialSocket=credentialTransport
+		}
+		
+		if(this.andOperator) {
+			pagExpression.and(pagExpressionClientId, pagExpressionApplication);
+		}
+		else {
+			pagExpression.or(pagExpressionClientId, pagExpressionApplication);
+		}
+	}
+	
+	private void setLikeConditionRicercaEsattaCaseInsensitive(ICredenzialeMittenteService credenzialeMittentiService,
+			IPaginatedExpression pagExpression,
+			String credentialClientId, String credentialApplication) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		if(this.clientId && this.application) {
+			setLikeConditionRicercaEsattaCaseInsensitiveBoth(credenzialeMittentiService,
+					pagExpression,
+					credentialClientId, credentialApplication);
+		}
+		else if(this.clientId) {
+			if(this.convertToDBValue) {
+				pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
+			}
+			else {
+				pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.EXACT);
+			}
+		}
+		else if(this.application) {
+			if(this.convertToDBValue) {
+				pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
+			}
+			else {
+				pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.EXACT);
+			}
+		}
+	}
+	private void setLikeConditionRicercaEsattaCaseInsensitiveBoth(ICredenzialeMittenteService credenzialeMittentiService,
+			IPaginatedExpression pagExpression,
+			String credentialClientId, String credentialApplication) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		IPaginatedExpression pagExpressionClientId = credenzialeMittentiService.newPaginatedExpression();
+		if(this.convertToDBValue) {
+			pagExpressionClientId.ilike(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
+		}
+		else {
+			pagExpressionClientId.ilike(CredenzialeMittente.model().CREDENZIALE, credentialClientId, LikeMode.EXACT); // utilizzato da govway dove credentialSocket=credentialTransport
+		}
+		
+		IPaginatedExpression pagExpressionApplication = credenzialeMittentiService.newPaginatedExpression();
+		if(this.convertToDBValue) {
+			pagExpressionApplication.ilike(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
+		}
+		else {
+			pagExpressionApplication.ilike(CredenzialeMittente.model().CREDENZIALE, credentialApplication, LikeMode.EXACT); // utilizzato da govway dove credentialSocket=credentialTransport
+		}
+			
+		if(this.andOperator) {
+			pagExpression.and(pagExpressionClientId, pagExpressionApplication);
+		}
+		else {
+			pagExpression.or(pagExpressionClientId, pagExpressionApplication);
+		}
 	}
 	
 }

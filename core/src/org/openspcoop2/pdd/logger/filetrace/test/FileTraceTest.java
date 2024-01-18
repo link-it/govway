@@ -60,6 +60,8 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ChannelSecurityToken;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfoDetails;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
@@ -146,6 +148,19 @@ public class FileTraceTest {
 		"Zq21s4Yl5IIZPl8ZAxThukMw9oX3TCBfdgZ8eQurlw==\n"+
 		"-----END CERTIFICATE-----";
 	
+	private static final String pdndClientId = "12345678-cccc-4a60-aaaa-12345678f8dd";
+	private static final String pdndClientConsumerId = "12345678-254d-bbbb-aaaa-82e210e12345";
+	private static final String pdndJsonClient = "{\"consumerId\":\""+pdndClientConsumerId+"\",\"id\":\""+pdndClientId+"\"}";
+			
+	private static final String pdndOrganizationCategory = "Comuni e loro Consorzi e Associazioni";
+	private static final String pdndOrganizationName = "Comune di Test";
+	private static final String pdndOrganizationId = "12345678-254d-bbbb-aaaa-82e210e12345";
+	private static final String pdndOrganizationExternalId = "c001";
+	private static final String pdndOrganizationExternalOrigin = "IPA";
+	private static final String pdndJsonOrganization = "{\"category\":\""+pdndOrganizationCategory+"\",\"externalId\":{\"id\":\""+pdndOrganizationExternalId+"\",\"origin\":\""+pdndOrganizationExternalOrigin+"\"},\"id\":\""+pdndOrganizationId+"\",\"name\":\""+pdndOrganizationName+"\"}";
+	
+	private static final String servizioApplicativoFruitore = "AppXde23";
+	
 	public static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
 		
 		Logger log = LoggerWrapperFactory.getLogger(FileTraceTest.class);
@@ -211,7 +226,7 @@ public class FileTraceTest {
 		transazioneDTO.setNomeSoggettoErogatore("EnteErogatore");
 		transazioneDTO.setNomeSoggettoFruitore("EnteFruitore");
 		transazioneDTO.setIdMessaggioRichiesta("idMsgReqXXX");
-		transazioneDTO.setServizioApplicativoFruitore("AppXde23");
+		transazioneDTO.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 		transazioneDTO.setCodiceRispostaIngresso("202");
 		transazioneDTO.setCodiceRispostaUscita("204");
 		transazioneDTO.setCredenziali("C=IT, O=Prova");
@@ -242,6 +257,7 @@ public class FileTraceTest {
 		securityToken.setAccessToken(restToken);
 		securityToken.setAuthorization(restToken);
 		securityToken.setIntegrity(restToken);
+		securityToken.setAudit(restToken);
 		ChannelSecurityToken channel = new ChannelSecurityToken();
 		channel.setCertificate(cert.getCertificate());
 		securityToken.setChannel(channel);
@@ -250,34 +266,101 @@ public class FileTraceTest {
 		
 		CredenzialiMittente credenzialiMittente = new CredenzialiMittente();
 
+		// Differenzio per avere un requester differente!!
+		boolean registraIDApplicativoToken = true;
+		boolean registraUsername = true;
+		boolean registraInformazioniPDND = true;
+		if(requestWithPayload) {
+			// POST
+			if(TipoPdD.APPLICATIVA.equals(tipoPdD)) {
+				registraIDApplicativoToken = false;
+				registraUsername = false;
+			}
+		}
+		else {
+			// GET
+			if(TipoPdD.APPLICATIVA.equals(tipoPdD)) {
+				registraIDApplicativoToken = false;
+				registraUsername = false;
+				registraInformazioniPDND = false;
+			}
+			else {
+				registraUsername = false;
+			}
+		}
+		
 		CredenzialeMittente token_issuer = new CredenzialeMittente();
 		token_issuer.setCredenziale("issuerGoogle");
-		credenzialiMittente.setToken_issuer(token_issuer);
+		credenzialiMittente.setTokenIssuer(token_issuer);
 		
 		CredenzialeMittente token_subject = new CredenzialeMittente();
 		token_subject.setCredenziale("subjectAD5432h43242");
-		credenzialiMittente.setToken_subject(token_subject);
+		credenzialiMittente.setTokenSubject(token_subject);
 		
 		CredenzialeMittente token_clientId = new CredenzialeMittente();
-		IDServizioApplicativo idSAToken = new IDServizioApplicativo();
-		idSAToken.setNome("SAToken");
-		idSAToken.setIdSoggettoProprietario(new IDSoggetto("gw", "SoggettoProprietarioSAToken"));
 		String clientIdToken = "3456ClientId";
-		CredenzialeTokenClient c = new CredenzialeTokenClient(clientIdToken, idSAToken);
+		CredenzialeTokenClient c = null;
+		if(registraIDApplicativoToken) {
+			IDServizioApplicativo idSAToken = new IDServizioApplicativo();
+			idSAToken.setNome("SAToken");
+			idSAToken.setIdSoggettoProprietario(new IDSoggetto("gw", "SoggettoProprietarioSAToken"));
+			c = new CredenzialeTokenClient(clientIdToken, idSAToken);
+		}
+		else {
+			c = new CredenzialeTokenClient(clientIdToken, null); 
+		}		
 		token_clientId.setCredenziale(c.getCredenziale());
-		credenzialiMittente.setToken_clientId(token_clientId);
+		credenzialiMittente.setTokenClientId(token_clientId);
 		
 		CredenzialeMittente token_mail = new CredenzialeMittente();
 		token_mail.setCredenziale("info@link.it");
-		credenzialiMittente.setToken_eMail(token_mail);
+		credenzialiMittente.setTokenEMail(token_mail);
 		
-		CredenzialeMittente token_username = new CredenzialeMittente();
-		token_username.setCredenziale("rossi");
-		credenzialiMittente.setToken_username(token_username);
+		if(registraUsername) {
+			CredenzialeMittente token_username = new CredenzialeMittente();
+			token_username.setCredenziale("rossi");
+			credenzialiMittente.setTokenUsername(token_username);
+		}
 		
 		CredenzialeMittente trasporto = new CredenzialeMittente();
 		trasporto.setCredenziale("C=IT, O=Prova");
 		credenzialiMittente.setTrasporto(trasporto);
+		
+		if(registraInformazioniPDND) {
+			if(!TipoPdD.APPLICATIVA.equals(tipoPdD)) {
+				securityToken.setPdnd(new PDNDTokenInfo());
+			}
+			
+			if(TipoPdD.APPLICATIVA.equals(tipoPdD)) {
+				CredenzialeMittente pdndClientJson = new CredenzialeMittente();
+				pdndClientJson.setCredenziale(pdndJsonClient);
+				credenzialiMittente.setTokenPdndClientJson(pdndClientJson);
+			}
+			else {
+				PDNDTokenInfoDetails d = new PDNDTokenInfoDetails();
+				d.setDetails(pdndJsonClient);
+				d.setId(pdndClientId);
+				securityToken.getPdnd().setClient(d);	
+			}
+			
+			if(TipoPdD.APPLICATIVA.equals(tipoPdD)) {
+				CredenzialeMittente pdndOrganizationJson = new CredenzialeMittente();
+				pdndOrganizationJson.setCredenziale(pdndJsonOrganization);
+				credenzialiMittente.setTokenPdndOrganizationJson(pdndOrganizationJson);
+			}
+			else {
+				PDNDTokenInfoDetails d = new PDNDTokenInfoDetails();
+				d.setDetails(pdndJsonOrganization);
+				d.setId(pdndOrganizationId);
+				securityToken.getPdnd().setOrganization(d);			
+			}
+			
+			if(TipoPdD.APPLICATIVA.equals(tipoPdD)) {
+				CredenzialeMittente pdndOrganizationName = new CredenzialeMittente();
+				pdndOrganizationName.setCredenziale(FileTraceTest.pdndOrganizationName);
+				credenzialiMittente.setTokenPdndOrganizationName(pdndOrganizationName);
+			}
+		}
 		
 		Traccia tracciaRichiesta = new Traccia();
 		tracciaRichiesta.setBusta(new Busta(CostantiLabel.TRASPARENTE_PROTOCOL_NAME));
@@ -391,11 +474,17 @@ public class FileTraceTest {
 	private static final String accessTokenJWT = tokenInfo+"|"+certClientInfo;
 	private static final String modiAuthorization = tokenInfo+"|"+certClientInfo;
 	private static final String modiIntegrity = tokenInfo+"|"+certClientInfo;
+	private static final String modiAudit = tokenInfo+"|"+certClientInfo;
+	private static final String pdndClient = "\""+pdndJsonClient.replace("\"", "\\\"")+"\"|\""+pdndClientId+"\"|\""+pdndClientConsumerId+"\"";
+	private static final String pdndClientEmpty = "\"\"|\"\"|\"\"";
+	private static final String pdndOrganization = "\""+pdndJsonOrganization.replace("\"", "\\\"")+"\"|\""+pdndOrganizationName+"\"|\""+pdndOrganizationId+"\"|\""+pdndOrganizationCategory+"\"|\""+pdndOrganizationExternalOrigin+"\"|\""+pdndOrganizationExternalId+"\"";
+	private static final String pdndOrganizationEmpty = "\"\"|\"\"|\"\"|\"\"|\"\"|\"\"";
+		
 	private static final String date = "\"2020-06-25 13:09:05:825\"|\"2020-06-25 13:09:05:875\"|\"2020-06-25 13:09:05:925\"|\"2020-06-25 13:09:06:025\"|\"2020-06-25 13:09:07:025\"|\"2020-06-25 13:09:07:125\"|\"2020-06-25 13:09:07:225\"|\"2020-06-25 13:09:07:490\"";
-	private static final String logRequestPA_PUT = "\"in\"|\"rest\"|\"erogazione\"|\"esempioCostanteRichiestaErogazione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:825\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"rossi\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"rossi\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"51\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_INGRESSO_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=inRequest\"|\"v1\"|\"v2a,v2b\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+date;
-	private static final String logRequestPA_GET = "\"in\"|\"rest\"|\"erogazione\"|\"esempioCostanteRichiestaErogazione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:825\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"GET\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"rossi\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"rossi\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"\"|\"0\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_INGRESSO_DUMP_BINARIO\"|\"v1\"|\"v2a,v2b\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+date;
-	private static final String logRequestPD_PUT = "\"out\"|\"soap\"|\"fruizione\"|\"esempioCostanteRichiestaFruizione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:925\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"rossi\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"rossi\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"49\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_USCITA_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=outRequest\"|\"v1\"|\"v2a,v2b,v2c\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+date;
-	private static final String logRequestPD_GET = "\"out\"|\"soap\"|\"fruizione\"|\"esempioCostanteRichiestaFruizione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:925\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"GET\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"rossi\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"rossi\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"\"|\"0\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_USCITA_DUMP_BINARIO\"|\"v1\"|\"v2a,v2b,v2c\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+date;
+	private static final String logRequestPA_PUT = "\"in\"|\"rest\"|\"erogazione\"|\"esempioCostanteRichiestaErogazione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:825\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"\"|\"\"|\"AppXde23\"|\"EnteFruitore\"|\""+pdndOrganizationName+"\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"51\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_INGRESSO_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=inRequest\"|\"v1\"|\"v2a,v2b\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+modiAudit+"|"+pdndClient+"|"+pdndOrganization+"|"+date;
+	private static final String logRequestPA_GET = "\"in\"|\"rest\"|\"erogazione\"|\"esempioCostanteRichiestaErogazione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:825\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"GET\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"\"|\"\"|\"AppXde23\"|\"EnteFruitore\"|\""+servizioApplicativoFruitore+"\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"\"|\"0\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_INGRESSO_DUMP_BINARIO\"|\"v1\"|\"v2a,v2b\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+modiAudit+"|"+pdndClientEmpty+"|"+pdndOrganizationEmpty+"|"+date;
+	private static final String logRequestPD_PUT = "\"out\"|\"soap\"|\"fruizione\"|\"esempioCostanteRichiestaFruizione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:925\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"rossi\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"rossi\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"49\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_USCITA_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=outRequest\"|\"v1\"|\"v2a,v2b,v2c\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+modiAudit+"|"+pdndClient+"|"+pdndOrganization+"|"+date;
+	private static final String logRequestPD_GET = "\"out\"|\"soap\"|\"fruizione\"|\"esempioCostanteRichiestaFruizione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:925\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"GET\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"SAToken\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"\"|\"0\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_USCITA_DUMP_BINARIO\"|\"v1\"|\"v2a,v2b,v2c\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+modiAudit+"|"+pdndClient+"|"+pdndOrganization+"|"+date;
 	
 	// *** TOPIC 'requestBody' ***
 	private static final String logRequestBodyPA = "UUIDXX.XX-deXXXRR-deXXXRest.MjAyMC0wNi0yNVQxNTowOTowNS44MjUrMDIwMA==.dGV4dC94bWw7IGNoYXJzZXQ9IlVURjgi.PHByb3ZhPlRFU1QgUklDSElFU1RBX0lOR1JFU1NPX0RVTVBfQklOQVJJTzwvcHJvdmE+";

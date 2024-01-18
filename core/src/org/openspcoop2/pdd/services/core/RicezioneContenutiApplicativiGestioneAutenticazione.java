@@ -182,6 +182,9 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
 			}
+			
+			updateCredenzialiSafe(null, null);
+			
 			return false;
 		}
 		
@@ -238,6 +241,9 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 					}
+					
+					updateCredenzialiSafe(null, null);
+					
 					return false;
 				}
 				if (!existsServizioApplicativo) {
@@ -250,6 +256,9 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 								getErrore402_AutenticazioneFallita("L'identità del servizio applicativo fornita ["+this.servizioApplicativo+"] non esiste nella configurazione"),
 								null,null)));
 					}
+					
+					updateCredenzialiSafe(null, null);
+					
 					return false;
 				}
 			}
@@ -451,6 +460,8 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 							}
 						}
 						
+						updateCredenzialiSafe(credenzialeTrasporto, tipoAutenticazione);
+						
 						return false;
 					}
 				}
@@ -564,6 +575,9 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 							this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
 						}
 					}
+					
+					updateCredenzialiSafe(credenzialeTrasporto, tipoAutenticazione);
+					
 					return false;
 					
 				}
@@ -689,6 +703,8 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 						
 					}
 					
+					updateCredenzialiSafe(credenzialeTrasporto, tipoAutenticazione);
+					
 					return false;
 				}
 			}
@@ -710,7 +726,8 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 				
 				if(this.informazioniTokenNormalizzate!=null) {
 					GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, this.informazioniTokenNormalizzate, this.idApplicativoToken, credenzialiMittente, 
-							this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiToken", this.requestInfo);
+							this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiToken", this.requestInfo,
+							this.pddContext);
 				}
 				
 				this.transaction.setCredenzialiMittente(credenzialiMittente);
@@ -997,6 +1014,54 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 		
 		return true;
 		
+	}
+	
+	private void updateCredenzialiSafe(String credenzialeTrasporto, String tipoAutenticazione) {
+		
+		// Viene chiamato se l'autenticazione fallisce
+		
+		CredenzialiMittente credenzialiMittente = this.transaction.getCredenzialiMittente();
+		if(credenzialiMittente==null) {
+			credenzialiMittente = new CredenzialiMittente();
+			try {
+				this.transaction.setCredenzialiMittente(credenzialiMittente);
+			}catch(Exception e) {
+				this.logCore.error("SetCredenzialiMittente error: "+e.getMessage(),e);
+			}
+		}
+		
+		updateCredenzialiTrasportoSafe(credenzialiMittente, credenzialeTrasporto, tipoAutenticazione);
+		
+		updateCredenzialiTokenSafe(credenzialiMittente);
+		
+	}
+	private void updateCredenzialiTrasportoSafe(CredenzialiMittente credenzialiMittente, String credenzialeTrasporto, String tipoAutenticazione) {
+		if(OpenSPCoop2Properties.getInstance().isGestioneAutenticazioneSaveTokenAuthenticationInfoAuthenticationFailed() &&
+				tipoAutenticazione!=null && credenzialeTrasporto!=null) {
+			try {
+				GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, 
+					this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiTrasporto", this.requestInfo);
+			}catch(Exception e) {
+				this.logCore.error("updateCredenzialiTrasporto error: "+e.getMessage(),e);
+			}
+		}
+	}
+	private void updateCredenzialiTokenSafe(CredenzialiMittente credenzialiMittente) {
+		if(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveTokenAuthenticationInfoAuthenticationFailed()) {
+			InformazioniToken info = this.informazioniTokenNormalizzate;
+			if(info==null && this.pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+				info = (InformazioniToken) this.pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			}
+			if(info!=null) {
+				try {
+					GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, info, this.idApplicativoToken, credenzialiMittente, 
+						this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiToken", this.requestInfo,
+						this.pddContext);
+				}catch(Exception e) {
+					this.logCore.error("updateCredenzialiToken error: "+e.getMessage(),e);
+				}
+			}
+		}
 	}
 
 	private static final String ERRORE_LETTURA_SOGGETTO = "Errore durante la lettura del soggetto '";

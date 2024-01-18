@@ -6,6 +6,7 @@ CREATE TABLE credenziale_mittente
 	credenziale VARCHAR(2900) NOT NULL,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ora_registrazione TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+	ref_credenziale BIGINT,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints
@@ -17,6 +18,7 @@ CREATE TABLE credenziale_mittente
 -- index
 CREATE UNIQUE INDEX index_credenziale_mittente_1 ON credenziale_mittente (tipo,credenziale);
 CREATE INDEX CREDENZIALE_ORAREG ON credenziale_mittente (ora_registrazione);
+CREATE INDEX CREDENZIALE_INTERNAL_REF ON credenziale_mittente (ref_credenziale);
 
 
 

@@ -62,7 +62,7 @@ I dati da indicare per generare un report sono:
 
       -  Token Info: si seleziona il claim del token e si specifica il
          criterio per il confronto con il token ricavato durante il
-         processo di autenticazione.
+         processo di autenticazione. Selezionando il profilo di interoperabilità "ModI" e il tipo di transazione "Erogazione", tra i claim forniti come criterio di ricerca è possibile utilizzare anche la voce "PDND - Organization" che consente di ricercare transazioni in cui le richieste provengono dall’organizzazione del client indicata; organizzazione recuperata tramite le API PDND.
 
 -  Esito
 

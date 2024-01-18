@@ -55,7 +55,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				null,
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -69,7 +69,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers, null,
 				"Non è stato riscontrata la proprietà della URL 'test-userinfo' contenente il token",
-				null);
+				null, null);
 	}
 		
 	
@@ -91,7 +91,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Risposta del servizio di UserInfo non valida: Connessione terminata con errore (codice trasporto: 500)",
-				Utilities.getMapExpectedTokenInfoInvalid());
+				null, Utilities.getMapExpectedTokenInfoInvalid());
 	}
 	
 	
@@ -110,7 +110,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Token expired; iat time '%' too old",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -128,7 +128,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Token valid in the future; iat time '%' is in the future",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -147,7 +147,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Token not usable before %",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -165,7 +165,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Token expired",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -185,7 +185,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Autenticazione token (Issuer,ClientId,Subject,Username,eMail) fallita: Token without clientId claim",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_clientIdNull, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -204,7 +204,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Autenticazione token (Issuer,ClientId,Subject,Username,eMail) fallita: Token without issuer claim",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_issuerNull, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -223,7 +223,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Autenticazione token (Issuer,ClientId,Subject,Username,eMail) fallita: Token without subject claim",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_subjectNull, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -242,7 +242,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Autenticazione token (Issuer,ClientId,Subject,Username,eMail) fallita: Token without username claim",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_usernameNull, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -261,7 +261,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Autenticazione token (Issuer,ClientId,Subject,Username,eMail) fallita: Token without email claim",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_emailNull, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -279,7 +279,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "requiredClaims", headers,  query,
 				null,
-				mapExpectedTokenInfo);
+				null, mapExpectedTokenInfo);
 	}
 
 	
@@ -300,7 +300,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "scopeAny", headers,  query,
 				null,
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -318,7 +318,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "scopeAny", headers,  query,
 				null,
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -336,7 +336,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "scopeAny", headers,  query,
 				"(Token without scopes) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -354,7 +354,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"(Scope '"+Utilities.s2+"' not found) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -372,7 +372,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"(Scope '"+Utilities.s3+"' not found) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -391,7 +391,7 @@ public class UserInfoTest extends ConfigLoader {
 						mapExpectedTokenInfo));
 		
 		Utilities._test(logCore, validazione, "rolesAny", headers,  query,null,
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -408,7 +408,7 @@ public class UserInfoTest extends ConfigLoader {
 						mapExpectedTokenInfo));
 		
 		Utilities._test(logCore, validazione, "rolesAny", headers,  query,null,
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -426,7 +426,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "rolesAny", headers,  query,
 				"(Roles not found in request context) Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-UserInfo (versione:1) erogato da gw/SoggettoInternoTest",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -444,7 +444,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"(Role 'r2' not found in request context) Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-UserInfo (versione:1) erogato da gw/SoggettoInternoTest",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -462,7 +462,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"(Role 'r3' not found in request context) Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-UserInfo (versione:1) erogato da gw/SoggettoInternoTest",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -482,7 +482,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"(Token claim 'client_id' with unexpected value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_clientIdInvalid, mapExpectedTokenInfo);
 	}
 	
 	
@@ -501,7 +501,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"(Token claim 'aud' with unexpected value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -520,7 +520,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"(Token claim 'username' with unexpected value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_usernameInvalid, mapExpectedTokenInfo);
 	}
 	@Test
 	public void usernameInvalid2() throws Exception {
@@ -537,7 +537,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"(Token claim 'username' with unexpected value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -556,7 +556,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"(Token unexpected claim 'nonEsistente') La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -580,7 +580,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "not", headers,  query,
 				null,
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -606,7 +606,7 @@ public class UserInfoTest extends ConfigLoader {
 						mapExpectedTokenInfo));
 		Utilities._test(logCore, validazione, "not", headers,  query,
 				"(Token claim 'client_id' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_clientIdInvalid, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -626,7 +626,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "not", headers,  query,
 				"(Token claim 'aud' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -646,7 +646,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "not", headers,  query,
 				"(Token claim 'iss' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -666,7 +666,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "not", headers,  query,
 				"(Token claim 'role' with unexpected value (regExpr not match failed)) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -693,7 +693,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "not", headers,  query,
 				"(Token claim 'username' with unexpected value (regExpr not find failed)) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_usernameInvalid, mapExpectedTokenInfo);
 	}
 	
 	
@@ -720,7 +720,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
 				null,
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -746,7 +746,7 @@ public class UserInfoTest extends ConfigLoader {
 						mapExpectedTokenInfo));
 		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
 				"(Resource '${tokenInfo:clientId}' with unauthorized value '18192.apps.invalid') Il chiamante non è autorizzato ad invocare l'API",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_clientIdInvalid, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -767,7 +767,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
 				"(Resource '${tokenInfo:aud[0]}' with unauthorized value '23223.apps') Il chiamante non è autorizzato ad invocare l'API",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -788,7 +788,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
 				"(Resource '${tokenInfo:iss}' with unauthorized value 'testAuthEnte') Il chiamante non è autorizzato ad invocare l'API",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -809,7 +809,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
 				"(Resource '${tokenInfo:roles[0]}' with unexpected value 'https://r1' (regExpr not match failed)) Il chiamante non è autorizzato ad invocare l'API",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -836,7 +836,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
 				"Resource '${tokenInfo:username}' with unexpected value 'usernameErrato' (regExpr not find failed)) Il chiamante non è autorizzato ad invocare l'API",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente_usernameInvalid, mapExpectedTokenInfo);
 	}
 	
 	
@@ -862,7 +862,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "ignoreCase", headers,  query,
 				null,
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -885,7 +885,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "ignoreCase", headers,  query,
 				"(Token claim 'iss' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -907,7 +907,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "ignoreCase", headers,  query,
 				"(Token claim 'name' with unexpected value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -929,7 +929,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "ignoreCase", headers,  query,
 				"(Token claim 'given_name' with unexpected value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -955,7 +955,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "ignoreCaseOnlyAuthzContenuti", headers,  query,
 				null,
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	
@@ -978,7 +978,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "ignoreCaseOnlyAuthzContenuti", headers,  query,
 				"(Resource '${tokenInfo:iss}' with unauthorized value 'testAuthEnte') Il chiamante non è autorizzato ad invocare l'API",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -1000,7 +1000,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "ignoreCaseOnlyAuthzContenuti", headers,  query,
 				"(Resource '${tokenInfo:userInfo.fullName}' with unexpected value 'Mario Bianchi Rossi') Il chiamante non è autorizzato ad invocare l'API",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	@Test
@@ -1022,7 +1022,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "ignoreCaseOnlyAuthzContenuti", headers,  query,
 				"(Resource '${tokenInfo:userInfo.firstName}' with unexpected value 'Mario') Il chiamante non è autorizzato ad invocare l'API",
-				mapExpectedTokenInfo);
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
 	

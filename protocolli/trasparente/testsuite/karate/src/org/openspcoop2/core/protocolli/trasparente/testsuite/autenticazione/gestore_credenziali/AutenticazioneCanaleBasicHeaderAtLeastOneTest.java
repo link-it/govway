@@ -55,7 +55,10 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoSoggettoInternoTestFruitore1",
-				"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthBasic@@BasicUsername 'ApplicativoSoggettoInternoTestFruitore1'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthBasic@@BasicUsername 'ApplicativoSoggettoInternoTestFruitore1'",
+						"basic",
+						"ApplicativoSoggettoInternoTestFruitore1"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestFruitore1' ) fornite da WebServerErogazioniSoggettoAuthBasic");
@@ -95,7 +98,8 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				null,
 				null,
-				"BasicUsername 'WebServerErogazioniSoggettoAuthBasicErrate'",
+				new CredenzialeTrasporto(
+						"BasicUsername 'WebServerErogazioniSoggettoAuthBasicErrate'"),
 				"ProxyAuth realm=\"GovWay\", error=\"invalid_request\", error_description=\"Invalid credentials\"",
 				Utilities.CREDENZIALI_PROXY_NON_CORRETTE,
 				"Autenticazione basic del Gestore delle Credenziali 'WebServerErogazioniSoggettoAuthBasic' fallita, credenziali presenti nel trasporto ( BasicUsername 'WebServerErogazioniSoggettoAuthBasicErrate' )");
@@ -118,7 +122,10 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				"SoggettoInternoTestFruitore",
 				"HSMClient1",
-				"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthBasic@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthBasic@@SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM'\nSSL-Issuer '/l=Pisa/st=Italy/ou=Test/o=Test/c=IT/cn=ExampleClient1HSM/'",
+						"ssl",
+						"/st=Italy/c=IT/ou=Test/cn=ExampleClient1HSM/l=Pisa/o=Test/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM' ) fornite da WebServerErogazioniSoggettoAuthBasic");
@@ -140,7 +147,10 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				"SoggettoInternoTestFruitore",
 				"ApplicativoSoggettoInternoTestFruitore1Principal",
-				"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthBasic@@Principal 'ApplicativoSoggettoInternoTestFruitore1'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerErogazioniSoggettoAuthBasic@@Principal 'ApplicativoSoggettoInternoTestFruitore1'",
+						"principal",
+						"ApplicativoSoggettoInternoTestFruitore1"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( Principal 'ApplicativoSoggettoInternoTestFruitore1' ) fornite da WebServerErogazioniSoggettoAuthBasic");
@@ -161,7 +171,8 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				null,
 				null,
-				"BasicUsername 'WebServerErogazioniSoggettoAuthBasic'",
+				new CredenzialeTrasporto(
+						"BasicUsername 'WebServerErogazioniSoggettoAuthBasic'"),
 				"ProxyAuth realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required credentials\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Non sono presenti Header HTTP che veicolano credenziali (header non rilevati: X-Erogazione-BASIC-Username,X-Erogazione-SSL-Subject,X-Erogazione-SSL-Cert,X-Erogazione-Principal)");
@@ -189,7 +200,10 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeBasic",
 				"ApplicativoSoggettoInternoTestGestoreCredenzialiBasic",
-				"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthBasic@@BasicUsername 'ApplicativoSoggettoInternoTestGestoreCredenzialiBasic'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthBasic@@BasicUsername 'ApplicativoSoggettoInternoTestGestoreCredenzialiBasic'",
+						"basic",
+						"ApplicativoSoggettoInternoTestGestoreCredenzialiBasic"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestGestoreCredenzialiBasic' ) fornite da WebServerFruizioniSoggettoAuthBasic");
@@ -229,7 +243,8 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeBasic",
 				null,
-				"BasicUsername 'WebServerFruizioniSoggettoAuthBasicErrate'",
+				new CredenzialeTrasporto(
+						"BasicUsername 'WebServerFruizioniSoggettoAuthBasicErrate'"),
 				"ProxyAuth realm=\"GovWay\", error=\"invalid_request\", error_description=\"Invalid credentials\"",
 				Utilities.CREDENZIALI_PROXY_NON_CORRETTE,
 				"Autenticazione basic del Gestore delle Credenziali 'WebServerFruizioniSoggettoAuthBasic' fallita, credenziali presenti nel trasporto ( BasicUsername 'WebServerFruizioniSoggettoAuthBasicErrate' )");
@@ -251,7 +266,10 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeBasic",
 				"ApplicativoSoggettoInternoTestGestoreCredenzialiBasic_ssl",
-				"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthBasic@@SSL-Subject '/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiBasic/'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthBasic@@SSL-Subject '/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiBasic/'",
+						"ssl",
+						"/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiBasic/"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject '/cn=ApplicativoSoggettoInternoTestGestoreCredenzialiBasic/' ) fornite da WebServerFruizioniSoggettoAuthBasic");
@@ -273,7 +291,10 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeBasic",
 				"ApplicativoSoggettoInternoTestGestoreCredenzialiBasic_principal",
-				"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthBasic@@Principal 'ApplicativoSoggettoInternoTestGestoreCredenzialiBasic'",
+				new CredenzialeTrasporto(
+						"@@GatewayCredenziali@@WebServerFruizioniSoggettoAuthBasic@@Principal 'ApplicativoSoggettoInternoTestGestoreCredenzialiBasic'",
+						"principal",
+						"ApplicativoSoggettoInternoTestGestoreCredenzialiBasic"),
 				null,
 				null,
 				"Ottenute credenziali di accesso ( Principal 'ApplicativoSoggettoInternoTestGestoreCredenzialiBasic' ) fornite da WebServerFruizioniSoggettoAuthBasic");
@@ -294,7 +315,8 @@ public class AutenticazioneCanaleBasicHeaderAtLeastOneTest extends ConfigLoader 
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeBasic",
 				null,
-				"BasicUsername 'WebServerFruizioniSoggettoAuthBasic'",
+				new CredenzialeTrasporto(
+						"BasicUsername 'WebServerFruizioniSoggettoAuthBasic'"),
 				"ProxyAuth realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required credentials\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Non sono presenti Header HTTP che veicolano credenziali (header non rilevati: X-Fruizione-BASIC-Username,X-Fruizione-SSL-Subject,X-Fruizione-SSL-Cert,X-Fruizione-Principal)");

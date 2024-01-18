@@ -31,11 +31,15 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
 import org.slf4j.Logger;
 
@@ -172,5 +176,48 @@ public class MBeanUtilsService {
 	}
 	public CredenzialeMittente getCredenzialeMittente(Long id) throws ServiceException, MultipleResultException, NotFoundException, NotImplementedException{
 		return ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(id);
+	}
+	
+	
+	public CredenzialeMittente getCredenzialeMittenteByReferenceFromCache(TipoCredenzialeMittente tipo, Long id) throws ServiceException, NotFoundException, NotImplementedException, ExpressionNotImplementedException, ExpressionException{
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey(tipo, id);
+			String methodName = "getCredenzialeMittenteByReference";
+			try {
+				return (CredenzialeMittente) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName, 
+						new Class<?>[] {TipoCredenzialeMittente.class, Long.class},
+						tipo, id);
+			}
+			catch(NotFoundException e) {
+				this.log.debug("Cache Access NotFound (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+			catch(Throwable e) {
+				this.log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		}
+		else {
+			return this.getCredenzialeMittenteByReference(tipo, id);
+		}
+	}
+	public CredenzialeMittente getCredenzialeMittenteByReference(TipoCredenzialeMittente tipo, Long id) throws ServiceException, NotFoundException, NotImplementedException, ExpressionNotImplementedException, ExpressionException{
+		JDBCCredenzialeMittenteServiceSearch search = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO);
+		IPaginatedExpression pagExpr = search.newPaginatedExpression();
+		pagExpr.equals(CredenzialeMittente.model().REF_CREDENZIALE, id);
+		pagExpr.equals(CredenzialeMittente.model().TIPO, tipo.getRawValue());
+		pagExpr.addOrder(CredenzialeMittente.model().ORA_REGISTRAZIONE, SortOrder.DESC);
+		pagExpr.limit(1);
+		List<CredenzialeMittente> l = search.findAll(pagExpr);
+		CredenzialeMittente cm = null;
+		if(l!=null && !l.isEmpty()) {
+			cm = l.get(0);
+		}
+		if(cm!=null) {
+			return cm;
+		}
+		else {
+			throw new NotFoundException("Credential type["+tipo.getRawValue()+"] ref["+id+"] not found");
+		}
 	}
 }

@@ -26,10 +26,14 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.handlers.InRequestContext;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.token.GestoreToken;
@@ -99,6 +103,8 @@ public class RicezioneBusteGestioneToken {
 	private RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore;
 	private RicezioneBusteParametriInvioBustaErrore parametriInvioBustaErrore;
 	
+	private IDSoggetto identitaPdD;
+	
 	public RicezioneBusteGestioneToken(MsgDiagnostico msgDiag, Logger logCore,
 			Tracciamento tracciamento, String correlazioneApplicativa, BustaRawContent<?> soapHeaderElement, Busta bustaRichiesta,
 			PortaApplicativa pa, IDPortaApplicativa idPA, PortaDelegata pd, IDPortaDelegata idPD,
@@ -109,6 +115,7 @@ public class RicezioneBusteGestioneToken {
 			PdDContext pddContext, String idTransazione,
 			IOpenSPCoopState openspcoopstate, Transaction transaction, RequestInfo requestInfo,
 			IProtocolFactory<?> protocolFactory,
+			IDSoggetto identitaPdD,
 			RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore, RicezioneBusteParametriInvioBustaErrore parametriInvioBustaErrore) {
 		this.msgDiag = msgDiag;
 		this.logCore = logCore;
@@ -140,6 +147,8 @@ public class RicezioneBusteGestioneToken {
 		this.requestInfo = requestInfo; 
 		
 		this.protocolFactory = protocolFactory;
+		
+		this.identitaPdD = identitaPdD;
 		
 		this.parametriGenerazioneBustaErrore = parametriGenerazioneBustaErrore;
 		this.parametriInvioBustaErrore = parametriInvioBustaErrore;
@@ -605,7 +614,9 @@ public class RicezioneBusteGestioneToken {
 						}
 	
 					}
-										
+								
+					updateCredenzialiToken();
+					
 					this.openspcoopstate.releaseResource();
 					return false;
 					
@@ -619,4 +630,35 @@ public class RicezioneBusteGestioneToken {
 		return true;
 	}
 	
+	private void updateCredenzialiToken() {
+		
+		// Viene chiamato se la validazione fallisce
+		
+		if(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveTokenAuthenticationInfoValidationFailed()) {
+			CredenzialiMittente credenzialiMittente = this.transaction.getCredenzialiMittente();
+			if(credenzialiMittente==null) {
+				credenzialiMittente = new CredenzialiMittente();
+				try {
+					this.transaction.setCredenzialiMittente(credenzialiMittente);
+				}catch(Exception e) {
+					this.logCore.error("SetCredenzialiMittente error: "+e.getMessage(),e);
+				}
+			}
+			InformazioniToken informazioniTokenNormalizzate = null;
+			if(this.pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+				informazioniTokenNormalizzate = (InformazioniToken) this.pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			}
+			if(informazioniTokenNormalizzate!=null) {
+				try {
+					GestoreAutenticazione.updateCredenzialiToken(
+							this.identitaPdD,
+							RicezioneBuste.ID_MODULO, this.idTransazione, informazioniTokenNormalizzate, null, credenzialiMittente, 
+							this.openspcoopstate, "RicezioneBuste.credenzialiToken", this.requestInfo,
+							this.pddContext);
+				}catch(Exception e) {
+					this.logCore.error("updateCredenzialiToken error: "+e.getMessage(),e);
+				}
+			}
+		}
+	}
 }

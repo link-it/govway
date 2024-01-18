@@ -59,6 +59,7 @@ public class Costanti {
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION = Map.newMapKey("TOKEN_ESITO_INTROSPECTION");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_ESITO_USER_INFO = Map.newMapKey("TOKEN_ESITO_USER_INFO");
 	public static final MapKey<String> PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE = Map.newMapKey("TOKEN_INFORMAZIONI_NORMALIZZATE");
+	public static final MapKey<String> PDD_CONTEXT_TOKEN_INFORMAZIONI_PDND_CLIENT_READ = Map.newMapKey("TOKEN_INFORMAZIONI_PDND_READ");
 	public static final MapKey<String> PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE = Map.newMapKey("ATTRIBUTI_INFORMAZIONI_NORMALIZZATE");
 	public static final MapKey<String> MSG_CONTEXT_TOKEN_FORWARD = Map.newMapKey("TOKEN_FORWARD"); // per salvarlo con il messaggio
 	

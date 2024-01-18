@@ -368,7 +368,7 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).getRawValue());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());
@@ -462,7 +462,7 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteTokenClaimSoggetto fClaim = (FiltroMittenteTokenClaimSoggetto) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).getRawValue());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());
@@ -480,7 +480,7 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).getRawValue());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());
@@ -552,7 +552,7 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).getRawValue());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());

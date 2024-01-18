@@ -3,6 +3,7 @@ package org.openspcoop2.web.ctrlstat.servlet.remote_stores;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.pdd.config.PDNDResolver;
 import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
@@ -78,7 +79,7 @@ public class RemoteStoresCostanti {
 	public static final String LABEL_INFORMAZIONI_CLIENT = "Informazioni Client";
 	
 	/* VALORI PARAMETRI */
-	public static final String VALUE_PARAMETRO_REMOTE_STORE_KEY_KID_STARTS_WITH_CLIENT_ID = "ClientId--";
+	public static final String VALUE_PARAMETRO_REMOTE_STORE_KEY_KID_STARTS_WITH_CLIENT_ID = PDNDResolver.REMOTE_STORE_KEY_KID_STARTS_WITH_CLIENT_ID;
 	public static final String VALUE_PARAMETRO_NON_PRESENTE = "-";
 	
 }

@@ -2823,6 +2823,7 @@ public class RicezioneBuste {
 				pddContext, idTransazione,
 				openspcoopstate, transaction, requestInfo,
 				protocolFactory,
+				identitaPdD,
 				parametriGenerazioneBustaErrore, parametriInvioBustaErrore);
 		
 		GestioneTokenAutenticazione gestioneTokenAutenticazione = null;

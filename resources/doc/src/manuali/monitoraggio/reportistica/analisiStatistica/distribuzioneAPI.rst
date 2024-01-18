@@ -6,7 +6,7 @@ Distribuzione per API
 Fornisce informazioni sulla ripartizione delle richieste Da/Per le API.
 Di seguito alcuni esempi di reports generabili.
 
-Tabella:
+**Tabella:**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneAPITabella.png
     :scale: 50%

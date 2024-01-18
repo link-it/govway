@@ -12607,15 +12607,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(tokenSelezionati!=null && tokenSelezionati.length>0) {
 						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < tokenSelezionati.length; i++) {
-							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionati[i]);
-							if(TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.toEnumConstant(tokenSelezionati[i], true);
+							if(TipoCredenzialeMittente.TOKEN_ISSUER.equals(tipo)) {
 								continue;
 							}
-							else if(TipoCredenzialeMittente.token_subject.equals(tipo)) {
+							else if(TipoCredenzialeMittente.TOKEN_SUBJECT.equals(tipo)) {
 								if(!bf.toString().endsWith(",") && bf.length()>0) {
 									bf.append(",");
 								}
-								bf.append(TipoCredenzialeMittente.token_issuer.name());
+								bf.append(TipoCredenzialeMittente.TOKEN_ISSUER.name());
 								if(i==0) {
 									bf.append(",");
 								}
@@ -15946,8 +15946,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0) {
 					List<String> l = new ArrayList<>();
 					for (int i = 0; i < tokenSelezionatiDB.length; i++) {
-						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionatiDB[i]);
-						if(!TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.toEnumConstant(tokenSelezionatiDB[i], true);
+						if(!TipoCredenzialeMittente.TOKEN_ISSUER.equals(tipo)) {
 							l.add(tokenSelezionatiDB[i]);
 						}
 					}
@@ -20426,15 +20426,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(tokenSelezionati!=null && tokenSelezionati.length>0) {
 						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < tokenSelezionati.length; i++) {
-							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionati[i]);
-							if(TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.toEnumConstant(tokenSelezionati[i],true);
+							if(TipoCredenzialeMittente.TOKEN_ISSUER.equals(tipo)) {
 								continue;
 							}
-							else if(TipoCredenzialeMittente.token_subject.equals(tipo)) {
+							else if(TipoCredenzialeMittente.TOKEN_SUBJECT.equals(tipo)) {
 								if(!bf.toString().endsWith(",") && bf.length()>0) {
 									bf.append(",");
 								}
-								bf.append(TipoCredenzialeMittente.token_issuer.name());
+								bf.append(TipoCredenzialeMittente.TOKEN_ISSUER.name());
 								if(i==0) {
 									bf.append(",");
 								}
@@ -23258,8 +23258,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0) {
 					List<String> l = new ArrayList<>();
 					for (int i = 0; i < tokenSelezionatiDB.length; i++) {
-						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionatiDB[i]);
-						if(!TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.toEnumConstant(tokenSelezionatiDB[i],true);
+						if(!TipoCredenzialeMittente.TOKEN_ISSUER.equals(tipo)) {
 							l.add(tokenSelezionatiDB[i]);
 						}
 					}

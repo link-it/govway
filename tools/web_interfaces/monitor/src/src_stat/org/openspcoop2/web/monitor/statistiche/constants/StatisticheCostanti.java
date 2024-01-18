@@ -53,6 +53,7 @@ public class StatisticheCostanti {
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_SUBJECT_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.subject.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_USERNAME_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.username.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_EMAIL_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.email.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_PDND_ORGANIZATION_NAME_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.pdndOrganizationName.label";
 	
 	/**public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_SHORT_KEY = STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY + ".short";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_SHORT_KEY = STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY + ".short";
@@ -112,5 +113,7 @@ public class StatisticheCostanti {
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_SUBJECT_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.subject.tooltip.svg.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_USERNAME_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.username.tooltip.svg.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_EMAIL_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.email.tooltip.svg.pattern";
-	
+	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_PDND_ORGANIZATION_NAME_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.pdndOrganizationName.tooltip.svg.pattern";
+
+	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENTID_PDNDINFO = "stats.search.claim.clientIdConPDND";
 }

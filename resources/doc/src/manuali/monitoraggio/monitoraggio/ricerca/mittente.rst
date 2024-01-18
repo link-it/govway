@@ -21,6 +21,15 @@ durante il processo di autenticazione (:numref:`mon_ricercaTokenInfo_fig`). Il f
 
     Filtro ricerca "Token Info"
 
+Selezionando il profilo di interoperabilità 'ModI' e il tipo di transazione 'Erogazione', tra i claim forniti come criterio di ricerca è possibile utilizzare anche la voce 'PDND - Organization' che consente di ricercare transazioni in cui le richieste provengono dall'organizzazione del client indicata; organizzazione recuperata tramite le API PDND (:numref:`mon_ricercaTokenInfo_criteriPDND_fig`).
+
+.. figure:: ../../_figure_monitoraggio/RicercaTokenInfoPDND.png
+    :scale: 100%
+    :align: center
+    :name: mon_ricercaTokenInfo_criteriPDND_fig
+
+    Filtro ricerca "Token Info" con criteri PDND
+
 La modalità **Soggetto** consente di effettuare la ricerca di transazioni stabilendo il soggetto interlocutore (:numref:`mon_ricercaSoggetto_fig`).
 
 .. figure:: ../../_figure_monitoraggio/RicercaSoggetto.png

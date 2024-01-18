@@ -1725,19 +1725,19 @@ public class CostantiControlStation {
 	
 	public static final List<String> TOKEN_VALUES = new ArrayList<>();
 	static {
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_subject.name());
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_issuer.name());
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_clientId.name());
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_username.name());
-		TOKEN_VALUES.add(TipoCredenzialeMittente.token_eMail.name());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_SUBJECT.getRawValue());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_ISSUER.getRawValue());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_USERNAME.getRawValue());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.TOKEN_EMAIL.getRawValue());
 	}
 	
 	public static final List<String> TOKEN_VALUES_WITHOUT_ISSUER = new ArrayList<>();
 	static {
-		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_subject.name());
-		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_clientId.name());
-		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_username.name());
-		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_eMail.name());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.TOKEN_SUBJECT.getRawValue());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.TOKEN_USERNAME.getRawValue());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.TOKEN_EMAIL.getRawValue());
 	}
 		
 	

@@ -88,7 +88,7 @@ public class Utilities extends ConfigLoader {
 			Map<String, String> headers,
 			String identitaSoggetto,
 			String identitaServizioApplicativo,
-			String credenziali,
+			CredenzialeTrasporto credenzialiTrasporto,
 			String wwwAuthenticateMessage,
 			String tipoErrore,
 			String ... msgErrori) throws Exception {
@@ -99,7 +99,7 @@ public class Utilities extends ConfigLoader {
 				headers,
 				identitaSoggetto,
 				identitaServizioApplicativo,
-				credenziali,
+				credenzialiTrasporto,
 				wwwAuthenticateMessage,
 				tipoErrore,
 				msgErrori);
@@ -111,7 +111,7 @@ public class Utilities extends ConfigLoader {
 			Map<String, String> headers,
 			String identitaSoggetto,
 			String identitaServizioApplicativo,
-			String credenziali,
+			CredenzialeTrasporto credenzialiTrasporto,
 			String wwwAuthenticateMessage,
 			String tipoErrore,
 			String ... msgErrori) throws Exception {
@@ -124,7 +124,7 @@ public class Utilities extends ConfigLoader {
 				headers,
 				identitaSoggetto,
 				identitaServizioApplicativo,
-				credenziali,
+				credenzialiTrasporto,
 				wwwAuthenticateMessage,
 				tipoErrore,
 				msgErrori);
@@ -137,7 +137,7 @@ public class Utilities extends ConfigLoader {
 			Map<String, String> headers,
 			String identitaSoggetto,
 			String identitaServizioApplicativo,
-			String credenziali,
+			CredenzialeTrasporto credenzialiTrasporto,
 			String wwwAuthenticateMessage,
 			String tipoErrore,
 			String ... msgErrori) throws Exception {
@@ -264,7 +264,7 @@ public class Utilities extends ConfigLoader {
 				
 		DBVerifier.verify(idTransazione, esitoExpected, 
 				identitaSoggetto, identitaServizioApplicativo,
-				credenziali,
+				credenzialiTrasporto,
 				msgErrori);
 		
 		return response;	

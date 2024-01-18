@@ -108,7 +108,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockJWT(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockJWT.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_validazioneJWT_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenValidazioneJWTLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT_"+nomePolicy, permits);
 			}
@@ -131,7 +131,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockIntrospection(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockIntrospection.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_introspection_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenIntrospectionLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenIntrospection_"+nomePolicy, permits);
 			}
@@ -154,7 +154,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockUserInfo(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockUserInfo.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_userInfo_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenUserInfoLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenUserInfo_"+nomePolicy, permits);
 			}
@@ -177,7 +177,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockNegoziazione(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockNegoziazione.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveToken_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveTokenLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenNegoziazione_"+nomePolicy, permits);
 			}
@@ -200,7 +200,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockAttributeAuthority(String nomePolicy){
 		org.openspcoop2.utils.Semaphore s = _lockAttributeAuthority.get(nomePolicy);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneAttributeAuthority_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneAttributeAuthorityLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenAttributeAuthority_"+nomePolicy, permits);
 			}
@@ -223,7 +223,7 @@ public class GestoreToken {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockGenericToken(String funzione){
 		org.openspcoop2.utils.Semaphore s = _lockGenericToken.get(funzione);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveToken_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveTokenLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreGenericTokenCache_"+funzione, permits);
 			}
@@ -1190,7 +1190,7 @@ public class GestoreToken {
 	public static final String VALIDAZIONE_JWT_FUNCTION = "ValidazioneJWT";
 		
 	public static EsitoGestioneToken validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
-			PdDContext pddContext,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata) throws Exception {
 		
 		EsitoGestioneToken esitoGestioneToken = null;
@@ -1280,10 +1280,17 @@ public class GestoreToken {
 					datiInvocazione.getPolicyGestioneToken().isValidazioneJWTSaveErrorInCache());
 		}
 		
-		if(esitoGestioneToken.isValido() && esitoGestioneToken.getRestSecurityToken()!=null) {
-			SecurityToken securityToken = SecurityTokenUtilities.newSecurityToken(pddContext);
+		SecurityToken securityToken = null;
+		if(
+				// esitoGestioneToken.isValido() && se non si genera comunque un security token non si hanno i json recuperati tramite la PDND 
+				esitoGestioneToken.getRestSecurityToken()!=null) {
+			securityToken = SecurityTokenUtilities.newSecurityToken(pddContext);
 			securityToken.setAccessToken(esitoGestioneToken.getRestSecurityToken());
 		}
+		
+		// enrich PDND Client Info
+		GestoreTokenValidazioneUtilities.validazioneInformazioniTokenEnrichPDNDClientInfo(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
+				pddContext, protocolFactory, datiInvocazione, securityToken);
 		
 		return esitoGestioneToken;
 	}
@@ -1679,7 +1686,7 @@ public class GestoreToken {
 			return list.get(0);
 		}
 		else {
-			return new InformazioniToken(OpenSPCoop2Properties.getInstance().isGestioneToken_saveSourceTokenInfo(), list.toArray(new InformazioniToken[1]));
+			return new InformazioniToken(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveSourceTokenInfo(), list.toArray(new InformazioniToken[1]));
 		}
 	}
 	

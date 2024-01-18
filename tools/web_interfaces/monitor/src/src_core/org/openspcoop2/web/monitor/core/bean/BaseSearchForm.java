@@ -38,6 +38,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
@@ -2320,6 +2321,34 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		
 		if (StringUtils.isEmpty(clientAddressMode)	|| "--".equals(clientAddressMode))
 			this.clientAddressMode = null;
+	}
+	
+	public boolean isShowPDNDFilters() {
+		return TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) && 
+				org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocollo());
+	}
+	
+	public List<SelectItem> getListaTokenClaim(){
+
+		List<SelectItem> lst = new ArrayList<>();
+		
+		MessageManager mm = MessageManager.getInstance();
+		
+		boolean showPDNDFilters = isShowPDNDFilters();
+		
+		lst.add(new SelectItem("--", "--"));
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_ISSUER.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_ISSUER)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_CLIENT_ID)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_SUBJECT.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_SUBJECT)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_USERNAME.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_USERNAME)));  
+		lst.add(new SelectItem(TipoCredenzialeMittente.TOKEN_EMAIL.getRawValue(), mm.getMessage(Costanti.SEARCH_TOKEN_EMAIL)));  
+		
+		if(showPDNDFilters) {
+			/**lst.add(new SelectItem("--", "--"));*/
+			lst.add(new SelectItem(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.getRawValue(), mm.getMessage(Costanti.SEARCH_PDND_PREFIX_ORGANIZATION_NAME)));   
+		}
+		
+		return lst;
 	}
 	
 	public String getTokenClaim() {

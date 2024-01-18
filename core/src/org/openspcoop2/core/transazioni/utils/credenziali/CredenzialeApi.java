@@ -35,7 +35,7 @@ public class CredenzialeApi extends AbstractCredenziale {
 	private String uriAPI;
 	
 	public CredenzialeApi(String uriAPI) {
-		super(TipoCredenzialeMittente.api);
+		super(TipoCredenzialeMittente.API);
 		this.uriAPI = uriAPI;
 	}
 
