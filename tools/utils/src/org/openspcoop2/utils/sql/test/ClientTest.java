@@ -2630,6 +2630,7 @@ public class ClientTest {
 						shortDayNameColonnaWhere = shortDayNameColonna;
 						
 						String dayOfYear = ld.getDayOfYear()+"";
+						dayOfYear = normalizeDayOfYear(tipo, dayOfYear);
 						String dayOfYearColonna = rs.getString("dayOfYearColonna");
 						String dayOfYearColonnaTabella = rs.getString("dayOfYearColonnaTabella");
 						info(log,systemOut,"riga["+(index++)+"]= (dayOfYearColonna:"+dayOfYearColonna+") (dayOfYearColonnaTabella:"+dayOfYearColonnaTabella+")");
@@ -2927,6 +2928,7 @@ public class ClientTest {
 							shortDayNameColonnaWhere = shortDayNameColonna;
 							
 							String dayOfYear = ld.getDayOfYear()+"";
+							dayOfYear = normalizeDayOfYear(tipo, dayOfYear);
 							String dayOfYearColonna = rs.getString("dayOfYearColonna");
 							String dayOfYearColonnaTabella = rs.getString("dayOfYearColonnaTabella");
 							info(log,systemOut,"riga["+(index++)+"]= ["+whereType+"] (dayOfYearColonna:"+dayOfYearColonna+") (dayOfYearColonnaTabella:"+dayOfYearColonnaTabella+")");
@@ -2997,6 +2999,17 @@ public class ClientTest {
 			
 		}
 		
+	}
+	
+	private static String normalizeDayOfYear(TipiDatabase tipo, String dayOfYear) {
+		//if(TipiDatabase.POSTGRESQL.equals(tipo)) {
+		if(dayOfYear.length()<=1) {
+			dayOfYear = "00"+dayOfYear;
+		}
+		else if(dayOfYear.length()<=2) {
+			dayOfYear = "0"+dayOfYear;
+		}
+		return dayOfYear;
 	}
 	
 	
