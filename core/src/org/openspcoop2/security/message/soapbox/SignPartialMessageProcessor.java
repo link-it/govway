@@ -31,7 +31,7 @@
  * - cifratura con chiave simmetrica
  * - supporto CRL 
  * 
- * Copyright (c) 2011-2023 Link.it srl (https://link.it). 
+ * Copyright (c) 2011-2024 Link.it srl (https://link.it). 
  * 
  */
 package org.openspcoop2.security.message.soapbox;
