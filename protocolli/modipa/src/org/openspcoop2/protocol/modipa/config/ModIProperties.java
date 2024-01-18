@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.config.PDNDResolver;
 import org.openspcoop2.pdd.core.keystore.KeystoreException;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreConfigPropertiesUtils;
 import org.openspcoop2.pdd.core.token.Costanti;
@@ -817,42 +818,13 @@ public class ModIProperties {
 	}
 	
 	public boolean isRemoteStore(String name) throws ProtocolException {
-		for (RemoteStoreConfig rsc : getRemoteStoreConfig()) {
-			if(name.equals(rsc.getStoreName())) {
-				return true;
-			}
-		}
-		return false;
+		return PDNDResolver.isRemoteStore(name, getRemoteStoreConfig());
 	}
 	public RemoteStoreConfig getRemoteStoreConfig(String name, IDSoggetto idDominio) throws ProtocolException {
-		for (RemoteStoreConfig rsc : getRemoteStoreConfig()) {
-			if(name.equals(rsc.getStoreName())) {
-				if(rsc.isMultitenant() && idDominio!=null && idDominio.getNome()!=null) {
-					try {
-						return rsc.newInstanceMultitenant(idDominio.getNome());
-					}catch(Exception e){
-						throw new ProtocolException(e.getMessage(),e);
-					}
-				}
-				return rsc;
-			}
-		}
-		return null;
+		return PDNDResolver.getRemoteStoreConfig(name, idDominio, getRemoteStoreConfig());
 	}
 	public RemoteStoreConfig getRemoteStoreConfigByTokenPolicy(String name, IDSoggetto idDominio) throws ProtocolException {
-		for (RemoteStoreConfig rsc : getRemoteStoreConfig()) {
-			if(name.equals(rsc.getTokenPolicy())) {
-				if(rsc.isMultitenant() && idDominio!=null && idDominio.getNome()!=null) {
-					try {
-						return rsc.newInstanceMultitenant(idDominio.getNome());
-					}catch(Exception e){
-						throw new ProtocolException(e.getMessage(),e);
-					}
-				}
-				return rsc;
-			}
-		}
-		return null;
+		return PDNDResolver.getRemoteStoreConfigByTokenPolicy(name, idDominio, getRemoteStoreConfig());
 	}
 	// riferito in org.openspcoop2.protocol.utils.ModIUtils
 	// non modificare il nome

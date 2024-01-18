@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -55,6 +56,7 @@ import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.PDNDResolver;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
@@ -69,9 +71,12 @@ import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -220,7 +225,7 @@ public class GestoreTokenValidazioneUtilities {
 				}
     			
     			// comunque lo aggiungo per essere consultabile nei casi di errore
-    			if(OpenSPCoop2Properties.getInstance().isGestioneToken_saveTokenInfo_validationFailed()) {
+    			if(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveTokenInfoValidationFailed()) {
     				informazioniToken = new InformazioniToken(esitoGestioneToken.getDetails(), SorgenteInformazioniToken.JWT, token);
     				esitoGestioneToken.setInformazioniToken(informazioniToken);
     			}
@@ -438,7 +443,7 @@ public class GestoreTokenValidazioneUtilities {
 				}
     			
     			// comunque lo aggiungo per essere consultabile nei casi di errore se una connessione http è terminata
-    			if(OpenSPCoop2Properties.getInstance().isGestioneToken_saveSourceTokenInfo() && httpResponseCode!=null) {
+    			if(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveSourceTokenInfo() && httpResponseCode!=null) {
     				informazioniToken = new InformazioniToken(esitoGestioneToken.getDetails(), httpResponseCode, risposta, SorgenteInformazioniToken.INTROSPECTION, token);
     				esitoGestioneToken.setInformazioniToken(informazioniToken);
     			}
@@ -542,7 +547,7 @@ public class GestoreTokenValidazioneUtilities {
 				}
     			
     			// comunque lo aggiungo per essere consultabile nei casi di errore se una connessione http è terminata
-    			if(OpenSPCoop2Properties.getInstance().isGestioneToken_saveSourceTokenInfo() && httpResponseCode!=null) {
+    			if(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveSourceTokenInfo() && httpResponseCode!=null) {
 	    			informazioniToken = new InformazioniToken(esitoGestioneToken.getDetails(), httpResponseCode, risposta, SorgenteInformazioniToken.USER_INFO, token);
 	    			esitoGestioneToken.setInformazioniToken(informazioniToken);
     			}
@@ -709,12 +714,12 @@ public class GestoreTokenValidazioneUtilities {
 			boolean op2headers = Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS.equals(forwardInforRaccolteMode);
 			SimpleDateFormat sdf = null;
 			if(op2headers) {
-				headerNames = properties.getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto();
+				headerNames = properties.getKeyValueGestioneTokenHeaderIntegrazioneTrasporto();
 				if(portaDelegata) {
-					set = properties.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
+					set = properties.getKeyPDSetEnabledGestioneTokenHeaderIntegrazioneTrasporto();
 				}
 				else {
-					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
+					set = properties.getKeyPASetEnabledGestioneTokenHeaderIntegrazioneTrasporto();
 				}
 				String pattern = properties.getGestioneTokenFormatDate();
 				if(pattern!=null && !"".equals(pattern)) {
@@ -723,10 +728,10 @@ public class GestoreTokenValidazioneUtilities {
 			}
 			else {
 				if(portaDelegata) {
-					set = properties.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson();
+					set = properties.getKeyPDSetEnabledGestioneTokenHeaderIntegrazioneJson();
 				}
 				else {
-					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson();
+					set = properties.getKeyPASetEnabledGestioneTokenHeaderIntegrazioneJson();
 				}
 				jsonUtils = JSONUtils.getInstance();
 				jsonNode = jsonUtils.newObjectNode();
@@ -770,7 +775,7 @@ public class GestoreTokenValidazioneUtilities {
 				for (String role : informazioniTokenNormalizzate.getAud()) {
 					if(op2headers) {
 						if(bf.length()>0) {
-							bf.append(properties.getGestioneTokenHeaderIntegrazioneTrasporto_audienceSeparator());
+							bf.append(properties.getGestioneTokenHeaderIntegrazioneTrasportoAudienceSeparator());
 						}
 						bf.append(role);
 					}
@@ -852,7 +857,7 @@ public class GestoreTokenValidazioneUtilities {
 				for (String role : informazioniTokenNormalizzate.getRoles()) {
 					if(op2headers) {
 						if(bf.length()>0) {
-							bf.append(properties.getGestioneTokenHeaderIntegrazioneTrasporto_roleSeparator());
+							bf.append(properties.getGestioneTokenHeaderIntegrazioneTrasportoRoleSeparator());
 						}
 						bf.append(role);
 					}
@@ -877,7 +882,7 @@ public class GestoreTokenValidazioneUtilities {
 				for (String scope : informazioniTokenNormalizzate.getScopes()) {
 					if(op2headers) {
 						if(bf.length()>0) {
-							bf.append(properties.getGestioneTokenHeaderIntegrazioneTrasporto_scopeSeparator());
+							bf.append(properties.getGestioneTokenHeaderIntegrazioneTrasportoScopeSeparator());
 						}
 						bf.append(scope);
 					}
@@ -985,7 +990,7 @@ public class GestoreTokenValidazioneUtilities {
 					}
 				}
 			}
-			List<String> listCustomClaims = properties.getCustomClaimsKeys_gestioneTokenForward();
+			List<String> listCustomClaims = properties.getCustomClaimsKeysGestioneTokenForward();
 			if(listCustomClaims!=null && !listCustomClaims.isEmpty()) {
 				
 				ArrayNode customClaimsNode = null;
@@ -997,7 +1002,7 @@ public class GestoreTokenValidazioneUtilities {
 				
 				for (String claimKey : listCustomClaims) {
 				
-					String claimName = properties.getCustomClaimsName_gestioneTokenHeaderIntegrazione(claimKey);
+					String claimName = properties.getCustomClaimsNameGestioneTokenHeaderIntegrazione(claimKey);
 					
 					if(informazioniTokenNormalizzate.getClaims()!=null && informazioniTokenNormalizzate.getClaims().containsKey(claimName)) {
 						
@@ -1010,21 +1015,21 @@ public class GestoreTokenValidazioneUtilities {
 						if(claimValues!=null && !claimValues.isEmpty()) {
 							boolean setCustomClaims = false;
 							if(op2headers) {
-								headerName = properties.getCustomClaimsHeaderName_gestioneTokenHeaderIntegrazioneTrasporto(claimKey);
+								headerName = properties.getCustomClaimsHeaderNameGestioneTokenHeaderIntegrazioneTrasporto(claimKey);
 								if(portaDelegata) {
-									setCustomClaims = properties.getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(claimKey);
+									setCustomClaims = properties.getCustomClaimsKeyPDSetEnabledGestioneTokenHeaderIntegrazioneTrasporto(claimKey);
 								}
 								else {
-									setCustomClaims = properties.getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(claimKey);
+									setCustomClaims = properties.getCustomClaimsKeyPASetEnabledGestioneTokenHeaderIntegrazioneTrasporto(claimKey);
 								}
 							}
 							else {
-								headerName = properties.getCustomClaimsJsonPropertyName_gestioneTokenHeaderIntegrazioneJson(claimKey);
+								headerName = properties.getCustomClaimsJsonPropertyNameGestioneTokenHeaderIntegrazioneJson(claimKey);
 								if(portaDelegata) {
-									setCustomClaims = properties.getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson(claimKey);
+									setCustomClaims = properties.getCustomClaimsKeyPDSetEnabledGestioneTokenHeaderIntegrazioneJson(claimKey);
 								}
 								else {
-									setCustomClaims = properties.getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson(claimKey);
+									setCustomClaims = properties.getCustomClaimsKeyPASetEnabledGestioneTokenHeaderIntegrazioneJson(claimKey);
 								}
 							}
 							
@@ -1203,7 +1208,7 @@ public class GestoreTokenValidazioneUtilities {
 		Date checkNow = now;
 		Long tolerance = null;
 		try {
-			tolerance = OpenSPCoop2Properties.getInstance().getGestioneToken_expTimeCheck_tolerance_milliseconds();
+			tolerance = OpenSPCoop2Properties.getInstance().getGestioneTokenExpTimeCheckToleranceMilliseconds();
 		}catch(Exception e) {
 			throw new TokenException(e.getMessage(),e);
 		}
@@ -1224,7 +1229,7 @@ public class GestoreTokenValidazioneUtilities {
 			
 		if(esitoGestioneToken.isValido()) {
 			
-			boolean enabled = OpenSPCoop2Properties.getInstance().isGestioneToken_expTimeCheck();
+			boolean enabled = OpenSPCoop2Properties.getInstance().isGestioneTokenExpTimeCheck();
 			
 			if(enabled && esitoGestioneToken.getInformazioniToken().getExp()!=null) {	
 				
@@ -1289,7 +1294,7 @@ public class GestoreTokenValidazioneUtilities {
 			 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
 			 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
 			 **/
-			Long old = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_milliseconds();
+			Long old = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckMilliseconds();
 			if(old!=null) {
 				Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
 				if(esitoGestioneToken.getInformazioniToken().getIat().before(oldMax)) {
@@ -1310,7 +1315,7 @@ public class GestoreTokenValidazioneUtilities {
 				}
 			}
 			
-			Long future = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_futureTolerance_milliseconds();
+			Long future = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
 			if(future!=null) {
 				Date futureMax = new Date((DateManager.getTimeMillis() + future.longValue()));
 				if(esitoGestioneToken.getInformazioniToken().getIat().after(futureMax)) {
@@ -1336,6 +1341,39 @@ public class GestoreTokenValidazioneUtilities {
 		if(!esitoGestioneToken.isValido()) {
 			esitoGestioneToken.setNoCache(!saveErrorInCache);
 		}
+	}
+	
+	static void validazioneInformazioniTokenEnrichPDNDClientInfo(EsitoGestioneToken esitoGestioneToken, PolicyGestioneToken policyGestioneToken, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory, AbstractDatiInvocazione datiInvocazione,
+			SecurityToken securityTokenForContext) throws CoreException, ProtocolException {
+		
+		if( 
+				(policyGestioneToken!=null && policyGestioneToken.getName()!=null) // dal nome della policy viene capito se e' attivo il recupero dei dati PDND
+				&&
+				(esitoGestioneToken!=null && esitoGestioneToken.getInformazioniToken()!=null && esitoGestioneToken.getInformazioniToken().getClientId()!=null) // il clientId serve per poter effettuare il recupero dei dati
+				&&
+				(datiInvocazione instanceof DatiInvocazionePortaApplicativa) // solo per erogazioni
+				&&
+				(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) // solo per profilo modi
+				) {
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			if(op2Properties.isGestoreChiaviPDNDretrieveClientInfoAfterVoucherPDNDValidation()) {
+				
+				IDSoggetto idSoggetto = null;
+				DatiInvocazionePortaApplicativa datiPA = (DatiInvocazionePortaApplicativa) datiInvocazione;
+				if(datiPA.getPa()!=null && datiPA.getPa().getTipoSoggettoProprietario()!=null && datiPA.getPa().getNomeSoggettoProprietario()!=null) {
+					idSoggetto = new IDSoggetto(datiPA.getPa().getTipoSoggettoProprietario(), datiPA.getPa().getNomeSoggettoProprietario());
+				}
+				else if(datiPA.getRequestInfo()!=null && datiPA.getRequestInfo().getIdentitaPdD()!=null) {
+					idSoggetto = datiPA.getRequestInfo().getIdentitaPdD();
+				}
+					
+				PDNDResolver pdndResolver = new PDNDResolver(pddContext, ModIUtils.getRemoteStoreConfig());
+				pdndResolver.enrichTokenInfo(datiInvocazione.getRequestInfo(), idSoggetto,
+						esitoGestioneToken.getInformazioniToken(), securityTokenForContext);
+			}
+		}
+		
 	}
 	
 	static void validazioneInformazioniTokenHeader(String jsonHeader, PolicyGestioneToken policyGestioneToken) throws TokenException, ProviderException, ProviderValidationException {
@@ -1602,10 +1640,10 @@ public class GestoreTokenValidazioneUtilities {
 		boolean debug = false;
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 		if(introspection) {
-			debug = properties.isGestioneToken_introspection_debug();	
+			debug = properties.isGestioneTokenIntrospectionDebug();	
 		}
 		else {
-			debug = properties.isGestioneToken_userInfo_debug();
+			debug = properties.isGestioneTokenUserInfoDebug();
 		}
 		if(debug) {
 			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");

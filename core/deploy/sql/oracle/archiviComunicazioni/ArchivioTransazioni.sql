@@ -7,6 +7,7 @@ CREATE TABLE credenziale_mittente
 	tipo VARCHAR2(20) NOT NULL,
 	credenziale VARCHAR2(2900) NOT NULL,
 	ora_registrazione TIMESTAMP NOT NULL,
+	ref_credenziale NUMBER,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -17,6 +18,7 @@ CREATE TABLE credenziale_mittente
 
 -- index
 CREATE INDEX CREDENZIALE_ORAREG ON credenziale_mittente (ora_registrazione);
+CREATE INDEX CREDENZIALE_INTERNAL_REF ON credenziale_mittente (ref_credenziale);
 
 ALTER TABLE credenziale_mittente MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;
 

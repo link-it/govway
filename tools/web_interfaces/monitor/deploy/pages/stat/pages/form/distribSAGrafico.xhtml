@@ -77,7 +77,8 @@
 								value="#{distribuzionePerSADM}"
 								id="table"
 								headerText="#{distribuzionePerSABean.caption} - #{distribuzionePerSABean.subCaption}"
-								enableDelete="false">
+								enableDelete="false"
+								useCount="#{distribuzioneSASearchForm.useCount}">
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{distribuzionePerSABean.tipoFiltroDatiMittente}" />
@@ -86,33 +87,51 @@
 								</rich:column>
 								<rich:column rendered="#{distribuzionePerSABean.showColumnSoggetto}">
 									<f:facet name="header">
-										<h:outputText value="Soggetto" />
+										<h:outputText value="#{msg['commons.soggetto.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['0']}"/>
 								</rich:column>
 								<rich:column rendered="false">
 									<f:facet name="header">
-										<h:outputText value="Ruolo" />
+										<h:outputText value="#{msg['commons.ruolo.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['1']}"/>
 								</rich:column>
 								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdApplicativoSoggetto}">
 									<f:facet name="header">
-										<h:outputText value="Applicativo" />
+										<h:outputText value="#{msg['commons.applicativo.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['0']}"/>
 								</rich:column>
 								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdApplicativoSoggetto}">
 									<f:facet name="header">
-										<h:outputText value="Soggetto" />
+										<h:outputText value="#{msg['commons.soggetto.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['1']}"/>
 								</rich:column>
 								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdApplicativo}">
 									<f:facet name="header">
-										<h:outputText value="Token Client ID" />
+										<h:outputText value="#{msg['commons.tokenInfo.clientID.label']}" />
 									</f:facet>
 									<h:outputText value="#{item.parentMap['1']}"/>
+								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdPDNDInfo}">
+									<f:facet name="header">
+										<h:outputText value="#{msg['commons.tokenInfo.clientID.label']}" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['0']}"/>
+								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdPDNDInfo}">
+									<f:facet name="header">
+										<h:outputText value="#{msg['commons.tokenInfo.clientID.pdnd.externalId.label']}" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['1']}"/>
+								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdPDNDInfo}">
+									<f:facet name="header">
+										<h:outputText value="#{msg['commons.tokenInfo.clientID.pdnd.categoria.label']}" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['2']}"/>
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">

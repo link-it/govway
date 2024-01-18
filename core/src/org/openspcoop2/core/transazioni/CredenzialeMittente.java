@@ -37,6 +37,7 @@ import java.io.Serializable;
  * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="credenziale" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="ref-credenziale" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -52,7 +53,8 @@ import java.io.Serializable;
   propOrder = {
   	"tipo",
   	"credenziale",
-  	"oraRegistrazione"
+  	"oraRegistrazione",
+  	"refCredenziale"
   }
 )
 
@@ -87,6 +89,14 @@ public class CredenzialeMittente extends org.openspcoop2.utils.beans.BaseBeanWit
     this.oraRegistrazione = oraRegistrazione;
   }
 
+  public java.lang.Long getRefCredenziale() {
+    return this.refCredenziale;
+  }
+
+  public void setRefCredenziale(java.lang.Long refCredenziale) {
+    this.refCredenziale = refCredenziale;
+  }
+
   private static final long serialVersionUID = 1L;
 
   private static org.openspcoop2.core.transazioni.model.CredenzialeMittenteModel modelStaticInstance = null;
@@ -115,5 +125,9 @@ public class CredenzialeMittente extends org.openspcoop2.utils.beans.BaseBeanWit
   @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="ora-registrazione",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date oraRegistrazione;
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="ref-credenziale",required=false,nillable=false)
+  protected java.lang.Long refCredenziale;
 
 }

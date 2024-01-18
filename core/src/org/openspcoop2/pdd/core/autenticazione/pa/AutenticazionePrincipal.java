@@ -96,18 +96,18 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 				}
 				break;
 			// Ho levato il contenuto, poichè senno devo fare il digest per poterlo poi cachare
-//				case CONTENT:
+/**				case CONTENT:
 //					this.pattern = authPrincipal.getPattern();
 //					if(this.pattern==null) {
 //						throw new AutenticazioneException("Pattern, da utilizzare per estrarre dal contenuto il principal, non indicato");
 //					}
-//					break;
+//					break;*/
 			case TOKEN:
 				this.tipoTokenClaim = authPrincipal.getTokenClaim();
 				if(this.tipoTokenClaim==null) {
 					throw new AutenticazioneException("Token Claim, da cui estrarre il principal, non indicato");
 				}
-				if(TipoCredenzialeMittente.trasporto.equals(this.tipoTokenClaim)) {
+				if(TipoCredenzialeMittente.TRASPORTO.equals(this.tipoTokenClaim)) {
 					this.nome = authPrincipal.getNome();
 					if(this.nome==null) {
 						throw new AutenticazioneException("Nome del token claim, da cui estrarre il principal, non indicato");
@@ -224,14 +224,12 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 				idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
 						getIdServizioApplicativoByCredenzialiPrincipal(principal);
 				if(idServizioApplicativo!=null) {
-					if(idSoggetto==null) {
-						idSoggetto = idServizioApplicativo.getIdSoggettoProprietario();
-					}
+					idSoggetto = idServizioApplicativo.getIdSoggettoProprietario();
 					// Non ha senso poter identificare entrambi con le stesse credenziali
-//					else if(idServizioApplicativo.getIdSoggettoProprietario().equals(idSoggetto)==false) {
+/**					else if(idServizioApplicativo.getIdSoggettoProprietario().equals(idSoggetto)==false) {
 //						throw new Exception("Identificato sia un soggetto che un applicativo. Il soggetto ["+idSoggetto+
 //								"] identificato è differente dal proprietario dell'applicativo identificato ["+idServizioApplicativo.getIdSoggettoProprietario()+"]");
-//					}
+//					}*/
 				}
 			}
 		}
@@ -248,7 +246,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		
 		if(idSoggetto == null){
 			// L'identificazione in ssl non e' obbligatoria
-			//esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
+			/**esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());*/
 			esito.setClientIdentified(false);
 			return esito;
 		}

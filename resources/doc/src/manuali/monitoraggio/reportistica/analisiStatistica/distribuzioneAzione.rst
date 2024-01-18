@@ -6,7 +6,7 @@ Distribuzione per Azione
 Fornisce informazioni sulla ripartizione delle richieste Da/Per
 Azioni/Risorse. Di seguito alcuni esempi di reports generabili.
 
-Tabella:
+**Tabella:**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneAzioneTabella.png
     :scale: 50%

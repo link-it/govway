@@ -197,7 +197,7 @@ public class InfoConfigurazione implements Serializable {
 		}
 		
 		try {
-			IDServizioApplicativo tokenClientApplication = credenzialiMittente!=null && credenzialiMittente.getToken_clientId()!=null ? CredenzialeTokenClient.convertApplicationDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale()) : null;
+			IDServizioApplicativo tokenClientApplication = credenzialiMittente!=null && credenzialiMittente.getTokenClientId()!=null ? CredenzialeTokenClient.convertApplicationDBValueToOriginal(credenzialiMittente.getTokenClientId().getCredenziale()) : null;
 			if(tokenClientApplication!=null && tokenClientApplication.getNome()!=null && tokenClientApplication.getIdSoggettoProprietario()!=null &&
 					tokenClientApplication.getIdSoggettoProprietario().getTipo()!=null && tokenClientApplication.getIdSoggettoProprietario().getNome()!=null) {
 				try {

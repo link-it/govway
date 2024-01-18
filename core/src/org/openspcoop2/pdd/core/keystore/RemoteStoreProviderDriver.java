@@ -95,7 +95,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	private static synchronized org.openspcoop2.utils.Semaphore initLockStore(String nomeRemoteStore){
 		org.openspcoop2.utils.Semaphore s = _lockStore.get(nomeRemoteStore);
 		if(s==null) {
-			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_validazioneJWT_lock_permits();
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneTokenValidazioneJWTLockPermits();
 			if(permits!=null && permits.intValue()>1) {
 				s = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT_"+nomeRemoteStore, permits);
 			}

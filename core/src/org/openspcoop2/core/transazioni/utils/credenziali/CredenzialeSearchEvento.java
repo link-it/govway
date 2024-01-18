@@ -33,7 +33,7 @@ import org.openspcoop2.utils.UtilsException;
 public class CredenzialeSearchEvento extends AbstractSearchCredenziale {
 
 	public CredenzialeSearchEvento() {
-		super(TipoCredenzialeMittente.eventi);
+		super(TipoCredenzialeMittente.EVENTI);
 	}
 	
 	@Override

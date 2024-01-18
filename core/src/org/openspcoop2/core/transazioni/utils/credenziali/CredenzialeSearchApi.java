@@ -33,7 +33,7 @@ import org.openspcoop2.utils.UtilsException;
 public class CredenzialeSearchApi extends AbstractSearchCredenziale {
 
 	public CredenzialeSearchApi() {
-		super(TipoCredenzialeMittente.api);
+		super(TipoCredenzialeMittente.API);
 	}
 	
 	@Override

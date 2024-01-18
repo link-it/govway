@@ -1244,20 +1244,20 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 				
 				// token
-				if(transaction.getCredenzialiMittente().getToken_issuer()!=null) {
-					transactionDTO.setTokenIssuer(transaction.getCredenzialiMittente().getToken_issuer().getId()+"");
+				if(transaction.getCredenzialiMittente().getTokenIssuer()!=null) {
+					transactionDTO.setTokenIssuer(transaction.getCredenzialiMittente().getTokenIssuer().getId()+"");
 				}
-				if(transaction.getCredenzialiMittente().getToken_clientId()!=null) {
-					transactionDTO.setTokenClientId(transaction.getCredenzialiMittente().getToken_clientId().getId()+"");
+				if(transaction.getCredenzialiMittente().getTokenClientId()!=null) {
+					transactionDTO.setTokenClientId(transaction.getCredenzialiMittente().getTokenClientId().getId()+"");
 				}
-				if(transaction.getCredenzialiMittente().getToken_subject()!=null) {
-					transactionDTO.setTokenSubject(transaction.getCredenzialiMittente().getToken_subject().getId()+"");
+				if(transaction.getCredenzialiMittente().getTokenSubject()!=null) {
+					transactionDTO.setTokenSubject(transaction.getCredenzialiMittente().getTokenSubject().getId()+"");
 				}
-				if(transaction.getCredenzialiMittente().getToken_username()!=null) {
-					transactionDTO.setTokenUsername(transaction.getCredenzialiMittente().getToken_username().getId()+"");
+				if(transaction.getCredenzialiMittente().getTokenUsername()!=null) {
+					transactionDTO.setTokenUsername(transaction.getCredenzialiMittente().getTokenUsername().getId()+"");
 				}
-				if(transaction.getCredenzialiMittente().getToken_eMail()!=null) {
-					transactionDTO.setTokenMail(transaction.getCredenzialiMittente().getToken_eMail().getId()+"");
+				if(transaction.getCredenzialiMittente().getTokenEMail()!=null) {
+					transactionDTO.setTokenMail(transaction.getCredenzialiMittente().getTokenEMail().getId()+"");
 				}
 			}
 			
@@ -1299,7 +1299,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			if(this.transazioniRegistrazioneTokenInformazioniNormalizzate && transaction.getInformazioniToken()!=null) {
 				
 				// token validazione
-				if(transaction.getInformazioniToken().getToken()!=null && op2Properties.isGestioneToken_saveTokenInfo_validationFailed_excludeJwtSignature()) {
+				if(transaction.getInformazioniToken().getToken()!=null && op2Properties.isGestioneTokenSaveTokenInfoValidationFailedExcludeJwtSignature()) {
 					transaction.getInformazioniToken().setToken(TokenUtilities.deleteSignature(transaction.getInformazioniToken().getToken()));
 				}
 				

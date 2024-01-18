@@ -1796,7 +1796,7 @@ components:
       name: claim
       description: Specifica il claim che deve essere presente nel jwt di una transazione
       schema:
-        $ref: "govway_core.yaml#/components/schemas/TokenClaimEnum"
+        $ref: "govway_core.yaml#/components/schemas/TokenClaimDistribuzioneStatisticaEnum"
       required: true
 
  
@@ -1852,6 +1852,8 @@ components:
               $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtInformazioniApiBase'
             mittente:
               $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtInformazioniMittenteBase'
+            pdnd_organization:
+              $ref: '#/components/schemas/PDNDOrganizationInfoItemTransazione'
             richiedente:
               type: string
 
@@ -1874,10 +1876,35 @@ components:
               type: integer
               format: int64
               example: 20
+            pdnd_organization:
+              $ref: '#/components/schemas/PDNDOrganizationInfo'
             richiedente:
               type: string
             dettaglio_errore:
               type: string
+
+    PDNDOrganizationInfoItemTransazione:
+      type: object
+      properties:
+        nome:
+          type: string
+
+    PDNDOrganizationInfo:
+      type: object
+      properties:
+        nome:
+          type: string
+        categoria:
+          type: string
+        external_id:
+          $ref: '#/components/schemas/PDNDOrganizationExternalId'
+    PDNDOrganizationExternalId:
+      type: object
+      properties:
+        codice:
+          type: string
+        origine:
+          type: string
 
     # Eventi
 
@@ -2532,7 +2559,7 @@ components:
           - claim
           properties:
             claim:
-              $ref: 'govway_core.yaml#/components/schemas/TokenClaimEnum'
+              $ref: 'govway_core.yaml#/components/schemas/TokenClaimDistribuzioneStatisticaEnum'
             soggetto:
               $ref: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName' # utilizzabile solamente con tipologia di ricerca 'erogazioni'
 
@@ -2697,7 +2724,7 @@ components:
       - claim
       properties:
         claim:
-          $ref: 'govway_core.yaml#/components/schemas/TokenClaimEnum'
+          $ref: 'govway_core.yaml#/components/schemas/TokenClaimSearchEnum'
     FiltroMittenteIndirizzoIP:
       type: object
       allOf:
@@ -2845,3 +2872,23 @@ components:
         - latenza_gateway
       example: latenza_totale
       default: latenza_totale
+
+    TokenClaimSearchEnum:
+      type: string
+      enum:
+        - subject
+        - issuer
+        - client_id
+        - username
+        - email
+        - pdnd_organization_name
+
+    TokenClaimDistribuzioneStatisticaEnum:
+      type: string
+      enum:
+        - subject
+        - issuer
+        - client_id
+        - client_id_pdnd_informazioni
+        - username
+        - email

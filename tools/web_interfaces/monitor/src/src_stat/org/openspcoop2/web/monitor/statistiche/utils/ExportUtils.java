@@ -80,6 +80,10 @@ public class ExportUtils {
 	
 	private static final String HEADER_VALUE_CATEGORY_PARENT_0 = "parent_0";
 	private static final String HEADER_VALUE_CATEGORY_PARENT_1 = "parent_1";
+	private static final String HEADER_VALUE_CATEGORY_PARENT_2 = "parent_2";
+	private static final String HEADER_VALUE_CATEGORY_PARENT_3 = "parent_3";
+	private static final String HEADER_VALUE_CATEGORY_PARENT_4 = "parent_4";
+	private static final String HEADER_VALUE_CATEGORY_PARENT_5 = "parent_5";
 	
 	
 	private static final String HEADER_VALUE_CATEGORY_OCCUPAZIONE_BANDA_COMPLESSIVA = "occupazioneBandaComplessiva";
@@ -93,6 +97,11 @@ public class ExportUtils {
 	private static final String FORMAT_MESE_ANNO = "MMM yyyy";
 	private static final String FORMAT_ANNO_MESE_GIORNO_ORA = "yyyy/MM/dd HH";
 	private static final String FORMAT_ORA = "HH";
+	
+	private static boolean isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato = false;
+	public static void setDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato(boolean b) {
+		isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato = b;
+	}
 	
 	public static ReportDataSource creaReportAndamentoTemporale(List<Res> list,String titoloReport,Logger log,TipoVisualizzazione tipoVisualizzazione,
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, StatisticType modalitaTemporale, boolean distribuzionePerEsiti, boolean convertRawData) throws CoreException {
@@ -201,8 +210,8 @@ public class ExportUtils {
 				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO) &&
 					tokenClaim!=null && StringUtils.isNotEmpty(tokenClaim)) {
 					try {
-						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(tokenClaim);
-						if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(tokenClaim, true);
+						if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)) {
 							
 							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
 							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_APPLICATIVO_LABEL_KEY);
@@ -211,6 +220,34 @@ public class ExportUtils {
 							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_1;
 							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LABEL_KEY);
 							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+						}
+						else if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm)) {
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_1;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_EXTERNAL_ID_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_2;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_CATEGORIA_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_3;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_ORGANIZATION_ID_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							if(isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato) {
+								headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_4;
+								headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_APPLICATIVO_LABEL_KEY);
+								colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+								
+								headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_5;
+								headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LABEL_KEY);
+								colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							}
 						}
 					}catch(Exception t) {
 						// ignore
@@ -357,8 +394,8 @@ public class ExportUtils {
 				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO) &&
 					tokenClaim!=null && StringUtils.isNotEmpty(tokenClaim)) {
 					try {
-						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(tokenClaim);
-						if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(tokenClaim, true);
+						if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)) {
 							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
 							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_APPLICATIVO_LABEL_KEY);
 							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
@@ -366,6 +403,34 @@ public class ExportUtils {
 							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_1;
 							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LABEL_KEY);
 							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+						}
+						else if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm)) {
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_1;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_EXTERNAL_ID_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_2;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_CATEGORIA_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_3;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_ORGANIZATION_ID_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							if(isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato) {
+								headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_4;
+								headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_APPLICATIVO_LABEL_KEY);
+								colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+								
+								headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_5;
+								headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LABEL_KEY);
+								colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							}
 						}
 					}catch(Exception t) {
 						// ignore
@@ -524,8 +589,8 @@ public class ExportUtils {
 				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO) &&
 					tokenClaim!=null && StringUtils.isNotEmpty(tokenClaim)) {
 					try {
-						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(tokenClaim);
-						if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(tokenClaim, true);
+						if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)) {
 							
 							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
 							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_APPLICATIVO_LABEL_KEY);
@@ -534,6 +599,34 @@ public class ExportUtils {
 							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_1;
 							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LABEL_KEY);
 							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+						}
+						else if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm)) {
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_1;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_EXTERNAL_ID_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_2;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_CATEGORIA_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_3;
+							headerValueLabel = MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_ORGANIZATION_ID_KEY);
+							colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							
+							if(isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato) {
+								headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_4;
+								headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_APPLICATIVO_LABEL_KEY);
+								colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+								
+								headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_5;
+								headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LABEL_KEY);
+								colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+							}
 						}
 					}catch(Exception t) {
 						// ignore
@@ -1339,10 +1432,20 @@ public class ExportUtils {
 			else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO) &&
 				tokenClaim!=null && StringUtils.isNotEmpty(tokenClaim)) {
 				try {
-					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(tokenClaim);
-					if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(tokenClaim, true);
+					if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)) {
 						header.add(HEADER_VALUE_CATEGORY_PARENT_0);
 						header.add(HEADER_VALUE_CATEGORY_PARENT_1);
+					}
+					else if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm)) {
+						header.add(HEADER_VALUE_CATEGORY_PARENT_0);
+						header.add(HEADER_VALUE_CATEGORY_PARENT_1);
+						header.add(HEADER_VALUE_CATEGORY_PARENT_2);
+						header.add(HEADER_VALUE_CATEGORY_PARENT_3);
+						if(isDistribuzioneTokenClientIdInformazioniPDNDAggiungiInformazioneApplicativoRegistrato) {
+							header.add(HEADER_VALUE_CATEGORY_PARENT_4);
+							header.add(HEADER_VALUE_CATEGORY_PARENT_5);
+						}
 					}
 				}catch(Exception t) {
 					// ignore

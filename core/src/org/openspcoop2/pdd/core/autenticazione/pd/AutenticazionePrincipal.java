@@ -96,18 +96,18 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 				}
 				break;
 			// Ho levato il contenuto, poichè senno devo fare il digest per poterlo poi cachare
-//				case CONTENT:
+/**				case CONTENT:
 //					this.pattern = authPrincipal.getPattern();
 //					if(this.pattern==null) {
 //						throw new AutenticazioneException("Pattern, da utilizzare per estrarre dal contenuto il principal, non indicato");
 //					}
-//					break;
+//					break;*/
 			case TOKEN:
 				this.tipoTokenClaim = authPrincipal.getTokenClaim();
 				if(this.tipoTokenClaim==null) {
 					throw new AutenticazioneException("Token Claim, da cui estrarre il principal, non indicato");
 				}
-				if(TipoCredenzialeMittente.trasporto.equals(this.tipoTokenClaim)) {
+				if(TipoCredenzialeMittente.TRASPORTO.equals(this.tipoTokenClaim)) {
 					this.nome = authPrincipal.getNome();
 					if(this.nome==null) {
 						throw new AutenticazioneException("Nome del token claim, da cui estrarre il principal, non indicato");
@@ -146,7 +146,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 				return null;
 			}
 		// Ho levato il contenuto, poichè senno devo fare il digest per poterlo poi cachare
-//		case CONTENT:
+/**		case CONTENT:*/
 		}
 		return null;
 	}
@@ -164,7 +164,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     	WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazionePrincipalWWWAuthenticateConfig(this.tipoAutenticazionePrincipal);
     	
     	IDSoggetto soggettoFruitore = null;
-    	if(datiInvocazione!=null && datiInvocazione.getPd()!=null) {
+    	if(datiInvocazione.getPd()!=null) {
     		soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
     	}
     	
@@ -226,12 +226,12 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		
 		if(idServizioApplicativo == null){
 			// L'identificazione in principal non e' obbligatoria
-			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal(CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE,principal));
+			/**esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal(CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE,principal));*/
 			esito.setClientIdentified(false);
 			return esito;
 		}
 		else {
-			if(OpenSPCoop2Properties.getInstance().isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari() && idServizioApplicativo.getIdSoggettoProprietario().equals(soggettoFruitore)==false) {
+			if(OpenSPCoop2Properties.getInstance().isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari() && !idServizioApplicativo.getIdSoggettoProprietario().equals(soggettoFruitore)) {
 				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
 						ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.
 							getErrore402_AutenticazioneFallitaPrincipal("soggetto proprietario ("+idServizioApplicativo.getIdSoggettoProprietario()+") dell'applicativo identificato ("+idServizioApplicativo.getNome()+") differente dal soggetto proprietario della porta invocata ("+soggettoFruitore+")",principal));

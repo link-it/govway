@@ -39,18 +39,18 @@ public class CredenzialeTrasporto extends AbstractCredenziale {
 	private String credential;
 	
 	public CredenzialeTrasporto(String tipoAutenticazione, String credential) {
-		super(TipoCredenzialeMittente.trasporto);
+		super(TipoCredenzialeMittente.TRASPORTO);
 		this.tipoAutenticazione = tipoAutenticazione;
 		this.credential = credential;
 	}
 	
 	@Override
-	public String getTipo() throws UtilsException {
+	public String getTipo() {
 		return getTipoTrasporto(this.tipo, this.tipoAutenticazione);
 	}
 
 	public static String getTipoTrasporto(TipoCredenzialeMittente tipo, String tipoAutenticazione) {
-		return tipo.name()+"_"+tipoAutenticazione;
+		return tipo.getRawValue()+"_"+tipoAutenticazione;
 	}
 	
 	@Override

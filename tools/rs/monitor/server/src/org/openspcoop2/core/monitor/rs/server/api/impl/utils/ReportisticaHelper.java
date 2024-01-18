@@ -321,7 +321,7 @@ public class ReportisticaHelper {
 						+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+filtro.getClass().getName()+"' (atteso: "+FiltroMittenteTokenClaim.class.getName()+")");
 			}
 			FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) filtro;
-			wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenClaim.get(fClaim.getClaim()));
+			wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenSearchClaim.get(fClaim.getClaim()));
 			wrap.overrideParameter(CostantiExporter.IDENTIFICATIVO_RICERCA_MITTENTE, fClaim.getId());
 			wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA, fClaim.isRicercaEsatta() + "");
 			wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE,fClaim.isCaseSensitive() + "");
@@ -432,7 +432,7 @@ public class ReportisticaHelper {
 								+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+filtro.getClass().getName()+"' (atteso: "+FiltroMittenteTokenClaimSoggetto.class.getName()+")");
 					}
 					FiltroMittenteTokenClaimSoggetto fClaim = (FiltroMittenteTokenClaimSoggetto) filtro;
-					wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenClaim.get(fClaim.getClaim()));
+					wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenSearchClaim.get(fClaim.getClaim()));
 					wrap.overrideParameter(CostantiExporter.IDENTIFICATIVO_RICERCA_MITTENTE, fClaim.getId());
 					wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA, fClaim.isRicercaEsatta() + "");
 					wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE, fClaim.isCaseSensitive() + "");
@@ -450,7 +450,7 @@ public class ReportisticaHelper {
 							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+filtro.getClass().getName()+"' (atteso: "+FiltroMittenteTokenClaim.class.getName()+")");
 				}
 				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) filtro;
-				wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenClaim.get(fClaim.getClaim()));
+				wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenSearchClaim.get(fClaim.getClaim()));
 				wrap.overrideParameter(CostantiExporter.IDENTIFICATIVO_RICERCA_MITTENTE, fClaim.getId());
 				wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA, fClaim.isRicercaEsatta() + "");
 				wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE, fClaim.isCaseSensitive() + "");
@@ -537,7 +537,7 @@ public class ReportisticaHelper {
 						+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+filtro.getClass().getName()+"' (atteso: "+FiltroMittenteTokenClaim.class.getName()+")");
 			}
 			FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) filtro;
-			wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenClaim.get(fClaim.getClaim()));
+			wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenSearchClaim.get(fClaim.getClaim()));
 			wrap.overrideParameter(CostantiExporter.IDENTIFICATIVO_RICERCA_MITTENTE, fClaim.getId());
 			wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA, fClaim.isRicercaEsatta() + "");
 			wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE,fClaim.isCaseSensitive() + "");
@@ -1185,7 +1185,7 @@ public class ReportisticaHelper {
 				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), true, TipoReport.token_info);
 
 		ReportisticaHelper.overrideRicercaStatisticaDistribuzioneApplicativo(body, wrap, env);
-		wrap.overrideParameter(CostantiExporter.CLAIM, Enums.toClaim.get(body.getClaim()).toString());
+		wrap.overrideParameter(CostantiExporter.CLAIM, Enums.toDistribuzioneTokenClaim.get(body.getClaim()).toString());
 
 		if(body.getSoggetto()!=null) {
 			if(!FiltroRicercaRuoloTransazioneEnum.EROGAZIONE.equals(body.getTipo())) {

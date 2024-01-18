@@ -83,7 +83,7 @@ public class DistribuzioneSADM extends BaseDataModel<String, ResDistribuzione, I
 				int limit = ((SequenceRange)range).getRows();
 
 				this.wrappedKeys = new ArrayList<>();
-				List<ResDistribuzione> list =  new ArrayList<ResDistribuzione>();
+				List<ResDistribuzione> list =  new ArrayList<>();
 				
 				try {
 					list =  this.getDataProvider().findAllDistribuzioneServizioApplicativo(start, limit);
@@ -116,4 +116,23 @@ public class DistribuzioneSADM extends BaseDataModel<String, ResDistribuzione, I
 	public boolean isTimeoutEvent(){
 		return this.getDataProvider().isTimeoutEvent();
 	}
+	
+	/** Metodi richiesto dal dataTable quando disabilito setUseCount tramite metodo setTipoReport in StatsSearchForm */
+	
+	public boolean isFirstEnabled() {
+		return false;
+	}
+	
+	public boolean isPrevEnabled() {
+		return false;
+	}
+	
+	public boolean isNextEnabled() {
+		return false;
+	}
+	
+	public String getRecordLabel() {
+		return null;
+	}
+	
 }

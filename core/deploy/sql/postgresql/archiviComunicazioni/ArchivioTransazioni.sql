@@ -7,6 +7,7 @@ CREATE TABLE credenziale_mittente
 	tipo VARCHAR(20) NOT NULL,
 	credenziale VARCHAR(2900) NOT NULL,
 	ora_registrazione TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	ref_credenziale BIGINT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_credenziale_mittente') NOT NULL,
 	-- unique constraints
@@ -17,6 +18,7 @@ CREATE TABLE credenziale_mittente
 
 -- index
 CREATE INDEX CREDENZIALE_ORAREG ON credenziale_mittente (ora_registrazione);
+CREATE INDEX CREDENZIALE_INTERNAL_REF ON credenziale_mittente (ref_credenziale);
 
 
 

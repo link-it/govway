@@ -59,7 +59,7 @@ import org.openspcoop2.core.monitor.rs.server.model.Riepilogo;
 import org.openspcoop2.core.monitor.rs.server.model.TipoIdentificazioneApplicativoEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
-import org.openspcoop2.core.monitor.rs.server.model.TokenClaimEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TokenClaimDistribuzioneStatisticaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.service.BaseImpl;
@@ -1199,7 +1199,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
     public byte[] getReportDistribuzioneTokenInfoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		TokenClaimEnum claim, ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
+    		TokenClaimDistribuzioneStatisticaEnum claim, ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();

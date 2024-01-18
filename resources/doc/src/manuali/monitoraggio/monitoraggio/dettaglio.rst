@@ -90,7 +90,14 @@ La sezione **Informazioni Mittente** (:numref:`mon_DettaglioTransazioneMittente_
 
     -  Credenziali: Le credenziali presenti nella richiesta pervenuta al gateway
 
-- la sezione *Token Info* è presente solamente se nella richiesta è presente un token e riporta:
+.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Mittente.png
+    :scale: 100%
+    :align: center
+    :name: mon_DettaglioTransazioneMittente_fig
+
+    Dettaglio Transazione: Informazioni Mittente
+
+- la sezione *Token Info* è presente solamente se nella richiesta è presente un token (:numref:`mon_DettaglioTransazioneMittenteToken_fig`) e riporta:
 
     -  Issuer: rappresenta il dominio che ha emesso il token
 
@@ -100,14 +107,30 @@ La sezione **Informazioni Mittente** (:numref:`mon_DettaglioTransazioneMittente_
 
     -  eMail: indirizzo eMail dell'utente 
 
-    -  Token Info: riporta il dettaglio delle informazioni estratte dal token ottenuto in fase di autenticazione della richiesta del mittente
+    -  PDND Organization: forniscono le eventuali informazioni sull'organizzazione del client recuperate tramite le API PDND (:numref:`mon_DettaglioTransazioneMittenteTokenPDND_fig`) 
 
-.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Mittente.png
+    -  Token Info: riporta il dettaglio delle informazioni estratte dal token ottenuto in fase di autenticazione della richiesta del mittente (:numref:`mon_DettaglioTransazioneMittenteTokenDetails_fig`) 
+
+.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Mittente_tokenInfo.png
     :scale: 100%
     :align: center
-    :name: mon_DettaglioTransazioneMittente_fig
+    :name: mon_DettaglioTransazioneMittenteToken_fig
 
-    Dettaglio Transazione: Informazioni Mittente
+    Dettaglio Transazione: Informazioni Token Mittente
+
+.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Mittente_tokenInfo2.png
+    :scale: 100%
+    :align: center
+    :name: mon_DettaglioTransazioneMittenteTokenDetails_fig
+
+    Dettaglio Transazione: Dettaglio informazioni presenti all'interno del Token Mittente
+
+.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Mittente_tokenInfoPDND.png
+    :scale: 100%
+    :align: center
+    :name: mon_DettaglioTransazioneMittenteTokenPDND_fig
+
+    Dettaglio Transazione: Informazioni Token Mittente con dati relativi all'organizzazione PDND del client
 
 La sezione **Dettagli Messaggio** (:numref:`mon_DettaglioTransazioneMessaggio_fig`) mostra:
 

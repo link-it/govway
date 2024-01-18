@@ -1918,7 +1918,8 @@ public class RicezioneContenutiApplicativi {
 				configurazionePdDReader,
 				pddContext, idTransazione,
 				openspcoopstate, transaction, requestInfo,
-				protocolFactory);
+				protocolFactory,
+				identitaPdD);
 	
 		GestioneTokenAutenticazione gestioneTokenAutenticazione = null;
 		String token = null;

@@ -89,6 +89,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.StatoDescrizione;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione.ErogazioniConfEnv;
 import org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione.FruizioniConfEnv;
+import org.openspcoop2.core.config.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.config.rs.server.model.*;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -4463,25 +4464,32 @@ public class ErogazioniApiHelper {
 			if(tmp!=null && tmp.length>0) {
 				List<TokenClaimEnum> token = new ArrayList<>();
 				for (int i = 0; i < tmp.length; i++) {
-					TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tmp[i]);
-					switch (tipo) {
-					case token_subject:
-						token.add(TokenClaimEnum.SUBJECT);
-						break;
-					case token_issuer:
-						token.add(TokenClaimEnum.ISSUER);
-						break;
-					case token_clientId:
-						token.add(TokenClaimEnum.CLIENT_ID);
-						break;
-					case token_username:
-						token.add(TokenClaimEnum.USERNAME);
-						break;
-					case token_eMail:
-						token.add(TokenClaimEnum.EMAIL);
-						break;
-					default:
-						break;
+					TipoCredenzialeMittente tipo = null;
+					try {
+						tipo = TipoCredenzialeMittente.toEnumConstant(tmp[i], true);
+					}catch(Exception e) {
+						LoggerProperties.getLoggerCore().error(e.getMessage(),e);
+					}
+					if(tipo!=null) {
+						switch (tipo) {
+						case TOKEN_SUBJECT:
+							token.add(TokenClaimEnum.SUBJECT);
+							break;
+						case TOKEN_ISSUER:
+							token.add(TokenClaimEnum.ISSUER);
+							break;
+						case TOKEN_CLIENT_ID:
+							token.add(TokenClaimEnum.CLIENT_ID);
+							break;
+						case TOKEN_USERNAME:
+							token.add(TokenClaimEnum.USERNAME);
+							break;
+						case TOKEN_EMAIL:
+							token.add(TokenClaimEnum.EMAIL);
+							break;
+						default:
+							break;
+						}
 					}
 				}
 				dest.setToken(token);
@@ -4940,19 +4948,19 @@ public class ErogazioniApiHelper {
 			for (TokenClaimEnum tokenClaim : body.getToken()) {
 				switch (tokenClaim) {
 				case SUBJECT:
-					values.add(TipoCredenzialeMittente.token_subject.name());
+					values.add(TipoCredenzialeMittente.TOKEN_SUBJECT.getRawValue());
 					break;
 				case ISSUER:
-					values.add(TipoCredenzialeMittente.token_issuer.name());
+					values.add(TipoCredenzialeMittente.TOKEN_ISSUER.getRawValue());
 					break;
 				case CLIENT_ID:
-					values.add(TipoCredenzialeMittente.token_clientId.name());
+					values.add(TipoCredenzialeMittente.TOKEN_CLIENT_ID.getRawValue());
 					break;
 				case USERNAME:
-					values.add(TipoCredenzialeMittente.token_username.name());
+					values.add(TipoCredenzialeMittente.TOKEN_USERNAME.getRawValue());
 					break;
 				case EMAIL:
-					values.add(TipoCredenzialeMittente.token_eMail.name());
+					values.add(TipoCredenzialeMittente.TOKEN_EMAIL.getRawValue());
 					break;
 				default:
 					break;

@@ -24,10 +24,14 @@ import java.util.List;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.handlers.InRequestContext;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.token.GestoreToken;
@@ -79,6 +83,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 	
 	private IProtocolFactory<?> protocolFactory;
 	
+	private IDSoggetto identitaPdD;
+	
 	public RicezioneContenutiApplicativiGestioneToken(MsgDiagnostico msgDiag, Logger logCore,
 			PortaDelegata portaDelegata, IDPortaDelegata identificativoPortaDelegata,
 			OpenSPCoop2Message requestMessage,
@@ -86,7 +92,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 			ConfigurazionePdDManager configurazionePdDReader,
 			PdDContext pddContext, String idTransazione,
 			IOpenSPCoopState openspcoopstate, Transaction transaction, RequestInfo requestInfo,
-			IProtocolFactory<?> protocolFactory) {
+			IProtocolFactory<?> protocolFactory,
+			IDSoggetto identitaPdD) {
 		this.msgDiag = msgDiag;
 		this.logCore = logCore;
 				
@@ -108,6 +115,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 		this.requestInfo = requestInfo; 
 		
 		this.protocolFactory = protocolFactory;
+		
+		this.identitaPdD = identitaPdD;
 		
 	}
 	
@@ -519,6 +528,8 @@ public class RicezioneContenutiApplicativiGestioneToken {
 						}
 					}
 					
+					updateCredenzialiToken();
+					
 					return false;
 					
 				}
@@ -531,4 +542,35 @@ public class RicezioneContenutiApplicativiGestioneToken {
 		
 	}
 	
+	private void updateCredenzialiToken() {
+		
+		// Viene chiamato se la validazione fallisce
+		
+		if(OpenSPCoop2Properties.getInstance().isGestioneTokenSaveTokenAuthenticationInfoValidationFailed()) {
+			CredenzialiMittente credenzialiMittente = this.transaction.getCredenzialiMittente();
+			if(credenzialiMittente==null) {
+				credenzialiMittente = new CredenzialiMittente();
+				try {
+					this.transaction.setCredenzialiMittente(credenzialiMittente);
+				}catch(Exception e) {
+					this.logCore.error("SetCredenzialiMittente error: "+e.getMessage(),e);
+				}
+			}
+			InformazioniToken informazioniTokenNormalizzate = null;
+			if(this.pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+				informazioniTokenNormalizzate = (InformazioniToken) this.pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			}
+			if(informazioniTokenNormalizzate!=null) {
+				try {
+					GestoreAutenticazione.updateCredenzialiToken(
+							this.identitaPdD,
+							RicezioneContenutiApplicativi.ID_MODULO, this.idTransazione, informazioniTokenNormalizzate, null, credenzialiMittente, 
+							this.openspcoopstate, "RicezioneContenutiApplicativi.credenzialiToken", this.requestInfo,
+							this.pddContext);
+				}catch(Exception e) {
+					this.logCore.error("updateCredenzialiToken error: "+e.getMessage(),e);
+				}
+			}
+		}
+	}
 }

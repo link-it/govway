@@ -60,6 +60,8 @@ public class CredenzialeMittenteFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "credenziale", CredenzialeMittente.model().CREDENZIALE.getFieldType()));
 				setParameter(object, "setOraRegistrazione", CredenzialeMittente.model().ORA_REGISTRAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "ora_registrazione", CredenzialeMittente.model().ORA_REGISTRAZIONE.getFieldType()));
+				setParameter(object, "setRefCredenziale", CredenzialeMittente.model().REF_CREDENZIALE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "ref_credenziale", CredenzialeMittente.model().REF_CREDENZIALE.getFieldType()));
 				return object;
 			}
 			
@@ -88,6 +90,8 @@ public class CredenzialeMittenteFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"credenziale"));
 				setParameter(object, "setOraRegistrazione", CredenzialeMittente.model().ORA_REGISTRAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"ora-registrazione"));
+				setParameter(object, "setRefCredenziale", CredenzialeMittente.model().REF_CREDENZIALE.getFieldType(),
+					this.getObjectFromMap(map,"ref-credenziale"));
 				return object;
 			}
 			

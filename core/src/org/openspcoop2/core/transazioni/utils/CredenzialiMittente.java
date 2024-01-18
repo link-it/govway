@@ -40,11 +40,15 @@ public class CredenzialiMittente implements Serializable {
 
 	private CredenzialeMittente trasporto;
 	
-	private CredenzialeMittente token_issuer;
-	private CredenzialeMittente token_clientId;
-	private CredenzialeMittente token_subject;
-	private CredenzialeMittente token_username;
-	private CredenzialeMittente token_eMail;
+	private CredenzialeMittente tokenIssuer;
+	private CredenzialeMittente tokenClientId;
+	private CredenzialeMittente tokenSubject;
+	private CredenzialeMittente tokenUsername;
+	private CredenzialeMittente tokenEMail;
+	
+	private CredenzialeMittente tokenPdndClientJson;
+	private CredenzialeMittente tokenPdndOrganizationJson;
+	private CredenzialeMittente tokenPdndOrganizationName;
 	
 	public CredenzialeMittente getTrasporto() {
 		return this.trasporto;
@@ -52,34 +56,54 @@ public class CredenzialiMittente implements Serializable {
 	public void setTrasporto(CredenzialeMittente trasporto) {
 		this.trasporto = trasporto;
 	}
-	public CredenzialeMittente getToken_issuer() {
-		return this.token_issuer;
+	
+	public CredenzialeMittente getTokenIssuer() {
+		return this.tokenIssuer;
 	}
-	public void setToken_issuer(CredenzialeMittente token_issuer) {
-		this.token_issuer = token_issuer;
+	public void setTokenIssuer(CredenzialeMittente tokenIssuer) {
+		this.tokenIssuer = tokenIssuer;
 	}
-	public CredenzialeMittente getToken_clientId() {
-		return this.token_clientId;
+	public CredenzialeMittente getTokenClientId() {
+		return this.tokenClientId;
 	}
-	public void setToken_clientId(CredenzialeMittente token_clientId) {
-		this.token_clientId = token_clientId;
+	public void setTokenClientId(CredenzialeMittente tokenClientId) {
+		this.tokenClientId = tokenClientId;
 	}
-	public CredenzialeMittente getToken_subject() {
-		return this.token_subject;
+	public CredenzialeMittente getTokenSubject() {
+		return this.tokenSubject;
 	}
-	public void setToken_subject(CredenzialeMittente token_subject) {
-		this.token_subject = token_subject;
+	public void setTokenSubject(CredenzialeMittente tokenSubject) {
+		this.tokenSubject = tokenSubject;
 	}
-	public CredenzialeMittente getToken_username() {
-		return this.token_username;
+	public CredenzialeMittente getTokenUsername() {
+		return this.tokenUsername;
 	}
-	public void setToken_username(CredenzialeMittente token_username) {
-		this.token_username = token_username;
+	public void setTokenUsername(CredenzialeMittente tokenUsername) {
+		this.tokenUsername = tokenUsername;
 	}
-	public CredenzialeMittente getToken_eMail() {
-		return this.token_eMail;
+	public CredenzialeMittente getTokenEMail() {
+		return this.tokenEMail;
 	}
-	public void setToken_eMail(CredenzialeMittente token_eMail) {
-		this.token_eMail = token_eMail;
+	public void setTokenEMail(CredenzialeMittente tokenEMail) {
+		this.tokenEMail = tokenEMail;
+	}
+	
+	public CredenzialeMittente getTokenPdndClientJson() {
+		return this.tokenPdndClientJson;
+	}
+	public void setTokenPdndClientJson(CredenzialeMittente tokenPdndClientJson) {
+		this.tokenPdndClientJson = tokenPdndClientJson;
+	}
+	public CredenzialeMittente getTokenPdndOrganizationJson() {
+		return this.tokenPdndOrganizationJson;
+	}
+	public void setTokenPdndOrganizationJson(CredenzialeMittente tokenPdndOrganizationJson) {
+		this.tokenPdndOrganizationJson = tokenPdndOrganizationJson;
+	}
+	public CredenzialeMittente getTokenPdndOrganizationName() {
+		return this.tokenPdndOrganizationName;
+	}
+	public void setTokenPdndOrganizationName(CredenzialeMittente tokenPdndOrganizationName) {
+		this.tokenPdndOrganizationName = tokenPdndOrganizationName;
 	}
 }

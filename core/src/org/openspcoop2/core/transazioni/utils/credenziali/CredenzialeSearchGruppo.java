@@ -33,7 +33,7 @@ import org.openspcoop2.utils.UtilsException;
 public class CredenzialeSearchGruppo extends AbstractSearchCredenziale {
 
 	public CredenzialeSearchGruppo() {
-		super(TipoCredenzialeMittente.gruppi);
+		super(TipoCredenzialeMittente.GRUPPI);
 	}
 	
 	@Override

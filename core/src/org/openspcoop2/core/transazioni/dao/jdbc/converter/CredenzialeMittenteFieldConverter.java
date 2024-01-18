@@ -88,6 +88,13 @@ public class CredenzialeMittenteFieldConverter extends AbstractSQLFieldConverter
 				return "ora_registrazione";
 			}
 		}
+		if(field.equals(CredenzialeMittente.model().REF_CREDENZIALE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".ref_credenziale";
+			}else{
+				return "ref_credenziale";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -108,6 +115,9 @@ public class CredenzialeMittenteFieldConverter extends AbstractSQLFieldConverter
 			return this.toTable(CredenzialeMittente.model(), returnAlias);
 		}
 		if(field.equals(CredenzialeMittente.model().ORA_REGISTRAZIONE)){
+			return this.toTable(CredenzialeMittente.model(), returnAlias);
+		}
+		if(field.equals(CredenzialeMittente.model().REF_CREDENZIALE)){
 			return this.toTable(CredenzialeMittente.model(), returnAlias);
 		}
 

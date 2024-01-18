@@ -34,7 +34,7 @@ import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 public class CredenzialeGruppi extends AbstractCredenzialeList {
 
 	public CredenzialeGruppi(List<String> values) {
-		super(TipoCredenzialeMittente.gruppi, values);
+		super(TipoCredenzialeMittente.GRUPPI, values);
 	}
 
 }
