@@ -1,3 +1,11 @@
+2024-01-19  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria, ProtocolloAS4]
+	Risolto Bug OP-1697
+	Gli artefatti prodotti dall'installer in caso di scelta del profilo di interoperabiltà 'eDelivery' presentano i seguenti errori:
+	- nell'archivio govway.ear manca il jar 'openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar' 
+	- il datasource per wildfly 'domibus-ds.xml' non contiene il nome jndi 'org.govway.datasource.domibus' atteso
+
 2024-01-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor, ApiRsMonitoraggio, ProtocolloModIPA]
