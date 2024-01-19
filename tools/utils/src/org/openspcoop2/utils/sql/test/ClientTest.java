@@ -3002,12 +3002,13 @@ public class ClientTest {
 	}
 	
 	private static String normalizeDayOfYear(TipiDatabase tipo, String dayOfYear) {
-		//if(TipiDatabase.POSTGRESQL.equals(tipo)) {
-		if(dayOfYear.length()<=1) {
-			dayOfYear = "00"+dayOfYear;
-		}
-		else if(dayOfYear.length()<=2) {
-			dayOfYear = "0"+dayOfYear;
+		if(TipiDatabase.POSTGRESQL.equals(tipo) || TipiDatabase.ORACLE.equals(tipo)) {
+			if(dayOfYear.length()<=1) {
+				dayOfYear = "00"+dayOfYear;
+			}
+			else if(dayOfYear.length()<=2) {
+				dayOfYear = "0"+dayOfYear;
+			}
 		}
 		return dayOfYear;
 	}
