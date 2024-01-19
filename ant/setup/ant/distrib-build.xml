@@ -1289,6 +1289,17 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 			</then>
 		</if>
 		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="sqlserver"/>
+			<then>
+				<mkdir dir="${dist}/sql/utilities/svecchiamento"/>
+				<copy todir="${dist}/sql/utilities/svecchiamento">
+					<fileset dir="${deploy_sql}/svecchiamento/sqlserver">
+				    		<include name="*"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+		<if>
 			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
 			<then>
 				<mkdir dir="${dist}/sql/profili"/>
