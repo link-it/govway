@@ -691,6 +691,11 @@
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
+						<copy todir="${tmp_archivi}/govway.ear/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+						</copy>
 						<if>
 							<equals arg1="${antinstaller_as4_as}" arg2="tomcat"/>
 							<then>
@@ -840,6 +845,18 @@
 				    <param name="archiveFile" value="${tmp_archivi}/govway.war"/>
 					<param name="as" value="${build_for_as}"/>
 				</antcall>
+
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_archivi}/govway.war/WEB-INF/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
 
 				<!-- preloading -->
 				<if>
@@ -1797,6 +1814,11 @@
 						<antcall target="as4_ds_settings">
 						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
 						</antcall>
+						<antcall target="replace_token">
+						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
+							<param name="token" value="${datasource_pdd_name}"/>
+							<param name="value" value="${datasource_domibus_name}"/>
+						</antcall>
 					</then>
 				</if>
 			</then>
@@ -1893,6 +1915,11 @@
 							tofile="${tmp_ds}/domibus-ds.xml"/>
 						<antcall target="as4_ds_settings">
 						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
+						</antcall>
+						<antcall target="replace_token">
+						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
+							<param name="token" value="${datasource_pdd_name}"/>
+							<param name="value" value="${datasource_domibus_name}"/>
 						</antcall>
 					</then>
 				</if>
