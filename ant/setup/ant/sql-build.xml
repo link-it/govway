@@ -170,10 +170,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 	<target name="_initSQL_sqlserver">	
 		<antcall target="_initSQL"/>		
 		<concat destfile="${sqlFileOutput}" append="yes">
-<![CDATA[-- Il charset da utilizzare è UTF-8, la collection deve essere case sensitive.
--- Per verificare il charset e la collection associata al database:
+<![CDATA[-- Il charset da utilizzare è UTF-8, la collation deve essere case sensitive.
+-- Per verificare il charset e la collation associata al database:
 --   SELECT collation_name FROM sys.databases WHERE name = '@DATABASE@';
--- Se viene rilevato un charset (deve essere *_CS_*) e/o una collection (deve terminare con _UTF8) differente, effettuare la seguente modifica (con collate di esempio):
+-- Se viene rilevato un charset (deve essere *_CS_*) e/o una collation (deve terminare con _UTF8) differente, effettuare la seguente modifica (con collate di esempio):
 --   ALTER DATABASE @DATABASE@ COLLATE Latin1_General_100_CS_AS_SC_UTF8;
 -- NOTA: la modifica del collate DEVE essere effettuata prima di caricare lo script seguente.
 -- 
