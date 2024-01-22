@@ -24,8 +24,8 @@
 		<jettison.version>1.5.4</jettison.version>
 		<org.json.json.version>20231013</org.json.json.version>
 		<json-lib.version>2.4-jdk15</json-lib.version>
-		<json-path.version>2.7.0</json-path.version>
-		<json-path.gov4j.version>2.7.0-gov4j-1</json-path.gov4j.version>
+		<json-path.version>2.9.0</json-path.version>
+		<json-path.gov4j.version>2.9.0-gov4j-1</json-path.gov4j.version>
 		<json-schema-core.version>1.2.8</json-schema-core.version>
 		<json-smart.version>2.4.10</json-smart.version>
 		<libphonenumber.version>8.12.57</libphonenumber.version>

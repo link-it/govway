@@ -1,3 +1,9 @@
+2024-01-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2023-51074: aggiornata libreria 'com.jayway.jsonpath:json-path' alla versione 2.9.0
+
 2024-01-19  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]
