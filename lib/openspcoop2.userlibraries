@@ -111,7 +111,7 @@
 	<archive path="/op2_3.4.dev/lib/json/msg-simple-1.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/failureaccess-1.0.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/libphonenumber-8.13.18.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/json-path-2.8.0-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/json-path-2.9.0-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/json-smart-2.5.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/accessors-smart-2.5.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/jettison-1.5.4.jar"/>
