@@ -1,10 +1,16 @@
 2024-01-19  Andrea Poli <apoli@link.it>
 
+	* [InstallerVersioneBinaria]
+	Aggiunti script di svecchiamento delle tracce per tipo di database sqlserver.
+
+2024-01-19  Andrea Poli <apoli@link.it>
+
 	* [InstallerVersioneBinaria, ProtocolloAS4]
 	Risolto Bug OP-1697
-	Gli artefatti prodotti dall'installer in caso di scelta del profilo di interoperabiltà 'eDelivery' presentano i seguenti errori:
+	Gli artefatti prodotti dall'installer in caso di scelta del profilo di interoperabiltà 'eDelivery' presentavano i seguenti errori:
 	- nell'archivio govway.ear manca il jar 'openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar' 
 	- il datasource per wildfly 'domibus-ds.xml' non contiene il nome jndi 'org.govway.datasource.domibus' atteso
+	Inoltre è stato aggiornato il riferimento al progetto eDelivery Domibus: https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Domibus
 
 2024-01-18  Andrea Poli <apoli@link.it>
 
