@@ -75,7 +75,7 @@ public class RestTest extends ConfigLoader {
 		
 		int tempoMax = 1500; // su oracle impiega piu' tempo
 		if(Utils.isJenkins()) {
-			tempoMax = 2500; 
+			tempoMax = 3000; 
 		}
 		
 		var responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 10);
