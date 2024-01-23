@@ -8,7 +8,7 @@ info:
   license:
     name: "GPL v3.0"
     url: "https://www.gnu.org/licenses/gpl-3.0.txt"
-  version: "3.3.13.p1"
+  version: "3.3.14"
   x-api-id: "https://govway.org/apiConfig"
   x-summary: "Servizi per la configurazione di GovWay"
 servers:

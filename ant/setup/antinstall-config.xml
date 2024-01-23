@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.8.dtd">
-<installer name="GovWay Installer v3.3.13.p1" defaultImageResource="/logoSetup.png"
+<installer name="GovWay Installer v3.3.14" defaultImageResource="/logoSetup.png"
     ui="swing,text"
 	verbose="false"
     windowIcon="/iconaSetup.png" wide="550:275" loadDefaults="true">
@@ -14,7 +14,7 @@
 	 - ./install.sh text ant.install.properties 
     -->
 
-    <page type="input" name="intro" displayText="Installer GovWay v3.3.13.p1">
+    <page type="input" name="intro" displayText="Installer GovWay v3.3.14">
         <comment explanatoryText=""/>
         <comment explanatoryText="Il software GovWay e' distribuito con licenza GPL v3"/>
         <comment explanatoryText=""/>
@@ -22,8 +22,8 @@
         <comment explanatoryText="       https://govway.org" bold="true"/>
         <comment explanatoryText="       https://link.it" bold="true"/>
 
-	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.3.13.p1"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
-	<hidden property="antinstaller_versione_attuale" value="3.3.13"/>
+	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.3.14"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
+	<hidden property="antinstaller_versione_attuale" value="3.3.14"/>
 
         <!-- NOTA: le proprieta seguenti NON devono essere utilizzate al di fuori della ifProperty altrimenti su windows non vengono 
                 considerati i valori iniziali presenti nel file ant.install.properties impostato nei comandi install.* -->
@@ -95,6 +95,7 @@
 
 	<large-select defaultValue="" property="antinstaller_versione_precedente" displayText="Versione Precedente">
 	    <!-- NOTA: non inserire più di 18 elementi, altrimenti la modalità './install.sh text' non esce da questa selezione -->
+	    <option value="3.3.13" text="3.3.13"/>
 	    <option value="3.3.12" text="3.3.12"/>
 	    <option value="3.3.11" text="3.3.11"/>
 	    <option value="3.3.10" text="3.3.10"/>
@@ -112,8 +113,8 @@
 	    <option value="3.2.1" text="3.2.1"/>
 	    <option value="3.2.0" text="3.2.0"/>
 	    <option value="3.1.1" text="3.1.1"/>
-	    <option value="3.1.0" text="3.1.0"/>
-	    <!-- <option value="3.0.1" text="3.0.1"/>
+	    <!-- <option value="3.1.0" text="3.1.0"/>
+	    <option value="3.0.1" text="3.0.1"/>
 	    <option value="3.0.0" text="3.0.0"/> -->
         </large-select>
     </page>
@@ -174,8 +175,6 @@
         <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
             <option value="postgresql" text="PostgreSQL"/>
             <option value="mysql" text="MySQL"/>
-	    <!-- <option value="mariadb" text="MariaDB"/> TODO -->
-  	    <!-- <option value="mysql" text="MariaDB"/> -->
             <option value="oracle" text="Oracle"/>
             <option value="hsql" text="HyperSQL"/>
             <option value="sqlserver" text="SQLServer"/>
@@ -243,8 +242,6 @@
         <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
             <option value="postgresql" text="PostgreSQL"/>
             <option value="mysql" text="MySQL"/>
-	    <!-- <option value="mariadb" text="MariaDB"/> TODO -->
-  	    <!-- <option value="mysql" text="MariaDB"/> -->
             <option value="oracle" text="Oracle"/>
             <option value="hsql" text="HyperSQL"/>
             <option value="sqlserver" text="SQLServer"/>
