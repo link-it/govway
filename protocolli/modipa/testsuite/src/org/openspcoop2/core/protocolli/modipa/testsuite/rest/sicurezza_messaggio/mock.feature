@@ -46,6 +46,8 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 	isTest('doppi-header-audience-risposta-diversi-valori-statici') || isTest('doppi-header-audience-risposta-diversi-valori-statici-authorization-non-valido') || isTest('doppi-header-audience-risposta-diversi-valori-statici-agid-jwt-signature-non-valido') ||
   isTest('doppi-header-audience-richiesta-stesso-valore') ||
   isTest('doppi-header-audience-richiesta-differente-valore') ||
+  isTest('doppi-header-audience-richiesta-differente-valore-audienceAsArray') ||
+  isTest('doppi-header-audience-richiesta-differente-valore-audienceAsArrayMultipleValues') ||
 	isTest('low-ttl-erogazione') || isTest('low-iat-ttl-erogazione') || isTest('iat-future-response') || 
 	isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || 
 	isTest('manomissione-token-risposta') || 
@@ -151,7 +153,9 @@ Scenario: isTest('connettivita-base-idar02-header-agid')
 #                IDAR03                  #
 ##########################################
 
-Scenario: isTest('connettivita-base-idar03') || isTest('digest-hex-idar03') || isTest('manomissione-header-http-firmati-risposta')
+Scenario: isTest('connettivita-base-idar03') || 
+	isTest('test-audience-as-array') || isTest('test-audience-as-array-multiple-values') ||
+	isTest('digest-hex-idar03') || isTest('manomissione-header-http-firmati-risposta')
 
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 200
@@ -806,7 +810,9 @@ Scenario: isTest('audit-rest-jwk-01')  ||
 		isTest('audit-rest-jwk-custom-01') || 
 		isTest('audit-rest-jwk-custom-02') ||
 		isTest('audit-rest-jwk-token-optional-01') || 
-		isTest('audit-rest-jwk-purpose-id-uguali')
+		isTest('audit-rest-jwk-purpose-id-uguali') ||
+		isTest('audit-rest-jwk-01-differentAudienceAsArray') ||
+		isTest('audit-rest-jwk-0401-differentAudienceAsArray')
 
     * match requestHeaders['Authorization'] == '#notpresent'
     * match requestHeaders['Agid-JWT-TrackingEvidence'] == '#notpresent'

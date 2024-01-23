@@ -3,6 +3,7 @@ Feature: Testing Sicurezza Messaggio ModiPA IDAR03
 Background:
     * def basic = read('classpath:utils/basic-auth.js')
     * def check_traccia = read('check-tracce/check-traccia.feature')
+    * def check_traccia_no_audience = read('check-tracce/check-traccia-no-audience.feature')
     * def decode_token = read('classpath:utils/decode-token.js')
     * def get_traccia = read('classpath:utils/get_traccia.js')
     * def get_info_transazione = read('classpath:utils/get_info_transazione.js')
@@ -68,6 +69,193 @@ And match header Authorization == '#notpresent'
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+
+
+
+
+
+@testAudienceAsArray
+Scenario: Test in cui l'audience viene inviato come array
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-AudienceAsArray/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'test-audience-as-array'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header IDAR03TestHeader = "TestHeaderRequest"
+And header GovWay-TestSuite-Test-Audience = "[testsuite]";
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
+* def request_digest = get client_token $.payload.signed_headers..digest
+* def response_digest = get server_token $.payload.signed_headers..digest
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar03testheader', value: 'TestHeaderRequest' },
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite"]' }
+])
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar03testheader', value: 'TestHeaderResponse' },
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-server-response"]' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+
+
+
+
+
+
+
+@testAudienceAsArrayMultipleValues
+Scenario: Test in cui l'audience viene inviato come array con più valori
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-AudienceAsArray/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'test-audience-as-array-multiple-values'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header IDAR03TestHeader = "TestHeaderRequest"
+And header GovWay-TestSuite-Test-Audience = "[testsuite2,testsuite,testsuite3]";
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
+* def request_digest = get client_token $.payload.signed_headers..digest
+* def response_digest = get server_token $.payload.signed_headers..digest
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar03testheader', value: 'TestHeaderRequest' },
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite2","testsuite","testsuite3"]' }
+])
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar03testheader', value: 'TestHeaderResponse' },
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-server-response"]' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+
+
+
+
+@testAudienceAsArrayInvalid
+Scenario: Test in cui l'audience viene inviato come array, valore diverso da quello atteso nell'erogazione
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-AudienceAsArray/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'test-audience-as-array-invalid'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header IDAR03TestHeader = "TestHeaderRequest"
+And header GovWay-TestSuite-Test-Audience = "[testsuite-invalid]";
+When method post
+Then status 400
+And match response == read('error-bodies/aud-token-richiesta-non-valido.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
+* def request_digest = get client_token $.payload.signed_headers..digest
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar03testheader', value: 'TestHeaderRequest' },
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-invalid"]' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
+
+
+
+
+@testAudienceAsArrayMultipleValuesInvalid
+Scenario: Test in cui l'audience viene inviato come array con più valori, valore diverso da quello atteso nell'erogazione
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03-AudienceAsArray/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'test-audience-as-array-multiple-values-invalid'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header IDAR03TestHeader = "TestHeaderRequest"
+And header GovWay-TestSuite-Test-Audience = "[testsuite2,testsuite-invalid,testsuite3]";
+When method post
+Then status 400
+And match response == read('error-bodies/aud-token-richiesta-non-valido.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
+* def request_digest = get client_token $.payload.signed_headers..digest
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar03testheader', value: 'TestHeaderRequest' },
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite2","testsuite-invalid","testsuite3"]' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
+
+
+
 
 
 
@@ -1370,7 +1558,7 @@ Then status 400
 
 
 @doppi-header-audience-richiesta-differente-valore
-Scenario: Il fruitore genera nei token in richiesta lo stesso valore di audience nei 2 differenti header
+Scenario: Il fruitore genera nei token in richiesta un valore differente di audience nei 2 differenti header
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicatiRequestDifferenteAudience/v1'
 And path 'resources', 1, 'M'
@@ -1445,6 +1633,142 @@ Then status 400
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_traccia(tid,'Richiesta') 
 * match result contains deep other_checks_richiesta
+
+
+@doppi-header-audience-richiesta-differente-valore-audienceAsArray
+Scenario: Il fruitore genera nei token in richiesta un valore differente, come array, negli audience nei 2 differenti header
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati-AudienceAsArray/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'doppi-header-audience-richiesta-differente-valore-audienceAsArray'
+And header GovWay-TestSuite-Test-Aud-Authorization = "[testsuite-audience-authorization]"
+And header GovWay-TestSuite-Test-Aud-Modi = "[testsuite-audience-integrity]"
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2', password: 'ApplicativoBlockingIDA01ExampleClient2' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-audience-authorization"]' },
+    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-audience-integrity"]' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_traccia(tid,'Richiesta') 
+* match result contains deep other_checks_richiesta
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-server-response-authorization","altro-valore"]' },
+    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-server-response-integrity","altro-valore"]' }
+])
+"""
+
+* def result = get_traccia(tid,'Risposta') 
+* match result contains deep other_checks_risposta
+
+@doppi-header-audience-richiesta-differente-valore-audienceAsArrayMultipleValues
+Scenario: Il fruitore genera nei token in richiesta un valore differente, come array con più valori, negli audience nei 2 differenti header
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati-AudienceAsArray/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'doppi-header-audience-richiesta-differente-valore-audienceAsArrayMultipleValues'
+And header GovWay-TestSuite-Test-Aud-Authorization = "[testsuite-audience-authorization,altro]"
+And header GovWay-TestSuite-Test-Aud-Modi = "[altro,altro2,testsuite-audience-integrity]"
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2', password: 'ApplicativoBlockingIDA01ExampleClient2' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-audience-authorization","altro"]' },
+    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["altro","altro2","testsuite-audience-integrity"]' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_traccia(tid,'Richiesta') 
+* match result contains deep other_checks_richiesta
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-server-response-authorization","altro-valore"]' },
+    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-server-response-integrity","altro-valore"]' }
+])
+"""
+
+* def result = get_traccia(tid,'Risposta') 
+* match result contains deep other_checks_risposta
+
+
+@doppi-header-audience-richiesta-differente-valore-audienceAsArray-authorizationInvalid
+Scenario: Il fruitore genera nei token in richiesta un valore differente, come array, negli audience nei 2 differenti header; il valore inserito nell'header authorization non è valido
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati-AudienceAsArray/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'doppi-header-audience-richiesta-differente-valore-audienceAsArrayInvalid'
+And header GovWay-TestSuite-Test-Aud-Authorization = "[testsuite-audience-authorization-invalid]"
+And header GovWay-TestSuite-Test-Aud-Modi = "[testsuite-audience-integrity]"
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2', password: 'ApplicativoBlockingIDA01ExampleClient2' })
+When method post
+Then status 400
+And match response == read('error-bodies/aud-token-richiesta-non-valido.json')
+And match header Authorization == '#notpresent'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-audience-authorization-invalid"]' },
+    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-audience-integrity"]' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_traccia(tid,'Richiesta') 
+* match result contains deep other_checks_richiesta
+
+
+
+@doppi-header-audience-richiesta-differente-valore-audienceAsArray-integrityInvalid
+Scenario: Il fruitore genera nei token in richiesta un valore differente, come array multiplo, negli audience nei 2 differenti header; il valore inserito nell'header integrity non è valido
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati-AudienceAsArray/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'doppi-header-audience-richiesta-differente-valore-audienceAsArrayIntegrityInvalid'
+And header GovWay-TestSuite-Test-Aud-Authorization = "[altro,testsuite-audience-authorization]"
+And header GovWay-TestSuite-Test-Aud-Modi = "[testsuite-audience-integrity-invalid,altro]"
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2', password: 'ApplicativoBlockingIDA01ExampleClient2' })
+When method post
+Then status 400
+And match response == read('error-bodies/aud-token-agid-jwt-signature-richiesta-non-valido.json')
+And match header Authorization == '#notpresent'
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["altro","testsuite-audience-authorization"]' },
+    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-audience-integrity-invalid","altro"]' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* def result = get_traccia(tid,'Richiesta') 
+* match result contains deep other_checks_richiesta
+
+
 
 
 @doppi-header-differenti-id-authorization

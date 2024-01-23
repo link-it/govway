@@ -43,6 +43,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.utils.ModISecurityUtils;
 
 /**
  * ModIDynamicConfiguration
@@ -203,7 +204,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
-		String schemaAuditImpostatoInAPIoAltreAzioni = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, id.getIdPortType().getNome());
+		String schemaAuditImpostatoInAPIoAltreAzioni = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, id.getIdPortType().getNome());
 	
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.addProfiloSicurezzaMessaggio(this.modiProperties,
 				configuration, false, true,
@@ -264,7 +265,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
-		String schemaAuditImpostatoInAPIoAltreAzioni = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, null);
+		String schemaAuditImpostatoInAPIoAltreAzioni = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, null);
 		
 		ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.addProfiloSicurezzaMessaggio(this.modiProperties,
 				configuration, true, true,

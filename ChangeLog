@@ -1,3 +1,13 @@
+2024-01-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA]
+	Risolto Bug OP-1694
+	La validazione dei token 'ModI' non supportava token contenenti claim 'aud' definiti come stringhe di array.
+	È stato aggiunto il supporto in modo da rispettare entrambe le modalità (array of case-sensitive strings or single case-sensitive string)
+	indicate nel RFC 'https://datatracker.ietf.org/doc/html/rfc7519.html#section-4.1.3'.
+	Nell'intervento è stato rivista anche la verifica dei certificati di una fruizione o erogazione, 
+	in modo che i keystore/truststore utilizzati per i token di una risposta vengono validati solamente se l'API prevede un token di sicurezza nella risposta.
+
 2024-01-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

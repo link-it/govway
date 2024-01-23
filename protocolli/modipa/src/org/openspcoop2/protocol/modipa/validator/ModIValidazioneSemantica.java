@@ -332,9 +332,13 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					checkIat(iatIntegrity, msg, rest, prefixIntegrity);
 				}
 				
-				String audience = busta.getProperty(rest ? 
+				String audienceBusta = busta.getProperty(rest ? 
 						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE :
 						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO	);
+				List<String> listAudienceBusta = null;
+				if(rest && this.modiProperties.isRestSecurityTokenAudienceProcessArrayModeEnabled()) {
+					listAudienceBusta = ModIUtilities.getArrayStringAsList(audienceBusta, true);
+				}
 				
 				Object audienceAttesoObject = null;
 				if(msg!=null) {
@@ -356,15 +360,9 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 				if(audienceAtteso!=null || audienceOAuthAtteso!=null) {
 					
-					boolean checkAudience = false;
-					if(audienceAtteso!=null) {
-						checkAudience = audienceAtteso.equals(audience);
-					}
+					boolean checkAudience = isAudienceValid(audienceAtteso, audienceBusta, listAudienceBusta);
 					
-					boolean checkAudienceOAuth = false;
-					if(audienceOAuthAtteso!=null) {
-						checkAudienceOAuth = audienceOAuthAtteso.equals(audience);
-					}
+					boolean checkAudienceOAuth = isAudienceValid(audienceOAuthAtteso, audienceBusta, listAudienceBusta);
 					
 					if(!checkAudience && !checkAudienceOAuth) {
 						
@@ -404,21 +402,19 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					}
 					
 					if(audienceIntegrityAtteso!=null || audienceIntegrityOAuthAtteso!=null) {
-						String audienceIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE);
-						if(audienceIntegrity==null) {
+						String audienceIntegrityBusta = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE);
+						if(audienceIntegrityBusta==null) {
 							// significa che l'audience tra i due token ricevuto e' identico
-							audienceIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
+							audienceIntegrityBusta = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
+						}
+						List<String> listAudienceIntegrityBusta = null;
+						if(audienceIntegrityBusta!=null && rest && this.modiProperties.isRestSecurityTokenAudienceProcessArrayModeEnabled()) {
+							listAudienceIntegrityBusta = ModIUtilities.getArrayStringAsList(audienceIntegrityBusta, true);
 						}
 						
-						boolean checkAudience = false;
-						if(audienceIntegrityAtteso!=null) {
-							checkAudience = audienceIntegrity.equals(audienceIntegrityAtteso);
-						}
+						boolean checkAudience = isAudienceValid(audienceIntegrityAtteso, audienceIntegrityBusta, listAudienceIntegrityBusta);
 						
-						boolean checkAudienceOAuth = false;
-						if(audienceIntegrityAttesoOAuthObject!=null) {
-							checkAudienceOAuth = audienceIntegrity.equals(audienceIntegrityAttesoOAuthObject);
-						}
+						boolean checkAudienceOAuth = isAudienceValid(audienceIntegrityOAuthAtteso, audienceIntegrityBusta, listAudienceIntegrityBusta);
 						
 						if(!checkAudience && !checkAudienceOAuth) {
 							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
@@ -460,12 +456,20 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				}
 				if(audienceAuditAttesoObject!=null) {
 					String audienceAuditAtteso = (String) audienceAuditAttesoObject;
-					String audienceAudit = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE);
-					if(audienceAudit==null) {
+					String audienceAuditBusta = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_AUDIENCE);
+					if(audienceAuditBusta==null) {
 						// significa che l'audience tra i due token ricevuto e' identico
-						audienceAudit = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
+						audienceAuditBusta = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
 					}
-					if(!audienceAuditAtteso.equals(audienceAudit)) {
+					
+					List<String> listAudienceAuditBusta = null;
+					if(audienceAuditBusta!=null && this.modiProperties.isSecurityTokenAuditProcessArrayModeEnabled()) {
+						listAudienceAuditBusta = ModIUtilities.getArrayStringAsList(audienceAuditBusta, true);
+					}
+					
+					boolean checkAudienceAudit = isAudienceValid(audienceAuditAtteso, audienceAuditBusta, listAudienceAuditBusta);
+					
+					if(!checkAudienceAudit) {
 						this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
 								isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
 									CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
@@ -779,6 +783,22 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			this.erroriProcessamento.add(this.validazioneUtils.newEccezioneProcessamento(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO, 
 					e.getMessage(),e));
 		}
+	}
+	
+	private boolean isAudienceValid(String audienceAtteso, String audience, List<String> listAudience) {
+		boolean checkAudience = false;
+		if(audienceAtteso!=null) {
+			checkAudience = audienceAtteso.equals(audience);
+			if(!checkAudience && listAudience!=null && !listAudience.isEmpty()) {
+				for (String check : listAudience) {
+					if(audienceAtteso.equals(check)) {
+						checkAudience = true;
+						break;
+					}
+				}
+			}
+		}
+		return checkAudience;
 	}
 
 	private void checkExp(String exp, Date now, boolean rest, String prefix) throws ProtocolException {

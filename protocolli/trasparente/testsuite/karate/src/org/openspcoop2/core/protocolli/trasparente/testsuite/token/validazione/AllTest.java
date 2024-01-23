@@ -507,6 +507,42 @@ public class AllTest extends ConfigLoader {
 				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
+	@Test
+	public void audienceSingleValueOk() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT_singleValueNoArrayAudience(false, 
+				mapExpectedTokenInfo));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazione, "success", headers,  null,
+				null,
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void audienceSingleValueKo() throws Exception {
+				
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT_singleValueNoArrayAudience(true, 
+				mapExpectedTokenInfo));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazione, "success", headers,  null,
+				"(Token claim 'aud' with unexpected value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
+	}
+	
 	
 	@Test
 	public void usernameInvalid1() throws Exception {
@@ -598,7 +634,9 @@ public class AllTest extends ConfigLoader {
 						false,true,false,
 						false,
 						false, false, false, false,
-						true, false, false, false,
+						true, 
+						false, false, 
+						false, false,
 						mapExpectedTokenInfo));
 		Utilities._test(logCore, validazione, "not", headers,  null,
 				"(Token claim 'client_id' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
@@ -680,7 +718,9 @@ public class AllTest extends ConfigLoader {
 				false,true,false,
 				false,
 				false, false, false, false,
-				false, false, true, false,
+				false, 
+				false, false, 
+				true, false,
 				mapExpectedTokenInfo));
 		
 		Utilities._test(logCore, validazione, "not", headers,  null,
@@ -732,7 +772,9 @@ public class AllTest extends ConfigLoader {
 						false,true,false,
 						false,
 						false, false, false, false,
-						true, false, false, false,
+						true, 
+						false, false, 
+						false, false,
 						mapExpectedTokenInfo));
 		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  null,
 				"(Resource '${tokenInfo:clientId}' with unauthorized value '18192.apps.invalid') Il chiamante non è autorizzato ad invocare l'API",
@@ -814,7 +856,9 @@ public class AllTest extends ConfigLoader {
 				false,true,false,
 				false,
 				false, false, false, false,
-				false, false, true, false,
+				false, 
+				false, false, 
+				true, false,
 				mapExpectedTokenInfo));
 		
 		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  null,
@@ -1007,7 +1051,9 @@ public class AllTest extends ConfigLoader {
 				true, true, true,
 				true,
 				false, false, false, false,
-				false, false, false, false,
+				false, 
+				false, false,
+				false, false,
 				null);
 	}
 	private static String buildJWT(boolean requiredClaims,
@@ -1027,7 +1073,9 @@ public class AllTest extends ConfigLoader {
 				true, true, true,
 				false,
 				false, false, false, false,
-				false, false, false, false,
+				false, 
+				false, false,
+				false, false,
 				mapExpectedTokenInfo);
 	}
 	private static String buildJWT_scope(boolean scope1, boolean scope2, boolean scope3,
@@ -1038,7 +1086,9 @@ public class AllTest extends ConfigLoader {
 				true, true, true,
 				false,
 				false, false, false, false,
-				false, false, false, false,
+				false, 
+				false, false,
+				false, false,
 				mapExpectedTokenInfo);
 	}
 	private static String buildJWT_roles(boolean role1, boolean role2, boolean role3,
@@ -1049,7 +1099,9 @@ public class AllTest extends ConfigLoader {
 				role1, role2, role3,
 				false,
 				false, false, false, false,
-				false, false, false, false,
+				false, 
+				false, false,
+				false, false,
 				mapExpectedTokenInfo);
 	}
 	private static String buildJWT_dates(boolean invalidIat, boolean futureIat, boolean invalidNbf, boolean invalidExp,
@@ -1060,7 +1112,9 @@ public class AllTest extends ConfigLoader {
 				true, true, true,
 				false,
 				invalidIat, futureIat, invalidNbf, invalidExp,
-				false, false, false, false,
+				false, 
+				false, false,
+				false, false,
 				mapExpectedTokenInfo);
 	}	
 	private static String buildJWT_invalid(boolean invalidClientId, boolean invalidAudience, boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
@@ -1071,9 +1125,24 @@ public class AllTest extends ConfigLoader {
 				true, true, true,
 				false,
 				false, false, false, false,
-				invalidClientId, invalidAudience, invalidUsername, invalidClaimCheNonDeveEsistere,
+				invalidClientId, 
+				false, invalidAudience, 
+				invalidUsername, invalidClaimCheNonDeveEsistere,
 				mapExpectedTokenInfo);
 	}			
+	private static String buildJWT_singleValueNoArrayAudience(boolean invalidAudience,
+			List<String> mapExpectedTokenInfo) throws Exception {
+		return buildJWT(true,
+				true, true, true, true, true,
+				true, true, true,
+				true, true, true,
+				false,
+				false, false, false, false,
+				false, 
+				true, invalidAudience, 
+				false, false,
+				mapExpectedTokenInfo);
+	}
 	private static String buildJWT(boolean requiredClaims,
 			boolean requiredClaims_clientId, boolean requiredClaims_issuer, boolean requiredClaims_subject,
 			boolean requiredClaims_username, boolean requiredClaims_eMail,
@@ -1081,7 +1150,9 @@ public class AllTest extends ConfigLoader {
 			boolean role1, boolean role2, boolean role3,
 			boolean signWithSoggetto1,
 			boolean invalidIat, boolean futureIat, boolean invalidNbf, boolean invalidExp,
-			boolean invalidClientId, boolean invalidAudience, boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
+			boolean invalidClientId, 
+			boolean singleValueNoArrayAudience, boolean invalidAudience,
+			boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
 			List<String> mapExpectedTokenInfo) throws Exception {
 		
 		String jsonInput = Utilities.buildJson(requiredClaims, 
@@ -1090,7 +1161,9 @@ public class AllTest extends ConfigLoader {
 				scope1, scope2, scope3, 
 				role1, role2, role3, 
 				invalidIat, futureIat, invalidNbf, invalidExp, 
-				invalidClientId, invalidAudience, invalidUsername, invalidClaimCheNonDeveEsistere, 
+				invalidClientId, 
+				singleValueNoArrayAudience, invalidAudience, 
+				invalidUsername, invalidClaimCheNonDeveEsistere, 
 				mapExpectedTokenInfo,
 				""); 
 		

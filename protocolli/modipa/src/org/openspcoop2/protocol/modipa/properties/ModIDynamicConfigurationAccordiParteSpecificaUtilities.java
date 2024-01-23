@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.utils.ModISecurityUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 
 /**
@@ -102,40 +103,40 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		boolean rest = ServiceBinding.REST.equals(api.getServiceBinding());
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
 				
-		boolean corniceSicurezza = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
+		boolean corniceSicurezza = ModISecurityUtils.isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
 		String patternDatiCorniceSicurezza = null;
 		String schemaDatiCorniceSicurezza = null;
 		if(corniceSicurezza) {
-			patternDatiCorniceSicurezza = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaPattern(api, portType);
+			patternDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaPattern(api, portType);
 			if(patternDatiCorniceSicurezza==null) {
 				// backward compatibility
 				patternDatiCorniceSicurezza = ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD;
 			}
 			if(!ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternDatiCorniceSicurezza)) {
-				schemaDatiCorniceSicurezza = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
+				schemaDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
 			}
 		}
 		
 		// Identificazione se è richiesta la sicurezza
-		if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioRequired(api, portType)) {
+		if(ModISecurityUtils.isSicurezzaMessaggioRequired(api, portType)) {
 		
-			boolean digest = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConIntegrita(api, portType);
+			boolean digest = ModISecurityUtils.isProfiloSicurezzaMessaggioConIntegrita(api, portType);
 			
 			boolean headerDuplicati = false;
 			boolean riferimentoX509 = false;
 			boolean kidMode = false;
 			if(rest) {
-				headerDuplicati = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
-				riferimentoX509 = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioRiferimentoX509Required(api, portType);
-				kidMode =  ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioKidModeSupported(api, portType);
+				headerDuplicati = ModISecurityUtils.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
+				riferimentoX509 = ModISecurityUtils.isSicurezzaMessaggioRiferimentoX509Required(api, portType);
+				kidMode =  ModISecurityUtils.isSicurezzaMessaggioKidModeSupported(api, portType);
 			}
 			
 			boolean tokenNonLocale = true;
 			if(rest || fruizioni) {
-				tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType, rest);	
+				tokenNonLocale = ModISecurityUtils.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType, rest);	
 			}
 			
-			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRichiesta(api, portType, true)) {
+			if(ModISecurityUtils.isProfiloSicurezzaMessaggioApplicabileRichiesta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addSicurezzaMessaggio(modiProperties,
 					configuration, rest, fruizioni, true, casoSpecialeModificaNomeFruizione, digest, 
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
@@ -145,7 +146,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 					false, 
 					tokenNonLocale);
 			}
-			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRisposta(api, portType, true)) {
+			if(ModISecurityUtils.isProfiloSicurezzaMessaggioApplicabileRisposta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addSicurezzaMessaggio(modiProperties,
 					configuration, rest, fruizioni, false, casoSpecialeModificaNomeFruizione, digest, 
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
@@ -170,7 +171,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 				
 				boolean tokenNonLocale = false;
 				if(fruizioni) {
-					tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType, rest);	
+					tokenNonLocale = ModISecurityUtils.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType, rest);	
 				}
 				
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addSicurezzaMessaggio(modiProperties,
@@ -257,33 +258,33 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		}
 		boolean rest = ServiceBinding.REST.equals(api.getServiceBinding());
 		
-		boolean corniceSicurezza = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
+		boolean corniceSicurezza = ModISecurityUtils.isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
 		String patternDatiCorniceSicurezza = null;
 		String schemaDatiCorniceSicurezza = null;
 		if(corniceSicurezza) {
-			patternDatiCorniceSicurezza = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaPattern(api, portType);
+			patternDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaPattern(api, portType);
 			if(patternDatiCorniceSicurezza==null) {
 				// backward compatibility
 				patternDatiCorniceSicurezza = ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD;
 			}
 			if(!ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternDatiCorniceSicurezza)) {
-				schemaDatiCorniceSicurezza = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
+				schemaDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
 			}
 		}
 		
 		// Identificazione se è richiesta la sicurezza
-		if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioRequired(api, portType)) {
+		if(ModISecurityUtils.isSicurezzaMessaggioRequired(api, portType)) {
 					
 			boolean headerDuplicati = false;
 			if(rest) {
-				headerDuplicati = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
+				headerDuplicati = ModISecurityUtils.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
 			}
 			
-			boolean kidMode = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioKidModeSupported(api, portType);
+			boolean kidMode = ModISecurityUtils.isSicurezzaMessaggioKidModeSupported(api, portType);
 			
-			boolean tokenNonLocale = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType, rest);
+			boolean tokenNonLocale = ModISecurityUtils.isProfiloSicurezzaMessaggioConSorgenteTokenNonLocale(api, portType, rest);
 			
-			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRichiesta(api, portType, true)) {
+			if(ModISecurityUtils.isProfiloSicurezzaMessaggioApplicabileRichiesta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateSicurezzaMessaggio(modiProperties,
 					consoleConfiguration, properties, rest, fruizioni, true, casoSpecialeModificaNomeFruizione, 
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
@@ -291,7 +292,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 					kidMode,
 					tokenNonLocale);
 			}
-			if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioApplicabileRisposta(api, portType, true)) {
+			if(ModISecurityUtils.isProfiloSicurezzaMessaggioApplicabileRisposta(api, portType, true)) {
 				ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateSicurezzaMessaggio(modiProperties,
 					consoleConfiguration, properties, rest, fruizioni, false, casoSpecialeModificaNomeFruizione, 
 					patternDatiCorniceSicurezza, schemaDatiCorniceSicurezza,
@@ -385,17 +386,17 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		}
 		
 		
-		boolean corniceSicurezza = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
+		boolean corniceSicurezza = ModISecurityUtils.isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
 		String patternDatiCorniceSicurezza = null;
 		String schemaDatiCorniceSicurezza = null;
 		if(corniceSicurezza) {
-			patternDatiCorniceSicurezza = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaPattern(api, portType);
+			patternDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaPattern(api, portType);
 			if(patternDatiCorniceSicurezza==null) {
 				// backward compatibility
 				patternDatiCorniceSicurezza = ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD;
 			}
 			if(!ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternDatiCorniceSicurezza)) {
-				schemaDatiCorniceSicurezza = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
+				schemaDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
 			}
 		}
 		
@@ -410,7 +411,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		
 		
 		// Identificazione se è richiesta la sicurezza
-		if(ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isSicurezzaMessaggioRequired(api, portType) || sicurezzaAudit) {
+		if(ModISecurityUtils.isSicurezzaMessaggioRequired(api, portType) || sicurezzaAudit) {
 			
 			AbstractConsoleItem<?> profiloSicurezzaMessaggioHttpHeadersItem = 	
 					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
@@ -480,14 +481,14 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			}
 			
 			boolean rest = ServiceBinding.REST.equals(api.getServiceBinding());
-			boolean digest = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConIntegrita(api, portType);
+			boolean digest = ModISecurityUtils.isProfiloSicurezzaMessaggioConIntegrita(api, portType);
 			boolean corniceSicurezzaLegacy = false;
 			if(corniceSicurezza) {
 				corniceSicurezzaLegacy = ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternDatiCorniceSicurezza);
 			}
 			boolean headerDuplicati = false;
 			if(rest) {
-				headerDuplicati = ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
+				headerDuplicati = ModISecurityUtils.isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
 			}
 			boolean requestCalcolatoSuInfoFruizioni = fruizioni;
 						

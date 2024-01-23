@@ -260,7 +260,9 @@ public class Utilities extends ConfigLoader {
 			boolean scope1, boolean scope2, boolean scope3,
 			boolean role1, boolean role2, boolean role3,
 			boolean invalidIat, boolean futureIat, boolean invalidNbf, boolean invalidExp,
-			boolean invalidClientId, boolean invalidAudience, boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
+			boolean invalidClientId, 
+			boolean singleValueNoArrayAudience, boolean invalidAudience, 
+			boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
 			List<String> mapExpectedTokenInfo,
 			String prefix) throws Exception {
 			
@@ -298,6 +300,9 @@ public class Utilities extends ConfigLoader {
 		String familyName = "Rossi";
 		
 		String aud = "\""+prefix+"aud\":[\""+audience+"\",\""+audience2+"\"]";
+		if(singleValueNoArrayAudience) {
+			aud = "\""+prefix+"aud\":\""+audience+"\"";
+		}
 		String jsonInput = 
 				"{ "+aud+",";
 		if(mapExpectedTokenInfo!=null) {

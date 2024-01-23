@@ -106,6 +106,7 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.utils.ModISecurityUtils;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.cache.CacheType;
@@ -3541,15 +3542,22 @@ public class RegistroServiziReader {
 			long idAsps, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverRegistroServiziException("Not Implemented");
 		}
 		
 		AccordoServizioParteSpecifica asps = null;
+		AccordoServizioParteComune api = null;
 		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
 			if(driver instanceof DriverRegistroServiziDB) {
 				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
 				asps = driverDB.getAccordoServizioParteSpecifica(idAsps);
+				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				api = driverDB.getAccordoServizioParteComune(idAccordo);
 				break;
 			}
 			else {
@@ -3557,11 +3565,11 @@ public class RegistroServiziReader {
 			}
 		}
 		
-		return checkCertificatiModIErogazioneById(asps,sogliaWarningGiorni, 
+		return checkCertificatiModIErogazioneById(api,asps,sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
-	public static CertificateCheck checkCertificatiModIErogazioneById(AccordoServizioParteSpecifica asps, int sogliaWarningGiorni, 
+	public static CertificateCheck checkCertificatiModIErogazioneById(AccordoServizioParteComune api, AccordoServizioParteSpecifica asps, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverRegistroServiziException {
 		
@@ -3575,11 +3583,19 @@ public class RegistroServiziReader {
 		}
 		
 		KeystoreParams keystoreParams = null;
-		try { 
-			keystoreParams = ModIUtils.getKeyStoreParams(asps.getProtocolPropertyList(), false);
-		}catch(Exception e) {
-			throw new DriverRegistroServiziException(e.getMessage(),e);
+		// il keystore viene utilizzato se c'è la gestione risposta.
+		boolean sicurezzaRisposta = false;
+		if(ModISecurityUtils.isSicurezzaMessaggioRequired(api, asps.getPortType())) {
+			sicurezzaRisposta = ModISecurityUtils.isProfiloSicurezzaMessaggioApplicabileRisposta(api, asps.getPortType(), true);
 		}
+		if(sicurezzaRisposta) {
+			try { 
+				keystoreParams = ModIUtils.getKeyStoreParams(asps.getProtocolPropertyList(), false);
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+		}
+		
 		KeystoreParams truststoreParams = null;
 		try { 
 			truststoreParams = ModIUtils.getTrustStoreParams(asps.getProtocolPropertyList());
@@ -3613,15 +3629,24 @@ public class RegistroServiziReader {
 			long idFruitore, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		
+		if(connectionPdD!=null) {
+			// nop
+		}
+		
 		if(useCache) {
 			throw new DriverRegistroServiziException("Not Implemented");
 		}
 		
+		AccordoServizioParteComune api = null;
+		AccordoServizioParteSpecifica asps = null;
 		Fruitore fruitore = null;
 		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
 			if(driver instanceof DriverRegistroServiziDB) {
 				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
 				fruitore = driverDB.getServizioFruitore(idFruitore);
+				asps = driverDB.getAccordoServizioParteSpecifica(fruitore.getIdServizio());
+				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				api = driverDB.getAccordoServizioParteComune(idAccordo);
 				break;
 			}
 			else {
@@ -3632,11 +3657,11 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziNotFound("Fruitore con id '"+idFruitore+"' non trovato");
 		}
 		
-		return checkCertificatiModIFruizioneById(fruitore,sogliaWarningGiorni, 
+		return checkCertificatiModIFruizioneById(api, asps, fruitore,sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
-	public static CertificateCheck checkCertificatiModIFruizioneById(Fruitore fruitore, int sogliaWarningGiorni, 
+	public static CertificateCheck checkCertificatiModIFruizioneById(AccordoServizioParteComune api, AccordoServizioParteSpecifica asps, Fruitore fruitore, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverRegistroServiziException {
 		
@@ -3651,24 +3676,38 @@ public class RegistroServiziReader {
 		}catch(Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
+		
 		KeystoreParams truststoreParams = null;
-		try { 
-			truststoreParams = ModIUtils.getTrustStoreParams(fruitore.getProtocolPropertyList());
-		}catch(Exception e) {
-			throw new DriverRegistroServiziException(e.getMessage(),e);
-		}
 		KeystoreParams truststoreSslParams = null;
-		try { 
-			truststoreSslParams = ModIUtils.getTrustStoreSSLParams(fruitore.getProtocolPropertyList());
-		}catch(Exception e) {
-			throw new DriverRegistroServiziException(e.getMessage(),e);
+		List<RemoteStoreConfig> trustStoreRemoteConfig = null;
+		// il truststore viene utilizzato se c'è la gestione risposta.
+		boolean sicurezzaRisposta = false;
+		if(ModISecurityUtils.isSicurezzaMessaggioRequired(api, asps.getPortType())) {
+			sicurezzaRisposta = ModISecurityUtils.isProfiloSicurezzaMessaggioApplicabileRisposta(api, asps.getPortType(), true);
+		}
+		if(sicurezzaRisposta) {
+			try { 
+				truststoreParams = ModIUtils.getTrustStoreParams(fruitore.getProtocolPropertyList());
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+			try { 
+				truststoreSslParams = ModIUtils.getTrustStoreSSLParams(fruitore.getProtocolPropertyList());
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+			try {
+				trustStoreRemoteConfig = ModIUtils.getRemoteStoreConfig();
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
 		}
 		
-		List<RemoteStoreConfig> trustStoreRemoteConfig = null;
-		try {
-			trustStoreRemoteConfig = ModIUtils.getRemoteStoreConfig();
-		}catch(Exception e) {
-			throw new DriverRegistroServiziException(e.getMessage(),e);
+		if(keystoreParams==null && !sicurezzaRisposta) {
+			// non ci sono certificati da controllare
+			CertificateCheck check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+			return check;
 		}
 		
 		return _checkStore(keystoreParams, 
