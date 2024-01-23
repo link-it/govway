@@ -1272,6 +1272,213 @@ Scenario: isTest('connettivita-base-idar03')
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
+Scenario: isTest('test-audience-as-array')
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: ['testsuite'],
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar03testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03-AudienceAsArray/v1')
+    
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: ['testsuite-server-response'],
+            client_id: 'RestBlockingIDAR03-AudienceAsArray/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03-AudienceAsArray/v1',
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json' },
+                { idar03testheader: 'TestHeaderResponse' }
+            ],
+            request_digest: request_digest[0]
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def response_token = decodeToken(responseHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def response_digest = get response_token $.payload.signed_headers..digest
+    
+    * match responseHeaders['Digest'][0] == response_digest[0]
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+Scenario: isTest('test-audience-as-array-multiple-values')
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: ['testsuite2','testsuite','testsuite3'],
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar03testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03-AudienceAsArray/v1')
+    
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: ['testsuite-server-response'],
+            client_id: 'RestBlockingIDAR03-AudienceAsArray/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03-AudienceAsArray/v1',
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json' },
+                { idar03testheader: 'TestHeaderResponse' }
+            ],
+            request_digest: request_digest[0]
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def response_token = decodeToken(responseHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def response_digest = get response_token $.payload.signed_headers..digest
+    
+    * match responseHeaders['Digest'][0] == response_digest[0]
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+Scenario: isTest('test-audience-as-array-invalid')
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: ['testsuite-invalid'],
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar03testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03-AudienceAsArray/v1')
+    
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/aud-token-richiesta-non-valido.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+Scenario: isTest('test-audience-as-array-multiple-values-invalid')
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: ['testsuite2','testsuite-invalid','testsuite3'],
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+                { idar03testheader: 'TestHeaderRequest' }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03-AudienceAsArray/v1')
+    
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/aud-token-richiesta-non-valido.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
 Scenario: isTest('digest-hex-idar03')
 
     * def client_token_match = 
@@ -3445,6 +3652,209 @@ Scenario: isTest('doppi-header-audience-richiesta-differente-valore-agid-jwt-sig
 		* def tid = responseHeaders['GovWay-Transaction-ID'][0]
 		* def result = get_traccia(tid,'Richiesta') 
 		* match result contains deep other_checks_richiesta	
+
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/aud-token-agid-jwt-signature-richiesta-non-valido.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+Scenario: isTest('doppi-header-audience-richiesta-differente-valore-audienceAsArray')
+
+    * def client_token_authorization_match =
+    """
+    ({
+        header: { kid: 'ExampleClient2'},
+        payload: {
+            aud: ['testsuite-audience-authorization']
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer"  })
+
+    * def client_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleClient2'},
+        payload: {
+            aud: ['testsuite-audience-integrity'],
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID"  })
+    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati-AudienceAsArray/v1')
+
+	* def other_checks_richiesta = 
+	"""
+	([
+	    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-audience-authorization"]' },
+	    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-audience-integrity"]' }
+	])
+	"""
+
+	* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+	* def result = get_traccia(tid,'Richiesta') 
+	* match result contains deep other_checks_richiesta
+
+	* def other_checks_risposta = 
+	"""
+	([
+	    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-server-response-authorization","altro-valore"]' },
+	    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-server-response-integrity","altro-valore"]' }
+	])
+	"""
+
+	* def result = get_traccia(tid,'Risposta') 
+	* match result contains deep other_checks_risposta	
+
+
+
+Scenario: isTest('doppi-header-audience-richiesta-differente-valore-audienceAsArrayMultipleValues')
+
+    * def client_token_authorization_match =
+    """
+    ({
+        header: { kid: 'ExampleClient2'},
+        payload: {
+            aud: ['testsuite-audience-authorization','altro']
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer"  })
+
+    * def client_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleClient2'},
+        payload: {
+            aud: ['altro','altro2','testsuite-audience-integrity'],
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID"  })
+    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati-AudienceAsArray/v1')
+
+	* def other_checks_richiesta = 
+	"""
+	([
+	    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-audience-authorization","altro"]' },
+	    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["altro","altro2","testsuite-audience-integrity"]' }
+	])
+	"""
+
+	* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+	* def result = get_traccia(tid,'Richiesta') 
+	* match result contains deep other_checks_richiesta
+
+	* def other_checks_risposta = 
+	"""
+	([
+	    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-server-response-authorization","altro-valore"]' },
+	    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-server-response-integrity","altro-valore"]' }
+	])
+	"""
+
+	* def result = get_traccia(tid,'Risposta') 
+	* match result contains deep other_checks_risposta	
+
+
+Scenario: isTest('doppi-header-audience-richiesta-differente-valore-audienceAsArrayInvalid')
+
+    * def client_token_authorization_match =
+    """
+    ({
+        header: { kid: 'ExampleClient2'},
+        payload: {
+            aud: ['testsuite-audience-authorization-invalid']
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer"  })
+
+    * def client_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleClient2'},
+        payload: {
+            aud: ['testsuite-audience-integrity'],
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID"  })
+    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati-AudienceAsArray/v1')
+
+	* def other_checks_richiesta = 
+	"""
+	([
+	    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["testsuite-audience-authorization-invalid"]' },
+	    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-audience-integrity"]' }
+	])
+	"""
+
+	* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+	* def result = get_traccia(tid,'Richiesta') 
+	* match result contains deep other_checks_richiesta	
+
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/aud-token-richiesta-non-valido.json')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+Scenario: isTest('doppi-header-audience-richiesta-differente-valore-audienceAsArrayIntegrityInvalid')
+
+    * def client_token_authorization_match =
+    """
+    ({
+        header: { kid: 'ExampleClient2'},
+        payload: {
+            aud: ['altro','testsuite-audience-authorization']
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer"  })
+
+    * def client_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleClient2'},
+        payload: {
+            aud: ['testsuite-audience-integrity-invalid','altro'],
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID"  })
+    
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati-AudienceAsArray/v1')
+
+	* def other_checks_richiesta = 
+	"""
+	([
+	    { name: 'ProfiloSicurezzaMessaggio-Audience', value: '["altro","testsuite-audience-authorization"]' },
+	    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: '["testsuite-audience-integrity-invalid","altro"]' }
+	])
+	"""
+
+	* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+	* def result = get_traccia(tid,'Richiesta') 
+	* match result contains deep other_checks_richiesta	
 
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/aud-token-agid-jwt-signature-richiesta-non-valido.json')
@@ -10439,6 +10849,286 @@ Scenario: isTest('audit-rest-jwk-token-custom-validazione-fallita-typestring-01'
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
+
+
+
+
+
+Scenario: isTest('audit-rest-jwk-01-differentAudienceAsArray')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-differentAudienceAsArray') ) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-differentAudienceAsArray') ) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-differentAudienceAsArray')  ) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      issExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-differentAudienceAsArray')  ) {
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-differentAudienceAsArray') ) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingIDA01'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-differentAudienceAsArray') ) {
+      dnonceExpected = '#notpresent'
+    }
+    """
+
+    * def digestExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-differentAudienceAsArray') ) {
+      digestExpected = '#notpresent'
+    }
+    """
+
+    * def userIdToken = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-differentAudienceAsArray') ) {
+      userIdToken = 'utente-token'
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-01-differentAudienceAsArray') ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: ["testsuite-audience-audit","altro"],
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: userIdToken, 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingAuditRest01-'+tipoTest+'-DifferentAudienceAsArray/v1')
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+Scenario: isTest('audit-rest-jwk-0401-differentAudienceAsArray')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401-differentAudienceAsArray') ) {
+      tipoTest = 'JWK'
+    }
+    """
+
+    * def audExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401-differentAudienceAsArray') ) {
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+    }
+    """
+
+
+    * def clientIdExpected = 'N.D.'
+    * def issExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401-differentAudienceAsArray')  ) {
+      kidExpected = 'KID-ApplicativoBlockingJWK'
+      clientIdExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+      issExpected = 'DemoSoggettoFruitore/KidOnly/ApplicativoBlockingJWK'
+    }
+    """
+
+    * def subExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401-differentAudienceAsArray')  ) {
+      subExpected = 'ApplicativoBlockingJWK'
+    }
+    """
+
+
+    * def purposeIdExpected = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401-differentAudienceAsArray') ) {
+      purposeIdExpected = 'purposeId-ApplicativoBlockingJWK'
+    }
+    """
+
+
+    * def dnonceExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401-differentAudienceAsArray')  ) {
+      dnonceExpected = '#notpresent'
+    }
+    """
+
+    * def digestExpected = '#notpresent'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401-differentAudienceAsArray')  ) {
+      digestExpected = '#notpresent'
+    }
+    """
+
+    * def userIdToken = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401-differentAudienceAsArray')  ) {
+      userIdToken = 'utente-token'
+    }
+    """
+
+    * def client_token_audit_match = 'N.D.'
+    * eval
+    """
+    if (isTest('audit-rest-jwk-0401-differentAudienceAsArray')  ) {
+    client_token_audit_match = ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: ["testsuite-audience-audit","altro"],
+            client_id: '#notpresent',
+            iss: issExpected,
+            sub: '#notpresent',
+	    userID: userIdToken, 
+            userLocation: 'ip-utente-token', 
+            LoA: 'livello-autenticazione-utente-token',
+	    dnonce: dnonceExpected
+        }
+    })
+    }
+    """
+
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { 
+		kid: kidExpected,
+	        x5c: '#notpresent',
+                x5u: '#notpresent',
+               'x5t#S256': '#notpresent'
+	},
+        payload: { 
+            aud: ["altro","testsuite-audience"],
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' }
+            ]
+        }
+    })
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: purposeIdExpected,
+	    digest: digestExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-TrackingEvidence'][0], match_to: client_token_audit_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingAuditRest01-'+tipoTest+'-DifferentAudienceAsArray/v1')
+    
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+	'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Client-Audit-Token': requestHeaders['Agid-JWT-TrackingEvidence'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
 

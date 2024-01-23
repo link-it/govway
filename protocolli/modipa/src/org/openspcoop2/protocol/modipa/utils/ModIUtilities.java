@@ -29,6 +29,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -129,6 +130,43 @@ public class ModIUtilities {
 				if(keyP.equalsIgnoreCase(key)) {
 					p.remove(keyP);
 					break;
+				}
+			}
+		}
+	}
+	
+	public static List<String> getArrayStringAsList(String v, boolean deleteQuote) {
+		List<String> l = null;
+		if(v!=null && v.startsWith("[") && v.endsWith("]") && v.length()>2) {
+			String newValue = v.substring(1, v.length()-1);
+			return ModIUtilities.getAsList(newValue, deleteQuote);
+		}
+		return l;
+	}
+	public static List<String> getAsList(String values, boolean deleteQuote){
+		List<String> l = new ArrayList<>();
+		if(values.contains(",")) {
+			String [] tmp = values.split(",");
+			convertAsListValue(l, tmp, deleteQuote);
+		}
+		else {
+			String v = values;
+			if(deleteQuote && v.startsWith("\"") && v.endsWith("\"") && v.length()>2) {
+				v = v.substring(1, v.length()-1);
+			}
+			l.add(v);
+		}
+		return l;
+	}
+	private static void convertAsListValue(List<String> l, String [] tmp, boolean deleteQuote) {
+		if(tmp!=null && tmp.length>0) {
+			for (String v : tmp) {
+				v = v.trim();
+				if(deleteQuote && v.startsWith("\"") && v.endsWith("\"") && v.length()>2) {
+					v = v.substring(1, v.length()-1);
+				}
+				if(StringUtils.isNotEmpty(v)) {
+					l.add(v);
 				}
 			}
 		}

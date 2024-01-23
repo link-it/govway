@@ -759,6 +759,16 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS = "risposta_attachments";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO = "custom";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE = "modipaSecurityRequest";
+    public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO = "true";
+    public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO = "false";
+    public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO = "custom";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE = "modipaSecurityResponse";
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO = "true";
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO = "false";
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO = "custom";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO = "modipaSecurityMessageProfile";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01 = "idam01";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02 = "idam02";

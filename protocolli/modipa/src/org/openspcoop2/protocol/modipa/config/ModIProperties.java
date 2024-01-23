@@ -262,6 +262,7 @@ public class ModIProperties {
 			isSecurityTokenAuditApiSoapX509RiferimentoX5cSingleCertificate();
 			isSecurityTokenAuditApiSoapX509RiferimentoX5u();
 			isSecurityTokenAuditApiSoapX509RiferimentoX5t();
+			isSecurityTokenAuditProcessArrayModeEnabled();
 			isSecurityTokenAuditAddPurposeId();
 			isSecurityTokenAuditExpectedPurposeId();
 			isSecurityTokenAuditCompareAuthorizationPurposeId();
@@ -307,6 +308,7 @@ public class ModIProperties {
 			isRestSecurityTokenResponseDigestClean();
 			isRestSecurityTokenResponseDigestHEADuseServerHeader();
 			isRestSecurityTokenFaultProcessEnabled();
+			isRestSecurityTokenAudienceProcessArrayModeEnabled();
 			getRestResponseSecurityTokenAudienceDefault(null);
 			getRestCorrelationIdHeader();
 			getRestReplyToHeader();
@@ -1468,6 +1470,34 @@ public class ModIProperties {
 		return this.isSecurityTokenAuditApiSoapX509RiferimentoX5t;
 	}
 	
+	private Boolean getSecurityTokenAuditProcessArrayModeReaded= null;
+	private Boolean getSecurityTokenAuditProcessArrayModeEnabled= null;
+	public boolean isSecurityTokenAuditProcessArrayModeEnabled() throws ProtocolException{
+    	if(this.getSecurityTokenAuditProcessArrayModeReaded==null){
+	    	String name = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.audience.processArrayMode";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.getSecurityTokenAuditProcessArrayModeEnabled = Boolean.valueOf(value);
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    		
+    		this.getSecurityTokenAuditProcessArrayModeReaded = true;
+    	}
+    	
+    	return this.getSecurityTokenAuditProcessArrayModeEnabled;
+	}
+	
     private Boolean isSecurityTokenAuditAddPurposeId = null;
 	public boolean isSecurityTokenAuditAddPurposeId(){
 		if(this.isSecurityTokenAuditAddPurposeId==null){
@@ -2431,6 +2461,35 @@ public class ModIProperties {
     	
     	return this.getRestSecurityTokenFaultProcessEnabled;
 	}
+	
+	private Boolean getRestSecurityTokenAudienceProcessArrayModeReaded= null;
+	private Boolean getRestSecurityTokenAudienceProcessArrayModeEnabled= null;
+	public boolean isRestSecurityTokenAudienceProcessArrayModeEnabled() throws ProtocolException{
+    	if(this.getRestSecurityTokenAudienceProcessArrayModeReaded==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.audience.processArrayMode";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.getRestSecurityTokenAudienceProcessArrayModeEnabled = Boolean.valueOf(value);
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    		
+    		this.getRestSecurityTokenAudienceProcessArrayModeReaded = true;
+    	}
+    	
+    	return this.getRestSecurityTokenAudienceProcessArrayModeEnabled;
+	}
+	
 	
 	private Boolean getRestResponseSecurityTokenAudienceDefaultReaded= null;
 	private String getRestResponseSecurityTokenAudienceDefault= null;
