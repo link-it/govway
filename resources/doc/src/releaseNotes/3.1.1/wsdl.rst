@@ -1,6 +1,9 @@
 Nuova funzionaltà di esposizione dei WSDL
 -----------------------------------------
 
+.. deprecated:: 3.3.0
+   Il WSDL generato risulta diverso da quello effettivamente esposto dal backend, comportando potenziali errori di interoperabilità.
+
 Aggiunta la funzionalità di esposizione dell'interfaccia WSDL di una API SOAP.
 
 È adesso possibile ottenere il file wsdl attraverso una invocazione HTTP
