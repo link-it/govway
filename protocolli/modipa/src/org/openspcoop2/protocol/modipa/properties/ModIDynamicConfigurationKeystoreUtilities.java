@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.protocol.modipa.properties;
 
-import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +47,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.KeystoreUtils;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
@@ -674,8 +674,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				
 				// Verifico chiave privata
 				if(archive!=null) {
-					KeyStore ks = KeyStore.getInstance(archiveType.name());
-					ks.load(new ByteArrayInputStream(archive), keystorePasswordItemValue.getValue().toCharArray());
+					KeyStore ks = KeystoreUtils.readKeystore(archive, archiveType.name(), keystorePasswordItemValue.getValue());
 					ks.getKey(keyAliasItemValue.getValue(), keyPasswordItemValue.getValue().toCharArray());
 				}
 			}
