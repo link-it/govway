@@ -1,3 +1,13 @@
+2024-01-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, ProtocolloModIPA]
+	Risolto Bug OP-1702
+	Durante la registrazione di un applicativo con profilo di interoperabilità 'ModI',
+	se nella sezione 'ModI - Sicurezza Messaggio - KeyStore' veniva effettuato con modalità 'Archivio' l'upload di un keystore pkcs12,
+	creato importando un altro archivio pkcs12 al suo interno, si ottevena l'errore: "keystore password was incorrect".
+	Si trattava dello stesso bug risolto nell'issue 'https://github.com/link-it/govway/issues/128' 
+	la cui risoluzione non era però stata riportata nella maschera di gestione della sicurezza ModI di un applicativo.
+
 2024-01-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloModIPA]
