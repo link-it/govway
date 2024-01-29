@@ -106,4 +106,15 @@ public class CostantiGrafici {
 	
 	public static final String TOTALE_KEY= "totale";
 	public static final String TOTALE_LABEL= "Totale";
+	
+	public static final String SCALA_VALORI_KEY= "scalaValori";
+	public static final String MIN_KEY= "min";
+	public static final String MAX_KEY= "max";
+	public static final String VALORE_KEY= "valore";
+	
+	public static final String X_LABEL_KEY= "xLabel";
+	public static final String X_KEY= "x";
+	
+	public static final String Y_LABEL_KEY= "yLabel";
+	public static final String Y_KEY= "y";
 }

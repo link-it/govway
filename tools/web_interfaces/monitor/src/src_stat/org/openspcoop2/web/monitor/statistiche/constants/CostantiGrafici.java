@@ -105,6 +105,17 @@ public class CostantiGrafici {
 	public static final String TOTALE_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TOTALE_KEY;
 	public static final String TOTALE_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TOTALE_LABEL;
 	
+	public static final String X_LABEL_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.X_LABEL_KEY;
+	public static final String X_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.X_KEY;
+	
+	public static final String Y_LABEL_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.Y_LABEL_KEY;
+	public static final String Y_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.Y_KEY;
+	
+	public static final String SCALA_VALORI_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.SCALA_VALORI_KEY;
+	public static final String MIN_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.MIN_KEY;
+	public static final String MAX_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.MAX_KEY;
+	public static final String VALORE_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VALORE_KEY;
+	
 	/** Costanti modulo statistiche*/
 	
 	public static final String ORA_KEY = "ora";
@@ -229,7 +240,6 @@ public class CostantiGrafici {
 	public static final String SPEED_KEY= "speed";
 	public static final String MISC_KEY= "misc";
 	public static final String PIECENTEROFFSET_KEY= "pieCenterOffset";
-	public static final String Y_KEY= "y";
 	public static final String CSSPREFIX_KEY= "cssPrefix";
 	
 	public static final String EFFECT_LINEAR_VALUE= "linear";
@@ -303,5 +313,8 @@ public class CostantiGrafici {
 	
 	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE_MS = "Latenza Media Totale [ms]";
 	public static final String LABEL_TIPO_LATENZA_LATENZA_MEDIA_TOTALE = "Latenza Media Totale";
+	
+	public static final String SEARCH_NUMERO_DIMENSIONI_2D_LABEL_KEY = "stats.search.numeroDimensioni.2d.label";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_LABEL_KEY = "stats.search.numeroDimensioni.3d.label";
 
 }

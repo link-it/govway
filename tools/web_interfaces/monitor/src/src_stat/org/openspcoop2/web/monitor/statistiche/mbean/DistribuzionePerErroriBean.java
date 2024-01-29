@@ -47,6 +47,7 @@ import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
@@ -139,9 +140,23 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		
+		
+		
 		switch (tipoReport) {
-		case BAR_CHART:
-			grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice());
+		case BAR_CHART: {
+			NumeroDimensioni numeroDimensioni = ((StatsSearchForm)this.search).getNumeroDimensioni();
+			
+			switch (numeroDimensioni) {
+			case DIMENSIONI_3:
+				StatisticType statisticType = StatsUtils.checkStatisticType((StatsSearchForm) this.search);
+				grafico = JsonStatsUtils.getJsonHeatmapChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice(), statisticType);
+				break;
+			case DIMENSIONI_2:
+			default:
+				grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice());	
+				break;
+			}
+		}
 			break;
 		case PIE_CHART:
 			grafico = JsonStatsUtils.getJsonPieChartDistribuzione(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , this.getSlice());
@@ -150,7 +165,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			break;
 		}
 		
-		if(list != null && list.size() > 0)
+		if(list != null && !list.isEmpty())
 			this.setVisualizzaComandiExport(true);
 		
 		String json = grafico != null ?  grafico.toString() : "";

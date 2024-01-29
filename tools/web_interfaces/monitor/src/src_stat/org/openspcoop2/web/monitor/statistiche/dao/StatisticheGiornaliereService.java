@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.statistiche.dao;
 
 import java.sql.Connection;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -120,12 +121,14 @@ import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
+import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3D;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.report.CostantiReport;
 import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerServizioBean;
@@ -166,6 +169,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private static final String FALSA_UNION_DEFAULT_VALUE = "gbyfake";
 	private static final Integer FALSA_UNION_DEFAULT_VALUE_INT = -99999;
 	private static final Integer FALSA_UNION_DEFAULT_VALUE_VERSIONE = 1;
+	private static Date FALSA_UNION_DEFAULT_VALUE_TIMESTAMP = null; 
+	
+	static {
+		try {
+			FALSA_UNION_DEFAULT_VALUE_TIMESTAMP = DateUtils.getSimpleDateFormatDay().parse("1970-01-01");
+		} catch (ParseException e) {
+			log.error("Errore durante la init della data fake ", e);
+		}
+	}
 
 	private StatsSearchForm andamentoTemporaleSearch;
 	private StatsSearchForm distribErroriSearch;
@@ -498,40 +510,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 	
 	public StatisticType checkStatisticType(StatsSearchForm form) {
-		StatisticType tipologia = form.getModalitaTemporale();
-		if(!form.isShowUnitaTempo()) {
-			if(form.isPeriodoPersonalizzato() && !form.isShowUnitaTempoPersonalizzato_periodoPersonalizzato()) {
-				// calcolo qua
-				Date dInizio = form.getDataInizio();
-				Date dFine = form.getDataFine();
-				if(dInizio!=null && dFine!=null) {
-					/*
-					long msDiff = dFine.getTime() - dInizio.getTime();
-					long ore24ms = 86400000;
-					if(msDiff > ore24ms) {
-						tipologia = StatisticType.GIORNALIERA; 
-					}
-					else {
-						tipologia = StatisticType.ORARIA; 
-					}*/
-					
-					// nel personalizzato considero sempre le ore
-					String format = "HH:mm";
-					String inizio = DateUtils.getSimpleDateFormat(format).format(dInizio);
-					String fine = DateUtils.getSimpleDateFormat(format).format(dFine);
-					if("00:00".equals(inizio) && "23:59".equals(fine)) {
-						tipologia = StatisticType.GIORNALIERA; 
-					}
-					else {
-						tipologia = StatisticType.ORARIA; 
-					}
-				}
-				if(tipologia==null) {
-					tipologia = StatisticType.GIORNALIERA; // default in caso di errore
-				}
-			}
-		}
-		return tipologia;
+		return StatsUtils.checkStatisticType(form);
 	}
 	
 	
@@ -2757,6 +2736,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			this.impostaFiltroIdClusterOrCanale(expr, this.distribErroriSearch, model, isCount);
 			
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			}
+			
 			expr.addGroupBy(model.ESITO);
 
 		} catch (ServiceException e) {
@@ -2816,6 +2800,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = this.createDistribuzioneErroriExpression(this.dao,	model, false);
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
+				gByExpr.sortOrder(s).addOrder(model.DATA);
+			}
+			
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.ESITO);
 
 			List<Index> forceIndexes = null;
@@ -2834,6 +2824,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
+			
+			String aliasFieldData3d = "data3d";
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				unionExpr.addSelectField(model.DATA, aliasFieldData3d);
+			}
 			String aliasFieldEsito = "esito";
 			
 			unionExpr.addSelectField(model.ESITO,		aliasFieldEsito);
@@ -2841,13 +2837,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				unionExprFake.addSelectField(new ConstantField(aliasFieldData3d, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), aliasFieldData3d);
+			}
 			unionExprFake.addSelectField(new ConstantField(aliasFieldEsito, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT,
 					model.ESITO.getFieldType()), aliasFieldEsito);
 			
 			Union union = new Union();
 			union.setUnionAll(true);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				union.addField(aliasFieldData3d);
+			}
 			union.addField(aliasFieldEsito);
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				union.addGroupBy(aliasFieldData3d);
+			}
 			union.addGroupBy(aliasFieldEsito);
+			
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(aliasFieldData3d,s);
+			}
 
 			TipoVisualizzazione tipoVisualizzazione = this.distribErroriSearch.getTipoVisualizzazione();
 			String sommaAliasName = "somma";
@@ -3005,13 +3020,23 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
-
-					ResDistribuzione r = new ResDistribuzione();
 					
 					int esito = ((Integer) row.get(aliasFieldEsito));
 					if(esito == StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT) {
 						continue;
 					} 	
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(aliasFieldData3d));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
 					
 					try {
 						r.setRisultato(esitiProperties.getEsitoLabel(esito));

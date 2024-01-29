@@ -450,12 +450,86 @@ function chartMapping(_dataJson, _type, _size) {
     var tips = [];
     var noData = -1;
     var noDataLabel = '';
+    var xSeries = [];
+    var ySeries = [];
+    var heatMapColorRange = [];
+    var heatMapColorDomain = [];
 
 
     noData = _dataJson.hasOwnProperty("noData")?0:-1;
     noDataLabel = (noData == -1)?'':labelUnescape(_dataJson.noData);
 
-    if(_type != 'pie') {
+	if(_type == 'heatmap') {
+		if(_dataJson.hasOwnProperty("scalaValori")) {
+			// colori
+            var minTmp = _dataJson.scalaValori.min;
+            var maxTmp = _dataJson.scalaValori.max;
+            
+            // range di colori minimo e massimo
+            heatMapColorRange.push(minTmp.colore);
+            heatMapColorRange.push(maxTmp.colore);
+            
+            // dominio dei valori minimo e massimo
+            heatMapColorDomain.push(parseInt(minTmp.valore, 10));
+            heatMapColorDomain.push(parseInt(maxTmp.valore, 10));
+		}
+		
+		dpChart.heatMapColorRange = heatMapColorRange;
+    	dpChart.heatMapColorDomain = heatMapColorDomain;
+		
+		
+        if(_dataJson.hasOwnProperty("categorie") && _dataJson.hasOwnProperty("dati") &&
+            _dataJson.hasOwnProperty("coloriAutomatici")) {
+            serieRef = _dataJson.categorie.map(function (item) {
+                return item.key;
+            });
+            if (!_dataJson.coloriAutomatici) {
+                serieColors = _dataJson.categorie.map(function (item) {
+                    return item.colore;
+                });
+            }
+            else serieColors = colorSerie(serieRef.length - 1);
+            for (var i = 0; i < _dataJson.categorie.length; i++) {
+                labelRef[_dataJson.categorie[i].key] = labelUnescape(_dataJson.categorie[i].label);
+            }
+            serie = _dataJson.dati.map(function (item) {
+                var obj = {};
+                var rowdata = [];
+                for (var i = 0; i < serieRef.length; i++) {
+                    rowdata.push(obj[serieRef[i]] = item[serieRef[i]]);
+                }
+                return rowdata;
+            });
+
+            //Check for no results
+            if(noData != 0) {
+                tips = _dataJson.dati.map(function (item) {
+                    var obj = {};
+                    var rowdata = [];
+                    for (var i = 0; i < serieRef.length; i++) {
+                        rowdata.push(obj[serieRef[i] + '_tooltip'] = labelUnescape(item[serieRef[i] + '_tooltip']));
+                    }
+                    return rowdata;
+                });
+             
+             	// serie asse x   
+                var xSeriesTmp = _dataJson.dati.map(function(item){return item.xLabel;});
+				xSeries = [...new  Set(xSeriesTmp)];
+				// serie asse y
+  				var ySeriesTmp = _dataJson.dati.map(function(item){return item.yLabel;});
+                ySeries = [...new  Set(ySeriesTmp)];
+                
+                cats = _dataJson.dati.map(function (cat) {
+                    return { data: labelUnescape(cat.xLabel), visible: (cat.xLabel == undefined || cat.xLabel != '') };
+                });
+                
+                
+            }
+        }
+        
+        dpChart.xSeries = xSeries;
+    	dpChart.ySeries = ySeries;
+    } else if(_type != 'pie') {
         if(_dataJson.hasOwnProperty("categorie") && _dataJson.hasOwnProperty("dati") &&
             _dataJson.hasOwnProperty("coloriAutomatici")) {
             serieRef = _dataJson.categorie.map(function (item) {
@@ -568,7 +642,6 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.noData = noData;
     dpChart.noDataLabel = (noData == 0)?noDataLabel:'';
     dpChart.tips = tips;
-
     return dpChart;
 }
 

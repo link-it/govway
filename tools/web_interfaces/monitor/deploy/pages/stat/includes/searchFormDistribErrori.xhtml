@@ -6,6 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:link="http://www.link.it">
+	<f:loadBundle var="msg" basename="messages" /> 
 	
 	<ui:include src="/stat/includes/searchFormStatistiche.xhtml">
 		<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
@@ -56,6 +57,15 @@
 	 			<a4j:support event="onselect" actionListener="#{search.tipoVisualizzazioneListener}" reRender="altriCriteri"/>
 			</rich:comboBox>
  		</link:prop>
+ 		
+ 		<a4j:outputPanel id="numeroDimensioniCtr" layout="block" rendered="#{search.visualizzaNumeroDimensioni}">
+	 		<link:prop label=" ">
+	 			<rich:comboBox id="NumeroDimensioniCombo" value="#{search._value_numeroDimensioni}" defaultLabel="#{msg['stats.search.numeroDimensioni.defaultLabel']}"
+						enableManualInput="false" width="416" converter="selectItemConverter">
+					<f:selectItems value="#{search.dimensioniDisponibili}"/>
+				</rich:comboBox>
+	 		</link:prop>
+ 		</a4j:outputPanel>
  		
  		<a4j:outputPanel id="tipoBandaCtr" layout="block" rendered="#{search._value_tipoVisualizzazione == 'dimensioneTransazioni'}">
 			<link:prop label="Tipo Banda">

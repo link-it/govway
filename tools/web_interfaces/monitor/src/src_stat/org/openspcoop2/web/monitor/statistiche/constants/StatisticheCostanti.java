@@ -116,4 +116,6 @@ public class StatisticheCostanti {
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_PDND_ORGANIZATION_NAME_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.pdndOrganizationName.tooltip.svg.pattern";
 
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENTID_PDNDINFO = "stats.search.claim.clientIdConPDND";
+	
+	public static final String  STATS_ANALISI_STATISTICA_HEATMAP_TOOLTIP_CATEGORIA_ALTRI_PATTERN_KEY = "stats.analisiStatistica.heatmap.tooltip.categoriaAltri.pattern";
 }

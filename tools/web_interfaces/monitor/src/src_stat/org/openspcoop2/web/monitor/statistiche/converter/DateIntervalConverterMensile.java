@@ -19,13 +19,12 @@
  */
 package org.openspcoop2.web.monitor.statistiche.converter;
 
-import java.text.SimpleDateFormat;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
+import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 
 /**
  * DateIntervalConverterMensile
@@ -39,16 +38,12 @@ public class DateIntervalConverterMensile implements Converter {
 
 	@Override
 	public Object getAsObject(FacesContext arg0, UIComponent arg1, String arg2) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getAsString(FacesContext ctx, UIComponent component, Object value) {
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy", ApplicationBean.getInstance().getLocale());
-
-		return sdf.format(value);
+		return StatsUtils.formatDate(StatisticType.MENSILE, value);
 	}
 
 }

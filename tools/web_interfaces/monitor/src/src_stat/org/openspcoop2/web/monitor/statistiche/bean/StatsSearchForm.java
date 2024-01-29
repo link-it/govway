@@ -96,6 +96,10 @@ public class StatsSearchForm extends BaseSearchForm{
 	//Tipo Statistica
 	private TipoStatistica tipoStatistica;
 	protected String _value_tipoStatistica;
+	
+	// Numero dimensioni 
+	private NumeroDimensioni numeroDimensioni;
+	private String _value_numeroDimensioni;
 
 	// Indicazione se il la distribuzione per soggetto è locale o remota. Vale solo per la distribuzione per soggetto.
 	// Negli altri casi è true per default per visualizzare la select list dei soggetti locali
@@ -148,6 +152,7 @@ public class StatsSearchForm extends BaseSearchForm{
 		//imposto defaults	
 		this.setPeriodo(this.getPeriodoDefault()!=null ? this.getPeriodoDefault() : "Ultimo mese");
 		this.tipoReport=TipoReport.BAR_CHART;
+		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
 		this.setSortOrder(SortOrder.ASC);  
 		this.tipoVisualizzazione = TipoVisualizzazione.NUMERO_TRANSAZIONI;
 		this.tipoLatenza = TipoLatenza.LATENZA_TOTALE;
@@ -520,6 +525,7 @@ public class StatsSearchForm extends BaseSearchForm{
 			}
 		}
 
+		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
 		this.setSortOrder(SortOrder.ASC); 
 		this.tipoVisualizzazione = TipoVisualizzazione.NUMERO_TRANSAZIONI;
 		this.tipoLatenza = TipoLatenza.LATENZA_TOTALE;
@@ -580,7 +586,9 @@ public class StatsSearchForm extends BaseSearchForm{
 		this.setTipiBanda(new String[3]);
 		this.getTipiBanda()[0] = "0";
 		this.getTipiBanda()[1] = getTipiBanda()[2] = null;
-
+		
+		// numero dimensioni
+		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
 	}
 
 	public void tipoLatenzaListener(ActionEvent ae){
@@ -888,6 +896,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	}
 
 	public void tipoReportSelected(ActionEvent ae){
+		this.numeroDimensioni = NumeroDimensioni.DIMENSIONI_2;
 	}
 
 	public TipoStatistica getTipoStatistica() {
@@ -897,7 +906,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	public void setTipoStatistica(TipoStatistica tipoStatistica) {
 		this.tipoStatistica = tipoStatistica;
 
-		if(tipoStatistica != null)
+		if(tipoStatistica != null) {
 			if(!this.tipoStatistica.equals(TipoStatistica.ANDAMENTO_TEMPORALE)){
 				this.tipoReport=TipoReport.BAR_CHART;
 			}else {
@@ -908,6 +917,7 @@ public class StatsSearchForm extends BaseSearchForm{
 					this.tipoReport=TipoReport.LINE_CHART;
 				}
 			}
+		}
 	}
 
 	public String get_value_tipoStatistica() {
@@ -1078,5 +1088,57 @@ public class StatsSearchForm extends BaseSearchForm{
 	public boolean isShowUnitaTempoPersonalizzato_periodoPersonalizzato() {
 		return this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato;
 	}
+	
+	public List<SelectItem> getDimensioniDisponibili() {
+		List<SelectItem> dimensioniDisponibili = new ArrayList<>();
+		
+		dimensioniDisponibili.add(new SelectItem(NumeroDimensioni.DIMENSIONI_2.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_2D_LABEL_KEY)));
+		dimensioniDisponibili.add(new SelectItem(NumeroDimensioni.DIMENSIONI_3.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_LABEL_KEY)));
+		
+		return dimensioniDisponibili;
+	}
 
+	public String get_value_numeroDimensioni() {
+		if(this.numeroDimensioni == null){
+			return null;
+		}else{
+			return this.numeroDimensioni.toString();
+		}
+	}
+
+	public void set_value_numeroDimensioni(String valueNumeroDimensioni) {
+		NumeroDimensioni nd = (NumeroDimensioni) NumeroDimensioni.toEnumConstantFromString(valueNumeroDimensioni);
+		this.setNumeroDimensioni(nd); 
+	}
+
+	public NumeroDimensioni getNumeroDimensioni() {
+		return this.numeroDimensioni;
+	}
+
+	public void setNumeroDimensioni(NumeroDimensioni numeroDimensioni) {
+		this.numeroDimensioni = numeroDimensioni;
+	}
+	
+	public boolean isVisualizzaNumeroDimensioni() {
+		TipoReport tipoReportToCheck = this.getTipoReport();
+		
+		// si visualizza se e' stato scelto  il report tabella o barchart con grafici svg attivi
+		return tipoReportToCheck != null && (tipoReportToCheck.equals(TipoReport.TABELLA) || (tipoReportToCheck.equals(TipoReport.BAR_CHART) && this.isUseGraficiSVG()));
+	}
+	
+	public boolean isVisualizzaGraficoBars() {
+		TipoReport tipoReportToCheck = this.getTipoReport();
+		NumeroDimensioni numeroDimensioniToCheck = this.getNumeroDimensioni();
+		return (tipoReportToCheck != null && tipoReportToCheck.equals(TipoReport.BAR_CHART)) &&
+				(numeroDimensioniToCheck != null && numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_2)) 
+				;
+	}
+	
+	public boolean isVisualizzaGraficoHeatmap() {
+		TipoReport tipoReportToCheck = this.getTipoReport();
+		NumeroDimensioni numeroDimensioniToCheck = this.getNumeroDimensioni();
+		return (tipoReportToCheck != null && (tipoReportToCheck.equals(TipoReport.BAR_CHART) && this.isUseGraficiSVG())) &&
+				(numeroDimensioniToCheck != null && numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3)) 
+				;
+	}
 }
