@@ -10868,7 +10868,7 @@ Scenario: isTest('audit-rest-jwk-01-differentAudienceAsArray')
     * eval
     """
     if (isTest('audit-rest-jwk-01-differentAudienceAsArray') ) {
-      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'-AudienceAsArray/v1'
     }
     """
 
@@ -10994,7 +10994,7 @@ Scenario: isTest('audit-rest-jwk-0401-differentAudienceAsArray')
     * eval
     """
     if (isTest('audit-rest-jwk-0401-differentAudienceAsArray') ) {
-      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'/v1'
+      audExpected = 'RestBlockingAuditRest01-'+tipoTest+'-AudienceAsArray/v1'
     }
     """
 
