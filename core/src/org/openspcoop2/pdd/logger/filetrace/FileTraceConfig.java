@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.logger.filetrace;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -49,11 +50,10 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  */
 public class FileTraceConfig {
 	
-	private static HashMap<String, FileTraceConfig> staticInstanceMap = new HashMap<String, FileTraceConfig>();
+	private static HashMap<String, FileTraceConfig> staticInstanceMap = new HashMap<>();
 	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("FileTraceConfig");
 
 	public static void init(InputStream is, String fileNamePath, boolean globale) throws CoreException {
-		//synchronized(staticInstanceMap) {
 		semaphore.acquireThrowRuntime("init_InputStream");
 		try {
 			if(!staticInstanceMap.containsKey(fileNamePath)){
@@ -65,7 +65,6 @@ public class FileTraceConfig {
 		}
 	}
 	public static void init(File file, boolean globale) throws CoreException {
-		//synchronized(staticInstanceMap) {
 		semaphore.acquireThrowRuntime("init_File");
 		try {
 			if(!staticInstanceMap.containsKey(file.getAbsolutePath())){
@@ -77,16 +76,14 @@ public class FileTraceConfig {
 		}
 	}
 	public static void update(File file, boolean globale) throws CoreException {
-		//synchronized(staticInstanceMap) {
 		semaphore.acquireThrowRuntime("update");
 		try {
-			_updateWithoutSynchronized(file, globale);
+			updateWithoutSynchronizedEngine(file, globale);
 		}finally {
 			semaphore.release("update_File");
 		}
 	}
 	public static void resetFileTraceAssociatePorte() throws CoreException {
-		//synchronized(staticInstanceMap) {
 		semaphore.acquireThrowRuntime("resetFileTraceAssociatePorte");
 		try {
 			if(!staticInstanceMap.isEmpty()) {
@@ -96,10 +93,10 @@ public class FileTraceConfig {
 					if(config.isGlobale()) {
 						continue;
 					}
-					//_updateWithoutSynchronized(new File(path), config.isGlobale());
+					/**updateWithoutSynchronizedEngine(new File(path), config.isGlobale());*/
 					removeEntries.add(path); // verra poi ricreato
 				}
-				while(removeEntries.size()>0) {
+				while(!removeEntries.isEmpty()) {
 					String path = removeEntries.remove(0);
 					staticInstanceMap.remove(path);
 				}
@@ -108,7 +105,7 @@ public class FileTraceConfig {
 			semaphore.release("resetFileTraceAssociatePorte");
 		}
 	}
-	private static void _updateWithoutSynchronized(File file, boolean globale) throws CoreException {
+	private static void updateWithoutSynchronizedEngine(File file, boolean globale) throws CoreException {
 		FileTraceConfig newConfig = new FileTraceConfig(file, globale);
 		FileTraceConfig instance = newConfig;
 		staticInstanceMap.remove(file.getAbsolutePath());
@@ -141,20 +138,20 @@ public class FileTraceConfig {
 	private Map<String, String> propertiesValues = new HashMap<>();
 	
 	private List<String> topicErogazioni = new ArrayList<>();
-	private Map<String, Topic> topicErogazioniMap = new HashMap<String, Topic>();
+	private Map<String, Topic> topicErogazioniMap = new HashMap<>();
 	
 	private List<String> topicFruizioni = new ArrayList<>();
-	private Map<String, Topic> topicFruizioneMap = new HashMap<String, Topic>();
+	private Map<String, Topic> topicFruizioneMap = new HashMap<>();
 	
 	public FileTraceConfig(File file, boolean globale) throws CoreException {
 		try(FileInputStream fin = new FileInputStream(file)){
-			_init(fin, globale);
+			initEngine(fin, globale);
 		}catch(Exception e) {
 			throw new CoreException(e.getMessage(),e);
 		}
 	}
 	public FileTraceConfig(InputStream is, boolean globale) throws CoreException {
-		_init(is, globale);
+		initEngine(is, globale);
 	}
 	
 	private static boolean escapeInFile = true;
@@ -164,9 +161,9 @@ public class FileTraceConfig {
 	public static void setEscapeInFile(boolean escapeInFile) {
 		FileTraceConfig.escapeInFile = escapeInFile;
 	}
-	private void _init(InputStream is, boolean globale) throws CoreException {
+	private void initEngine(InputStream is, boolean globale) throws CoreException {
 		try {
-			this.globale = false;
+			this.globale = globale;
 			
 			Properties p = new Properties();
 			
@@ -183,7 +180,7 @@ public class FileTraceConfig {
 					if(StringUtils.isEmpty(line)) {
 						continue;
 					}
-					//System.out.println("LINE ["+line+"]");
+					/**System.out.println("LINE ["+line+"]");*/
 					String key = line;
 					String value = "";
 					if(line.endsWith("=")) {
@@ -245,12 +242,12 @@ public class FileTraceConfig {
 			
 			readFormatProperties(reader);
 				
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw new CoreException(t.getMessage(),t);
 		}
 	}
 	
-	private InputStream getInputStreamLogFile(PropertiesReader reader) throws Exception {
+	private InputStream getInputStreamLogFile(PropertiesReader reader) throws UtilsException, FileNotFoundException {
 		String tmp = getProperty(reader, "log.config.file", true);
 		
 		File fTmp = new File(tmp);
@@ -275,11 +272,11 @@ public class FileTraceConfig {
 			return new FileInputStream(fTmp);
 		}
 	
-		throw new Exception("File '"+tmp+"' not found");
+		throw new UtilsException("File '"+tmp+"' not found");
 		
 	}
 	
-	private void registerTopic(PropertiesReader reader, boolean erogazioni) throws Exception {
+	private void registerTopic(PropertiesReader reader, boolean erogazioni) throws UtilsException {
 		
 		String tipo = erogazioni ? "erogazioni" : "fruizioni";
 		
@@ -354,7 +351,7 @@ public class FileTraceConfig {
 		}
 	}
 	@SuppressWarnings("unused")
-	private List<String> getList(PropertiesReader reader, String propertyName) throws Exception{
+	private List<String> getList(PropertiesReader reader, String propertyName) throws UtilsException {
 		List<String> list = new ArrayList<>();		
 		String tmp = getProperty(reader, propertyName, false);
 		if(tmp!=null && !StringUtils.isEmpty(tmp)) {

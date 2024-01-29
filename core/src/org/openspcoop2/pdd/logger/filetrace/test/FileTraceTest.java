@@ -21,7 +21,9 @@
 package org.openspcoop2.pdd.logger.filetrace.test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -69,15 +71,21 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.CompressorType;
+import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
 /**     
@@ -89,7 +97,35 @@ import org.slf4j.Logger;
  */
 public class FileTraceTest {
 
+	private static final String DIR_TMP = "/tmp/logs/";
+	
+	private static final String ENV_NAME_1 = "FILETRACE-TEST-ENV";
+	private static final String ENV_VALUE_1 = "envValue";
+	private static final String ENV_NAME_2 = "FILETRACE-TEST-ENV2";
+	private static final String ENV_VALUE_2 = "envValue2";
+	
+	public static void initDir() throws UtilsException, ReflectiveOperationException {
+		boolean deleteDir = FileSystemUtilities.deleteDirNotEmpty(DIR_TMP,3);
+		if(!deleteDir) {
+			throw new UtilsException("Directory ["+DIR_TMP+"] non eliminata");
+		}
+		System.out.println("Directory inizializzata");
+		
+		updateEnv(ENV_NAME_1, ENV_VALUE_1);
+		updateEnv(ENV_NAME_2, ENV_VALUE_2);
+		System.out.println("ENV inizializzata ("+ENV_NAME_1+":"+System.getenv(ENV_NAME_1)+") ("+ENV_NAME_2+":"+System.getenv(ENV_NAME_2)+")");
+	}
+	@SuppressWarnings({ "unchecked" })
+	private static void updateEnv(String name, String val) throws ReflectiveOperationException {
+		Map<String, String> env = System.getenv();
+		Field field = env.getClass().getDeclaredField("m");
+	    field.setAccessible(true);
+	    ((Map<String, String>) field.get(env)).put(name, val);
+	}
+	
 	public static void main(String [] args) throws Exception{
+
+		initDir();
 		
 		boolean log4j = true;
 		boolean requestWithPayload = true;
@@ -125,7 +161,7 @@ public class FileTraceTest {
 	private static String clientAssertionBase64 = hdr+"."+payload+".PDdXpT5htzB6JI0TdYsfsIBjH8tSV0IkIiKAI0S1IYkqcS6pOs84MsfVk3wnd1_dSiR-2KSpGzZU9s8TuGoXcdR-4oa6EN0RNJJsF8zC1KHVx1IBl4jcZGRY5vAgtKwBC87bPz7EaYXtesS3Go-fl5HTFWvZ4OR3yxvsrCfTy_ehQwVJwJy9yKrIpQFq_dSQr_xQbRBL495D9Fp4p54vNdP3IRtoDq16NUhwkH_dbQJGUJdYZ2M31bBZUvgu9RRZz_ftjI78Swwq5FIwIG7r5trwgmVebZtdLF2Ni5Vc2rL7ZNuBpH7Y_knRgRYbH4HxnMoHOU6nU8yM_ZPZyhHneA";
 	
 	// CertificateTest.class.getResourceAsStream(CertificateTest.PREFIX+"govway_test.pem")
-	private static String PEM_CERTIFICATE = "-----BEGIN CERTIFICATE-----\n"+
+	private static final String PEMCERTIFICATE = "-----BEGIN CERTIFICATE-----\n"+
 		"MIIDqzCCApMCBFx+TB4wDQYJKoZIhvcNAQELBQAwgZkxGzAZBgkqhkiG9w0BCQEW\n"+
 		"DGluZm9AbGluay5pdDELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBUl0YWx5MRYwFAYD\n"+
 		"VQQHDA1nb3Z3YXlfdGVzdF9sMRYwFAYDVQQKDA1nb3Z3YXlfdGVzdF9vMRcwFQYD\n"+
@@ -148,18 +184,27 @@ public class FileTraceTest {
 		"Zq21s4Yl5IIZPl8ZAxThukMw9oX3TCBfdgZ8eQurlw==\n"+
 		"-----END CERTIFICATE-----";
 	
-	private static final String pdndClientId = "12345678-cccc-4a60-aaaa-12345678f8dd";
-	private static final String pdndClientConsumerId = "12345678-254d-bbbb-aaaa-82e210e12345";
-	private static final String pdndJsonClient = "{\"consumerId\":\""+pdndClientConsumerId+"\",\"id\":\""+pdndClientId+"\"}";
+	private static final String PDND_CLIENT_ID = "12345678-cccc-4a60-aaaa-12345678f8dd";
+	private static final String PDND_CLIENT_CONSUMER_ID = "12345678-254d-bbbb-aaaa-82e210e12345";
+	private static final String PDND_JSON_CLIENT = "{\"consumerId\":\""+PDND_CLIENT_CONSUMER_ID+"\",\"id\":\""+PDND_CLIENT_ID+"\"}";
 			
-	private static final String pdndOrganizationCategory = "Comuni e loro Consorzi e Associazioni";
-	private static final String pdndOrganizationName = "Comune di Test";
-	private static final String pdndOrganizationId = "12345678-254d-bbbb-aaaa-82e210e12345";
-	private static final String pdndOrganizationExternalId = "c001";
-	private static final String pdndOrganizationExternalOrigin = "IPA";
-	private static final String pdndJsonOrganization = "{\"category\":\""+pdndOrganizationCategory+"\",\"externalId\":{\"id\":\""+pdndOrganizationExternalId+"\",\"origin\":\""+pdndOrganizationExternalOrigin+"\"},\"id\":\""+pdndOrganizationId+"\",\"name\":\""+pdndOrganizationName+"\"}";
+	private static final String PDND_ORGANIZATION_CATEGORY = "Comuni e loro Consorzi e Associazioni";
+	private static final String PDND_ORGANIZATION_NAME = "Comune di Test";
+	private static final String PDND_ORGANIZATION_ID = "12345678-254d-bbbb-aaaa-82e210e12345";
+	private static final String PDND_ORGANIZATIONEXTERNAL_ID = "c001";
+	private static final String PDND_ORGANIZATION_EXTERNAL_ORIGIN = "IPA";
+	private static final String PDND_JSON_ORGANIZATION = "{\"category\":\""+PDND_ORGANIZATION_CATEGORY+"\",\"externalId\":{\"id\":\""+PDND_ORGANIZATIONEXTERNAL_ID+"\",\"origin\":\""+PDND_ORGANIZATION_EXTERNAL_ORIGIN+"\"},\"id\":\""+PDND_ORGANIZATION_ID+"\",\"name\":\""+PDND_ORGANIZATION_NAME+"\"}";
 	
-	private static final String servizioApplicativoFruitore = "AppXde23";
+	private static final String SERVIZIO_APPLICATIVO_FRUITORE = "AppXde23";
+	
+	private static final String CONTENT_TYPE_TEXT_XML_CHARSET = "text/xml; charset=\"UTF8\"";
+	
+	private static final String HEADER_CONTENT_XXX = "Content-XXX";
+	private static final String HEADER_CONTENT_XXX_VALUE = "ADEDE";
+	
+	private static final String HEADER_TIPO_MESSAGGIO = "TipoMessaggio";
+	
+	private static final String MSG_FAILED_PREFIX = "FAILED!! \nAtteso:\n";
 	
 	public static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
 		
@@ -167,9 +212,9 @@ public class FileTraceTest {
 		ConfigurazionePdD confPdD = new ConfigurazionePdD();
 		confPdD.setLoader(new Loader());
 		confPdD.setLog(log);
-		Map<String, IProtocolFactory<?>> m = new HashMap<String, IProtocolFactory<?>>();
+		Map<String, IProtocolFactory<?>> m = new HashMap<>();
 		m.put(CostantiLabel.TRASPARENTE_PROTOCOL_NAME, Utilities.newInstance("org.openspcoop2.protocol.trasparente.TrasparenteFactory"));
-		MapReader<String, IProtocolFactory<?>> map = new MapReader<String, IProtocolFactory<?>>(m, false);
+		MapReader<String, IProtocolFactory<?>> map = new MapReader<>(m, false);
 		EsitiProperties.initialize(null, log, new Loader(), map);
 		
 		String testData = "2020-06-25_15:09:05.825";
@@ -226,7 +271,7 @@ public class FileTraceTest {
 		transazioneDTO.setNomeSoggettoErogatore("EnteErogatore");
 		transazioneDTO.setNomeSoggettoFruitore("EnteFruitore");
 		transazioneDTO.setIdMessaggioRichiesta("idMsgReqXXX");
-		transazioneDTO.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+		transazioneDTO.setServizioApplicativoFruitore(SERVIZIO_APPLICATIVO_FRUITORE);
 		transazioneDTO.setCodiceRispostaIngresso("202");
 		transazioneDTO.setCodiceRispostaUscita("204");
 		transazioneDTO.setCredenziali("C=IT, O=Prova");
@@ -249,8 +294,7 @@ public class FileTraceTest {
 		
 		SecurityToken securityToken = new SecurityToken();
 		Certificate cert = 
-				//ArchiveLoader.load(ArchiveType.CER, Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(CertificateTest.PREFIX+"govway_test.pem")), 0, null);
-				ArchiveLoader.load(ArchiveType.CER, PEM_CERTIFICATE.getBytes(), 0, null);
+				ArchiveLoader.load(ArchiveType.CER, PEMCERTIFICATE.getBytes(), 0, null);
 		RestMessageSecurityToken restToken = new RestMessageSecurityToken();
 		restToken.setCertificate(cert.getCertificate());
 		restToken.setToken(clientAssertionBase64);
@@ -289,15 +333,15 @@ public class FileTraceTest {
 			}
 		}
 		
-		CredenzialeMittente token_issuer = new CredenzialeMittente();
-		token_issuer.setCredenziale("issuerGoogle");
-		credenzialiMittente.setTokenIssuer(token_issuer);
+		CredenzialeMittente tokenIssuer = new CredenzialeMittente();
+		tokenIssuer.setCredenziale("issuerGoogle");
+		credenzialiMittente.setTokenIssuer(tokenIssuer);
 		
-		CredenzialeMittente token_subject = new CredenzialeMittente();
-		token_subject.setCredenziale("subjectAD5432h43242");
-		credenzialiMittente.setTokenSubject(token_subject);
+		CredenzialeMittente tokenSubject = new CredenzialeMittente();
+		tokenSubject.setCredenziale("subjectAD5432h43242");
+		credenzialiMittente.setTokenSubject(tokenSubject);
 		
-		CredenzialeMittente token_clientId = new CredenzialeMittente();
+		CredenzialeMittente tokenClientId = new CredenzialeMittente();
 		String clientIdToken = "3456ClientId";
 		CredenzialeTokenClient c = null;
 		if(registraIDApplicativoToken) {
@@ -309,17 +353,17 @@ public class FileTraceTest {
 		else {
 			c = new CredenzialeTokenClient(clientIdToken, null); 
 		}		
-		token_clientId.setCredenziale(c.getCredenziale());
-		credenzialiMittente.setTokenClientId(token_clientId);
+		tokenClientId.setCredenziale(c.getCredenziale());
+		credenzialiMittente.setTokenClientId(tokenClientId);
 		
-		CredenzialeMittente token_mail = new CredenzialeMittente();
-		token_mail.setCredenziale("info@link.it");
-		credenzialiMittente.setTokenEMail(token_mail);
+		CredenzialeMittente tokenMail = new CredenzialeMittente();
+		tokenMail.setCredenziale("info@link.it");
+		credenzialiMittente.setTokenEMail(tokenMail);
 		
 		if(registraUsername) {
-			CredenzialeMittente token_username = new CredenzialeMittente();
-			token_username.setCredenziale("rossi");
-			credenzialiMittente.setTokenUsername(token_username);
+			CredenzialeMittente tokenUsername = new CredenzialeMittente();
+			tokenUsername.setCredenziale("rossi");
+			credenzialiMittente.setTokenUsername(tokenUsername);
 		}
 		
 		CredenzialeMittente trasporto = new CredenzialeMittente();
@@ -333,31 +377,31 @@ public class FileTraceTest {
 			
 			if(TipoPdD.APPLICATIVA.equals(tipoPdD)) {
 				CredenzialeMittente pdndClientJson = new CredenzialeMittente();
-				pdndClientJson.setCredenziale(pdndJsonClient);
+				pdndClientJson.setCredenziale(PDND_JSON_CLIENT);
 				credenzialiMittente.setTokenPdndClientJson(pdndClientJson);
 			}
 			else {
 				PDNDTokenInfoDetails d = new PDNDTokenInfoDetails();
-				d.setDetails(pdndJsonClient);
-				d.setId(pdndClientId);
+				d.setDetails(PDND_JSON_CLIENT);
+				d.setId(PDND_CLIENT_ID);
 				securityToken.getPdnd().setClient(d);	
 			}
 			
 			if(TipoPdD.APPLICATIVA.equals(tipoPdD)) {
 				CredenzialeMittente pdndOrganizationJson = new CredenzialeMittente();
-				pdndOrganizationJson.setCredenziale(pdndJsonOrganization);
+				pdndOrganizationJson.setCredenziale(PDND_JSON_ORGANIZATION);
 				credenzialiMittente.setTokenPdndOrganizationJson(pdndOrganizationJson);
 			}
 			else {
 				PDNDTokenInfoDetails d = new PDNDTokenInfoDetails();
-				d.setDetails(pdndJsonOrganization);
-				d.setId(pdndOrganizationId);
+				d.setDetails(PDND_JSON_ORGANIZATION);
+				d.setId(PDND_ORGANIZATION_ID);
 				securityToken.getPdnd().setOrganization(d);			
 			}
 			
 			if(TipoPdD.APPLICATIVA.equals(tipoPdD)) {
 				CredenzialeMittente pdndOrganizationName = new CredenzialeMittente();
-				pdndOrganizationName.setCredenziale(FileTraceTest.pdndOrganizationName);
+				pdndOrganizationName.setCredenziale(FileTraceTest.PDND_ORGANIZATION_NAME);
 				credenzialiMittente.setTokenPdndOrganizationName(pdndOrganizationName);
 			}
 		}
@@ -369,43 +413,43 @@ public class FileTraceTest {
 		Messaggio richiestaIngresso = new Messaggio();
 		richiestaIngresso.setTipoMessaggio(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO);
 		if(requestWithPayload) {
-			richiestaIngresso.setContentType("text/xml; charset=\"UTF8\"");
+			richiestaIngresso.setContentType(CONTENT_TYPE_TEXT_XML_CHARSET);
 			richiestaIngresso.setBody(DumpByteArrayOutputStream.newInstance("<prova>TEST RICHIESTA_INGRESSO_DUMP_BINARIO</prova>".getBytes()));
-			TransportUtils.addHeader(richiestaIngresso.getHeaders(),"Content-Type", "text/xml; charset=\"UTF8\"; tipo=inRequest");
+			TransportUtils.addHeader(richiestaIngresso.getHeaders(),HttpConstants.CONTENT_TYPE, "text/xml; charset=\"UTF8\"; tipo=inRequest");
 		}
-		TransportUtils.addHeader(richiestaIngresso.getHeaders(),"Content-XXX", "ADEDE");
-		TransportUtils.addHeader(richiestaIngresso.getHeaders(),"TipoMessaggio", "RICHIESTA_INGRESSO_DUMP_BINARIO");
+		TransportUtils.addHeader(richiestaIngresso.getHeaders(),HEADER_CONTENT_XXX, HEADER_CONTENT_XXX_VALUE);
+		TransportUtils.addHeader(richiestaIngresso.getHeaders(),HEADER_TIPO_MESSAGGIO, "RICHIESTA_INGRESSO_DUMP_BINARIO");
 		
 		Messaggio richiestaUscita = new Messaggio();
 		richiestaUscita.setTipoMessaggio(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
 		if(requestWithPayload) {
-			richiestaUscita.setContentType("text/xml; charset=\"UTF8\"");
+			richiestaUscita.setContentType(CONTENT_TYPE_TEXT_XML_CHARSET);
 			richiestaUscita.setBody(DumpByteArrayOutputStream.newInstance("<prova>TEST RICHIESTA_USCITA_DUMP_BINARIO</prova>".getBytes()));
-			TransportUtils.addHeader(richiestaUscita.getHeaders(),"Content-Type", "text/xml; charset=\"UTF8\"; tipo=outRequest");
+			TransportUtils.addHeader(richiestaUscita.getHeaders(),HttpConstants.CONTENT_TYPE, "text/xml; charset=\"UTF8\"; tipo=outRequest");
 		}
-		TransportUtils.addHeader(richiestaUscita.getHeaders(),"Content-XXX", "ADEDE");
-		TransportUtils.addHeader(richiestaUscita.getHeaders(),"TipoMessaggio", "RICHIESTA_USCITA_DUMP_BINARIO");
+		TransportUtils.addHeader(richiestaUscita.getHeaders(),HEADER_CONTENT_XXX, HEADER_CONTENT_XXX_VALUE);
+		TransportUtils.addHeader(richiestaUscita.getHeaders(),HEADER_TIPO_MESSAGGIO, "RICHIESTA_USCITA_DUMP_BINARIO");
 		
 		Messaggio rispostaIngresso = new Messaggio();
 		rispostaIngresso.setTipoMessaggio(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
-		rispostaIngresso.setContentType("text/xml; charset=\"UTF8\"");
+		rispostaIngresso.setContentType(CONTENT_TYPE_TEXT_XML_CHARSET);
 		rispostaIngresso.setBody(DumpByteArrayOutputStream.newInstance("<prova>TEST RISPOSTA_INGRESSO_DUMP_BINARIO</prova>".getBytes()));
-		TransportUtils.addHeader(rispostaIngresso.getHeaders(),"Content-Type", "text/xml; charset=\"UTF8\"; tipo=inResponse");
-		TransportUtils.addHeader(rispostaIngresso.getHeaders(),"Content-XXX", "ADEDE");
-		TransportUtils.addHeader(rispostaIngresso.getHeaders(),"TipoMessaggio", "RISPOSTA_INGRESSO_DUMP_BINARIO");
+		TransportUtils.addHeader(rispostaIngresso.getHeaders(),HttpConstants.CONTENT_TYPE, "text/xml; charset=\"UTF8\"; tipo=inResponse");
+		TransportUtils.addHeader(rispostaIngresso.getHeaders(),HEADER_CONTENT_XXX, HEADER_CONTENT_XXX_VALUE);
+		TransportUtils.addHeader(rispostaIngresso.getHeaders(),HEADER_TIPO_MESSAGGIO, "RISPOSTA_INGRESSO_DUMP_BINARIO");
 		
 		Messaggio rispostaUscita = new Messaggio();
 		rispostaUscita.setTipoMessaggio(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);
-		rispostaUscita.setContentType("text/xml; charset=\"UTF8\"");
+		rispostaUscita.setContentType(CONTENT_TYPE_TEXT_XML_CHARSET);
 		rispostaUscita.setBody(DumpByteArrayOutputStream.newInstance("<prova>TEST RISPOSTA_USCITA_DUMP_BINARIO</prova>".getBytes()));
-		TransportUtils.addHeader(rispostaUscita.getHeaders(),"Content-Type", "text/xml; charset=\"UTF8\"; tipo=outResponse");
-		TransportUtils.addHeader(rispostaUscita.getHeaders(),"Content-XXX", "ADEDE");
-		TransportUtils.addHeader(rispostaUscita.getHeaders(),"TipoMessaggio", "RISPOSTA_USCITA_DUMP_BINARIO");
+		TransportUtils.addHeader(rispostaUscita.getHeaders(),HttpConstants.CONTENT_TYPE, "text/xml; charset=\"UTF8\"; tipo=outResponse");
+		TransportUtils.addHeader(rispostaUscita.getHeaders(),HEADER_CONTENT_XXX, HEADER_CONTENT_XXX_VALUE);
+		TransportUtils.addHeader(rispostaUscita.getHeaders(),HEADER_TIPO_MESSAGGIO, "RISPOSTA_USCITA_DUMP_BINARIO");
 		
 		System.setProperty("javaProperty.1", "p1");
 		System.setProperty("javaProperty.2", "p2");
 		
-//		Properties pTest = new Properties();
+/**		Properties pTest = new Properties();
 //		pTest.put("format.escape.\"", "\\\"");
 //		pTest.put("format.escape.=", "\\=");
 //		pTest.put("format.headers.separator","|");
@@ -427,7 +471,7 @@ public class FileTraceTest {
 //		}
 //		System.out.println("\n\n\nFile prodotto:\n"+FileSystemUtilities.readFile(fTmp)+"\n\n\n");
 //		//LogTraceConfig config = LogTraceConfig.getConfig(fTmp);
-//		fTmp.delete();
+//		fTmp.delete();*/
 		
 		String path = "/org/openspcoop2/pdd/logger/filetrace/test/testFileTrace.properties";
 		InputStream is = FileTraceTest.class.getResourceAsStream(path);
@@ -467,36 +511,36 @@ public class FileTraceTest {
 	}
 	
 	// *** TOPIC 'request' ***
-	private static final String retrievedTokenInfo = "\"AAAAATOKEN\"|\"JWT\"|\"UUIDXX\"|\"rfc7523_x509\"|\""+clientAssertionBase64+"\"|\"rfc7523_x509\"|\"clientIdXX\"|\"clientBEARERTOKEN\"|\"USERNAME\"|\"http://retrieveToken\"";
-	private static final String certClientInfo = "\"CN=govway_test, OU=govway_test_ou, O=govway_test_o, L=govway_test_l, ST=Italy, C=IT, EMAILADDRESS=info@link.it\"|\"govway_test\"|\"govway_test_ou\"|\"CN=govway_test, OU=govway_test_ou, O=govway_test_o, L=govway_test_l, ST=Italy, C=IT, EMAILADDRESS=info@link.it\"";
-	private static final String tokenInfo = "\"ewogICJhbGciOiAiUlMyNTYiLAogICJ0eXAiOiAiSldUIiwKICAia2lkIjogInByb3ZhIiwKICAieDVjIjogWwogICAgIk1JSS4uLi4uZjZ1UXhjbGhVaDBOaXZqNmhJSitDZDNSMS9GdncxejY5RXllT3ROd3FZU2JzdzJnamlkbzhHUGdEVWtxZFVaSThyYnRjbDIyK2x0S2VXbURhUXZOUUZnTlUreUJObTBBPSIKICBdCn0=.ewogICJpYXQiOiAxNjUwMDMyOTAzLAogICJuYmYiOiAxNjUwMDMyOTAzLAogICJleHAiOiAxNjUwMDMzMDAzLAogICJqdGkiOiAiNGU2MWRjMTQtYmNjOC0xMWVjLTllOTktMDA1MDU2YWUwMzA3IiwKICAiYXVkIjogInRlc3QiLAogICJjbGllbnRfaWQiOiAiY1Rlc3QiLAogICJpc3MiOiAiaXNzVGVzdCIsCiAgInN1YiI6ICJzdWJUZXN0Igp9.PDdXpT5htzB6JI0TdYsfsIBjH8tSV0IkIiKAI0S1IYkqcS6pOs84MsfVk3wnd1_dSiR-2KSpGzZU9s8TuGoXcdR-4oa6EN0RNJJsF8zC1KHVx1IBl4jcZGRY5vAgtKwBC87bPz7EaYXtesS3Go-fl5HTFWvZ4OR3yxvsrCfTy_ehQwVJwJy9yKrIpQFq_dSQr_xQbRBL495D9Fp4p54vNdP3IRtoDq16NUhwkH_dbQJGUJdYZ2M31bBZUvgu9RRZz_ftjI78Swwq5FIwIG7r5trwgmVebZtdLF2Ni5Vc2rL7ZNuBpH7Y_knRgRYbH4HxnMoHOU6nU8yM_ZPZyhHneA\"|\"ewogICJhbGciOiAiUlMyNTYiLAogICJ0eXAiOiAiSldUIiwKICAia2lkIjogInByb3ZhIiwKICAieDVjIjogWwogICAgIk1JSS4uLi4uZjZ1UXhjbGhVaDBOaXZqNmhJSitDZDNSMS9GdncxejY5RXllT3ROd3FZU2JzdzJnamlkbzhHUGdEVWtxZFVaSThyYnRjbDIyK2x0S2VXbURhUXZOUUZnTlUreUJObTBBPSIKICBdCn0=\"|\"ewogICJhbGciOiAiUlMyNTYiLAogICJ0eXAiOiAiSldUIiwKICAia2lkIjogInByb3ZhIiwKICAieDVjIjogWwogICAgIk1JSS4uLi4uZjZ1UXhjbGhVaDBOaXZqNmhJSitDZDNSMS9GdncxejY5RXllT3ROd3FZU2JzdzJnamlkbzhHUGdEVWtxZFVaSThyYnRjbDIyK2x0S2VXbURhUXZOUUZnTlUreUJObTBBPSIKICBdCn0=\"|\"RS256\"|\"kid=prova,x5c=MII.....f6uQxclhUh0Nivj6hIJ+Cd3R1/Fvw1z69EyeOtNwqYSbsw2gjido8GPgDUkqdUZI8rbtcl22+ltKeWmDaQvNQFgNU+yBNm0A=,typ=JWT,alg=RS256\"|\"ewogICJpYXQiOiAxNjUwMDMyOTAzLAogICJuYmYiOiAxNjUwMDMyOTAzLAogICJleHAiOiAxNjUwMDMzMDAzLAogICJqdGkiOiAiNGU2MWRjMTQtYmNjOC0xMWVjLTllOTktMDA1MDU2YWUwMzA3IiwKICAiYXVkIjogInRlc3QiLAogICJjbGllbnRfaWQiOiAiY1Rlc3QiLAogICJpc3MiOiAiaXNzVGVzdCIsCiAgInN1YiI6ICJzdWJUZXN0Igp9\"|\"ewogICJpYXQiOiAxNjUwMDMyOTAzLAogICJuYmYiOiAxNjUwMDMyOTAzLAogICJleHAiOiAxNjUwMDMzMDAzLAogICJqdGkiOiAiNGU2MWRjMTQtYmNjOC0xMWVjLTllOTktMDA1MDU2YWUwMzA3IiwKICAiYXVkIjogInRlc3QiLAogICJjbGllbnRfaWQiOiAiY1Rlc3QiLAogICJpc3MiOiAiaXNzVGVzdCIsCiAgInN1YiI6ICJzdWJUZXN0Igp9\"|\"test\"|\"aud=test,sub=subTest,nbf=1650032903,iss=issTest,exp=1650033003,iat=1650032903,jti=4e61dc14-bcc8-11ec-9e99-005056ae0307,client_id=cTest\"";
-	private static final String tlsClientInfo = certClientInfo;
-	private static final String accessTokenJWT = tokenInfo+"|"+certClientInfo;
-	private static final String modiAuthorization = tokenInfo+"|"+certClientInfo;
-	private static final String modiIntegrity = tokenInfo+"|"+certClientInfo;
-	private static final String modiAudit = tokenInfo+"|"+certClientInfo;
-	private static final String pdndClient = "\""+pdndJsonClient.replace("\"", "\\\"")+"\"|\""+pdndClientId+"\"|\""+pdndClientConsumerId+"\"";
-	private static final String pdndClientEmpty = "\"\"|\"\"|\"\"";
-	private static final String pdndOrganization = "\""+pdndJsonOrganization.replace("\"", "\\\"")+"\"|\""+pdndOrganizationName+"\"|\""+pdndOrganizationId+"\"|\""+pdndOrganizationCategory+"\"|\""+pdndOrganizationExternalOrigin+"\"|\""+pdndOrganizationExternalId+"\"";
-	private static final String pdndOrganizationEmpty = "\"\"|\"\"|\"\"|\"\"|\"\"|\"\"";
+	private static final String RETRIEVED_TOKEN_INFO = "\"AAAAATOKEN\"|\"JWT\"|\"UUIDXX\"|\"rfc7523_x509\"|\""+clientAssertionBase64+"\"|\"rfc7523_x509\"|\"clientIdXX\"|\"clientBEARERTOKEN\"|\"USERNAME\"|\"http://retrieveToken\"";
+	private static final String CERT_CLIENT_INFO = "\"CN=govway_test, OU=govway_test_ou, O=govway_test_o, L=govway_test_l, ST=Italy, C=IT, EMAILADDRESS=info@link.it\"|\"govway_test\"|\"govway_test_ou\"|\"CN=govway_test, OU=govway_test_ou, O=govway_test_o, L=govway_test_l, ST=Italy, C=IT, EMAILADDRESS=info@link.it\"";
+	private static final String TOKEN_INFO = "\"ewogICJhbGciOiAiUlMyNTYiLAogICJ0eXAiOiAiSldUIiwKICAia2lkIjogInByb3ZhIiwKICAieDVjIjogWwogICAgIk1JSS4uLi4uZjZ1UXhjbGhVaDBOaXZqNmhJSitDZDNSMS9GdncxejY5RXllT3ROd3FZU2JzdzJnamlkbzhHUGdEVWtxZFVaSThyYnRjbDIyK2x0S2VXbURhUXZOUUZnTlUreUJObTBBPSIKICBdCn0=.ewogICJpYXQiOiAxNjUwMDMyOTAzLAogICJuYmYiOiAxNjUwMDMyOTAzLAogICJleHAiOiAxNjUwMDMzMDAzLAogICJqdGkiOiAiNGU2MWRjMTQtYmNjOC0xMWVjLTllOTktMDA1MDU2YWUwMzA3IiwKICAiYXVkIjogInRlc3QiLAogICJjbGllbnRfaWQiOiAiY1Rlc3QiLAogICJpc3MiOiAiaXNzVGVzdCIsCiAgInN1YiI6ICJzdWJUZXN0Igp9.PDdXpT5htzB6JI0TdYsfsIBjH8tSV0IkIiKAI0S1IYkqcS6pOs84MsfVk3wnd1_dSiR-2KSpGzZU9s8TuGoXcdR-4oa6EN0RNJJsF8zC1KHVx1IBl4jcZGRY5vAgtKwBC87bPz7EaYXtesS3Go-fl5HTFWvZ4OR3yxvsrCfTy_ehQwVJwJy9yKrIpQFq_dSQr_xQbRBL495D9Fp4p54vNdP3IRtoDq16NUhwkH_dbQJGUJdYZ2M31bBZUvgu9RRZz_ftjI78Swwq5FIwIG7r5trwgmVebZtdLF2Ni5Vc2rL7ZNuBpH7Y_knRgRYbH4HxnMoHOU6nU8yM_ZPZyhHneA\"|\"ewogICJhbGciOiAiUlMyNTYiLAogICJ0eXAiOiAiSldUIiwKICAia2lkIjogInByb3ZhIiwKICAieDVjIjogWwogICAgIk1JSS4uLi4uZjZ1UXhjbGhVaDBOaXZqNmhJSitDZDNSMS9GdncxejY5RXllT3ROd3FZU2JzdzJnamlkbzhHUGdEVWtxZFVaSThyYnRjbDIyK2x0S2VXbURhUXZOUUZnTlUreUJObTBBPSIKICBdCn0=\"|\"ewogICJhbGciOiAiUlMyNTYiLAogICJ0eXAiOiAiSldUIiwKICAia2lkIjogInByb3ZhIiwKICAieDVjIjogWwogICAgIk1JSS4uLi4uZjZ1UXhjbGhVaDBOaXZqNmhJSitDZDNSMS9GdncxejY5RXllT3ROd3FZU2JzdzJnamlkbzhHUGdEVWtxZFVaSThyYnRjbDIyK2x0S2VXbURhUXZOUUZnTlUreUJObTBBPSIKICBdCn0=\"|\"RS256\"|\"kid=prova,x5c=MII.....f6uQxclhUh0Nivj6hIJ+Cd3R1/Fvw1z69EyeOtNwqYSbsw2gjido8GPgDUkqdUZI8rbtcl22+ltKeWmDaQvNQFgNU+yBNm0A=,typ=JWT,alg=RS256\"|\"ewogICJpYXQiOiAxNjUwMDMyOTAzLAogICJuYmYiOiAxNjUwMDMyOTAzLAogICJleHAiOiAxNjUwMDMzMDAzLAogICJqdGkiOiAiNGU2MWRjMTQtYmNjOC0xMWVjLTllOTktMDA1MDU2YWUwMzA3IiwKICAiYXVkIjogInRlc3QiLAogICJjbGllbnRfaWQiOiAiY1Rlc3QiLAogICJpc3MiOiAiaXNzVGVzdCIsCiAgInN1YiI6ICJzdWJUZXN0Igp9\"|\"ewogICJpYXQiOiAxNjUwMDMyOTAzLAogICJuYmYiOiAxNjUwMDMyOTAzLAogICJleHAiOiAxNjUwMDMzMDAzLAogICJqdGkiOiAiNGU2MWRjMTQtYmNjOC0xMWVjLTllOTktMDA1MDU2YWUwMzA3IiwKICAiYXVkIjogInRlc3QiLAogICJjbGllbnRfaWQiOiAiY1Rlc3QiLAogICJpc3MiOiAiaXNzVGVzdCIsCiAgInN1YiI6ICJzdWJUZXN0Igp9\"|\"test\"|\"aud=test,sub=subTest,nbf=1650032903,iss=issTest,exp=1650033003,iat=1650032903,jti=4e61dc14-bcc8-11ec-9e99-005056ae0307,client_id=cTest\"";
+	private static final String TLS_CLIENT_INFO = CERT_CLIENT_INFO;
+	private static final String ACCESS_TOKEN_JWT = TOKEN_INFO+"|"+CERT_CLIENT_INFO;
+	private static final String MODI_AUTHORIZATION = TOKEN_INFO+"|"+CERT_CLIENT_INFO;
+	private static final String MODI_INTEGRITY = TOKEN_INFO+"|"+CERT_CLIENT_INFO;
+	private static final String MODI_AUDIT = TOKEN_INFO+"|"+CERT_CLIENT_INFO;
+	private static final String PDND_CLIENT = "\""+PDND_JSON_CLIENT.replace("\"", "\\\"")+"\"|\""+PDND_CLIENT_ID+"\"|\""+PDND_CLIENT_CONSUMER_ID+"\"";
+	private static final String PDND_CLIENT_EMPTY = "\"\"|\"\"|\"\"";
+	private static final String PDND_ORGANIZATION = "\""+PDND_JSON_ORGANIZATION.replace("\"", "\\\"")+"\"|\""+PDND_ORGANIZATION_NAME+"\"|\""+PDND_ORGANIZATION_ID+"\"|\""+PDND_ORGANIZATION_CATEGORY+"\"|\""+PDND_ORGANIZATION_EXTERNAL_ORIGIN+"\"|\""+PDND_ORGANIZATIONEXTERNAL_ID+"\"";
+	private static final String PDND_ORGANIZATION_EMPTY = "\"\"|\"\"|\"\"|\"\"|\"\"|\"\"";
 		
-	private static final String date = "\"2020-06-25 13:09:05:825\"|\"2020-06-25 13:09:05:875\"|\"2020-06-25 13:09:05:925\"|\"2020-06-25 13:09:06:025\"|\"2020-06-25 13:09:07:025\"|\"2020-06-25 13:09:07:125\"|\"2020-06-25 13:09:07:225\"|\"2020-06-25 13:09:07:490\"";
-	private static final String logRequestPA_PUT = "\"in\"|\"rest\"|\"erogazione\"|\"esempioCostanteRichiestaErogazione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:825\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"\"|\"\"|\"AppXde23\"|\"EnteFruitore\"|\""+pdndOrganizationName+"\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"51\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_INGRESSO_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=inRequest\"|\"v1\"|\"v2a,v2b\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+modiAudit+"|"+pdndClient+"|"+pdndOrganization+"|"+date;
-	private static final String logRequestPA_GET = "\"in\"|\"rest\"|\"erogazione\"|\"esempioCostanteRichiestaErogazione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:825\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"GET\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"\"|\"\"|\"AppXde23\"|\"EnteFruitore\"|\""+servizioApplicativoFruitore+"\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"\"|\"0\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_INGRESSO_DUMP_BINARIO\"|\"v1\"|\"v2a,v2b\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+modiAudit+"|"+pdndClientEmpty+"|"+pdndOrganizationEmpty+"|"+date;
-	private static final String logRequestPD_PUT = "\"out\"|\"soap\"|\"fruizione\"|\"esempioCostanteRichiestaFruizione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:925\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"rossi\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"rossi\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"49\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_USCITA_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=outRequest\"|\"v1\"|\"v2a,v2b,v2c\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+modiAudit+"|"+pdndClient+"|"+pdndOrganization+"|"+date;
-	private static final String logRequestPD_GET = "\"out\"|\"soap\"|\"fruizione\"|\"esempioCostanteRichiestaFruizione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:05:925\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"GET\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"SAToken\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"\"|\"0\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_USCITA_DUMP_BINARIO\"|\"v1\"|\"v2a,v2b,v2c\"|"+retrievedTokenInfo+"|"+tlsClientInfo+"|"+accessTokenJWT+"|"+modiAuthorization+"|"+modiIntegrity+"|"+modiAudit+"|"+pdndClient+"|"+pdndOrganization+"|"+date;
+	private static final String DATE = "\"2020-06-25 13:09:05:825\"|\"2020-06-25 13:09:05:875\"|\"2020-06-25 13:09:05:925\"|\"2020-06-25 13:09:06:025\"|\"2020-06-25 13:09:07:025\"|\"2020-06-25 13:09:07:125\"|\"2020-06-25 13:09:07:225\"|\"2020-06-25 13:09:07:490\"";
+	private static final String LOG_REQUEST_PA_PUT = "\"in\"|\"rest\"|\"erogazione\"|\"esempioCostanteRichiestaErogazione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\""+ENV_VALUE_1+"\"|\""+ENV_VALUE_2+"\"|\"2020-06-25 13:09:05:825\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"\"|\"\"|\"AppXde23\"|\"EnteFruitore\"|\""+PDND_ORGANIZATION_NAME+"\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"51\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_INGRESSO_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=inRequest\"|\"v1\"|\"v2a,v2b\"|"+RETRIEVED_TOKEN_INFO+"|"+TLS_CLIENT_INFO+"|"+ACCESS_TOKEN_JWT+"|"+MODI_AUTHORIZATION+"|"+MODI_INTEGRITY+"|"+MODI_AUDIT+"|"+PDND_CLIENT+"|"+PDND_ORGANIZATION+"|"+DATE;
+	private static final String LOG_REQUEST_PA_GET = "\"in\"|\"rest\"|\"erogazione\"|\"esempioCostanteRichiestaErogazione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\""+ENV_VALUE_1+"\"|\""+ENV_VALUE_2+"\"|\"2020-06-25 13:09:05:825\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"GET\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"\"|\"\"|\"AppXde23\"|\"EnteFruitore\"|\""+SERVIZIO_APPLICATIVO_FRUITORE+"\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"\"|\"0\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_INGRESSO_DUMP_BINARIO\"|\"v1\"|\"v2a,v2b\"|"+RETRIEVED_TOKEN_INFO+"|"+TLS_CLIENT_INFO+"|"+ACCESS_TOKEN_JWT+"|"+MODI_AUTHORIZATION+"|"+MODI_INTEGRITY+"|"+MODI_AUDIT+"|"+PDND_CLIENT_EMPTY+"|"+PDND_ORGANIZATION_EMPTY+"|"+DATE;
+	private static final String LOG_REQUEST_PD_PUT = "\"out\"|\"soap\"|\"fruizione\"|\"esempioCostanteRichiestaFruizione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\""+ENV_VALUE_1+"\"|\""+ENV_VALUE_2+"\"|\"2020-06-25 13:09:05:925\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"rossi\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"rossi\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"49\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_USCITA_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=outRequest\"|\"v1\"|\"v2a,v2b,v2c\"|"+RETRIEVED_TOKEN_INFO+"|"+TLS_CLIENT_INFO+"|"+ACCESS_TOKEN_JWT+"|"+MODI_AUTHORIZATION+"|"+MODI_INTEGRITY+"|"+MODI_AUDIT+"|"+PDND_CLIENT+"|"+PDND_ORGANIZATION+"|"+DATE;
+	private static final String LOG_REQUEST_PD_GET = "\"out\"|\"soap\"|\"fruizione\"|\"esempioCostanteRichiestaFruizione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\""+ENV_VALUE_1+"\"|\""+ENV_VALUE_2+"\"|\"2020-06-25 13:09:05:925\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"GET\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"SAToken\"|\"SoggettoProprietarioSAToken\"|\"AppXde23\"|\"EnteFruitore\"|\"SAToken\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"\"|\"0\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_USCITA_DUMP_BINARIO\"|\"v1\"|\"v2a,v2b,v2c\"|"+RETRIEVED_TOKEN_INFO+"|"+TLS_CLIENT_INFO+"|"+ACCESS_TOKEN_JWT+"|"+MODI_AUTHORIZATION+"|"+MODI_INTEGRITY+"|"+MODI_AUDIT+"|"+PDND_CLIENT+"|"+PDND_ORGANIZATION+"|"+DATE;
 	
 	// *** TOPIC 'requestBody' ***
-	private static final String logRequestBodyPA = "UUIDXX.XX-deXXXRR-deXXXRest.MjAyMC0wNi0yNVQxNTowOTowNS44MjUrMDIwMA==.dGV4dC94bWw7IGNoYXJzZXQ9IlVURjgi.PHByb3ZhPlRFU1QgUklDSElFU1RBX0lOR1JFU1NPX0RVTVBfQklOQVJJTzwvcHJvdmE+";
-	private static final String logRequestBodyPD = "UUIDXX.XX-deXXXRR-deXXXRest.MjAyMC0wNi0yNVQxNTowOTowNS45MjUrMDIwMA==.dGV4dC94bWw7IGNoYXJzZXQ9IlVURjgi.PHByb3ZhPlRFU1QgUklDSElFU1RBX1VTQ0lUQV9EVU1QX0JJTkFSSU88L3Byb3ZhPg==";
+	private static final String LOG_REQUEST_BODY_PA = "UUIDXX.XX-deXXXRR-deXXXRest.MjAyMC0wNi0yNVQxNTowOTowNS44MjUrMDIwMA==.dGV4dC94bWw7IGNoYXJzZXQ9IlVURjgi.PHByb3ZhPlRFU1QgUklDSElFU1RBX0lOR1JFU1NPX0RVTVBfQklOQVJJTzwvcHJvdmE+";
+	private static final String LOG_REQUEST_BODY_PD = "UUIDXX.XX-deXXXRR-deXXXRest.MjAyMC0wNi0yNVQxNTowOTowNS45MjUrMDIwMA==.dGV4dC94bWw7IGNoYXJzZXQ9IlVURjgi.PHByb3ZhPlRFU1QgUklDSElFU1RBX1VTQ0lUQV9EVU1QX0JJTkFSSU88L3Byb3ZhPg==";
 	
 	// *** TOPIC 'response' ***
-	private static final String logResponsePA = "\"esempioCostanteRispostaErogazione\"|\"ADEDADEAD.DEADADEADAD.dEADEADADEA\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:07:490\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"204\"|\"1665000\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"48\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RISPOSTA_USCITA_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=outResponse\"|\"X-GovWay-APP-SERVER=10.114.32.21\"|\"X-GovWay-HOSTNAME-APP-SERVER=prova\"|\"X-GovWay-SERVER-ENCODING=UTF-8\"|\"X-GovWay-APP-SERVER-PORT=8443\"|\"X-GovWay-USER=Andrea\"|\"X-GovWay-COMPLEX=versione_api = 1; api = APIEsempio; operazione = azioneDiProva; erogatore = EnteErogatore; soggetto_fruitore = EnteFruitore; applicativo_fruitore = AppXde23; id_messaggio_richiesta = idMsgReqXXX; id_messaggio_risposta = ; id_collaborazione = ; esito = OK;\"";
-	private static final String logResponsePD = "\"esempioCostanteRispostaFruizione\"|\"ADEDADEAD.DEADADEADAD.dEADEADADEA\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"2020-06-25 13:09:07:025\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"202\"|\"1100000\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"50\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RISPOSTA_INGRESSO_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=inResponse\"|\"X-GovWay-APP-SERVER=10.114.32.21\"|\"X-GovWay-HOSTNAME-APP-SERVER=prova\"|\"X-GovWay-SERVER-ENCODING=UTF-8\"|\"X-GovWay-APP-SERVER-PORT=8443\"|\"X-GovWay-USER=Andrea\"|\"X-GovWay-COMPLEX=versione_api = 1; api = APIEsempio; operazione = azioneDiProva; erogatore = EnteErogatore; soggetto_fruitore = EnteFruitore; applicativo_fruitore = AppXde23; id_messaggio_richiesta = idMsgReqXXX; id_messaggio_risposta = ; id_collaborazione = ; esito = OK;\"";
+	private static final String LOG_RESPONSE_PA = "\"esempioCostanteRispostaErogazione\"|\"ADEDADEAD.DEADADEADAD.dEADEADADEA\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\""+ENV_VALUE_1+"\"|\""+ENV_VALUE_2+"\"|\"2020-06-25 13:09:07:490\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"204\"|\"1665000\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"48\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RISPOSTA_USCITA_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=outResponse\"|\"X-GovWay-APP-SERVER=10.114.32.21\"|\"X-GovWay-HOSTNAME-APP-SERVER=prova\"|\"X-GovWay-SERVER-ENCODING=UTF-8\"|\"X-GovWay-APP-SERVER-PORT=8443\"|\"X-GovWay-USER=Andrea\"|\"X-GovWay-COMPLEX=versione_api = 1; api = APIEsempio; operazione = azioneDiProva; erogatore = EnteErogatore; soggetto_fruitore = EnteFruitore; applicativo_fruitore = AppXde23; id_messaggio_richiesta = idMsgReqXXX; id_messaggio_risposta = ; id_collaborazione = ; esito = OK;\"";
+	private static final String LOG_RESPONSE_PD = "\"esempioCostanteRispostaFruizione\"|\"ADEDADEAD.DEADADEADAD.dEADEADADEA\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\""+ENV_VALUE_1+"\"|\""+ENV_VALUE_2+"\"|\"2020-06-25 13:09:07:025\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"http://127.0.0.1:8080/govwayAPIConfig/api/PetStorec0c4269e2ebe413dadb79071/1?dad=ddede&adadad=dede\"|\"202\"|\"1100000\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"50\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RISPOSTA_INGRESSO_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=inResponse\"|\"X-GovWay-APP-SERVER=10.114.32.21\"|\"X-GovWay-HOSTNAME-APP-SERVER=prova\"|\"X-GovWay-SERVER-ENCODING=UTF-8\"|\"X-GovWay-APP-SERVER-PORT=8443\"|\"X-GovWay-USER=Andrea\"|\"X-GovWay-COMPLEX=versione_api = 1; api = APIEsempio; operazione = azioneDiProva; erogatore = EnteErogatore; soggetto_fruitore = EnteFruitore; applicativo_fruitore = AppXde23; id_messaggio_richiesta = idMsgReqXXX; id_messaggio_risposta = ; id_collaborazione = ; esito = OK;\"";
 	
 	// *** TOPIC 'responseBody' ***
-	private static final String logResponseBodyPA = "UUIDXX.XX-deXXXRR-deXXXRest.MjAyMC0wNi0yNVQxNTowOTowNy40OTArMDIwMA==.SFRUUC8xLjEgMjA0IE5vIENvbnRlbnQKQ29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX1VTQ0lUQV9EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1vdXRSZXNwb25zZQpYLUdvdldheS1BUFAtU0VSVkVSOiAxMC4xMTQuMzIuMjEKWC1Hb3ZXYXktSE9TVE5BTUUtQVBQLVNFUlZFUjogcHJvdmEKWC1Hb3ZXYXktU0VSVkVSLUVOQ09ESU5HOiBVVEYtOApYLUdvdldheS1BUFAtU0VSVkVSLVBPUlQ6IDg0NDMKWC1Hb3ZXYXktVVNFUjogQW5kcmVhClgtR292V2F5LUNPTVBMRVg6IHZlcnNpb25lX2FwaSA9IDE7IGFwaSA9IEFQSUVzZW1waW87IG9wZXJhemlvbmUgPSBhemlvbmVEaVByb3ZhOyBlcm9nYXRvcmUgPSBFbnRlRXJvZ2F0b3JlOyBzb2dnZXR0b19mcnVpdG9yZSA9IEVudGVGcnVpdG9yZTsgYXBwbGljYXRpdm9fZnJ1aXRvcmUgPSBBcHBYZGUyMzsgaWRfbWVzc2FnZ2lvX3JpY2hpZXN0YSA9IGlkTXNnUmVxWFhYOyBpZF9tZXNzYWdnaW9fcmlzcG9zdGEgPSA7IGlkX2NvbGxhYm9yYXppb25lID0gOyBlc2l0byA9IE9LOw==.PHByb3ZhPlRFU1QgUklTUE9TVEFfVVNDSVRBX0RVTVBfQklOQVJJTzwvcHJvdmE+";
-	private static final String logResponseBodyPD = "UUIDXX.XX-deXXXRR-deXXXRest.MjAyMC0wNi0yNVQxNTowOTowNy4wMjUrMDIwMA==.SFRUUC8xLjEgMjAyIEFjY2VwdGVkCkNvbnRlbnQtWFhYOiBBREVERQpUaXBvTWVzc2FnZ2lvOiBSSVNQT1NUQV9JTkdSRVNTT19EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1pblJlc3BvbnNlClgtR292V2F5LUFQUC1TRVJWRVI6IDEwLjExNC4zMi4yMQpYLUdvdldheS1IT1NUTkFNRS1BUFAtU0VSVkVSOiBwcm92YQpYLUdvdldheS1TRVJWRVItRU5DT0RJTkc6IFVURi04ClgtR292V2F5LUFQUC1TRVJWRVItUE9SVDogODQ0MwpYLUdvdldheS1VU0VSOiBBbmRyZWEKWC1Hb3ZXYXktQ09NUExFWDogdmVyc2lvbmVfYXBpID0gMTsgYXBpID0gQVBJRXNlbXBpbzsgb3BlcmF6aW9uZSA9IGF6aW9uZURpUHJvdmE7IGVyb2dhdG9yZSA9IEVudGVFcm9nYXRvcmU7IHNvZ2dldHRvX2ZydWl0b3JlID0gRW50ZUZydWl0b3JlOyBhcHBsaWNhdGl2b19mcnVpdG9yZSA9IEFwcFhkZTIzOyBpZF9tZXNzYWdnaW9fcmljaGllc3RhID0gaWRNc2dSZXFYWFg7IGlkX21lc3NhZ2dpb19yaXNwb3N0YSA9IDsgaWRfY29sbGFib3JhemlvbmUgPSA7IGVzaXRvID0gT0s7.PHByb3ZhPlRFU1QgUklTUE9TVEFfSU5HUkVTU09fRFVNUF9CSU5BUklPPC9wcm92YT4=";
+	private static final String LOG_RESPONSE_BODY_PA = "UUIDXX.XX-deXXXRR-deXXXRest.MjAyMC0wNi0yNVQxNTowOTowNy40OTArMDIwMA==.SFRUUC8xLjEgMjA0IE5vIENvbnRlbnQKQ29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX1VTQ0lUQV9EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1vdXRSZXNwb25zZQpYLUdvdldheS1BUFAtU0VSVkVSOiAxMC4xMTQuMzIuMjEKWC1Hb3ZXYXktSE9TVE5BTUUtQVBQLVNFUlZFUjogcHJvdmEKWC1Hb3ZXYXktU0VSVkVSLUVOQ09ESU5HOiBVVEYtOApYLUdvdldheS1BUFAtU0VSVkVSLVBPUlQ6IDg0NDMKWC1Hb3ZXYXktVVNFUjogQW5kcmVhClgtR292V2F5LUNPTVBMRVg6IHZlcnNpb25lX2FwaSA9IDE7IGFwaSA9IEFQSUVzZW1waW87IG9wZXJhemlvbmUgPSBhemlvbmVEaVByb3ZhOyBlcm9nYXRvcmUgPSBFbnRlRXJvZ2F0b3JlOyBzb2dnZXR0b19mcnVpdG9yZSA9IEVudGVGcnVpdG9yZTsgYXBwbGljYXRpdm9fZnJ1aXRvcmUgPSBBcHBYZGUyMzsgaWRfbWVzc2FnZ2lvX3JpY2hpZXN0YSA9IGlkTXNnUmVxWFhYOyBpZF9tZXNzYWdnaW9fcmlzcG9zdGEgPSA7IGlkX2NvbGxhYm9yYXppb25lID0gOyBlc2l0byA9IE9LOw==.PHByb3ZhPlRFU1QgUklTUE9TVEFfVVNDSVRBX0RVTVBfQklOQVJJTzwvcHJvdmE+";
+	private static final String LOG_RESPONSE_BODY_PD = "UUIDXX.XX-deXXXRR-deXXXRest.MjAyMC0wNi0yNVQxNTowOTowNy4wMjUrMDIwMA==.SFRUUC8xLjEgMjAyIEFjY2VwdGVkCkNvbnRlbnQtWFhYOiBBREVERQpUaXBvTWVzc2FnZ2lvOiBSSVNQT1NUQV9JTkdSRVNTT19EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1pblJlc3BvbnNlClgtR292V2F5LUFQUC1TRVJWRVI6IDEwLjExNC4zMi4yMQpYLUdvdldheS1IT1NUTkFNRS1BUFAtU0VSVkVSOiBwcm92YQpYLUdvdldheS1TRVJWRVItRU5DT0RJTkc6IFVURi04ClgtR292V2F5LUFQUC1TRVJWRVItUE9SVDogODQ0MwpYLUdvdldheS1VU0VSOiBBbmRyZWEKWC1Hb3ZXYXktQ09NUExFWDogdmVyc2lvbmVfYXBpID0gMTsgYXBpID0gQVBJRXNlbXBpbzsgb3BlcmF6aW9uZSA9IGF6aW9uZURpUHJvdmE7IGVyb2dhdG9yZSA9IEVudGVFcm9nYXRvcmU7IHNvZ2dldHRvX2ZydWl0b3JlID0gRW50ZUZydWl0b3JlOyBhcHBsaWNhdGl2b19mcnVpdG9yZSA9IEFwcFhkZTIzOyBpZF9tZXNzYWdnaW9fcmljaGllc3RhID0gaWRNc2dSZXFYWFg7IGlkX21lc3NhZ2dpb19yaXNwb3N0YSA9IDsgaWRfY29sbGFib3JhemlvbmUgPSA7IGVzaXRvID0gT0s7.PHByb3ZhPlRFU1QgUklTUE9TVEFfSU5HUkVTU09fRFVNUF9CSU5BUklPPC9wcm92YT4=";
 
 	
 	private static void test(TipoPdD tipoPdD, boolean log4j, boolean requestWithPayload,
@@ -510,19 +554,19 @@ public class FileTraceTest {
 			Messaggio richiestaIngresso, Messaggio richiestaUscita,
 			Messaggio rispostaIngresso, Messaggio rispostaUscita) throws Exception {
 		
-		boolean onlyLogFileTrace_headers = TipoPdD.APPLICATIVA.equals(tipoPdD) || (TipoPdD.DELEGATA.equals(tipoPdD) && transazioneDTO.getEsito()==16);
-		boolean onlyLogFileTrace_body = TipoPdD.APPLICATIVA.equals(tipoPdD) && transazioneDTO.getEsito()!=16;
+		boolean onlyLogFileTraceHeaders = TipoPdD.APPLICATIVA.equals(tipoPdD) || (TipoPdD.DELEGATA.equals(tipoPdD) && transazioneDTO.getEsito()==16);
+		boolean onlyLogFileTraceBody = TipoPdD.APPLICATIVA.equals(tipoPdD) && transazioneDTO.getEsito()!=16;
 		
-		System.out.println("\n\n ---------------------------- ("+tipoPdD+") (esito:"+transazioneDTO.getEsito()+") (httpMethod:"+transazioneDTO.getTipoRichiesta()+") (onlyLogFileTrace headers:"+onlyLogFileTrace_headers+" body:"+onlyLogFileTrace_body+") -----------------------------");
+		System.out.println("\n\n ---------------------------- ("+tipoPdD+") (esito:"+transazioneDTO.getEsito()+") (httpMethod:"+transazioneDTO.getTipoRichiesta()+") (onlyLogFileTrace headers:"+onlyLogFileTraceHeaders+" body:"+onlyLogFileTraceBody+") -----------------------------");
 		
 		boolean erogazioni = TipoPdD.APPLICATIVA.equals(tipoPdD);
 		Transaction transaction = new Transaction("UUIDXX", "FileTraceTest", false);
 		transaction.setCredenzialiMittente(credenzialiMittente);
 		transaction.setTracciaRichiesta(tracciaRichiesta);
-		transaction.addMessaggio(richiestaIngresso, onlyLogFileTrace_headers, onlyLogFileTrace_body);
-		transaction.addMessaggio(richiestaUscita, onlyLogFileTrace_headers, onlyLogFileTrace_body);
-		transaction.addMessaggio(rispostaIngresso, onlyLogFileTrace_headers, onlyLogFileTrace_body);
-		transaction.addMessaggio(rispostaUscita, onlyLogFileTrace_headers, onlyLogFileTrace_body);
+		transaction.addMessaggio(richiestaIngresso, onlyLogFileTraceHeaders, onlyLogFileTraceBody);
+		transaction.addMessaggio(richiestaUscita, onlyLogFileTraceHeaders, onlyLogFileTraceBody);
+		transaction.addMessaggio(rispostaIngresso, onlyLogFileTraceHeaders, onlyLogFileTraceBody);
+		transaction.addMessaggio(rispostaUscita, onlyLogFileTraceHeaders, onlyLogFileTraceBody);
 		
 		System.out.println("Messaggi presenti prima: "+transaction.sizeMessaggi());
 		
@@ -552,7 +596,46 @@ public class FileTraceTest {
 		
 		if(log4j) {
 			
-			manager.invoke(tipoPdD, context);
+			/** OUTPUT PRIMA INVOCAZIONE: 
+			 *    [testng] Attuale situazione log
+   [testng] 	request:11.96kb
+   [testng] 	requestBody:171b
+   [testng] 	response:911b
+   [testng] 	responseBody:903b
+			 * */
+			
+			System.out.println("Iterazione master ...");
+			manager.invoke(tipoPdD, context);	
+			System.out.println("Iterazione master ok");
+			
+			boolean compressExpected = true;
+			
+			Date now = DateManager.getDate();
+			String formatDir = "yyyy-MM";
+			String formatFile = "MM-dd-yyyy";
+			String dirName = DateUtils.getSimpleDateFormat(formatDir).format(now)+"-"+ENV_VALUE_2;
+			String dirFile = DateUtils.getSimpleDateFormat(formatFile).format(now);
+			
+			System.out.println("Verifica log prodotti ...");
+			verificaFile(dirName, dirFile, 
+					erogazioni, requestWithPayload, !compressExpected,
+					transazioneDTO);
+			System.out.println("Verifica log prodotti completata");
+			
+			int numeroInvocazioni = 2;
+			for (int i = 0; i < numeroInvocazioni; i++) {
+				System.out.println("Iterazione "+(i+1)+"/"+numeroInvocazioni+" ...");
+			manager.invoke(tipoPdD, context);	
+				System.out.println("Iterazione "+(i+1)+"/"+numeroInvocazioni+" ok");
+			}
+			
+			System.out.println("Verifica log compressi prodotti ...");
+			
+			verificaFile(dirName, dirFile,
+					erogazioni, requestWithPayload, compressExpected,
+					transazioneDTO);
+			
+			System.out.println("Verifica log compressi prodotti completata");
 		}
 		else {
 		
@@ -569,7 +652,7 @@ public class FileTraceTest {
 				risultatiAttesi = 3;
 			}
 			if(res!=risultatiAttesi) {
-				throw new Exception("Attesi "+risultatiAttesi+" risultati");
+				throw new UtilsException("Attesi "+risultatiAttesi+" risultati");
 			}
 			
 			if(outputMap.size()>0) {
@@ -586,23 +669,23 @@ public class FileTraceTest {
 					if(erogazioni) {
 						if("request".equals(topic)) {
 							if(requestWithPayload) {
-								if(!logMsg.equals(logRequestPA_PUT)) {
-									throw new Exception("FAILED!! \nAtteso:\n"+logRequestPA_PUT+"\nTrovato:\n"+logMsg);
+								if(!logMsg.equals(LOG_REQUEST_PA_PUT)) {
+									throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PA_PUT+"\nTrovato:\n"+logMsg);
 								}
 							}
 							else {
-								if(!logMsg.equals(logRequestPA_GET)) {
-									throw new Exception("FAILED!! \nAtteso:\n"+logRequestPA_GET+"\nTrovato:\n"+logMsg);
+								if(!logMsg.equals(LOG_REQUEST_PA_GET)) {
+									throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PA_GET+"\nTrovato:\n"+logMsg);
 								}
 							}
 						}
 						else if("requestBody".equals(topic)) {
-							if(!logMsg.equals(logRequestBodyPA)) {
-								throw new Exception("FAILED!! \nAtteso:\n"+logRequestBodyPA+"\nTrovato:\n"+logMsg);
+							if(!logMsg.equals(LOG_REQUEST_BODY_PA)) {
+								throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_BODY_PA+"\nTrovato:\n"+logMsg);
 							}
 						}
 						else if("response".equals(topic)) {
-							String atteso = logResponsePA;
+							String atteso = LOG_RESPONSE_PA;
 							if(transazioneDTO.getEsito()!=0) {
 								atteso = atteso.replace("esito = OK", "esito = ERRORE_AUTENTICAZIONE");
 							}
@@ -610,56 +693,56 @@ public class FileTraceTest {
 								atteso = atteso.replace("PUT", "GET");
 							}
 							if(!logMsg.equals(atteso)) {
-								throw new Exception("FAILED!! \nAtteso:\n"+atteso+"\nTrovato:\n"+logMsg);
+								throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+logMsg);
 							}
 						}
 						else if("responseBody".equals(topic)) {
-							String atteso = logResponseBodyPA;
+							String atteso = LOG_RESPONSE_BODY_PA;
 							if(transazioneDTO.getEsito()!=0) {
 								atteso = atteso.replace("9yYXppb25lID0gOyBlc2l0byA9IE9LOw==", "9yYXppb25lID0gOyBlc2l0byA9IEVSUk9SRV9BVVRFTlRJQ0FaSU9ORTs=");
 							}
 							if(!logMsg.equals(atteso)) {
-								throw new Exception("FAILED!! \nAtteso:\n"+atteso+"\nTrovato:\n"+logMsg);
+								throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+logMsg);
 							}
 						}
 						else {
-							throw new Exception("FAILED!! topic sconosciuto");
+							throw new UtilsException("FAILED!! topic sconosciuto");
 						}
 					}
 					else {
 						if("request".equals(topic)) {
 							if(requestWithPayload) {
-								if(!logMsg.equals(logRequestPD_PUT)) {
-									throw new Exception("FAILED!! \nAtteso:\n"+logRequestPD_PUT+"\nTrovato:\n"+logMsg);
+								if(!logMsg.equals(LOG_REQUEST_PD_PUT)) {
+									throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PD_PUT+"\nTrovato:\n"+logMsg);
 								}
 							}
 							else {
-								if(!logMsg.equals(logRequestPD_GET)) {
-									throw new Exception("FAILED!! \nAtteso:\n"+logRequestPD_GET+"\nTrovato:\n"+logMsg);
+								if(!logMsg.equals(LOG_REQUEST_PD_GET)) {
+									throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PD_GET+"\nTrovato:\n"+logMsg);
 								}
 							}
 						}
 						else if("requestBody".equals(topic)) {
-							if(!logMsg.equals(logRequestBodyPD)) {
-								throw new Exception("FAILED!! \nAtteso:\n"+logRequestBodyPD+"\nTrovato:\n"+logMsg);
+							if(!logMsg.equals(LOG_REQUEST_BODY_PD)) {
+								throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_BODY_PD+"\nTrovato:\n"+logMsg);
 							}
 						}
 						else if("response".equals(topic)) {
-							String atteso = logResponsePD;
+							String atteso = LOG_RESPONSE_PD;
 							if(!requestWithPayload) {
 								atteso = atteso.replace("PUT", "GET");
 							}
 							if(!logMsg.equals(atteso)) {
-								throw new Exception("FAILED!! \nAtteso:\n"+atteso+"\nTrovato:\n"+logMsg);
+								throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+logMsg);
 							}
 						}
 						else if("responseBody".equals(topic)) {
-							if(!logMsg.equals(logResponseBodyPD)) {
-								throw new Exception("FAILED!! \nAtteso:\n"+logResponseBodyPD+"\nTrovato:\n"+logMsg);
+							if(!logMsg.equals(LOG_RESPONSE_BODY_PD)) {
+								throw new UtilsException(MSG_FAILED_PREFIX+LOG_RESPONSE_BODY_PD+"\nTrovato:\n"+logMsg);
 							}
 						}
 						else {
-							throw new Exception("FAILED!! topic sconosciuto");
+							throw new UtilsException("FAILED!! topic sconosciuto");
 						}
 					}
 				}
@@ -670,37 +753,233 @@ public class FileTraceTest {
 		
 		int sizeAfter = transaction.sizeMessaggi();
 		System.out.println("Messaggi presenti dopo: "+sizeAfter);
-		if(onlyLogFileTrace_headers && onlyLogFileTrace_body) {
+		if(onlyLogFileTraceHeaders && onlyLogFileTraceBody) {
 			if(sizeAfter!=0) {
-				throw new Exception("Attesi 0 messaggi");
+				throw new UtilsException("Attesi 0 messaggi");
 			}
 		}
-		else if(onlyLogFileTrace_headers || onlyLogFileTrace_body) {
+		else if(onlyLogFileTraceHeaders || onlyLogFileTraceBody) {
 			if(sizeAfter!=4) {
-				throw new Exception("Attesi 4 messaggi");
+				throw new UtilsException("Attesi 4 messaggi");
 			}
-			if(onlyLogFileTrace_headers) {
+			if(onlyLogFileTraceHeaders) {
 				for (Messaggio msg : transaction.getMessaggi()) {
 					if(msg.getHeaders()!=null && !msg.getHeaders().isEmpty()) {
-						throw new Exception("Heaeders non attesi ("+msg.getTipoMessaggio()+")");
+						throw new UtilsException("Heaeders non attesi ("+msg.getTipoMessaggio()+")");
 					}
 				}
 			}	
 			else {
 				for (Messaggio msg : transaction.getMessaggi()) {
 					if(msg.getBody()!=null) {
-						throw new Exception("Body non atteso ("+msg.getTipoMessaggio()+")");
+						throw new UtilsException("Body non atteso ("+msg.getTipoMessaggio()+")");
 					}
 					if(msg.getContentType()!=null) {
-						throw new Exception("ContentType non atteso ("+msg.getTipoMessaggio()+")");
+						throw new UtilsException("ContentType non atteso ("+msg.getTipoMessaggio()+")");
 					}
 				}
 			}
 		}
 		else {
 			if(sizeAfter!=4) {
-				throw new Exception("Attesi 4 messaggi");
+				throw new UtilsException("Attesi 4 messaggi");
 			}
+		}
+	}
+	
+	private static String getContentFile(String file, boolean compress, boolean expected) throws UtilsException, FileNotFoundException {
+		File f = new File(file);
+		if(!f.exists()) {
+			if(expected) {
+				throw new UtilsException("File atteso ["+f.getAbsolutePath()+"] non trovato");
+			}
+			else {
+				return null;
+			}
+		}
+		if(!f.canRead()) {
+			throw new UtilsException("File atteso ["+f.getAbsolutePath()+"] non leggibile");
+		}
+		byte [] c = FileSystemUtilities.readBytesFromFile(f);
+		if(compress) {
+			byte [] cDecompressed = CompressorUtilities.decompress(c, CompressorType.GZIP);
+			return new String(cDecompressed);
+		}
+		else {
+			return new String(c);
+		}
+	}
+	
+	private static void verificaFile(String dirName,String dirFile,
+			boolean erogazioni, boolean requestWithPayload, boolean compressExpected,
+			Transazione transazioneDTO) throws FileNotFoundException, UtilsException {
+		
+		String fileSuffix = ".log";
+		String fileGzSuffix = "-1.log.gz";
+		String fileGzSuffix2 = "-2.log.gz";	
+		
+		String dirCompress = dirName+"/";
+		String dateFileCompress = "-"+dirFile;
+		
+		
+		String fileRequest = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+".request"+""+fileSuffix;
+		String request = getContentFile(fileRequest,false, true);
+		String sizeRequest = Utilities.convertBytesToFormatString(request.length());
+		
+		String fileRequestCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".request"+dateFileCompress+fileGzSuffix;
+		String requestCompress = getContentFile(fileRequestCompress,true,compressExpected);
+		
+		
+		String fileRequestBody = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+".requestBody"+""+fileSuffix;
+		String requestBody = getContentFile(fileRequestBody,false,true);
+		String sizeRequestBody = Utilities.convertBytesToFormatString(requestBody.length());
+		
+		String fileRequestBodyCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".requestBody"+dateFileCompress+fileGzSuffix;
+		String requestBodyCompress = getContentFile(fileRequestBodyCompress,true,compressExpected);
+		
+		
+		String fileResponse = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+".response"+""+fileSuffix;
+		String response = getContentFile(fileResponse,false, true);
+		String sizeResponse = Utilities.convertBytesToFormatString(response.length());
+		
+		String fileResponseCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".response"+dateFileCompress+fileGzSuffix;
+		String responseCompress = getContentFile(fileResponseCompress,true,compressExpected);
+		
+		String fileResponseCompress2 = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".response"+dateFileCompress+fileGzSuffix2;
+		String responseCompress2 = getContentFile(fileResponseCompress2,true,
+				false); // può avvenire dopo
+		
+		
+		String fileResponseBody = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+".responseBody"+""+fileSuffix;
+		String responseBody = getContentFile(fileResponseBody,false, true);
+		String sizeResponseBody = Utilities.convertBytesToFormatString(responseBody.length());
+		
+		String fileResponseBodyCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".responseBody"+dateFileCompress+fileGzSuffix;
+		String responseBodyCompress = getContentFile(fileResponseBodyCompress,true,compressExpected);
+		
+		
+		if(!compressExpected) {
+			System.out.println("Attuale situazione log\n\trequest:"+sizeRequest+"\n\trequestBody:"+sizeRequestBody+"\n\tresponse:"+sizeResponse+"\n\tresponseBody:"+sizeResponseBody+"");
+		}
+		
+		String nonTrovatoInFileMessage="\nNon trovato in file:";
+		String nonTrovatoInFileCompressMessage=" e nemmeno in file compresso:";
+		
+		String decompressed = ".decompressed";
+		String fileRequestDecompressed = fileRequest + decompressed;
+		String fileRequestBodyDecompressed = fileRequestBody + decompressed;
+		String fileResponseDecompressed = fileResponse + decompressed;
+		String fileResponseDecompressed2 = fileResponse + decompressed + "2";
+		String fileResponseBodyDecompressed = fileResponseBody + decompressed;
+		if(requestCompress!=null) {
+			FileSystemUtilities.writeFile(fileRequestDecompressed, requestCompress.getBytes());
+		}
+		if(requestBodyCompress!=null) {
+			FileSystemUtilities.writeFile(fileRequestBodyDecompressed, requestBodyCompress.getBytes());
+		}
+		if(responseCompress!=null) {
+			FileSystemUtilities.writeFile(fileResponseDecompressed, responseCompress.getBytes());
+		}
+		if(responseCompress2!=null) {
+			FileSystemUtilities.writeFile(fileResponseDecompressed2, responseCompress2.getBytes());
+		}
+		if(responseBodyCompress!=null) {
+			FileSystemUtilities.writeFile(fileResponseBodyDecompressed, responseBodyCompress.getBytes());
+		}
+			
+		
+		if(erogazioni) {
+			
+			// request
+			if(requestWithPayload) {
+				if(!request.contains(LOG_REQUEST_PA_PUT) && 
+						(requestCompress==null || !requestCompress.contains(LOG_REQUEST_PA_PUT))
+				) {
+					throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PA_PUT+nonTrovatoInFileMessage+fileRequest+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
+				}
+			}
+			else {
+				if(!request.contains(LOG_REQUEST_PA_GET) && 
+						(requestCompress == null || !requestCompress.contains(LOG_REQUEST_PA_GET)
+				)) {
+					throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PA_GET+nonTrovatoInFileMessage+fileRequest+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
+				}
+			}
+
+			// requestBody
+			if(!requestBody.contains(LOG_REQUEST_BODY_PA) && 
+					(requestBodyCompress == null || !requestBodyCompress.contains(LOG_REQUEST_BODY_PA)
+			)) {
+				throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_BODY_PA+nonTrovatoInFileMessage+fileRequestBody+nonTrovatoInFileCompressMessage+fileRequestBodyDecompressed);
+			}
+	
+			// response
+			String atteso = LOG_RESPONSE_PA;
+			if(transazioneDTO.getEsito()!=0) {
+				atteso = atteso.replace("esito = OK", "esito = ERRORE_AUTENTICAZIONE");
+			}
+			if(!requestWithPayload) {
+				atteso = atteso.replace("PUT", "GET");
+			}
+			if(!response.contains(atteso) &&
+					(responseCompress==null || !responseCompress.contains(atteso)) &&
+					(responseCompress2==null || !responseCompress2.contains(atteso))) {
+				throw new UtilsException(MSG_FAILED_PREFIX+atteso+nonTrovatoInFileMessage+fileResponse+nonTrovatoInFileCompressMessage+fileResponseDecompressed);
+			}
+			
+			// responseBody
+			atteso = LOG_RESPONSE_BODY_PA;
+			if(transazioneDTO.getEsito()!=0) {
+				atteso = atteso.replace("9yYXppb25lID0gOyBlc2l0byA9IE9LOw==", "9yYXppb25lID0gOyBlc2l0byA9IEVSUk9SRV9BVVRFTlRJQ0FaSU9ORTs=");
+			}
+			if(!responseBody.contains(atteso) &&
+					(responseBodyCompress==null || !responseBodyCompress.contains(atteso))) {
+				throw new UtilsException(MSG_FAILED_PREFIX+atteso+nonTrovatoInFileMessage+fileResponseBody+nonTrovatoInFileCompressMessage+fileResponseBodyDecompressed);
+			}
+
+		}
+		else {
+			// request
+			if(requestWithPayload) {
+				if(!request.contains(LOG_REQUEST_PD_PUT) && 
+						(requestCompress==null || !requestCompress.contains(LOG_REQUEST_PD_PUT))
+				) {
+					throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PD_PUT+nonTrovatoInFileMessage+fileRequest+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
+				}
+			}
+			else {
+				if(!request.contains(LOG_REQUEST_PD_GET) && 
+						(requestCompress==null || !requestCompress.contains(LOG_REQUEST_PD_GET))
+				) {
+					throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PD_GET+nonTrovatoInFileMessage+fileRequest+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
+				}
+			}
+			
+			// requestBody
+			if(!requestBody.contains(LOG_REQUEST_BODY_PD) && 
+					(requestBodyCompress == null || !requestBodyCompress.contains(LOG_REQUEST_BODY_PD)
+			)) {
+				throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_BODY_PD+nonTrovatoInFileMessage+fileRequestBody+nonTrovatoInFileCompressMessage+fileRequestBodyDecompressed);
+			}
+			
+			// response
+			String atteso = LOG_RESPONSE_PD;
+			if(!requestWithPayload) {
+				atteso = atteso.replace("PUT", "GET");
+			}
+			if(!response.contains(atteso) &&
+					(responseCompress==null || !responseCompress.contains(atteso)) &&
+					(responseCompress2==null || !responseCompress2.contains(atteso))) {
+				throw new UtilsException(MSG_FAILED_PREFIX+atteso+nonTrovatoInFileMessage+fileResponse+nonTrovatoInFileCompressMessage+fileResponseDecompressed);
+			}
+			
+			// responseBody
+			if(!responseBody.contains(LOG_RESPONSE_BODY_PD) && 
+					(responseBodyCompress == null || !responseBodyCompress.contains(LOG_RESPONSE_BODY_PD)
+			)) {
+				throw new UtilsException(MSG_FAILED_PREFIX+LOG_RESPONSE_BODY_PD+nonTrovatoInFileMessage+fileResponseBody+nonTrovatoInFileCompressMessage+fileResponseBodyDecompressed);
+			}
+
 		}
 	}
 }
