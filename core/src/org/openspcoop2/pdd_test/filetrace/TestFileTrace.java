@@ -22,6 +22,7 @@ package org.openspcoop2.pdd_test.filetrace;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd_test.Costanti;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.test.TestLogger;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -40,7 +41,10 @@ public class TestFileTrace {
 	private static final boolean requestWithPayload = true;
 	
 	@DataProvider(name="fileTraceProvider")
-	public Object[][] provider(){
+	public Object[][] provider() throws UtilsException, ReflectiveOperationException{
+		
+		org.openspcoop2.pdd.logger.filetrace.test.FileTraceTest.initDir();
+		
 		return new Object[][]{
 			
 			{TipoPdD.APPLICATIVA, !log4j, 0, requestWithPayload},

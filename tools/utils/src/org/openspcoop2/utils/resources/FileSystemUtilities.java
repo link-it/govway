@@ -310,6 +310,48 @@ public class FileSystemUtilities {
         return true;
     }
     
+    public static boolean deleteDirNotEmpty(String dir, int maxChilds) {
+    	return deleteDirNotEmpty(new File(dir), maxChilds);
+    }
+    public static boolean deleteDirNotEmpty(File dir, int maxChilds) {
+    	return deleteDirNotEmpty(dir, maxChilds , 0);
+    }
+ 	private static boolean deleteDirNotEmpty(File dir, int maxChilds, int level) {
+ 		if (emptyDir(dir)) {
+ 			deleteDir(dir);
+ 			return true;
+ 		}
+ 		else {
+ 			if(maxChilds==level) {
+ 				return false;
+ 			}
+ 			File [] childs = dir.listFiles();
+ 			if(childs!=null && childs.length>0) {
+ 				return deleteDirNotEmpty(childs, maxChilds, level);
+ 			}
+ 			return true;
+ 		}
+    }
+ 	private static boolean deleteDirNotEmpty(File [] childs, int maxChilds, int level) {
+ 		boolean ok = true;
+ 		for (File file : childs) {
+			if(file.isDirectory()) {
+				boolean v = deleteDirNotEmpty(file, maxChilds , level+1);
+				if(!v) {
+					ok = false;
+				}
+			}
+			else {
+				try {
+					Files.delete(file.toPath());
+				}catch(Exception e) {
+					ok = false;
+				}
+			}
+		}
+		return ok;
+ 	}
+    
 	public static boolean deleteDir(String dir) {
 		File d = new File(dir);
 		if(!d.exists()){

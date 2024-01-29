@@ -59,7 +59,7 @@ public class FileTraceManager {
 	private Info tBase64;
 	
 
-	public FileTraceManager(Logger log, FileTraceConfig config) throws Exception {
+	public FileTraceManager(Logger log, FileTraceConfig config) {
 		this.config = config;
 		this.log = log;
 	}
@@ -134,50 +134,50 @@ public class FileTraceManager {
 		
 	public void cleanResourcesForOnlyFileTrace(Transaction transaction) throws ProtocolException {
 			
-		List<TipoMessaggio> tipiDaEliminare_headers = transaction.getMessaggi_headers_onlyLogFileTrace();
-		List<TipoMessaggio> tipiDaEliminare_body = transaction.getMessaggi_body_onlyLogFileTrace();
+		List<TipoMessaggio> tipiDaEliminareHeaders = transaction.getMessaggi_headers_onlyLogFileTrace();
+		List<TipoMessaggio> tipiDaEliminareBody = transaction.getMessaggi_body_onlyLogFileTrace();
 			
-		List<TipoMessaggio> messaggiDaLiminare = new ArrayList<TipoMessaggio>();
+		List<TipoMessaggio> messaggiDaLiminare = new ArrayList<>();
 		
 		for(int i=0; i<transaction.sizeMessaggi(); i++){
 			Messaggio messaggio = transaction.getMessaggio(i);
 			TipoMessaggio tipoMessaggio = messaggio.getTipoMessaggio();
 			
-			boolean onlyLogFileTrace_headers = false;
-			if(tipiDaEliminare_headers!=null && !tipiDaEliminare_headers.isEmpty()) {
-				for (int j = 0; j < tipiDaEliminare_headers.size(); j++) {
-					TipoMessaggio tipoMessaggio_headers = tipiDaEliminare_headers.get(j);
-					if(tipoMessaggio_headers.equals(tipoMessaggio)) {
-						onlyLogFileTrace_headers = true;
+			boolean onlyLogFileTraceHeaders = false;
+			if(tipiDaEliminareHeaders!=null && !tipiDaEliminareHeaders.isEmpty()) {
+				for (int j = 0; j < tipiDaEliminareHeaders.size(); j++) {
+					TipoMessaggio tipoMessaggioHeaders = tipiDaEliminareHeaders.get(j);
+					if(tipoMessaggioHeaders.equals(tipoMessaggio)) {
+						onlyLogFileTraceHeaders = true;
 						break;
 					}
 				}
 			}
-			if(onlyLogFileTrace_headers) {
-				tipiDaEliminare_headers.remove(tipoMessaggio);	
+			if(onlyLogFileTraceHeaders) {
+				tipiDaEliminareHeaders.remove(tipoMessaggio);	
 			}
 			
-			boolean onlyLogFileTrace_body = false;
-			if(tipiDaEliminare_body!=null && !tipiDaEliminare_body.isEmpty()) {
-				for (int j = 0; j < tipiDaEliminare_body.size(); j++) {
-					TipoMessaggio tipoMessaggio_body = tipiDaEliminare_body.get(j);
-					if(tipoMessaggio_body.equals(tipoMessaggio)) {
-						onlyLogFileTrace_body = true;
+			boolean onlyLogFileTraceBody = false;
+			if(tipiDaEliminareBody!=null && !tipiDaEliminareBody.isEmpty()) {
+				for (int j = 0; j < tipiDaEliminareBody.size(); j++) {
+					TipoMessaggio tipoMessaggioBody = tipiDaEliminareBody.get(j);
+					if(tipoMessaggioBody.equals(tipoMessaggio)) {
+						onlyLogFileTraceBody = true;
 						break;
 					}
 				}
 			}
-			if(onlyLogFileTrace_body) {
-				tipiDaEliminare_body.remove(tipoMessaggio);	
+			if(onlyLogFileTraceBody) {
+				tipiDaEliminareBody.remove(tipoMessaggio);	
 			}
 			
-			if(onlyLogFileTrace_headers && onlyLogFileTrace_body) {
+			if(onlyLogFileTraceHeaders && onlyLogFileTraceBody) {
 				messaggiDaLiminare.add(tipoMessaggio);
 			}
-			else if(onlyLogFileTrace_headers) {
+			else if(onlyLogFileTraceHeaders) {
 				messaggio.getHeaders().clear();
 			}
-			else if(onlyLogFileTrace_body) {
+			else if(onlyLogFileTraceBody) {
 				if(messaggio.getBody()!=null) {
 					messaggio.getBody().unlock();
 					messaggio.getBody().clearResources();
@@ -188,7 +188,7 @@ public class FileTraceManager {
 		}
 		
 		if(messaggiDaLiminare!=null && !messaggiDaLiminare.isEmpty()) {
-			while(messaggiDaLiminare.size()>0) {
+			while(!messaggiDaLiminare.isEmpty()) {
 				TipoMessaggio tipo = messaggiDaLiminare.remove(0);
 				if(transaction.sizeMessaggi()>0) {
 					for (int i = 0; i < transaction.sizeMessaggi(); i++) {
@@ -231,7 +231,7 @@ public class FileTraceManager {
 			boolean requestSent = false;
 			if(context!=null && context.containsKey(Costanti.RICHIESTA_INOLTRATA_BACKEND)) {
 				Object o = context.getObject(Costanti.RICHIESTA_INOLTRATA_BACKEND);
-				if(o!=null && o instanceof String) {
+				if(o instanceof String) {
 					String s = (String) o;
 					if(Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE.equals(s)) {
 						requestSent = true;
@@ -239,7 +239,7 @@ public class FileTraceManager {
 				}
 			}
 			
-			List<Topic> topicInvoke = new ArrayList<Topic>();
+			List<Topic> topicInvoke = new ArrayList<>();
 			for (String topicName : topic) {
 				Topic topicConfig = topicMap.get(topicName);
 				
@@ -315,7 +315,7 @@ public class FileTraceManager {
 			for (String sortKey : properties) {
 				String pName = this.config.getPropertiesNames().get(sortKey);
 				String pValue = this.config.getPropertiesValues().get(sortKey);
-				//System.out.println("SORT ["+sortKey+"] ["+pName+"]");
+				/**System.out.println("SORT ["+sortKey+"] ["+pName+"]");*/
 				String resolvedValue = this.resolve(pValue);
 				this.t.addProperty(pName, resolvedValue);
 				this.tBase64.addProperty(pName, resolvedValue);
