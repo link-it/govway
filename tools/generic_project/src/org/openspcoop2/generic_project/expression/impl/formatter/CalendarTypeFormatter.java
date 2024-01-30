@@ -52,17 +52,7 @@ public class CalendarTypeFormatter implements ITypeFormatter<Calendar> {
 	
 	@Override
 	public String toSQLString(Calendar o,TipiDatabase databaseType) throws ExpressionException {
-		switch (databaseType) {
-		case POSTGRESQL:
-			return "timestamp '"+this.toString(o)+"'";
-		case ORACLE:
-		case MYSQL:
-		case HSQL:
-		case SQLSERVER:
-		case DEFAULT:
-		default:
-			return "'"+this.toString(o)+"'";
-		}
+		return TimestampTypeFormatter.toSQLString(o, o.getTime(), databaseType, this);
 	}
 
 	@Override

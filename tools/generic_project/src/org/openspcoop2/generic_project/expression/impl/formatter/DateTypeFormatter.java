@@ -52,17 +52,7 @@ public class DateTypeFormatter implements ITypeFormatter<Date> {
 	
 	@Override
 	public String toSQLString(Date o, TipiDatabase databaseType) throws ExpressionException {
-		switch (databaseType) {
-		case POSTGRESQL:
-			return "timestamp '"+this.toString(o)+"'";
-		case ORACLE:
-		case MYSQL:
-		case HSQL:
-		case SQLSERVER:
-		case DEFAULT:
-		default:
-			return "'"+this.toString(o)+"'";
-		}
+		return TimestampTypeFormatter.toSQLString(o, o, databaseType, this);
 	}
 
 	@Override

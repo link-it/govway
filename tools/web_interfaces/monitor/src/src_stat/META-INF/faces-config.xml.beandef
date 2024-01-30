@@ -80,6 +80,11 @@
    <property-class>org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere</property-class>
    <value>#{statisticheGiornaliereService}</value>
   </managed-property>
+   	<managed-property>
+  		<property-name>search</property-name>
+  		<property-class>org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm</property-class>
+  		<value>#{distribuzioneErroriSearchForm}</value>
+	</managed-property>
  </managed-bean>
  <managed-bean>
   <managed-bean-name>distribuzionePerServizioBean</managed-bean-name>
@@ -105,6 +110,11 @@
    <property-class>org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere</property-class>
    <value>#{statisticheGiornaliereService}</value>
   </managed-property>
+   	<managed-property>
+  		<property-name>search</property-name>
+  		<property-class>org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm</property-class>
+  		<value>#{distribuzioneErroriSearchForm}</value>
+	</managed-property>
  </managed-bean>
  <managed-bean>
   <managed-bean-name>distribuzionePerSADM</managed-bean-name>
@@ -115,6 +125,11 @@
    <property-class>org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere</property-class>
    <value>#{statisticheGiornaliereService}</value>
   </managed-property>
+   	<managed-property>
+  		<property-name>search</property-name>
+  		<property-class>org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm</property-class>
+  		<value>#{distribuzioneErroriSearchForm}</value>
+	</managed-property>
  </managed-bean>
  <managed-bean>
   <managed-bean-name>distribuzionePerSABean</managed-bean-name>
@@ -184,6 +199,11 @@
 	 	<property-name>dataProvider</property-name>
 	 	<property-class>org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere</property-class>
 		<value>#{statisticheGiornaliereService}</value>
+	</managed-property>
+	 	<managed-property>
+  		<property-name>search</property-name>
+  		<property-class>org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm</property-class>
+  		<value>#{distribuzioneErroriSearchForm}</value>
 	</managed-property>
 </managed-bean>
 

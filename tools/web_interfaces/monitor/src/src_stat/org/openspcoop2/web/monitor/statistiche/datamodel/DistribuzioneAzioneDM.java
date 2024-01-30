@@ -30,10 +30,12 @@ import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
 import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.ServiceException;
-
+import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.web.monitor.core.datamodel.BaseDataModel;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
+import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerAzioneBean;
@@ -51,7 +53,12 @@ public class DistribuzioneAzioneDM extends BaseDataModel<String, ResDistribuzion
 	private static final long serialVersionUID = 500153520162806619L;
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 	
+	private transient StatsSearchForm search;
 	private boolean visualizzaComandiExport = false;
+	
+	public void setSearch(StatsSearchForm search) {
+		this.search = search;
+	}
 	
 	@Override
 	public int getRowCount() {
@@ -85,7 +92,10 @@ public class DistribuzioneAzioneDM extends BaseDataModel<String, ResDistribuzion
 
 				this.wrappedKeys = new ArrayList<>();
 				
-				List<ResDistribuzione> list =  new ArrayList<ResDistribuzione>();
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.search.getNumeroDimensioni())) {
+					this.search.setSortOrder(SortOrder.DESC);
+				}
+				List<ResDistribuzione> list =  new ArrayList<>();
 				
 				try {
 					list =  this.getDataProvider().findAllDistribuzioneAzione(start, limit);

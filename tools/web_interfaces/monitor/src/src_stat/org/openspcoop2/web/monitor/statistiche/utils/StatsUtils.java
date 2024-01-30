@@ -1704,7 +1704,7 @@ public class StatsUtils {
 		}
 	}
 	
-	public static StatisticType checkStatisticType(StatsSearchForm form) {
+	public static StatisticType checkStatisticType(StatsSearchForm form, boolean onlyForCount) {
 		StatisticType tipologia = form.getModalitaTemporale();
 		if(!form.isShowUnitaTempo()) {
 			if(form.isPeriodoPersonalizzato() && !form.isShowUnitaTempoPersonalizzato_periodoPersonalizzato()) {
@@ -1728,6 +1728,16 @@ public class StatsUtils {
 					String fine = DateUtils.getSimpleDateFormat(format).format(dFine);
 					if("00:00".equals(inizio) && "23:59".equals(fine)) {
 						tipologia = StatisticType.GIORNALIERA; 
+						
+						// se non e' un discorso solamente di conteggio, ma anche di raggruppamento e visualizzazione, verifico di non essere nel solito giorno nei due intervalli 
+						if(!onlyForCount) {
+							String formatDay = "yyyy-MM-dd";
+							String inizioDay = DateUtils.getSimpleDateFormat(formatDay).format(dInizio);
+							String fineDay = DateUtils.getSimpleDateFormat(formatDay).format(dFine);
+							if(inizioDay.equals(fineDay)) {
+								tipologia = StatisticType.ORARIA; 
+							}
+						}
 					}
 					else {
 						tipologia = StatisticType.ORARIA; 
@@ -1741,8 +1751,8 @@ public class StatsUtils {
 		return tipologia;
 	}
 	
-	public static String formatDate(StatsSearchForm form, Date date) {
-		StatisticType tipologia = checkStatisticType(form);
+	public static String formatDate(StatsSearchForm form, Date date, boolean onlyForCount) {
+		StatisticType tipologia = checkStatisticType(form, onlyForCount);
 		return formatDate(tipologia, date);
 	}
 	

@@ -47,6 +47,7 @@ import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3D;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
+import org.slf4j.Logger;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -544,11 +545,15 @@ public class JsonStatsUtils {
 
 	/* ************** HEATMAP CHART **************** */
 
-	public static JSONObject getJsonHeatmapChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer slice, StatisticType tempo){
-		return _getJsonHeatmapChartDistribuzione(list, search, caption, subCaption, direzioneLabelParam, slice, null, tempo);
+	public static JSONObject getJsonHeatmapChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, 
+			String caption, String subCaption, String direzioneLabelParam, Integer slice, StatisticType tempo,
+			Logger log){
+		return _getJsonHeatmapChartDistribuzione(list, search, caption, subCaption, direzioneLabelParam, slice, null, tempo, log);
 	}
 
-	private static JSONObject _getJsonHeatmapChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, Integer numeroLabel, StatisticType tempo
+	private static JSONObject _getJsonHeatmapChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, 
+			String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, Integer numeroLabel, StatisticType tempo,
+			Logger log
 			){
 		JSONObject grafico = new JSONObject();
 
@@ -651,7 +656,7 @@ public class JsonStatsUtils {
 		        List<String> categorieDaAccorpareComeAltri = sortedKeys.subList(slice, sortedKeys.size());
 		        
 		        // aggiorno contenuto list
-		        list = valorizzaListaRisultatiConElementiOrdinatiPerSommaDecrescenteConElementoAltri(elementiPerCategoria, totaliPerCategoriaEntryList, categorieDaAccorpareComeAltri, search);
+		        list = valorizzaListaRisultatiConElementiOrdinatiPerSommaDecrescenteConElementoAltri(elementiPerCategoria, totaliPerCategoriaEntryList, categorieDaAccorpareComeAltri, search, log);
 			}
 
 			// una volta che ho la lista degli elementi da visualizzare gia' calcolata, comprensiva dell'eventuale elemento 'altri' si tratta solo di creare i rettangoli json
@@ -841,7 +846,8 @@ public class JsonStatsUtils {
 	
 	private static List<ResDistribuzione> valorizzaListaRisultatiConElementiOrdinatiPerSommaDecrescenteConElementoAltri(
 			Map<String, List<ResDistribuzione>> elementiPerCategoria,
-			List<Map.Entry<String, Number>> entryList, List<String> categorieDaAccorpareComeAltri, StatsSearchForm search) {
+			List<Map.Entry<String, Number>> entryList, List<String> categorieDaAccorpareComeAltri, StatsSearchForm search,
+			Logger log) {
 		// colleziona i valori ordinati per chiavi con somma decrescente
 		List<ResDistribuzione> destList = new ArrayList<>();
 		for (Map.Entry<String, Number> entry : entryList) {
@@ -866,6 +872,10 @@ public class JsonStatsUtils {
 		for (String categoria : categorieDaAccorpareComeAltri) {
 			List<ResDistribuzione> categoriaDaAccorpare = elementiPerCategoria.get(categoria);
 			
+			if(!colonnaAltri.isEmpty() &&
+					categoriaDaAccorpare.size()!=colonnaAltri.size()) {
+				log.error("Categoria '"+categoria+"' possiede una dimensione '"+categoriaDaAccorpare.size()+"' diversa da quella attesa '"+colonnaAltri.size()+"'");
+			}
 			
 			// prima iterazione aggiungo direttamente tutti valori modificando la label in altri
 			if(colonnaAltri.isEmpty()) {

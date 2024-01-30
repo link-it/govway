@@ -99,7 +99,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	
 	// Numero dimensioni 
 	private NumeroDimensioni numeroDimensioni;
-	private String _value_numeroDimensioni;
+	protected String _value_numeroDimensioni;
 
 	// Indicazione se il la distribuzione per soggetto è locale o remota. Vale solo per la distribuzione per soggetto.
 	// Negli altri casi è true per default per visualizzare la select list dei soggetti locali

@@ -51,7 +51,7 @@ public class DistribuzioneErroriDM extends BaseDataModel<String, ResDistribuzion
 	private static final long serialVersionUID = 500153520162806619L;
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 	
-	private StatsSearchForm search;
+	private transient StatsSearchForm search;
 	private boolean visualizzaComandiExport = false;
 	
 	public void setSearch(StatsSearchForm search) {

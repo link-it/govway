@@ -20,9 +20,12 @@
 
 package org.openspcoop2.utils.sql;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * Implementazione per HyperSQL
@@ -37,6 +40,18 @@ public class DerbyQueryObject extends SQLQueryObjectCore {
 		super(tipoDatabase);
 	}
 
+	
+	/**
+	 * Ritorna una costante  di tipo 'timestamp'
+	 * 
+	 * @param date Costante
+	 */
+	@Override
+	public String getSelectTimestampConstantField(Date date) throws SQLQueryObjectException{
+		SimpleDateFormat sqlDateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
+		return "CAST('"+sqlDateformat.format(date)+"' AS TIMESTAMP)";
+	}
+	
 	
 	
 	@Override
