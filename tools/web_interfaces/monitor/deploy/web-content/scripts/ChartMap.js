@@ -513,14 +513,14 @@ function chartMapping(_dataJson, _type, _size) {
                 });
              
              	// serie asse x   
-                var xSeriesTmp = _dataJson.dati.map(function(item){return item.xLabel;});
+                var xSeriesTmp = _dataJson.dati.map(function(item){return decodeHTML(item.xLabel);});
 				xSeries = [...new  Set(xSeriesTmp)];
 				// serie asse y
-  				var ySeriesTmp = _dataJson.dati.map(function(item){return item.yLabel;});
+  				var ySeriesTmp = _dataJson.dati.map(function(item){return decodeHTML(item.yLabel);});
                 ySeries = [...new  Set(ySeriesTmp)];
                 
                 cats = _dataJson.dati.map(function (cat) {
-                    return { data: labelUnescape(cat.xLabel), visible: (cat.xLabel == undefined || cat.xLabel != '') };
+                    return { data: decodeHTML(labelUnescape(cat.xLabel)), visible: (cat.xLabel == undefined || cat.xLabel != '') };
                 });
                 
                 
@@ -564,7 +564,7 @@ function chartMapping(_dataJson, _type, _size) {
                     return rowdata;
                 });
                 cats = _dataJson.dati.map(function (cat) {
-                    return { data: labelUnescape(cat.data), visible: (cat.dataLabel == undefined || cat.dataLabel != '') };
+                    return { data: decodeHTML(labelUnescape(cat.data)), visible: (cat.dataLabel == undefined || cat.dataLabel != '') };
                 });
             }
         }
@@ -594,14 +594,14 @@ function chartMapping(_dataJson, _type, _size) {
                 dpChart.legendTooltip[index] = key.label;
                 if(dpChart.limitLegenda !== -1) {
                     if(dpChart.limitLegenda < key.label.length) {
-                        var _txt = (index +1) + '. ' + key.label.substr(0, dpChart.limitLegenda) + '...';
+                        var _txt = (index +1) + '. ' + decodeHTML(key.label.substr(0, dpChart.limitLegenda)) + '...';
                         return (dpChart.valueOnLegend)?_txt+' ('+ key.value + ')':_txt;
                     }
                 }
                 if(dpChart.valueOnLegend) {
-                    return (index +1) + '. ' + key.label + ' (' + key.value + ')';
+                    return (index +1) + '. ' + decodeHTML(key.label) + ' (' + key.value + ')';
                 }
-                return (index +1) + '. ' + key.label;
+                return (index +1) + '. ' + decodeHTML(key.label);
             });
         }
     }
@@ -733,3 +733,14 @@ function embedFonts(svg) {
     defs.appendChild(css);
     svg.insertBefore(defs, svg.firstChild);
 }
+
+/**
+* effettua la decodifica della stringa passata come parametro
+*
+ */
+function decodeHTML(html) {
+  var txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+}
+
