@@ -141,6 +141,14 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	if(dp.noData != 0) {
 		// larghezza dei singoli rettangoli 
 		var _firstTick = svgTmp.querySelector('.c3-axis.c3-axis-x path').getBoundingClientRect().width / xLabels.length;
+		// Spazio disponibile in caso di label orizzontali
+		var spazioDisponibile = _firstTick - 10; // Sottrai 10 per lasciare spazio per i puntini di sospensione
+		
+		// se la label e' rotata lo spazio a disposizione si dimezza, ma sfrutto lo spazio sotto l'asse y 
+        if(dp.rotation != 0){
+			spazioDisponibile = _firstTick /2 + _yAxisWidth - 10;
+		}
+		
 		// larghezza asse y comprese label
 		var _yAxisWidth = svgTmp.querySelector('.c3-axis.c3-axis-y').getBBox().width;
 //		console.log('Dimensione disponibile per la categoria x: ' + _firstTick);
@@ -155,15 +163,8 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 			    
 //		    console.log(testo + ":" + lunghezza);
 			    
-		    if(lunghezza > _firstTick){
+		    if(lunghezza > spazioDisponibile){
 				//console.log(testo + " da accorciare");
-		        // Calcola la lunghezza disponibile per il testo accorciato
-		        var spazioDisponibile = _firstTick - 10; // Sottrai 10 per lasciare spazio per i puntini di sospensione
-		        
-		        // se la label e' rotata lo spazio a disposizione si dimezza, ma sfrutto lo spazio sotto l'asse y 
-		        if(dp.rotation != 0){
-					spazioDisponibile = _firstTick /2 + _yAxisWidth - 10;
-				}
 		        
 		        // Calcola la nuova lunghezza del testo accorciato
 		        var testoAccorciato = testo;

@@ -28,7 +28,7 @@ import javax.validation.Valid;
 public class RicercaStatisticaDistribuzioneAzione extends RicercaBaseStatisticaSoggetti {
   
   @Schema(required = true, description = "")
-  private OpzioniGenerazioneReport report = null;
+  private OpzioniGenerazioneReportDimensioni report = null;
   
   @Schema(description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "identificazione", visible = true )
@@ -51,15 +51,15 @@ public class RicercaStatisticaDistribuzioneAzione extends RicercaBaseStatisticaS
   @JsonProperty("report")
   @NotNull
   @Valid
-  public OpzioniGenerazioneReport getReport() {
+  public OpzioniGenerazioneReportDimensioni getReport() {
     return this.report;
   }
 
-  public void setReport(OpzioniGenerazioneReport report) {
+  public void setReport(OpzioniGenerazioneReportDimensioni report) {
     this.report = report;
   }
 
-  public RicercaStatisticaDistribuzioneAzione report(OpzioniGenerazioneReport report) {
+  public RicercaStatisticaDistribuzioneAzione report(OpzioniGenerazioneReportDimensioni report) {
     this.report = report;
     return this;
   }

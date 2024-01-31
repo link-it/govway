@@ -11,9 +11,10 @@
       "tipo_informazione": {
         "tipo": "numero_transazioni"
       }
-    },
+    }, 
     "esito": {
       "tipo": "ok"
     }
+    
 
   }

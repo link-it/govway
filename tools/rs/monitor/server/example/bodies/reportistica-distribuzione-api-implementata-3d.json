@@ -5,15 +5,16 @@
       "data_fine": "2032-04-29T06:51:05.860Z"
     },
     "tipo": "erogazione",
+    "distingui_api_implementata": false,
     "report": {
       "formato": "csv",
       "tipo": "table",
       "tipo_informazione": {
         "tipo": "numero_transazioni"
-      }
+      },
+      "dimensioni": "3d"
     },
     "esito": {
       "tipo": "ok"
     }
-
   }

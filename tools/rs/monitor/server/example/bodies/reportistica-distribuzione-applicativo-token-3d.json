@@ -5,12 +5,14 @@
       "data_fine": "2032-04-29T06:51:05.860Z"
     },
     "tipo": "erogazione",
+    "tipo_identificazione_applicativo": "token",
     "report": {
       "formato": "csv",
       "tipo": "table",
       "tipo_informazione": {
         "tipo": "numero_transazioni"
-      }
+      },
+      "dimensioni": "3d"
     },
     "esito": {
       "tipo": "ok"

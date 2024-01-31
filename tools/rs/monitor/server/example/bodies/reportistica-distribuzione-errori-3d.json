@@ -10,10 +10,11 @@
       "tipo": "table",
       "tipo_informazione": {
         "tipo": "numero_transazioni"
-      }
+      },
+      "dimensioni": "3d"
     },
     "esito": {
-      "tipo": "ok"
+      "tipo": "qualsiasi"
     }
 
   }

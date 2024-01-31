@@ -32,6 +32,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.model.BaseOggettoWithSimpleName;
+import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiImplementata;
@@ -50,6 +51,7 @@ import org.openspcoop2.core.monitor.rs.server.model.OccupazioneBandaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.OccupazioneBandaTipi;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportBase;
+import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportDimensioni;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportMultiLine;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatistica;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatisticaSoggetti;
@@ -572,7 +574,7 @@ public class ReportisticaHelper {
 		wrap.overrideParameter(CostantiExporter.TIPO_REPORT, tipoReport.toString());
 	}
 
-	public static final void setTipoInformazioneReport(OpzioniGenerazioneReport opzioni, TipoInformazioneReportEnum tipoInformazioneReport) {
+	public static final void setTipoInformazioneReport(OpzioniGenerazioneReport opzioni, TipoInformazioneReportEnum tipoInformazioneReport, DimensioniReportEnum dimensioniReport) {
 		TipoInformazioneReportEnum tipoInfo = tipoInformazioneReport!=null ? tipoInformazioneReport : TipoInformazioneReportEnum.NUMERO_TRANSAZIONI;
 		switch (tipoInfo) {
 		case NUMERO_TRANSAZIONI:
@@ -587,6 +589,11 @@ public class ReportisticaHelper {
 			opzioni.setTipoInformazione(new TipoInformazioneReportTempoMedioRisposta());
 			((TipoInformazioneReportTempoMedioRisposta)opzioni.getTipoInformazione()).setTipo(tipoInfo);
 			break;
+		}
+		
+		if(dimensioniReport!=null && opzioni instanceof OpzioniGenerazioneReportDimensioni) {
+			OpzioniGenerazioneReportDimensioni o = (OpzioniGenerazioneReportDimensioni) opzioni;
+			o.setDimensioni(dimensioniReport);
 		}
 	}
 	
@@ -634,6 +641,13 @@ public class ReportisticaHelper {
 			wrap.overrideParameter(CostantiExporter.TIPO_LATENZA_VISUALIZZATA, Enums.toTipoLatenza.get(val).toString());
 			break;
 		}
+		}
+		
+		if(body instanceof OpzioniGenerazioneReportDimensioni) {
+			OpzioniGenerazioneReportDimensioni o = (OpzioniGenerazioneReportDimensioni) body;
+			if(o.getDimensioni()!=null) {
+				wrap.overrideParameter(CostantiExporter.DIMENSIONI_VISUALIZZATE, Enums.getNumeroDimensioniMap().get(o.getDimensioni()).getValue());
+			}
 		}
 	}
 

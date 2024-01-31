@@ -567,6 +567,7 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/dimensioni_report"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -645,6 +646,7 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/dimensioni_report"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -724,6 +726,7 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/dimensioni_report"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -797,6 +800,7 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/dimensioni_report"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -874,6 +878,7 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/dimensioni_report"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -955,6 +960,7 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/dimensioni_report"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -1034,6 +1040,7 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/dimensioni_report"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -1112,6 +1119,7 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/dimensioni_report"
       - $ref: "#/components/parameters/claim"
       responses:
         "200":
@@ -1190,6 +1198,7 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/dimensioni_report"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -1574,6 +1583,14 @@ components:
             - $ref: "#/components/schemas/TipoInformazioneReportNumeroTransazioni"
             - $ref: "#/components/schemas/TipoInformazioneReportOccupazioneBanda"
             - $ref: "#/components/schemas/TipoInformazioneReportTempoMedioRisposta"
+    OpzioniGenerazioneReportDimensioni:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/OpzioniGenerazioneReport"
+      - type: "object"
+        properties:
+          dimensioni:
+            $ref: "#/components/schemas/DimensioniReportEnum"
     TipoInformazioneReportNumeroTransazioni:
       required:
       - "tipo"
@@ -1923,7 +1940,7 @@ components:
         type: "object"
         properties:
           report:
-            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+            $ref: "#/components/schemas/OpzioniGenerazioneReportDimensioni"
           azione:
             $ref: "#/components/schemas/NCName"
           mittente:
@@ -1956,7 +1973,7 @@ components:
         type: "object"
         properties:
           report:
-            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+            $ref: "#/components/schemas/OpzioniGenerazioneReportDimensioni"
           api:
             $ref: "#/components/schemas/FiltroApiSoggetti"
           azione:
@@ -1985,7 +2002,7 @@ components:
         type: "object"
         properties:
           report:
-            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+            $ref: "#/components/schemas/OpzioniGenerazioneReportDimensioni"
           azione:
             $ref: "#/components/schemas/NCName"
           mittente:
@@ -2018,7 +2035,7 @@ components:
         type: "object"
         properties:
           report:
-            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+            $ref: "#/components/schemas/OpzioniGenerazioneReportDimensioni"
           soggetto_erogatore:
             $ref: "#/components/schemas/BaseOggettoWithSimpleName"
           distingui_api_implementata:
@@ -2054,7 +2071,7 @@ components:
         type: "object"
         properties:
           report:
-            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+            $ref: "#/components/schemas/OpzioniGenerazioneReportDimensioni"
           mittente:
             discriminator:
               propertyName: "identificazione"
@@ -2085,7 +2102,7 @@ components:
         type: "object"
         properties:
           report:
-            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+            $ref: "#/components/schemas/OpzioniGenerazioneReportDimensioni"
           azione:
             $ref: "#/components/schemas/NCName"
           esito:
@@ -2379,6 +2396,13 @@ components:
       - "numero_transazioni"
       - "occupazione_banda"
       - "tempo_medio_risposta"
+    DimensioniReportEnum:
+      type: "string"
+      example: "2d"
+      default: "2d"
+      enum:
+      - "2d"
+      - "3d"
     OccupazioneBandaEnum:
       type: "string"
       example: "banda_complessiva"
@@ -3446,6 +3470,14 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/TipoInformazioneReportEnum"
+    dimensioni_report:
+      name: "dimensioni_report"
+      in: "query"
+      description: "Specifica le informaziono visualizzate nel report se senza data\
+        \ (2d) o con data (3d)"
+      required: false
+      schema:
+        $ref: "#/components/schemas/DimensioniReportEnum"
     tipo_identificazione_applicativo:
       name: "tipo_identificazione"
       in: "query"

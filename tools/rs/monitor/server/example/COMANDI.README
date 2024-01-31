@@ -58,27 +58,39 @@ curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwa
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-esiti?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-errori?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-errori?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&dimensioni_report=2d"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-errori?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&dimensioni_report=3d"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-soggetto-remoto?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-soggetto-remoto?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=xls&dimensioni_report=3d"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-soggetto-locale?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-soggetto-locale?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=pdf&dimensioni_report=3d"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-api?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-api?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&dimensioni_report=3d"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-azione?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-azione?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&dimensioni_report=3d"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-applicativo?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-applicativo?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&tipo_identificazione=trasporto"
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-applicativo?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&tipo_identificazione=token"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-applicativo?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&tipo_identificazione=trasporto&dimensioni_report=3d"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-applicativo?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&tipo_identificazione=token&dimensioni_report=3d"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-id-autenticato?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-id-autenticato?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&dimensioni_report=3d"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-token-info?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&claim=username"
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-token-info?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&claim=client_id"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-token-info?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&claim=client_id&dimensioni_report=3d"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-token-info?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&claim=client_id_pdnd_informazioni&profilo=ModI&soggetto=DemoSoggettoErogatore"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-token-info?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&claim=client_id_pdnd_informazioni&profilo=ModI&soggetto=DemoSoggettoErogatore&dimensioni_report=3d"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-indirizzo-ip?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-indirizzo-ip?data_inizio=2012-07-21T17:32:28Z&data_fine=2032-07-21T17:32:28Z&tipo=erogazione&formato_report=csv&dimensioni_report=3d"
 
 
 
