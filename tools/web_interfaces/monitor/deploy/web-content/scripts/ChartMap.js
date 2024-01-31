@@ -253,25 +253,60 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
         svg.style.fontFamily = 'Roboto';
     }
 
-    if(dp.type != 'pie' && dp.rotation != 0 && dp.noData != 0) {
-        var _max_cat = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        _max_cat.setAttributeNS(null,"opacity", 0);
-        _max_cat.appendChild(document.createTextNode(dp.maxCategory));
-        svg.appendChild(_max_cat);
-        var _firstTick = svg.querySelector('.c3-event-rects rect').getBBox().width;
-        var _firstText = svg.querySelector('.c3-axis.c3-axis-x text tspan').getBoundingClientRect().width;
-        var _yAxisWidth = svg.querySelector('.c3-axis.c3-axis-y').getBBox().width;
-        var _pad = _firstText - (_firstTick/2);
-
-        if(_pad > _yAxisWidth){
-            options.padding.left = _pad + _max_cat.getBBox().height;
-        }
-        options.axis.x.height = Math.abs(_max_cat.getComputedTextLength()*Math.sin(dp.rotation/180*Math.PI));
-        options.size.height = dp.size.h + options.axis.x.height;
-        svg.removeChild(_max_cat);
-
-        chart = c3.generate(options);
-        svg = d.querySelector('svg');
+    if(dp.type != 'pie' && dp.noData != 0) {
+		var _firstTick = svg.querySelector('.c3-event-rects rect').getBBox().width;
+		
+		// rotazione delle label e calcolo nuova altezza del grafico
+		if(dp.rotation != 0) {
+	        var _max_cat = document.createElementNS("http://www.w3.org/2000/svg", "text");
+	        _max_cat.setAttributeNS(null,"opacity", 0);
+	        _max_cat.appendChild(document.createTextNode(dp.maxCategory));
+	        svg.appendChild(_max_cat);
+	        
+	        var _firstText = svg.querySelector('.c3-axis.c3-axis-x text tspan').getBoundingClientRect().width;
+	        var _yAxisWidth = svg.querySelector('.c3-axis.c3-axis-y').getBBox().width;
+	        var _pad = _firstText - (_firstTick/2);
+	
+	        if(_pad > _yAxisWidth){
+	            options.padding.left = _pad + _max_cat.getBBox().height;
+	        }
+	        options.axis.x.height = Math.abs(_max_cat.getComputedTextLength()*Math.sin(dp.rotation/180*Math.PI));
+	        options.size.height = dp.size.h + options.axis.x.height;
+	        svg.removeChild(_max_cat);
+	
+	        chart = c3.generate(options);
+	        svg = d.querySelector('svg');
+	    } else {
+			// label orizzontali
+			// visualizzazione orizzontale, devo controllare che le label restino all'interno della lunghezza prevista per il blocco
+			// Calcolo la lunghezza massima delle label dell'asse x
+			var _allXLabels = svg.querySelectorAll('.c3-axis.c3-axis-x text tspan');
+			
+			_allXLabels.forEach(function(elemento) {
+				var testo = elemento.textContent;
+			    var lunghezza = elemento.getBoundingClientRect().width;
+				    
+			    console.log(testo + ":" + lunghezza);
+				    
+			    if(lunghezza > _firstTick){
+					//console.log(testo + " da accorciare");
+			        // Calcola la lunghezza disponibile per il testo accorciato
+			        var spazioDisponibile = _firstTick - 10; // Sottrai 10 per lasciare spazio per i puntini di sospensione
+			        
+			        // Calcola la nuova lunghezza del testo accorciato
+			        var testoAccorciato = testo;
+			        while (elemento.getBoundingClientRect().width > spazioDisponibile && testoAccorciato.length > 0) {
+			            testoAccorciato = testoAccorciato.slice(0, -1); // Rimuovi l'ultimo carattere
+			            elemento.textContent = testoAccorciato + "..."; // Aggiungi i puntini di sospensione
+			        }
+				        
+			        // stampa risultato
+			        testo = elemento.textContent;
+			    	lunghezza = elemento.getBoundingClientRect().width;
+			        console.log(testo + ":" + lunghezza);
+				}
+			});
+		}
     }
 
     var title = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -615,7 +650,7 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.labelRef = labelRef;
     dpChart.catsTooltip = {};
     dpChart.cats = [];
-    if( _type !== 'pie') {
+    if( _type !== 'pie' ||  _type !== 'heatmap') {
         dpChart.legendTooltip = {};
         Object.keys(dpChart.labelRef).forEach(function(key) {
             dpChart.legendTooltip[key] = dpChart.labelRef[key];
