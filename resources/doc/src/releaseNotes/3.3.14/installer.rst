@@ -5,7 +5,7 @@ Sono stati apportati i seguenti miglioramenti all'installer binario:
 
 - aggiunti script di svecchiamento delle tracce per tipo di database sqlserver;
 
-- eliminata la generazione dell'archivio 'govwaySec' prodotto per default sugli archivi generati per l'application server WildFly; l'archivio è nuovamente generabile abilitando l'opzione specifica utilizzando l'installer in modalità avanzata;
+- eliminata la generazione dell'archivio 'govwaySec' prodotto per default tra gli archivi generati per l'application server WildFly; l'archivio è comunque generabile abilitando l'opzione specifica disponibile in modalità avanzata;
 
 - gli artefatti prodotti dall'installer in caso di scelta del profilo di interoperabiltà 'eDelivery' presentavano i seguenti errori:
 
