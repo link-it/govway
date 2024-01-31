@@ -288,6 +288,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		return false;
 	}
 	
+	public boolean isShowColumnAutenticazione() {
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
+			return this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
+		}
+		return false;
+	}
+	
 	public boolean isShowColumnClientIdApplicativoSoggetto() {
 		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
 			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {

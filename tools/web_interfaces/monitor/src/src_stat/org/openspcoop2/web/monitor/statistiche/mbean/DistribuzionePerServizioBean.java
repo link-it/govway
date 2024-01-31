@@ -399,11 +399,14 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
 			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
-					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), 
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi(),
+					false); 
 
 			// scrittura del report sullo stream
 			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
-					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi());
 
 			if(useFaceContext){
 				context.responseComplete();
@@ -498,11 +501,14 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
 			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
-					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), 
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi(),
+					false); 
 
 			// scrittura del report sullo stream
 			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
-					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi());
 
 			if(useFaceContext){
 				context.responseComplete();
@@ -597,11 +603,14 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
 			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
-					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), true); 
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi(),
+					true); 
 
 			// scrittura del report sullo stream
 			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
-					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi());
 
 			if(useFaceContext){
 				context.responseComplete();

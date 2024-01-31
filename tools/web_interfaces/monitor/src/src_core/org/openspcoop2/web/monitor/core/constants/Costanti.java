@@ -127,6 +127,7 @@ public class Costanti {
 	public static final String INDIRIZZO_IP_KEY = "commons.indirizzoIP.label";
 	public static final String IDENTIFICAZIONE_TOKEN_KEY = "commons.identificazione.token.label";
 	public static final String IDENTIFICAZIONE_TRASPORTO_KEY = "commons.identificazione.trasporto.label";
+	public static final String AUTENTICAZIONE_KEY = "commons.autenticazione.label";
 	
 	public static final String TOKEN_CLIENT_ID_PDND_EXTERNAL_ID_KEY = "commons.tokenInfo.clientID.pdnd.externalId.label";
 	public static final String TOKEN_CLIENT_ID_PDND_ORGANIZATION_ID_KEY = "commons.tokenInfo.clientID.pdnd.id.label";

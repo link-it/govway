@@ -90,6 +90,21 @@ public class DistribuzioneSADM extends BaseDataModel<String, ResDistribuzione, I
 				int start = ((SequenceRange)range).getFirstRow();
 				int limit = ((SequenceRange)range).getRows();
 
+				StatisticheGiornaliereService sgs = null;
+				if(this.getDataProvider() instanceof StatisticheGiornaliereService) {
+					sgs = (StatisticheGiornaliereService) this.getDataProvider();
+				}
+				
+				boolean countApplicativo = false;
+				/**System.out.println("===== WALK =====");
+				System.out.println("PRIMA offset["+start+"] limit["+limit+"]");*/
+				if((sgs!=null && sgs.getDistribSaSearch()!=null && !sgs.getDistribSaSearch().isUseCount())) {
+					countApplicativo = true;
+					start = sgs.getDistribSaSearch().getStart();
+					limit = sgs.getDistribSaSearch().getLimit();
+				}
+				/**System.out.println("DOPO countApplicativo["+countApplicativo+"] offset["+start+"] limit["+limit+"]");*/
+				
 				this.wrappedKeys = new ArrayList<>();
 				
 				if(NumeroDimensioni.DIMENSIONI_3.equals(this.search.getNumeroDimensioni())) {
@@ -104,6 +119,12 @@ public class DistribuzioneSADM extends BaseDataModel<String, ResDistribuzione, I
 				}
 				
 				list = DistribuzionePerSABean.calcolaLabels(list, ((StatisticheGiornaliereService) this.getDataProvider()).getDistribSaSearch().getProtocollo(),((StatisticheGiornaliereService) this.getDataProvider()).getDistribSaSearch());
+				
+				if(countApplicativo) {
+					this.currentSearchSize = list != null ?  list.size() : 0;
+					this.search.setCurrentSearchSize(this.currentSearchSize);
+					/**System.out.println("currentSearchSize["+this.currentSearchSize+"]");*/
+				}
 				
 				for (ResDistribuzione r : list) {
 					this.wrappedData.put(r.getRisultato(), r);
@@ -132,18 +153,122 @@ public class DistribuzioneSADM extends BaseDataModel<String, ResDistribuzione, I
 	/** Metodi richiesto dal dataTable quando disabilito setUseCount tramite metodo setTipoReport in StatsSearchForm */
 	
 	public boolean isFirstEnabled() {
+		/**System.out.println("===== isFirstEnabled =====");*/
+		
+		StatisticheGiornaliereService sgs = null;
+		if(this.getDataProvider() instanceof StatisticheGiornaliereService) {
+			sgs = (StatisticheGiornaliereService) this.getDataProvider();
+		}
+		
+		if(this.search!=null && 
+				sgs!=null && sgs.getDistribSaSearch()!=null && !sgs.getDistribSaSearch().isUseCount()) {
+			/**System.out.println("START ["+sgs.getDistribSaSearch().getStart()+"]");*/
+			return sgs.getDistribSaSearch().getStart()!=null && sgs.getDistribSaSearch().getStart().intValue()>0;
+		}
+
 		return false;
 	}
 	
 	public boolean isPrevEnabled() {
-		return false;
+		return this.isFirstEnabled();
 	}
 	
 	public boolean isNextEnabled() {
+		StatisticheGiornaliereService sgs = null;
+		if(this.getDataProvider() instanceof StatisticheGiornaliereService) {
+			sgs = (StatisticheGiornaliereService) this.getDataProvider();
+		}
+		
+		if(this.search != null && 
+				sgs!=null && sgs.getDistribSaSearch()!=null && !sgs.getDistribSaSearch().isUseCount()) {
+			return this.search.getCurrentSearchSize() != null && this.search.getLimit()!=null && 
+					this.search.getCurrentSearchSize().intValue() == this.search.getLimit().intValue();
+		}
+
 		return false;
 	}
 	
 	public String getRecordLabel() {
+		return null;
+	}
+	
+	public String nextPage() {
+		
+		/**System.out.println("===== nextPage =====");*/
+		
+		StatisticheGiornaliereService sgs = null;
+		if(this.getDataProvider() instanceof StatisticheGiornaliereService) {
+			sgs = (StatisticheGiornaliereService) this.getDataProvider();
+		}
+		
+		if(sgs!=null && sgs.getDistribSaSearch()!=null && !sgs.getDistribSaSearch().isUseCount() &&
+				sgs.getDistribSaSearch().getStart()!=null && sgs.getDistribSaSearch().getLimit()!=null) {
+			int start = sgs.getDistribSaSearch().getStart().intValue();
+			int limit = sgs.getDistribSaSearch().getLimit().intValue();
+			int newStart = start + limit;
+			sgs.getDistribSaSearch().setStart(newStart);
+		}
+		
+		Integer currentPage = this.getCurrentPage();
+		if(currentPage != null)
+			this.setCurrentPage(currentPage + 1);
+		else 
+			this.setCurrentPage(1);
+		/**System.out.println("currentPage ["+getCurrentPage()+"]");*/
+		
+		this.update();
+		
+		return null;
+	}
+
+	public String prevPage() {
+		
+		/**System.out.println("===== prevPage =====");*/
+		
+		StatisticheGiornaliereService sgs = null;
+		if(this.getDataProvider() instanceof StatisticheGiornaliereService) {
+			sgs = (StatisticheGiornaliereService) this.getDataProvider();
+		}
+		
+		if(sgs!=null && sgs.getDistribSaSearch()!=null && !sgs.getDistribSaSearch().isUseCount() &&
+				sgs.getDistribSaSearch().getStart()!=null && sgs.getDistribSaSearch().getLimit()!=null) {
+			int start = sgs.getDistribSaSearch().getStart().intValue();
+			int limit = sgs.getDistribSaSearch().getLimit().intValue();
+			int newStart = start - limit;
+			sgs.getDistribSaSearch().setStart(newStart);
+		}
+		
+		Integer currentPage = this.getCurrentPage();
+		if(currentPage != null)
+			this.setCurrentPage(currentPage - 1);
+		else 
+			this.setCurrentPage(1);
+		/**System.out.println("currentPage ["+getCurrentPage()+"]");*/
+
+		this.update();
+		 
+		return null;
+	}
+
+	public String firstPage() {
+		
+		/**System.out.println("===== firstPage =====");*/
+		
+		StatisticheGiornaliereService sgs = null;
+		if(this.getDataProvider() instanceof StatisticheGiornaliereService) {
+			sgs = (StatisticheGiornaliereService) this.getDataProvider();
+		}
+		
+		if(sgs!=null && sgs.getDistribSaSearch()!=null && !sgs.getDistribSaSearch().isUseCount() &&
+				sgs.getDistribSaSearch().getStart()!=null && sgs.getDistribSaSearch().getLimit()!=null) {
+			sgs.getDistribSaSearch().setStart(0);
+		}
+		
+		this.setCurrentPage(1);
+		/**System.out.println("currentPage dopo ["+getCurrentPage()+"]");*/
+		
+		this.update();
+		
 		return null;
 	}
 	

@@ -124,7 +124,7 @@
 							</a4j:commandLink>
 						</a4j:form>
 					</rich:panel>
-					<rich:panel id="exportCmdPanelTbl" styleClass="noborder text-align-left" bodyClass="nopadding">
+					<rich:panel id="exportCmdPanelTbl" styleClass="noborder text-align-right" bodyClass="nopadding">
 						<h:form id="formExportCmdPanelTbl" rendered="#{distribuzionePerSoggettoDM.visualizzaComandiExport}">
 							<input type="hidden" id="_csrfFormExportCmdPanelTbl" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:commandLink id="exportCsvLink" target="_blank" action="#{distribuzionePerSoggettoBean.esportaCsv}" title="Esporta i risultati in formato CSV">

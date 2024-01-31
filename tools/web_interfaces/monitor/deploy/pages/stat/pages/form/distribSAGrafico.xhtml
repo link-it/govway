@@ -144,6 +144,12 @@
 									</f:facet>
 									<h:outputText value="#{item.parentMap['2']}"/>
 								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnAutenticazione}">
+									<f:facet name="header">
+										<h:outputText value="#{msg['commons.autenticazione.label']}" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['0']}"/>
+								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{distribuzionePerSABean.sommaColumnHeader}" />

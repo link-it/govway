@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -551,6 +552,20 @@ public class JsonStatsUtils {
 		return _getJsonHeatmapChartDistribuzione(list, search, caption, subCaption, direzioneLabelParam, slice, null, tempo, log);
 	}
 
+	private static String buildKeyJsonHeatmapChartDistribuzione(ResDistribuzione res) {
+		StringBuilder sb = new StringBuilder(res.getRisultato());
+		if(res.getParentMap()!=null && !res.getParentMap().isEmpty()) {
+			int i = 0;
+			for (Entry<String, String> entry : res.getParentMap().entrySet()) {
+				sb.append("_");
+				sb.append(i);
+				sb.append(":");
+				sb.append(entry.getValue());
+				i++;
+			}
+		}
+		return sb.toString();
+	}
 	private static JSONObject _getJsonHeatmapChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, 
 			String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, Integer numeroLabel, StatisticType tempo,
 			Logger log
@@ -607,14 +622,14 @@ public class JsonStatsUtils {
 			int maxLenghtLabel = 0;
 			
 			// 1. Valorizzare tutti dati mancanti, genero eventuali 0 cosi tutti i calcoli successivi si faranno su un numero di elementi dell'asse y uguale 
-			list = generaElementiMancanti(list, search);
+			list = generaElementiMancanti(list, log);
 
 			// 2. Ordinare i risultati per categoria con somma valori piu' alti 
 			Map<String, List<ResDistribuzione>> elementiPerCategoria = new HashMap<>();
 			Map<String, Number> totaliPerCategoria = new HashMap<>();
 
 			for (ResDistribuzione res : list) {
-				String key = res.getRisultato();
+				String key = buildKeyJsonHeatmapChartDistribuzione(res);
 				List<ResDistribuzione> remove = elementiPerCategoria.remove(key);
 
 				if(remove == null) {
@@ -622,6 +637,8 @@ public class JsonStatsUtils {
 				} 
 
 				remove.add(res);
+				
+				/**System.out.println("KEY ["+key+"] sizeList:"+remove.size()+" value["+res.getSomma()+"] data["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(((ResDistribuzione3D)res).getData())+"] dataFormattata["+((ResDistribuzione3D)res).getDataFormattata()+"]");*/
 				
 				elementiPerCategoria.put(key, remove);
 
@@ -775,14 +792,17 @@ public class JsonStatsUtils {
 		return grafico;
 	}
 
-	public static List<ResDistribuzione> generaElementiMancanti(List<ResDistribuzione> origList, StatsSearchForm search){
-		if(origList == null) return null;
+	public static List<ResDistribuzione> generaElementiMancanti(List<ResDistribuzione> origList, Logger log){
+		List<ResDistribuzione> lNull = null;
+		if(origList == null) 
+			return lNull;
 
 		List<ResDistribuzione> destList = new ArrayList<>();
 
 		// Trova i valori minimi e massimi di x, y nei risultati esistenti
 
 		Set<String> existingXValues = new HashSet<>();
+		Map<String,String> existingXValuesOriginalKey = new HashMap<>();
 
 		Set<Date> existingYValues = new HashSet<>();
 
@@ -794,10 +814,12 @@ public class JsonStatsUtils {
 			destList.add(resDistribuzione3D);
 
 			// colleziono le X esistenti
-			existingXValues.add(resDistribuzione3D.getRisultato());
+			String key = buildKeyJsonHeatmapChartDistribuzione(resDistribuzione3D);
+			existingXValues.add(key);
+			existingXValuesOriginalKey.put(key, resDistribuzione3D.getRisultato());
 			
 			// colleziono le parentmap
-			mapParentMaps.put(resDistribuzione3D.getRisultato(), resDistribuzione3D.getParentMap());
+			mapParentMaps.put(key, resDistribuzione3D.getParentMap());
 
 			// colleziono le Y esistenti
 			existingYValues.add(resDistribuzione3D.getData());
@@ -809,7 +831,8 @@ public class JsonStatsUtils {
 			for(Date y : existingYValues) {
 				// Aggiungi una tripla solo se non esiste già una tripla con la stessa x e y
 				if (!containsTriple(destList, x, y)) {
-					ResDistribuzione3D resDistribuzione3D = new ResDistribuzione3D(x, y, 0);
+					String originalKey = existingXValuesOriginalKey.get(x);
+					ResDistribuzione3D resDistribuzione3D = new ResDistribuzione3D(originalKey, y, 0);
 					// copio informazioni parentMap per costruzione tooltip
 					resDistribuzione3D.getParentMap().putAll(mapParentMaps.get(x));
 					missingTriples.add(resDistribuzione3D);
@@ -820,13 +843,19 @@ public class JsonStatsUtils {
 		// aggiungo tutti i risultati mancanti
 		destList.addAll(missingTriples);
 
+		long xYsize = ((long)existingXValues.size()) * ((long)existingYValues.size());
+		if(destList.size()!=xYsize) {
+			log.error("generaElementiMancanti destListSize:"+destList.size()+" xYsize:"+xYsize+" existingXValues:"+existingXValues+" existingYValues:"+existingYValues+"");
+		}
+		
 		return destList;
 	}
 
 	private static boolean containsTriple(List<ResDistribuzione> valuesList, String x, Date y) {
 		for (ResDistribuzione res : valuesList) {
 			ResDistribuzione3D resDistribuzione3D = (ResDistribuzione3D) res;
-			if (resDistribuzione3D.getRisultato().equals(x) && resDistribuzione3D.getData().equals(y)) {
+			String key = buildKeyJsonHeatmapChartDistribuzione(resDistribuzione3D);
+			if (key.equals(x) && resDistribuzione3D.getData().equals(y)) {
 				return true;
 			}
 		}
@@ -853,7 +882,7 @@ public class JsonStatsUtils {
 		for (Map.Entry<String, Number> entry : entryList) {
 			// inserisco solo quelli da non accorpare come altri
 			if(!categorieDaAccorpareComeAltri.contains(entry.getKey())) {
-			destList.addAll(elementiPerCategoria.get(entry.getKey()));
+				destList.addAll(elementiPerCategoria.get(entry.getKey()));
 			}
 		}
 		
@@ -872,6 +901,8 @@ public class JsonStatsUtils {
 		for (String categoria : categorieDaAccorpareComeAltri) {
 			List<ResDistribuzione> categoriaDaAccorpare = elementiPerCategoria.get(categoria);
 			
+			/**log.error("---- Categoria '"+categoria+"' possiede una dimensione '"+categoriaDaAccorpare.size()+"' --- attesa '"+colonnaAltri.size()+"'");*/
+			
 			if(!colonnaAltri.isEmpty() &&
 					categoriaDaAccorpare.size()!=colonnaAltri.size()) {
 				log.error("Categoria '"+categoria+"' possiede una dimensione '"+categoriaDaAccorpare.size()+"' diversa da quella attesa '"+colonnaAltri.size()+"'");
@@ -880,6 +911,9 @@ public class JsonStatsUtils {
 			// prima iterazione aggiungo direttamente tutti valori modificando la label in altri
 			if(colonnaAltri.isEmpty()) {
 				for (ResDistribuzione resDistribuzione : categoriaDaAccorpare) {
+					
+					/**log.error("---- Categoria '"+categoria+"' AGGIUNTA PER ALTRI!");*/
+					
 					resDistribuzione.setRisultato(CostantiGrafici.ALTRI_LABEL);
 					// cancellazione della mappa parent per evitare visualizzare informazioni sul dettaglio della categoria
 					if(resDistribuzione.getParentMap() != null) {

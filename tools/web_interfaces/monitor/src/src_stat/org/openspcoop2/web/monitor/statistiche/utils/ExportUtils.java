@@ -136,16 +136,38 @@ public class ExportUtils {
 		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, numeroDimensioni, 
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null, convertRawData);
 	}
+	
+	public static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica,
+			boolean distribuzionePerImplementazioneApi, 
+			boolean convertRawData) {
+		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, numeroDimensioni, 
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null, 
+				distribuzionePerImplementazioneApi,
+				convertRawData);
+	}
 
 	public static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, boolean convertRawData) {
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,
+			boolean convertRawData) {
+		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, numeroDimensioni, 
+				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim,
+				false,
+				convertRawData);
+	}
+	private static JasperReportBuilder creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,
+			boolean distribuzionePerImplementazioneApi,
+			boolean convertRawData) {
 		
 		if(titoloReport!=null) {
 			// non usato
 		}
 		
 		JRDataSource dataSource = getDatasourceDistribuzione(list, log, tipoVisualizzazione, numeroDimensioni,  
-				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, convertRawData);
+				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, 
+				distribuzionePerImplementazioneApi,
+				convertRawData);
 
 		JasperReportBuilder builder = report();
 		builder.setDataSource(dataSource);
@@ -171,7 +193,13 @@ public class ExportUtils {
 		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null); 
 	}
-
+	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,
+			boolean distribuzionePerImplementazioneApi) throws CoreException {
+		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null,
+				false, distribuzionePerImplementazioneApi); 
+	}
 	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws CoreException {
 		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni, 
@@ -179,6 +207,13 @@ public class ExportUtils {
 	}
 	public static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, boolean distribuzionePerEsiti) throws CoreException {
+		esportaCsv(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,
+				tipiBanda, tipiLatenza, tipoStatistica,  tipoRiconoscimento, identificazione, tokenClaim, 
+				distribuzionePerEsiti, false);
+	}
+	private static void esportaCsv(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, 
+			boolean distribuzionePerEsiti, boolean distribuzionePerImplementazioneApi) throws CoreException {
 		
 		if(titoloReport!=null) {
 			// non usato
@@ -243,9 +278,11 @@ public class ExportUtils {
 				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
 				break;
 			case DISTRIBUZIONE_SERVIZIO:
-				headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
-				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
+				if(distribuzionePerImplementazioneApi) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
+					colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
+				}
 				break;
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -304,6 +341,11 @@ public class ExportUtils {
 					}catch(Exception t) {
 						// ignore
 					}
+				}
+				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.AUTENTICAZIONE_KEY);
+					colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
 				}
 				break;
 			case ANDAMENTO_TEMPORALE:
@@ -387,11 +429,17 @@ public class ExportUtils {
 	}
 
 	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,
+			boolean distribuzionePerImplementazioneApi) throws IOException, JRException {
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null,
+				false, distribuzionePerImplementazioneApi);
+	}
+	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws IOException, JRException {
 		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
 				tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
 	}
-
 	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws IOException, JRException {
 		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
@@ -399,6 +447,13 @@ public class ExportUtils {
 	}
 	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,  boolean distribuzionePerEsiti) throws IOException, JRException {
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim,  
+				distribuzionePerEsiti, false);
+	}
+	public static void esportaPdf(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,  
+			boolean distribuzionePerEsiti, boolean distribuzionePerImplementazioneApi) throws IOException, JRException {
 		
 		String headerValueLabel = "";
 		String headerValueCategory = "";
@@ -456,9 +511,11 @@ public class ExportUtils {
 				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 			case DISTRIBUZIONE_SERVIZIO:
-				headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
-				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				if(distribuzionePerImplementazioneApi) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
+					colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				}
 				break;
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -516,6 +573,11 @@ public class ExportUtils {
 					}catch(Exception t) {
 						// ignore
 					}
+				}
+				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.AUTENTICAZIONE_KEY);
+					colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				}
 				break;
 			case ANDAMENTO_TEMPORALE:
@@ -596,17 +658,6 @@ public class ExportUtils {
         
 	}
 
-	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws CoreException {
-		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
-				tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
-	}
-
-	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws CoreException {
-		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
-				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
-	}
 	@SuppressWarnings("deprecation")
 	private static TextColumnBuilder<String> buildColumnDeprecated(String label, String category){
 		return col.column(label, category, type.stringType())
@@ -633,9 +684,32 @@ public class ExportUtils {
 			return buildColumnWithoutTextAdjust(label, category);
 		}
 	}
-	
+	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws CoreException {
+		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
+	}
+	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,
+			boolean distribuzionePerImplementazioneApi) throws CoreException {
+		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null,
+				false, distribuzionePerImplementazioneApi);
+	}
+	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws CoreException {
+		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
+	}	
 	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim, boolean distribuzionePerEsiti) throws CoreException {
+		esportaXls(outputStream, report, titoloReport, headerLabel,tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza,tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, 
+				distribuzionePerEsiti, false);
+	}
+	private static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim, 
+			boolean distribuzionePerEsiti, boolean distribuzionePerImplementazioneApi) throws CoreException {
 		
 		if(titoloReport!=null) {
 			// non usato
@@ -704,10 +778,11 @@ public class ExportUtils {
 				colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 				break;
 			case DISTRIBUZIONE_SERVIZIO:
-				
-				headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
-				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(buildColumn(headerValueLabel, headerValueCategory));
+				if(distribuzionePerImplementazioneApi) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
+					colonne.add(buildColumn(headerValueLabel, headerValueCategory));
+				}
 				break;
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -766,6 +841,11 @@ public class ExportUtils {
 					}catch(Exception t) {
 						// ignore
 					}
+				}
+				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.AUTENTICAZIONE_KEY);
+					colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 				}
 				break;
 			case ANDAMENTO_TEMPORALE:
@@ -1570,7 +1650,9 @@ public class ExportUtils {
 	}
 
 	private static JRDataSource getDatasourceDistribuzione (List<ResDistribuzione> list,Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, boolean convertRawData)  {
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,
+			boolean distribuzionePerImplementazioneApi,
+			boolean convertRawData)  {
 
 		boolean distribuzione3d = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni);
 		
@@ -1603,7 +1685,9 @@ public class ExportUtils {
 			header.add(HEADER_VALUE_CATEGORY_PARENT_1);
 			break;
 		case DISTRIBUZIONE_SERVIZIO:
-			header.add(HEADER_VALUE_CATEGORY_PARENT_0);
+			if(distribuzionePerImplementazioneApi) {
+				header.add(HEADER_VALUE_CATEGORY_PARENT_0);
+			}
 			break;
 		case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 			if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -1633,6 +1717,9 @@ public class ExportUtils {
 				}catch(Exception t) {
 					// ignore
 				}
+			}
+			else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+				header.add(HEADER_VALUE_CATEGORY_PARENT_0);
 			}
 			break;
 		case ANDAMENTO_TEMPORALE:
@@ -1718,10 +1805,10 @@ public class ExportUtils {
 				oneLine.add(risultato3D!=null ? risultato3D.getDataFormattata() : "N.D.");
 			}
 			
-			String label = risultato.getRisultato() != null ? risultato.getRisultato() : "";
+			String label = (risultato!=null && risultato.getRisultato() != null) ? risultato.getRisultato() : "";
 			oneLine.add(label);
 						
-			if(!risultato.getParentMap().isEmpty()){
+			if(risultato!=null && risultato.getParentMap()!=null && !risultato.getParentMap().isEmpty()){
 				Set<String> keySet = risultato.getParentMap().keySet();
 				for (String parentCol : keySet) {
 					oneLine.add(risultato.getParentMap().get(parentCol)); 

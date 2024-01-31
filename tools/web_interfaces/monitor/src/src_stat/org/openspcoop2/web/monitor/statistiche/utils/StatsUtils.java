@@ -1423,7 +1423,7 @@ public class StatsUtils {
 							}
 						} else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 							String labelTooltipDistribuzioneIdentificativoAutenticatoSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_TOOLTIP_SVG_PATTERN_KEY);
-							sb.append(MessageFormat.format(labelTooltipDistribuzioneIdentificativoAutenticatoSvgPattern, labelValore,valore,risultato));
+							sb.append(MessageFormat.format(labelTooltipDistribuzioneIdentificativoAutenticatoSvgPattern, labelValore,valore,risultato,parent.get("0")));
 						} else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
 							String labelTooltipDistribuzioneIndirizzoIPSvgPattern =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_INDIRIZZO_IP_TOOLTIP_SVG_PATTERN_KEY);
 							sb.append(MessageFormat.format(labelTooltipDistribuzioneIndirizzoIPSvgPattern, labelValore,valore,risultato));
@@ -1498,7 +1498,8 @@ public class StatsUtils {
 							}
 						}  else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 							String tooltipSectionIdentificativoAutenticato =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_IDENTIFICATIVO_AUTENTICATO_PATTERN_KEY);
-							sb.append(labelValore).append(": ").append(valore).append(tooltipSectionIdentificativoAutenticato).append(risultato);
+							String tooltipSectionAutenticazione = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_IDENTIFICATIVO_AUTENTICATO_AUTENTICAZIONE_KEY);
+							sb.append(labelValore).append(": ").append(valore).append(tooltipSectionIdentificativoAutenticato).append(risultato).append(tooltipSectionAutenticazione).append(parent.get("0"));
 						} else if(form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
 							String tooltipSectionIndirizzoIP =  MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_INDIRIZZO_IP_PATTERN_KEY);
 							sb.append(labelValore).append(": ").append(valore).append(tooltipSectionIndirizzoIP).append(risultato);
