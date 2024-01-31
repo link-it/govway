@@ -138,40 +138,87 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	  .style("text-anchor", "end")
 	  ; 
 	    
-    // rotazione delle label dell'asse X
-     if(dp.rotation != 0 && dp.noData != 0) {
-		var d = document.getElementById(id);
-    	var svgTmp = d.querySelector('svg');
- 
-	   	var _max_cat = document.createElementNS("http://www.w3.org/2000/svg", "text");
-       	_max_cat.setAttributeNS(null,"opacity", 0);
-       	_max_cat.setAttributeNS(null,"font-family", 'Roboto');
-    	_max_cat.setAttributeNS(null,"font-size", 14);
-    	_max_cat.setAttributeNS(null,"text-anchor", 'end');
-	    _max_cat.setAttribute("transform", "translate(-10,10)rotate(" + dp.rotation + ")");
-	     
-     	_max_cat.textContent = dp.maxCategory;
-        svgTmp.appendChild(_max_cat);
-         
-		var _firstTick = svgTmp.querySelector('.c3-axis.c3-axis-x path').getBoundingClientRect().width / xLabels.length;
-        var _firstText = svgTmp.querySelector('.c3-axis.c3-axis-x text').getBoundingClientRect().width;
-        var _yAxisWidth = svgTmp.querySelector('.c3-axis.c3-axis-y').getBBox().width;
-        var _pad = _firstText - (_firstTick/2);
-
-        if(_pad > _yAxisWidth){
-            let padding_left = _pad + _max_cat.getBBox().height;
-        }
-        
-        let axis_x_height = Math.abs(_max_cat.getComputedTextLength()*Math.sin(dp.rotation/180*Math.PI));
-        let size_height = dp.size.h + axis_x_height;
-        svgTmp.removeChild(_max_cat);
-
-		// aggiorno altezza grafico
-		let svgIdSharp = "#" + svgId;        
-		d3.select(svgIdSharp).attr('height', size_height);
-    }
-	  
 	if(dp.noData != 0) {
+		// larghezza dei singoli rettangoli 
+		var _firstTick = svgTmp.querySelector('.c3-axis.c3-axis-x path').getBoundingClientRect().width / xLabels.length;
+//		console.log('Dimensione disponibile per la categoria x: ' + _firstTick);
+		
+		// visualizzazione orizzontale e obliqua, devo controllare che le label restino all'interno della lunghezza prevista per il rettangolo'
+		// Calcolo la lunghezza massima delle label dell'asse x
+		var _allXLabels = svgTmp.querySelectorAll('.c3-axis.c3-axis-x text');
+		
+		_allXLabels.forEach(function(elemento) {
+			var testo = elemento.textContent;
+		    var lunghezza = elemento.getBoundingClientRect().width;
+			    
+		    console.log(testo + ":" + lunghezza);
+			    
+		    if(lunghezza > _firstTick){
+				//console.log(testo + " da accorciare");
+		        // Calcola la lunghezza disponibile per il testo accorciato
+		        var spazioDisponibile = _firstTick - 10; // Sottrai 10 per lasciare spazio per i puntini di sospensione
+		        
+		        // Calcola la nuova lunghezza del testo accorciato
+		        var testoAccorciato = testo;
+		        while (elemento.getBoundingClientRect().width > spazioDisponibile && testoAccorciato.length > 0) {
+		            testoAccorciato = testoAccorciato.slice(0, -1); // Rimuovi l'ultimo carattere
+		            elemento.textContent = testoAccorciato + "..."; // Aggiungi i puntini di sospensione
+		        }
+			        
+		        // stampa risultato
+		        testo = elemento.textContent;
+		    	lunghezza = elemento.getBoundingClientRect().width;
+		        console.log(testo + ":" + lunghezza);
+				}
+			});
+		
+    	// rotazione delle label dell'asse X
+     	if(dp.rotation != 0) {
+			var d = document.getElementById(id);
+	    	var svgTmp = d.querySelector('svg');
+	    	
+	    	var _allXLabels = svgTmp.querySelectorAll('.c3-axis.c3-axis-x text');
+			
+			var _max_cat_height = 0;
+			_allXLabels.forEach(function(elemento) {
+				var testo = elemento.textContent;
+			    var lunghezza = elemento.getBoundingClientRect().width;
+			    var altezza = elemento.getBoundingClientRect().height;
+			    
+			    console.log(testo + ":" + lunghezza  + ":" + altezza );
+			    if(altezza > _max_cat_height) {
+					_max_cat_height = altezza;
+				}
+		    });
+	 
+//		   	var _max_cat = document.createElementNS("http://www.w3.org/2000/svg", "text");
+//	       	_max_cat.setAttributeNS(null,"opacity", 0);
+//	       	_max_cat.setAttributeNS(null,"font-family", 'Roboto');
+//	    	_max_cat.setAttributeNS(null,"font-size", 14);
+//	    	_max_cat.setAttributeNS(null,"text-anchor", 'end');
+//		    _max_cat.setAttribute("transform", "translate(-10,10)rotate(" + dp.rotation + ")");
+//		     
+//	     	_max_cat.textContent = dp.maxCategory;
+//	        svgTmp.appendChild(_max_cat);
+			
+	        var _firstText = svgTmp.querySelector('.c3-axis.c3-axis-x text').getBoundingClientRect().width;
+	        var _yAxisWidth = svgTmp.querySelector('.c3-axis.c3-axis-y').getBBox().width;
+	        var _pad = _firstText - (_firstTick/2);
+	
+	        if(_pad > _yAxisWidth){
+//	            let padding_left = _pad + _max_cat.getBBox().height;
+	            let padding_left = _pad + _max_cat_height;
+	        }
+	        
+//	        let axis_x_height = Math.abs(_max_cat.getComputedTextLength()*Math.sin(dp.rotation/180*Math.PI));
+	        let axis_x_height = Math.abs(_max_cat_height*Math.sin(dp.rotation/180*Math.PI));
+	        let size_height = dp.size.h + axis_x_height;
+//	        svgTmp.removeChild(_max_cat);
+	
+			// aggiorno altezza grafico
+			let svgIdSharp = "#" + svgId;        
+			d3.select(svgIdSharp).attr('height', size_height);
+		}
 	  
 	  	// Build color scale
 		var myColor = d3.scaleLinear()
