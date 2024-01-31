@@ -141,6 +141,8 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	if(dp.noData != 0) {
 		// larghezza dei singoli rettangoli 
 		var _firstTick = svgTmp.querySelector('.c3-axis.c3-axis-x path').getBoundingClientRect().width / xLabels.length;
+		// larghezza asse y comprese label
+		var _yAxisWidth = svgTmp.querySelector('.c3-axis.c3-axis-y').getBBox().width;
 //		console.log('Dimensione disponibile per la categoria x: ' + _firstTick);
 		
 		// visualizzazione orizzontale e obliqua, devo controllare che le label restino all'interno della lunghezza prevista per il rettangolo'
@@ -151,12 +153,17 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 			var testo = elemento.textContent;
 		    var lunghezza = elemento.getBoundingClientRect().width;
 			    
-		    console.log(testo + ":" + lunghezza);
+//		    console.log(testo + ":" + lunghezza);
 			    
 		    if(lunghezza > _firstTick){
 				//console.log(testo + " da accorciare");
 		        // Calcola la lunghezza disponibile per il testo accorciato
 		        var spazioDisponibile = _firstTick - 10; // Sottrai 10 per lasciare spazio per i puntini di sospensione
+		        
+		        // se la label e' rotata lo spazio a disposizione si dimezza, ma sfrutto lo spazio sotto l'asse y 
+		        if(dp.rotation != 0){
+					spazioDisponibile = _firstTick /2 + _yAxisWidth - 10;
+				}
 		        
 		        // Calcola la nuova lunghezza del testo accorciato
 		        var testoAccorciato = testo;
@@ -168,7 +175,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 		        // stampa risultato
 		        testo = elemento.textContent;
 		    	lunghezza = elemento.getBoundingClientRect().width;
-		        console.log(testo + ":" + lunghezza);
+//		        console.log(testo + ":" + lunghezza);
 				}
 			});
 		
@@ -185,7 +192,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 			    var lunghezza = elemento.getBoundingClientRect().width;
 			    var altezza = elemento.getBoundingClientRect().height;
 			    
-			    console.log(testo + ":" + lunghezza  + ":" + altezza );
+//			    console.log(testo + ":" + lunghezza  + ":" + altezza );
 			    if(altezza > _max_cat_height) {
 					_max_cat_height = altezza;
 				}
@@ -202,7 +209,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 //	        svgTmp.appendChild(_max_cat);
 			
 	        var _firstText = svgTmp.querySelector('.c3-axis.c3-axis-x text').getBoundingClientRect().width;
-	        var _yAxisWidth = svgTmp.querySelector('.c3-axis.c3-axis-y').getBBox().width;
+	        
 	        var _pad = _firstText - (_firstTick/2);
 	
 	        if(_pad > _yAxisWidth){
