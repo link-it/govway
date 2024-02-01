@@ -232,6 +232,12 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		return this.getXml();
 	}
 
+	
+	public boolean isShowColumnErogatore() {
+		return ((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi();
+	}
+	
+	
 	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY)).append(CostantiGrafici.WHITE_SPACE);

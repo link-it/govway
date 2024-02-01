@@ -1,15 +1,15 @@
 .. _mon_reportistica_config_csv:
 
-Formato CSV del Report Configurazione API
------------------------------------------
+Formato CSV/XLS del Report Configurazione API
+-----------------------------------------------
 
-L'esportazione in CSV dei dettagli relativi ad una erogazione o fruizione produce una riga che contiene le principali informazioni sulla configurazione.
+L'esportazione dei dettagli relativi ad una erogazione o fruizione produce una riga che contiene le principali informazioni sulla configurazione.
 Le righe prodotte per la singola erogazione o fruizione possono essere più di una nei seguenti casi:
 
-- *attivazione di gruppi di azioni o risorse*: viene prodotta una riga CSV per ogni gruppo il cui nome viene riportato nella colonna 'Gruppo'
-- *connettore multiplo*: viene prodotta una riga CSV per ogni connettore definito nella lista dei connettori multipli. Il nome del connettore viene riportato nella colonna 'Connettore Multiplo'
+- *attivazione di gruppi di azioni o risorse*: viene prodotta una riga per ogni gruppo il cui nome viene riportato nella colonna 'Gruppo'
+- *connettore multiplo*: viene prodotta una riga per ogni connettore definito nella lista dei connettori multipli. Il nome del connettore viene riportato nella colonna 'Connettore Multiplo'
 
-Di seguito il nome dell'header e il formato del valore inserito in ogni colonna del CSV. La descrizione viene raggruppa per tipologia di informazioni
+Di seguito il nome dell'header e il formato del valore inserito in ogni colonna. La descrizione viene raggruppa per tipologia di informazioni
 
 - 'Profilo Interoperabilità': indica il profilo a cui la configurazione appartiene (es. 'API Gateway' o 'ModI').
 - 'Tipo API': assume il valore 'rest' o 'soap' a seconda della tecnologia dell'API.
@@ -92,6 +92,6 @@ Di seguito il nome dell'header e il formato del valore inserito in ogni colonna 
 - 'Connettore (Altre Configurazioni)': vengono riportate le configurazioni dei connettori differenti da http.
 - 'Porta Delegata' [solo in una fruizione]: nome interno della fruizione.
 - 'Porta Applicativa' [solo in una erogazione]: nome interno dell'erogazione.
-- 'Connettore Multiplo' [solo in una erogazione]: in caso di configurazione con connettore multiplo, viene riportato il nome del connettore che interessa la riga CSV.
+- 'Connettore Multiplo' [solo in una erogazione]: in caso di configurazione con connettore multiplo, viene riportato il nome del connettore che interessa la riga.
 - 'Applicativo Server' [solo in una erogazione]: se nel connettore è stato attivato un applicativo server, viene riportato il nome dell'applicativo.
 

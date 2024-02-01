@@ -46,6 +46,24 @@ Di seguito alcuni esempi di reports generabili.
 
     Esempio di report grafico di distribuzione per API (Bar Chart sul tempo medio di risposta)
 
+**Tabella 3D**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneTokenInfoTabellaSubject3D.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneTokenInfoTabellaSubject3D_fig
+
+    Esempio di report tabellare di distribuzione per claim 'subject', comprensivo di date, presente nei token ricevuti
+
+**Grafico 'Bar Chart 3D' sul tempo medio di risposta**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneTokenInfoBar3D.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneTokenInfoBar3D_fig
+
+    Esempio di report grafico di distribuzione per claim 'subject' (Bar Chart 3D sul numero di transazioni e sulle date)
+
 **Informazioni PDND**
 
 Selezionando il profilo di interoperabilità "ModI" e il tipo di transazione "Erogazione", tra i claim forniti come criterio di ricerca è possibile utilizzare anche la voce "Client ID + Informazioni PDND" che consente di ottenere un report basato sulle informazioni, relative al clientId, recuperate tramite le API PDND (:numref:`mon_distribuzioneTokenModalitaIdentificazionePDND_fig`).
@@ -57,7 +75,7 @@ Selezionando il profilo di interoperabilità "ModI" e il tipo di transazione "Er
 
     Report di distribuzione per token; selezione del claim da utilizzare come criterio di raggruppamento delle richieste ricevute (Informazioni PDND)
 
-Di seguito un esempio di report che riporta le informazioni PDND (:numref:`mon_distribuzioneTokenInfoTabellaPDND_fig`).
+Di seguito esempi di report che riportano le informazioni PDND (:numref:`mon_distribuzioneTokenInfoTabellaPDND_fig`).
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneTokenInfoTabellaPDND.png
     :scale: 50%
@@ -65,3 +83,17 @@ Di seguito un esempio di report che riporta le informazioni PDND (:numref:`mon_d
     :name: mon_distribuzioneTokenInfoTabellaPDND_fig
 
     Esempio di report tabellare di distribuzione per claim 'clientID' arricchito di informazioni prelevate tramite API PDND
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneTokenInfoTabellaPDND3D.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneTokenInfoTabellaPDND3D_fig
+
+    Esempio di report tabellare di distribuzione 3D per claim 'clientID', comprensivo di date, arricchito di informazioni prelevate tramite API PDND
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneTokenInfoBarPDND3D.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneTokenInfoBarPDND3D_fig
+
+    Esempio di report grafico di distribuzione per claim 'clientID' arricchito di informazioni prelevate tramite API PDND (Bar Chart 3D sul numero di transazioni e sulle date)

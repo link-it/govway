@@ -88,7 +88,7 @@
 									</f:facet>
 									<h:outputText value="#{item.risultato}"/>
 								</rich:column>
-								<rich:column>
+								<rich:column rendered="#{distribuzionePerServizioBean.showColumnErogatore}">
 									<f:facet name="header">
 										<h:outputText value="#{msg['commons.erogatore.label']}" />
 									</f:facet>
