@@ -137,7 +137,7 @@ public class FileTraceManager {
 		List<TipoMessaggio> tipiDaEliminareHeaders = transaction.getMessaggi_headers_onlyLogFileTrace();
 		List<TipoMessaggio> tipiDaEliminareBody = transaction.getMessaggi_body_onlyLogFileTrace();
 			
-		List<TipoMessaggio> messaggiDaLiminare = new ArrayList<>();
+		List<TipoMessaggio> messaggiDaEliminare = new ArrayList<>();
 		
 		for(int i=0; i<transaction.sizeMessaggi(); i++){
 			Messaggio messaggio = transaction.getMessaggio(i);
@@ -172,7 +172,7 @@ public class FileTraceManager {
 			}
 			
 			if(onlyLogFileTraceHeaders && onlyLogFileTraceBody) {
-				messaggiDaLiminare.add(tipoMessaggio);
+				messaggiDaEliminare.add(tipoMessaggio);
 			}
 			else if(onlyLogFileTraceHeaders) {
 				messaggio.getHeaders().clear();
@@ -187,9 +187,9 @@ public class FileTraceManager {
 			}
 		}
 		
-		if(messaggiDaLiminare!=null && !messaggiDaLiminare.isEmpty()) {
-			while(!messaggiDaLiminare.isEmpty()) {
-				TipoMessaggio tipo = messaggiDaLiminare.remove(0);
+		if(messaggiDaEliminare!=null) {
+			while(!messaggiDaEliminare.isEmpty()) {
+				TipoMessaggio tipo = messaggiDaEliminare.remove(0);
 				if(transaction.sizeMessaggi()>0) {
 					for (int i = 0; i < transaction.sizeMessaggi(); i++) {
 						if(tipo.equals(transaction.getMessaggio(i).getTipoMessaggio())) {
