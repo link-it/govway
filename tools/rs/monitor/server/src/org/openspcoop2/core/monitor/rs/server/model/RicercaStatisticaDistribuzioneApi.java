@@ -28,7 +28,7 @@ import javax.validation.Valid;
 public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   
   @Schema(required = true, description = "")
-  private OpzioniGenerazioneReport report = null;
+  private OpzioniGenerazioneReportDimensioni report = null;
   
   @Schema(description = "")
   private BaseOggettoWithSimpleName soggettoErogatore = null;
@@ -57,15 +57,15 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   @JsonProperty("report")
   @NotNull
   @Valid
-  public OpzioniGenerazioneReport getReport() {
+  public OpzioniGenerazioneReportDimensioni getReport() {
     return this.report;
   }
 
-  public void setReport(OpzioniGenerazioneReport report) {
+  public void setReport(OpzioniGenerazioneReportDimensioni report) {
     this.report = report;
   }
 
-  public RicercaStatisticaDistribuzioneApi report(OpzioniGenerazioneReport report) {
+  public RicercaStatisticaDistribuzioneApi report(OpzioniGenerazioneReportDimensioni report) {
     this.report = report;
     return this;
   }

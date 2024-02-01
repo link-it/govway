@@ -7,7 +7,7 @@ Questo report mostra come si distribuiscono le transazioni registrate
 dal gateway sui soggetti remoti (gli interlocutori dei soggetti locali).
 Di seguito alcuni esempi di reports generabili.
 
-**Tabella:**
+**Tabella**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoRemotoTabella.png
     :scale: 50%
@@ -24,3 +24,30 @@ Di seguito alcuni esempi di reports generabili.
     :name: mon_distribuzioneSoggettoRemotoPie_fig
 
     Esempio di Report di Distribuzione per Soggetto Remoto (Pie Chart sul numero di transazioni)
+
+**Grafico 'Bar Chart' sul numero di transazioni**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoRemotoBar.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneSoggettoRemotoBar_fig
+
+    Esempio di Report di Distribuzione per Soggetto Remoto (Bar Chart sul numero di transazioni)
+
+**Tabella 3D**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoRemotoTabella3D.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneSoggettoRemotoTabella3D_fig
+
+    Esempio di report tabellare comprensivo di date che riporta la distribuzione per soggetto remoto
+
+**Grafico 'Bar Chart 3D' sul numero di transazioni**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoRemotoBar3D.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneSoggettoRemotoBar3D_fig
+
+    Esempio di Report di Distribuzione per Soggetto Remoto (Bar Chart 3D sul numero di transazioni e sulle date)

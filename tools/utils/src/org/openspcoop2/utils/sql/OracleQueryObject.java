@@ -23,11 +23,14 @@
 package org.openspcoop2.utils.sql;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateUtils;
 
 
 
@@ -80,6 +83,17 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	
 	
 	
+	
+	/**
+	 * Ritorna una costante  di tipo 'timestamp'
+	 * 
+	 * @param date Costante
+	 */
+	@Override
+	public String getSelectTimestampConstantField(Date date) throws SQLQueryObjectException{
+		SimpleDateFormat sqlDateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
+		return "TO_TIMESTAMP('"+sqlDateformat.format(date)+"', 'YYYY-MM-DD HH24:MI:SS.FF3')";
+	}
 	
 	
 	

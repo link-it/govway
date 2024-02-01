@@ -19,15 +19,12 @@
  */
 package org.openspcoop2.web.monitor.statistiche.converter;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
+import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 
 /**
  * DateIntervalConverterSettimanale
@@ -41,22 +38,12 @@ public class DateIntervalConverterSettimanale implements Converter {
 
 	@Override
 	public Object getAsObject(FacesContext arg0, UIComponent arg1, String arg2) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getAsString(FacesContext ctx, UIComponent component, Object value) {
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", ApplicationBean.getInstance().getLocale());
-		SimpleDateFormat sdf_last_hour = new SimpleDateFormat("yyyy/MM/dd", ApplicationBean.getInstance().getLocale());
-
-		Calendar c = Calendar.getInstance();
-		c.setTime((Date)value);
-		c.add(Calendar.WEEK_OF_MONTH, 1);
-		c.add(Calendar.DAY_OF_WEEK, -1);
-		
-		return sdf.format(value)+"-"+sdf_last_hour.format(c.getTime());
+		return StatsUtils.formatDate(StatisticType.SETTIMANALE, value);
 	}
 
 }

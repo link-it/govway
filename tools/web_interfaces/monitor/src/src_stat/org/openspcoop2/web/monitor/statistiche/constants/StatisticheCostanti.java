@@ -92,6 +92,7 @@ public class StatisticheCostanti {
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_SOGGETTO_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.soggetto.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_APPLICATIVO_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.applicativo.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_IDENTIFICATIVO_AUTENTICATO_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.identificativoAutenticato.pattern";
+	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_IDENTIFICATIVO_AUTENTICATO_AUTENTICAZIONE_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.identificativoAutenticato.autenticazione";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_INDIRIZZO_IP_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.indirizzoIP.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.tokenInfo.pattern";
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_TOKENINFO_ISSUER_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tooltip.nosvg.sa.tokenInfo.issuer.pattern";
@@ -116,4 +117,6 @@ public class StatisticheCostanti {
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKENINFO_PDND_ORGANIZATION_NAME_TOOLTIP_SVG_PATTERN_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.pdndOrganizationName.tooltip.svg.pattern";
 
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENTID_PDNDINFO = "stats.search.claim.clientIdConPDND";
+	
+	public static final String  STATS_ANALISI_STATISTICA_HEATMAP_TOOLTIP_CATEGORIA_ALTRI_PATTERN_KEY = "stats.analisiStatistica.heatmap.tooltip.categoriaAltri.pattern";
 }

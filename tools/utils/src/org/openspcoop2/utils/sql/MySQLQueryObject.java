@@ -22,9 +22,12 @@
 
 package org.openspcoop2.utils.sql;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateUtils;
 
 
 /**
@@ -44,6 +47,21 @@ public class MySQLQueryObject extends SQLQueryObjectCore{
 	}
 
 
+	
+	/**
+	 * Ritorna una costante  di tipo 'timestamp'
+	 * 
+	 * @param date Costante
+	 */
+	@Override
+	public String getSelectTimestampConstantField(Date date) throws SQLQueryObjectException{
+		SimpleDateFormat sqlDateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
+		return "STR_TO_DATE('"+sqlDateformat.format(date)+"', '%Y-%m-%d %H:%i:%s.%f')";
+	}
+	
+	
+	
+	
 	
 	@Override
 	public String getUnixTimestampConversion(String column){

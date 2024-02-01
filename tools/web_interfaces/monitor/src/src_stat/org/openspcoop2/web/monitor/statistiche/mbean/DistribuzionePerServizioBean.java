@@ -54,6 +54,7 @@ import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
@@ -104,7 +105,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 	
 	public static final String PREFIX_API = "___API___";
 	public static List<ResDistribuzione>  calcolaLabels (List<ResDistribuzione> list, String protocollo){
-		if(list!=null  && list.size()>0){
+		if(list!=null  && !list.isEmpty()){
 			for (ResDistribuzione res : list) {
 				String tipoNomeSoggetto = res.getParentMap().get("0");
 				
@@ -193,8 +194,20 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 
 		switch (tipoReport) {
-		case BAR_CHART:
-			grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel() , this.getSlice());
+		case BAR_CHART:{
+			NumeroDimensioni numeroDimensioni = ((StatsSearchForm)this.search).getNumeroDimensioni();
+			
+			switch (numeroDimensioni) {
+				case DIMENSIONI_3:
+					StatisticType statisticType = StatsUtils.checkStatisticType((StatsSearchForm) this.search, false);
+					grafico = JsonStatsUtils.getJsonHeatmapChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice(), statisticType, DynamicPdDBean.log);
+					break;
+				case DIMENSIONI_2:
+				default:
+					grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel() , this.getSlice());
+					break;
+				}
+			}
 			break;
 		case PIE_CHART:
 			grafico = JsonStatsUtils.getJsonPieChartDistribuzione(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , this.getSlice());
@@ -203,7 +216,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			break;
 		}
 
-		if(list != null && list.size() > 0)
+		if(list != null && !list.isEmpty())
 			this.setVisualizzaComandiExport(true);
 
 		String json = grafico != null ?  grafico.toString() : "";
@@ -219,6 +232,12 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		return this.getXml();
 	}
 
+	
+	public boolean isShowColumnErogatore() {
+		return ((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi();
+	}
+	
+	
 	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY)).append(CostantiGrafici.WHITE_SPACE);
@@ -385,10 +404,15 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), 
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi(),
+					false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi());
 
 			if(useFaceContext){
 				context.responseComplete();
@@ -482,10 +506,15 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), 
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi(),
+					false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi());
 
 			if(useFaceContext){
 				context.responseComplete();
@@ -579,10 +608,15 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), true); 
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi(),
+					true); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+					((StatsSearchForm)this.search).isDistribuzionePerImplementazioneApi());
 
 			if(useFaceContext){
 				context.responseComplete();

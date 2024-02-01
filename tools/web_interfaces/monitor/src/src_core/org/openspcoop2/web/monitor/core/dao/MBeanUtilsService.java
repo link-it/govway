@@ -189,7 +189,8 @@ public class MBeanUtilsService {
 						tipo, id);
 			}
 			catch(NotFoundException e) {
-				this.log.debug("Cache Access NotFound (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				String msg = "Cache Access NotFound (method:"+methodName+" key:"+key+"): "+e.getMessage();
+				this.log.debug(msg);
 				return null;
 			}
 			catch(Throwable e) {

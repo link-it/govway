@@ -20,9 +20,12 @@
 
 package org.openspcoop2.utils.sql;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * SQLServerQueryObject
@@ -78,6 +81,20 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 	
 	
 
+	
+	/**
+	 * Ritorna una costante  di tipo 'timestamp'
+	 * 
+	 * @param date Costante
+	 */
+	@Override
+	public String getSelectTimestampConstantField(Date date) throws SQLQueryObjectException{
+		SimpleDateFormat sqlDateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
+		return "TIMESTAMP('"+sqlDateformat.format(date)+"', 'YYYY-MM-DD HH24:MI:SS.FF3')";
+	}
+	
+	
+	
 	@Override
 	public String getUnixTimestampConversion(String column){
 		return "((((CAST (DAYS("+column+"-CURRENT_TIMEZONE) - DAYS('1970-01-01') AS BIGINT)*86400)+MIDNIGHT_SECONDS("+

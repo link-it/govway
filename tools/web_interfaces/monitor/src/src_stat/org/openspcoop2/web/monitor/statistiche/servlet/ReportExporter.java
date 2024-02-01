@@ -59,6 +59,7 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
@@ -1284,6 +1285,32 @@ public class ReportExporter extends HttpServlet{
 			}
 			statSearchForm.setTipiLatenza(arrayLatenza);
 		}
+		
+		
+		
+		// ** dimensioni visualizzate **
+		
+		String dimensioniVisualizzate = req.getParameter(CostantiExporter.DIMENSIONI_VISUALIZZATE);
+		NumeroDimensioni dimensioniVisualizzateEnum = CostantiExporter.DIMENSIONI_VISUALIZZATE_DEFAULT;
+		if(dimensioniVisualizzate!=null){
+			dimensioniVisualizzate = dimensioniVisualizzate.trim();
+			dimensioniVisualizzateEnum = NumeroDimensioni.toEnumConstant(dimensioniVisualizzate);
+			if(dimensioniVisualizzateEnum==null){
+				String [] values = NumeroDimensioni.toArray();
+				StringBuilder sb = new StringBuilder();
+				if(values!=null && values.length>0) {
+					for (String tipo : values) {
+						if(sb.length()>0) {
+							sb.append(",");
+						}
+						sb.append(tipo);
+					}
+				}
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.DIMENSIONI_VISUALIZZATE+"' fornito possiede un valore '"+dimensioniVisualizzate
+						+"' sconosciuto. I tipi supportati sono: "+sb.toString());
+			}
+		}
+		statSearchForm.setNumeroDimensioni(dimensioniVisualizzateEnum);
 	}
 	
 	

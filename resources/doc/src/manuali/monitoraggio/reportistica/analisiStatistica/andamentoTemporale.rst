@@ -7,7 +7,7 @@ Fornisce statistiche riguardo l'andamento temporale delle transazioni
 che sono transitate sul gateway. Di seguito alcuni esempi di reports
 generabili.
 
-**Grafico 'Line Chart' sul numero di transazioni:**
+**Grafico 'Line Chart' sul numero di transazioni**
 
 .. figure:: ../../_figure_monitoraggio/AndamentoTemporale.png
     :scale: 50%
@@ -16,7 +16,7 @@ generabili.
 
     Esempio di report grafico di andamento temporale (Line Chart sul numero di transazioni)
 
-**Grafico 'Line Chart' sull'occupazione di banda:**
+**Grafico 'Line Chart' sull'occupazione di banda**
 
 .. figure:: ../../_figure_monitoraggio/AndamentoTemporaleBanda.png
     :scale: 50%
@@ -25,7 +25,7 @@ generabili.
 
     Esempio di report grafico di andamento temporale (Line Chart sull’occupazione di banda)
 
-**Grafico 'Line Chart' sul tempo medio di risposta:**
+**Grafico 'Line Chart' sul tempo medio di risposta**
 
 .. figure:: ../../_figure_monitoraggio/AndamentoTemporaleTempoMedio.png
     :scale: 50%
@@ -34,7 +34,7 @@ generabili.
 
     Esempio di report grafico di andamento temporale (Line Chart sul tempo medio di risposta)
 
-**Grafico 'Bar Chart' sul numero di transazioni:**
+**Grafico 'Bar Chart' sul numero di transazioni**
 
 .. figure:: ../../_figure_monitoraggio/AndamentoTemporaleBar.png
     :scale: 50%
@@ -43,7 +43,7 @@ generabili.
 
     Esempio di report grafico di andamento temporale (Bar Chart sul numero di transazioni)
 
-**Grafico 'Bar Chart' sull'occupazione di banda:**
+**Grafico 'Bar Chart' sull'occupazione di banda**
 
 .. figure:: ../../_figure_monitoraggio/AndamentoTemporaleBarBanda.png
     :scale: 50%
@@ -52,7 +52,7 @@ generabili.
 
     Esempio di report grafico di andamento temporale (Bar Chart sull’occupazione di banda)
 
-**Grafico 'Bar Chart' sul tempo medio di risposta:**
+**Grafico 'Bar Chart' sul tempo medio di risposta**
 
 .. figure:: ../../_figure_monitoraggio/AndamentoTemporaleBarTempoMedio.png
     :scale: 50%
@@ -61,7 +61,7 @@ generabili.
 
     Esempio di report grafico di andamento temporale (Bar Chart sul tempo medio di risposta)
 
-**Tabella:**
+**Tabella**
 
 .. figure:: ../../_figure_monitoraggio/AndamentoTemporaleTabella.png
     :scale: 70%
