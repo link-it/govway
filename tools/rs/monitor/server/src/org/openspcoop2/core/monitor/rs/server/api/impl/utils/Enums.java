@@ -20,12 +20,14 @@
 
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
+import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
@@ -48,6 +50,7 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 
 /**
@@ -149,6 +152,17 @@ public class Enums {
 				TipoVisualizzazione.DIMENSIONE_TRANSAZIONI);
 		Enums.toTipoVisualizzazione.put(TipoInformazioneReportEnum.TEMPO_MEDIO_RISPOSTA,
 				TipoVisualizzazione.TEMPO_MEDIO_RISPOSTA);
+	}
+	
+	private static final EnumMap<DimensioniReportEnum, NumeroDimensioni> toNumeroDimensioni = new EnumMap<>(DimensioniReportEnum.class);
+	public static Map<DimensioniReportEnum, NumeroDimensioni> getNumeroDimensioniMap() {
+		return toNumeroDimensioni;
+	}
+	static {
+		Enums.toNumeroDimensioni.put(DimensioniReportEnum._2D,
+				NumeroDimensioni.DIMENSIONI_2);
+		Enums.toNumeroDimensioni.put(DimensioniReportEnum._3D,
+				NumeroDimensioni.DIMENSIONI_3);
 	}
 
 	public static final Map<OccupazioneBandaEnum, TipoBanda> toTipoBanda = new HashMap<>();

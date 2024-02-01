@@ -41,6 +41,7 @@ public class Colors {
 	public static final String CODE_LATENZA_TOTALE = "3B83B7";
 	public static final String CODE_LATENZA_SERVIZIO = "FF8F52";
 	public static final String CODE_LATENZA_PORTA = "95B964";
+	public static final String CODE_WHITE = "FFFFFF";
 	
 	public static final String CSS_COLOR_FAULT_APPLICATIVO = org.openspcoop2.core.transazioni.constants.Colors.CSS_COLOR_FAULT_APPLICATIVO;
 	public static final String CSS_COLOR_ERROR = org.openspcoop2.core.transazioni.constants.Colors.CSS_COLOR_ERROR;
@@ -52,6 +53,7 @@ public class Colors {
 	public static final String CSS_COLOR_LATENZA_TOTALE = "#"+CODE_LATENZA_TOTALE;
 	public static final String CSS_COLOR_LATENZA_SERVIZIO = "#"+CODE_LATENZA_SERVIZIO;
 	public static final String CSS_COLOR_LATENZA_PORTA = "#"+CODE_LATENZA_PORTA;
+	public static final String CSS_COLOR_WHITE = "#"+CODE_WHITE;
 	
 	public static final Color COLOR_FAULT_APPLICATIVO = org.openspcoop2.core.transazioni.constants.Colors.COLOR_FAULT_APPLICATIVO;
 	public static final Color COLOR_ERROR = org.openspcoop2.core.transazioni.constants.Colors.COLOR_ERROR;

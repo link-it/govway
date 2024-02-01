@@ -50,6 +50,7 @@ import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.report.ReportDataSource;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
@@ -150,8 +151,20 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 		try {
 			switch (tipoReport) {
-			case BAR_CHART:
-				grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice());
+			case BAR_CHART:{
+				NumeroDimensioni numeroDimensioni = ((StatsSearchForm)this.search).getNumeroDimensioni();
+				
+				switch (numeroDimensioni) {
+					case DIMENSIONI_3:
+						StatisticType statisticType = StatsUtils.checkStatisticType((StatsSearchForm) this.search, false);
+						grafico = JsonStatsUtils.getJsonHeatmapChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice(), statisticType, DynamicPdDBean.log);
+						break;
+					case DIMENSIONI_2:
+					default:
+						grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice());
+						break;
+					}
+				}
 				break;
 			case PIE_CHART:
 				grafico = JsonStatsUtils.getJsonPieChartDistribuzione(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , this.getSlice());
@@ -284,6 +297,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	public boolean isShowColumnSoggetto() {
 		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
 			return this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
+		}
+		return false;
+	}
+	
+	public boolean isShowColumnAutenticazione() {
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
+			return this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
 		}
 		return false;
 	}
@@ -458,11 +478,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
 			if(useFaceContext){
@@ -560,11 +582,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
 			if(useFaceContext){
@@ -662,11 +686,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			String identificazione = this.search.getIdentificazione();
 			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+			ReportDataSource report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(),  
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, true); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione, ((StatsSearchForm)this.search).getNumeroDimensioni(), 
+					tipiBanda, tipiLatenza,
 					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
 			if(useFaceContext){

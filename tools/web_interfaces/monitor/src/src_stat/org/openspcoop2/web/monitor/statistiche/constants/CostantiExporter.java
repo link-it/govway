@@ -28,6 +28,7 @@ import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 
 /**
  * CostantiExporter
@@ -252,6 +253,11 @@ public class CostantiExporter {
 	public static final TipoBanda TIPO_BANDA_VISUALIZZATA_DEFAULT = TipoBanda.COMPLESSIVA;
 	public static final String TIPO_LATENZA_VISUALIZZATA = "latenza";
 	public static final TipoLatenza TIPO_LATENZA_VISUALIZZATA_DEFAULT = TipoLatenza.LATENZA_TOTALE;
+	
+	public static final String DIMENSIONI_VISUALIZZATE = "dimensioni";
+	public static final NumeroDimensioni DIMENSIONI_VISUALIZZATE_DEFAULT = NumeroDimensioni.DIMENSIONI_2;
+	public static final String DIMENSIONI_VISUALIZZATE_2 = NumeroDimensioni.DIMENSIONI_2.getValue();
+	public static final String DIMENSIONI_VISUALIZZATE_3 = NumeroDimensioni.DIMENSIONI_3.getValue();
 	
 	public static final String CLAIM = "claim";
 	public static final String CLAIM_SUBJECT = "subject";

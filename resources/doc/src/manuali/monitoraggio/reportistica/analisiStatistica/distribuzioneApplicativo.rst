@@ -21,7 +21,7 @@ Per procedere alla generazione del report deve essere selezionata la modalità d
 
 Di seguito alcuni esempi di report generabili.
 
-**Tabella degli applicativi identificati tramite credenziali di tipo 'trasporto':**
+**Tabella degli applicativi identificati tramite credenziali di tipo 'trasporto'**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoTabella.png
     :scale: 50%
@@ -30,7 +30,7 @@ Di seguito alcuni esempi di report generabili.
 
     Esempio di report tabellare di distribuzione per applicativo identificato tramite credenziali di tipo 'trasporto'
 
-**Tabella degli applicativi identificati tramite credenziali di tipo 'token':**
+**Tabella degli applicativi identificati tramite credenziali di tipo 'token'**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoTabellaToken.png
     :scale: 50%
@@ -39,7 +39,7 @@ Di seguito alcuni esempi di report generabili.
 
     Esempio di report tabellare di distribuzione per applicativo identificato tramite credenziali di tipo 'token'
 
-**Grafico 'Pie Chart' sul numero di transazioni:**
+**Grafico 'Pie Chart' sul numero di transazioni**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoPie.png
     :scale: 50%
@@ -47,3 +47,40 @@ Di seguito alcuni esempi di report generabili.
     :name: mon_distribuzioneApplicativoPie_fig
 
     Esempio di report grafico di distribuzione per applicativo (Pie Chart sul numero di transazioni)
+
+**Grafico 'Bar Chart' sul numero di transazioni**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoBar.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneApplicativoBar_fig
+
+    Esempio di report grafico di distribuzione per applicativo (Bar Chart sul numero di transazioni)
+
+**Tabella 3D degli applicativi identificati tramite credenziali di tipo 'trasporto'**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoTabella3D.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneApplicativoTabella3D_fig
+
+    Esempio di report tabellare di distribuzione per applicativo, comprensivo di date, identificato tramite credenziali di tipo 'trasporto'
+
+**Tabella 3D degli applicativi identificati tramite credenziali di tipo 'token'**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoTabellaToken3D.png
+    :scale: 50%
+    :align: center
+    :name: mon_distribuzioneApplicativoTabellaToken3D_fig
+
+    Esempio di report tabellare di distribuzione per applicativo, comprensivo di date, identificato tramite credenziali di tipo 'token'
+
+**Grafico 'Bar Chart 3D' sul numero di transazioni**
+
+.. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoBar3D.png
+    :scale: 70%
+    :align: center
+    :name: mon_distribuzioneApplicativoBar3D_fig
+
+    Esempio di report grafico di distribuzione per applicativo (Bar Chart 3D sul numero di transazioni e sulle date)
+

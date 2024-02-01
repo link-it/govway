@@ -254,25 +254,60 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
         svg.style.fontFamily = 'Roboto';
     }
 
-    if(dp.type != 'pie' && dp.rotation != 0 && dp.noData != 0) {
-        var _max_cat = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        _max_cat.setAttributeNS(null,"opacity", 0);
-        _max_cat.appendChild(document.createTextNode(dp.maxCategory));
-        svg.appendChild(_max_cat);
-        var _firstTick = svg.querySelector('.c3-event-rects rect').getBBox().width;
-        var _firstText = svg.querySelector('.c3-axis.c3-axis-x text tspan').getBoundingClientRect().width;
-        var _yAxisWidth = svg.querySelector('.c3-axis.c3-axis-y').getBBox().width;
-        var _pad = _firstText - (_firstTick/2);
-
-        if(_pad > _yAxisWidth){
-            options.padding.left = _pad + _max_cat.getBBox().height;
-        }
-        options.axis.x.height = Math.abs(_max_cat.getComputedTextLength()*Math.sin(dp.rotation/180*Math.PI));
-        options.size.height = dp.size.h + options.axis.x.height;
-        svg.removeChild(_max_cat);
-
-        chart = c3.generate(options);
-        svg = d.querySelector('svg');
+    if(dp.type != 'pie' && dp.noData != 0) {
+		var _firstTick = svg.querySelector('.c3-event-rects rect').getBBox().width;
+		
+		// rotazione delle label e calcolo nuova altezza del grafico
+		if(dp.rotation != 0) {
+	        var _max_cat = document.createElementNS("http://www.w3.org/2000/svg", "text");
+	        _max_cat.setAttributeNS(null,"opacity", 0);
+	        _max_cat.appendChild(document.createTextNode(dp.maxCategory));
+	        svg.appendChild(_max_cat);
+	        
+	        var _firstText = svg.querySelector('.c3-axis.c3-axis-x text tspan').getBoundingClientRect().width;
+	        var _yAxisWidth = svg.querySelector('.c3-axis.c3-axis-y').getBBox().width;
+	        var _pad = _firstText - (_firstTick/2);
+	
+	        if(_pad > _yAxisWidth){
+	            options.padding.left = _pad + _max_cat.getBBox().height;
+	        }
+	        options.axis.x.height = Math.abs(_max_cat.getComputedTextLength()*Math.sin(dp.rotation/180*Math.PI));
+	        options.size.height = dp.size.h + options.axis.x.height;
+	        svg.removeChild(_max_cat);
+	
+	        chart = c3.generate(options);
+	        svg = d.querySelector('svg');
+	    } else {
+			// label orizzontali
+			// visualizzazione orizzontale, devo controllare che le label restino all'interno della lunghezza prevista per il blocco
+			// Calcolo la lunghezza massima delle label dell'asse x
+			var _allXLabels = svg.querySelectorAll('.c3-axis.c3-axis-x text tspan');
+			
+			_allXLabels.forEach(function(elemento) {
+				var testo = elemento.textContent;
+			    var lunghezza = elemento.getBoundingClientRect().width;
+				    
+			    console.log(testo + ":" + lunghezza);
+				    
+			    if(lunghezza > _firstTick){
+					//console.log(testo + " da accorciare");
+			        // Calcola la lunghezza disponibile per il testo accorciato
+			        var spazioDisponibile = _firstTick - 10; // Sottrai 10 per lasciare spazio per i puntini di sospensione
+			        
+			        // Calcola la nuova lunghezza del testo accorciato
+			        var testoAccorciato = testo;
+			        while (elemento.getBoundingClientRect().width > spazioDisponibile && testoAccorciato.length > 0) {
+			            testoAccorciato = testoAccorciato.slice(0, -1); // Rimuovi l'ultimo carattere
+			            elemento.textContent = testoAccorciato + "..."; // Aggiungi i puntini di sospensione
+			        }
+				        
+			        // stampa risultato
+			        testo = elemento.textContent;
+			    	lunghezza = elemento.getBoundingClientRect().width;
+			        console.log(testo + ":" + lunghezza);
+				}
+			});
+		}
     }
 
     var title = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -451,12 +486,86 @@ function chartMapping(_dataJson, _type, _size) {
     var tips = [];
     var noData = -1;
     var noDataLabel = '';
+    var xSeries = [];
+    var ySeries = [];
+    var heatMapColorRange = [];
+    var heatMapColorDomain = [];
 
 
     noData = _dataJson.hasOwnProperty("noData")?0:-1;
     noDataLabel = (noData == -1)?'':labelUnescape(_dataJson.noData);
 
-    if(_type != 'pie') {
+	if(_type == 'heatmap') {
+		if(_dataJson.hasOwnProperty("scalaValori")) {
+			// colori
+            var minTmp = _dataJson.scalaValori.min;
+            var maxTmp = _dataJson.scalaValori.max;
+            
+            // range di colori minimo e massimo
+            heatMapColorRange.push(minTmp.colore);
+            heatMapColorRange.push(maxTmp.colore);
+            
+            // dominio dei valori minimo e massimo
+            heatMapColorDomain.push(parseInt(minTmp.valore, 10));
+            heatMapColorDomain.push(parseInt(maxTmp.valore, 10));
+		}
+		
+		dpChart.heatMapColorRange = heatMapColorRange;
+    	dpChart.heatMapColorDomain = heatMapColorDomain;
+		
+		
+        if(_dataJson.hasOwnProperty("categorie") && _dataJson.hasOwnProperty("dati") &&
+            _dataJson.hasOwnProperty("coloriAutomatici")) {
+            serieRef = _dataJson.categorie.map(function (item) {
+                return item.key;
+            });
+            if (!_dataJson.coloriAutomatici) {
+                serieColors = _dataJson.categorie.map(function (item) {
+                    return item.colore;
+                });
+            }
+            else serieColors = colorSerie(serieRef.length - 1);
+            for (var i = 0; i < _dataJson.categorie.length; i++) {
+                labelRef[_dataJson.categorie[i].key] = labelUnescape(_dataJson.categorie[i].label);
+            }
+            serie = _dataJson.dati.map(function (item) {
+                var obj = {};
+                var rowdata = [];
+                for (var i = 0; i < serieRef.length; i++) {
+                    rowdata.push(obj[serieRef[i]] = item[serieRef[i]]);
+                }
+                return rowdata;
+            });
+
+            //Check for no results
+            if(noData != 0) {
+                tips = _dataJson.dati.map(function (item) {
+                    var obj = {};
+                    var rowdata = [];
+                    for (var i = 0; i < serieRef.length; i++) {
+                        rowdata.push(obj[serieRef[i] + '_tooltip'] = labelUnescape(item[serieRef[i] + '_tooltip']));
+                    }
+                    return rowdata;
+                });
+             
+             	// serie asse x   
+                var xSeriesTmp = _dataJson.dati.map(function(item){return decodeHTML(item.xLabel);});
+				xSeries = [...new  Set(xSeriesTmp)];
+				// serie asse y
+  				var ySeriesTmp = _dataJson.dati.map(function(item){return decodeHTML(item.yLabel);});
+                ySeries = [...new  Set(ySeriesTmp)];
+                
+                cats = _dataJson.dati.map(function (cat) {
+                    return { data: decodeHTML(labelUnescape(cat.xLabel)), visible: (cat.xLabel == undefined || cat.xLabel != '') };
+                });
+                
+                
+            }
+        }
+        
+        dpChart.xSeries = xSeries;
+    	dpChart.ySeries = ySeries;
+    } else if(_type != 'pie') {
         if(_dataJson.hasOwnProperty("categorie") && _dataJson.hasOwnProperty("dati") &&
             _dataJson.hasOwnProperty("coloriAutomatici")) {
             serieRef = _dataJson.categorie.map(function (item) {
@@ -491,7 +600,7 @@ function chartMapping(_dataJson, _type, _size) {
                     return rowdata;
                 });
                 cats = _dataJson.dati.map(function (cat) {
-                    return { data: labelUnescape(cat.data), visible: (cat.dataLabel == undefined || cat.dataLabel != '') };
+                    return { data: decodeHTML(labelUnescape(cat.data)), visible: (cat.dataLabel == undefined || cat.dataLabel != '') };
                 });
             }
         }
@@ -521,14 +630,14 @@ function chartMapping(_dataJson, _type, _size) {
                 dpChart.legendTooltip[index] = key.label;
                 if(dpChart.limitLegenda !== -1) {
                     if(dpChart.limitLegenda < key.label.length) {
-                        var _txt = (index +1) + '. ' + key.label.substr(0, dpChart.limitLegenda) + '...';
+                        var _txt = (index +1) + '. ' + decodeHTML(key.label.substr(0, dpChart.limitLegenda)) + '...';
                         return (dpChart.valueOnLegend)?_txt+' ('+ key.value + ')':_txt;
                     }
                 }
                 if(dpChart.valueOnLegend) {
-                    return (index +1) + '. ' + key.label + ' (' + key.value + ')';
+                    return (index +1) + '. ' + decodeHTML(key.label) + ' (' + key.value + ')';
                 }
-                return (index +1) + '. ' + key.label;
+                return (index +1) + '. ' + decodeHTML(key.label);
             });
         }
     }
@@ -542,7 +651,7 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.labelRef = labelRef;
     dpChart.catsTooltip = {};
     dpChart.cats = [];
-    if( _type !== 'pie') {
+    if( _type !== 'pie' ||  _type !== 'heatmap') {
         dpChart.legendTooltip = {};
         Object.keys(dpChart.labelRef).forEach(function(key) {
             dpChart.legendTooltip[key] = dpChart.labelRef[key];
@@ -569,7 +678,6 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.noData = noData;
     dpChart.noDataLabel = (noData == 0)?noDataLabel:'';
     dpChart.tips = tips;
-
     return dpChart;
 }
 
@@ -663,3 +771,14 @@ function embedFonts(svg) {
     defs.appendChild(css);
     svg.insertBefore(defs, svg.firstChild);
 }
+
+/**
+* effettua la decodifica della stringa passata come parametro
+*
+ */
+function decodeHTML(html) {
+  var txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+}
+

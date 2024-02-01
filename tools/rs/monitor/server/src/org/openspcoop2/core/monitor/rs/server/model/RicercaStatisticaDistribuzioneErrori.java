@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 public class RicercaStatisticaDistribuzioneErrori extends RicercaBaseStatisticaSoggetti {
   
   @Schema(required = true, description = "")
-  private OpzioniGenerazioneReport report = null;
+  private OpzioniGenerazioneReportDimensioni report = null;
   
   @Schema(description = "")
   private String azione = null;
@@ -54,15 +54,15 @@ public class RicercaStatisticaDistribuzioneErrori extends RicercaBaseStatisticaS
   @JsonProperty("report")
   @NotNull
   @Valid
-  public OpzioniGenerazioneReport getReport() {
+  public OpzioniGenerazioneReportDimensioni getReport() {
     return this.report;
   }
 
-  public void setReport(OpzioniGenerazioneReport report) {
+  public void setReport(OpzioniGenerazioneReportDimensioni report) {
     this.report = report;
   }
 
-  public RicercaStatisticaDistribuzioneErrori report(OpzioniGenerazioneReport report) {
+  public RicercaStatisticaDistribuzioneErrori report(OpzioniGenerazioneReportDimensioni report) {
     this.report = report;
     return this;
   }

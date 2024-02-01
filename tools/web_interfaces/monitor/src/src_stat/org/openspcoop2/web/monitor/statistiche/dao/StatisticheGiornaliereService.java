@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.statistiche.dao;
 
 import java.sql.Connection;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -38,6 +39,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -120,12 +122,14 @@ import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
+import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3D;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.report.CostantiReport;
 import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerServizioBean;
@@ -166,6 +170,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private static final String FALSA_UNION_DEFAULT_VALUE = "gbyfake";
 	private static final Integer FALSA_UNION_DEFAULT_VALUE_INT = -99999;
 	private static final Integer FALSA_UNION_DEFAULT_VALUE_VERSIONE = 1;
+	private static Date FALSA_UNION_DEFAULT_VALUE_TIMESTAMP = null; 
+	
+	private static final String ALIAS_FIELD_DATA_3D = "data3d";
+	
+	static {
+		try {
+			FALSA_UNION_DEFAULT_VALUE_TIMESTAMP = DateUtils.getSimpleDateFormatDay().parse("1970-01-01");
+		} catch (ParseException e) {
+			log.error("Errore durante la init della data fake ", e);
+		}
+	}
 
 	private StatsSearchForm andamentoTemporaleSearch;
 	private StatsSearchForm distribErroriSearch;
@@ -498,40 +513,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 	
 	public StatisticType checkStatisticType(StatsSearchForm form) {
-		StatisticType tipologia = form.getModalitaTemporale();
-		if(!form.isShowUnitaTempo()) {
-			if(form.isPeriodoPersonalizzato() && !form.isShowUnitaTempoPersonalizzato_periodoPersonalizzato()) {
-				// calcolo qua
-				Date dInizio = form.getDataInizio();
-				Date dFine = form.getDataFine();
-				if(dInizio!=null && dFine!=null) {
-					/*
-					long msDiff = dFine.getTime() - dInizio.getTime();
-					long ore24ms = 86400000;
-					if(msDiff > ore24ms) {
-						tipologia = StatisticType.GIORNALIERA; 
-					}
-					else {
-						tipologia = StatisticType.ORARIA; 
-					}*/
-					
-					// nel personalizzato considero sempre le ore
-					String format = "HH:mm";
-					String inizio = DateUtils.getSimpleDateFormat(format).format(dInizio);
-					String fine = DateUtils.getSimpleDateFormat(format).format(dFine);
-					if("00:00".equals(inizio) && "23:59".equals(fine)) {
-						tipologia = StatisticType.GIORNALIERA; 
-					}
-					else {
-						tipologia = StatisticType.ORARIA; 
-					}
-				}
-				if(tipologia==null) {
-					tipologia = StatisticType.GIORNALIERA; // default in caso di errore
-				}
-			}
+		
+		boolean onlyForCount = true;
+		boolean distribuzione3d = form.getNumeroDimensioni()!=null && NumeroDimensioni.DIMENSIONI_3.equals(form.getNumeroDimensioni());
+		if(distribuzione3d) {
+			onlyForCount = false;
 		}
-		return tipologia;
+		return StatsUtils.checkStatisticType(form, onlyForCount);
 	}
 	
 	
@@ -660,7 +648,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -938,7 +926,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -1168,7 +1156,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							break;
 						}
 						
-						if(forceIndexes!=null && forceIndexes.size()>0){
+						if(forceIndexes!=null && !forceIndexes.isEmpty()){
 							for (Index index : forceIndexes) {
 								expOk.addForceIndex(index);	
 								expKo.addForceIndex(index);	
@@ -1926,7 +1914,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// soggetto selezionato va messo come complementare
 
 				boolean trafficoSoggetto = StringUtils.isNotBlank(this.andamentoTemporaleSearch.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -1945,7 +1933,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -1999,7 +1987,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -2039,7 +2027,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -2072,7 +2060,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -2287,7 +2275,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				impostaTipiCompatibiliConProtocollo(dao, model, exprKo, protocolloSelected, null);
 			}
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					exprOk.addForceIndex(index);	
 					exprKo.addForceIndex(index);	
@@ -2428,7 +2416,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = createDistribuzioneErroriExpression(dao, model, true);
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -2544,7 +2532,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				boolean trafficoSoggetto = StringUtils
 						.isNotBlank(this.distribErroriSearch
 								.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -2563,7 +2551,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -2625,7 +2613,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -2667,7 +2655,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -2701,7 +2689,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -2756,6 +2744,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroApi(expr, this.distribErroriSearch, model, isCount);
 
 			this.impostaFiltroIdClusterOrCanale(expr, this.distribErroriSearch, model, isCount);
+			
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			}
 			
 			expr.addGroupBy(model.ESITO);
 
@@ -2816,6 +2809,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = this.createDistribuzioneErroriExpression(this.dao,	model, false);
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
+				gByExpr.sortOrder(s).addOrder(model.DATA);
+			}
+			
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.ESITO);
 
 			List<Index> forceIndexes = null;
@@ -2827,13 +2826,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
 			}
 			
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
 			String aliasFieldEsito = "esito";
 			
 			unionExpr.addSelectField(model.ESITO,		aliasFieldEsito);
@@ -2841,13 +2845,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
 			unionExprFake.addSelectField(new ConstantField(aliasFieldEsito, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT,
 					model.ESITO.getFieldType()), aliasFieldEsito);
 			
 			Union union = new Union();
 			union.setUnionAll(true);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
 			union.addField(aliasFieldEsito);
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
 			union.addGroupBy(aliasFieldEsito);
+			
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribErroriSearch.getSortOrder() != null ? 	this.distribErroriSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
 
 			TipoVisualizzazione tipoVisualizzazione = this.distribErroriSearch.getTipoVisualizzazione();
 			String sommaAliasName = "somma";
@@ -3005,13 +3028,23 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
-
-					ResDistribuzione r = new ResDistribuzione();
 					
 					int esito = ((Integer) row.get(aliasFieldEsito));
 					if(esito == StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT) {
 						continue;
 					} 	
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribErroriSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
 					
 					try {
 						r.setRisultato(esitiProperties.getEsitoLabel(esito));
@@ -3318,7 +3351,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					erogazione_portaApplicativa_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -3336,7 +3369,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					erogazione_portaApplicativa_Expr.or(orSoggetti);
 				}
 				
-				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+				if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					// il mittente puo nn essere specificato
 					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
 						erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
@@ -3418,7 +3451,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					fruizione_portaDelegata_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -3436,7 +3469,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fruizione_portaDelegata_Expr.or(orSoggetti);
 				}
 				
-				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+				if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					// il destinatario puo nn essere specificato
 					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
 						fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
@@ -3460,36 +3493,59 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// UNION
 
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+					
+					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+					}
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_MITTENTE);
 					erogazione_portaApplicativa_Expr.addGroupBy(model.MITTENTE);
 
+					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+					}
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_DESTINATARIO);
 					fruizione_portaDelegata_Expr.addGroupBy(model.DESTINATARIO);
 				}
 				else{
+					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+					}
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_DESTINATARIO);
 					erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 
+					// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+					}
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_MITTENTE);
 					fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 				}
 
-				if(forceIndexes!=null && forceIndexes.size()>0){
+				if(forceIndexes!=null && !forceIndexes.isEmpty()){
 					for (Index index : forceIndexes) {
 						erogazione_portaApplicativa_Expr.addForceIndex(index);	
 						fruizione_portaDelegata_Expr.addForceIndex(index);
 					}
 				}
-				
+								
 				UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					erogazione_portaApplicativa_UnionExpr.addSelectField(model.TIPO_MITTENTE,
 							"tipo_soggetto");
@@ -3504,6 +3560,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}				
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					fruizione_portaDelegata_UnionExpr.addSelectField(
 							model.TIPO_DESTINATARIO, "tipo_soggetto");
@@ -3519,11 +3581,20 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				Union union = new Union();
 				union.setUnionAll(true);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addField(ALIAS_FIELD_DATA_3D);
+				}
 				union.addField("tipo_soggetto");
 				union.addField("soggetto");
+				
+				// group by field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				}
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
-
 
 				NonNegativeNumber nnn = dao.unionCount(union, erogazione_portaApplicativa_UnionExpr, fruizione_portaDelegata_UnionExpr); 
 				return nnn != null ? nnn.longValue() : 0L;
@@ -3608,7 +3679,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					erogazione_portaApplicativa_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -3626,7 +3697,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					erogazione_portaApplicativa_Expr.or(orSoggetti);
 				}
 				
-				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+				if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					
 					// il mittente puo nn essere specificato
 					boolean ignoreSetMittente = isIgnoreSetMittente(this.distribSoggettoSearch);
@@ -3645,6 +3716,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				this.impostaFiltroIdClusterOrCanale(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 				
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+				}
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3658,13 +3734,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 				}
 
-				if(forceIndexes!=null && forceIndexes.size()>0){
+				if(forceIndexes!=null && !forceIndexes.isEmpty()){
 					for (Index index : forceIndexes) {
 						erogazione_portaApplicativa_Expr.addForceIndex(index);		
 					}
 				}
 				
 				UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}	
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					erogazione_portaApplicativa_UnionExpr.addSelectField(
 							model.TIPO_MITTENTE, "tipo_soggetto");
@@ -3681,6 +3763,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Espressione finta per usare l'ordinamento
 				IExpression fakeExpr = dao.newExpression();
 				UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+							model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+				}
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
 					unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
@@ -3692,8 +3779,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				Union union = new Union();
 				union.setUnionAll(true);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addField(ALIAS_FIELD_DATA_3D);
+				}
 				union.addField("tipo_soggetto");
 				union.addField("soggetto");
+				
+				// group by field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				}
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
 
@@ -3777,7 +3874,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					fruizione_portaDelegata_Expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -3795,7 +3892,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fruizione_portaDelegata_Expr.or(orSoggetti);
 				}
 				
-				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+				if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					// il destinatario puo nn essere specificato
 					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeDestinatario())) {
 						fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoDestinatario());
@@ -3812,6 +3909,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				this.impostaFiltroIdClusterOrCanale(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 				
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+				}
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3825,13 +3927,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 				}
 
-				if(forceIndexes!=null && forceIndexes.size()>0){
+				if(forceIndexes!=null && !forceIndexes.isEmpty()){
 					for (Index index : forceIndexes) {
 						fruizione_portaDelegata_Expr.addForceIndex(index);	
 					}
 				}
 				
 				UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					fruizione_portaDelegata_UnionExpr.addSelectField(
 							model.TIPO_DESTINATARIO,
@@ -3850,6 +3958,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Espressione finta per usare l'ordinamento
 				IExpression fakeExpr = dao.newExpression();
 				UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+							model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+				}
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
 					unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
@@ -3861,8 +3974,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				Union union = new Union();
 				union.setUnionAll(true);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addField(ALIAS_FIELD_DATA_3D);
+				}
 				union.addField("tipo_soggetto");
 				union.addField("soggetto");
+				
+				// group by field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					union.addGroupBy(ALIAS_FIELD_DATA_3D);
+				}
 				union.addGroupBy("tipo_soggetto");
 				union.addGroupBy("soggetto");
 
@@ -3901,6 +4024,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			ExpressionException, ServiceException, NotImplementedException,
 			CoreException, NotFoundException, ProtocolException, UserInvalidException, UtilsException {
 
+		StatisticType tipologia = checkStatisticType(this.distribSoggettoSearch);
+		
 		List<Index> forceIndexes = null;
 		try{
 			forceIndexes = 
@@ -4002,7 +4127,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// il mittente e' l'utente loggato (sempre presente se non
 			// sn admin)
-			if (listaSoggettiGestione.size() > 0) {
+			if (!listaSoggettiGestione.isEmpty()) {
 				erogazione_portaApplicativa_Expr.and();
 
 				IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -4020,7 +4145,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.or(orSoggetti);
 			}
 
-			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+			if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				// il mittente puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
 					erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
@@ -4101,7 +4226,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// il mittente e' l'utente loggato (sempre presente se non
 			// sn admin)
-			if (listaSoggettiGestione.size() > 0) {
+			if (!listaSoggettiGestione.isEmpty()) {
 				fruizione_portaDelegata_Expr.and();
 
 				IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -4119,7 +4244,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.or(orSoggetti);
 			}
 
-			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+			if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
 					fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
@@ -4143,29 +4268,51 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// UNION
 
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
+				
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+				}
+				
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_MITTENTE);
 				erogazione_portaApplicativa_Expr.addGroupBy(model.MITTENTE);
 
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+				}
+				
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_DESTINATARIO);
 				fruizione_portaDelegata_Expr.addGroupBy(model.DESTINATARIO);
 			}
 			else{
+				
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+				}
+				
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_DESTINATARIO);
 				erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 
+				// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+					fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+				}
+				
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_MITTENTE);
 				fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					erogazione_portaApplicativa_Expr.addForceIndex(index);	
 					fruizione_portaDelegata_Expr.addForceIndex(index);	
@@ -4173,6 +4320,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_UnionExpr.addSelectField(model.TIPO_MITTENTE,
 						"tipo_soggetto");
@@ -4187,6 +4340,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_UnionExpr.addSelectField(
 						model.TIPO_DESTINATARIO, "tipo_soggetto");
@@ -4202,11 +4361,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
 			union.addField("tipo_soggetto");
 			union.addField("soggetto");
+			
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
 			union.addGroupBy("tipo_soggetto");
 			union.addGroupBy("soggetto");
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
+			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSoggettoSearch.getTipoVisualizzazione();
 			switch (tipoVisualizzazione) {
 			case DIMENSIONE_TRANSAZIONI:
@@ -4367,7 +4542,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+					
 					r.setRisultato(((String) row.get("tipo_soggetto")) + "/"
 							+ ((String) row.get("soggetto")));
 
@@ -4463,7 +4649,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// il mittente e' l'utente loggato (sempre presente se non
 			// sn admin)
-			if (listaSoggettiGestione.size() > 0) {
+			if (!listaSoggettiGestione.isEmpty()) {
 				erogazione_portaApplicativa_Expr.and();
 
 				IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -4481,7 +4667,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.or(orSoggetti);
 			}
 
-			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+			if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				
 				// il mittente puo nn essere specificato
 				boolean ignoreSetMittente = isIgnoreSetMittente(this.distribSoggettoSearch);
@@ -4500,6 +4686,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroIdClusterOrCanale(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 			
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				erogazione_portaApplicativa_Expr.addGroupBy(model.DATA);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4513,7 +4704,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					erogazione_portaApplicativa_Expr.addForceIndex(index);	
 				}
@@ -4524,6 +4715,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			//			erogazione_portaApplicativa_Expr.addOrder(model.MITTENTE);
 
 			UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}	
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_UnionExpr.addSelectField(
 						model.TIPO_MITTENTE, "tipo_soggetto");
@@ -4540,6 +4737,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
 				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
@@ -4551,11 +4753,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
 			union.addField("tipo_soggetto");
 			union.addField("soggetto");
+			
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
 			union.addGroupBy("tipo_soggetto");
 			union.addGroupBy("soggetto");
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
+			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSoggettoSearch.getTipoVisualizzazione();
 			switch (tipoVisualizzazione) {
 			case DIMENSIONE_TRANSAZIONI:
@@ -4696,9 +4914,25 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
-					r.setRisultato(((String) row.get("tipo_soggetto")) + "/"
-							+ ((String) row.get("soggetto")));
+					String risultato = ((String) row.get("tipo_soggetto")) + "/"
+							+ ((String) row.get("soggetto"));
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+					
+					r.setRisultato(risultato);
 
 					Number somma = StatsUtils.converToNumber(row.get("somma"));
 					if(somma!=null){
@@ -4707,8 +4941,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
-						res.add(r);
+					res.add(r);
 				}
 
 			}
@@ -4791,7 +5024,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// il mittente e' l'utente loggato (sempre presente se non
 			// sn admin)
-			if (listaSoggettiGestione.size() > 0) {
+			if (!listaSoggettiGestione.isEmpty()) {
 				fruizione_portaDelegata_Expr.and();
 
 				IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -4809,7 +5042,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.or(orSoggetti);
 			}
 
-			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+			if(!this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeDestinatario())) {
 					fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoDestinatario());
@@ -4826,6 +5059,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			this.impostaFiltroIdClusterOrCanale(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 			
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				fruizione_portaDelegata_Expr.addGroupBy(model.DATA);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4839,7 +5077,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					fruizione_portaDelegata_Expr.addForceIndex(index);	
 				}
@@ -4850,6 +5088,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			//			fruizione_portaDelegata_Expr.addOrder(model.DESTINATARIO);
 
 			UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				fruizione_portaDelegata_UnionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_UnionExpr.addSelectField(
 						model.TIPO_DESTINATARIO,
@@ -4868,6 +5112,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
 				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
@@ -4879,11 +5128,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
 			union.addField("tipo_soggetto");
 			union.addField("soggetto");
+			
+			// group by field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
 			union.addGroupBy("tipo_soggetto");
 			union.addGroupBy("soggetto");
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribSoggettoSearch.getSortOrder() != null ? 	this.distribSoggettoSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
+			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSoggettoSearch.getTipoVisualizzazione();
 			switch (tipoVisualizzazione) {
 			case DIMENSIONE_TRANSAZIONI:
@@ -5029,9 +5294,25 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
-					r.setRisultato(((String) row.get("tipo_soggetto")) + "/"
-							+ ((String) row.get("soggetto")));
+					String risultato = ((String) row.get("tipo_soggetto")) + "/"
+							+ ((String) row.get("soggetto"));
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSoggettoSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+					
+					r.setRisultato(risultato);
 
 					Number somma = StatsUtils.converToNumber(row.get("somma"));
 					if(somma!=null){
@@ -5040,8 +5321,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
-						res.add(r);
+					res.add(r);
 				}
 
 			}
@@ -5103,7 +5383,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = createDistribuzioneServizioExpression(dao,model, true);
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -5173,6 +5453,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = this.createDistribuzioneServizioExpression(this.dao, model, false);
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribServizioSearch.getSortOrder() != null ? 	this.distribServizioSearch.getSortOrder() : SortOrder.ASC;
+				gByExpr.sortOrder(s).addOrder(model.DATA);
+			}
+			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
 				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
@@ -5192,7 +5478,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -5209,6 +5495,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
 			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			
+			// select field by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
 			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 				
@@ -5242,6 +5536,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field e group by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
+			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 				union.addField(aliasFieldTipoServizio);
 				union.addField(aliasFieldServizio);
@@ -5257,6 +5558,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			else {
 				union.addField(aliasUriApi);
 				union.addGroupBy(aliasUriApi);
+			}
+			
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribServizioSearch.getSortOrder() != null ? 	this.distribServizioSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
 			}
 
 			TipoVisualizzazione tipoVisualizzazione = this.distribServizioSearch.getTipoVisualizzazione();
@@ -5404,23 +5711,42 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// List<Object[]> list = q.getResultList();
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
+					String risultato = null;
+					if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
+						risultato = ((String) row.get(aliasFieldTipoServizio)) + "/"
+								+ ((String) row.get(aliasFieldServizio)) + ":"
+								+ (row.get(aliasFieldVersioneServizio));
+					}
+					else {
+						risultato = (String) row.get(aliasUriApi);
+					}
+					
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
 					
 					if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 						
-						r.setRisultato(((String) row.get(aliasFieldTipoServizio)) + "/"
-								+ ((String) row.get(aliasFieldServizio)) + ":"
-								+ (row.get(aliasFieldVersioneServizio)));
+						r.setRisultato(risultato);
 						
 						r.getParentMap().put("0",((String) row.get(aliasFieldTipoDestinatario)) + "/"
 								+ ((String) row.get(aliasFieldDestinatario)));
 					}
 					else {
 						
-						String risultato = (String) row.get(aliasUriApi);
-						
-						if(!risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
-							risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribServizioSearch);	
+						risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribServizioSearch, new StringBuilder());	
 						
 						r.setRisultato(DistribuzionePerServizioBean.PREFIX_API+risultato);
 						
@@ -5433,8 +5759,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
-						res.add(r);
+					res.add(r);
 				}
 
 			}
@@ -5533,7 +5858,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				boolean trafficoSoggetto = StringUtils
 						.isNotBlank(this.distribServizioSearch
 								.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -5552,7 +5877,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -5614,7 +5939,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -5656,7 +5981,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -5690,7 +6015,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -5726,6 +6051,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			this.impostaFiltroIdClusterOrCanale(expr, this.distribServizioSearch, model, isCount);
 
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribServizioSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			}
+			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 			
 				expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -5822,7 +6152,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = createDistribuzioneAzioneExpression(dao,	model, true);
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -5925,7 +6255,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				boolean trafficoSoggetto = StringUtils
 						.isNotBlank(this.distribAzioneSearch
 								.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -5944,7 +6274,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -6006,7 +6336,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -6048,7 +6378,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -6082,7 +6412,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -6131,6 +6461,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroApi(expr, this.distribAzioneSearch, model, isCount);
 
 			this.impostaFiltroIdClusterOrCanale(expr, this.distribAzioneSearch, model, isCount);
+
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			}
 			
 			expr.notEquals(model.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.addGroupBy(model.AZIONE);
@@ -6203,6 +6538,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			IExpression gByExpr = this.createDistribuzioneAzioneExpression(this.dao,	model, false);
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribAzioneSearch.getSortOrder() : SortOrder.ASC;
+				gByExpr.sortOrder(s).addOrder(model.DATA);
+			}
+			
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.AZIONE);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
@@ -6219,7 +6560,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 			
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -6233,6 +6574,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String aliasFieldTipoDestinatario = "tipo_destinatario";
 			String aliasFieldDestinatario = "destinatario";
 			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+			}
+			
 			unionExpr.addSelectField(model.AZIONE,		aliasFieldAzione);
 			unionExpr.addSelectField(model.TIPO_SERVIZIO, aliasFieldTipoServizio);
 			unionExpr.addSelectField(model.SERVIZIO, aliasFieldServizio);
@@ -6243,6 +6589,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			
+			// select field data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+						model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+			}
+			
 			unionExprFake.addSelectField(new ConstantField(aliasFieldAzione, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
 					model.AZIONE.getFieldType()), aliasFieldAzione);			
 			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
@@ -6258,6 +6611,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field e group by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
+			
 			union.addField(aliasFieldAzione);
 			union.addField(aliasFieldTipoServizio);
 			union.addField(aliasFieldServizio);
@@ -6271,6 +6631,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			union.addGroupBy(aliasFieldTipoDestinatario);
 			union.addGroupBy(aliasFieldDestinatario);
 
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribAzioneSearch.getSortOrder() != null ? 	this.distribAzioneSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
+			}
+
+			
 			TipoVisualizzazione tipoVisualizzazione = this.distribAzioneSearch.getTipoVisualizzazione();
 			String sommaAliasName = "somma";
 			String datoParamAliasName = "dato";
@@ -6417,8 +6784,24 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
-					r.setRisultato(((String) row.get(aliasFieldAzione)));
+					String risultato = ((String) row.get(aliasFieldAzione));
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
+					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribAzioneSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+					
+					r.setRisultato(risultato);
 					
 					r.getParentMap().put("0",((String) row.get(aliasFieldTipoServizio)) + "/"
 							+ ((String) row.get(aliasFieldServizio)) + ":"
@@ -6434,8 +6817,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
-						res.add(r);
+					res.add(r);
 				}
 
 			}
@@ -6653,6 +7035,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(forceErogazione){
 					gByExprErogazione = createDistribuzioneServizioApplicativoExpression(this.dao,model,false,
 							forceErogazione,false);	
+					
+					// ordinamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+						gByExprErogazione.sortOrder(s).addOrder(model.DATA);
+					}
+					
 					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 /**					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
@@ -6675,6 +7064,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(forceFruizione){
 					gByExprFruizione = createDistribuzioneServizioApplicativoExpression(this.dao,model,false,
 							false,forceFruizione);	
+					
+					// ordinamento per data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+						gByExprFruizione.sortOrder(s).addOrder(model.DATA);
+					}
+					
 					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -6696,6 +7092,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Lascio else solo se si vuole tornare indietro come soluzione
 				gByExpr = createDistribuzioneServizioApplicativoExpression(this.dao,model,false,
 						false, false);	
+				
+				// ordinamento per data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+					SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+					gByExpr.sortOrder(s).addOrder(model.DATA);
+				}
+				
 				gByExpr.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 				
 				if(forceIndexes!=null && !forceIndexes.isEmpty()){
@@ -6716,6 +7119,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(forceErogazione || forceFruizione){
 				if(forceErogazione){
 					unionExprErogatore = new UnionExpression(gByExprErogazione);
+					// select field data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						unionExprErogatore.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+					}
 					unionExprErogatore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 					// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 //					unionExprErogatore.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoSoggetto);
@@ -6732,6 +7139,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				if(forceFruizione){
 					unionExprFruitore = new UnionExpression(gByExprFruizione);
+					// select field data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						unionExprFruitore.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+					}
 					unionExprFruitore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -6747,9 +7158,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// Espressione finta per usare l'ordinamento
 					fakeExpr = this.dao.newExpression();
 					unionExprFake = new UnionExpression(fakeExpr);
+					
+					// select field data in caso di visualizzazione a 3 dimensioni
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						unionExprFake.addSelectField(new ConstantField(ALIAS_FIELD_DATA_3D, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_TIMESTAMP,
+								model.DATA.getFieldType()), ALIAS_FIELD_DATA_3D);
+					}
+					
 					unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
 							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, credenzialeFieldGroupBy.getFieldType()), 
 							aliasFieldCredenzialeMittente);
+					
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 							if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
@@ -6769,6 +7188,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Lascio else solo se si vuole tornare indietro come soluzione
 				
 				unionExpr = new UnionExpression(gByExpr);
+				
+				// select field data in caso di visualizzazione a 3 dimensioni
+				if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+					unionExpr.addSelectField(model.DATA, ALIAS_FIELD_DATA_3D);
+				}
+				
 				unionExpr.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 				
 				// Espressione finta per usare l'ordinamento
@@ -6782,6 +7207,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			 			
 			Union union = new Union();
 			union.setUnionAll(true);
+			
+			// select field by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				union.addField(ALIAS_FIELD_DATA_3D);
+			}
+			
 			union.addField(aliasFieldCredenzialeMittente);
 			if(forceErogazione || forceFruizione){
 				if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
@@ -6794,6 +7225,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 				}
 			}
+			
+			// select group by data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				union.addGroupBy(ALIAS_FIELD_DATA_3D);
+			}
+			
 			union.addGroupBy(aliasFieldCredenzialeMittente);
 			if(forceErogazione || forceFruizione){
 				if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
@@ -6822,6 +7259,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(indexUE == 1){
 				uExpressions[indexUE] = unionExprFake;
 				fake = true;
+			}
+			
+			
+			// ordinamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				SortOrder s = 	this.distribSaSearch.getSortOrder() != null ? 	this.distribSaSearch.getSortOrder() : SortOrder.ASC;
+				union.addOrderBy(ALIAS_FIELD_DATA_3D,s);
 			}
 			
 			TipoVisualizzazione tipoVisualizzazione = this.distribSaSearch.getTipoVisualizzazione();
@@ -7054,10 +7498,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			ArrayList<ResDistribuzione> res = new ArrayList<>();
 
-			if(start != null)
+			boolean countApplicativo = false;
+			int elementi = 0;
+			if(start != null && limit!=null && !this.distribSaSearch.isUseCount()) {
+				countApplicativo = true;
+			}
+			
+			if(!countApplicativo && start != null) {
 				union.setOffset(start);
-			if(start != null)
+			}
+			if(!countApplicativo && start != null && limit!=null) {
 				union.setLimit(limit);
+			}
 
 			this.timeoutEvent = false;
 			
@@ -7090,17 +7542,31 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				for (Map<String, Object> row : list) {
 
-					ResDistribuzione r = new ResDistribuzione();
 					String risultato = (String) row.get(aliasFieldCredenzialeMittente);
 					
 					if(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE.equals(risultato)) {
 						continue;
-					} 	
+					} 
+					if(risultato!=null && risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) {
+						continue;
+					}
 					
+					ResDistribuzione r = null;
+					if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+						r = new ResDistribuzione3D();
+
+						// setto la data e la sua versione formattata in funziona dell'unita' temporale scelta
+						Date data = ((Date) row.get(ALIAS_FIELD_DATA_3D));
+						((ResDistribuzione3D)r).setData(data);
+						((ResDistribuzione3D)r).setDataFormattata(StatsUtils.formatDate(tipologia, data));
+					} else {
+						r = new ResDistribuzione();
+					}
+										
 					String risultatoIdLongCredenzialeMittente = risultato;
 										
-					if(!risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
-						risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribSaSearch);
+					StringBuilder sbTipoCredenziale = new StringBuilder();
+					risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribSaSearch, sbTipoCredenziale);
 					
 					boolean addSoggetto = true;
 					
@@ -7270,6 +7736,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 								StatisticheGiornaliereService.logError(t.getMessage(), t);
 							}
 						}
+						else if(	this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+							
+							String tipoCredenziale = "-";
+							if(sbTipoCredenziale.length()>0 && sbTipoCredenziale.toString().contains("_")) {
+								String [] tmp = sbTipoCredenziale.toString().split("_");
+								if(tmp!=null && tmp.length>1 && tmp[1]!=null && StringUtils.isNotEmpty(tmp[1])) {
+									tipoCredenziale = tmp[1];
+								}
+							}
+							if(TipoAutenticazione.SSL.getValue().equals(tipoCredenziale)) {
+								tipoCredenziale = TipoAutenticazione.SSL.getLabel(); 
+							}
+							else if(TipoAutenticazione.BASIC.getValue().equals(tipoCredenziale)) {
+								tipoCredenziale = TipoAutenticazione.BASIC.getLabel(); 
+							}
+							else if(TipoAutenticazione.APIKEY.getValue().equals(tipoCredenziale)) {
+								tipoCredenziale = TipoAutenticazione.APIKEY.getLabel(); 
+							}
+							else if(TipoAutenticazione.PRINCIPAL.getValue().equals(tipoCredenziale)) {
+								tipoCredenziale = TipoAutenticazione.PRINCIPAL.getLabel(); 
+							}
+							
+							r.getParentMap().put("0", tipoCredenziale);
+							
+						}
+
 					}
 					
 					r.setRisultato(risultato);
@@ -7293,8 +7785,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
-						res.add(r);
+					/**System.out.println("============");
+					System.out.println("actual-size:"+res.size()+" elementi:"+elementi+" start:"+start+" limit:"+limit+"");*/
+					if(countApplicativo) {
+						elementi++;
+						if(elementi<=start) {
+							/**System.out.println("CONTINUE");*/
+							continue; 
+						}
+						if(res.size()>=limit) {
+							/**System.out.println("BREAK");*/
+							break;
+						}
+					}
+					
+					res.add(r);
 				}
 
 			}
@@ -7598,6 +8103,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 
+			// raggruppamento per data in caso di visualizzazione a 3 dimensioni
+			if(NumeroDimensioni.DIMENSIONI_3.equals(this.distribSaSearch.getNumeroDimensioni())) {
+				expr.addGroupBy(model.DATA);
+			}
 			
 			this.impostaGroupByFiltroDatiMittente(expr, this.distribSaSearch, model, isCount); 
 			
@@ -7606,7 +8115,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroApi(expr, this.distribSaSearch, model, isCount);
 
 			this.impostaFiltroIdClusterOrCanale(expr, this.distribSaSearch, model, isCount);
-
+			
 			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 			// Poichè gli applicativi sono identificati univocamente insieme anche al soggetto proprietario, si aggiunge il soggetto nella group by
 			if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
@@ -7758,7 +8267,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(modelContenuti.RISORSA_VALORE);
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					gByExpr.addForceIndex(index);	
 				}
@@ -8012,7 +8521,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		IExpression expr = createDistribuzionePersonalizzataExpression(dao,	model, modelContenuti, true);
 
-		if(forceIndexes!=null && forceIndexes.size()>0){
+		if(forceIndexes!=null && !forceIndexes.isEmpty()){
 			for (Index index : forceIndexes) {
 				try{
 					expr.addForceIndex(index);
@@ -8258,7 +8767,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			//			}
 			}
 
-			if(forceIndexes!=null && forceIndexes.size()>0){
+			if(forceIndexes!=null && !forceIndexes.isEmpty()){
 				for (Index index : forceIndexes) {
 					expr.addForceIndex(index);
 				}
@@ -8655,7 +9164,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				boolean trafficoSoggetto = StringUtils
 						.isNotBlank(this.statistichePersonalizzateSearch
 								.getTrafficoPerSoggetto());
-				boolean soggetto = listaSoggettiGestione.size() > 0;
+				boolean soggetto = !listaSoggettiGestione.isEmpty();
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
 				if (trafficoSoggetto) {
@@ -8674,7 +9183,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if (trafficoSoggetto && soggetto) {
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -8728,7 +9237,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// e' impostato solo il soggetto in gestione
 					expr.and();
 
-					if (listaSoggettiGestione.size() > 0) {
+					if (!listaSoggettiGestione.isEmpty()) {
 						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
 						                                           .size()];
 						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
@@ -8768,7 +9277,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -8799,7 +9308,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				// il mittente e' l'utente loggato (sempre presente se non
 				// sn admin)
-				if (listaSoggettiGestione.size() > 0) {
+				if (!listaSoggettiGestione.isEmpty()) {
 					expr.and();
 
 					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
@@ -9367,7 +9876,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 	
 	
-	private String getLabelCredenzialeFieldGroupBy(String risultato, BaseSearchForm searchForm) {
+	private String getLabelCredenzialeFieldGroupBy(String risultato, BaseSearchForm searchForm, StringBuilder sbTipoCredenziale) {
 		try {
 			// credenziali mittente
 			if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
@@ -9377,6 +9886,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							/**CredenzialeMittente credenzialeMittente =  ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));*/
 							MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
 							CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
+							if(credenzialeMittente!=null && credenzialeMittente.getTipo()!=null) {
+								sbTipoCredenziale.append(credenzialeMittente.getTipo());
+							}
 							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 						}
 						else {
@@ -9396,6 +9908,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						/**CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));*/
 						MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
 						CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
+						if(credenzialeMittente!=null && credenzialeMittente.getTipo()!=null) {
+							sbTipoCredenziale.append(credenzialeMittente.getTipo());
+						}
 						return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 					}
 				} 
@@ -9405,7 +9920,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
 						CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
 						
-						String credenziale = credenzialeMittente.getCredenziale();
+						if(credenzialeMittente!=null && credenzialeMittente.getTipo()!=null) {
+							sbTipoCredenziale.append(credenzialeMittente.getTipo());
+						}
+						
+						String credenziale = credenzialeMittente!=null ? credenzialeMittente.getCredenziale() : null;
 						if(credenziale!=null) {
 							StringBuilder bf = new StringBuilder();
 							if(CredenzialeClientAddress.isSocketAddressDBValue(credenziale)) {
@@ -9441,6 +9960,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							/**credenzialeMittente  = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));*/
 							MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
 							credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(risultato));
+							if(credenzialeMittente!=null && credenzialeMittente.getTipo()!=null) {
+								sbTipoCredenziale.append(credenzialeMittente.getTipo());
+							}
 							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 
 					case TRASPORTO:

@@ -22,6 +22,7 @@
 
 package org.openspcoop2.utils.sql;
 
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.utils.TipiDatabase;
@@ -550,8 +551,22 @@ public interface ISQLQueryObject {
 	 * @param alias Alias
 	 */
 	public ISQLQueryObject addSelectDayOfWeekTimestampField(String aliasTabella,String field,String alias) throws SQLQueryObjectException;
-		
+
 	
+	/**
+	 * Aggiunge una costante alla select di tipo 'timestamp'
+	 * es: timestamp 'costante' AS alias FROM ....
+	 * 
+	 * @param date Costante
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectTimestampConstantField(Date date,String alias) throws SQLQueryObjectException;
+	/**
+	 * Ritorna una costante  di tipo 'timestamp'
+	 * 
+	 * @param date Costante
+	 */
+	public String getSelectTimestampConstantField(Date date) throws SQLQueryObjectException;
 	
 	
 	

@@ -14,10 +14,6 @@
     },
     "esito": {
       "tipo": "ok"
-    },
-    "api": {
-      "nome": "PetStore",
-      "versione": 1
     }
 
   }

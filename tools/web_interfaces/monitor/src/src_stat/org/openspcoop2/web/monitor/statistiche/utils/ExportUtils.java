@@ -48,10 +48,12 @@ import org.openspcoop2.web.monitor.core.converter.DurataConverter;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
+import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione3D;
 import org.openspcoop2.web.monitor.core.report.Colonna;
 import org.openspcoop2.web.monitor.core.report.ReportDataSource;
 import org.openspcoop2.web.monitor.core.report.Templates;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
+import org.openspcoop2.web.monitor.statistiche.bean.NumeroDimensioni;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.slf4j.Logger;
 
@@ -77,6 +79,8 @@ public class ExportUtils {
 	
 	private static final String HEADER_VALUE_CATEGORY_ERRORE = "errore";
 	private static final String HEADER_VALUE_LABEL_ERRORE = "Fallite";
+
+	private static final String HEADER_VALUE_CATEGORY_DATA_3D = "data_3d";
 	
 	private static final String HEADER_VALUE_CATEGORY_PARENT_0 = "parent_0";
 	private static final String HEADER_VALUE_CATEGORY_PARENT_1 = "parent_1";
@@ -113,19 +117,43 @@ public class ExportUtils {
 		return getDatasourceAndamentoTemporale(	list, log, tipoVisualizzazione, tipiBanda, tipiLatenza, modalitaTemporale,distribuzionePerEsiti, convertRawData);
 	}
 
-	public static ReportDataSource creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, 
+	public static ReportDataSource creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, boolean convertRawData) {
-		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, null, null, null, convertRawData);
+		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, numeroDimensioni, 
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null, convertRawData);
+	}
+	
+	public static ReportDataSource creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica,
+			boolean distribuzionePerImplementazioneApi, 
+			boolean convertRawData) {
+		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, numeroDimensioni, 
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null, 
+				distribuzionePerImplementazioneApi,
+				convertRawData);
 	}
 
-	public static ReportDataSource creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, boolean convertRawData) {
+	public static ReportDataSource creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,
+			boolean convertRawData) {
+		return creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, numeroDimensioni, 
+				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim,
+				false,
+				convertRawData);
+	}
+	private static ReportDataSource creaReportDistribuzione(List<ResDistribuzione> list,String titoloReport, Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,
+			boolean distribuzionePerImplementazioneApi,
+			boolean convertRawData) {
 		
 		if(titoloReport!=null) {
 			// non usato
 		}
 		
-		return  getDatasourceDistribuzione(list, log, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, convertRawData);
+		return  getDatasourceDistribuzione(list, log, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, 
+				distribuzionePerImplementazioneApi,
+				convertRawData);
 	}
 
 	public static ReportDataSource creaReportAndamentoTemporalePersonalizzato(Map<String, List<Res>> results,String titoloReport,Logger log,TipoVisualizzazione tipoVisualizzazione,
@@ -138,17 +166,32 @@ public class ExportUtils {
 		return getDatasourceAndamentoTemporalePersonalizzato(results, log, tipoVisualizzazione, tipiBanda, tipiLatenza, modalitaTemporale, convertRawData);
 	}
 
-	public static void esportaCsv(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+	public static void esportaCsv(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws UtilsException {
-		esportaCsv(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, null, null, null); 
+		esportaCsv(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null); 
 	}
-
-	public static void esportaCsv(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+	public static void esportaCsv(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,
+			boolean distribuzionePerImplementazioneApi) throws UtilsException {
+		esportaCsv(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null,
+				false, distribuzionePerImplementazioneApi); 
+	}
+	public static void esportaCsv(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws UtilsException {
-		esportaCsv(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, tipiBanda,tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
+		esportaCsv(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni, 
+				tipiBanda,tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
 	}
-	public static void esportaCsv(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+	public static void esportaCsv(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, boolean distribuzionePerEsiti) throws UtilsException {
+		esportaCsv(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,
+				tipiBanda, tipiLatenza, tipoStatistica,  tipoRiconoscimento, identificazione, tokenClaim, 
+				distribuzionePerEsiti, false);
+	}
+	private static void esportaCsv(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, 
+			boolean distribuzionePerEsiti, boolean distribuzionePerImplementazioneApi) throws UtilsException {
 		
 		if(titoloReport!=null) {
 			// non usato
@@ -158,6 +201,25 @@ public class ExportUtils {
 		
 		String headerValueLabel = "";
 		String headerValueCategory = "";
+
+		boolean distribuzione3d = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni);
+		if(distribuzione3d) {
+			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+			case DISTRIBUZIONE_AZIONE:
+			case DISTRIBUZIONE_SERVIZIO:
+			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
+			case DISTRIBUZIONE_SOGGETTO:
+			case STATISTICA_PERSONALIZZATA:
+				headerValueCategory = HEADER_VALUE_CATEGORY_DATA_3D;
+				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.DATA_LABEL_KEY);
+				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				break;
+			case ANDAMENTO_TEMPORALE:
+				break;
+			}
+		}
+
 		colonne.add(new Colonna("nome", headerLabel, HorizontalAlignment.CENTER));
 
 		if(distribuzionePerEsiti){
@@ -191,9 +253,11 @@ public class ExportUtils {
 				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 			case DISTRIBUZIONE_SERVIZIO:
-				headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
-				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				if(distribuzionePerImplementazioneApi) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
+					colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				}
 				break;
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -252,6 +316,11 @@ public class ExportUtils {
 					}catch(Exception t) {
 						// ignore
 					}
+				}
+				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.AUTENTICAZIONE_KEY);
+					colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				}
 				break;
 			case ANDAMENTO_TEMPORALE, DISTRIBUZIONE_SOGGETTO, STATISTICA_PERSONALIZZATA:
@@ -326,22 +395,55 @@ public class ExportUtils {
 		printer.close();
 	}
 
-	public static void esportaPdf(OutputStream outputStream, ReportDataSource report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+	public static void esportaPdf(OutputStream outputStream, ReportDataSource report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,
+			boolean distribuzionePerImplementazioneApi) throws IOException, UtilsException {
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null,
+				false, distribuzionePerImplementazioneApi);
+	}
+	public static void esportaPdf(OutputStream outputStream, ReportDataSource report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws IOException, UtilsException {
-		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
 	}
-
-	public static void esportaPdf(OutputStream outputStream, ReportDataSource report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+	public static void esportaPdf(OutputStream outputStream, ReportDataSource report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws IOException, UtilsException {
-		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
 	}
-	public static void esportaPdf(OutputStream outputStream, ReportDataSource report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+	public static void esportaPdf(OutputStream outputStream, ReportDataSource report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,  boolean distribuzionePerEsiti) throws IOException, UtilsException {
+		esportaPdf(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim,  
+				distribuzionePerEsiti, false);
+	}
+	private static void esportaPdf(OutputStream outputStream, ReportDataSource report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,  
+			boolean distribuzionePerEsiti, boolean distribuzionePerImplementazioneApi) throws IOException, UtilsException {
 		
 		String headerValueLabel = "";
 		String headerValueCategory = "";
 
 		List<Colonna> colonne = new ArrayList<>();
+		
+		boolean distribuzione3d = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni);
+		if(distribuzione3d) {
+			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+			case DISTRIBUZIONE_AZIONE:
+			case DISTRIBUZIONE_SERVIZIO:
+			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
+			case DISTRIBUZIONE_SOGGETTO:
+			case STATISTICA_PERSONALIZZATA:
+				headerValueCategory = HEADER_VALUE_CATEGORY_DATA_3D;
+				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.DATA_LABEL_KEY);
+				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				break;
+			case ANDAMENTO_TEMPORALE:
+				break;
+			}
+		}
 		
 		colonne.add(new Colonna("nome", headerLabel, HorizontalAlignment.CENTER));
 		
@@ -375,9 +477,11 @@ public class ExportUtils {
 				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 			case DISTRIBUZIONE_SERVIZIO:
-				headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
-				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				if(distribuzionePerImplementazioneApi) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
+					colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				}
 				break;
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -435,6 +539,11 @@ public class ExportUtils {
 					}catch(Exception t) {
 						// ignore
 					}
+				}
+				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.AUTENTICAZIONE_KEY);
+					colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				}
 				break;
 			case ANDAMENTO_TEMPORALE, DISTRIBUZIONE_SOGGETTO, STATISTICA_PERSONALIZZATA:
@@ -513,18 +622,32 @@ public class ExportUtils {
         
 	}
 
-	public static void esportaXls(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+	public static void esportaXls(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica) throws IOException {
-		esportaXls(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
+		esportaXls(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null);
 	}
-
-	public static void esportaXls(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+	public static void esportaXls(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,
+			boolean distribuzionePerImplementazioneApi) throws IOException {
+		esportaXls(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, null, null, null,
+				false, distribuzionePerImplementazioneApi);
+	}
+	public static void esportaXls(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim) throws IOException {
-		esportaXls(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
+		esportaXls(outputStream, datasource, titoloReport, headerLabel, tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, false);
 	}
-	
-	public static void esportaXls(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
+	public static void esportaXls(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim, boolean distribuzionePerEsiti) throws IOException {
+		esportaXls(outputStream, datasource, titoloReport, headerLabel,tipoVisualizzazione, numeroDimensioni,  
+				tipiBanda, tipiLatenza,tipoStatistica, tipoRiconoscimento, identificazione, tokenClaim, 
+				distribuzionePerEsiti, false);
+	}
+	private static void esportaXls(OutputStream outputStream, ReportDataSource datasource,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni,  
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, String identificazione, String tokenClaim, 
+			boolean distribuzionePerEsiti, boolean distribuzionePerImplementazioneApi) throws IOException {
 		
 		if(titoloReport!=null) {
 			// non usato
@@ -534,6 +657,24 @@ public class ExportUtils {
 		
 		String headerValueLabel = "";
 		String headerValueCategory = "";
+
+		boolean distribuzione3d = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni);
+		if(distribuzione3d) {
+			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+			case DISTRIBUZIONE_AZIONE:
+			case DISTRIBUZIONE_SERVIZIO:
+			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
+			case DISTRIBUZIONE_SOGGETTO:
+			case STATISTICA_PERSONALIZZATA:
+				headerValueCategory = HEADER_VALUE_CATEGORY_DATA_3D;
+				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.DATA_LABEL_KEY);
+				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				break;
+			case ANDAMENTO_TEMPORALE:
+				break;
+			}
+		}
 
 		colonne.add(new Colonna("nome", headerLabel, HorizontalAlignment.CENTER));
 
@@ -553,6 +694,7 @@ public class ExportUtils {
 
 		}
 		else{
+						
 			switch (tipoStatistica) {
 			case DISTRIBUZIONE_ERRORI:
 				headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
@@ -569,10 +711,11 @@ public class ExportUtils {
 				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				break;
 			case DISTRIBUZIONE_SERVIZIO:
-				
-				headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
-				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				if(distribuzionePerImplementazioneApi) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
+					colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
+				}
 				break;
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -631,6 +774,11 @@ public class ExportUtils {
 					}catch(Exception t) {
 						// ignore
 					}
+				}
+				else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+					headerValueCategory = HEADER_VALUE_CATEGORY_PARENT_0;
+					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.AUTENTICAZIONE_KEY);
+					colonne.add(new Colonna(headerValueCategory, headerValueLabel, HorizontalAlignment.CENTER));
 				}
 				break;
 			case ANDAMENTO_TEMPORALE, DISTRIBUZIONE_SOGGETTO, STATISTICA_PERSONALIZZATA:
@@ -1404,11 +1552,31 @@ public class ExportUtils {
 
 	}
 
-	private static ReportDataSource getDatasourceDistribuzione (List<ResDistribuzione> list,Logger log,TipoVisualizzazione tipoVisualizzazione, 
-			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim, boolean convertRawData)  {
+	private static ReportDataSource getDatasourceDistribuzione (List<ResDistribuzione> list,Logger log,TipoVisualizzazione tipoVisualizzazione, NumeroDimensioni numeroDimensioni, 
+			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza, TipoStatistica tipoStatistica, String tipoRiconoscimento, String identificazione, String tokenClaim,
+			boolean distribuzionePerImplementazioneApi,
+			boolean convertRawData)  {
+
+		boolean distribuzione3d = numeroDimensioni!=null && NumeroDimensioni.DIMENSIONI_3.equals(numeroDimensioni);
+		
 		// Scittura Intestazione
 		List<String> header = new ArrayList<>();
 
+		if(distribuzione3d) {
+			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+			case DISTRIBUZIONE_AZIONE:
+			case DISTRIBUZIONE_SERVIZIO:
+			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
+			case DISTRIBUZIONE_SOGGETTO:
+			case STATISTICA_PERSONALIZZATA:
+				header.add(HEADER_VALUE_CATEGORY_DATA_3D);
+				break;
+			case ANDAMENTO_TEMPORALE:
+				break;
+			}
+		}
+		
 		header.add("nome");
 
 		switch (tipoStatistica) {
@@ -1420,7 +1588,9 @@ public class ExportUtils {
 			header.add(HEADER_VALUE_CATEGORY_PARENT_1);
 			break;
 		case DISTRIBUZIONE_SERVIZIO:
-			header.add(HEADER_VALUE_CATEGORY_PARENT_0);
+			if(distribuzionePerImplementazioneApi) {
+				header.add(HEADER_VALUE_CATEGORY_PARENT_0);
+			}
 			break;
 		case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 			if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
@@ -1450,6 +1620,9 @@ public class ExportUtils {
 				}catch(Exception t) {
 					// ignore
 				}
+			}
+			else if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+				header.add(HEADER_VALUE_CATEGORY_PARENT_0);
 			}
 			break;
 		case ANDAMENTO_TEMPORALE, DISTRIBUZIONE_SOGGETTO, STATISTICA_PERSONALIZZATA:
@@ -1513,13 +1686,32 @@ public class ExportUtils {
 		for (int idx = 0 ; idx < list.size() ; idx ++){
 			ResDistribuzione risultato = list.get(idx);
 
+			ResDistribuzione3D risultato3D = null; 
+			if(distribuzione3d) {
+				switch (tipoStatistica) {
+				case DISTRIBUZIONE_ERRORI:
+				case DISTRIBUZIONE_AZIONE:
+				case DISTRIBUZIONE_SERVIZIO:
+				case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
+				case DISTRIBUZIONE_SOGGETTO:
+				case STATISTICA_PERSONALIZZATA:
+					risultato3D = (ResDistribuzione3D) risultato; 
+					break;
+				case ANDAMENTO_TEMPORALE:
+					break;
+				}
+			}
+
 			List<String> oneLine = new ArrayList<>();
 
-			// Servizio
-			String label = risultato.getRisultato() != null ? risultato.getRisultato() : "";
-			oneLine.add(label);
+			if(distribuzione3d) {
+				oneLine.add(risultato3D!=null ? risultato3D.getDataFormattata() : "N.D.");
+			}
 			
-			if(!risultato.getParentMap().isEmpty()){
+			String label = (risultato!=null && risultato.getRisultato() != null) ? risultato.getRisultato() : "";
+			oneLine.add(label);
+						
+			if(risultato!=null && risultato.getParentMap()!=null && !risultato.getParentMap().isEmpty()){
 				Set<String> keySet = risultato.getParentMap().keySet();
 				for (String parentCol : keySet) {
 					oneLine.add(risultato.getParentMap().get(parentCol)); 
