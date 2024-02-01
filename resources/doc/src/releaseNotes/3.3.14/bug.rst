@@ -47,23 +47,22 @@ Sono stati risolti i seguenti bug relativi al profilo di interoperabilità "ModI
 
 	- la verifica dei certificati non veniva effettuata: la console indicava che tutti i certificati erano validi anche quando non lo erano;
 
-	- la configurazione fornita dalla funzionalità 'Visualizza dettagli della configurazione', presente nelle opzioni della fruizione, non visualizzava le informazioni corrette su eventuali keystore definite nella fruizione stessa;
+	- la configurazione fornita dalla funzionalità 'Visualizza dettagli della configurazione', presente nelle opzioni della fruizione, non visualizzava le informazioni corrette su eventuali keystore definiti nella fruizione stessa;
 
-        - nel caso si configurava prima una API senza pattern di sicurezza messaggio e successivamente si modificava impostando il pattern 'ID_AUTH_REST_01' e 'Generazione Token' via PDND, entrando nella maschera di configurazione del connettore della fruizione si otteneva una informazione errata sulla token policy che sembrava assegnata anche se in realtà non lo era.
+        - nel caso fosse configurata una API senza pattern di sicurezza messaggio e successivamente questa fosse stata modificata impostando il pattern 'ID_AUTH_REST_01' e 'Generazione Token' via PDND, entrando nella maschera di configurazione del connettore della fruizione si otteneva una informazione errata sulla token policy che risultava assegnata anche se in realtà non lo era;
 
-- Durante la registrazione di un applicativo con profilo di interoperabilità 'ModI', se nella sezione 'ModI - Sicurezza Messaggio - KeyStore' veniva effettuato con modalità 'Archivio' l'upload di un keystore pkcs12, creato importando un altro archivio pkcs12 al suo interno, si ottevena l'errore: "keystore password was incorrect". Si trattava dello stesso bug risolto nell'issue 'https://github.com/link-it/govway/issues/128' la cui risoluzione non era stata riportata nella maschera di gestione della sicurezza ModI di un applicativo.
-
+- durante la registrazione di un applicativo con profilo di interoperabilità 'ModI', se nella sezione 'ModI - Sicurezza Messaggio - KeyStore' veniva effettuato con modalità 'Archivio' l'upload di un keystore pkcs12, creato importando un altro archivio pkcs12 al suo interno, si otteneva l'errore: "keystore password was incorrect". Si trattava dello stesso bug risolto nell'issue 'https://github.com/link-it/govway/issues/128' la cui risoluzione non era stata riportata nella maschera di gestione della sicurezza ModI di un applicativo.
 
 
 Per la console di gestione sono stati risolti i seguenti bug:
 
-- durante la visualizzazione di una pagina, il componente "loading" che inibisce l'utilizzo della pagina stessa terminava la sua funzione prima che il caricamento della pagina fosse completo;
+- durante la visualizzazione di una pagina, il componente "loading", che inibisce l'utilizzo della pagina stessa, terminava la sua funzione prima che il caricamento della pagina fosse completato;
 
-- la creazione di una API tramite interfaccia OpenAPI contenente la definizione di un parametro di tipo 'header' falliva e dai log si poteva riscontrare il seguente errore: "Trovato parametro header 'Authorization' senza tipo";
+- la creazione di una API tramite caricamento di un'interfaccia OpenAPI contenente la definizione di un parametro di tipo 'header' falliva e dai log si poteva riscontrare il seguente errore: "Trovato parametro header 'Authorization' senza tipo";
 
 - se veniva effettuata una configurazione dei nodi in cluster suddivisi per gruppi, l'operazione "Svuota le Cache dei nodi '<nomeGruppo>'" veniva ripetuta erroneamente più volte per ogni nodo;
 
-- su una erogazione configurata per gestire gruppi di risorse differenti in cui in ogni gruppo veniva ridefinito il connettore e attivata la consegna condizionale, se venivano visualizzati i connettori di un gruppo e successivamente si passava a visualizzare i connettori dell'altro gruppo i dati riportati sui connettori erano errati.
+- su una erogazione configurata per gestire gruppi di risorse differenti, in cui per ogni gruppo fosse ridefinito il connettore e attivata la consegna condizionale, il passaggio in visualizzazione tra gruppi diversi poteva mostrare dati dei connettori errati.
 
 
 

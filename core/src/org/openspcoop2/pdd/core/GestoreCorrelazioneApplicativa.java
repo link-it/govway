@@ -873,7 +873,7 @@ public class GestoreCorrelazioneApplicativa {
 			}
 			if( generaErrore ){
 				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-						getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body");
+						getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti è presente nel body");
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 			}
 		}else{			
@@ -1511,7 +1511,7 @@ public class GestoreCorrelazioneApplicativa {
 			}
 			if( generaErrore ){
 				this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-						getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body");
+						getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti è presente nel body");
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 			}
 		}else{

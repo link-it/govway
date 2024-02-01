@@ -62,7 +62,7 @@ indicare i seguenti dati:
 
    .. note::
 
-	Se una richiesta non è applicabile a nessuna regola di correlazione applicativa, fino alla versione 3.3.13.p1 la richiesta terminava con l'errore "Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body". Dalla versione successiva è stato modificato il default in modo da accettare la richiesta. È comunque possibile ripristinare il precedente comportamento come descritto nella sezione :ref:`correlazione_ruleNotFound`.
+	Se una richiesta non è applicabile a nessuna regola di correlazione applicativa, fino alla versione 3.3.13.p1 la richiesta terminava con l'errore "Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti è presente nel body". Dalla versione successiva è stato modificato il default in modo da accettare la richiesta. È comunque possibile ripristinare il precedente comportamento come descritto nella sezione :ref:`correlazione_ruleNotFound`.
 
 -  *Modalità Identificazione*: rappresenta la modalità di acquisizione
    dell'identificatore applicativo. Può assumere i seguenti valori:

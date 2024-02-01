@@ -35,7 +35,7 @@ Sono stati apportati i seguenti miglioramenti alla funzionalità di integrazione
 
 Sono infine stati apportati i seguenti miglioramenti:
 
-- aggiunto supporto per uno scenario di fruizione ModI in cui è possibile utilizzare il materiale crittografico definito nella token policy per firmare i token di AUDIT e di INTEGRITY;
+- aggiunto supporto per uno scenario di fruizione ModI in cui sia necessario utilizzare il materiale crittografico definito nella token policy per firmare i token di AUDIT e di INTEGRITY;
 
 - la validazione dei token 'ModI' non supportava token contenenti claim 'aud' definiti come stringhe di array; è stato aggiunto il supporto in modo da rispettare entrambe le modalità (array of case-sensitive strings or single case-sensitive string) indicate nel RFC 'https://datatracker.ietf.org/doc/html/rfc7519.html#section-4.1.3';
 
