@@ -1,3 +1,14 @@
+2024-02-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1706
+	Risolta anomalia che si verificava in alcuni casi limite durante il tracciamento delle fruizioni di API con negoziazione token.
+	L'errore segnalato nei log era: 
+		"PostOutResponseHandler [transazioni]Errore durante la scrittura della transazione sul database (Lettura dati Transazione): Caused by: java.util.ConcurrentModificationException
+			at java.util.HashMap$HashIterator.nextNode(HashMap.java)
+			...
+			at org.openspcoop2.pdd.core.token.TokenUtilities.replaceTokenInMap(TokenUtilities.java)
+
 2024-02-01  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor, ApiRsMonitoraggio]

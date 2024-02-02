@@ -20,6 +20,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.plugin.classes;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
@@ -39,7 +40,7 @@ public class TokenNegoziazioneParserCustom extends BasicNegoziazioneTokenParser 
 	}
 	
 	@Override
-	public void init(String raw, Map<String, Object> claims) {
+	public void init(String raw, Map<String, Serializable> claims) {
 		
 		try {
 			String id = Utilities.readIdentificativoTest();

@@ -60,7 +60,7 @@ public abstract class BaseBean implements Serializable {
 	}
 	
 	private void logExceptionStackTrace(Exception e) {
-		logExceptionStackTrace(e);
+		e.printStackTrace(System.err);
 	}
 	
 	/* ********** GENERIC UTILS ********* */

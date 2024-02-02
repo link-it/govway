@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
 
@@ -41,7 +42,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.BaseBean implements Serializable {
+public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.BaseBean implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -50,20 +51,20 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	
 	public InformazioniNegoziazioneToken() {} // per serializzatore
 	public InformazioniNegoziazioneToken(InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta,
-			String rawResponse, INegoziazioneTokenParser tokenParser) throws Exception {
+			String rawResponse, INegoziazioneTokenParser tokenParser) throws UtilsException {
 		this(datiRichiesta,null,rawResponse,tokenParser);
 	}
 	public InformazioniNegoziazioneToken(InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta,
-			Integer httpResponseCode, String rawResponse, INegoziazioneTokenParser tokenParser) throws Exception {
+			Integer httpResponseCode, String rawResponse, INegoziazioneTokenParser tokenParser) throws UtilsException {
 		this(datiRichiesta, httpResponseCode, rawResponse, tokenParser, null);
 	}
 	public InformazioniNegoziazioneToken(InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta,
-			Integer httpResponseCode, String rawResponse, INegoziazioneTokenParser tokenParser, InformazioniNegoziazioneToken previousToken) throws Exception {
+			Integer httpResponseCode, String rawResponse, INegoziazioneTokenParser tokenParser, InformazioniNegoziazioneToken previousToken) throws UtilsException {
 		this.rawResponse = rawResponse;
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		if(jsonUtils.isJson(this.rawResponse)) {
 			JsonNode root = jsonUtils.getAsNode(this.rawResponse);
-			Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+			Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 			if(readClaims!=null && readClaims.size()>0) {
 				this.claims.putAll(readClaims);
 			}
@@ -98,7 +99,7 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	}
 	
 	public InformazioniNegoziazioneToken(InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta,
-			String errorDetails, Integer httpResponseCode, byte[] rawResponse) throws Exception {
+			String errorDetails, Integer httpResponseCode, byte[] rawResponse) {
 		
 		this.claims = null;
 		
@@ -153,7 +154,7 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	private List<String> scopes;
 	
 	// Claims
-	private Map<String,Object> claims = new HashMap<>();
+	private Map<String,Serializable> claims = new HashMap<>();
 		
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 	
@@ -182,6 +183,9 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	}
 	
 	public boolean isValid() {
+		return this.valid;
+	}
+	public boolean getValid() { // clone
 		return this.valid;
 	}
 	public void setValid(boolean valid) {
@@ -240,21 +244,22 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	public List<String> getScopes() {
 		return this.scopes;
 	}
-
 	public void setScopes(List<String> scopes) {
 		this.scopes = scopes;
 	}
 
-	public Map<String, Object> getClaims() {
+	public Map<String, Serializable> getClaims() {
 		return this.claims;
 	}
-
-	public void setClaims(Map<String, Object> claims) {
+	public void setClaims(Map<String, Serializable> claims) {
 		this.claims = claims;
 	}
 			
 	public String getRawResponse() {
 		return this.rawResponse;
+	}
+	public void setRawResponse(String rawResponse) {
+		this.rawResponse = rawResponse;
 	}
 	public void replaceInRawResponse(String original, String newS) {
 		if(this.rawResponse!=null) {

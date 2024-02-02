@@ -31,6 +31,7 @@ import java.util.Map;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
@@ -53,9 +54,11 @@ import net.minidev.json.JSONObject;
 */
 public class Utilities extends ConfigLoader {
 
-	public static List<String> getMapExpectedTokenInfoInvalid() {
+	public static List<String> getMapExpectedTokenInfoInvalid(String token) {
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		mapExpectedTokenInfo.add("\"type\":\"validated_token\"");
 		mapExpectedTokenInfo.add("\"valid\":false");
+		mapExpectedTokenInfo.add("\"token\":\""+TokenUtilities.deleteSignature(token)+"\"");
 		return mapExpectedTokenInfo;
 	}
 	

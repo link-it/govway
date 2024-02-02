@@ -20,6 +20,7 @@
 package org.openspcoop2.pdd.core.token;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -1385,7 +1386,7 @@ public class GestoreTokenValidazioneUtilities {
 				JSONUtils jsonUtils = JSONUtils.getInstance();
 				if(jsonUtils.isJson(jsonHeader)) {
 					JsonNode root = jsonUtils.getAsNode(jsonHeader);
-					Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+					Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 					
 					validazioneInformazioniTokenHeader(readClaims, policyGestioneToken.getValidazioneJWTHeaderTyp(), Claims.JSON_WEB_TOKEN_RFC_7515_TYPE);
 					
@@ -1402,7 +1403,7 @@ public class GestoreTokenValidazioneUtilities {
 		
 	}
 	
-	private static void validazioneInformazioniTokenHeader(Map<String, Object> readClaims, List<String> expectedValues, String claim) throws TokenException {
+	private static void validazioneInformazioniTokenHeader(Map<String, Serializable> readClaims, List<String> expectedValues, String claim) throws TokenException {
 		if(expectedValues!=null && !expectedValues.isEmpty()) {
 			String v = null;
 			if(readClaims!=null && !readClaims.isEmpty()) {

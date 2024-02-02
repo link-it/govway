@@ -33,7 +33,7 @@ import java.util.Map;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop2.utils.beans.BaseBean implements Serializable {
+public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop2.utils.beans.BaseBean implements Serializable, Cloneable {
 
 	/**
 	 * 

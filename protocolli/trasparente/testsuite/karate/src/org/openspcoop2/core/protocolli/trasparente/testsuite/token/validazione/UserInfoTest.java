@@ -80,10 +80,12 @@ public class UserInfoTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		String tokenInvalid = buildJWT_dates(false, false, false, false,  // tutte buone, elimino la risposta introspection dopo 
+				mapExpectedTokenInfo);
+		
 		Map<String, String> headers = new HashMap<>();
 		Map<String, String> query = new HashMap<>();
-		query.put("test-userinfo", buildJWT_dates(false, false, false, false,  // tutte buone, elimino la risposta introspection dopo 
-				mapExpectedTokenInfo));
+		query.put("test-userinfo", tokenInvalid);
 		headers.put("test-username", Utilities.username);
 		
 		File f = new File("/tmp/userinfoResponse.json");
@@ -91,7 +93,7 @@ public class UserInfoTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
 				"Risposta del servizio di UserInfo non valida: Connessione terminata con errore (codice trasporto: 500)",
-				null, Utilities.getMapExpectedTokenInfoInvalid());
+				null, Utilities.getMapExpectedTokenInfoInvalid(tokenInvalid));
 	}
 	
 	

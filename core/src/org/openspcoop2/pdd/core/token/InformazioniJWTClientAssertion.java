@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class InformazioniJWTClientAssertion extends org.openspcoop2.utils.beans.BaseBean implements Serializable {
+public class InformazioniJWTClientAssertion extends org.openspcoop2.utils.beans.BaseBean implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -55,7 +55,7 @@ public class InformazioniJWTClientAssertion extends org.openspcoop2.utils.beans.
 					String hdrBase64 = split[0]; 
 					try {
 						this.jsonHeader = new String(Base64Utilities.decode(hdrBase64));
-					}catch(Throwable t) {
+					}catch(Exception t) {
 						log.error("Decode header failed (hdr: "+hdrBase64+" assertion:"+base64+"): "+t.getMessage(),t);
 					}
 					if(this.jsonHeader!=null) {
@@ -63,13 +63,13 @@ public class InformazioniJWTClientAssertion extends org.openspcoop2.utils.beans.
 							JSONUtils jsonUtils = JSONUtils.getInstance();
 							if(jsonUtils.isJson(this.jsonHeader)) {
 								JsonNode root = jsonUtils.getAsNode(this.jsonHeader);
-								Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+								Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 								if(readClaims!=null && readClaims.size()>0) {
 									this.header = new HashMap<>();
 									this.header.putAll(readClaims);
 								}
 							}	
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							log.error("Decode header failed (json: "+this.jsonHeader+"): "+t.getMessage(),t);
 						}
 					}
@@ -78,7 +78,7 @@ public class InformazioniJWTClientAssertion extends org.openspcoop2.utils.beans.
 					String payloadBase64 = split[1]; 
 					try {
 						this.jsonPayload = new String(Base64Utilities.decode(payloadBase64));
-					}catch(Throwable t) {
+					}catch(Exception t) {
 						log.error("Decode payload failed (payload: "+payloadBase64+" assertion:"+base64+"): "+t.getMessage(),t);
 					}
 					if(this.jsonPayload!=null) {
@@ -86,13 +86,13 @@ public class InformazioniJWTClientAssertion extends org.openspcoop2.utils.beans.
 							JSONUtils jsonUtils = JSONUtils.getInstance();
 							if(jsonUtils.isJson(this.jsonPayload)) {
 								JsonNode root = jsonUtils.getAsNode(this.jsonPayload);
-								Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+								Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 								if(readClaims!=null && readClaims.size()>0) {
 									this.payload = new HashMap<>();
 									this.payload.putAll(readClaims);
 								}
 							}	
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							log.error("Decode payload failed (json: "+this.jsonPayload+"): "+t.getMessage(),t);
 						}
 					}
@@ -106,21 +106,21 @@ public class InformazioniJWTClientAssertion extends org.openspcoop2.utils.beans.
 	// RawResponse
 	private String token;
 	// Claims
-	private Map<String,Object> header = null;
-	private Map<String,Object> payload = null;
+	private Map<String,Serializable> header = null;
+	private Map<String,Serializable> payload = null;
 	private String jsonHeader;
 	private String jsonPayload;
 
-	public Map<String, Object> getHeader() {
+	public Map<String, Serializable> getHeader() {
 		return this.header;
 	}
-	public void setHeader(Map<String, Object> header) {
+	public void setHeader(Map<String, Serializable> header) {
 		this.header = header;
 	}
-	public Map<String, Object> getPayload() {
+	public Map<String, Serializable> getPayload() {
 		return this.payload;
 	}
-	public void setPayload(Map<String, Object> payload) {
+	public void setPayload(Map<String, Serializable> payload) {
 		this.payload = payload;
 	}
 

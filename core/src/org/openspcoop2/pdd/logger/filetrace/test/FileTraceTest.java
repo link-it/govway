@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.logger.filetrace.test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -478,9 +479,9 @@ public class FileTraceTest {
 		FileTraceConfig.init(is, path, true);
 		FileTraceConfig config = FileTraceConfig.getConfig(new File(path), true); // inizializzato sopra
 			
-		Map<String, Object> attributes = new HashMap<>();
+		Map<String, Serializable> attributes = new HashMap<>();
 		attributes.put("a1", "v1");
-		List<String> l2 = new ArrayList<>();
+		ArrayList<String> l2 = new ArrayList<>();
 		l2.add("v2a");
 		l2.add("v2b");
 		attributes.put("a2", l2);
