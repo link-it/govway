@@ -83,14 +83,16 @@ public class AllTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
+		String tokenInvalid = "AAA.AAAA.AAAA";
+		
 		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
-				"AAA.AAAA.AAAA");
+				tokenInvalid);
 		headers.put("test-username", Utilities.username);
 		
 		Utilities._test(logCore, validazione, "success", headers,  null,
 				"Validazione del token 'JWS' fallita: Token non valido: [COMPACT] Signature verification failure",
-				null, Utilities.getMapExpectedTokenInfoInvalid());
+				null, Utilities.getMapExpectedTokenInfoInvalid(tokenInvalid));
 	}
 	
 	@Test
@@ -99,14 +101,16 @@ public class AllTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
+		String tokenInvalid = buildJWT_signInvalid();
+		
 		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
-				buildJWT_signInvalid());
+				tokenInvalid);
 		headers.put("test-username", Utilities.username);
 		
 		Utilities._test(logCore, validazione, "success", headers,  null,
 				"Validazione del token 'JWS' fallita: Token non valido",
-				null, Utilities.getMapExpectedTokenInfoInvalid());
+				null, Utilities.getMapExpectedTokenInfoInvalid(tokenInvalid));
 	}
 	
 	

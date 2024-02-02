@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +64,7 @@ public class TokenUtilities {
 	
 	private TokenUtilities() {}
 
-	public static Properties getDefaultProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static Properties getDefaultProperties(Map<String, Properties> mapProperties) {
 		return MultiPropertiesUtilities.getDefaultProperties(mapProperties);
 	}
 	public static Properties getValidazioneJwtClaimsMappingProperties(Map<String, Properties> mapProperties) {
@@ -111,51 +112,51 @@ public class TokenUtilities {
 		return multiProperties;
 	}
 	
-	public static boolean isValidazioneEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static boolean isValidazioneEnabled(Map<String, Properties> mapProperties) {
 		return isValidazioneEnabled(getDefaultProperties(mapProperties));
 	}
-	public static boolean isValidazioneEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
+	public static boolean isValidazioneEnabled(Properties pDefault) {
 		return isEnabled(pDefault, Costanti.POLICY_VALIDAZIONE_STATO);
 	}
-	public static boolean isValidazioneEnabled(GenericProperties gp) throws ProviderException, ProviderValidationException {
+	public static boolean isValidazioneEnabled(GenericProperties gp) throws ProviderException {
 		Map<String, Properties> multiProperties = getMultiProperties(gp);
 		return isValidazioneEnabled(multiProperties);
 	}
 		
-	public static boolean isIntrospectionEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static boolean isIntrospectionEnabled(Map<String, Properties> mapProperties) {
 		return isIntrospectionEnabled(getDefaultProperties(mapProperties));
 	}
-	public static boolean isIntrospectionEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
+	public static boolean isIntrospectionEnabled(Properties pDefault) {
 		return isEnabled(pDefault, Costanti.POLICY_INTROSPECTION_STATO);
 	}
-	public static boolean isIntrospectionEnabled(GenericProperties gp) throws ProviderException, ProviderValidationException {
+	public static boolean isIntrospectionEnabled(GenericProperties gp) throws ProviderException {
 		Map<String, Properties> multiProperties = getMultiProperties(gp);
 		return isIntrospectionEnabled(multiProperties);
 	}
 	
-	public static boolean isUserInfoEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static boolean isUserInfoEnabled(Map<String, Properties> mapProperties) {
 		return isUserInfoEnabled(getDefaultProperties(mapProperties));
 	}
-	public static boolean isUserInfoEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
+	public static boolean isUserInfoEnabled(Properties pDefault) {
 		return isEnabled(pDefault, Costanti.POLICY_USER_INFO_STATO);
 	}
-	public static boolean isUserInfoEnabled(GenericProperties gp) throws ProviderException, ProviderValidationException {
+	public static boolean isUserInfoEnabled(GenericProperties gp) throws ProviderException {
 		Map<String, Properties> multiProperties = getMultiProperties(gp);
 		return isUserInfoEnabled(multiProperties);
 	}
 	
-	public static boolean isTokenForwardEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+	public static boolean isTokenForwardEnabled(Map<String, Properties> mapProperties) {
 		return isTokenForwardEnabled(getDefaultProperties(mapProperties));
 	}
-	public static boolean isTokenForwardEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
+	public static boolean isTokenForwardEnabled(Properties pDefault) {
 		return isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_STATO);
 	}
-	public static boolean isTokenForwardEnabled(GenericProperties gp) throws ProviderException, ProviderValidationException {
+	public static boolean isTokenForwardEnabled(GenericProperties gp) throws ProviderException {
 		Map<String, Properties> multiProperties = getMultiProperties(gp);
 		return isTokenForwardEnabled(multiProperties);
 	}
 	
-	public static boolean isEnabled(Properties p, String propertyName) throws ProviderException, ProviderValidationException {
+	public static boolean isEnabled(Properties p, String propertyName) {
 		return MultiPropertiesUtilities.isEnabled(p, propertyName);
 	}
 	
@@ -286,7 +287,7 @@ public class TokenUtilities {
 		return policy;
 
 	}
-	private static void fill(PolicyGestioneToken policy, GestioneToken gestioneToken, Map<String, Properties> multiProperties) throws ProviderException, ProviderValidationException {
+	private static void fill(PolicyGestioneToken policy, GestioneToken gestioneToken, Map<String, Properties> multiProperties) {
 		if(gestioneToken.getTokenOpzionale()!=null) {
 			policy.setTokenOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneToken.getTokenOpzionale()));
 		}
@@ -407,14 +408,14 @@ public class TokenUtilities {
 		return claimValueSB.length()>0 ? claimValueSB.toString() : null;
 	}
 	
-	public static String getClaimAsString(Map<String, Object> claims, String claim) {
+	public static String getClaimAsString(Map<String, Serializable> claims, String claim) {
 		List<String> l = getClaimAsList(claims, claim);
 		if(l==null || l.isEmpty()) {
 			return null;
 		}
 		return TokenUtilities.getClaimValuesAsString(l);
 	}
-	public static List<String> getClaimAsList(Map<String, Object> claims, String claim) {
+	public static List<String> getClaimAsList(Map<String, Serializable> claims, String claim) {
 		List<String> l = null;
 		Object o = claims.get(claim);
 		if(o==null) {
@@ -428,7 +429,7 @@ public class TokenUtilities {
 		return l;
 	}
 	
-	public static String getFirstClaimAsString(Map<String, Object> claims, List<String> names) {
+	public static String getFirstClaimAsString(Map<String, Serializable> claims, List<String> names) {
 		for (String name : names) {
 			String claim = getClaimAsString(claims, name);
 			if(claim!=null) {
@@ -437,7 +438,7 @@ public class TokenUtilities {
 		}
 		return null;
 	}
-	public static List<String> getFirstClaimAsList(Map<String, Object> claims, List<String> names) {
+	public static List<String> getFirstClaimAsList(Map<String, Serializable> claims, List<String> names) {
 		List<String> lRet = null;
 		for (String name : names) {
 			List<String> l = getClaimAsList(claims, name);
@@ -595,22 +596,24 @@ public class TokenUtilities {
 		}
 		return token;
 	}
-	public static void replaceTokenInMap(Map<String, Object> claims, String originale, String newToken) {
+	public static Map<String, Serializable> replaceTokenInMapByValue(Map<String, Serializable> claims, String valueOriginale, String newValue) {
+		
+		Map<String, Serializable> newMap = new HashMap<>();
+		
 		if(claims!=null && !claims.isEmpty()) {
-			List<String> keyDaSostituire = new ArrayList<>();
-			for (Map.Entry<String,Object> entry : claims.entrySet()) {
+			for (Map.Entry<String,Serializable> entry : claims.entrySet()) {
 				String key = entry.getKey();
-				Object o = claims.get(key);
-				if(o instanceof String && originale.equals(o)) {
-					keyDaSostituire.add(key);
+				Serializable o = claims.get(key);
+				if(o instanceof String && valueOriginale.equals(o)) {
+					newMap.put(key, newValue);
+				}
+				else {
+					newMap.put(key, o);
 				}
 			}
-			while(!keyDaSostituire.isEmpty()) {
-				String key = keyDaSostituire.remove(0);
-				claims.remove(key);
-				claims.put(key, newToken);
-			}
 		}
+		
+		return newMap;
 	}
 	
 	private static final String EXTERNAL_RESOURCE_UNDEFINED = "External resource undefined";
@@ -754,5 +757,22 @@ public class TokenUtilities {
 			item.setRequired(true);
 		}
 		return actualValue;
+	}
+	
+	
+	
+	
+	public static HashMap<String, Serializable> toHashMapSerializable(Map<String, Serializable> map) {
+		HashMap<String, Serializable> mapNull = null;
+		if(map instanceof HashMap) {
+			return (HashMap<String, Serializable>) map;
+		}
+		else if(map!=null) {
+			HashMap<String, Serializable> sMap = new HashMap<>();
+			for (Map.Entry<String,Serializable> entry : map.entrySet()) {
+				sMap.put(entry.getKey(), entry.getValue());
+			}
+		}
+		return mapNull;
 	}
 }

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.json;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,78 +84,75 @@ public class YAMLUtils extends AbstractUtils {
 	
 
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("JSONUtils");
-	private static YAMLMapper _mapper;
+	private static YAMLMapper internalMapper;
 	private static synchronized void initMapper()  {
 		semaphore.acquireThrowRuntime("initMapper");
 		try {
-			if(_mapper==null){
-				_mapper = new YAMLMapper();
-				_mapper.setTimeZone(TimeZone.getDefault());
-				_mapper.setSerializationInclusion(Include.NON_NULL);
-				_mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-				_mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
+			if(internalMapper==null){
+				internalMapper = new YAMLMapper();
+				internalMapper.setTimeZone(TimeZone.getDefault());
+				internalMapper.setSerializationInclusion(Include.NON_NULL);
+				internalMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+				internalMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
 					    WRITE_DATES_AS_TIMESTAMPS , false);
 				// Since 2.1.4, the field exampleSetFlag appears in json produced with ObjectMapper#writeValue(File, Object) when serializing an object of type OpenApi.
 				// "exampleSetFlag" : false
 				// Con il codice sottostante, nelle classi Mixin l'attributo 'getExampleSetFlag' viene ignorato
-				_mapper.addMixIn(io.swagger.v3.oas.models.media.Schema.class, io.swagger.v3.core.jackson.mixin.SchemaMixin.class);
-				_mapper.addMixIn(io.swagger.v3.oas.models.media.MediaType.class, io.swagger.v3.core.jackson.mixin.MediaTypeMixin.class);
+				internalMapper.addMixIn(io.swagger.v3.oas.models.media.Schema.class, io.swagger.v3.core.jackson.mixin.SchemaMixin.class);
+				internalMapper.addMixIn(io.swagger.v3.oas.models.media.MediaType.class, io.swagger.v3.core.jackson.mixin.MediaTypeMixin.class);
 			}
 		}finally {
 			semaphore.release("initMapper");
 		}
 	}
 	public static void setMapperTimeZone(TimeZone timeZone) {
-		if(_mapper==null){
+		if(internalMapper==null){
 			initMapper();
 		}
-		//synchronized(mapperSynchronized){
 		semaphore.acquireThrowRuntime("setMapperTimeZone");
 		try {
-			_mapper.setTimeZone(timeZone);
+			internalMapper.setTimeZone(timeZone);
 		}finally {
 			semaphore.release("setMapperTimeZone");
 		}
 	}
 	public static void registerJodaModule() {
-		if(_mapper==null){
+		if(internalMapper==null){
 			initMapper();
 		}
-		//synchronized(mapperSynchronized){
 		semaphore.acquireThrowRuntime("registerJodaModule");
 		try {
-			_mapper.registerModule(new JodaModule());
+			internalMapper.registerModule(new JodaModule());
 		}finally {
 			semaphore.release("registerJodaModule");
 		}
 	}
 	public static void registerJavaTimeModule() {
-		if(_mapper==null){
+		if(internalMapper==null){
 			initMapper();
 		}
-		//synchronized(mapperSynchronized){
 		semaphore.acquireThrowRuntime("registerJavaTimeModule");
 		try {
-			_mapper.registerModule(new JavaTimeModule());
+			internalMapper.registerModule(new JavaTimeModule());
 		}finally {
 			semaphore.release("registerJavaTimeModule");
 		}
 	}
 	
 	public static YAMLMapper getObjectMapper() {
-		if(_mapper==null){
+		if(internalMapper==null){
 			initMapper();
 		}
-		return _mapper;
+		return internalMapper;
 	}
 	
 	private static ObjectWriter writer;
 	private static synchronized void initWriter()  {
-		if(_mapper==null){
+		if(internalMapper==null){
 			initMapper();
 		}
 		if(writer==null){
-			writer = _mapper.writer();
+			writer = internalMapper.writer();
 		}
 	}
 	public static ObjectWriter getObjectWriter() {
@@ -166,11 +164,11 @@ public class YAMLUtils extends AbstractUtils {
 	
 	private static ObjectWriter writerPrettyPrint;
 	private static synchronized void initWriterPrettyPrint()  {
-		if(_mapper==null){
+		if(internalMapper==null){
 			initMapper();
 		}
 		if(writerPrettyPrint==null){
-			writerPrettyPrint = _mapper.writer().withDefaultPrettyPrinter();
+			writerPrettyPrint = internalMapper.writer().withDefaultPrettyPrinter();
 		}
 	}
 	public static ObjectWriter getObjectWriterPrettyPrint() {
@@ -247,8 +245,7 @@ public class YAMLUtils extends AbstractUtils {
 		if(containsMergeKeyAnchor(yaml)) {
 			// Risoluzione merge key '<<: *'
 			Map<String, Object> obj = new org.yaml.snakeyaml.Yaml().load(yaml);
-			String jsonRepresentation = jsonUtils.toString(obj);
-			return jsonRepresentation;
+			return jsonUtils.toString(obj); // jsonRepresentation
 		}
 		return null;
 	}
@@ -256,24 +253,24 @@ public class YAMLUtils extends AbstractUtils {
 	
 	// CONVERT TO MAP 
 	
-	public Map<String, Object> convertToMap(Logger log, String source, String raw) {
+	public Map<String, Serializable> convertToMap(Logger log, String source, String raw) {
 		return this.convertToMap(log, source, raw, null);
 	}
-	public Map<String, Object> convertToMap(Logger log, String source, String raw, List<String> claimsToConvert) {
+	public Map<String, Serializable> convertToMap(Logger log, String source, String raw, List<String> claimsToConvert) {
 		if(this.isYaml(raw)) {
-			return super._convertToMap(log, source, raw, claimsToConvert);
+			return super.convertToMapEngine(log, source, raw, claimsToConvert);
 		}
 		else {
 			return new HashMap<>(); // empty return
 		}	
 	}
 	
-	public Map<String, Object> convertToMap(Logger log, String source, byte[]raw) {
+	public Map<String, Serializable> convertToMap(Logger log, String source, byte[]raw) {
 		return this.convertToMap(log, source, raw, null);
 	}
-	public Map<String, Object> convertToMap(Logger log, String source, byte[]raw, List<String> claimsToConvert) {
+	public Map<String, Serializable> convertToMap(Logger log, String source, byte[]raw, List<String> claimsToConvert) {
 		if(this.isYaml(raw)) {
-			return super._convertToMap(log, source, raw, claimsToConvert);
+			return super.convertToMapEngine(log, source, raw, claimsToConvert);
 		}
 		else {
 			return new HashMap<>(); // empty return

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.pdd.core.token.TipoInformazioni;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.json.JSONUtils;
@@ -43,7 +44,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean implements Serializable {
+public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -85,7 +86,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			JSONUtils jsonUtils = JSONUtils.getInstance();
 			if(jsonUtils.isJson(this.rawResponse)) {
 				JsonNode root = jsonUtils.getAsNode(this.rawResponse);
-				Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+				Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 				if(readClaims!=null && readClaims.size()>0) {
 					this.claims.putAll(readClaims);
 				}
@@ -141,7 +142,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 			
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getClaims().size()>0) {
-					this.claims.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getClaims());
+					this.claims.put(informazioniTokens[i].getSourceAttributeAuthority(),TokenUtilities.toHashMapSerializable(informazioniTokens[i].getClaims()));
 				}
 			}
 			
@@ -150,7 +151,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 					if(this.attributes==null) {
 						this.attributes = new HashMap<>();
 					}
-					this.attributes.put(informazioniTokens[i].getSourceAttributeAuthority(),informazioniTokens[i].getAttributes());
+					this.attributes.put(informazioniTokens[i].getSourceAttributeAuthority(),TokenUtilities.toHashMapSerializable(informazioniTokens[i].getAttributes()));
 				}
 			}
 			
@@ -226,7 +227,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 	private boolean valid;
 	
 	// Attributi
-	private Map<String, Object> attributes;
+	private Map<String, Serializable> attributes;
 
 	// String representing the issuer for this attribute response
 	private String iss; 
@@ -257,7 +258,7 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 	private Map<String, String> aaIdentifier;
 	
 	// Claims
-	private Map<String,Object> claims = new HashMap<>();
+	private Map<String,Serializable> claims = new HashMap<>();
 	
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 	
@@ -286,7 +287,9 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 	public boolean isValid() {
 		return this.valid;
 	}
-
+	public boolean getValid() { // clone
+		return this.valid;
+	}
 	public void setValid(boolean valid) {
 		this.valid = valid;
 	}
@@ -297,6 +300,13 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 		}
 		return BooleanNullable.NULL();
 	}
+	public Boolean getMultipleAttributeAuthorities() {
+		return this.multipleAttributeAuthorities;
+	}
+	public void setMultipleAttributeAuthorities(Boolean multipleAttributeAuthorities) {
+		this.multipleAttributeAuthorities = multipleAttributeAuthorities;
+	}
+	
 	public List<String> getAttributeAuthorities() {
 		List<String> l = null;
 		if(this.attributeAuthorities!=null && !this.attributeAuthorities.isEmpty()) {
@@ -304,11 +314,14 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 		}
 		return l;
 	}
+	public void setAttributeAuthorities(List<String> attributeAuthorities) {
+		this.attributeAuthorities = attributeAuthorities;
+	}
 	
-	public Map<String, Object> getAttributes() {
+	public Map<String, Serializable> getAttributes() {
 		return this.attributes;
 	}
-	public void setAttributes(Map<String, Object> attributes) {
+	public void setAttributes(Map<String, Serializable> attributes) {
 		this.attributes = attributes;
 	}
 	public List<String> getAttributesNames(){
@@ -441,28 +454,39 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 		this.aaIdentifier = aaIdentifier;
 	}
 	
-	public Map<String, Object> getClaims() {
+	public Map<String, Serializable> getClaims() {
 		return this.claims;
 	}
-
-	public void setClaims(Map<String, Object> claims) {
+	public void setClaims(Map<String, Serializable> claims) {
 		this.claims = claims;
 	}
 			
 	public String getRawResponse() {
 		return this.rawResponse;
 	}
+	public void setRawResponse(String rawResponse) {
+		this.rawResponse = rawResponse;
+	}
 	
 	public String getSourceAttributeAuthority() {
 		return this.sourceAttributeAuthority;
+	}
+	public void setSourceAttributeAuthority(String sourceAttributeAuthority) {
+		this.sourceAttributeAuthority = sourceAttributeAuthority;
 	}
 	
 	public Map<String, String> getSourcesAttributeInfo() {
 		return this.sourcesAttributeInfo;
 	}
-
+	public void setSourcesAttributeInfo(Map<String, String> sourcesAttributeInfo) {
+		this.sourcesAttributeInfo = sourcesAttributeInfo;
+	}
+	
 	public List<String> getSourceAttributeAuthorities() {
 		return this.sourceAttributeAuthorities;
+	}
+	public void setSourceAttributeAuthorities(List<String> sourceAttributeAuthorities) {
+		this.sourceAttributeAuthorities = sourceAttributeAuthorities;
 	}
 	
 }

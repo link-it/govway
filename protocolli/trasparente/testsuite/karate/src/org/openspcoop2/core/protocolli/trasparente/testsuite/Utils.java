@@ -560,6 +560,7 @@ public class Utils {
 		resource.add("DatiAutenticazione");
 		resource.add("GestioneToken");
 		resource.add("Keystore");
+		resource.add("AttributeAuthority");
 		resource.add("ResponseCaching");
 		// disabilitata resource.add("ControlloTraffico");
 		resource.add("LoadBalancer");

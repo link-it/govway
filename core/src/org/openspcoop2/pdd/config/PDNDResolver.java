@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.keystore.KeystoreException;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreProvider;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
@@ -318,7 +319,7 @@ public class PDNDResolver {
 	}
 	private void enrichTokenInfoAddInClaims(JSONUtils jsonUtils, SecurityToken securityTokenForContext, InformazioniToken informazioniTokenNormalizzate, JsonNode root, String type,
 			PDNDTokenInfoDetails info) {
-		Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+		Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 		if(!readClaims.isEmpty()) {
 			enrichTokenInfoAddInClaims(securityTokenForContext, informazioniTokenNormalizzate,
 					type, info,
@@ -328,18 +329,18 @@ public class PDNDResolver {
 
 	private void enrichTokenInfoAddInClaims(SecurityToken securityTokenForContext, InformazioniToken informazioniTokenNormalizzate,
 			String type, PDNDTokenInfoDetails info,
-			Map<String, Object> readClaims) {
-		informazioniTokenNormalizzate.getPdnd().put(type,readClaims);
+			Map<String, Serializable> readClaims) {
+		informazioniTokenNormalizzate.getPdnd().put(type,TokenUtilities.toHashMapSerializable(readClaims));
 		String prefix = PDNDTokenInfo.TOKEN_INFO_PREFIX_PDND+type+".";
 		Map<String, Serializable> readClaimsSerializable = new HashMap<>(); 
 		if(informazioniTokenNormalizzate.getClaims()!=null) {
-			for (Map.Entry<String,Object> entry : readClaims.entrySet()) {
+			for (Map.Entry<String,Serializable> entry : readClaims.entrySet()) {
 				String key = prefix+entry.getKey();
 				if(!informazioniTokenNormalizzate.getClaims().containsKey(key)) {
 					informazioniTokenNormalizzate.getClaims().put(key, entry.getValue());
 				}
 				if(entry.getValue() instanceof Serializable) {
-					readClaimsSerializable.put(entry.getKey(), (Serializable) entry.getValue());
+					readClaimsSerializable.put(entry.getKey(), entry.getValue());
 				}
 			}
 		}

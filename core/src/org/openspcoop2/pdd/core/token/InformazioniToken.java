@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,7 +43,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean implements Serializable {
+public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 
 	/**
 	 * 
@@ -50,16 +51,16 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	private static final long serialVersionUID = 1L;
 	
 	public InformazioniToken() {} // per serializzatore
-	public InformazioniToken(SorgenteInformazioniToken sourceType, String rawResponse, ITokenParser tokenParser) throws Exception {
+	public InformazioniToken(SorgenteInformazioniToken sourceType, String rawResponse, ITokenParser tokenParser) throws UtilsException {
 		this(null,sourceType, rawResponse,tokenParser);
 	}
-	public InformazioniToken(Integer httpResponseCode, SorgenteInformazioniToken sourceType, String rawResponse, ITokenParser tokenParser) throws Exception {
+	public InformazioniToken(Integer httpResponseCode, SorgenteInformazioniToken sourceType, String rawResponse, ITokenParser tokenParser) throws UtilsException {
 		this.rawResponse = rawResponse;
 		this.sourceType = sourceType;
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		if(jsonUtils.isJson(this.rawResponse)) {
 			JsonNode root = jsonUtils.getAsNode(this.rawResponse);
-			Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
+			Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 			if(readClaims!=null && readClaims.size()>0) {
 				this.claims.putAll(readClaims);
 			}
@@ -97,10 +98,10 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		}
 	}
 	
-	public InformazioniToken(String errorDetails, SorgenteInformazioniToken sourceType, String token) throws Exception {
+	public InformazioniToken(String errorDetails, SorgenteInformazioniToken sourceType, String token) {
 		this(errorDetails,null,null,sourceType, token);
 	}
-	public InformazioniToken(String errorDetails, Integer httpResponseCode, byte[] rawResponse, SorgenteInformazioniToken sourceType, String token) throws Exception {
+	public InformazioniToken(String errorDetails, Integer httpResponseCode, byte[] rawResponse, SorgenteInformazioniToken sourceType, String token) {
 		this.valid = false;
 		this.token = token;
 		this.claims = null;
@@ -115,7 +116,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	
 	@SuppressWarnings("unchecked")
-	public InformazioniToken(boolean saveSourceTokenInfo, InformazioniToken ... informazioniTokens ) throws Exception {
+	public InformazioniToken(boolean saveSourceTokenInfo, InformazioniToken ... informazioniTokens ) throws UtilsException {
 		if(informazioniTokens!=null && informazioniTokens.length>0) {
 			
 			if(saveSourceTokenInfo) {
@@ -226,38 +227,58 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			}
 		}
 	}
-	private static Object getValue(String field, InformazioniToken ... informazioniTokens) throws Exception {
+	private static Object getValue(String field, InformazioniToken ... informazioniTokens) throws UtilsException {
 		Object tmp = null;
 		List<Object> listTmp = new ArrayList<>();
 		String getMethodName = "get"+((field.charAt(0)+"").toUpperCase())+field.substring(1);
-		Method getMethod = InformazioniToken.class.getMethod(getMethodName);
+		Method getMethod = null;
+		try {
+			getMethod = InformazioniToken.class.getMethod(getMethodName);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 		
 		// La fusione avviene per precedenza dall'ultimo fino al primo (a meno che non sia una lista)
-		for (int i = 0; i < informazioniTokens.length; i++) {
-			InformazioniToken infoToken = informazioniTokens[i];
-			Object o = getMethod.invoke(infoToken);
-			if(o!=null) {
-				if(o instanceof List<?>) {
-					List<?> list = (List<?>) o;
-					if(!list.isEmpty()) {
-						for (Object object : list) {
-							if(!listTmp.contains(object)) {
-								listTmp.add(object);
-							}
-						}
-					}
-				}
-				else {
-					tmp = o;
-				}
-			}
-		}
+		tmp = getValue(getMethod, listTmp, informazioniTokens);
 		if(!listTmp.isEmpty()) {
 			return listTmp;
 		}
 		else {
 			return tmp;
 		}
+	}
+	private static Object getValue(Method getMethod, List<Object> listTmp, InformazioniToken ... informazioniTokens) throws UtilsException {
+		Object tmp = null;
+		for (int i = 0; i < informazioniTokens.length; i++) {
+			InformazioniToken infoToken = informazioniTokens[i];
+			Object o = null;
+			try {
+				o = getMethod.invoke(infoToken);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+			if(o!=null) {
+				tmp = getValue(o, listTmp);
+			}
+		}
+		return tmp;
+	}
+	private static Object getValue(Object o, List<Object> listTmp) {
+		Object tmp = null;
+		if(o instanceof List<?>) {
+			List<?> list = (List<?>) o;
+			if(!list.isEmpty()) {
+				for (Object object : list) {
+					if(!listTmp.contains(object)) {
+						listTmp.add(object);
+					}
+				}
+			}
+		}
+		else {
+			tmp = o;
+		}
+		return tmp;
 	}
 		
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
@@ -310,7 +331,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	private InformazioniTokenUserInfo userInfo;
 			
 	// Claims
-	private Map<String,Object> claims = new HashMap<>();
+	private Map<String,Serializable> claims = new HashMap<>();
 		
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 
@@ -340,7 +361,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	private InformazioniNegoziazioneToken retrievedToken;
 		
 	// InformazioniPDND
-	private Map<String,Object> pdnd = null;
+	private Map<String,Serializable> pdnd = null;
 	
 	public TipoInformazioni getType() {
 		return this.type;
@@ -352,7 +373,9 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public boolean isValid() {
 		return this.valid;
 	}
-
+	public boolean getValid() { // clone
+		return this.valid;
+	}
 	public void setValid(boolean valid) {
 		this.valid = valid;
 	}
@@ -360,7 +383,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public String getIss() {
 		return this.iss;
 	}
-
 	public void setIss(String iss) {
 		this.iss = iss;
 	}
@@ -368,7 +390,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public String getSub() {
 		return this.sub;
 	}
-
 	public void setSub(String sub) {
 		this.sub = sub;
 	}
@@ -376,7 +397,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public String getUsername() {
 		return this.username;
 	}
-
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -384,7 +404,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public List<String> getAud() {
 		return this.aud;
 	}
-
 	public void setAud(List<String> aud) {
 		this.aud = aud;
 	}
@@ -392,7 +411,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public Date getExp() {
 		return this.exp;
 	}
-
 	public void setExp(Date exp) {
 		this.exp = exp;
 	}
@@ -400,7 +418,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public Date getIat() {
 		return this.iat;
 	}
-
 	public void setIat(Date iat) {
 		this.iat = iat;
 	}
@@ -408,7 +425,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public Date getNbf() {
 		return this.nbf;
 	}
-
 	public void setNbf(Date nbf) {
 		this.nbf = nbf;
 	}
@@ -416,7 +432,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public String getClientId() {
 		return this.clientId;
 	}
-
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
@@ -431,7 +446,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public List<String> getRoles() {
 		return this.roles;
 	}
-
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
 	}
@@ -439,7 +453,6 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public List<String> getScopes() {
 		return this.scopes;
 	}
-
 	public void setScopes(List<String> scopes) {
 		this.scopes = scopes;
 	}
@@ -451,16 +464,18 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.userInfo = userInfo;
 	}
 	
-	public Map<String, Object> getClaims() {
+	public Map<String, Serializable> getClaims() {
 		return this.claims;
 	}
-
-	public void setClaims(Map<String, Object> claims) {
+	public void setClaims(Map<String, Serializable> claims) {
 		this.claims = claims;
 	}
 			
 	public String getRawResponse() {
 		return this.rawResponse;
+	}
+	public void setRawResponse(String rawResponse) {
+		this.rawResponse = rawResponse;
 	}
 	
 	public String getToken() {
@@ -487,15 +502,24 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public SorgenteInformazioniToken getSourceType() {
 		return this.sourceType;
 	}
+	public void setSourceType(SorgenteInformazioniToken sourceType) { 
+		this.sourceType = sourceType;
+	}
 	
 	public Map<SorgenteInformazioniToken, String> getSourcesTokenInfo() {
 		return this.sourcesTokenInfo;
+	}
+	public void setSourcesTokenInfo(Map<SorgenteInformazioniToken, String> sourcesTokenInfo) {
+		this.sourcesTokenInfo = sourcesTokenInfo;
 	}
 
 	public List<SorgenteInformazioniToken> getSourceTypes() {
 		return this.sourceTypes;
 	}
-
+	public void setSourceTypes(List<SorgenteInformazioniToken> sourceTypes) {
+		this.sourceTypes = sourceTypes;
+	}
+	
 	public InformazioniAttributi getAa() {
 		return this.aa;
 	}
@@ -510,10 +534,10 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.retrievedToken = retrievedToken;
 	}
 	
-	public Map<String, Object> getPdnd() {
+	public Map<String, Serializable> getPdnd() {
 		return this.pdnd;
 	}
-	public void setPdnd(Map<String, Object> pdnd) {
+	public void setPdnd(Map<String, Serializable> pdnd) {
 		this.pdnd = pdnd;
 	}
 }

@@ -23,6 +23,7 @@ package org.openspcoop2.utils.json;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -236,24 +237,24 @@ public abstract class AbstractUtils {
 	
 	// UTILITIES
 	
-	public Map<String, Object> convertToSimpleMap(JsonNode node){
+	public Map<String, Serializable> convertToSimpleMap(JsonNode node){
 		return this.convertToSimpleMap(node, true, false, true, false, ".");
 	}
-	public Map<String, Object> convertToSimpleMap(JsonNode node, String separator){
+	public Map<String, Serializable> convertToSimpleMap(JsonNode node, String separator){
 		return this.convertToSimpleMap(node, true, false, true, false, separator);
 	}
-	public Map<String, Object> convertToSimpleMap(JsonNode node, 
+	public Map<String, Serializable> convertToSimpleMap(JsonNode node, 
 			boolean analyzeArrayNode, boolean analyzeAsStringArrayNode,
 			boolean analyzeObjectNode, boolean analyzeAsStringObjectNode,
 			String separator){
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Serializable> map = new HashMap<>();
 		_convertToSimpleMap(null, node, null, map,
 				analyzeArrayNode, analyzeAsStringArrayNode,
 				analyzeObjectNode, analyzeAsStringObjectNode,
 				separator);
 		return map;
 	}
-	private void _convertToSimpleMap(String name, JsonNode node, String prefix, Map<String, Object> map,
+	private void _convertToSimpleMap(String name, JsonNode node, String prefix, Map<String, Serializable> map,
 			boolean analyzeArrayNode, boolean analyzeAsStringArrayNode,
 			boolean analyzeObjectNode, boolean analyzeAsStringObjectNode,
 			String separator){
@@ -273,7 +274,7 @@ public abstract class AbstractUtils {
 					if(analyzeArrayNode) {
 						ArrayNode array = (ArrayNode) child;
 						if(array.size()>0) {
-							List<String> lString = new ArrayList<>();
+							ArrayList<String> lString = new ArrayList<>();
 							for (int i = 0; i < array.size(); i++) {
 								JsonNode arrayChildNode = array.get(i);
 								if(arrayChildNode instanceof ArrayNode || arrayChildNode instanceof ObjectNode) {
@@ -289,7 +290,7 @@ public abstract class AbstractUtils {
 										lString.add(text);
 								}
 							}
-							if(lString.size()>0) {
+							if(!lString.isEmpty()) {
 								map.put(newPrefix+field, lString);
 							}
 						}
@@ -326,7 +327,7 @@ public abstract class AbstractUtils {
 		else if(node instanceof ArrayNode) {
 			ArrayNode array = (ArrayNode) node;
 			if(array.size()>0) {
-				List<String> lString = new ArrayList<>();
+				ArrayList<String> lString = new ArrayList<>();
 				for (int i = 0; i < array.size(); i++) {
 					JsonNode arrayChildNode = array.get(i);
 					if(arrayChildNode instanceof ArrayNode || arrayChildNode instanceof ObjectNode) {
@@ -342,7 +343,7 @@ public abstract class AbstractUtils {
 							lString.add(text);
 					}
 				}
-				if(lString.size()>0) {
+				if(!lString.isEmpty()) {
 					map.put(name, lString);
 				}
 			}
@@ -365,29 +366,29 @@ public abstract class AbstractUtils {
 	
 	// CONVERT TO MAP 
 	
-	protected Map<String, Object> _convertToMap(Logger log, String source, String raw, List<String> claimsToConvert) {
+	protected Map<String, Serializable> convertToMapEngine(Logger log, String source, String raw, List<String> claimsToConvert) {
 		JsonNode jsonResponse = null;
 		try {
 			jsonResponse = this.getAsNode(raw);
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			// ignore
 		}
-		return _convertToMap(log, source, jsonResponse, claimsToConvert);
+		return convertToMapEngine(log, source, jsonResponse, claimsToConvert);
 	}
-	protected Map<String, Object> _convertToMap(Logger log, String source, byte[]raw, List<String> claimsToConvert) {
+	protected Map<String, Serializable> convertToMapEngine(Logger log, String source, byte[]raw, List<String> claimsToConvert) {
 		JsonNode jsonResponse = null;
 		try {
 			jsonResponse = this.getAsNode(raw);
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			// ignore
 		}
-		return _convertToMap(log, source, jsonResponse, claimsToConvert);
+		return convertToMapEngine(log, source, jsonResponse, claimsToConvert);
 	}
-	private Map<String, Object> _convertToMap(Logger log, String source, JsonNode jsonResponse, List<String> claimsToConvert) {
-		Map<String, Object> returnMap = new HashMap<>();
+	private Map<String, Serializable> convertToMapEngine(Logger log, String source, JsonNode jsonResponse, List<String> claimsToConvert) {
+		Map<String, Serializable> returnMap = new HashMap<>();
 			
 		try {
-			if(jsonResponse!=null && jsonResponse instanceof ObjectNode) {
+			if(jsonResponse instanceof ObjectNode) {
 						
 				Iterator<String> iterator = jsonResponse.fieldNames();
 				while(iterator.hasNext()) {
@@ -403,37 +404,37 @@ public abstract class AbstractUtils {
 								if(array.size()>0) {
 									JsonNode arrayFirstChildNode = array.get(0);
 									if(arrayFirstChildNode instanceof ValueNode) {
-										List<Object> l = new ArrayList<>();
+										ArrayList<Serializable> l = new ArrayList<>();
 										for (int i = 0; i < array.size(); i++) {
 											JsonNode arrayChildNode = array.get(i);
-											Map<String, Object> readClaims = this.convertToSimpleMap(arrayChildNode);
+											Map<String, Serializable> readClaims = this.convertToSimpleMap(arrayChildNode);
 											if(readClaims!=null && readClaims.size()>0) {
 												if(readClaims.size()==1) {
 													for (String claim : readClaims.keySet()) {
-														Object value = readClaims.get(claim);
+														Serializable value = readClaims.get(claim);
 														l.add(value);
 													}
 												}
 												else {
 													for (String claim : readClaims.keySet()) {
-														Object value = readClaims.get(claim);
-														_addAttribute(returnMap, claim==null ? field : claim, value);
+														Serializable value = readClaims.get(claim);
+														addAttributeEngine(returnMap, claim==null ? field : claim, value);
 													}
 												}
 											}
 										}
 										if(!l.isEmpty()) {
-											_addAttribute(returnMap, field, l);
+											addAttributeEngine(returnMap, field, l);
 										}
 									}
 									else {
 										for (int i = 0; i < array.size(); i++) {
 											JsonNode arrayChildNode = array.get(i);
-											Map<String, Object> readClaims = this.convertToSimpleMap(arrayChildNode);
+											Map<String, Serializable> readClaims = this.convertToSimpleMap(arrayChildNode);
 											if(readClaims!=null && readClaims.size()>0) {
 												for (String claim : readClaims.keySet()) {
-													Object value = readClaims.get(claim);
-													_addAttribute(returnMap, claim, value);
+													Serializable value = readClaims.get(claim);
+													addAttributeEngine(returnMap, claim, value);
 												}
 											}
 										}
@@ -441,11 +442,11 @@ public abstract class AbstractUtils {
 								}
 							}
 							else {
-								Map<String, Object> readClaims = this.convertToSimpleMap(selectedClaim);
+								Map<String, Serializable> readClaims = this.convertToSimpleMap(selectedClaim);
 								if(readClaims!=null && readClaims.size()>0) {
 									for (String claim : readClaims.keySet()) {
-										Object value = readClaims.get(claim);
-										_addAttribute(returnMap, claim, value);
+										Serializable value = readClaims.get(claim);
+										addAttributeEngine(returnMap, claim, value);
 									}
 								}
 							}
@@ -461,7 +462,7 @@ public abstract class AbstractUtils {
 
 		return returnMap;
 	}
-	private void _addAttribute(Map<String, Object> attributes, String claim, Object value) {
+	private void addAttributeEngine(Map<String, Serializable> attributes, String claim, Serializable value) {
 		if(attributes.containsKey(claim)) {
 			for (int j = 1; j < 100; j++) {
 				String newKeyClaim = "_"+claim+"_"+j;

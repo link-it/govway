@@ -79,9 +79,11 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		String tokenInvalid = buildJWT_dates(false, false, false, false, // tutte buone, elimino la risposta introspection dopo 
+				mapExpectedTokenInfo);
+		
 		Map<String, String> headers = new HashMap<>();
-		headers.put("test-introspection", buildJWT_dates(false, false, false, false, // tutte buone, elimino la risposta introspection dopo 
-				mapExpectedTokenInfo));
+		headers.put("test-introspection", tokenInvalid);
 		headers.put("test-username", Utilities.username);
 		
 		File f = new File("/tmp/introspectionResponse.json");
@@ -89,7 +91,7 @@ public class IntrospectionTest extends ConfigLoader {
 		
 		Utilities._test(logCore, validazione, "success", headers,  null,
 				"Risposta del servizio di Introspection non valida: Connessione terminata con errore (codice trasporto: 500)",
-				null, Utilities.getMapExpectedTokenInfoInvalid());
+				null, Utilities.getMapExpectedTokenInfoInvalid(tokenInvalid));
 	}
 		
 	

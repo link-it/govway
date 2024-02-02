@@ -223,7 +223,7 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 		return this.tokenClaims;
 	}
 
-	public void setTokenClaims(Map<String, Object> tokenClaims) {
+	public void setTokenClaims(Map<String, Serializable> tokenClaims) {
 		this.tokenClaims = new HashMap<>();
 		if(tokenClaims!=null && !tokenClaims.isEmpty()) {
 			for (String key : tokenClaims.keySet()) {

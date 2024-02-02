@@ -20,6 +20,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.plugin.classes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class AttributeAuthorityParserCustom extends BasicRetrieveAttributeAuthor
 	}
 	
 	@Override
-	public void init(String raw, Map<String, Object> claims) {
+	public void init(String raw, Map<String, Serializable> claims) {
 		
 		try {
 			String id = Utilities.readIdentificativoTest();

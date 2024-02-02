@@ -1264,7 +1264,23 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			// token negoziazione
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken = null;
 			if(this.transazioniRegistrazioneRetrieveToken_saveAsTokenInfo) {
-				informazioniNegoziazioneToken = transaction.getInformazioniNegoziazioneToken();
+				if(transaction.getInformazioniNegoziazioneToken()!=null) {
+					informazioniNegoziazioneToken = transaction.getInformazioniNegoziazioneToken();
+					if(
+							(
+									op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature() &&
+									(informazioniNegoziazioneToken.getAccessToken()!=null || informazioniNegoziazioneToken.getRefreshToken()!=null)
+							)
+							||
+							(
+									op2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature() &&
+									informazioniNegoziazioneToken.getRequest()!=null
+							)
+					) {
+						// clone for fix 'Caused by: java.util.ConcurrentModificationException' e non modificare informazione in cache dovuto alla deleteSignature e alla sostituzione del token
+						informazioniNegoziazioneToken = (InformazioniNegoziazioneToken) informazioniNegoziazioneToken.clone();
+					}
+				}
 				
 				if(informazioniNegoziazioneToken!=null) {
 					if(op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature()) {
@@ -1272,25 +1288,23 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							String originale = informazioniNegoziazioneToken.getAccessToken();
 							String senzaSignature = TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getAccessToken());
 							informazioniNegoziazioneToken.setAccessToken(senzaSignature);
-							TokenUtilities.replaceTokenInMap(informazioniNegoziazioneToken.getClaims(), originale, senzaSignature);
+							informazioniNegoziazioneToken.setClaims(TokenUtilities.replaceTokenInMapByValue(informazioniNegoziazioneToken.getClaims(), originale, senzaSignature));
 							informazioniNegoziazioneToken.replaceInRawResponse(originale, senzaSignature);
 						}
 						if(informazioniNegoziazioneToken.getRefreshToken()!=null) {
 							String originale = informazioniNegoziazioneToken.getRefreshToken();
 							String senzaSignature = TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getRefreshToken());
 							informazioniNegoziazioneToken.setRefreshToken(senzaSignature);
-							TokenUtilities.replaceTokenInMap(informazioniNegoziazioneToken.getClaims(), originale, senzaSignature);
+							informazioniNegoziazioneToken.setClaims(TokenUtilities.replaceTokenInMapByValue(informazioniNegoziazioneToken.getClaims(), originale, senzaSignature));
 							informazioniNegoziazioneToken.replaceInRawResponse(originale, senzaSignature);
 						}
 					}
 					
-					if(informazioniNegoziazioneToken.getRequest()!=null) {
-						if(informazioniNegoziazioneToken.getRequest().getJwtClientAssertion()!=null && 
-								informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()!=null) {
-							if(op2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature()) {
-								informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().setToken(TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()));
-							}
-						}
+					if(informazioniNegoziazioneToken.getRequest()!=null &&
+						informazioniNegoziazioneToken.getRequest().getJwtClientAssertion()!=null && 
+						informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()!=null &&
+						op2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature()) {
+						informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().setToken(TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()));
 					}
 				}
 			}
@@ -1298,29 +1312,35 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			// token info
 			if(this.transazioniRegistrazioneTokenInformazioniNormalizzate && transaction.getInformazioniToken()!=null) {
 				
+				InformazioniToken informazioniToken = transaction.getInformazioniToken();
+				if(informazioniToken.getToken()!=null && op2Properties.isGestioneTokenSaveTokenInfoValidationFailedExcludeJwtSignature()) {
+					// clone for fix 'Caused by: java.util.ConcurrentModificationException' e non modificare informazione in cache dovuto alla deleteSignature e alla sostituzione del token
+					informazioniToken = (InformazioniToken) informazioniToken.clone();
+				}
+				
 				// token validazione
-				if(transaction.getInformazioniToken().getToken()!=null && op2Properties.isGestioneTokenSaveTokenInfoValidationFailedExcludeJwtSignature()) {
-					transaction.getInformazioniToken().setToken(TokenUtilities.deleteSignature(transaction.getInformazioniToken().getToken()));
+				if(informazioniToken.getToken()!=null && op2Properties.isGestioneTokenSaveTokenInfoValidationFailedExcludeJwtSignature()) {
+					informazioniToken.setToken(TokenUtilities.deleteSignature(informazioniToken.getToken()));
 				}
 				
 				// token negoziazione
 				if(informazioniNegoziazioneToken!=null) {
-					transaction.getInformazioniToken().setRetrievedToken(informazioniNegoziazioneToken);
+					informazioniToken.setRetrievedToken(informazioniNegoziazioneToken);
 				}
 				
 				// attributi
 				InformazioniAttributi informazioniAttributi = null;
 				if(!this.transazioniRegistrazioneAttributiInformazioniNormalizzate) {
-					informazioniAttributi = transaction.getInformazioniToken().getAa();
-					transaction.getInformazioniToken().setAa(null);
+					informazioniAttributi = informazioniToken.getAa();
+					informazioniToken.setAa(null);
 				}
 				try {
-					transactionDTO.setTokenInfo(transaction.getInformazioniToken().toJson());
-				}catch(Throwable t) {
+					transactionDTO.setTokenInfo(informazioniToken.toJson());
+				}catch(Exception t) {
 					this.logger.error("Serializzazione informazioni token non riuscita: "+t.getMessage(),t);
 				}
 				if(informazioniAttributi!=null) {
-					transaction.getInformazioniToken().setAa(informazioniAttributi);
+					informazioniToken.setAa(informazioniAttributi);
 				}
 								
 			}

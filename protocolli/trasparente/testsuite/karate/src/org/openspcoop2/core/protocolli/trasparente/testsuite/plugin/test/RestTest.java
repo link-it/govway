@@ -65,6 +65,8 @@ public class RestTest extends ConfigLoader {
 	
 	private static void _test(TipoServizio tipoServizio) throws Exception {
 
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetAllCache(logCore);
+		
 		String id = IDUtilities.generateAlphaNumericRandomString(10);
 		File f = new File("/tmp/govway.plugins.testsuite.id");
 		f.delete();

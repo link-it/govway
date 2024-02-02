@@ -26,10 +26,11 @@ Sono stati risolti i seguenti bug:
 
 - non venivano utilizzati i tempi di connection e read timeout impostati a livello globale; l'anomalia è stata risolta e nell'occasione sono stati rivisti i tempi di default utilizzati a livello globale per una nuova installazione:
 
-	- connection timeout: modificato da 10 a 5 secondi
-	- read timeout sulle erogazioni: modificato da 120 a 60 secondi
-	- read timeout sulle fruizioni: modificato da 150 a 65 secondi
+	- connection timeout: modificato da 10 a 5 secondi;
+	- read timeout sulle erogazioni: modificato da 120 a 60 secondi;
+	- read timeout sulle fruizioni: modificato da 150 a 65 secondi.
 
+- risolta anomalia che si verificava in alcuni casi limite durante il tracciamento delle fruizioni di API con negoziazione token; l'errore segnalato nei log era: "PostOutResponseHandler [transazioni]Errore durante la scrittura della transazione sul database (Lettura dati Transazione): Caused by: java.util.ConcurrentModificationException ... at org.openspcoop2.pdd.core.token.TokenUtilities.replaceTokenInMap(TokenUtilities.java)".
 
 Sono stati risolti i seguenti bug relativi al profilo di interoperabilità "ModI":
 
