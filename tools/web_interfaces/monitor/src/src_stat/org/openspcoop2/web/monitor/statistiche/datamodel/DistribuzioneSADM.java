@@ -126,10 +126,12 @@ public class DistribuzioneSADM extends BaseDataModel<String, ResDistribuzione, I
 					/**System.out.println("currentSearchSize["+this.currentSearchSize+"]");*/
 				}
 				
-				for (ResDistribuzione r : list) {
-					this.wrappedData.put(r.getRisultato(), r);
-					this.wrappedKeys.add(r.getRisultato());
-					visitor.process(context, r.getRisultato(), argument);
+				if(list!=null) {
+					for (ResDistribuzione r : list) {
+						this.wrappedData.put(r.getRisultato(), r);
+						this.wrappedKeys.add(r.getRisultato());
+						visitor.process(context, r.getRisultato(), argument);
+					}
 				}
 			}
 		} catch (Exception e) {

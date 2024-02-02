@@ -7003,6 +7003,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(this.dao==null) {
 				throw new ServiceException("DAO unknown");
 			}
+			if(model==null) {
+				throw new ServiceException("Model unknown");
+			}
 			
 			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.dao).getFieldConverter(); 
 			

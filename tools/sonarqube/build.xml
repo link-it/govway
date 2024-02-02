@@ -926,6 +926,8 @@
 				<!-- Falsi positivi -->
 				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/monitor/core.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.monitor.falsePositives}"/>
+				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/monitor/enum.properties"/>
+				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.monitor.enum.falsePositives}"/>
 				<property file="${sonar.falsePositivesDir}/tools/web_interfaces/monitor/security_hotspots.properties"/>
 				<var name="govway.falsePositive" value="${govway.falsePositive},${tools.web_interfaces.monitor.sec.falsePositives}"/>
 
