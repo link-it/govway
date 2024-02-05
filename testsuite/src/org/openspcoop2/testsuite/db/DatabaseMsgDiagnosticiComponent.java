@@ -905,6 +905,14 @@ public class DatabaseMsgDiagnosticiComponent {
 					}
 				}
 				
+				if(!casoSpecialeEmail){
+					if(messaggio.contains("EsempioFruitoreTrasparentePrincipal2@MinisteroFruitore")){
+						String tmp = new String(messaggio);
+						tmp = tmp.replace("EsempioFruitoreTrasparentePrincipal2@MinisteroFruitore", "");
+						casoSpecialeEmail = tmp.contains("@")==false;
+					}
+				}
+				
 				if(casoSpecialeEmail==false){
 					resultsList.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
 							": "+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));
