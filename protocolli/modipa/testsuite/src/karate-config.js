@@ -19,6 +19,8 @@ function fn() {
   
   return { 
     govway_base_path: karate.properties["govway_base_path"],
+    jmx_username: karate.properties["jmx_username"],
+    jmx_password: karate.properties["jmx_password"],
     govwayDbConfig: { 
       username: karate.properties['db_username'],
       password: karate.properties['db_password'],

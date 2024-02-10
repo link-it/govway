@@ -1,10 +1,11 @@
-Feature: Controllo traccia IDAR01 con kid
+Feature: Controllo traccia IDAR01 con authorization token generato da PDND
 
-Scenario: Controllo traccia IDAR01 con kid
+Scenario: Controllo traccia IDAR01 con authorization token generato da PDND
 
 
 * def profilo_sicurezza = karate.get('profilo_sicurezza', 'IDAR01')
 * def profilo_interazione = karate.get('profilo_interazione', 'bloccante')
+* def token_auth = karate.get('token_auth', 'Authorization ModI')
 * def kid = karate.get('kid', 'N.D.')
 
 * def other_checks = karate.get('other_checks', [])
@@ -17,14 +18,7 @@ Scenario: Controllo traccia IDAR01 con kid
     { name: 'ProfiloInterazione', value: profilo_interazione },
     { name: 'ProfiloSicurezzaCanale', value: 'IDAC01' },
     { name: 'ProfiloSicurezzaMessaggio', value: profilo_sicurezza },
-    { name: 'ProfiloSicurezzaMessaggio-IssuedAt', value: '#string' },
-    { name: 'ProfiloSicurezzaMessaggio-NotBefore', value: '#string' },
-    { name: 'ProfiloSicurezzaMessaggio-Expiration', value: '#string' },
-    { name: 'ProfiloSicurezzaMessaggio-MessageId', value: '#uuid' },
-    { name: 'ProfiloSicurezzaMessaggio-ClientId', value: token.payload.client_id },
-    { name: 'ProfiloSicurezzaMessaggio-Issuer', value: token.payload.iss },
-    { name: 'ProfiloSicurezzaMessaggio-Subject', value: token.payload.sub },
-    { name: 'ProfiloSicurezzaMessaggio-Kid', value: kid }
+    { name: 'GenerazioneTokenIDAuth', value: token_auth }
 ])
 """
 
@@ -57,6 +51,6 @@ else {
 """
 
 
-* def check_tracciamento_diagnostica = read('classpath:utils/check-tracciamento-diagnostica.feature') 
+* def check_tracciamento_diagnostica_pa_error = read('classpath:utils/check-tracciamento-diagnostica-pa-error.feature') 
 # Verifico che le tracce e i diagnostici utilizzino i corretti id messaggio
-* call check_tracciamento_diagnostica ({ tid: tid, traceMessageId:id_messaggio_traccia, tipo:tipo, requestMessageId:requestMessageIdValue })
+* call check_tracciamento_diagnostica_pa_error ({ tid: tid, traceMessageId:id_messaggio_traccia, tipo:tipo, requestMessageId:requestMessageIdValue })

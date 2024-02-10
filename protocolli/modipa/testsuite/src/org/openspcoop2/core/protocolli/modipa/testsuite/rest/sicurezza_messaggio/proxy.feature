@@ -72,8 +72,13 @@ Scenario: isTest('connettivita-base')
 
     * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_match })
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01/v1')
-    
+        
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * def server_token_match =
     """
@@ -290,11 +295,17 @@ Scenario: isTest('enabled-security-on-action')
 
     * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_match })
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     # Cambia questo
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01CRUDNoDefaultSecurity/v1' 
 
     * karate.proceed (url_invocazione_erogazione)
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     # Cambia il sub
     * def server_token_match =
     """
@@ -684,7 +695,6 @@ Scenario: isTest('connettivita-base-header-agid')
     * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01HeaderAgid/v1')
-    
 
     * def server_token_match =
     """
@@ -1045,7 +1055,14 @@ Scenario: isTest('connettivita-base-idar02')
 
     * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_match, kind: 'Bearer' })
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR02/v1')    
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
 
     * def server_token_match =
     """
@@ -1132,7 +1149,13 @@ Scenario: isTest('connettivita-base-idar02-header-agid')
 
     * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
 
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0],'AGID')
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR02HeaderAgid/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * def server_token_match =
     """
@@ -1230,9 +1253,14 @@ Scenario: isTest('connettivita-base-idar03')
     """
     * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
 
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
-    
     * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_id = get request_token $.payload.jti
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+    
     * def request_digest = get request_token $.payload.signed_headers..digest
 
     * match requestHeaders['Digest'][0] == request_digest[0]
@@ -2232,9 +2260,14 @@ Scenario: isTest('connettivita-base-idar03-header-bearer')
     """
     * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_match, kind: 'Bearer' })
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderBearer/v1')
     
-    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     * def request_digest = get request_token $.payload.signed_headers..digest
 
     * match requestHeaders['Digest'][0] == request_digest[0]
@@ -2485,6 +2518,7 @@ Scenario: isTest('idar03-token-criteri-personalizzati')
     """
     ({
         'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Message-ID': responseHeaders['GovWay-Message-ID'][0],
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -2546,8 +2580,13 @@ Scenario: isTest('doppi-header-idar03')
     * def request_digest = get client_token_integrity $.payload.signed_headers..digest
     * match requestHeaders['Digest'][0] == request_digest[0]
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
 
     * def server_token_authorization_match =
@@ -2791,9 +2830,15 @@ Scenario: isTest('doppi-header-authorization-richiesta-integrity-risposta')
 		* match requestHeaders['Agid-JWT-Signature'] == '#notpresent' 
 		* match requestHeaders['Digest'] == '#notpresent' 
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
     
-		* match responseHeaders['Authorization'] == '#notpresent' 
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
+    * match responseHeaders['Authorization'] == '#notpresent' 
     
     * def server_token_integrity_match =
     """
@@ -2847,8 +2892,14 @@ Scenario: isTest('doppi-header-solo-authorization-richiesta')
 		* match requestHeaders['Agid-JWT-Signature'] == '#notpresent' 
 		* match requestHeaders['Digest'] == '#notpresent' 
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     * def server_token_authorization_match =
     """
     ({
@@ -2935,8 +2986,14 @@ Scenario: isTest('doppi-header-solo-authorization-richiesta-risposta')
 
     * request ''
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1')
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     * def server_token_authorization_match =
     """
     ({
@@ -3870,8 +3927,13 @@ Scenario: isTest('doppi-header-differenti-id-authorization')
     * def client_token_integrity_jti = get client_token_integrity $.payload.jti
     * match client_token_authorization_jti != client_token_integrity_jti
 
+    * def request_id = get client_token_authorization $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicatiDifferenteIDconDefaultAuthorization/v1')
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     * def server_token_authorization = decodeToken(responseHeaders['Authorization'][0], "Bearer")
     * def server_token_integrity = decodeToken(responseHeaders['Agid-JWT-Signature'][0], "AGID")
     
@@ -3899,8 +3961,13 @@ Scenario: isTest('doppi-header-differenti-id-agid-jwt-signature')
     * def client_token_integrity_jti = get client_token_integrity $.payload.jti
     * match client_token_authorization_jti != client_token_integrity_jti
 
+    * def request_id = get client_token_integrity $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicatiDifferenteIDconDefaultAgidJWTSignature/v1')
-    
+        
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     * def server_token_authorization = decodeToken(responseHeaders['Authorization'][0], "Bearer")
     * def server_token_integrity = decodeToken(responseHeaders['Agid-JWT-Signature'][0], "AGID")
     
@@ -4016,9 +4083,14 @@ Scenario: isTest('check-authz-idar03')
     """
     * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
 
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CheckAuthz/v1')
     
-    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     * def request_digest = get request_token $.payload.signed_headers..digest
 
     * match requestHeaders['Digest'][0] == request_digest[0]
@@ -4112,9 +4184,12 @@ Scenario: isTest('check-authz-doppi-header-idar03')
     * def request_digest = get client_token_integrity $.payload.signed_headers..digest
     * match requestHeaders['Digest'][0] == request_digest[0]
 
+    * def request_id = get client_token_authorization $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicatiCheckAuthz/v1')
     
-
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * def server_token_authorization_match =
     """
@@ -4241,8 +4316,12 @@ Scenario: isTest('check-authz-oauth2-doppi-header-idar03')
     * def request_digest = get client_token_integrity $.payload.signed_headers..digest
     * match requestHeaders['Digest'][0] == request_digest[0]
 
+    * def request_id = get client_token_authorization $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicatiCheckAuthzOAuth2/v1')
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
 
     * def server_token_authorization_match =
@@ -4341,8 +4420,12 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-authorizatio
     * def request_digest = get client_token_authorization $.payload.signed_headers..digest
     * match requestHeaders['Digest'][0] == request_digest[0]
 
+    * def request_id = get client_token_authorization $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03SecurityTokenTrasformazione/v1')
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
 
     * def server_token_authorization_match =
@@ -4406,8 +4489,13 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-integrity-to
     * def request_digest = get client_token_integrity $.payload.signed_headers..digest
     * match requestHeaders['Digest'][0] == request_digest[0]
 
+    * def request_id = get client_token_integrity $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03SecurityTokenTrasformazione/v1')
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     
     * def server_token_integrity_match =
     """
@@ -4469,9 +4557,14 @@ Scenario: isTest('connettivita-base-idar0302')
     """
     * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
 
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0],'AGID')
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302/v1')
     
-    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     * def request_digest = get request_token $.payload.signed_headers..digest
 
     * match requestHeaders['Digest'][0] == request_digest[0]
@@ -4617,9 +4710,14 @@ Scenario: isTest('connettivita-base-idar0302-header-bearer')
     """
     * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_match, kind: 'Bearer' })
 
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302HeaderBearer/v1')
-    
     * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302HeaderBearer/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+    
     * def request_digest = get request_token $.payload.signed_headers..digest
 
     * match requestHeaders['Digest'][0] == request_digest[0]
@@ -4845,13 +4943,19 @@ Scenario: isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authoriza
     })
     """
 
-		* call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match_custom_claims_integrity, kind: "AGID" })
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match_custom_claims_integrity, kind: "AGID" })
 
     # Cambia questo
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0302HeaderDuplicatiCorniceSicurezzaCustomClaim/v1'
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (url_invocazione_erogazione)
-    
+ 
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+   
     # Check claims custom
     * def server_token_match_claims_authorization =
     """
@@ -5057,10 +5161,15 @@ Scenario: isTest('idar03-custom-single-header') || isTest('idar0302-custom-singl
     """
     * call checkToken ({token: requestHeaders['CustomTestSuite-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
 
-    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03Custom/v1')
-    
     * def request_token = decodeToken(requestHeaders['CustomTestSuite-JWT-Signature'][0], "AGID")
     * karate.log("Ret: ", request_token)
+    * def request_id = get request_token $.payload.jti
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03Custom/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id    
+
     * match request_token.payload.signed_headers == "#notpresent"
     
     * match requestHeaders['Digest'] == '#notpresent'
@@ -5272,8 +5381,13 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
     * match client_token_authorization.payload.signed_headers == "#notpresent"
     * match client_token_integrity.payload.signed_headers == "#notpresent"
 
+    * def request_id = get client_token_authorization $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
 
 
     * def server_token_authorization_match =
@@ -5907,9 +6021,14 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
 
     * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
 
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
     
-    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     * def request_digest = get request_token $.payload.signed_headers..digest
 
     * match requestHeaders['Digest'][0] == request_digest[0]
@@ -6747,7 +6866,8 @@ Scenario: isTest('idar04-token-risposta-jwk') ||
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04-'+tipoTest+'/v1')
 
-    * def clientIdExpected = 'anonymous'
+    #* def clientIdExpected = 'anonymous'
+    * def clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
     * def audExpected = 'RestBlockingIDAR04-'+tipoTest+'/v1'
 
     * def server_token_match =
@@ -6777,6 +6897,7 @@ Scenario: isTest('idar04-token-risposta-jwk') ||
     """
     ({
         'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Message-ID': responseHeaders['GovWay-Message-ID'][0]
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
@@ -7219,20 +7340,13 @@ Scenario: isTest('audience-differenti-ko-idar04-jwk')
 #       IDAR0402         #
 ########################
 
-Scenario: isTest('connettivita-base-idar0402-pdnd') ||
-		isTest('connettivita-base-idar0402-keypair')
+Scenario: isTest('connettivita-base-idar0402-pdnd')
 
     * def tipoTest = 'N.D.'
     * eval
     """
     if (isTest('connettivita-base-idar0402-pdnd')) {
       tipoTest = 'PDND'
-    }
-    """
-    * eval
-    """
-    if (isTest('connettivita-base-idar0402-keypair')) {
-      tipoTest = 'KeyPair'
     }
     """
 
@@ -7243,8 +7357,7 @@ Scenario: isTest('connettivita-base-idar0402-pdnd') ||
 
     * eval
     """
-    if (isTest('connettivita-base-idar0402-pdnd') ||
-		isTest('connettivita-base-idar0402-keypair')) {
+    if (isTest('connettivita-base-idar0402-pdnd')) {
       kidExpected = 'KID-ApplicativoBlockingIDA01'
       clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
       subExpected = 'ApplicativoBlockingIDA01-CredenzialePrincipal'
@@ -7262,6 +7375,122 @@ Scenario: isTest('connettivita-base-idar0402-pdnd') ||
       clientIdFruizioneExpected = 'RestBlockingIDAR0402-PDND/v1'
     }
     """
+
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidFruizioneExpected },
+        payload: { 
+            aud: audFruizioneExpected,
+            client_id: clientIdFruizioneExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: audFruizioneExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' }
+            ]
+        }
+    })
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: 'purposeId-'+subExpected
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_id = get request_token $.payload.jti
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402-'+tipoTest+'/v1')
+    
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * match requestHeaders['Digest'][0] == request_digest[0]
+
+    * karate.log("Ret: ", responseHeaders)
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: clientIdExpected,
+            client_id: 'ExampleServer'+tipoTest,
+            iss: 'DemoSoggettoErogatore',
+            sub: audExpected,
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json' }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def response_token = decodeToken(responseHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def response_digest = get response_token $.payload.signed_headers..digest
+    
+    * match responseHeaders['Digest'][0] == response_digest[0]
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+
+Scenario: isTest('connettivita-base-idar0402-keypair')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('connettivita-base-idar0402-keypair')) {
+      tipoTest = 'KeyPair'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR0402-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('connettivita-base-idar0402-keypair')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01-CredenzialePrincipal'
+    }
+    """
+
+    * def kidFruizioneExpected = 'N.D.'
+    * def audFruizioneExpected = 'N.D.'
+    * def clientIdFruizioneExpected = 'N.D.'
     * eval
     """
     if (isTest('connettivita-base-idar0402-keypair')) {
@@ -7309,8 +7538,14 @@ Scenario: isTest('connettivita-base-idar0402-pdnd') ||
 
     * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
 
+    * def request_token_authorization = decodeToken(requestHeaders['Authorization'][0], "Bearer")
+    * def request_id = get request_token_authorization $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402-'+tipoTest+'/v1')
     
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
     * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
     * def request_digest = get request_token $.payload.signed_headers..digest
 
@@ -7350,6 +7585,9 @@ Scenario: isTest('connettivita-base-idar0402-pdnd') ||
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
 
 
 Scenario: isTest('riutilizzo-token-idar0402-pdnd') ||
@@ -7529,7 +7767,13 @@ Scenario: isTest('idar04-custom-header-pdnd') ||
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * match requestHeaders['GovWay-Integration'] == '#notpresent'
 
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-'+tipoTest+'/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
 
     * karate.log("Ret: ", responseHeaders)
 
@@ -7698,7 +7942,13 @@ Scenario: isTest('idar04-custom-header-pdnd-get-without-custom')
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * match requestHeaders['GovWay-Integration'] == '#notpresent'
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-'+tipoTest+'/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * karate.log("Ret: ", responseHeaders)
 

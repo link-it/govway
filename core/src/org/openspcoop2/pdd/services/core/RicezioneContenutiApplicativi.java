@@ -32,6 +32,7 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -5264,7 +5265,17 @@ public class RicezioneContenutiApplicativi {
 		// -- REFRESH Impostation Risposta dell'Header Trasporto o se l'invocazione e' stata attiva dall'IntegrationManager --
 		// Refresh necessario in seguito alla potenziale impostazione della collaborazione e Profilo di Collaborazione
 		// ed eventuali altre future informazioni non subito disponibili
-		headerIntegrazioneRisposta.getBusta().setID(idMessageRequest);
+		
+		String jtiIdModIRequest = null;
+		if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID)) {
+			jtiIdModIRequest = (String) pddContext.get(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID);
+		}
+		if(jtiIdModIRequest!=null && StringUtils.isNotEmpty(jtiIdModIRequest) && !jtiIdModIRequest.equals(idMessageRequest)) {
+			headerIntegrazioneRisposta.getBusta().setID(jtiIdModIRequest);
+		}
+		else {
+			headerIntegrazioneRisposta.getBusta().setID(idMessageRequest);
+		}
 		OutResponsePDMessage outResponsePDMessage = new OutResponsePDMessage();
 		outResponsePDMessage.setBustaRichiesta(bustaRichiesta);
 		Object bustaRispostaObject = null;

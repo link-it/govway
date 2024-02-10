@@ -106,6 +106,9 @@ public class Costanti {
 	public static final MapKey<String> CORS_PREFLIGHT_REQUEST_VIA_GATEWAY = Map.newMapKey("CORS_PREFLIGHT_REQUEST_VIA_GATEWAY");
 	public static final MapKey<String> CORS_PREFLIGHT_REQUEST_TRASPARENTE = Map.newMapKey("CORS_PREFLIGHT_REQUEST_TRASPARENTE");
 	
+	public static final MapKey<String> MODI_JTI_REQUEST_ID = Map.newMapKey("MODI_JTI_REQUEST_ID");
+	public static final MapKey<String> MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC = Map.newMapKey("MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC");
+	
 	public static final MapKey<String> CONSEGNA_MULTIPLA_SINCRONA_CONFIGURAZIONE = Map.newMapKey("CONSEGNA_MULTIPLA_SINCRONA_CONFIGURAZIONE");
 	public static final MapKey<String> CONSEGNA_MULTIPLA_SINCRONA = Map.newMapKey("CONSEGNA_MULTIPLA_SINCRONA");
 	public static final MapKey<String> CONSEGNA_MULTIPLA_CONNETTORI = Map.newMapKey("CONSEGNA_MULTIPLA_CONNETTORI");

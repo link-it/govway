@@ -388,6 +388,7 @@ public class ModIProperties {
 			isValidazioneBufferEnabled();
 			isRiferimentoIDRichiestaPortaDelegataRequired();
 			isRiferimentoIDRichiestaPortaApplicativaRequired();
+			isTokenOAuthUseJtiIntegrityAsMessageId();
 			
 			/* **** SOAP FAULT (Generati dagli attori esterni) **** */
 			
@@ -4207,6 +4208,35 @@ public class ModIProperties {
     	}
     	
     	return this.isRiferimentoIDRichiestaPortaApplicativaRequired;
+	}
+    
+	private Boolean isTokenOAuthUseJtiIntegrityAsMessageId= null;
+	private Boolean isTokenOAuthUseJtiIntegrityAsMessageIdRead= null;
+    public Boolean isTokenOAuthUseJtiIntegrityAsMessageId(){
+    	if(this.isTokenOAuthUseJtiIntegrityAsMessageIdRead==null){
+    		String pName = "org.openspcoop2.protocol.modipa.tokenOAuthIntegrity.useJtiIntegrityAsMessageId";
+	    	try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+				
+				if (value != null){
+					value = value.trim();
+					this.isTokenOAuthUseJtiIntegrityAsMessageId = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, true));
+					this.isTokenOAuthUseJtiIntegrityAsMessageId = true;
+				}
+				
+				this.isTokenOAuthUseJtiIntegrityAsMessageIdRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprietà '"+pName+"' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				this.isTokenOAuthUseJtiIntegrityAsMessageId = true;
+				
+				this.isTokenOAuthUseJtiIntegrityAsMessageIdRead = true;
+			}
+    	}
+    	
+    	return this.isTokenOAuthUseJtiIntegrityAsMessageId;
 	}
 	
 	

@@ -975,6 +975,17 @@ public final class CostantiDB {
     public static final String MODIPA_KEYSTORE_FRUIZIONE = "fruizione";
     public static final String MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY = "token";
     
+	// COSTANTI buste
+	
+	public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE = "ProfiloSicurezzaCanale";
+    
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO = "ProfiloSicurezzaMessaggio";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN = "GenerazioneTokenIDAuth";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID = "ProfiloSicurezzaMessaggio-MessageId";    
+    
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN = "ProfiloSicurezzaAudit";
+    public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_SCHEMA = "ProfiloSicurezzaAudit-SchemaDati";
+    
     
     /**
      * STATO FUNZIONALITA

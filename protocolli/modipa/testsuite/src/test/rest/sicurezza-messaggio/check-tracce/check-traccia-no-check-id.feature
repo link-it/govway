@@ -19,7 +19,7 @@ Scenario: Controllo traccia IDAR01
     { name: 'ProfiloSicurezzaMessaggio-IssuedAt', value: '#string' },
     { name: 'ProfiloSicurezzaMessaggio-NotBefore', value: '#string' },
     { name: 'ProfiloSicurezzaMessaggio-Expiration', value: '#string' },
-    { name: 'ProfiloSicurezzaMessaggio-AuthorizationMessageId', value: '#uuid' },
+    { name: 'ProfiloSicurezzaMessaggio-MessageId', value: '#uuid' },
     { name: 'ProfiloSicurezzaMessaggio-Audience', value: token.payload.aud },
     { name: 'ProfiloSicurezzaMessaggio-ClientId', value: token.payload.client_id },
     { name: 'ProfiloSicurezzaMessaggio-Issuer', value: token.payload.iss },

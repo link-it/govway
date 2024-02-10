@@ -46,6 +46,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDResolver;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -53,7 +54,6 @@ import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
-import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -71,6 +71,8 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
+import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.ModIValidazioneSemanticaProfiloSicurezza;
 import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.date.DateManager;
@@ -210,55 +212,16 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			Date now = DateManager.getDate();
 			
 			
+			ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza = new ModIValidazioneSemanticaProfiloSicurezza(busta, isRichiesta);
 			
-			String securityMessageProfileNonFiltratoPDND = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO);
-			if(securityMessageProfileNonFiltratoPDND!=null) {
-				securityMessageProfileNonFiltratoPDND = ModIPropertiesUtils.convertProfiloSicurezzaToConfigurationValue(securityMessageProfileNonFiltratoPDND);
-			}
+			boolean sicurezzaTokenOauth = modIValidazioneSemanticaProfiloSicurezza.isSicurezzaTokenOauth();
+			String securityMessageProfileSorgenteTokenIdAuth = modIValidazioneSemanticaProfiloSicurezza.getSecurityMessageProfileSorgenteTokenIdAuth();
 			
-			String securityMessageProfileSorgenteTokenIdAuth = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN);
-			if(securityMessageProfileSorgenteTokenIdAuth!=null) {
-				securityMessageProfileSorgenteTokenIdAuth = ModIPropertiesUtils.convertProfiloSicurezzaSorgenteTokenToConfigurationValue(securityMessageProfileSorgenteTokenIdAuth);
-			}
+			boolean sicurezzaMessaggio = modIValidazioneSemanticaProfiloSicurezza.isSicurezzaMessaggio();
+			boolean sicurezzaMessaggioIDAR04 = modIValidazioneSemanticaProfiloSicurezza.isSicurezzaMessaggioIDAR04();
 			
-			String securityMessageProfile = securityMessageProfileNonFiltratoPDND;
-			if(securityMessageProfileSorgenteTokenIdAuth!=null &&
-				(	
-					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01.equals(securityMessageProfileNonFiltratoPDND) 
-						|| 
-					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(securityMessageProfileNonFiltratoPDND)
-				)
-				&&
-				(	
-					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(securityMessageProfileSorgenteTokenIdAuth) 
-						||
-					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(securityMessageProfileSorgenteTokenIdAuth)
-				)
-			){
-				securityMessageProfile = null;
-			}
-						
-			boolean sicurezzaTokenOauth = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(securityMessageProfileSorgenteTokenIdAuth) 
-					||
-				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(securityMessageProfileSorgenteTokenIdAuth);
-			
-			boolean sicurezzaMessaggio = securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile);
-			boolean sicurezzaMessaggioIDAR04 = false;
-			if(sicurezzaMessaggio) {
-				sicurezzaMessaggioIDAR04 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) 
-												|| 
-											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
-			}
-			
-			String securityAuditPattern = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_AUDIT_PATTERN);
-			
-			if(securityAuditPattern!=null) {
-				securityAuditPattern = ModIPropertiesUtils.convertProfiloAuditToConfigurationValue(securityAuditPattern);
-			}
-			
-			boolean sicurezzaAudit = isRichiesta && 
-					securityAuditPattern!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(securityAuditPattern);
-			
+			boolean sicurezzaAudit = modIValidazioneSemanticaProfiloSicurezza.isSicurezzaAudit();
+			String securityAuditPattern = modIValidazioneSemanticaProfiloSicurezza.getSecurityAuditPattern();
 			
 			if(sicurezzaMessaggio || sicurezzaAudit) {
 				msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
@@ -284,8 +247,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 					validateTokenAuthorizationId(msg,
 							prefixAuthorization,
-							busta, 
-							sicurezzaMessaggio);
+							modIValidazioneSemanticaProfiloSicurezza);
 					
 					boolean checkAudienceByModIConfig = sicurezzaMessaggio || sicurezzaAudit;
 					pa = validateTokenAuthorizationAudience(msg, factory, state, requestInfo,
@@ -301,7 +263,24 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			
 			
 			if(sicurezzaMessaggio) {
-								
+				
+				if(isRichiesta && sicurezzaTokenOauth) {
+					String id = busta.getProperty(CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
+					if( id==null || StringUtils.isEmpty(id) ) {
+						// non c'era un token di integrita nonostante ne sia stato configurato (es. per GET) e sia stato indicato di utilizzarlo come identificativo messaggio.
+						// per questo motivo in ricezione buste il metodo 'ModIUtils.replaceBustaIdWithJtiTokenId' non è stato invocato
+						// Utilizzo come identificativo del messaggio quello presente nel voucher.
+						String jti = TokenUtilities.readJtiFromInformazioniToken(this.context);
+						if(jti!=null && StringUtils.isNotEmpty(jti)) {
+							ModIUtils.replaceBustaIdWithJtiTokenId(modIValidazioneSemanticaProfiloSicurezza, jti);
+							msgDiag.updateKeywordIdMessaggioRichiesta(busta.getID());
+							if(this.context!=null) {
+								this.context.put(Costanti.MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC, busta.getID());
+							}
+						}
+					}
+				}
+				
 				String exp = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP);
 				if(exp!=null) {
 					checkExp(exp, now, rest, "");
@@ -1118,26 +1097,11 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	
 	private void validateTokenAuthorizationId(OpenSPCoop2Message msg,
 			String prefixAuthorization,
-			Busta busta, boolean sicurezzaMessaggio) throws ProtocolException {
+			ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza) throws ProtocolException {
 	
-		Object useJtiAuthorizationObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_USE_JTI_AUTHORIZATION);
-		boolean useJtiAuthorization = false;
-		if(useJtiAuthorizationObject instanceof Boolean) {
-			useJtiAuthorization = (Boolean) useJtiAuthorizationObject;
-		}
-		
+		boolean useJtiAuthorization = ModIUtils.useJtiAuthorizationObject(msg);
 		if(useJtiAuthorization) {
-			Object oInformazioniTokenNormalizzate = null;
-			if(this.context!=null) {
-				oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
-			}
-			InformazioniToken informazioniTokenNormalizzate = null;
-			String jtiClaimReceived = null;
-			if(oInformazioniTokenNormalizzate!=null) {
-				informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
-				jtiClaimReceived = informazioniTokenNormalizzate.getJti();
-			}
-			
+			String jtiClaimReceived = TokenUtilities.readJtiFromInformazioniToken(this.context);			
 			if(jtiClaimReceived==null || StringUtils.isEmpty(jtiClaimReceived)) {
 				
 				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
@@ -1147,12 +1111,11 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			}
 			else {
 				
-				String idIntegrity = busta.getID();
-				busta.removeProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
-				if(sicurezzaMessaggio) {
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, idIntegrity);
+				if(modIValidazioneSemanticaProfiloSicurezza!=null) {
+					// nop
 				}
-				busta.setID(jtiClaimReceived);
+				/** SPOSTATO IN RICEZIONE BUSTE per generare il corretto idMessaggio */
+				/**ModIUtils.replaceBustaIdWithJtiTokenId(modIValidazioneSemanticaProfiloSicurezza, jtiClaimReceived);*/
 				
 			}
 		}

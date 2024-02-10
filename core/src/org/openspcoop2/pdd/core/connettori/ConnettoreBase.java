@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -84,6 +85,8 @@ import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.ModIValidazioneSemanticaProfiloSicurezza;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
@@ -629,6 +632,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected NameValue getTokenQueryParameter() throws ConnettoreException {
 		return this.getTokenParameter(false);
 	}
+	private ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza;
+	public void setModIValidazioneSemanticaProfiloSicurezza(
+			ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza) {
+		this.modIValidazioneSemanticaProfiloSicurezza = modIValidazioneSemanticaProfiloSicurezza;
+	}
 	private NameValue getTokenParameter(boolean header) throws ConnettoreException {
 		if(this.policyNegoziazioneToken!=null) {
 			try {
@@ -710,7 +718,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					if(this.msgDiagnostico!=null) {
 						try {
 							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.inCache");
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							this.logger.error("Emissione diagnostica 'negoziazioneToken.inCache' fallita: "+t.getMessage(),t);
 						}
 					}
@@ -725,8 +733,29 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					if(this.msgDiagnostico!=null) {
 						try {
 							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.completata");
-						}catch(Throwable t) {
+						}catch(Exception t) {
 							this.logger.error("Emissione diagnostica 'negoziazioneToken.completata' fallita: "+t.getMessage(),t);
+						}
+					}
+				}
+				
+				if(this.modIValidazioneSemanticaProfiloSicurezza!=null) {
+					String jti = ModIUtils.readJti(esitoNegoziazione.getToken(), this.logger.getLogger());
+					if(jti!=null && StringUtils.isNotEmpty(jti)) {
+						ModIUtils.replaceBustaIdWithJtiTokenId(this.modIValidazioneSemanticaProfiloSicurezza, jti);
+						if(this.msgDiagnostico!=null) {
+							this.msgDiagnostico.updateKeywordIdMessaggioRichiesta(this.busta.getID());
+						}
+						if(this.getPddContext()!=null) {
+							this.getPddContext().put(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID, jti);
+						}
+					}
+					
+					if(this.msgDiagnostico!=null) {
+						try {
+							this.msgDiagnostico.logPersonalizzato("inoltroInCorso");
+						}catch(Exception t) {
+							this.logger.error("Emissione diagnostica 'inoltroInCorso' fallita: "+t.getMessage(),t);
 						}
 					}
 				}
