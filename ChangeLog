@@ -1,3 +1,13 @@
+2024-02-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1708
+	In una configurazione che prevede un access token PDND (ID_AUTH_REST_01), 
+	il jti presente all'interno del token non veniva utilizzato come identificativo messaggio della richiesta alla quale veniva invece asssociato un identificativo generato da GovWay.
+	L'anomalia comportava:
+	- un doppio tracciamento sia del jti e che dell'identificativo generato da GovWay;
+	- una valorizzazione dell'header di integrazione 'GovWay-Message-ID' con l'identificativo generato da GovWay invece del jti.
+
 2024-02-06  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.14

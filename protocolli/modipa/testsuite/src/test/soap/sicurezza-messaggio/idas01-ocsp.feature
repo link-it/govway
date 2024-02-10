@@ -30,13 +30,18 @@ And match response == resp
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=Client-test.esempio.it, O=Esempio, C=it', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @certificato-client-revocato-ocsp

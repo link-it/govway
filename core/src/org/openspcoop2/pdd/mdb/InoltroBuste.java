@@ -34,6 +34,7 @@ import java.util.Map;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -47,6 +48,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
@@ -71,6 +73,7 @@ import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
@@ -167,6 +170,8 @@ import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
+import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.ModIValidazioneSemanticaProfiloSicurezza;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -2313,9 +2318,41 @@ public class InoltroBuste extends GenericLib{
 			// --------------------- spedizione --------------------------
 			Date dataPrimaInvocazioneConnettore = null;
 			Date dataTerminataInvocazioneConnettore = null;
-			if(invokerNonSupportato==false){
+			if(!invokerNonSupportato){
+				
+				boolean emitDiagnostic=true;
+				if(protocolFactory!=null && org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
+						bustaRichiesta!=null && requestMessageTrasformato!=null &&
+						connectorSender instanceof ConnettoreBase) {
+					ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza = new ModIValidazioneSemanticaProfiloSicurezza(bustaRichiesta, true);
+					if(modIValidazioneSemanticaProfiloSicurezza.isSicurezzaTokenOauth()) {
+						/**boolean useJtiAuthorization = ModIUtils.useJtiAuthorizationObject(this.requestMsg); 
+						 * Da realizzare tramite proprieta' nella configurazione della fruizione, simile a quella dell'erogazione
+						 * Per adesso ci si basa su una proprietà definita in modipa.properties e su una proprietà ridefinibile nella fruizione
+						 * */
+						boolean useJtiAuthorization = !(CostantiProprieta.isModITraceJtiSourceIntegrity(pd!=null ? pd.getProprietaList() : null, ModIUtils.isTokenOAuthUseJtiIntegrityAsMessageId())); 
+						if(useJtiAuthorization) {
+							((ConnettoreBase)connectorSender).setModIValidazioneSemanticaProfiloSicurezza(modIValidazioneSemanticaProfiloSicurezza);
+							emitDiagnostic=false;
+							// il log di inoltroInCorso verra emesso dopo la negoziazione del token in modo da utilizzare il corretto id.
+						}
+						else {
+							// verifico che il token di integrity sia stato prodotto altrimenti comunque indico di usare il jti dell'header authorization
+							String id = bustaRichiesta.getProperty(CostantiDB.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
+							if( id==null || StringUtils.isEmpty(id) ) {
+								((ConnettoreBase)connectorSender).setModIValidazioneSemanticaProfiloSicurezza(modIValidazioneSemanticaProfiloSicurezza);
+								emitDiagnostic=false;
+								// il log di inoltroInCorso verra emesso dopo la negoziazione del token in modo da utilizzare il corretto id.
+							}
+						}
+					}
+				}
+				
+				if(emitDiagnostic) {
+					msgDiag.logPersonalizzato("inoltroInCorso");
+				}
+				
 				// utilizzo connettore
-				msgDiag.logPersonalizzato("inoltroInCorso");
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
 				dataPrimaInvocazioneConnettore = DateManager.getDate();
 				errorConsegna = !connectorSender.send(responseCachingConfig, connettoreMsg);

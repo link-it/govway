@@ -26,8 +26,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -49,6 +47,7 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -642,78 +641,28 @@ public class ModIPropertiesUtils {
 	}
 	
 	public static String convertProfiloSicurezzaToSDKValue(String securityMessageProfile, boolean rest) {
-		String profilo = securityMessageProfile.toUpperCase();
-		if(rest) {
-			profilo = profilo.replace("M", "R");
-		}
-		else {
-			profilo = profilo.replace("M", "S");
-		}
-		return profilo;
+		return ModIUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest);
 	}
 	public static String convertProfiloSicurezzaToConfigurationValue(String securityMessageProfileSDKValue) {
-		String securityMessageProfile = securityMessageProfileSDKValue.toLowerCase();
-		securityMessageProfile = securityMessageProfile.replace("r", "m");
-		securityMessageProfile = securityMessageProfile.replace("s", "m");
-		return securityMessageProfile;
+		return ModIUtils.convertProfiloSicurezzaToConfigurationValue(securityMessageProfileSDKValue);
 	}
 	
 	private static ProtocolException newProtocolExceptionUnknown(String prefix, String value) {
-		return new ProtocolException(prefix+" '"+value+"' unknown");
+		return ModIUtils.newProtocolExceptionUnknown(prefix, value);
 	}
 	
-	public static String convertProfiloSicurezzaSorgenteTokenToSDKValue(String sorgenteToken) throws ProtocolException {
-		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE.equals(sorgenteToken)) {
-			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE;
-		}
-		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken)) {
-			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND;
-		}
-		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken)) {
-			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_OAUTH;
-		}
-		else {
-			// backward compatibility
-			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE;
-		}
+	public static String convertProfiloSicurezzaSorgenteTokenToSDKValue(String sorgenteToken) {
+		return ModIUtils.convertProfiloSicurezzaSorgenteTokenToSDKValue(sorgenteToken);
 	}
-	public static String convertProfiloSicurezzaSorgenteTokenToConfigurationValue(String sortenteTokenSDKValue) throws ProtocolException {
-		if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_LOCALE.equals(sortenteTokenSDKValue)) {
-			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE;
-		}
-		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND.equals(sortenteTokenSDKValue)) {
-			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND;
-		}
-		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_OAUTH.equals(sortenteTokenSDKValue)) {
-			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH;
-		}
-		throw newProtocolExceptionUnknown("Source label",sortenteTokenSDKValue);
+	public static String convertProfiloSicurezzaSorgenteTokenToConfigurationValue(String sorgenteTokenSDKValue) throws ProtocolException {
+		return ModIUtils.convertProfiloSicurezzaSorgenteTokenToConfigurationValue(sorgenteTokenSDKValue);
 	}
-	
 	
 	public static String convertProfiloAuditToSDKValue(String patternCorniceSicurezza) throws ProtocolException {
-		if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezza)) {
-			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD;
-		}
-		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01.equals(patternCorniceSicurezza)) {
-			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01;
-		}
-		else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02.equals(patternCorniceSicurezza)) {
-			return CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02;
-		}
-		throw newProtocolExceptionUnknown("Pattern value",patternCorniceSicurezza);
+		return ModIUtils.convertProfiloAuditToSDKValue(patternCorniceSicurezza);
 	}
 	public static String convertProfiloAuditToConfigurationValue(String patternCorniceSicurezzaSDKValue) throws ProtocolException {
-		if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD.equals(patternCorniceSicurezzaSDKValue)) {
-			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD;
-		}
-		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01.equals(patternCorniceSicurezzaSDKValue)) {
-			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01;
-		}
-		else if(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02.equals(patternCorniceSicurezzaSDKValue)) {
-			return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02;
-		}
-		throw newProtocolExceptionUnknown("Pattern label",patternCorniceSicurezzaSDKValue);
+		return ModIUtils.convertProfiloAuditToConfigurationValue(patternCorniceSicurezzaSDKValue);
 	}
 	
 	public static String convertSchemaAuditToSDKValue(String schemaCorniceSicurezza, ModIProperties modiProperties) throws ProtocolException {

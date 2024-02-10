@@ -3,7 +3,9 @@ Feature: Testing Sicurezza Messaggio ModiPA IDAR03
 Background:
     * def basic = read('classpath:utils/basic-auth.js')
     * def check_traccia = read('check-tracce/check-traccia.feature')
+    * def check_traccia_no_check_id = read('check-tracce/check-traccia-no-check-id.feature')
     * def check_traccia_no_audience = read('check-tracce/check-traccia-no-audience.feature')
+    * def check_traccia_pa_error = read('check-tracce/check-traccia-pa-error.feature')
     * def decode_token = read('classpath:utils/decode-token.js')
     * def get_traccia = read('classpath:utils/get_traccia.js')
     * def get_info_transazione = read('classpath:utils/get_info_transazione.js')
@@ -64,11 +66,14 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
 
 
 
@@ -119,12 +124,14 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
 
 
 
@@ -176,12 +183,14 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_no_audience ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_no_audience ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
 
 
 
@@ -301,11 +310,14 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
 
 
 
@@ -480,11 +492,15 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud'     })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_token.payload.jti     })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
 
 
 @response-without-payload-tampered-header
@@ -537,11 +553,15 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
 
 
 @informazioni-utente-header
@@ -591,11 +611,15 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
 
 
 
@@ -646,11 +670,15 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
 
 
 @informazioni-utente-mixed
@@ -700,11 +728,16 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
+
 
 
 @informazioni-utente-static
@@ -752,11 +785,15 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
 
 
 
@@ -808,11 +845,15 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_iu ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_iu ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
 
 
 
@@ -880,11 +921,16 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
+
 
 
 @idar03-token-richiesta
@@ -921,6 +967,10 @@ And match header Authorization == '#notpresent'
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
 
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
+
 
 
 @idar03-token-risposta
@@ -951,10 +1001,11 @@ And match header Authorization == '#notpresent'
 """
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_no_check_id ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia_no_check_id ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+
 
 
 
@@ -988,6 +1039,10 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
 
 # Gli faccio fare anche una put per verificare che in quest'altro caso il token c'è sia nella richiesta che nella risposta
 # Utilizzo la risposta con le proprietà invertite perchè il proxy karate le inverte
@@ -1037,12 +1092,14 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_token.payload.jti })
 
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
 
 
 @doppi-header
@@ -1087,11 +1144,14 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
 
 
 @doppi-header-manomissione-payload-richiesta
@@ -1217,6 +1277,9 @@ And match response == read('error-bodies/aud-token-risposta-non-valido.json')
 * def result = get_traccia(tid,'Risposta') 
 * match result contains deep other_checks_risposta
 
+
+
+
 @doppi-header-audience-risposta-agid-jwt-signature-non-valida-rispetto-client
 Scenario: L'erogatore genera un audience, nel token Agid-JWT-Signature, differente da quello atteso e registrato sul client (atteso id identico nei due header)
 
@@ -1287,11 +1350,14 @@ And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpres
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
 
 
 @doppi-header-audience-risposta-differente-audience-valida-rispetto-client
@@ -1320,6 +1386,9 @@ And match header Authorization == '#notpresent'
 * def result = get_traccia(tid,'Risposta') 
 * match result contains deep other_checks_risposta
 
+
+
+
 @doppi-header-audience-risposta-differente-audience-non-valida-rispetto-client
 Scenario: L'erogatore genera un audience, nel token Agid-JWT-Signature, differente da quello presente nel token Authorization (sono attesi due valori differenti, nell'authorization quello del client). Il valore inserito nel token Agid è errato.
 
@@ -1344,6 +1413,8 @@ And match response == read('error-bodies/aud-token-agid-jwt-signature-risposta-n
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_traccia(tid,'Risposta') 
 * match result contains deep other_checks_risposta
+
+
 
 
 @doppi-header-audience-risposta-valore-statico
@@ -1373,6 +1444,8 @@ And match header Authorization == '#notpresent'
 * match result contains deep other_checks_risposta
 
 
+
+
 @doppi-header-audience-risposta-valore-statico-non-valido
 Scenario: Il fruitore si attende nei token in risposta una valore statico di audience, rispetto al normale caso dinamico associato al client. Il valore ritornato non è valido.
 
@@ -1397,6 +1470,9 @@ And match response == read('error-bodies/aud-token-risposta-non-valido-header-du
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_traccia(tid,'Risposta') 
 * match result contains deep other_checks_risposta
+
+
+
 
 @doppi-header-audience-risposta-diversi-valori-statici
 Scenario: Il fruitore si attende nei token in risposta valori statici di audience differenti nei 2 header
@@ -1426,6 +1502,9 @@ And match header Authorization == '#notpresent'
 * match result contains deep other_checks_risposta
 
 
+
+
+
 @doppi-header-audience-risposta-diversi-valori-statici-authorization-non-valido
 Scenario: Il fruitore si attende nei token in risposta valori statici di audience differenti nei 2 header. Il valore indicato nel token Authorization non è valido
 
@@ -1451,6 +1530,8 @@ And match response == read('error-bodies/aud-token-risposta-non-valido.json')
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_traccia(tid,'Risposta') 
 * match result contains deep other_checks_risposta
+
+
 
 
 @doppi-header-audience-risposta-diversi-valori-statici-agid-jwt-signature-non-valido
@@ -1480,6 +1561,8 @@ And match response == read('error-bodies/aud-token-agid-jwt-signature-risposta-n
 * match result contains deep other_checks_risposta
 
 
+
+
 @doppi-header-audience-richiesta-stesso-valore
 Scenario: Il fruitore genera nei token in richiesta lo stesso valore di audience nei 2 differenti header
 
@@ -1506,6 +1589,9 @@ And match header Authorization == '#notpresent'
 * def result = get_traccia(tid,'Richiesta') 
 * match result contains deep other_checks_richiesta
 
+
+
+
 @doppi-header-audience-richiesta-stesso-valore-authorization-non-valido
 Scenario: Il fruitore genera nei token in richiesta lo stesso valore di audience nei 2 differenti header. Il valore indicato nel token Authorization non è valido
 
@@ -1531,6 +1617,9 @@ Then status 400
 * def result = get_traccia(tid,'Richiesta') 
 * match result contains deep other_checks_richiesta
 
+
+
+
 @doppi-header-audience-richiesta-stesso-valore-agid-jwt-signature-non-valido
 Scenario: Il fruitore genera nei token in richiesta lo stesso valore di audience nei 2 differenti header. Il valore indicato nel token Agid-JWT-Signature non è valido
 
@@ -1555,6 +1644,8 @@ Then status 400
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_traccia(tid,'Richiesta') 
 * match result contains deep other_checks_richiesta
+
+
 
 
 @doppi-header-audience-richiesta-differente-valore
@@ -1584,6 +1675,9 @@ And match header Authorization == '#notpresent'
 * def result = get_traccia(tid,'Richiesta') 
 * match result contains deep other_checks_richiesta
 
+
+
+
 @doppi-header-audience-richiesta-differente-valore-authorization-non-valido
 Scenario: Il fruitore genera nei token in richiesta lo stesso valore di audience nei 2 differenti header. Il valore indicato nel token Authorization non è valido
 
@@ -1609,6 +1703,9 @@ Then status 400
 * def result = get_traccia(tid,'Richiesta') 
 * match result contains deep other_checks_richiesta
 
+
+
+
 @doppi-header-audience-richiesta-differente-valore-agid-jwt-signature-non-valido
 Scenario: Il fruitore genera nei token in richiesta lo stesso valore di audience nei 2 differenti header. Il valore indicato nel token Agid-JWT-Signature non è valido
 
@@ -1633,6 +1730,8 @@ Then status 400
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_traccia(tid,'Richiesta') 
 * match result contains deep other_checks_richiesta
+
+
 
 
 @doppi-header-audience-richiesta-differente-valore-audienceAsArray
@@ -1673,6 +1772,9 @@ And match header Authorization == '#notpresent'
 * def result = get_traccia(tid,'Risposta') 
 * match result contains deep other_checks_risposta
 
+
+
+
 @doppi-header-audience-richiesta-differente-valore-audienceAsArrayMultipleValues
 Scenario: Il fruitore genera nei token in richiesta un valore differente, come array con più valori, negli audience nei 2 differenti header
 
@@ -1710,6 +1812,8 @@ And match header Authorization == '#notpresent'
 
 * def result = get_traccia(tid,'Risposta') 
 * match result contains deep other_checks_risposta
+
+
 
 
 @doppi-header-audience-richiesta-differente-valore-audienceAsArray-authorizationInvalid
@@ -1823,11 +1927,15 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
+
 
 
 * def transazioni_checks_richiesta = 
@@ -1909,12 +2017,16 @@ And match header Authorization == '#notpresent'
 """
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_integrity_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_integrity_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_integrity_token.payload.jti
+
 
 
 * def transazioni_checks_richiesta = 
@@ -1942,6 +2054,7 @@ And match header Authorization == '#notpresent'
 * match tidmessaggiorichiesta contains deep transazioni_checks_richiesta
 * def tidmessaggiorisposta = get_info_transazione(tid,'id_messaggio_risposta') 
 * match tidmessaggiorisposta contains deep transazioni_checks_risposta
+
 
 
 
@@ -1991,6 +2104,8 @@ And match header Agid-JWT-Signature == '#present'
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token_decoded, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 
 
+
+
 @doppi-header-token-date-differenti-risposta
 Scenario: Test con presenza sia dell'header Authorization che Agid-JWT-Signature che presentano date differenti nella risposta
 
@@ -2028,8 +2143,13 @@ And match header Agid-JWT-Signature == '#notpresent'
 ])
 """
 
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId: tidMessaggio })
+
+
+
 
 @doppi-header-token-date-differenti-richiesta-authorization-scaduta
 Scenario: Test con presenza sia dell'header Authorization che Agid-JWT-Signature che presentano date differenti nella richiesta. Il token 'Authorization e' scaduto'
@@ -2073,7 +2193,9 @@ And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest
 """
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token_decoded, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_pa_error ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token_decoded, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+
 
 
 @doppi-header-token-date-differenti-richiesta-integrity-scaduta
@@ -2118,7 +2240,10 @@ And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest
 """
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token_decoded, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_pa_error ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token_decoded, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+
+
 
 
 @doppi-header-token-date-differenti-risposta-authorization-scaduta
@@ -2135,6 +2260,7 @@ And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
 
+
 @doppi-header-token-date-differenti-risposta-integrity-scaduta
 Scenario: Test con presenza sia dell'header Authorization che Agid-JWT-Signature che presentano date differenti nella risposta. Il token 'Agid-JWT-Signature e' scaduto'
 
@@ -2147,6 +2273,8 @@ When method post
 Then status 502
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/ttl-scaduto-in-agid-jwt-signature-response.json')
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
 
 
 @doppi-header-token-date-differenti-richiesta-iat-oldest
@@ -2170,6 +2298,9 @@ And match response.title == 'InteroperabilityInvalidRequest'
 And match response.status == 400
 And match response.detail contains '[Header \'Agid-JWT-Signature\'\] Token creato da troppo tempo'
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+
 
 @doppi-header-token-date-differenti-risposta-iat-oldest
 Scenario: Test con presenza sia dell'header Authorization che Agid-JWT-Signature che presentano date differenti nella risposta. I token presentano un claim 'iat' troppo vecchio
@@ -2228,11 +2359,16 @@ And match header Authorization == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
+
 
 
 
@@ -2278,11 +2414,14 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
 
 
 
@@ -2328,11 +2467,16 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
+
+
 
 
 
@@ -2376,11 +2520,16 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
+
+
 
 
 @doppi-header-security-token-trasformazione-authorization-header
@@ -2423,11 +2572,17 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
+
+
+
 
 
 @doppi-header-security-token-trasformazione-authorization-payload
@@ -2470,11 +2625,15 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
+
 
 
 
@@ -2519,11 +2678,14 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
 
 
 
@@ -2568,11 +2730,16 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_integrity_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_integrity_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_integrity_token.payload.jti
+
+
 
 
 @doppi-header-security-token-trasformazione-integrity-header
@@ -2615,11 +2782,16 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_integrity_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_integrity_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_integrity_token.payload.jti
+
+
 
 
 @doppi-header-security-token-trasformazione-integrity-payload
@@ -2662,10 +2834,13 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_integrity_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_integrity_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
-* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_integrity_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_integrity_token.payload.jti
 
 

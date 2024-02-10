@@ -15,13 +15,7 @@ Scenario: Controllo traccia IDAS01
     { name: 'ProfiloInterazione', value: 'bloccante' },
     { name: 'ProfiloSicurezzaCanale', value: 'IDAC01' },
     { name: 'ProfiloSicurezzaMessaggio', value: profilo_sicurezza },
-    { name: 'ProfiloSicurezzaMessaggio-X509-Subject', value: x509sub },
-    { name: 'ProfiloSicurezzaMessaggio-X509-Issuer', value: x509sub },
-    { name: 'ProfiloSicurezzaMessaggio-IssuedAt', value: '#string' },
-    { name: 'ProfiloSicurezzaMessaggio-Expiration', value: '#string' },
-    { name: 'ProfiloSicurezzaMessaggio-WSA-To', value: karate.xmlPath(body, '/Envelope/Header/To') },
-    { name: 'ProfiloSicurezzaMessaggio-WSA-From', value: karate.xmlPath(body, '/Envelope/Header/From/Address') },
-    { name: 'ProfiloSicurezzaMessaggio-MessageId', value: karate.xmlPath(body, '/Envelope/Header/MessageID') },
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' }
 ])
 """
 
@@ -34,7 +28,7 @@ Scenario: Controllo traccia IDAS01
 
 * def id_messaggio_traccia = 
 """
-id_messaggio_traccia = karate.xmlPath(body, '/Envelope/Header/MessageID')
+id_messaggio_traccia =client_request_id
 """
 
 

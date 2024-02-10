@@ -875,7 +875,7 @@ public class CostantiProprieta {
 	private static final String MODI_AUDIT_SUFFIX_TRACE_ENABLED = ".trace.enabled";
 	private static final String MODI_AUDIT_SUFFIX_FORWARD_BACKEND_ENABLED = ".forwardBackend.enabled";
 	private static final String MODI_AUDIT_SUFFIX_FORWARD_BACKEND = ".forwardBackend";
-
+	
 	public static boolean isModIAuditTraceEnabled(List<Proprieta> proprieta, String claim, boolean defaultValue) {
 		String p = MODI_AUDIT_CLAIM_PREFIX+claim+MODI_AUDIT_SUFFIX_TRACE_ENABLED;
 		return readBooleanValueWithDefault(proprieta, p, defaultValue, MODI_VALUE_ENABLED, MODI_VALUE_DISABLED);
@@ -889,6 +889,27 @@ public class CostantiProprieta {
 		String valueS = readValue(proprieta, p);
 		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
 			return valueS;
+		}
+		return defaultValue;
+	}
+	
+	private static final String MODI_TRACE_JTI_SOURCE = "modi.trace.jti.source";
+	public static final String MODI_TRACE_JTI_SOURCE_VALUE_AUTHORIZATION = "authorization";
+	public static final String MODI_TRACE_JTI_SOURCE_VALUE_INTEGRITY = "integrity";
+	
+	public static boolean isModITraceJtiSourceAuthorization(List<Proprieta> proprieta, boolean defaultValue) {
+		String p = MODI_TRACE_JTI_SOURCE;
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS.equalsIgnoreCase(MODI_TRACE_JTI_SOURCE_VALUE_AUTHORIZATION);
+		}
+		return defaultValue;
+	}
+	public static boolean isModITraceJtiSourceIntegrity(List<Proprieta> proprieta, boolean defaultValue) {
+		String p = MODI_TRACE_JTI_SOURCE;
+		String valueS = readValue(proprieta, p);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			return valueS.equalsIgnoreCase(MODI_TRACE_JTI_SOURCE_VALUE_INTEGRITY);
 		}
 		return defaultValue;
 	}

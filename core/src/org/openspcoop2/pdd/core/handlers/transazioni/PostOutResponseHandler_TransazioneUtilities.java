@@ -711,7 +711,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 				// Richiesta
 				String idMessaggioRichiesta = context.getProtocollo().getIdRichiesta();
-				if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) &&
+				if(
+						//TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) &&
 						CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
 						tracciaRichiesta!=null && tracciaRichiesta.getBusta()!=null && tracciaRichiesta.getBusta().getID()!=null &&
 						!tracciaRichiesta.getBusta().getID().equals(idMessaggioRichiesta)) {

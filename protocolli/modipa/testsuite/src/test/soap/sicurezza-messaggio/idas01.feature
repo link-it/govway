@@ -28,13 +28,18 @@ And match response == read("response.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 
@@ -58,13 +63,18 @@ And match response == resp
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 
@@ -98,13 +108,18 @@ Then status 200
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 
@@ -130,13 +145,18 @@ And match response == resp
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 
@@ -159,8 +179,13 @@ And match response == ''
 * def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
 * xml client_request = karateCache.get("Client-Request")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @disabled-security-on-action
@@ -200,13 +225,18 @@ And match response == read('response-op.xml')
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 # Voglio testare che sull'altra azione non sia abilitata la sicurezza
@@ -247,13 +277,18 @@ And match response == resp
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 
@@ -278,13 +313,18 @@ And match response == resp
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 
@@ -309,13 +349,18 @@ And match response == resp
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @riferimento-x509-IssuerSerial-x509Key
@@ -339,13 +384,18 @@ And match response == resp
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @no-token-to-erogazione
@@ -580,13 +630,18 @@ And match response == read("response.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @keystore-ridefinito-fruizione
@@ -608,13 +663,18 @@ And match response == read("response.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @keystore-ridefinito-fruizione-applicativo-no-keystore
@@ -636,13 +696,18 @@ And match response == read("response.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient5, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 @keystore-ridefinito-fruizione-archivio
@@ -664,13 +729,18 @@ And match response == read("response.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient4, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient4, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 
 
@@ -693,12 +763,17 @@ And match response == read("response.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* def client_request_id = karate.xmlPath(client_request, '/Envelope/Header/MessageID')
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
-* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', requestMessageId:client_request_id })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_request_id
 
 

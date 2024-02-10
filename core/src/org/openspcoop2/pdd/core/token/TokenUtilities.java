@@ -48,6 +48,7 @@ import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.KeystoreParams;
@@ -774,5 +775,19 @@ public class TokenUtilities {
 			}
 		}
 		return mapNull;
+	}
+	
+	public static String readJtiFromInformazioniToken(Context context) {
+		Object oInformazioniTokenNormalizzate = null;
+		if(context!=null) {
+			oInformazioniTokenNormalizzate = context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+		}
+		InformazioniToken informazioniTokenNormalizzate = null;
+		String jtiClaimReceived = null;
+		if(oInformazioniTokenNormalizzate!=null) {
+			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+			jtiClaimReceived = informazioniTokenNormalizzate.getJti();
+		}
+		return jtiClaimReceived;
 	}
 }

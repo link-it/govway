@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazione;
@@ -127,6 +128,7 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.attribute_authority.EsitoRecuperoAttributi;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
@@ -214,6 +216,8 @@ import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
+import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.ModIValidazioneSemanticaProfiloSicurezza;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -2845,6 +2849,27 @@ public class RicezioneBuste {
 		
 		
 		
+		/* ------------ Riconciliazione ID Messaggio con quello ricevuto nel token oAuth ------------- */
+		
+		if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
+			ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza = new ModIValidazioneSemanticaProfiloSicurezza(bustaRichiesta, true);
+			if(modIValidazioneSemanticaProfiloSicurezza.isSicurezzaTokenOauth()) {
+				boolean useJtiAuthorization = ModIUtils.useJtiAuthorizationObject(requestMessage);
+				if(useJtiAuthorization) {
+					String jti = TokenUtilities.readJtiFromInformazioniToken(pddContext);
+					if(jti!=null && StringUtils.isNotEmpty(jti)) {
+						ModIUtils.replaceBustaIdWithJtiTokenId(modIValidazioneSemanticaProfiloSicurezza, jti);
+						msgDiag.updateKeywordIdMessaggioRichiesta(bustaRichiesta.getID());
+					}
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		
 		
 		/*
 		 * ---------------- Mittente / Autenticazione ---------------------
@@ -4240,6 +4265,27 @@ public class RicezioneBuste {
 			}
 		}
 
+		
+		
+		
+		
+		
+		
+		/* ------------ Riconciliazione ID Messaggio con quello ricevuto nel token oAuth ------------- */
+		
+		if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
+			pddContext.containsKey(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC)) {
+			Object o = pddContext.get(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC);
+			if(o instanceof String) {
+				msgDiag.updateKeywordIdMessaggioRichiesta((String)o);
+				idMessageRequest = (String)o;
+				this.msgContext.getProtocol().setIdRichiesta(idMessageRequest);
+			}
+		}
+		
+		
+		
+		
 		
 		
 		

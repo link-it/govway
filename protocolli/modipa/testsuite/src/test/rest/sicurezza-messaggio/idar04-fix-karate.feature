@@ -2,13 +2,14 @@ Feature: Testing Sicurezza Messaggio ModiPA IDAR04 -> ID_INTEGRITY_REST_02
 
 Background:
     * def basic = read('classpath:utils/basic-auth.js')
-    * def check_traccia = read('check-tracce/check-traccia.feature')
     * def check_traccia_kid = read('check-tracce/check-traccia-kid.feature')
     * def check_traccia_kid_solo_oauth = read('check-tracce/check-traccia-kid-solo-oauth.feature')
     * def decode_token = read('classpath:utils/decode-token.js')
     * def get_traccia = read('classpath:utils/get_traccia.js')
     * def get_info_transazione = read('classpath:utils/get_info_transazione.js')
     
+    * def reset_cache_token = read('classpath:utils/reset-cache-token.feature')
+
     * def clean_remote_store_key = read('classpath:utils/remote_store_key.js')
     * def result = clean_remote_store_key('KID-ExampleServer')
     * def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01')
@@ -37,6 +38,9 @@ Background:
 
 @authorization-richiesta-integrity-risposta
 Scenario Outline: Test con presenza dell'header Authorization nella richiesta e Agid-JWT-Signature nella risposta (<tipo-test> <descrizione>)
+
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1"
 And path 'resources', 1, 'M'
@@ -86,12 +90,15 @@ And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpres
 * def kidRequest = '<kid>'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
-* call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
+* call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
-* call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
+* call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
 
 Examples:
 | tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
@@ -103,6 +110,9 @@ Examples:
 
 @solo-authorization-richiesta
 Scenario Outline: Test con presenza dell'header Authorization solo nella richiesta (<tipo-test> <descrizione>)
+
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
 And path 'resources', 1, 'M'
@@ -134,10 +144,13 @@ And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpres
 * def kidRequest = '<kid>'
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth' })
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
 
 Examples:
 | tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |

@@ -15,10 +15,12 @@ Background:
     * def check_signature = read('check-signature.feature')
     * def check_client_token = read('check-client-token.feature')
     * def check_server_token = read('check-server-token.feature')
+    * def check_server_token_oauth = read('check-server-token-oauth.feature')
 
     * def checkTokenAudit = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/rest/sicurezza_messaggio/check-token.feature')
     * def checkTokenKid = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/rest/sicurezza_messaggio/check-token-kid.feature')
 
+    * def decodeToken = read('classpath:utils/decode-token.js')
 
 Scenario: isTest('connettivita-base')
     # Salvo la richiesta e la risposta per far controllare la traccia del token
@@ -33,7 +35,13 @@ Scenario: isTest('connettivita-base')
     * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
     * match keyRef == '#' + key
 
+    * xml xml_client_request = client_request
+    * def request_id = karate.xmlPath(xml_client_request, '/Envelope/Header/MessageID')
+
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS01/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
 
@@ -93,7 +101,13 @@ Scenario: isTest('response-without-payload')
 
     * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite" })
 
+    * xml xml_client_request = client_request
+    * def request_id = karate.xmlPath(xml_client_request, '/Envelope/Header/MessageID')
+
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOP/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     # La signature non viene fatta su di una risposta vuota quindi non la controllo
     # Controllo qui la traccia della erogazione perchè non posso far viaggiare header
@@ -129,7 +143,13 @@ Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequ
 
     * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite" })
     
+    * xml xml_client_request = client_request
+    * def request_id = karate.xmlPath(xml_client_request, '/Envelope/Header/MessageID')
+
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
 
@@ -452,7 +472,13 @@ Scenario: isTest('connettivita-base-truststore-ca-ocsp')
 
     * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01_OCSP", to: "testsuite" })
 
+    * xml xml_client_request = client_request
+    * def request_id = karate.xmlPath(xml_client_request, '/Envelope/Header/MessageID')
+
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01TrustStoreCAOCSP/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS01TrustStoreCAOCSP/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01_OCSP" })
 
@@ -482,7 +508,13 @@ Scenario: isTest('connettivita-base-idas02') || isTest('connettivita-base-idas02
 
     * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite" })
 
+    * xml xml_client_request = client_request
+    * def request_id = karate.xmlPath(xml_client_request, '/Envelope/Header/MessageID')
+
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS02/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
 
@@ -491,7 +523,13 @@ Scenario: isTest('connettivita-base-idas02') || isTest('connettivita-base-idas02
 
 Scenario: isTest('riutilizzo-token-generato-auth-server')
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02TokenOAuth/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * def newHeaders = 
     """
@@ -554,7 +592,13 @@ Scenario: isTest('connettivita-base-idas03')
     * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
     * match keyRef == '#' + key
 
+    * xml xml_client_request = client_request
+    * def request_id = karate.xmlPath(xml_client_request, '/Envelope/Header/MessageID')
+
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS03/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS03/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
 
@@ -858,6 +902,13 @@ Scenario: isTest('idas03-token-risposta')
     * xmlstring server_response = response
     * eval karateCache.add("Server-Response", server_response)
 
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Message-ID': responseHeaders['GovWay-Message-ID'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 Scenario: isTest('idas03-token-azione-puntuale')
     
@@ -925,7 +976,13 @@ Scenario: isTest('connettivita-base-idas0302')
     * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
     * match keyRef == '#' + key
 
+    * xml xml_client_request = client_request
+    * def request_id = karate.xmlPath(xml_client_request, '/Envelope/Header/MessageID')
+
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS0302/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
 
     * call check_server_token ({ from: "SoapBlockingIDAS0302/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
 
@@ -955,9 +1012,15 @@ Scenario: isTest('riutilizzo-token-generato-auth-server-idas0302')
     * def key = bodyPath('/Envelope/Header/Security/BinarySecurityToken/@Id')
     * match keyRef == '#' + key
 
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS0302TokenOAuth/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS0302TokenOAuth/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
+    * call check_server_token_oauth ({ from: "SoapBlockingIDAS0302TokenOAuth/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", requestId: request_id })
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id

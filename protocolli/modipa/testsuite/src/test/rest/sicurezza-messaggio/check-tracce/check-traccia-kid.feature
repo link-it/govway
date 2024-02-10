@@ -33,3 +33,31 @@ Scenario: Controllo traccia IDAR01 con kid
 
 * def result = get_traccia(tid,tipo) 
 * match result contains deep traccia_to_match
+
+
+
+* def id_messaggio_traccia = 
+"""
+if (tipo=='Risposta') {
+   id_messaggio_traccia = token.payload.jti
+}
+else {
+   id_messaggio_traccia = traceMessageId
+}
+"""
+
+
+* def requestMessageIdValue = 
+"""
+if (tipo=='Risposta') {
+   requestMessageIdValue = requestMessageId
+}
+else {
+   requestMessageIdValue = 'undefined'
+}
+"""
+
+
+* def check_tracciamento_diagnostica = read('classpath:utils/check-tracciamento-diagnostica.feature') 
+# Verifico che le tracce e i diagnostici utilizzino i corretti id messaggio
+* call check_tracciamento_diagnostica ({ tid: tid, traceMessageId:id_messaggio_traccia, tipo:tipo, requestMessageId:requestMessageIdValue })

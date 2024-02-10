@@ -784,6 +784,11 @@ public class MsgDiagnostico {
 			}
 		}
 	}
+	public void updateKeywordIdMessaggioRichiesta(String idMessaggio){
+		if(idMessaggio!=null){
+			this.keywordLogPersonalizzati.put(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idMessaggio);
+		}
+	}
 	public String replaceKeywords(String msg){
 				
 		/* Potenzialmente N^2	
