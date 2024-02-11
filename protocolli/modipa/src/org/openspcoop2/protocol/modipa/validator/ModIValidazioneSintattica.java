@@ -552,7 +552,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											dynamicMap, datiRichiesta,
 											idSoggetto);
 									
-									if(token==null && bustaRitornata!=null && !sorgenteLocale) {
+									if(token==null && !sorgenteLocale) {
 										// non c'era un token di integrita nonostante ne sia stato configurato (es. per GET) e sia stato indicato di utilizzarlo come identificativo messaggio.
 										// per questo motivo in ricezione buste il metodo 'ModIUtils.replaceBustaIdWithJtiTokenId' non è stato invocato
 										// Utilizzo come identificativo del messaggio quello presente nel voucher.
@@ -713,7 +713,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											null, null,
 											idSoggetto); // gia' inizializzato sopra
 												
-									if(tokenIntegrity==null && bustaRitornata!=null) {
+									if(tokenIntegrity==null) {
 										// non c'era un token di integrita nonostante ne sia stato configurato (es. per GET) e sia stato indicato di utilizzarlo come identificativo messaggio.
 										// Utilizzo come identificativo del messaggio quello presente nell'authorization.
 										String idAuth = bustaRitornata.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID);

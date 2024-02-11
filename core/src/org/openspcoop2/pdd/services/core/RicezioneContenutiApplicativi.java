@@ -5267,8 +5267,14 @@ public class RicezioneContenutiApplicativi {
 		// ed eventuali altre future informazioni non subito disponibili
 		
 		String jtiIdModIRequest = null;
-		if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID)) {
-			jtiIdModIRequest = (String) pddContext.get(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID);
+		Object bustaRispostaObject = null;
+		if(pddContext!=null) {
+			if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID)) {
+				jtiIdModIRequest = (String) pddContext.get(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID);
+			}
+			if(pddContext.containsKey(CostantiPdD.BUSTA_RISPOSTA)) {
+				bustaRispostaObject = pddContext.getObject(CostantiPdD.BUSTA_RISPOSTA);
+			}
 		}
 		if(jtiIdModIRequest!=null && StringUtils.isNotEmpty(jtiIdModIRequest) && !jtiIdModIRequest.equals(idMessageRequest)) {
 			headerIntegrazioneRisposta.getBusta().setID(jtiIdModIRequest);
@@ -5278,11 +5284,7 @@ public class RicezioneContenutiApplicativi {
 		}
 		OutResponsePDMessage outResponsePDMessage = new OutResponsePDMessage();
 		outResponsePDMessage.setBustaRichiesta(bustaRichiesta);
-		Object bustaRispostaObject = null;
-		if(pddContext!=null) {
-			bustaRispostaObject = pddContext.getObject(CostantiPdD.BUSTA_RISPOSTA);
-		}
-		if(bustaRispostaObject!=null && bustaRispostaObject instanceof Busta){
+		if(bustaRispostaObject instanceof Busta){
 			Busta bustaRisposta = (Busta) bustaRispostaObject;
 			// aggiungo proprieta' (vengono serializzate negli header di integrazione)
 			if(bustaRisposta.sizeProperties()>0){
