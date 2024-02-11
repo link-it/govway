@@ -2321,7 +2321,7 @@ public class InoltroBuste extends GenericLib{
 			if(!invokerNonSupportato){
 				
 				boolean emitDiagnostic=true;
-				if(protocolFactory!=null && org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
+				if(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
 						bustaRichiesta!=null && requestMessageTrasformato!=null &&
 						connectorSender instanceof ConnettoreBase) {
 					ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza = new ModIValidazioneSemanticaProfiloSicurezza(bustaRichiesta, true);
