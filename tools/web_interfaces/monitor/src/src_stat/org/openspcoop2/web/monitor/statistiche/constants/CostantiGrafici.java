@@ -58,6 +58,7 @@ public class CostantiGrafici {
 	public static final String DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO =org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO;
 	
 	public static final String TOOLTIP_SUFFIX = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TOOLTIP_SUFFIX;
+	public static final String LABEL_SUFFIX = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LABEL_SUFFIX;
 	
 	public static final String TITOLO_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TITOLO_KEY;
 	public static final String SOTTOTITOLO_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.SOTTOTITOLO_KEY;
@@ -92,6 +93,9 @@ public class CostantiGrafici {
 	public static final String LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY;
 	public static final int LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE;
 	public static final String VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA;
+	public static final String VISUALIZZA_VALUE_NELLA_CELLA_GRAFICO_HEATMAP= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VISUALIZZA_VALUE_NELLA_CELLA_GRAFICO_HEATMAP;
+	public static final String VISUALIZZA_VALORE_ZERO_NEL_GRAFICO_HEATMAP= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VISUALIZZA_VALORE_ZERO_NEL_GRAFICO_HEATMAP;
+	public static final String LABEL_LEGENDA_GRAFICO_HEATMAP= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LABEL_LEGENDA_GRAFICO_HEATMAP;
 	
 	public static final String OK_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_KEY;
 	public static final String OK_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_LABEL;

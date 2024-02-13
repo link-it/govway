@@ -57,6 +57,7 @@ public class CostantiGrafici {
 	public static final String DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO = "Distribuzione Esito dei messaggi nell'ultimo periodo.";
 	
 	public static final String TOOLTIP_SUFFIX = "_tooltip";
+	public static final String LABEL_SUFFIX = "_label";
 	
 	public static final String TITOLO_KEY= "titolo";
 	public static final String SOTTOTITOLO_KEY= "sottotitolo";
@@ -89,6 +90,9 @@ public class CostantiGrafici {
 	public static final int COLONNE_LEGENDA_DEFAULT_VALUE = 16;
 	
 	public static final String VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA= "valueOnLegend";
+	public static final String VISUALIZZA_VALUE_NELLA_CELLA_GRAFICO_HEATMAP= "visualizzaValoreNellaCella";
+	public static final String VISUALIZZA_VALORE_ZERO_NEL_GRAFICO_HEATMAP= "visualizzaValoreZero";
+	public static final String LABEL_LEGENDA_GRAFICO_HEATMAP= "labelLegenda";
 	
 	public static final String LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY = "limit";
 	public static final int LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE = 50;
