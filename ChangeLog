@@ -1,3 +1,11 @@
+2024-02-13  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità OP-1710
+	Il report 'heatmap' fornito con la distribuzione statistica in 3 dimensioni presente nella funzionalità di "Analisi Statistica" è stato migliorato per:
+	- contenere una legenda che descriva la corrispondenza tra tonalità del colore e misura rappresentata;
+	- possibilità di visualizzare in ogni quadratino la misura.
+
 2024-02-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

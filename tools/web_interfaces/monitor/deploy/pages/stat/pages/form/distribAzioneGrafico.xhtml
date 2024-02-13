@@ -444,7 +444,7 @@
 					   				var chartId = 'distribuzioneAzioneHeatmapId';
 					   				var chartDivId = 'distribuzioneAzioneHeatmapDiv';
 					   				var chartWidth = jQuery('#chartPanelHeatmap_body').width() -40;
-									var chartHeight = 650;
+									var chartHeight = 700;
 									var chartType = 'heatmap';
 					   				var data0 = '#{distribuzionePerAzioneBean.data}';
 					   				// init 
@@ -491,7 +491,7 @@
 											</style>	
 										</a4j:outputPanel>
 										<h:inputHidden value="true" id="usaSVG"/>
-										<h:panelGrid columns="#{distribuzioneAzioneSearchForm.useGraficiSVG ? 5 : 3 }" >
+										<h:panelGrid columns="#{distribuzioneAzioneSearchForm.useGraficiSVG ? 7 : 3 }" >
 											<h:panelGrid columns="2" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
 												<h:outputLabel value="Label" styleClass="direzioneLabelGrafici" />
 												<rich:comboBox id="rotazioneCombo" value="#{distribuzionePerAzioneBean.direzioneLabel}" defaultLabel="Seleziona Label"
@@ -511,6 +511,18 @@
 													maxValue="#{distribuzionePerAzioneBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici">
 													<a4j:support event="onchange" actionListener="#{distribuzionePerAzioneBean.updateChartNumeroRisultati}" reRender="scriptHeatmapChartPanel,gridComandiHeatmap"/>
 												</rich:inputNumberSpinner>
+											</h:panelGrid>
+											<a4j:outputPanel rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" layout="block" >
+												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+											</a4j:outputPanel>
+											<h:panelGrid columns="2" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+												<h:outputLabel value="Mostra Valori" styleClass="labelMostraValoriGrafico" />
+												<rich:comboBox id="visualizzaValoriNelleCelle" value="#{distribuzionePerAzioneBean.visualizzaTotaleNelleCelleGraficoHeatmap}" 
+													defaultLabel="Mostra valori grafico" width="55" enableManualInput="false" converter="selectItemConverter">
+													<f:selectItem itemValue="true" itemLabel="Si"/>
+													<f:selectItem itemValue="false" itemLabel="No"/>
+													<a4j:support status="mainStatus" event="onselect" reRender="scriptHeatmapChartPanel,gridComandiHeatmap" actionListener="#{distribuzionePerAzioneBean.updateChartVisualizzaTotaleNelleCelleGraficoHeatmap}" />
+												</rich:comboBox>
 											</h:panelGrid>
 											<a4j:outputPanel rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />

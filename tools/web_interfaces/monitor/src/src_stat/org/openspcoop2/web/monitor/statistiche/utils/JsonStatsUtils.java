@@ -42,6 +42,7 @@ import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
@@ -547,9 +548,9 @@ public class JsonStatsUtils {
 	/* ************** HEATMAP CHART **************** */
 
 	public static JSONObject getJsonHeatmapChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, 
-			String caption, String subCaption, String direzioneLabelParam, Integer slice, StatisticType tempo,
+			String caption, String subCaption, String direzioneLabelParam, Integer slice, StatisticType tempo, boolean visualizzaTotaleNelleCelleGraficoHeatmap,
 			Logger log){
-		return _getJsonHeatmapChartDistribuzione(list, search, caption, subCaption, direzioneLabelParam, slice, null, tempo, log);
+		return _getJsonHeatmapChartDistribuzione(list, search, caption, subCaption, direzioneLabelParam, slice, null, tempo, visualizzaTotaleNelleCelleGraficoHeatmap, log);
 	}
 
 	private static String buildKeyJsonHeatmapChartDistribuzione(ResDistribuzione res) {
@@ -567,7 +568,7 @@ public class JsonStatsUtils {
 		return sb.toString();
 	}
 	private static JSONObject _getJsonHeatmapChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, 
-			String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, Integer numeroLabel, StatisticType tempo,
+			String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, Integer numeroLabel, StatisticType tempo, boolean visualizzaTotaleNelleCelleGraficoHeatmap,
 			Logger log
 			){
 		JSONObject grafico = new JSONObject();
@@ -577,6 +578,13 @@ public class JsonStatsUtils {
 		grafico.put(CostantiGrafici.TITOLO_KEY, caption);
 		grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, subCaption);
 		grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, getDirezioneLabel(direzioneLabelParam));
+		grafico.put(CostantiGrafici.VISUALIZZA_VALUE_NELLA_CELLA_GRAFICO_HEATMAP, visualizzaTotaleNelleCelleGraficoHeatmap);
+		try {
+			grafico.put(CostantiGrafici.VISUALIZZA_VALORE_ZERO_NEL_GRAFICO_HEATMAP, PddMonitorProperties.getInstance(log).isStatisticheVisualizzaValoreZeroNelGraficoHeatmap());
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		
 
 		SimpleDateFormat sdf = null;
 		SimpleDateFormat sdf_last = null;
@@ -722,7 +730,8 @@ public class JsonStatsUtils {
 					maxLenghtLabel = r.length();
 
 				// informazini asse X
-				rectangle.put(CostantiGrafici.X_KEY, escapeJsonLabel(r));
+				String key = buildKeyJsonHeatmapChartDistribuzione(entry);
+				rectangle.put(CostantiGrafici.X_KEY, escapeJsonLabel(key));
 				rectangle.put(CostantiGrafici.X_LABEL_KEY, escapeJsonLabel(r));
 
 				// informazini asse Y
@@ -746,6 +755,7 @@ public class JsonStatsUtils {
 
 				rectangle.put(CostantiGrafici.TOTALE_KEY, value);
 				rectangle.put(CostantiGrafici.TOTALE_KEY+CostantiGrafici.TOOLTIP_SUFFIX, toolText);
+				rectangle.put(CostantiGrafici.TOTALE_KEY+CostantiGrafici.LABEL_SUFFIX, StatsUtils.getToolText(search,sum));
 
 				dati.add(rectangle);
 
@@ -786,8 +796,49 @@ public class JsonStatsUtils {
 		max.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,valoreMassimo));
 
 		scalaValori.put(CostantiGrafici.MAX_KEY, max);
-
+		
 		grafico.put(CostantiGrafici.SCALA_VALORI_KEY, scalaValori);
+		
+		// Label della legenda in funzione dei valori min e max calcolati
+		JSONArray labelsLegenda = new JSONArray();
+		
+		// visualizzazione di 5 label
+		// 0, max/4 , max/2, 3 max/4, max 
+		
+		// MIN LAbel
+		JSONObject minLabel = new JSONObject();
+		minLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,valoreMinimo));
+		minLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,valoreMinimo));
+		labelsLegenda.add(minLabel);
+		
+		// 1/4 max
+		Number unQuarto = StatsUtils.avg(search, valoreMassimo, 4);
+		JSONObject unQuartoLabel = new JSONObject();
+		unQuartoLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,unQuarto));
+		unQuartoLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,unQuarto));
+		labelsLegenda.add(unQuartoLabel);
+		
+		// 1/2 max
+		Number unMezzo = StatsUtils.avg(search, valoreMassimo, 2);
+		JSONObject unMezzoLabel = new JSONObject();
+		unMezzoLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,unMezzo));
+		unMezzoLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,unMezzo));
+		labelsLegenda.add(unMezzoLabel);
+				
+		// 3/4 max ((maxLegend / 2 + maxLegend) / 2)
+		Number treQuarti = StatsUtils.avg(search, StatsUtils.sum(search, valoreMassimo, unMezzo), 2);
+		JSONObject treQuartiLabel = new JSONObject();
+		treQuartiLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,treQuarti));
+		treQuartiLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,treQuarti));
+		labelsLegenda.add(treQuartiLabel);
+				
+		// MAX LAbel
+		JSONObject maxLabel = new JSONObject();
+		maxLabel.put(CostantiGrafici.VALORE_KEY, StatsUtils.getValue(search,valoreMassimo));
+		maxLabel.put(CostantiGrafici.LABEL_KEY, StatsUtils.getToolText(search,valoreMassimo));
+		labelsLegenda.add(maxLabel);
+
+		grafico.put(CostantiGrafici.LABEL_LEGENDA_GRAFICO_HEATMAP, labelsLegenda);
 
 		return grafico;
 	}

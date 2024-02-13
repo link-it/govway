@@ -41,7 +41,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	let svgId = id + "_svg";
 	
 	// calcolo margini 
-	var margin = {top: 89.5, right: 160, bottom: 30, left: 70.5};
+	var margin = {top: 130, right: 160, bottom: 30, left: 70.5};
   	var width = dp.size.w;
   	var	height = dp.size.h;
   	
@@ -98,18 +98,30 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 		}
 	}
 	
+	let asseXValues = xLabels.map(function(item) {
+		  	return item.valore;
+			});
+	
 	// Creazione asse X scales and axis:
 	var x = d3.scaleBand()
   	.range([ 0, (width - 2 * margin.left)])
-  	.domain(xLabels)
-//  	.padding(0.01)
-  	;
+  	.domain(asseXValues);
   	
   	// Creo un selettore per l'asse x
 	const xAxis = svg.append("g")
 		.attr("class", "c3-axis c3-axis-x") // Aggiungo le classi CSS della libreria c3 per riutilizzarne i selettori
-	    .attr("transform", "translate(0," + (height - 2 * margin.top) + ")")
-	    .call(d3.axisBottom(x));
+	    .attr("transform", "translate(0," + (height - 1.5 * margin.top) + ")")
+	    .call(d3.axisBottom(x)
+	    	.tickValues(xLabels.map(function(item) { return item.valore; })) // Imposta i valori dei tick sull'asse X
+		    .tickFormat(function(valore) {
+		        // Trova la label corrispondente al valore x
+		        var label = xLabels.find(function(item) {
+		            return item.valore === valore;
+		        }).label;
+		        return label; // Restituisci la label
+		    })
+	    
+	    );
 	
 	// Controllo se è impostata la visualizzazione delle label non orizzontali
 	if (dp.rotation != 0) {
@@ -122,11 +134,14 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	xAxis.selectAll("text")
 	    .style("font-size", 14);
 	    
+	let asseYValues = yLabels.map(function(item) {
+		  	return item.valore;
+			});
 	    
 	// Creazione asse Y scales and axis:
 	var y = d3.scaleBand()
-	  .range([ (height - 2 * margin.top), 0 ])
-	  .domain(yLabels)
+	  .range([ (height - 1.5 * margin.top), 0 ])
+	  .domain(asseYValues)
 //	  .padding(0.01)
 	  ;
 	  
@@ -199,29 +214,16 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 				}
 		    });
 	 
-//		   	var _max_cat = document.createElementNS("http://www.w3.org/2000/svg", "text");
-//	       	_max_cat.setAttributeNS(null,"opacity", 0);
-//	       	_max_cat.setAttributeNS(null,"font-family", 'Roboto');
-//	    	_max_cat.setAttributeNS(null,"font-size", 14);
-//	    	_max_cat.setAttributeNS(null,"text-anchor", 'end');
-//		    _max_cat.setAttribute("transform", "translate(-10,10)rotate(" + dp.rotation + ")");
-//		     
-//	     	_max_cat.textContent = dp.maxCategory;
-//	        svgTmp.appendChild(_max_cat);
-			
 	        var _firstText = svgTmp.querySelector('.c3-axis.c3-axis-x text').getBoundingClientRect().width;
 	        
 	        var _pad = _firstText - (_firstTick/2);
 	
 	        if(_pad > _yAxisWidth){
-//	            let padding_left = _pad + _max_cat.getBBox().height;
 	            let padding_left = _pad + _max_cat_height;
 	        }
 	        
-//	        let axis_x_height = Math.abs(_max_cat.getComputedTextLength()*Math.sin(dp.rotation/180*Math.PI));
 	        let axis_x_height = Math.abs(_max_cat_height*Math.sin(dp.rotation/180*Math.PI));
-	        let size_height = dp.size.h + axis_x_height;
-//	        svgTmp.removeChild(_max_cat);
+	        let size_height = dp.size.h + axis_x_height + 50;
 	
 			// aggiorno altezza grafico
 			let svgIdSharp = "#" + svgId;        
@@ -292,6 +294,65 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
       			.style("stroke", "none")
       			.style("opacity", 0.8);
 		}
+		
+		var mouseoverText = function(d) {
+			let tooltipHtml = generaTooltip(d, this);
+			// imposto l'html cosi da usarlo per calcolare l'eventuale sforamento vers dx
+			tooltip.html(tooltipHtml);
+	
+			// posizione di riferimento del tooltip e' al centro del quadrato
+			let boundingBox = this.getBoundingClientRect();
+			
+			let posX = boundingBox.x + (boundingBox.width/2);
+			let posY = boundingBox.y + (boundingBox.height/2);
+	
+			// sposto il tooltip verso sinistra in caso scavalchi la larghezza massima del grafico
+			let maxX = this.parentElement.parentElement.attributes.width.value;
+			let tooltipWidth = parseFloat(tooltip.style('width'));
+			let diffX = (posX + tooltipWidth) - maxX;
+			if(diffX > 0){
+				posX -= diffX; 
+			}
+			
+			// visualizzo tooltip e imposto posizione
+	    	tooltip.style("opacity", 1)
+    			.style("left", posX + "px")
+			    .style("top", posY + "px")
+    		;
+    		
+    		// Recupera i dati del rettangolo corrispondente a questo testo
+		    const rectData = _dataJson.dati.find(function(rect) {
+		        return rect.x === d.x && rect.y === d.y;
+		    });
+		
+			// imposto bordo nero nel rettangolo corrispondente
+    		d3.select('rect[data-x="' + decodeHTML(rectData.x) + '"][data-y="' + decodeHTML(rectData.y) + '"]')
+    			.style("stroke", "black")
+    			.style("opacity", 1);
+			}
+			
+		var mousemoveText = function(d) {
+			// gestione posizione tooltip spostata nel mouse over.
+			//tool tip scorre in verticale come negli altri tipi di grafico
+//    		tooltip
+			//      .style("left", (d3.mouse(this)[0]+70) + "px")
+//      		.style("top", (d3.mouse(this)[1]) + "px");
+  		}
+  
+		var mouseleaveText = function(d) {
+			// nascondo il tooltip
+    		tooltip.style("opacity", 0);
+    		
+    		// Recupera i dati del rettangolo corrispondente a questo testo
+		    const rectData = _dataJson.dati.find(function(rect) {
+		        return rect.x === d.x && rect.y === d.y;
+		    });
+    		
+    		// elimino bordo dal rettangolo corrispondente
+    		d3.select('rect[data-x="' + decodeHTML(rectData.x) + '"][data-y="' + decodeHTML(rectData.y) + '"]')
+      			.style("stroke", "none")
+      			.style("opacity", 0.8);
+		}
 
 		//Read the data		
 		//console.log(_dataJson.dati);
@@ -309,6 +370,12 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
       		.attr("y", function(d) { 
 				return y(decodeHTML(d.y)); 
 			})
+			.attr("data-x", function(d) { // Aggiungi un attributo data-x
+		        return decodeHTML(d.x);
+		    })
+		    .attr("data-y", function(d) { // Aggiungi un attributo data-y
+		        return decodeHTML(d.y);
+		    })
 			.attr("class", "c3-rect")
       		.attr("width", x.bandwidth() )
       		.attr("height", y.bandwidth() )
@@ -319,6 +386,112 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
     		.on("mousemove", mousemove)
     		.on("mouseleave", mouseleave)
 			;
+			
+		// disegno i valori nelle celle se previsto
+		// text-anchor="middle" dominant-baseline="middle"
+		if(dp.heatMapVisualizzaValori){
+			svg.selectAll()
+      		.data(_dataJson.dati)
+      		.enter()
+      		.append("text")
+      		.text(function(d){
+				if(dp.heatMapVisualizzaValoreZero){
+					return d.totale_label;
+				} else {
+					if(d.totale_label && parseInt(d.totale_label) != 0) { 
+						return d.totale_label;
+						}
+					else {
+						return '';
+					}	
+				}
+				})
+      		.style("font-family", "Roboto")
+      		.style("font-size", 14)
+			.attr("text-anchor", "middle" )
+			.attr("dominant-baseline", "middle" )
+	   		.attr("x", function(d) {
+	            // Calcola la coordinata x del centro del rettangolo
+	            return x(decodeHTML(d.x)) + (x.bandwidth() / 2);
+	        })
+	        .attr("y", function(d) {
+	            // Calcola la coordinata y del centro del rettangolo
+	            return y(decodeHTML(d.y)) + (y.bandwidth() / 2) + 3;
+	        })
+	        .on("mouseover", mouseoverText)
+	        .on("mousemove", mousemoveText)
+    		.on("mouseleave", mouseleaveText)
+			;
+		}	
+			
+		// creazione della legenda
+  		let linearGradient = svg.append("linearGradient").attr("id", "linear-gradient");
+  
+  		// Gradiente orizzontale
+  		linearGradient.attr("x1", "0%").attr("y1", "0%").attr("x2", "100%").attr("y2", "0%");
+    		
+  		// creazione del gradiente a partire dalle informazioni su minimo e massimo
+		linearGradient
+	    	.selectAll("stop")
+		    .data([{ offset: "0%", color: dp.heatMapColorRange[0] },{ offset: "100%", color: dp.heatMapColorRange[1] }])
+		    .enter()
+		    .append("stop")
+		    .attr("offset", function (d) {
+		    	return d.offset;
+		    })
+		    .attr("stop-color", function (d) {
+		      return d.color;
+		    });
+		    
+  		let minLegend = dp.heatMapColorDomain[0];
+  		let maxLegend = dp.heatMapColorDomain[1];
+  		let legendWidth = width * 0.3;
+    	let legendHeight = 8;
+		
+		// Aggingo il contenitore della legenda
+		let svgIdSharp = "#" + svgId;        
+		let legendsvg = d3.select(svgIdSharp).append("g")
+			.attr("id", "legend")
+			.style("font-family", "Roboto")
+  		  	.attr("transform", "translate(" + ((dp.size.w /2)) + "," + (margin.top /2) + ")")
+		;
+  
+	  	// disegno il rettangolo della legenda
+	  	legendsvg
+		    .append("rect")
+		    .attr("class", "legendRect")
+		    .attr("x", -legendWidth / 2 + 0.5)
+		    .attr("y", 10)
+		    .attr("width", legendWidth)
+		    .attr("height", legendHeight)
+		    .style("fill", "url(#linear-gradient)")
+		    .style("stroke", "black")
+		    .style("stroke-width", "1px");
+	  
+		  // Scala dei valori per l'asse X della legenda
+		  let xScaleLegenda = d3
+		    .scaleLinear()
+		    .range([0, legendWidth])
+		    .domain([minLegend,maxLegend]);
+		  
+		  let tickValues = dp.heatMapLegendValues.map(function(item) {
+		  	return { valore: item.valore, label: item.label };
+			});
+		  
+		  // assegno i valori per le label dell'asse X della legenda		  
+		  legendsvg.append("g")
+		    .call(d3.axisBottom(xScaleLegenda)
+		    		.tickValues(tickValues.map(function(item) { return item.valore; })) // Utilizza i valori x come tick values
+				    .tickFormat(function(valore) {
+				        // Trova la label corrispondente al valore x
+				        var label = tickValues.find(function(item) {
+				            return item.valore === valore;
+				        }).label;
+				        return label; // Restituisci la label
+				    })
+		    	)
+		    	.attr("id", "asseXLegenda")
+		    	.attr("transform","translate(" + -legendWidth / 2 + "," + (10 + legendHeight) + ")");
 	}
 		
 	var d = document.getElementById(id);

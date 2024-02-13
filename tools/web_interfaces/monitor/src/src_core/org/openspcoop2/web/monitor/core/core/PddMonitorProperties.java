@@ -663,6 +663,13 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.latenzaPorta.enabled", true, true));
 	}
 
+	public boolean isStatisticheVisualizzaValoriNelleCelleDelGraficoHeatmap() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.graficoHeatmap.visualizzaValoriNelleCelle.enabled", false, true));
+	}
+	
+	public boolean isStatisticheVisualizzaValoreZeroNelGraficoHeatmap() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.graficoHeatmap.visualizzaValoreZero.enabled", false, true));
+	}
 
 	
 	// periodo refresh live

@@ -476,6 +476,9 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.clickItemLegenda = _dataJson.hasOwnProperty('clickItemLegenda')?_dataJson.clickItemLegenda:true;
     dpChart.valoreRealeTorta = _dataJson.hasOwnProperty('valoreRealeTorta')?_dataJson.valoreRealeTorta:false;
     dpChart.pieTotal = 0;
+    dpChart.heatMapVisualizzaValori = _dataJson.hasOwnProperty('visualizzaValoreNellaCella')?_dataJson.visualizzaValoreNellaCella:false;
+    dpChart.heatMapVisualizzaValoreZero = _dataJson.hasOwnProperty('visualizzaValoreZero')?_dataJson.visualizzaValoreZero:false;
+    dpChart.heatMapLegendValues = _dataJson.hasOwnProperty('labelLegenda')?_dataJson.labelLegenda:[];
 
     var serieRef = [];
     var serie = [];
@@ -497,8 +500,8 @@ function chartMapping(_dataJson, _type, _size) {
 	if(_type == 'heatmap') {
 		if(_dataJson.hasOwnProperty("scalaValori")) {
 			// colori
-            var minTmp = _dataJson.scalaValori.min;
-            var maxTmp = _dataJson.scalaValori.max;
+            let minTmp = _dataJson.scalaValori.min;
+            let maxTmp = _dataJson.scalaValori.max;
             
             // range di colori minimo e massimo
             heatMapColorRange.push(minTmp.colore);
@@ -515,50 +518,44 @@ function chartMapping(_dataJson, _type, _size) {
 		
         if(_dataJson.hasOwnProperty("categorie") && _dataJson.hasOwnProperty("dati") &&
             _dataJson.hasOwnProperty("coloriAutomatici")) {
-            serieRef = _dataJson.categorie.map(function (item) {
-                return item.key;
-            });
-            if (!_dataJson.coloriAutomatici) {
-                serieColors = _dataJson.categorie.map(function (item) {
-                    return item.colore;
-                });
-            }
-            else serieColors = colorSerie(serieRef.length - 1);
-            for (var i = 0; i < _dataJson.categorie.length; i++) {
-                labelRef[_dataJson.categorie[i].key] = labelUnescape(_dataJson.categorie[i].label);
-            }
-            serie = _dataJson.dati.map(function (item) {
-                var obj = {};
-                var rowdata = [];
-                for (var i = 0; i < serieRef.length; i++) {
-                    rowdata.push(obj[serieRef[i]] = item[serieRef[i]]);
-                }
-                return rowdata;
-            });
 
             //Check for no results
             if(noData != 0) {
-                tips = _dataJson.dati.map(function (item) {
-                    var obj = {};
-                    var rowdata = [];
-                    for (var i = 0; i < serieRef.length; i++) {
-                        rowdata.push(obj[serieRef[i] + '_tooltip'] = labelUnescape(item[serieRef[i] + '_tooltip']));
-                    }
-                    return rowdata;
-                });
-             
              	// serie asse x   
-                var xSeriesTmp = _dataJson.dati.map(function(item){return decodeHTML(item.xLabel);});
-				xSeries = [...new  Set(xSeriesTmp)];
+                let xSeriesTmp = _dataJson.dati.map(function(item){
+					return { valore: decodeHTML(item.x), label: decodeHTML(item.xLabel) };
+                 });
+                // Elimina i duplicati basati su valore e label
+				jQuery.each(xSeriesTmp, function(index, item) {
+				    var isDuplicate = false;
+				    jQuery.each(xSeries, function(innerIndex, innerItem) {
+				        if (innerItem.valore === item.valore && innerItem.label === item.label) {
+				            isDuplicate = true;
+				            return false; // Esci dal ciclo interno
+				        }
+				    });
+				    if (!isDuplicate) {
+				        xSeries.push(item);
+				    }
+				});
+				
 				// serie asse y
-  				var ySeriesTmp = _dataJson.dati.map(function(item){return decodeHTML(item.yLabel);});
-                ySeries = [...new  Set(ySeriesTmp)];
-                
-                cats = _dataJson.dati.map(function (cat) {
-                    return { data: decodeHTML(labelUnescape(cat.xLabel)), visible: (cat.xLabel == undefined || cat.xLabel != '') };
-                });
-                
-                
+  				let ySeriesTmp = _dataJson.dati.map(function(item){
+					return { valore: decodeHTML(item.y), label: decodeHTML(item.yLabel) };
+				});
+				// Elimina i duplicati basati su valore e label
+				jQuery.each(ySeriesTmp, function(index, item) {
+				    var isDuplicate = false;
+				    jQuery.each(ySeries, function(innerIndex, innerItem) {
+				        if (innerItem.valore === item.valore && innerItem.label === item.label) {
+				            isDuplicate = true;
+				            return false; // Esci dal ciclo interno
+				        }
+				    });
+				    if (!isDuplicate) {
+				        ySeries.push(item);
+				    }
+				});
             }
         }
         

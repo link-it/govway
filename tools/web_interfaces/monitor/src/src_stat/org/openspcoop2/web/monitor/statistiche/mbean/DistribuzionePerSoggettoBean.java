@@ -178,7 +178,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			switch (numeroDimensioni) {
 				case DIMENSIONI_3:
 					StatisticType statisticType = StatsUtils.checkStatisticType((StatsSearchForm) this.search, false);
-					grafico = JsonStatsUtils.getJsonHeatmapChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice(), statisticType, DynamicPdDBean.log);
+					grafico = JsonStatsUtils.getJsonHeatmapChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice(), statisticType, this.isVisualizzaTotaleNelleCelleGraficoHeatmap(), DynamicPdDBean.log);
 					break;
 				case DIMENSIONI_2:
 				default:

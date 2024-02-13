@@ -82,6 +82,8 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	// comandi export 
 	private boolean visualizzaComandiExport = false;
 	
+	private boolean visualizzaTotaleNelleCelleGraficoHeatmap = false;
+	
 	// private boolean enableSpecialFilters = false;
 	// private SelectItem[] specialFilters;
 
@@ -101,6 +103,7 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 			this.direzioneLabel = govwayMonitorProperties.getOrientamentoDefaultLabelGrafici();
 			this.numeroLabelAsseXDistribuzioneTemporale = govwayMonitorProperties.getNumeroLabelDefaultDistribuzioneTemporale();
 			this.nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati = govwayMonitorProperties.isNascondiComandoNumeroLabelSeInferioreAlNumeroRisultati();
+			this.visualizzaTotaleNelleCelleGraficoHeatmap = govwayMonitorProperties.isStatisticheVisualizzaValoriNelleCelleDelGraficoHeatmap();
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 		}
@@ -534,5 +537,14 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	}
 	
 	public void updateChartNumeroRisultati(ActionEvent e) {
+	}
+	
+	public void updateChartVisualizzaTotaleNelleCelleGraficoHeatmap(ActionEvent e) {
+	}
+	public boolean isVisualizzaTotaleNelleCelleGraficoHeatmap() {
+		return this.visualizzaTotaleNelleCelleGraficoHeatmap;
+	}
+	public void setVisualizzaTotaleNelleCelleGraficoHeatmap(boolean visualizzaTotaleNelleCelleGraficoHeatmap) {
+		this.visualizzaTotaleNelleCelleGraficoHeatmap = visualizzaTotaleNelleCelleGraficoHeatmap;
 	}
 }
