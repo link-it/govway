@@ -476,6 +476,9 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.clickItemLegenda = _dataJson.hasOwnProperty('clickItemLegenda')?_dataJson.clickItemLegenda:true;
     dpChart.valoreRealeTorta = _dataJson.hasOwnProperty('valoreRealeTorta')?_dataJson.valoreRealeTorta:false;
     dpChart.pieTotal = 0;
+    dpChart.heatMapVisualizzaValori = _dataJson.hasOwnProperty('visualizzaValoreNellaCella')?_dataJson.visualizzaValoreNellaCella:false;
+    dpChart.heatMapVisualizzaValoreZero = _dataJson.hasOwnProperty('visualizzaValoreZero')?_dataJson.visualizzaValoreZero:false;
+    dpChart.heatMapLegendValues = _dataJson.hasOwnProperty('labelLegenda')?_dataJson.labelLegenda:[];
 
     var serieRef = [];
     var serie = [];

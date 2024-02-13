@@ -142,6 +142,30 @@ public class SelectItemConverter implements Converter {
 				}
 			}
 		}
+		else if(value instanceof Boolean){
+			for (SelectItem selectItem : selectItems) {
+				Object value2 = selectItem.getValue();
+				if( value2 instanceof Boolean){
+					boolean v2 = ((Boolean)value2).booleanValue();
+					boolean v1 = ((Boolean)value).booleanValue();
+					if(v2 == v1) {
+						return selectItem.getLabel();
+					}
+				}
+				else if( value2 instanceof String){
+					boolean v2 = false;
+					try{
+						v2 = Boolean.parseBoolean((String)value2);
+					}catch(Exception e){
+						// ignore
+					}
+					boolean v1 = ((Boolean)value).booleanValue();
+					if(v2 == v1) {
+						return selectItem.getLabel();
+					}
+				}
+			}
+		}
 		
 		if(value instanceof SelectItem){
 			SelectItem facesSelectItem = (SelectItem) value;
