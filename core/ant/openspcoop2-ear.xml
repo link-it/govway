@@ -685,7 +685,7 @@
 				<include name="cryptacular-1.2.5.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="herasaf-xacml-core-3.0.2.jar"/>
-				<include name="nimbus-jose-jwt-9.31.jar"/>
+				<include name="nimbus-jose-jwt-9.37.3.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/wss4j">
 				<include name="*.jar"/>
