@@ -460,7 +460,7 @@
 				<include name="bcprov-ext-jdk18on-1.74.jar"/>
 				<include name="bcutil-jdk18on-1.74.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
-				<include name="nimbus-jose-jwt-9.25.6.jar"/>
+				<include name="nimbus-jose-jwt-9.37.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/httpcore">
 				<include name="${govwayConsoleRemota_httpcore}"/>

@@ -207,7 +207,7 @@
 	<archive path="/op2_3.3.dev/lib/security/bcpkix-jdk18on-1.74.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/bcutil-jdk18on-1.74.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/herasaf-xacml-core-2.0.4.jar"/>
-	<archive path="/op2_3.3.dev/lib/security/nimbus-jose-jwt-9.25.6.jar"/>
+	<archive path="/op2_3.3.dev/lib/security/nimbus-jose-jwt-9.37.3.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/jasypt-1.9.3.jar"/>
 	<!-- shared -->
         <archive path="/op2_3.3.dev/lib/shared/xom-1.2.11.jar"/>
