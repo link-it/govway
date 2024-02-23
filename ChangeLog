@@ -1,5 +1,14 @@
 2024-02-23  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1713
+	In caso di Violazione Policy di RateLimiting con raggruppamento per Token Claim l'evento emesso non conteneva l'informazione puntuale sul valore del claim.
+	Nell'intervento è stata corretta anche una anomalia presente durante il salvataggio di una policy con criterio di raggruppamento per Token Claim 'subject';
+	l'impostazione del criterio di raggruppamento per token subject non consentiva di entrare nuovamente in modifica della policy e nei log si poteva riscontrare un errore simile al seguente:
+	"Enum with value [TOKEN_ISSUER] not found"
+
+2024-02-23  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
 	- CVE-2024-22243: aggiornata libreria 'org.springframework:*' alla versione 5.3.32

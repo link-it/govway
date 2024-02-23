@@ -31,6 +31,7 @@ import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.RisultatoStato;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 
@@ -398,10 +399,47 @@ public class PolicyUtilities {
 			}
 			
 			if(groupBy.getToken()!=null && StringUtils.isNotEmpty(groupBy.getToken())){
-				if(bf.length()>0){
-					bf.append(", ");
+				String [] token = null;
+				if(groupBy.getToken().contains(",")) {
+					token = groupBy.getToken().split(",");
 				}
-				bf.append("Token: ").append(groupBy.getToken());
+				else {
+					token = new String[] {groupBy.getToken()};
+				}
+				if(token!=null && token.length>0) {
+					for (int i = 0; i < token.length; i++) {
+						if(bf.length()>0){
+							bf.append(", ");
+						}
+						bf.append(token[i]).append(": ");
+						TipoCredenzialeMittente claim = TipoCredenzialeMittente.toEnumConstant(token[i]);
+						if(claim!=null) {
+							switch (claim) {
+							case TOKEN_SUBJECT:
+								bf.append(datiGroupBy.getTokenSubject());
+								break;
+							case TOKEN_ISSUER:
+								bf.append(datiGroupBy.getTokenIssuer());
+								break;
+							case TOKEN_CLIENT_ID:
+								bf.append(datiGroupBy.getTokenClientId());
+								break;
+							case TOKEN_USERNAME:
+								bf.append(datiGroupBy.getTokenUsername());
+								break;
+							case TOKEN_EMAIL:
+								bf.append(datiGroupBy.getTokenEMail());
+								break;
+							default:
+								bf.append("N.D.");
+								break;
+							}
+						}
+						else {
+							bf.append("N.D.");
+						}
+					}
+				}	
 			}
 			
 			if(groupBy.isInformazioneApplicativaEnabled()){
