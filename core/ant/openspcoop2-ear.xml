@@ -812,7 +812,7 @@
 				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.12.0.jar"/>
-				<include name="commons-compress-1.21.jar"/>
+				<include name="commons-compress-1.26.0.jar"/>
 				<include name="commons-fileupload-1.5.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
