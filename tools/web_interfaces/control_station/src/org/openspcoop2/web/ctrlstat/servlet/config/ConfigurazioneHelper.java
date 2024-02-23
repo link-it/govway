@@ -12598,7 +12598,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								if(!bf.toString().endsWith(",") && bf.length()>0) {
 									bf.append(",");
 								}
-								bf.append(TipoCredenzialeMittente.TOKEN_ISSUER.name());
+								bf.append(TipoCredenzialeMittente.TOKEN_ISSUER.getRawValue());
 								if(i==0) {
 									bf.append(",");
 								}

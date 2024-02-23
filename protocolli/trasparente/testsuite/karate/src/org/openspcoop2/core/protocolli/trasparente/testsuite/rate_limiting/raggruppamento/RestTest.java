@@ -21,9 +21,13 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.raggruppamento;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Properties;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +65,8 @@ public class RestTest extends ConfigLoader {
 	@Test
 	public void perRichiedenteFruizione() {
 		
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
+		
 		final String erogazione = "RaggruppamentoRichiedenteRest";
 		final String urlServizio =  basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/orario";
 		
@@ -89,11 +95,30 @@ public class RestTest extends ConfigLoader {
 		
 		HttpRequest[] requests = {requestGroup1, requestGroup2, requestGroup3};
 		
-		makeAndCheckGroupRequests(TipoServizio.FRUIZIONE, PolicyAlias.ORARIO, erogazione, requests);		
+		makeAndCheckGroupRequests(TipoServizio.FRUIZIONE, PolicyAlias.ORARIO, erogazione, requests);	
+		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+		
+		
+		String idServizio = "SoggettoInternoTestFruitore/SoggettoInternoTest/RaggruppamentoRichiedenteRest/v1";
+		String groupBy = null;
+		
+		groupBy = "Fruitore: gw/SoggettoInternoTestFruitore, SAFruitore: "+Credenziali.applicativoSITFFiltrato.username+", ApplicativoToken: *";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Fruitore: gw/SoggettoInternoTestFruitore, SAFruitore: "+Credenziali.applicativoSITFNonFiltrato.username+", ApplicativoToken: *";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Fruitore: gw/SoggettoInternoTestFruitore, SAFruitore: "+Credenziali.applicativoSITFRuoloFiltrato.username+", ApplicativoToken: *";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
 	}
 	
 	@Test
 	public void perRichiedenteErogazione() {
+		
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
 		
 		final String erogazione = "RaggruppamentoRichiedenteRest";
 		final String urlServizio =  basePath + "/SoggettoInternoTest/"+erogazione+"/v1/orario";
@@ -125,10 +150,27 @@ public class RestTest extends ConfigLoader {
 		
 		makeAndCheckGroupRequests(TipoServizio.EROGAZIONE, PolicyAlias.ORARIO, erogazione, requests);
 		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTest/RaggruppamentoRichiedenteRest/v1";
+		String groupBy = null;
+		
+		groupBy = "Fruitore: gw/SoggettoNonFiltrato, SAFruitore: "+Credenziali.applicativoRuoloFiltrato.username+", ApplicativoToken: *";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Fruitore: gw/SoggettoNonFiltrato, SAFruitore: "+Credenziali.applicativoRuoloFiltrato2.username+", ApplicativoToken: *";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Fruitore: gw/"+Credenziali.soggettoRuoloFiltrato.username+", SAFruitore: *, ApplicativoToken: *";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
 	}
 	
 	@Test
 	public void perRichiedenteTokenFruizione() throws Exception {
+		
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
 		
 		final String erogazione = "RaggruppamentoRichiedenteTokenRest";
 		final String urlServizio =  basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/orario";
@@ -164,10 +206,29 @@ public class RestTest extends ConfigLoader {
 		
 		makeAndCheckGroupRequests(TipoServizio.FRUIZIONE, PolicyAlias.ORARIO, erogazione, requests);
 		
+		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTestFruitore/SoggettoInternoTest/RaggruppamentoRichiedenteTokenRest/v1";
+		String groupBy = null;
+		
+		groupBy = "Fruitore: gw/SoggettoInternoTestFruitore, SAFruitore: Anonimo, ApplicativoToken: gw/SoggettoInternoTestFruitore/ApplicativoToken1SoggettoInternoFruitore";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Fruitore: gw/SoggettoInternoTestFruitore, SAFruitore: Anonimo, ApplicativoToken: *";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Fruitore: gw/SoggettoInternoTestFruitore, SAFruitore: Anonimo, ApplicativoToken: gw/SoggettoInternoTestFruitore/ApplicativoToken2SoggettoInternoFruitore";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+
 	}
 	
 	@Test
 	public void perRichiedenteTokenErogazione() throws Exception {
+		
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
 		
 		final String erogazione = "RaggruppamentoRichiedenteTokenRest";
 		final String urlServizio =  basePath + "/SoggettoInternoTest/"+erogazione+"/v1/orario";
@@ -202,6 +263,22 @@ public class RestTest extends ConfigLoader {
 		HttpRequest[] requests = {requestGroup1, requestGroup2, requestGroup3};
 		
 		makeAndCheckGroupRequests(TipoServizio.EROGAZIONE, PolicyAlias.ORARIO, erogazione, requests);
+		
+			
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTest/RaggruppamentoRichiedenteTokenRest/v1";
+		String groupBy = null;
+		
+		groupBy = "Fruitore: -, SAFruitore: *, ApplicativoToken: *";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Fruitore: -, SAFruitore: *, ApplicativoToken: gw/SoggettoInternoTestFruitore/ApplicativoToken1SoggettoInternoFruitore";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Fruitore: -, SAFruitore: *, ApplicativoToken: gw/SoggettoInternoTestFruitore/ApplicativoToken2SoggettoInternoFruitore";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
 		
 	}
 	
@@ -347,28 +424,53 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perHeaderXForwardedForErogazione() throws UtilsException {
+		List<String> test = new ArrayList<>();
 		HttpUtilities.getClientAddressHeaders().forEach( headerName ->
-				perHeaderXForwardedFor(TipoServizio.EROGAZIONE, headerName)
+				perHeaderXForwardedFor(TipoServizio.EROGAZIONE, headerName, test)
 			);
 	}
 	
 	@Test
 	public void perHeaderXForwardedForFruizione() throws UtilsException {
+		List<String> test = new ArrayList<>();
 		HttpUtilities.getClientAddressHeaders().forEach( headerName ->
-			perHeaderXForwardedFor(TipoServizio.FRUIZIONE, headerName)
+			perHeaderXForwardedFor(TipoServizio.FRUIZIONE, headerName, test)
 		);
 	}
 	
 	
+	private static final String EROGAZIONE_1 = "RaggruppamentoTokenRest";
+	private static final String EROGAZIONE_2 = "Raggruppamento2TokenRest";
+	private static final String EROGAZIONE_3 = "Raggruppamento3TokenRest";
+	private static final String RAGGRUPPAMENTO_SUBJECT = "subject";
+	private static final String RAGGRUPPAMENTO_CLIENT = "client";
+	private static final String RAGGRUPPAMENTO_MULTIPLO = "multiplo";
+	
 	@Test
-	public void perTokenErogazione() throws UtilsException {
-		perToken(TipoServizio.EROGAZIONE);
+	public void perTokenSubjectErogazione() throws UtilsException { 
+		perToken(TipoServizio.EROGAZIONE, EROGAZIONE_1, RAGGRUPPAMENTO_SUBJECT);
+	}
+	@Test
+	public void perTokenSubjectFruizione() throws UtilsException { 
+		perToken(TipoServizio.FRUIZIONE, EROGAZIONE_1, RAGGRUPPAMENTO_SUBJECT);
 	}
 	
+	@Test
+	public void perTokenClientIdErogazione() throws UtilsException { 
+		perToken(TipoServizio.EROGAZIONE, EROGAZIONE_2, RAGGRUPPAMENTO_CLIENT);
+	}
+	@Test
+	public void perTokenClientIdFruizione() throws UtilsException {
+		perToken(TipoServizio.FRUIZIONE, EROGAZIONE_2, RAGGRUPPAMENTO_CLIENT);
+	}
 	
 	@Test
+	public void perTokenErogazione() throws UtilsException { 
+		perToken(TipoServizio.EROGAZIONE, EROGAZIONE_3, RAGGRUPPAMENTO_MULTIPLO);
+	}
+	@Test
 	public void perTokenFruizione() throws UtilsException {
-		perToken(TipoServizio.FRUIZIONE);
+		perToken(TipoServizio.FRUIZIONE, EROGAZIONE_3, RAGGRUPPAMENTO_MULTIPLO);
 	}
 	
 	
@@ -385,6 +487,8 @@ public class RestTest extends ConfigLoader {
 	
 	
 	public static void perRisorsa(TipoServizio tipoServizio) {
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
+		
 		final String erogazione = "RaggruppamentoRest";
 		final String urlServizio =  tipoServizio == TipoServizio.EROGAZIONE
 				? basePath + "/SoggettoInternoTest/"+erogazione+"/v1"
@@ -414,12 +518,32 @@ public class RestTest extends ConfigLoader {
 			r.addHeader(testIdHeader, PolicyAlias.FILTRORISORSA.value);
 		}
 		
-		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.FILTRORISORSA, erogazione, requests);
+		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.FILTRORISORSA, erogazione, requests);	
+		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTest/RaggruppamentoRest/v1";
+		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+			idServizio = "SoggettoInternoTestFruitore/"+idServizio;
+		}
+		String groupBy = null;
+		
+		groupBy = "Azione: GET_minuto";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTRORISORSA, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Azione: GET_giornaliero";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTRORISORSA, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Azione: GET_orario";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTRORISORSA, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
 	}
 	
 	
-	public static void perToken(TipoServizio tipoServizio) throws UtilsException {
-		final String erogazione = "RaggruppamentoTokenRest";
+	public static void perToken(TipoServizio tipoServizio, String erogazione, String tipoRaggruppamento) throws UtilsException {
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
+		
 		final String urlServizio =  tipoServizio == TipoServizio.EROGAZIONE
 				? basePath + "/SoggettoInternoTest/"+erogazione+"/v1/orario"
 				: basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/orario";
@@ -449,8 +573,9 @@ public class RestTest extends ConfigLoader {
 		String token1 = "{\n"+
 		  "\"sub\": \"gruppo1\",\n"+
 		  "\"iss\": \"example.org\",\n"+
-		  "\"preferred_username\": \"John Doe\",\n"+
-		  "\"azp\": \"clientTest\",\n"+
+		  "\"preferred_username\": \"Utente1\",\n"+
+		  "\"azp\": \"clientTest1\",\n"+
+		  "\"email\": \"email1@prova.org\",\n"+
 		  "\"iat\": "+(iat.getTime()/1000)+"\n"+
 		"}";
 		String token1Signed = jsonSignature.sign(token1);
@@ -464,8 +589,9 @@ public class RestTest extends ConfigLoader {
 		String token2 = "{\n"+
 				  "\"sub\": \"gruppo2\",\n"+
 				  "\"iss\": \"example.org\",\n"+
-				  "\"preferred_username\": \"John Doe\",\n"+
-				  "\"azp\": \"clientTest\",\n"+
+				  "\"preferred_username\": \"Utente2\",\n"+
+				  "\"azp\": \"clientTest2\",\n"+
+				  "\"email\": \"email2@prova.org\",\n"+
 				  "\"iat\": "+(iat.getTime()/1000)+"\n"+
 				"}";
 				
@@ -479,8 +605,9 @@ public class RestTest extends ConfigLoader {
 		String token3 = "{\n"+
 				  "\"sub\": \"gruppo3\",\n"+
 				  "\"iss\": \"example.org\",\n"+
-				  "\"preferred_username\": \"John Doe\",\n"+
-				  "\"azp\": \"clientTest\",\n"+
+				  "\"preferred_username\": \"Utente3\",\n"+
+				  "\"azp\": \"clientTest3\",\n"+
+				  "\"email\": \"email3@prova.org\",\n"+
 				  "\"iat\": "+(iat.getTime()/1000)+"\n"+
 				"}";
 				
@@ -495,10 +622,56 @@ public class RestTest extends ConfigLoader {
 		
 
 		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.ORARIO, erogazione, requests);	
+		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTest/"+erogazione+"/v1";
+		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+			idServizio = "SoggettoInternoTestFruitore/"+idServizio;
+		}
+		String groupBy = null;
+		
+		if(RAGGRUPPAMENTO_SUBJECT.equals(tipoRaggruppamento)) {
+			groupBy = "token_issuer: example.org, token_subject: gruppo1";
+		}
+		else if(RAGGRUPPAMENTO_CLIENT.equals(tipoRaggruppamento)) {
+			groupBy = "token_clientId: clientTest1";
+		}
+		else if(RAGGRUPPAMENTO_MULTIPLO.equals(tipoRaggruppamento)) {
+			groupBy = "token_issuer: example.org, token_subject: gruppo1, token_clientId: clientTest1, token_username: Utente1, token_eMail: email1@prova.org";
+		}
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		if(RAGGRUPPAMENTO_SUBJECT.equals(tipoRaggruppamento)) {
+			groupBy = "token_issuer: example.org, token_subject: gruppo2";
+		}
+		else if(RAGGRUPPAMENTO_CLIENT.equals(tipoRaggruppamento)) {
+			groupBy = "token_clientId: clientTest2";
+		}
+		else if(RAGGRUPPAMENTO_MULTIPLO.equals(tipoRaggruppamento)) {
+			groupBy = "token_issuer: example.org, token_subject: gruppo2, token_clientId: clientTest2, token_username: Utente2, token_eMail: email2@prova.org";
+		}
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		if(RAGGRUPPAMENTO_SUBJECT.equals(tipoRaggruppamento)) {
+			groupBy = "token_issuer: example.org, token_subject: gruppo3";
+		}
+		else if(RAGGRUPPAMENTO_CLIENT.equals(tipoRaggruppamento)) {
+			groupBy = "token_clientId: clientTest3";
+		}
+		else if(RAGGRUPPAMENTO_MULTIPLO.equals(tipoRaggruppamento)) {
+			groupBy = "token_issuer: example.org, token_subject: gruppo3, token_clientId: clientTest3, token_username: Utente3, token_eMail: email3@prova.org";
+		}
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.ORARIO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
 	}
 	
 	
 	public static void perHeader(TipoServizio tipoServizio) {
+		
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
+		
 		final String erogazione = "RaggruppamentoRest";
 		final String urlServizio =  tipoServizio == TipoServizio.EROGAZIONE
 				? basePath + "/SoggettoInternoTest/"+erogazione+"/v1/orario"
@@ -532,9 +705,32 @@ public class RestTest extends ConfigLoader {
 		}
 		
 		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.FILTROHEADER, erogazione, requests);	
+		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTest/RaggruppamentoRest/v1";
+		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+			idServizio = "SoggettoInternoTestFruitore/"+idServizio;
+		}
+		String groupBy = null;
+		
+		groupBy = "Chiave-Tipo: HeaderBased, Chiave-Criterio: Gruppo, Chiave-Valore: gruppo1";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROHEADER, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: HeaderBased, Chiave-Criterio: Gruppo, Chiave-Valore: gruppo2";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROHEADER, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: HeaderBased, Chiave-Criterio: Gruppo, Chiave-Valore: gruppo3";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROHEADER, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
 	}
 	
-	public static void perHeaderXForwardedFor(TipoServizio tipoServizio, String headerName) {
+	public static void perHeaderXForwardedFor(TipoServizio tipoServizio, String headerName, List<String> test) {
+		
+		test.add(headerName);		
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
+		
 		final String erogazione = "RaggruppamentoRest";
 		final String urlServizio =  tipoServizio == TipoServizio.EROGAZIONE
 				? basePath + "/SoggettoInternoTest/"+erogazione+"/v1/orario"
@@ -567,10 +763,36 @@ public class RestTest extends ConfigLoader {
 			r.addHeader(testIdHeader, PolicyAlias.FILTROXFORWARDEDFOR.value);
 		}
 		
-		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.FILTROXFORWARDEDFOR, erogazione, requests);
+		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.FILTROXFORWARDEDFOR, erogazione, requests);	
+		
+		if(test.size()<=1) {
+			
+			// solo una volta faccio la verifica degli eventi
+			
+			org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+			List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+					
+			String idServizio = "SoggettoInternoTest/RaggruppamentoRest/v1";
+			if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+				idServizio = "SoggettoInternoTestFruitore/"+idServizio;
+			}
+			String groupBy = null;
+			
+			groupBy = "Chiave-Tipo: IndirizzoIP_Forwarded, Chiave-Valore: gruppo1";
+			EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROXFORWARDEDFOR, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+			
+			groupBy = "Chiave-Tipo: IndirizzoIP_Forwarded, Chiave-Valore: gruppo2";
+			EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROXFORWARDEDFOR, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+			
+			groupBy = "Chiave-Tipo: IndirizzoIP_Forwarded, Chiave-Valore: gruppo3";
+			EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROXFORWARDEDFOR, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		}
 	}
 	
 	public static void perUrlInvocazione(TipoServizio tipoServizio) {
+		
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
+		
 		final String erogazione = "RaggruppamentoRest";
 		final String urlServizio =  tipoServizio == TipoServizio.EROGAZIONE
 				? basePath + "/SoggettoInternoTest/"+erogazione+"/v1"
@@ -601,10 +823,31 @@ public class RestTest extends ConfigLoader {
 		}
 		
 		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.FILTROURLINVOCAZIONE, erogazione, requests);
+		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTest/RaggruppamentoRest/v1";
+		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+			idServizio = "SoggettoInternoTestFruitore/"+idServizio;
+		}
+		String groupBy = null;
+		
+		groupBy = "Chiave-Tipo: URLBased, Chiave-Criterio: .*/(?:gw_)?SoggettoInternoTest/(?:gw_)?RaggruppamentoRest/v1/([^/|^?]*).*, Chiave-Valore: minuto";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROURLINVOCAZIONE, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: URLBased, Chiave-Criterio: .*/(?:gw_)?SoggettoInternoTest/(?:gw_)?RaggruppamentoRest/v1/([^/|^?]*).*, Chiave-Valore: giornaliero";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROURLINVOCAZIONE, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: URLBased, Chiave-Criterio: .*/(?:gw_)?SoggettoInternoTest/(?:gw_)?RaggruppamentoRest/v1/([^/|^?]*).*, Chiave-Valore: orario";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROURLINVOCAZIONE, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
 	}
 	
 	public static void perContenuto(TipoServizio tipoServizio) {
 	
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
+		
 		final String erogazione = "RaggruppamentoRest";
 		final String urlServizio =  tipoServizio == TipoServizio.EROGAZIONE
 				? basePath + "/SoggettoInternoTest/"+erogazione+"/v1/orario"
@@ -640,9 +883,30 @@ public class RestTest extends ConfigLoader {
 		}
 		
 		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.FILTROCONTENUTO, erogazione, requests);
+		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTest/RaggruppamentoRest/v1";
+		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+			idServizio = "SoggettoInternoTestFruitore/"+idServizio;
+		}
+		String groupBy = null;
+		
+		groupBy = "Chiave-Tipo: ContentBased, Chiave-Criterio: $.gruppo, Chiave-Valore: gruppo1";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROCONTENUTO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: ContentBased, Chiave-Criterio: $.gruppo, Chiave-Valore: gruppo2";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROCONTENUTO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: ContentBased, Chiave-Criterio: $.gruppo, Chiave-Valore: gruppo3";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROCONTENUTO, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
 	}
 	
 	public static void perParametroUrl(TipoServizio tipoServizio) {
+		
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
 		
 		final String erogazione = "RaggruppamentoRest";
 		final String urlServizio =  tipoServizio == TipoServizio.EROGAZIONE
@@ -674,6 +938,25 @@ public class RestTest extends ConfigLoader {
 		}
 		
 		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.FILTROPARAMETROURL, erogazione, requests);
+		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTest/RaggruppamentoRest/v1";
+		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+			idServizio = "SoggettoInternoTestFruitore/"+idServizio;
+		}
+		String groupBy = null;
+		
+		groupBy = "Chiave-Tipo: FormBased, Chiave-Criterio: gruppo, Chiave-Valore: gruppo1";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROPARAMETROURL, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: FormBased, Chiave-Criterio: gruppo, Chiave-Valore: gruppo2";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROPARAMETROURL, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: FormBased, Chiave-Criterio: gruppo, Chiave-Valore: gruppo3";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROPARAMETROURL, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
 		
 	}
 

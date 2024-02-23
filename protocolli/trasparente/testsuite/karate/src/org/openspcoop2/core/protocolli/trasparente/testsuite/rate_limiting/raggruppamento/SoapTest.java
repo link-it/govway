@@ -21,9 +21,12 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.raggruppamento;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Properties;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -542,6 +545,8 @@ public class SoapTest extends ConfigLoader {
 	
 	private static void perSoapAction(TipoServizio tipoServizio) {
 		
+		LocalDateTime dataSpedizione = LocalDateTime.now();	
+		
 		final String erogazione = "RaggruppamentoSoap";
 		final String urlServizio =  tipoServizio == TipoServizio.EROGAZIONE
 				? basePath + "/SoggettoInternoTest/"+erogazione+"/v1"
@@ -560,7 +565,6 @@ public class SoapTest extends ConfigLoader {
 		requestGroup2.setUrl(urlServizio);
 		requestGroup2.setContent(SoapBodies.get(PolicyAlias.ORARIO).getBytes());
 		
-		
 		HttpRequest requestGroup3 = new HttpRequest();
 		requestGroup3.setContentType("application/soap+xml; action=Giornaliero");
 		requestGroup3.setMethod(HttpRequestMethod.POST);
@@ -575,6 +579,25 @@ public class SoapTest extends ConfigLoader {
 		}
 		
 		makeAndCheckGroupRequests(tipoServizio, PolicyAlias.FILTROSOAPACTION, erogazione, requests);		
+		
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.waitForDbEvents();
+		List<Map<String, Object>> events = org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.congestione.EventiUtils.getNotificheEventi(dataSpedizione);		
+				
+		String idServizio = "SoggettoInternoTest/RaggruppamentoSoap/v1";
+		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
+			idServizio = "SoggettoInternoTestFruitore/"+idServizio;
+		}
+		String groupBy = null;
+		
+		groupBy = "Chiave-Tipo: SOAPActionBased, Chiave-Valore: Minuto";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROSOAPACTION, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: SOAPActionBased, Chiave-Valore: Orario";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROSOAPACTION, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);
+		
+		groupBy = "Chiave-Tipo: SOAPActionBased, Chiave-Valore: Giornaliero";
+		EventiUtils.checkEventConViolazioneRL(events, PolicyAlias.FILTROSOAPACTION, idServizio, dataSpedizione, Optional.empty(), Optional.of(groupBy), logRateLimiting);	
 	}
 	
 
