@@ -2,6 +2,12 @@
 
 	* [GovWayCore]
 	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2024-22243: aggiornata libreria 'org.springframework:*' alla versione 5.3.32
+
+2024-02-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
 	- CVE-2024-25710: aggiornata libreria 'org.apache.commons:commons-compress' alla versione 1.26.0
 
 2024-02-14  Andrea Poli <apoli@link.it>
