@@ -673,7 +673,7 @@
 				<include name="commons-beanutils-1.9.4.jar"/>
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.13.0.jar"/>
-				<include name="commons-compress-1.23.0.jar"/>
+				<include name="commons-compress-1.26.0.jar"/>
 				<include name="commons-fileupload2-*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">

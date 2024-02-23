@@ -262,7 +262,7 @@
 				<include name="commons-validator-1.7.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
 				<include name="commons-lang3-3.13.0.jar"/>
-				<include name="commons-compress-1.23.0.jar"/>
+				<include name="commons-compress-1.26.0.jar"/>
 				<include name="commons-fileupload2-*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">

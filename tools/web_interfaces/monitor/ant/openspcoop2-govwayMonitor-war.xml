@@ -167,7 +167,7 @@
 				<include name="commons-codec-1.16.0.jar" />
 				<include name="commons-math3-3.6.1.jar" />
 				<include name="commons-csv-1.10.0.jar" />
-				<include name="commons-compress-1.23.0.jar" />
+				<include name="commons-compress-1.26.0.jar" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/console">
 				<include name="jquery-3.6.4.jar"/>
