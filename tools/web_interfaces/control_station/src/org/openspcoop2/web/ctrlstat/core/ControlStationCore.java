@@ -74,7 +74,9 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.TracciamentoConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -8790,5 +8792,40 @@ public class ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 		return configurazioneBean;
+	}
+	
+	
+	
+	public TracciamentoConfigurazione buildTracciamentoConfigurazioneDatabase(String dbStato,
+			String dbStatoReqIn, String dbStatoReqOut, String dbStatoResOut, String dbStatoResOutComplete,
+			boolean dbFiltroEsiti){
+		TracciamentoConfigurazione database = new TracciamentoConfigurazione();
+		database.setStato(StatoFunzionalitaConPersonalizzazione.toEnumConstant(dbStato));
+		if(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(database.getStato())) {
+			database.setRequestIn(StatoFunzionalita.toEnumConstant(dbStatoReqIn));
+			database.setRequestOut(StatoFunzionalita.toEnumConstant(dbStatoReqOut));
+			database.setResponseOut(StatoFunzionalita.toEnumConstant(dbStatoResOut));
+			database.setResponseOutComplete(StatoFunzionalita.toEnumConstant(dbStatoResOutComplete));
+		}
+		if(!StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(database.getStato())) {
+			database.setFiltroEsiti(dbFiltroEsiti ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		}
+		return database;
+	}
+	public TracciamentoConfigurazione buildTracciamentoConfigurazioneFiletrace(String fsStato,
+			String fsStatoReqIn, String fsStatoReqOut, String fsStatoResOut, String fsStatoResOutComplete,
+			boolean fsFiltroEsiti){
+		TracciamentoConfigurazione filetrace = new TracciamentoConfigurazione();
+		filetrace.setStato(StatoFunzionalitaConPersonalizzazione.toEnumConstant(fsStato));
+		if(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(filetrace.getStato())) {
+			filetrace.setRequestIn(StatoFunzionalita.toEnumConstant(fsStatoReqIn));
+			filetrace.setRequestOut(StatoFunzionalita.toEnumConstant(fsStatoReqOut));
+			filetrace.setResponseOut(StatoFunzionalita.toEnumConstant(fsStatoResOut));
+			filetrace.setResponseOutComplete(StatoFunzionalita.toEnumConstant(fsStatoResOutComplete));
+		}
+		if(!StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(filetrace.getStato())) {
+			filetrace.setFiltroEsiti(fsFiltroEsiti ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		}
+		return filetrace;
 	}
 }

@@ -68,6 +68,8 @@ import org.openspcoop2.core.config.PortaDelegataAutorizzazioneToken;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.IdPortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
+import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector;
+import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
@@ -95,6 +97,9 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
 import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.TracciamentoConfigurazione;
+import org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta;
+import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.CanaleConfigurazioneNodo;
@@ -144,7 +149,6 @@ import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Dump;
-import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.IntegrationManager;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
@@ -3136,6 +3140,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: tracciamento-configurazione-filetrace-connector
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletraceConnector readTracciamentoConfigurazioneFiletraceConnector(String fileName) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletraceConnector) this.xmlToObj(fileName, TracciamentoConfigurazioneFiletraceConnector.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletraceConnector readTracciamentoConfigurazioneFiletraceConnector(File file) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletraceConnector) this.xmlToObj(file, TracciamentoConfigurazioneFiletraceConnector.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletraceConnector readTracciamentoConfigurazioneFiletraceConnector(InputStream in) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletraceConnector) this.xmlToObj(in, TracciamentoConfigurazioneFiletraceConnector.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletraceConnector readTracciamentoConfigurazioneFiletraceConnector(byte[] in) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletraceConnector) this.xmlToObj(in, TracciamentoConfigurazioneFiletraceConnector.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletraceConnector readTracciamentoConfigurazioneFiletraceConnectorFromString(String in) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletraceConnector) this.xmlToObj(in.getBytes(), TracciamentoConfigurazioneFiletraceConnector.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: tracciamento-configurazione-filetrace
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletrace readTracciamentoConfigurazioneFiletrace(String fileName) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletrace) this.xmlToObj(fileName, TracciamentoConfigurazioneFiletrace.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletrace readTracciamentoConfigurazioneFiletrace(File file) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletrace) this.xmlToObj(file, TracciamentoConfigurazioneFiletrace.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletrace readTracciamentoConfigurazioneFiletrace(InputStream in) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletrace) this.xmlToObj(in, TracciamentoConfigurazioneFiletrace.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletrace readTracciamentoConfigurazioneFiletrace(byte[] in) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletrace) this.xmlToObj(in, TracciamentoConfigurazioneFiletrace.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazioneFiletrace readTracciamentoConfigurazioneFiletraceFromString(String in) throws DeserializerException {
+		return (TracciamentoConfigurazioneFiletrace) this.xmlToObj(in.getBytes(), TracciamentoConfigurazioneFiletrace.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: trasformazione-regola-risposta
 	 =================================================================================
 	*/
@@ -4831,6 +4961,195 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public CanaleConfigurazione readCanaleConfigurazioneFromString(String in) throws DeserializerException {
 		return (CanaleConfigurazione) this.xmlToObj(in.getBytes(), CanaleConfigurazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: tracciamento-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazione readTracciamentoConfigurazione(String fileName) throws DeserializerException {
+		return (TracciamentoConfigurazione) this.xmlToObj(fileName, TracciamentoConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazione readTracciamentoConfigurazione(File file) throws DeserializerException {
+		return (TracciamentoConfigurazione) this.xmlToObj(file, TracciamentoConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazione readTracciamentoConfigurazione(InputStream in) throws DeserializerException {
+		return (TracciamentoConfigurazione) this.xmlToObj(in, TracciamentoConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazione readTracciamentoConfigurazione(byte[] in) throws DeserializerException {
+		return (TracciamentoConfigurazione) this.xmlToObj(in, TracciamentoConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.TracciamentoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TracciamentoConfigurazione readTracciamentoConfigurazioneFromString(String in) throws DeserializerException {
+		return (TracciamentoConfigurazione) this.xmlToObj(in.getBytes(), TracciamentoConfigurazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-tracciamento-porta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneTracciamentoPorta readConfigurazioneTracciamentoPorta(String fileName) throws DeserializerException {
+		return (ConfigurazioneTracciamentoPorta) this.xmlToObj(fileName, ConfigurazioneTracciamentoPorta.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneTracciamentoPorta readConfigurazioneTracciamentoPorta(File file) throws DeserializerException {
+		return (ConfigurazioneTracciamentoPorta) this.xmlToObj(file, ConfigurazioneTracciamentoPorta.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneTracciamentoPorta readConfigurazioneTracciamentoPorta(InputStream in) throws DeserializerException {
+		return (ConfigurazioneTracciamentoPorta) this.xmlToObj(in, ConfigurazioneTracciamentoPorta.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneTracciamentoPorta readConfigurazioneTracciamentoPorta(byte[] in) throws DeserializerException {
+		return (ConfigurazioneTracciamentoPorta) this.xmlToObj(in, ConfigurazioneTracciamentoPorta.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneTracciamentoPorta readConfigurazioneTracciamentoPortaFromString(String in) throws DeserializerException {
+		return (ConfigurazioneTracciamentoPorta) this.xmlToObj(in.getBytes(), ConfigurazioneTracciamentoPorta.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: transazioni
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transazioni readTransazioni(String fileName) throws DeserializerException {
+		return (Transazioni) this.xmlToObj(fileName, Transazioni.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transazioni readTransazioni(File file) throws DeserializerException {
+		return (Transazioni) this.xmlToObj(file, Transazioni.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transazioni readTransazioni(InputStream in) throws DeserializerException {
+		return (Transazioni) this.xmlToObj(in, Transazioni.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transazioni readTransazioni(byte[] in) throws DeserializerException {
+		return (Transazioni) this.xmlToObj(in, Transazioni.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transazioni readTransazioniFromString(String in) throws DeserializerException {
+		return (Transazioni) this.xmlToObj(in.getBytes(), Transazioni.class);
 	}	
 	
 	
@@ -7918,69 +8237,6 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Dump readDumpFromString(String in) throws DeserializerException {
 		return (Dump) this.xmlToObj(in.getBytes(), Dump.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: transazioni
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Transazioni readTransazioni(String fileName) throws DeserializerException {
-		return (Transazioni) this.xmlToObj(fileName, Transazioni.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Transazioni readTransazioni(File file) throws DeserializerException {
-		return (Transazioni) this.xmlToObj(file, Transazioni.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Transazioni readTransazioni(InputStream in) throws DeserializerException {
-		return (Transazioni) this.xmlToObj(in, Transazioni.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Transazioni readTransazioni(byte[] in) throws DeserializerException {
-		return (Transazioni) this.xmlToObj(in, Transazioni.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @return Object type {@link org.openspcoop2.core.config.Transazioni}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Transazioni readTransazioniFromString(String in) throws DeserializerException {
-		return (Transazioni) this.xmlToObj(in.getBytes(), Transazioni.class);
 	}	
 	
 	

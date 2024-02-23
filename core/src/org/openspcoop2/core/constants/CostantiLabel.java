@@ -135,6 +135,7 @@ public final class CostantiLabel {
 	public static final String LABEL_CONFIGURAZIONE_MESSAGE_SECURITY = "Sicurezza Messaggio";
 	public static final String LABEL_CONFIGURAZIONE_MTOM = "MTOM";
 	public static final String LABEL_CONFIGURAZIONE_TRASFORMAZIONE = "Trasformazione";
+	public static final String LABEL_CONFIGURAZIONE_TRANSAZIONI = "Tracciamento";
 	public static final String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA= "Correlazione Applicativa";
 	public static final String LABEL_CONFIGURAZIONE_TIPO_DUMP = "Registrazione Messaggi";
 	public static final String LABEL_CONFIGURAZIONE_CORS= "Gestione CORS";

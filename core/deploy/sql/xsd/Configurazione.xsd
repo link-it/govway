@@ -26,13 +26,15 @@
                                 <linkit:sql-comment><![CDATA[**** URLInvocazione ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="url-invocazione" object-type="url-invocazione"/>
                                 <linkit:sql-table object-name="url-invocazione-regola" object-type="url-invocazione-regola"/>
-                                <linkit:sql-comment><![CDATA[**** Messaggi diagnostici Appender ****]]></linkit:sql-comment>
+                                <linkit:sql-comment><![CDATA[**** Messaggi diagnostici ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="msg-diag-appender" object-type="msg-diag-appender"/>
                                 <linkit:sql-table object-name="msg-diag-appender-prop" object-type="msg-diag-appender-prop"/>
-                                <linkit:sql-comment><![CDATA[**** Tracciamento Appender ****]]></linkit:sql-comment>
+                                <linkit:sql-comment><![CDATA[**** Tracciamento ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="tracciamento-appender" object-type="tracciamento-appender"/>
                                 <linkit:sql-table object-name="tracciamento-appender-prop" object-type="tracciamento-appender-prop"/>
-                                <linkit:sql-comment><![CDATA[**** Dump Appender ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="tracciamento-configurazione" object-type="tracciamento-configurazione"/>
+                                <linkit:sql-table object-name="tracciamento-configurazione-filetrace" object-type="tracciamento-configurazione-filetrace"/>
+                                <linkit:sql-comment><![CDATA[**** Dump ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="dump-configurazione" object-type="dump-configurazione"/>
                                 <linkit:sql-table object-name="dump-configurazione-regola" object-type="dump-configurazione-regola"/>
                                 <linkit:sql-table object-name="dump-appender" object-type="dump-appender"/>
@@ -490,36 +492,69 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="tracciamento_esiti" type="xsd:string" minOccurs="0">
+                <xsd:element name="tracciamento_esiti_pd" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="tracciamento_esiti"/>
-                                <linkit:sql-ddl-column-comment>Indicazione su quali transazioni la porta deve registrare</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-mapping name="tracciamento_esiti_pd"/>
+                                <linkit:sql-ddl-column-comment>Indicazione su quali transazioni la porta deve registrare per le fruizioni di API</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="transazioni_tempi_elaborazione" type="xsd:string" minOccurs="0">
+                <xsd:element name="tracciamento_esiti_pa" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="transazioni_tempi"/>
-                                <linkit:sql-ddl-column-comment>Indicazione se nella transazione vengono salvati anche i tempi di elaborazione (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                                <linkit:sql-column-mapping name="tracciamento_esiti"/> <!-- uso il nome originale per avere backward compatibility durante l'upgrade SQL -->
+                                <linkit:sql-ddl-column-comment>Indicazione su quali transazioni la porta deve registrare per le erogazioni di API</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="transazioni_tempi_elaborazione_pd" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="transazioni_tempi_pd"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se nella transazione vengono salvati anche i tempi di elaborazione (abilitato/disabilitato) delle fruizioni di API</linkit:sql-ddl-column-comment>                             
                                 <linkit:sql-column-comment><![CDATA[Transazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="transazioni_token" type="xsd:string" minOccurs="0">
+                <xsd:element name="transazioni_tempi_elaborazione_pa" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="transazioni_token"/>
-                                <linkit:sql-ddl-column-comment>Indicazione se nella transazione viene salvato anche le informazioni sul token normalizzato (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                                <linkit:sql-column-mapping name="transazioni_tempi"/> <!-- uso il nome originale per avere backward compatibility durante l'upgrade SQL -->
+                                <linkit:sql-ddl-column-comment>Indicazione se nella transazione vengono salvati anche i tempi di elaborazione (abilitato/disabilitato) delle erogazioni di API</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="transazioni_token_pd" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="transazioni_token_pd"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se nella transazione viene salvato anche le informazioni sul token normalizzato (abilitato/disabilitato) negoziato tramite fruizioni di API</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="transazioni_token_pa" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="transazioni_token"/> <!-- uso il nome originale per avere backward compatibility durante l'upgrade SQL -->
+                                <linkit:sql-ddl-column-comment>Indicazione se nella transazione viene salvato anche le informazioni sul token normalizzato (abilitato/disabilitato) ricevuto su erogazioni di API</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -2529,6 +2564,258 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
         </xsd:complexType>
     </xsd:element>
     
+
+
+
+
+
+
+    <xsd:element name="tracciamento-configurazione">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="tracce_config"
+                        comment="Definisce la configurazione del tracciamento delle richieste in transito sulla Porta di Dominio">
+                        <linkit:sql-table-constraint unique="uniq_tracce_conf"/>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="proprietario"/>
+			    <linkit:sql-table-index-field name="tipo"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="proprietario" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="proprietario"/>
+                                <linkit:sql-ddl-column-comment>Identificativo logico del proprietario (config/pd/pa)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Tipo di configurazione (db/fileTrace)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_proprietario" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_proprietario"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del proprietario (FK verso tabella configurazione(id) o porte_delegate(id) o porte_applicative(id))</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il tracciamento risulta abilitato, disabilitato o personalizzato</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="filtro_esiti" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="filtro_esiti"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il tracciamento risulta abilitato ma filtrato per esiti (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="request_in" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="request_in"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il tracciamento risulta abilitato nella fase di ricezione della richiesta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="request_out" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="request_out"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il tracciamento risulta abilitato nella fase di spedizione della richiesta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_out" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_out"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il tracciamento risulta abilitato nella fase di spedizione della risposta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_out_complete" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_out_complete"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il tracciamento risulta abilitato dopo aver completato la spedizione della risposta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="tracciamento-configurazione-filetrace">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="filetrace_config"
+                        comment="Definisce la configurazione del tracciamento delle richieste in transito sulla Porta di Dominio, tramite filetrace">
+                        <linkit:sql-table-constraint unique="uniq_filetrace_conf"/>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="proprietario"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="proprietario" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="proprietario"/>
+                                <linkit:sql-ddl-column-comment>Identificativo logico del proprietario (config/pd/pa)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_proprietario" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_proprietario"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del proprietario (FK verso tabella configurazione(id) o porte_delegate(id) o porte_applicative(id))</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="config" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="config"/>
+                                <linkit:sql-ddl-column-comment>Path alla configurazione fileTrace su filesystem</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="dump_in_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dump_in_stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se risulta abilitato il dump binario per le richieste ricevute e le risposte consegnate al client (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="dump_in_stato_hdr" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dump_in_stato_hdr"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se risulta abilitato il dump binario degli header HTTP per le richieste ricevute e le risposte consegnate al client (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="dump_in_stato_body" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dump_in_stato_body"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se risulta abilitato il dump binario dei payload HTTP per le richieste ricevute e le risposte consegnate al client (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="dump_out_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dump_out_stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se risulta abilitato il dump binario per le richieste consegnate e le risposte ricevute dal server (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="dump_out_stato_hdr" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dump_out_stato_hdr"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se risulta abilitato il dump binario degli header HTTP per le richieste consegnate e le risposte ricevute dal server (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="dump_out_stato_body" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dump_out_stato_body"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se risulta abilitato il dump binario dei payload HTTP per le richieste consegnate e le risposte ricevute dal server (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
+
+
+
     
     
     

@@ -185,9 +185,9 @@ public class DriverConfigurazioneDB_dumpLIB {
 			}
 		
 		} catch (SQLException se) {
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] SQLException [" + se.getMessage() + "].",se);
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDDumpConfigurazione] SQLException [" + se.getMessage() + "].",se);
 		}catch (Exception se) {
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] Exception [" + se.getMessage() + "].",se);
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDDumpConfigurazione] Exception [" + se.getMessage() + "].",se);
 		} finally {
 	
 			JDBCUtilities.closeResources(updateStmt);

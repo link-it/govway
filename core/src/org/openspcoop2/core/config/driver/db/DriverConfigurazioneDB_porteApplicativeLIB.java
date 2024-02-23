@@ -60,6 +60,8 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
+import org.openspcoop2.core.config.TracciamentoConfigurazione;
+import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
@@ -169,10 +171,24 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 		CorrelazioneApplicativaRisposta corrAppRisposta = aPA.getCorrelazioneApplicativaRisposta();
 
 		String msgDiagSeverita = null;
+		String tracciamentoStato = null;
 		String tracciamentoEsiti = null;
+		String transazioniTempiElaborazione = null;
+		String transazioniToken = null;
+		TracciamentoConfigurazione tracciamentoDatabase = null;
+		TracciamentoConfigurazione tracciamentoFiletrace = null;
+		TracciamentoConfigurazioneFiletrace tracciamentoFiletraceDetails = null;
 		if(aPA.getTracciamento()!=null){
 			msgDiagSeverita = DriverConfigurazioneDBLib.getValue(aPA.getTracciamento().getSeverita());
+			tracciamentoStato =  DriverConfigurazioneDBLib.getValue(aPA.getTracciamento().getStato());
 			tracciamentoEsiti = aPA.getTracciamento().getEsiti();
+			if(aPA.getTracciamento().getTransazioni()!=null) {
+				transazioniTempiElaborazione = DriverConfigurazioneDBLib.getValue(aPA.getTracciamento().getTransazioni().getTempiElaborazione());
+				transazioniToken = DriverConfigurazioneDBLib.getValue(aPA.getTracciamento().getTransazioni().getToken());
+			}
+			tracciamentoDatabase = aPA.getTracciamento().getDatabase();
+			tracciamentoFiletrace = aPA.getTracciamento().getFiletrace();
+			tracciamentoFiletraceDetails = aPA.getTracciamento().getFiletraceConfig();
 		}
 		
 		CorsConfigurazione corsConfigurazione = aPA.getGestioneCors();
@@ -450,7 +466,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("msg_diag_severita", "?");
+				sqlQueryObject.addInsertField("tracciamento_stato", "?");
 				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
+				sqlQueryObject.addInsertField("transazioni_tempi", "?");
+				sqlQueryObject.addInsertField("transazioni_token", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				// cors
 				sqlQueryObject.addInsertField("cors_stato", "?");
@@ -604,7 +623,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				
 				// Tracciamento
 				stm.setString(index++, msgDiagSeverita);
+				stm.setString(index++, tracciamentoStato);
 				stm.setString(index++, tracciamentoEsiti);
+				stm.setString(index++, transazioniTempiElaborazione);
+				stm.setString(index++, transazioniToken);
 				
 				// Stato
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getStato()) : null);
@@ -1444,6 +1466,17 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " A.A. alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
+				// tracciamentoConfigurazione
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoDatabase, aPA.getId(), 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoFiletrace, aPA.getId(), 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoFiletraceDetails, aPA.getId(), 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA);
 				
 				
 				// dumpConfigurazione
@@ -1611,7 +1644,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("msg_diag_severita", "?");
+				sqlQueryObject.addUpdateField("tracciamento_stato", "?");
 				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
+				sqlQueryObject.addUpdateField("transazioni_tempi", "?");
+				sqlQueryObject.addUpdateField("transazioni_token", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				// cors
 				sqlQueryObject.addUpdateField("cors_stato", "?");
@@ -1768,7 +1804,10 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
 				// Tracciamento
 				stm.setString(index++, msgDiagSeverita);
+				stm.setString(index++, tracciamentoStato);
 				stm.setString(index++, tracciamentoEsiti);
+				stm.setString(index++, transazioniTempiElaborazione);
+				stm.setString(index++, transazioniToken);
 				// Stato
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDBLib.getValue(aPA.getStato()) : null);
 				// cors
@@ -2943,6 +2982,17 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " A.A. alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
+				// tracciamentoConfigurazione
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoDatabase, idPortaApplicativa, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoFiletrace, idPortaApplicativa, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoFiletraceDetails, idPortaApplicativa, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA);
 				
 				
 				// dumpConfigurazione
@@ -2986,6 +3036,18 @@ public class DriverConfigurazioneDB_porteApplicativeLIB {
 				if (idPortaApplicativa <= 0)
 					throw new DriverConfigurazioneException("Non e' stato possibile recuperare l'id della Porta Applicativa.");
 
+				// tracciamentoConfigurazione
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoDatabase, idPortaApplicativa, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoFiletrace, idPortaApplicativa, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoFiletraceDetails, idPortaApplicativa, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA);
+				
 				// dumpConfigurazione
 				DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(type, con, aPA.getDump(), idPortaApplicativa, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
 				

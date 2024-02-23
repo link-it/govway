@@ -15,6 +15,8 @@
 -- DROP INDEX index_registro_plug_jar_1 ON registro_plug_jar ;
 -- DROP INDEX index_generic_property_1 ON generic_property ;
 -- DROP INDEX index_dump_config_1 ON dump_config ;
+-- DROP INDEX index_filetrace_config_1 ON filetrace_config ;
+-- DROP INDEX index_tracce_config_1 ON tracce_config ;
 DROP TABLE remote_store_key;
 DROP TABLE remote_store;
 DROP TABLE nodi_runtime_operations;
@@ -37,6 +39,8 @@ DROP TABLE dump_appender_prop;
 DROP TABLE dump_appender;
 DROP TABLE dump_config_regola;
 DROP TABLE dump_config;
+DROP TABLE filetrace_config;
+DROP TABLE tracce_config;
 DROP TABLE tracce_appender_prop;
 DROP TABLE tracce_appender;
 DROP TABLE msgdiag_appender_prop;

@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.constants.ServiceBinding;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
@@ -128,6 +129,14 @@ public class DriverConfigurazioneDBLib {
 		}
 	}
 	public static String getValue(StatoFunzionalitaConWarning funzionalita){
+		if(funzionalita==null){
+			return null;
+		}
+		else{
+			return funzionalita.getValue();
+		}
+	}
+	public static String getValue(StatoFunzionalitaConPersonalizzazione funzionalita){
 		if(funzionalita==null){
 			return null;
 		}
@@ -343,6 +352,14 @@ public class DriverConfigurazioneDBLib {
 		}
 		else{
 			return StatoFunzionalitaConWarning.toEnumConstant(value);
+		}
+	}
+	public static StatoFunzionalitaConPersonalizzazione getEnumStatoFunzionalitaConPersonalizzazione(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return StatoFunzionalitaConPersonalizzazione.toEnumConstant(value);
 		}
 	}
 	public static MTOMProcessorType getEnumMTOMProcessorType(String value){
