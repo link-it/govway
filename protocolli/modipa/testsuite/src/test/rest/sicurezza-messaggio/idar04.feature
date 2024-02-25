@@ -404,6 +404,9 @@ Examples:
 @assenza-header-integrity-richiesta
 Scenario Outline: Il proxy rimuove lo header integrity per far arrabbiare l'erogazione (<tipo-test>; <descrizione>)
 
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
+
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04-<tipo-test>/v1'
 And path 'resources', 1, 'M'
 And request read('request.json')
