@@ -29,7 +29,6 @@ import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.pdd.core.keystore.KeystoreException;
 import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriverUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -48,7 +47,7 @@ import org.slf4j.Logger;
 
 
 /**     
- * TimerGestoreChiaviPDNDLib
+ * TimerGestoreCacheChiaviPDNDLib
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
@@ -157,44 +156,65 @@ public class TimerGestoreCacheChiaviPDNDLib {
 
 		long startControlloTimer = DateManager.getTimeMillis();
 			
-		Connection conConfigurazione = null;
-    	DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection = null;
+		long idStore = -1;
+		
+		DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection = null;
 		try{
-
 			Object oConfig = ConfigurazionePdDReader.getDriverConfigurazionePdD();
 			if(oConfig instanceof DriverConfigurazioneDB) {
 				driverConfigurazioneDbGestoreConnection = (DriverConfigurazioneDB) oConfig;
-				conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(TimerGestoreChiaviPDND.ID_MODULO, false);
-				if(conConfigurazione == null)
-					throw new TimerException("Connessione al database della configurazione non disponibile");	
 			}
 			else {
 				throw new TimerException("Gestore utilizzabile solamente con una configurazione su database");
 			}
-			
-			long idStore = RemoteStoreProviderDriverUtils.getIdRemoteStore(conConfigurazione, this.tipoDatabase, this.remoteStore);
-			if(idStore<=0) {
-				emitDiagnosticLog("letturaCacheKeys.nonNecessaria");
-				return;
-			}
-			
-			process(startControlloTimer, conConfigurazione, idStore);
 		}
 		catch (Exception e) {
-			this.msgDiag.logErroreGenerico(e,"TimerGestoreCacheChiaviPDND");
+			this.msgDiag.logErroreGenerico(e,TimerGestoreCacheChiaviPDND.ID_MODULO);
 			this.logTimerError("Riscontrato errore durante la gestione della cache delle chavi della PDND: "+ e.getMessage(),e);
+			return;
+		}
+		
+		idStore = getIdStore(driverConfigurazioneDbGestoreConnection);
+		if(idStore<=0) {
+			emitDiagnosticLog("letturaCacheKeys.nonNecessaria");
+			return;
+		}
+				
+		try{
+			process(startControlloTimer, idStore, driverConfigurazioneDbGestoreConnection);
+		}catch (Exception e) {
+			this.msgDiag.logErroreGenerico(e,TimerGestoreCacheChiaviPDND.ID_MODULO);
+			this.logTimerError("Riscontrato errore durante la gestione della cache delle chavi della PDND: "+ e.getMessage(),e);
+		}
+	}
+	
+	private long getIdStore(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection) {
+		Connection conConfigurazione = null;
+		String method = TimerGestoreCacheChiaviPDND.ID_MODULO+".getIdStore";
+    	try{
+
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			if(conConfigurazione == null) {
+				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
+			}
+			
+			return RemoteStoreProviderDriverUtils.getIdRemoteStore(conConfigurazione, this.tipoDatabase, this.remoteStore);			
+		}
+		catch (Exception e) {
+			this.msgDiag.logErroreGenerico(e,TimerGestoreCacheChiaviPDND.ID_MODULO);
+			this.logTimerError("Riscontrato errore durante la gestione della cache delle chavi della PDND (read idStore): "+ e.getMessage(),e);
+			return -1;
 		}finally{
 			try{
 				if(conConfigurazione!=null)
-					driverConfigurazioneDbGestoreConnection.releaseConnection(conConfigurazione);
+					driverConfigurazioneDbGestoreConnection.releaseConnection(method, conConfigurazione);
 			}catch(Exception eClose){
 				// ignore
 			}
 		}
-			
 	}
 	
-	private void process(long startControlloTimer, Connection conConfigurazione, long idStore) throws SecurityException, KeystoreException, CoreException {
+	private void process(long startControlloTimer, long idStore, DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection) throws SecurityException, CoreException, TimerException {
 		// NOTA: non viene eliminato dalla cache di primo livello "GestoreRichieste" poichè:
 		// - per default i remote store non sono salvati nella cache di primo livello, vedi proprietà 'org.openspcoop2.pdd.cache.impl.requestManager.remoteStore.saveInCache' di govway.properties
 		// - se vengono salvati, il tempo di vita di questi elementi deve essere più basso rispetto alle normali cache (per default è 30 secondi)
@@ -209,7 +229,7 @@ public class TimerGestoreCacheChiaviPDNDLib {
 				if(key!=null && key.startsWith(keyCachePrefix) && key.length()>keyCachePrefix.length()) {
 					size++;
 					String kid = key.substring(keyCachePrefix.length());
-					if(!RemoteStoreProviderDriverUtils.existsRemoteStoreKey(conConfigurazione, this.tipoDatabase, idStore, kid, true)) {
+					if(!existsRemoteStoreKey(driverConfigurazioneDbGestoreConnection, idStore, kid)) {
 						removeFromCache(key, kid);
 					}
 					
@@ -225,6 +245,30 @@ public class TimerGestoreCacheChiaviPDNDLib {
 		this.msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_EVENTI, size+"");
 		
 		emitDiagnosticLog("letturaCacheKeys.effettuata");
+	}
+	
+	private boolean existsRemoteStoreKey(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, long idStore, String kid) throws TimerException {
+		Connection conConfigurazione = null;
+		String method = TimerGestoreCacheChiaviPDND.ID_MODULO+".existsRemoteStoreKey_"+idStore+"_"+kid;
+    	try{
+
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			if(conConfigurazione == null) {
+				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
+			}
+			
+			return RemoteStoreProviderDriverUtils.existsRemoteStoreKey(conConfigurazione, this.tipoDatabase, idStore, kid, true);
+		}
+		catch (Exception e) {
+			throw new TimerException("existsRemoteStoreKey failed: "+e.getMessage());
+		}finally{
+			try{
+				if(conConfigurazione!=null)
+					driverConfigurazioneDbGestoreConnection.releaseConnection(method, conConfigurazione);
+			}catch(Exception eClose){
+				// ignore
+			}
+		}
 	}
 
 	private void removeFromCache(String key, String kid) throws SecurityException, CoreException {

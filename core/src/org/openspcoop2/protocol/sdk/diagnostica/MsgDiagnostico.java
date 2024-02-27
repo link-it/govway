@@ -48,17 +48,30 @@ public class MsgDiagnostico implements Serializable{
 
 	private static final long serialVersionUID = -3157816024001587816L;
 
+    // indicazione store
+    private boolean stored = false;
+	
     // msgdiagnostico
     private org.openspcoop2.core.diagnostica.MessaggioDiagnostico messaggioDiagnostico;
 
+    
 	
-    public MsgDiagnostico(){
+	public MsgDiagnostico(){
     	this.messaggioDiagnostico = new MessaggioDiagnostico();
     }
     public MsgDiagnostico(org.openspcoop2.core.diagnostica.MessaggioDiagnostico messaggioDiagnostico) {
     	this.messaggioDiagnostico = messaggioDiagnostico;
     }
+
     
+    // stored
+    
+    public boolean isStored() {
+		return this.stored;
+	}
+	public void setStored(boolean stored) {
+		this.stored = stored;
+	}
     
     
     // base

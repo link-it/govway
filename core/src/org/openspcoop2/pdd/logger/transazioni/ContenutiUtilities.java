@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.handlers.transazioni;
+package org.openspcoop2.pdd.logger.transazioni;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.transazioni.DumpContenuto;
@@ -33,24 +33,27 @@ import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;
 import java.util.List;
 
 import org.slf4j.Logger;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.date.DateManager;
 
 /**     
- * PostOutResponseHandler_ContenutiUtilities
+ * ContenutiUtilities
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PostOutResponseHandler_ContenutiUtilities {
+public class ContenutiUtilities {
 
 	private Logger logger;
 	
-	public PostOutResponseHandler_ContenutiUtilities(Logger log){
+	public ContenutiUtilities(Logger log){
 		this.logger = log;
 	}
 	
@@ -93,7 +96,7 @@ public class PostOutResponseHandler_ContenutiUtilities {
 			
 
 			// ----------------------- Inserimento contenuti -------------------------
-			if(risorse!=null && risorse.size()>0){
+			if(risorse!=null && !risorse.isEmpty()){
 				
 				
 				for (TransactionResource risorsaCalcolata : risorse) {
@@ -101,9 +104,7 @@ public class PostOutResponseHandler_ContenutiUtilities {
 					if(org.openspcoop2.core.transazioni.constants.TipoMessaggio.RICHIESTA_INGRESSO.equals(risorsaCalcolata.getTipoMessaggio())){
 						
 						if(dumpMessaggioRichiestaIngresso==null) {
-							try{
-								dumpMessaggioRichiestaIngresso = dumpMessageService.get(idDumpMessaggioRichiestaIngresso);
-							}catch(NotFoundException notFound){}
+							dumpMessaggioRichiestaIngresso = getSafe(dumpMessageService, idDumpMessaggioRichiestaIngresso);
 						}
 						
 						if(dumpMessaggioRichiestaIngresso==null){
@@ -123,9 +124,7 @@ public class PostOutResponseHandler_ContenutiUtilities {
 					else if(org.openspcoop2.core.transazioni.constants.TipoMessaggio.RICHIESTA_USCITA.equals(risorsaCalcolata.getTipoMessaggio())){
 						
 						if(dumpMessaggioRichiestaUscita==null) {
-							try{
-								dumpMessaggioRichiestaUscita = dumpMessageService.get(idDumpMessaggioRichiestaUscita);
-							}catch(NotFoundException notFound){}
+							dumpMessaggioRichiestaUscita = getSafe(dumpMessageService, idDumpMessaggioRichiestaUscita);
 						}
 						
 						if(dumpMessaggioRichiestaUscita==null){
@@ -145,9 +144,7 @@ public class PostOutResponseHandler_ContenutiUtilities {
 					else if(org.openspcoop2.core.transazioni.constants.TipoMessaggio.RISPOSTA_INGRESSO.equals(risorsaCalcolata.getTipoMessaggio())){
 						
 						if(dumpMessaggioRispostaIngresso==null) {
-							try{
-								dumpMessaggioRispostaIngresso = dumpMessageService.get(idDumpMessaggioRispostaIngresso);
-							}catch(NotFoundException notFound){}
+							dumpMessaggioRispostaIngresso = getSafe(dumpMessageService, idDumpMessaggioRispostaIngresso);
 						}
 						
 						if(dumpMessaggioRispostaIngresso==null){
@@ -167,9 +164,7 @@ public class PostOutResponseHandler_ContenutiUtilities {
 					else if(org.openspcoop2.core.transazioni.constants.TipoMessaggio.RISPOSTA_USCITA.equals(risorsaCalcolata.getTipoMessaggio())){
 						
 						if(dumpMessaggioRispostaUscita==null) {
-							try{
-								dumpMessaggioRispostaUscita = dumpMessageService.get(idDumpMessaggioRispostaUscita);
-							}catch(NotFoundException notFound){}
+							dumpMessaggioRispostaUscita = getSafe(dumpMessageService, idDumpMessaggioRispostaUscita);
 						}
 						
 						if(dumpMessaggioRispostaUscita==null){
@@ -253,6 +248,15 @@ public class PostOutResponseHandler_ContenutiUtilities {
 		} catch (Exception e) {
 			throw new HandlerException("Errore durante la scrittura della transazione sul database: " + e.getLocalizedMessage(), e);
 		} 
+	}
+	
+	private DumpMessaggio getSafe(IDumpMessaggioService dumpMessageService, IdDumpMessaggio id) throws ServiceException, MultipleResultException, NotImplementedException {
+		try{
+			return dumpMessageService.get(id);
+		}catch(NotFoundException notFound){
+			// ignore
+			return null;
+		}
 	}
 	
 }

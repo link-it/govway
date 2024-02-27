@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.controllo_traffico.handler.InRequestProtocolHandlerGestioneControlloTraffico;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -84,8 +85,8 @@ public class InRequestProtocolHandler extends FirstPositionHandler implements  o
 			if(op2Properties.isControlloTrafficoEnabled()){
 				tr.getTempiElaborazione().startControlloTraffico_rateLimiting();
 				try {
-					InRequestProtocolHandler_GestioneControlloTraffico inRequestProtocolHandler_gestioneControlloTraffico = 
-							new InRequestProtocolHandler_GestioneControlloTraffico();
+					InRequestProtocolHandlerGestioneControlloTraffico inRequestProtocolHandler_gestioneControlloTraffico = 
+							new InRequestProtocolHandlerGestioneControlloTraffico();
 					inRequestProtocolHandler_gestioneControlloTraffico.process(context, tr);
 				}finally {
 					tr.getTempiElaborazione().endControlloTraffico_rateLimiting();

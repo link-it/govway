@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.timers.pdnd;
 import java.sql.Connection;
 import java.util.Date;
 
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
@@ -47,6 +48,7 @@ import org.openspcoop2.pdd.timers.TimerState;
 import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
@@ -211,37 +213,33 @@ public class TimerGestoreChiaviPDNDLib {
 
 		long startControlloTimer = DateManager.getTimeMillis();
 			
-		Connection conConfigurazione = null;
-    	DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection = null;
+		DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection = null;
 		try{
-
 			Object oConfig = ConfigurazionePdDReader.getDriverConfigurazionePdD();
 			if(oConfig instanceof DriverConfigurazioneDB) {
 				driverConfigurazioneDbGestoreConnection = (DriverConfigurazioneDB) oConfig;
-				conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(TimerGestoreChiaviPDND.ID_MODULO, false);
-				if(conConfigurazione == null)
-					throw new TimerException("Connessione al database della configurazione non disponibile");	
 			}
 			else {
 				throw new TimerException("Gestore utilizzabile solamente con una configurazione su database");
 			}
-			
-			
+		}
+		catch (Exception e) {
+			this.msgDiag.logErroreGenerico(e,TimerGestoreChiaviPDND.ID_MODULO);
+			this.logTimerError("Riscontrato errore durante la gestione eventi per le chiavi della PDND: "+ e.getMessage(),e);
+			return;
+		}
+		
+		try{
+
 			String causa = "Gestione chiavi PDND";
 			try {
 				
-				GestoreMessaggi.acquireLock(
-						this.semaphore, conConfigurazione, this.timerLock,
-						this.msgDiag, causa, 
-						this.op2Properties.getGestoreChiaviPDNDTimerLockAttesaAttiva(), 
-						this.op2Properties.getGestoreChiaviPDNDTimerLockCheckInterval());
+				acquireLock(driverConfigurazioneDbGestoreConnection, causa);
 				
-				process(conConfigurazione);
+				process(driverConfigurazioneDbGestoreConnection);
 				
 			}finally{
-				GestoreMessaggi.releaseSafeLock(
-						this.semaphore, conConfigurazione, this.timerLock,
-						this.msgDiag, causa);
+				releaseSafeLock(driverConfigurazioneDbGestoreConnection, causa);
 			}
 			
 			// end
@@ -256,25 +254,72 @@ public class TimerGestoreChiaviPDNDLib {
 			this.logTimerInfo(t.getMessage(),t);
 		}
 		catch (Exception e) {
-			this.msgDiag.logErroreGenerico(e,"TimerGestoreChiaviPDNDLib");
+			this.msgDiag.logErroreGenerico(e,TimerGestoreChiaviPDND.ID_MODULO);
 			this.logTimerError("Riscontrato errore durante la gestione eventi per le chiavi della PDND: "+ e.getMessage(),e);
-		}finally{
-			try{
-				if(conConfigurazione!=null)
-					driverConfigurazioneDbGestoreConnection.releaseConnection(conConfigurazione);
-			}catch(Exception eClose){
-				// ignore
-			}
 		}
 			
 	}
 
+	private void acquireLock(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, String causa) throws DriverConfigurazioneException, TimerException, UtilsException, TimerLockNotAvailableException {
+		Connection conConfigurazione = null;
+		String method = TimerGestoreChiaviPDND.ID_MODULO+".acquireLock";
+    	try{
+
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			if(conConfigurazione == null) {
+				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
+			}
+			
+			GestoreMessaggi.acquireLock(
+					this.semaphore, conConfigurazione, this.timerLock,
+					this.msgDiag, causa, 
+					this.op2Properties.getGestoreChiaviPDNDTimerLockAttesaAttiva(), 
+					this.op2Properties.getGestoreChiaviPDNDTimerLockCheckInterval());
+		}
+    	finally{
+			try{
+				if(conConfigurazione!=null)
+					driverConfigurazioneDbGestoreConnection.releaseConnection(method, conConfigurazione);
+			}catch(Exception eClose){
+				// ignore
+			}
+		}
+	}
+	private void releaseSafeLock(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, String causa)  {
+		Connection conConfigurazione = null;
+		String method = TimerGestoreChiaviPDND.ID_MODULO+".releaseSafeLock";
+    	try{
+
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			if(conConfigurazione == null) {
+				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
+			}
+			
+			GestoreMessaggi.releaseSafeLock(
+					this.semaphore, conConfigurazione, this.timerLock,
+					this.msgDiag, causa);
+			
+		}
+    	catch(Exception e) {
+    		this.msgDiag.logErroreGenerico(e,TimerGestoreChiaviPDND.ID_MODULO);
+    	}
+		finally{
+			try{
+				if(conConfigurazione!=null)
+					driverConfigurazioneDbGestoreConnection.releaseConnection(method, conConfigurazione);
+			}catch(Exception eClose){
+				// ignore
+			}
+		}
+	}
+	
+	
 	private long lastEventId = 0;
 		
-	private void process(Connection conConfigurazione) throws KeystoreException {
+	private void process(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection) throws KeystoreException {
 		
 		// Recupero id del Remote Store
-		boolean created = readRemoteStoreDbImage(conConfigurazione);
+		boolean created = readRemoteStoreDbImage(driverConfigurazioneDbGestoreConnection);
 		
 		TimerGestoreChiaviPDNDUtilities pdndUtilities = new TimerGestoreChiaviPDNDUtilities(this.remoteStore, this.urlCheckEventi, this.parameterLastEventId, this.parameterLimit, this.limit);
 		
@@ -284,7 +329,7 @@ public class TimerGestoreChiaviPDNDLib {
 		
 		if(created || this.remoteStoreDbImage.getLastEvent()==null) {
 			// Initialize
-			updateLasteEventId = initialize(conConfigurazione, pdndUtilities);
+			updateLasteEventId = initialize(driverConfigurazioneDbGestoreConnection, pdndUtilities);
 		}
 		else {
 			// Verifico ultima data di aggiornamento
@@ -305,7 +350,7 @@ public class TimerGestoreChiaviPDNDLib {
 			long prec = 0; 
 			while(letti > 0) {
 				prec = this.lastEventId; 
-				letti = gestione(conConfigurazione, pdndUtilities, true);
+				letti = gestione(driverConfigurazioneDbGestoreConnection, pdndUtilities, true);
 				if(this.lastEventId<=prec) {
 					// l'ultima gestione non ha aggiornato lastEventId
 					break;
@@ -320,11 +365,11 @@ public class TimerGestoreChiaviPDNDLib {
 				
 		// aggiorno lastEventId sul database
 		if(updateLasteEventId) {
-			RemoteStoreProviderDriverUtils.updateRemoteStore(conConfigurazione, this.tipoDatabase, this.remoteStoreDbImage.getId(), this.lastEventId+"");
+			updateRemoteStore(driverConfigurazioneDbGestoreConnection,  this.remoteStoreDbImage.getId(), this.lastEventId+"");
 		}
 		
 	}
-	private boolean initialize(Connection conConfigurazione, TimerGestoreChiaviPDNDUtilities pdndUtilities) {
+	private boolean initialize(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, TimerGestoreChiaviPDNDUtilities pdndUtilities) {
 		
 		boolean updateLasteEventId = false;
 		
@@ -334,7 +379,7 @@ public class TimerGestoreChiaviPDNDLib {
 			long prec = 0; 
 			while(letti > 0) {
 				prec = this.lastEventId; 
-				letti = gestione(conConfigurazione, pdndUtilities, false);
+				letti = gestione(driverConfigurazioneDbGestoreConnection, pdndUtilities, false);
 				if(this.lastEventId<=prec) {
 					// l'ultima gestione non ha aggiornato lastEventId
 					break;
@@ -359,6 +404,29 @@ public class TimerGestoreChiaviPDNDLib {
 	}
 	
 	private RemoteStore remoteStoreDbImage = null;
+	private boolean readRemoteStoreDbImage(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection) throws KeystoreException {
+		Connection conConfigurazione = null;
+		String method = TimerGestoreChiaviPDND.ID_MODULO+".readRemoteStoreDbImage";
+    	try{
+
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			if(conConfigurazione == null) {
+				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
+			}
+			
+			return readRemoteStoreDbImage(conConfigurazione);
+		}
+		catch (Exception e) {
+			throw new KeystoreException("readRemoteStoreDbImage failed: "+e.getMessage());
+		}finally{
+			try{
+				if(conConfigurazione!=null)
+					driverConfigurazioneDbGestoreConnection.releaseConnection(method, conConfigurazione);
+			}catch(Exception eClose){
+				// ignore
+			}
+		}
+	}
 	private boolean readRemoteStoreDbImage(Connection conConfigurazione) throws KeystoreException {
 		this.remoteStoreDbImage = RemoteStoreProviderDriverUtils.getRemoteStore(conConfigurazione, this.tipoDatabase, this.remoteStore, false);
 		boolean created = false;
@@ -387,7 +455,7 @@ public class TimerGestoreChiaviPDNDLib {
 		return "Evento '"+event.getEventId()+"' ";
 	}
 	
-	private int gestione(Connection conConfigurazione, TimerGestoreChiaviPDNDUtilities pdndUtilities, boolean gestioneEvento) {
+	private int gestione(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, TimerGestoreChiaviPDNDUtilities pdndUtilities, boolean gestioneEvento) {
 		try {
 			long startGenerazione = DateManager.getTimeMillis();
 			
@@ -411,7 +479,7 @@ public class TimerGestoreChiaviPDNDLib {
 					if(event.getEventId()>this.lastEventId) {
 						this.lastEventId = event.getEventId();
 						if(gestioneEvento) {
-							gestioneEvento(conConfigurazione, event);
+							gestioneEvento(driverConfigurazioneDbGestoreConnection, event);
 						}
 					}
 					else {
@@ -434,7 +502,7 @@ public class TimerGestoreChiaviPDNDLib {
 		}
 	}
 	
-	private void gestioneEvento(Connection conConfigurazione, TimerGestoreChiaviPDNDEvent event) throws KeystoreException, TimerException {
+	private void gestioneEvento(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, TimerGestoreChiaviPDNDEvent event) throws KeystoreException, TimerException {
 		if(TimerGestoreChiaviPDNDEvent.OBJECT_TYPE_KEY.equals(event.getObjectType()) &&
 			(
 					TimerGestoreChiaviPDNDEvent.EVENT_TYPE_DELETED.equals(event.getEventType())
@@ -459,7 +527,7 @@ public class TimerGestoreChiaviPDNDLib {
 			}
 						
 			if(kid!=null) {
-				gestioneEvento(conConfigurazione, event, kid);
+				gestioneEvento(driverConfigurazioneDbGestoreConnection, event, kid);
 			}
 			
 			emitDiagnosticLog("gestioneEventi.evento");
@@ -470,6 +538,29 @@ public class TimerGestoreChiaviPDNDLib {
 			}
 			else {
 				emitLog(getEventPrefix(event)+"relativo ad un tipo di operazione '"+event.getObjectType()+"' non gestita; (tipo di evento '"+event.getEventType()+"')");
+			}
+		}
+	}
+	private void gestioneEvento(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, TimerGestoreChiaviPDNDEvent event, String kid) throws KeystoreException, TimerException {
+		Connection conConfigurazione = null;
+		String method = TimerGestoreChiaviPDND.ID_MODULO+".gestioneEvento_"+kid;
+    	try{
+
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			if(conConfigurazione == null) {
+				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
+			}
+			
+			gestioneEvento(conConfigurazione, event, kid);
+		}
+		catch (Exception e) {
+			throw new KeystoreException("gestioneEvento failed: "+e.getMessage());
+		}finally{
+			try{
+				if(conConfigurazione!=null)
+					driverConfigurazioneDbGestoreConnection.releaseConnection(method, conConfigurazione);
+			}catch(Exception eClose){
+				// ignore
 			}
 		}
 	}
@@ -496,6 +587,30 @@ public class TimerGestoreChiaviPDNDLib {
 				String msgError = "Registrazione evento per kid '"+kid+"' (eventType:"+event.getEventType()+") non riuscita: "+e.getMessage();
 				this.logCoreError(msgError,e);
 				this.logTimerError(msgError,e);
+			}
+		}
+	}
+	
+	private void updateRemoteStore(DriverConfigurazioneDB driverConfigurazioneDbGestoreConnection, long idStore, String lastEventId) throws KeystoreException {
+		Connection conConfigurazione = null;
+		String method = TimerGestoreChiaviPDND.ID_MODULO+".updateRemoteStore_"+idStore+"_"+lastEventId;
+    	try{
+
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			if(conConfigurazione == null) {
+				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
+			}
+			
+			RemoteStoreProviderDriverUtils.updateRemoteStore(conConfigurazione, this.tipoDatabase, this.remoteStoreDbImage.getId(), this.lastEventId+"");
+		}
+		catch (Exception e) {
+			throw new KeystoreException("updateRemoteStore failed: "+e.getMessage());
+		}finally{
+			try{
+				if(conConfigurazione!=null)
+					driverConfigurazioneDbGestoreConnection.releaseConnection(method, conConfigurazione);
+			}catch(Exception eClose){
+				// ignore
 			}
 		}
 	}

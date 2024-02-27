@@ -17,15 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.handlers.transazioni;
+package org.openspcoop2.pdd.core.controllo_traffico.handler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
@@ -39,19 +35,28 @@ import org.openspcoop2.pdd.core.controllo_traffico.GeneratoreMessaggiErrore;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
+import org.openspcoop2.pdd.logger.transazioni.TransazioniProcessTimes;
+import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
+import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 /**     
- * PostOutResponseHandler_GestioneControlloTraffico
+ * PostOutResponseHandlerGestioneControlloTraffico
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PostOutResponseHandler_GestioneControlloTraffico {
+public class PostOutResponseHandlerGestioneControlloTraffico {
 
 	public void process(Boolean controlloTrafficoMaxRequestThreadRegistrato, Logger logger, String idTransazione,
-			Transazione transazioneDTO, PostOutResponseContext context,
+			Transazione transazioneDTO, InformazioniTransazione info, EsitoTransazione esito,
 			TransazioniProcessTimes times){
+		
+		Context context = info.getContext();
 		
 		long timeStart = -1;
 		
@@ -65,13 +70,13 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 				Long maxThreads = null;
 				Integer threshold = null;
 				
-				if(context!=null && context.getPddContext()!=null){
-					Object maxThreadsObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_MAX_THREADS_THRESHOLD);
-					if(maxThreadsObject!=null && maxThreadsObject instanceof Long){
+				if(context!=null){
+					Object maxThreadsObject = context.getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_MAX_THREADS_THRESHOLD);
+					if(maxThreadsObject instanceof Long){
 						maxThreads = (Long) maxThreadsObject;
 					}
 					
-					Object thresholdObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD);
+					Object thresholdObject = context.getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD);
 					if(thresholdObject!=null && maxThreadsObject instanceof Long){
 						threshold = (Integer) thresholdObject;
 					}
@@ -84,7 +89,7 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 			if(times!=null) {
 				long timeEnd =  DateManager.getTimeMillis();
 				long timeProcess = timeEnd-timeStart;
-				times.controlloTraffico_removeThread = timeProcess;
+				times.setControlloTrafficoRemoveThread(timeProcess);
 			}
 		}
 		try {
@@ -96,47 +101,47 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 				}
 				
 				Object objectId = null;
-				if(context!=null && context.getPddContext()!=null) {
-					objectId = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_UNIQUE_ID_POLICY);
+				if(context!=null) {
+					objectId = context.removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_UNIQUE_ID_POLICY);
 				}
-				if(context!=null && context.getPddContext()!=null &&
+				if(context!=null &&
 						objectId!=null && (objectId instanceof List<?>) ){
 					@SuppressWarnings("unchecked")
 					List<String> uniqueIdsPolicies = (List<String>) objectId;
-					if(uniqueIdsPolicies!=null && uniqueIdsPolicies.size()>0){
-						Object object = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_GROUP_BY_CONDITION);
-						Object objectIncrementCounter_policyApplicabile = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_APPLICABILE);
-						Object objectIncrementCounter_policyViolata = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_VIOLATA);
-						Object object_policyTypes = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT);
-						Object object_policyConfiguration_porta = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_PORTA);
-						Object object_policyConfiguration_globale = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_GLOBALE);
-						if(object!=null && (object instanceof List<?>) &&
-								objectIncrementCounter_policyApplicabile!=null && (objectIncrementCounter_policyApplicabile instanceof List<?>) &&
-								objectIncrementCounter_policyViolata!=null && (objectIncrementCounter_policyViolata instanceof List<?>) &&
-								object_policyTypes!=null && (object_policyTypes instanceof List<?>) &&
-								object_policyConfiguration_globale!=null && (object_policyConfiguration_globale instanceof PolicyConfiguration) &&
-								object_policyConfiguration_porta!=null && (object_policyConfiguration_porta instanceof PolicyConfiguration)){
+					if(uniqueIdsPolicies!=null && !uniqueIdsPolicies.isEmpty()){
+						Object object = context.removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_GROUP_BY_CONDITION);
+						Object objectIncrementCounterPolicyApplicabile = context.removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_APPLICABILE);
+						Object objectIncrementCounterPolicyViolata = context.removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_VIOLATA);
+						Object objectPolicyTypes = context.removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT);
+						Object objectPolicyConfigurationPorta = context.removeObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_PORTA);
+						Object objectPolicyConfigurationGlobale = context.removeObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_GLOBALE);
+						if((object instanceof List<?>) &&
+								objectIncrementCounterPolicyApplicabile!=null && (objectIncrementCounterPolicyApplicabile instanceof List<?>) &&
+								objectIncrementCounterPolicyViolata!=null && (objectIncrementCounterPolicyViolata instanceof List<?>) &&
+								objectPolicyTypes!=null && (objectPolicyTypes instanceof List<?>) &&
+								objectPolicyConfigurationGlobale!=null && (objectPolicyConfigurationGlobale instanceof PolicyConfiguration) &&
+								objectPolicyConfigurationPorta!=null && (objectPolicyConfigurationPorta instanceof PolicyConfiguration)){
 							@SuppressWarnings("unchecked")
 							List<IDUnivocoGroupByPolicy> groupByPolicies = (List<IDUnivocoGroupByPolicy>) object; 
 							@SuppressWarnings("unchecked")
-							List<Boolean> incrementCounter_policyApplicabile = (List<Boolean>) objectIncrementCounter_policyApplicabile; 
+							List<Boolean> incrementCounterPolicyApplicabile = (List<Boolean>) objectIncrementCounterPolicyApplicabile; 
 							@SuppressWarnings("unchecked")
-							List<Boolean> incrementCounter_policyViolata = (List<Boolean>) objectIncrementCounter_policyViolata; 
+							List<Boolean> incrementCounterPolicyViolata = (List<Boolean>) objectIncrementCounterPolicyViolata; 
 							@SuppressWarnings("unchecked")
-							List<String> policyTypes = (List<String>) object_policyTypes; 
-							PolicyConfiguration policyConfiguration_globale = (PolicyConfiguration) object_policyConfiguration_globale;
-							PolicyConfiguration policyConfiguration_porta = (PolicyConfiguration) object_policyConfiguration_porta;
+							List<String> policyTypes = (List<String>) objectPolicyTypes; 
+							PolicyConfiguration policyConfigurationGlobale = (PolicyConfiguration) objectPolicyConfigurationGlobale;
+							PolicyConfiguration policyConfigurationPorta = (PolicyConfiguration) objectPolicyConfigurationPorta;
 							if(groupByPolicies!=null && groupByPolicies.size()==uniqueIdsPolicies.size() &&
-									incrementCounter_policyApplicabile!=null && incrementCounter_policyApplicabile.size()==uniqueIdsPolicies.size() &&
-									incrementCounter_policyViolata!=null && incrementCounter_policyViolata.size()==uniqueIdsPolicies.size() &&
+									incrementCounterPolicyApplicabile!=null && incrementCounterPolicyApplicabile.size()==uniqueIdsPolicies.size() &&
+									incrementCounterPolicyViolata!=null && incrementCounterPolicyViolata.size()==uniqueIdsPolicies.size() &&
 									policyTypes!=null && policyTypes.size()==uniqueIdsPolicies.size() &&
-									policyConfiguration_globale!=null &&
-									policyConfiguration_porta!=null) {
+									policyConfigurationGlobale!=null &&
+									policyConfigurationPorta!=null) {
 								
 								MisurazioniTransazione misurazioniTransazione = new MisurazioniTransazione();
-								misurazioniTransazione.setTipoPdD(context.getTipoPorta());
-								misurazioniTransazione.setProtocollo( context.getProtocolFactory().getProtocol());
-								misurazioniTransazione.setEsitoTransazione(context.getEsito().getCode());
+								misurazioniTransazione.setTipoPdD(info.getTipoPorta());
+								misurazioniTransazione.setProtocollo( info.getProtocolFactory().getProtocol());
+								misurazioniTransazione.setEsitoTransazione(esito.getCode());
 								
 								misurazioniTransazione.setDataIngressoRichiesta(transazioneDTO.getDataIngressoRichiesta());
 								misurazioniTransazione.setDataUscitaRichiesta(transazioneDTO.getDataUscitaRichiesta());
@@ -151,10 +156,10 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 								if(times!=null) {
 									long timeEnd =  DateManager.getTimeMillis();
 									long timeProcess = timeEnd-timeStart;
-									times.controlloTraffico_preparePolicy = timeProcess;
+									times.setControlloTrafficoPreparePolicy(timeProcess);
 								
 									if(!uniqueIdsPolicies.isEmpty()) {
-										times.controlloTraffico_policyTimes = new ArrayList<>();
+										times.setControlloTrafficoPolicyTimes(new ArrayList<>());
 									}
 								}
 								
@@ -171,13 +176,13 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 										String policyAPI = policyTypes.get(i);
 										PolicyConfiguration policyConfiguration = null;
 										if(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_API.equals(policyAPI)) {
-											policyConfiguration = policyConfiguration_porta;
+											policyConfiguration = policyConfigurationPorta;
 										}
 										else if(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_GLOBAL.equals(policyAPI)) {
-											policyConfiguration = policyConfiguration_globale;
+											policyConfiguration = policyConfigurationGlobale;
 										}
 										else {
-											//CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_DEFAULT;
+											/**CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_DEFAULT;*/
 											policyConfiguration = new PolicyConfiguration(true);
 										} 
 										IGestorePolicyAttive gestorePolicy = GestorePolicyAttive.getInstance(policyConfiguration.getType());
@@ -195,14 +200,14 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 										
 										org.openspcoop2.utils.Map<Object> mapContext = null;
 										if(context!=null) {
-											mapContext = context.getPddContext();
+											mapContext = context;
 										}
 										
 										policyGroupByActiveThreads.
 											registerStopRequest(logControlloTraffico, idTransazione, groupByPolicies.get(i),mapContext, 
 													misurazioniTransazione, 
-													incrementCounter_policyApplicabile.get(i),
-													incrementCounter_policyViolata.get(i));
+													incrementCounterPolicyApplicabile.get(i),
+													incrementCounterPolicyViolata.get(i));
 										
 										if(times!=null) {
 											sb.append(",");
@@ -210,7 +215,7 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 											long timeProcess = timeEnd-timeStart;
 											sb.append(timeProcess);
 											sb.append("]");
-											times.controlloTraffico_policyTimes.add(sb.toString());
+											times.getControlloTrafficoPolicyTimes().add(sb.toString());
 										}
 										
 									}catch(PolicyNotFoundException notFound){

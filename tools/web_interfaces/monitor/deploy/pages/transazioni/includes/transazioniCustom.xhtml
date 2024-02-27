@@ -103,7 +103,7 @@
 										<a4j:outputPanel layout="block" id="titoloInfoLatenzaTransazione" styleClass="titoloEntry">
 											<i class="material-icons md-24">hourglass_empty</i>			
 										</a4j:outputPanel>
-										<rich:toolTip for="entryInfoLatenzaTransazioneTitolo" rendered="#{((not empty item.latenzaServizio and item.consegnaMultipla == false) or transazioniBean.transazioniLatenzaPortaEnabled)}">
+										<rich:toolTip for="entryInfoLatenzaTransazioneTitolo" rendered="#{!item.esitoSendInCorso and ((not empty item.latenzaServizio and item.consegnaMultipla == false) or transazioniBean.transazioniLatenzaPortaEnabled)}">
 												<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 												<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 												<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
@@ -112,6 +112,9 @@
 											</rich:toolTip>
 									</a4j:outputPanel>
 									<a4j:outputPanel layout="block" id="entryInfoEsitoTransazioneTitolo" styleClass="entryInfoEsitoTransazione #{item.cssColonnaEsito}">
+										<a4j:outputPanel layout="block" id="titoloInfoEsito_sendInCorso" styleClass="titoloEntry" rendered="#{item.esitoSendInCorso}">
+											<i class="material-icons md-24">outgoing_mail</i>
+										</a4j:outputPanel>	
 										<a4j:outputPanel layout="block" id="titoloInfoEsito_ok" styleClass="titoloEntry" rendered="#{item.esitoOk}">
 											<i class="material-icons md-24">check</i>
 										</a4j:outputPanel>	
@@ -121,7 +124,7 @@
 										<a4j:outputPanel layout="block" id="titoloInfoEsito_ko" styleClass="titoloEntry" rendered="#{item.esitoKo}">
 											<i class="material-icons md-24">warning</i>
 										</a4j:outputPanel>	
-										<a4j:outputPanel layout="block" id="titoloInfoEsito_def" styleClass="titoloEntry" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}">
+										<a4j:outputPanel layout="block" id="titoloInfoEsito_def" styleClass="titoloEntry" rendered="#{!item.esitoSendInCorso and !item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}">
 											<i class="material-icons md-24">warning</i>
 										</a4j:outputPanel>
 										<rich:toolTip for="entryInfoEsitoTransazioneTitolo">
@@ -198,8 +201,9 @@
 								<a4j:outputPanel layout="block" id="infoColDXSottotitolo" styleClass="infoColDXTransazioneRiga2">
 									<a4j:outputPanel layout="block" id="entryInfoLatenzaTransazioneSottotitolo" styleClass="entryInfoLatenzaTransazione #{item.cssColonnaLatenza}">
 										<a4j:outputPanel layout="block" id="sottotitoloInfoLatenzaTransazione" styleClass="metadatiEntry">
-											<h:outputText id="outLatenzaServizio2" value="#{item.latenzaTotale}" converter="latenzaConverter"/>
-											<rich:toolTip for="entryInfoLatenzaTransazioneSottotitolo" rendered="#{((not empty item.latenzaServizio and item.consegnaMultipla == false) or transazioniBean.transazioniLatenzaPortaEnabled)}">
+											<h:outputText id="outLatenzaServizio2" value="#{item.latenzaTotale}" converter="latenzaConverter" rendered="#{!item.esitoSendInCorso}"/>
+											<h:outputText id="outLatenzaServizio2SendInCorso" value="-1" converter="latenzaConverter" rendered="#{item.esitoSendInCorso}"/>
+											<rich:toolTip for="entryInfoLatenzaTransazioneSottotitolo" rendered="#{!item.esitoSendInCorso and ((not empty item.latenzaServizio and item.consegnaMultipla == false) or transazioniBean.transazioniLatenzaPortaEnabled)}">
 												<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 												<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 												<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>

@@ -2933,4 +2933,41 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		} 
 		return null;
 	}
+	
+	
+	
+	
+	
+	// *** Configurazione (Tracciamento) ***
+	
+	@Override
+	public boolean existsFaseTracciamentoDBRequestIn(boolean erogazioni, boolean fruizioni) {
+		log.debug("existsFaseTracciamentoDBRequestIn [erogazioni:" + erogazioni + ", fruizioni:"+fruizioni+"]");
+		try {
+			return this.driverConfigDB.existsFaseTracciamentoDBRequestIn(erogazioni, fruizioni);
+		}catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return false;
+	}
+	@Override
+	public boolean existsFaseTracciamentoDBRequestOut(boolean erogazioni, boolean fruizioni) {
+		log.debug("existsFaseTracciamentoDBRequestOut [erogazioni:" + erogazioni + ", fruizioni:"+fruizioni+"]");
+		try {
+			return this.driverConfigDB.existsFaseTracciamentoDBRequestOut(erogazioni, fruizioni);
+		}catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return false;
+	}
+	@Override
+	public boolean existsFaseTracciamentoDBResponseOut(boolean erogazioni, boolean fruizioni) {
+		log.debug("existsFaseTracciamentoDBResponseOut [erogazioni:" + erogazioni + ", fruizioni:"+fruizioni+"]");
+		try {
+			return this.driverConfigDB.existsFaseTracciamentoDBResponseOut(erogazioni, fruizioni);
+		}catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return false;
+	}
 }

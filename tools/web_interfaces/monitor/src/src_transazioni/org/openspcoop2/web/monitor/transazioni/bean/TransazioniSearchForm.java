@@ -1531,4 +1531,9 @@ Context, Cloneable {
 	public void setBackRicerca(boolean backRicerca) {
 		this.backRicerca = backRicerca;
 	}
+	
+	@Override
+	public List<SelectItem> getEsitiContesto() {
+		return getEsitiContesto(true);
+	}
 }

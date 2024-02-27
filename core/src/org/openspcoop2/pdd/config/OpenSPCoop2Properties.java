@@ -96,6 +96,7 @@ import org.openspcoop2.pdd.core.threshold.IThreshold;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
+import org.openspcoop2.pdd.logger.transazioni.ConfigurazioneTracciamento;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.Imbustamento;
 import org.openspcoop2.pdd.mdb.ImbustamentoRisposte;
@@ -268,9 +269,9 @@ public class OpenSPCoop2Properties {
 	private CoreException newCoreExceptionCannotWrite(File f, boolean expectedDir){
 		return new CoreException(getPrefixFile(f, expectedDir)+"cannot write");
 	}
-	private CoreException newCoreExceptionNotExists(File f, boolean expectedDir){
+	/**private CoreException newCoreExceptionNotExists(File f, boolean expectedDir){
 		return new CoreException(getPrefixFile(f, expectedDir)+"not exists");
-	}
+	}*/
 	
 
 	
@@ -27528,23 +27529,8 @@ public class OpenSPCoop2Properties {
 				}
 				name = name.trim();
 				
-				this.getTransazioniFileTraceConfig = new File(name);
-				if(!this.getTransazioniFileTraceConfig.exists()) {
-					String rootDir = this.getRootDirectory();
-					if(rootDir!=null && !"".equals(rootDir)) {
-						this.getTransazioniFileTraceConfig = new File(rootDir, name);
-					}
-				}
+				this.getTransazioniFileTraceConfig = ConfigurazioneTracciamento.toFileTraceConfig(name, this.getRootDirectory());
 				
-				if(!this.getTransazioniFileTraceConfig.exists()) {
-					throw newCoreExceptionNotExists(this.getTransazioniFileTraceConfig, false);
-				}
-				if(this.getTransazioniFileTraceConfig.isDirectory()) {
-					throw newCoreExceptionNotFile(this.getTransazioniFileTraceConfig, false);
-				}
-				if(this.getTransazioniFileTraceConfig.canRead()==false) {
-					throw newCoreExceptionCannotRead(this.getTransazioniFileTraceConfig, false);
-				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);

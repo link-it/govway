@@ -1506,4 +1506,62 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			return this.driver.getPlugin(idPlugin);
 		}
 	}
+	
+	
+	
+	
+	
+	// *** Configurazione (Tracciamento) ***
+	
+	@Override
+	public boolean existsFaseTracciamentoDBRequestIn(boolean erogazioni, boolean fruizioni) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("existsFaseTracciamentoDBRequestIn", "erogazioni:"+erogazioni , "fruizioni:"+fruizioni);
+			String methodName = "existsFaseTracciamentoDBRequestIn";
+			try {
+				return (Boolean) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {boolean.class, boolean.class }, 
+						erogazioni,fruizioni);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return false;
+			}
+		} else {
+			return this.driver.existsFaseTracciamentoDBRequestIn(erogazioni,fruizioni);
+		}
+	}
+	@Override
+	public boolean existsFaseTracciamentoDBRequestOut(boolean erogazioni, boolean fruizioni) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("existsFaseTracciamentoDBRequestOut", "erogazioni:"+erogazioni , "fruizioni:"+fruizioni);
+			String methodName = "existsFaseTracciamentoDBRequestOut";
+			try {
+				return (Boolean) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {boolean.class, boolean.class }, 
+						erogazioni,fruizioni);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return false;
+			}
+		} else {
+			return this.driver.existsFaseTracciamentoDBRequestOut(erogazioni,fruizioni);
+		}
+	}
+	@Override
+	public boolean existsFaseTracciamentoDBResponseOut(boolean erogazioni, boolean fruizioni) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("existsFaseTracciamentoDBResponseOut", "erogazioni:"+erogazioni , "fruizioni:"+fruizioni);
+			String methodName = "existsFaseTracciamentoDBResponseOut";
+			try {
+				return (Boolean) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {boolean.class, boolean.class }, 
+						erogazioni,fruizioni);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return false;
+			}
+		} else {
+			return this.driver.existsFaseTracciamentoDBResponseOut(erogazioni,fruizioni);
+		}
+	}
 }

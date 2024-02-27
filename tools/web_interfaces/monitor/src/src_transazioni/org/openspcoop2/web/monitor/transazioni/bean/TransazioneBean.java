@@ -29,6 +29,7 @@ import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -48,6 +49,7 @@ import org.openspcoop2.pdd.logger.info.DatiEsitoTransazione;
 import org.openspcoop2.pdd.logger.info.DatiMittente;
 import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
 import org.openspcoop2.pdd.logger.info.InfoMittenteFormatUtils;
+import org.openspcoop2.pdd.logger.transazioni.TransazioneUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -225,7 +227,7 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public boolean isEsitoOk(){	
-		return TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo());
+		return !isEsitoSendInCorso() && TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo());
 	}
 	public boolean isEsitoFaultApplicativo(){	
 		return TransazioniEsitiUtils.isEsitoFaultApplicativo(this.getEsito(), this.getProtocollo());
@@ -233,8 +235,16 @@ public class TransazioneBean extends Transazione{
 	public boolean isEsitoKo(){	
 		return TransazioniEsitiUtils.isEsitoKo(this.getEsito(), this.getProtocollo());
 	}
+	public boolean isEsitoSendInCorso(){	
+		String esitoContesto = getEsitoContesto();
+		return TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto);
+	}
 	
 	public String getEsitoIcona() {
+		String esitoContesto = getEsitoContesto();
+		if(TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_SEND_ICON_KEY);
+		}
 		if(TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo()))
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_OK_ICON_KEY);
 		if(TransazioniEsitiUtils.isEsitoFaultApplicativo(this.getEsito(), this.getProtocollo()))
@@ -246,44 +256,88 @@ public class TransazioneBean extends Transazione{
 	}
 
 	public java.lang.String getEsitoLabel() {
-		return TransazioniEsitiUtils.getEsitoLabel(this.getEsito(), this.getProtocollo());
+		
+		String esitoContesto = getEsitoContesto();
+		if(TransazioneUtilities.isFaseRequestIn(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+		}
+		else if(TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+		}
+		else {
+		
+			return TransazioniEsitiUtils.getEsitoLabel(this.getEsito(), this.getProtocollo());
+			
+		}
 	}
 	
 	public java.lang.String getEsitoLabelSyntetic() {
-		Integer httpStatus = null;
-		if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
-			try {
-				httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
-			}catch(Exception t) {
-				// ignore
-			}
+		
+		String esitoContesto = getEsitoContesto();
+		if(TransazioneUtilities.isFaseRequestIn(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 		}
-		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.getEsito(), this.getProtocollo(), httpStatus, this.getTipoApi());
+		else if(TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+		}
+		else {
+		
+			Integer httpStatus = null;
+			if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
+				try {
+					httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
+				}catch(Exception t) {
+					// ignore
+				}
+			}
+			return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.getEsito(), this.getProtocollo(), httpStatus, this.getTipoApi());
+			
+		}
 	}
 	
 	public java.lang.String getEsitoLabelDescription() {
-		Integer httpStatus = null;
-		if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
-			try {
-				httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
-			}catch(Exception t) {
-				// ignore
-			}
+		
+		String esitoContesto = getEsitoContesto();
+		if(TransazioneUtilities.isFaseRequestIn(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 		}
-		Integer httpInStatus = null;
-		if(this.getCodiceRispostaIngresso()!=null && !"".equals(this.getCodiceRispostaIngresso())) {
-			try {
-				httpInStatus = Integer.valueOf(this.getCodiceRispostaIngresso());
-			}catch(Exception t) {
-				// ignore
-			}
+		else if(TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
 		}
-		return TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo(), httpStatus, httpInStatus, this.getTipoApi());
+		else {
+		
+			Integer httpStatus = null;
+			if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
+				try {
+					httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
+				}catch(Exception t) {
+					// ignore
+				}
+			}
+			Integer httpInStatus = null;
+			if(this.getCodiceRispostaIngresso()!=null && !"".equals(this.getCodiceRispostaIngresso())) {
+				try {
+					httpInStatus = Integer.valueOf(this.getCodiceRispostaIngresso());
+				}catch(Exception t) {
+					// ignore
+				}
+			}
+			return TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo(), httpStatus, httpInStatus, this.getTipoApi());
+			
+		}
 	}
 	
 	public boolean isShowContesto(){
 		try{
-			return EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo()).getEsitiTransactionContextCode().size()>1;
+			if(EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo()).getEsitiTransactionContextCode().size()>1) {
+				return true;
+			}
+			else {
+				String esitoContesto = getEsitoContesto();
+				/** return TransazioneUtilities.isFaseIntermedia(esitoContesto);*/
+				// la req_in e req_out viene riportata nell'esito
+				return TransazioneUtilities.isFaseResponseOut(esitoContesto);
+			}
 		}catch(Exception e){
 			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo dei contesti: "+e.getMessage(),e);
 			return false;
@@ -291,7 +345,45 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public java.lang.String getEsitoContestoLabel() {
-		return TransazioniEsitiUtils.getEsitoContestoLabel(this.getEsitoContesto(), this.getProtocollo());
+		String esitoContesto = getEsitoContesto();
+		boolean moreContext = false;
+		try{
+			moreContext = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo()).getEsitiTransactionContextCode().size()>1;
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo dei contesti: "+e.getMessage(),e);
+		}
+		if(TransazioneUtilities.isFaseRequestIn(esitoContesto)) {
+			/**
+			if(moreContext) {
+				return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}
+			else {
+				return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}*/
+			// la req_in e req_out viene riportata nell'esito
+			return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo());
+		}
+		else if(TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+			/**if(moreContext) {
+				return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}
+			else {
+				return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}*/
+			// la req_in e req_out viene riportata nell'esito
+			return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo());
+		}
+		else if(TransazioneUtilities.isFaseResponseOut(esitoContesto)) {
+			if(moreContext) {
+				return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
+			else {
+				return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
+		}
+		else {
+			return TransazioniEsitiUtils.getEsitoContestoLabel(this.getEsitoContesto(), this.getProtocollo());
+		}
 	}
 	
 	public String getFaultCooperazionePretty(){
@@ -1296,6 +1388,10 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public String getCssColonnaEsito() {
+		String esitoContesto = getEsitoContesto();
+		if(TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_OK;
+		}
 		if(this.isEsitoOk())
 			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_OK;
 		if(this.isEsitoFaultApplicativo())
@@ -1307,6 +1403,10 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public String getCssColonnaLatenza() {
+		String esitoContesto = getEsitoContesto();
+		if(TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_OK;
+		}
 		if(this.isEsitoOk())
 			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_OK;
 		if(this.isEsitoFaultApplicativo())

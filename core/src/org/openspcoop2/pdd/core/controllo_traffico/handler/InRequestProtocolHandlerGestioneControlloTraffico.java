@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.handlers.transazioni;
+package org.openspcoop2.pdd.core.controllo_traffico.handler;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -77,25 +78,25 @@ import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
 
 /**     
- * InRequestProtocolHandler_GestioneControlloTraffico
+ * InRequestProtocolHandlerGestioneControlloTraffico
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class InRequestProtocolHandler_GestioneControlloTraffico {
+public class InRequestProtocolHandlerGestioneControlloTraffico {
 
-	private static java.util.Random _rnd = null;
+	private static java.util.Random rndEngine = null;
 	private static synchronized void initRandom() {
-		if(_rnd==null) {
-			_rnd = new SecureRandom();
+		if(rndEngine==null) {
+			rndEngine = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
-		if(_rnd==null) {
+		if(rndEngine==null) {
 			initRandom();
 		}
-		return _rnd;
+		return rndEngine;
 	}
 	
 	public void process(InRequestProtocolContext context, Transaction tr) throws HandlerException{
@@ -105,11 +106,11 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 		
 		DatiTransazione datiTransazione = null;
 				
-		IGestorePolicyAttive gestorePolicy_globale = null;
-		IGestorePolicyAttive gestorePolicy_porta = null;
-		PolicyConfiguration policyConfiguration_globale = null;
-		PolicyConfiguration policyConfiguration_porta = null;
-		PolicyConfiguration policyConfiguration_header_http = null;
+		IGestorePolicyAttive gestorePolicyGlobale = null;
+		IGestorePolicyAttive gestorePolicyPorta = null;
+		PolicyConfiguration policyConfigurationGlobale = null;
+		PolicyConfiguration policyConfigurationPorta = null;
+		PolicyConfiguration policyConfigurationHeaderHttp = null;
 		
 		GestoreControlloTraffico gestoreControlloTraffico = null;
 		ConfigurazionePdDManager configPdDManager = null;
@@ -140,7 +141,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
 			
 			if(context==null) {
-				throw new Exception("InRequestProtocolContext is null");
+				throw new CoreException("InRequestProtocolContext is null");
 			}
 			
 			// Leggo i dati del servizio
@@ -178,11 +179,13 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					try {
 						mapPolicyAttiveAPI = configPdDManager.getElencoIdPolicyAttiveAPI(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache(),
 								context.getTipoPorta(), datiTransazione.getNomePorta());
-					}catch(DriverConfigurazioneNotFound notFound) {}
+					}catch(DriverConfigurazioneNotFound notFound) {
+						// ignore
+					}
 					if(mapPolicyAttiveAPI!=null && !mapPolicyAttiveAPI.isEmpty()) {
 						Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttiveAPI.keySet().iterator();
 						while (it.hasNext()) {
-							TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+							TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = it.next();
 							ElencoIdPolicyAttive elencoPolicyAttiveAPI = mapPolicyAttiveAPI.get(tipoRisorsaPolicyAttiva);
 							if(elencoPolicyAttiveAPI!=null) {
 								ElencoIdPolicyAttive cloned = (ElencoIdPolicyAttive) elencoPolicyAttiveAPI.clone(); // altrimenti dopo aggiungendo quelle globali si modifica l'oggetto in cache
@@ -194,11 +197,13 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttiveGlobali = null;
 					try {
 						mapPolicyAttiveGlobali = configPdDManager.getElencoIdPolicyAttiveGlobali(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
-					}catch(DriverConfigurazioneNotFound notFound) {}
+					}catch(DriverConfigurazioneNotFound notFound) {
+						// ignore
+					}
 					if(mapPolicyAttiveGlobali!=null && !mapPolicyAttiveGlobali.isEmpty()) {
 						Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttiveGlobali.keySet().iterator();
 						while (it.hasNext()) {
-							TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+							TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = it.next();
 							ElencoIdPolicyAttive elencoPolicyAttiveGlobali = mapPolicyAttiveGlobali.get(tipoRisorsaPolicyAttiva);
 							
 							if(mapPolicyAttive.containsKey(tipoRisorsaPolicyAttiva)) {
@@ -223,42 +228,42 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 				
 				// ** ConfigurazionePolicy per gestore **
 				
-				policyConfiguration_globale = configPdDManager.getConfigurazionePolicyRateLimitingGlobali(requestInfo);
-				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_GLOBALE, policyConfiguration_globale);
+				policyConfigurationGlobale = configPdDManager.getConfigurazionePolicyRateLimitingGlobali(requestInfo);
+				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_GLOBALE, policyConfigurationGlobale);
 								
-				PolicyConfiguration _policyConfiguration_api = null;
+				PolicyConfiguration policyConfigurationApiInternal = null;
 				if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null){
 					PortaDelegata pd = configPdDManager.getPortaDelegata(context.getIntegrazione().getIdPD(),requestInfo);
-					_policyConfiguration_api = new PolicyConfiguration(pd.getProprietaRateLimitingList());
+					policyConfigurationApiInternal = new PolicyConfiguration(pd.getProprietaRateLimitingList());
 				}
 				else if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null){
 					PortaApplicativa pa = configPdDManager.getPortaApplicativa(context.getIntegrazione().getIdPA(),requestInfo);
-					_policyConfiguration_api = new PolicyConfiguration(pa.getProprietaRateLimitingList());
+					policyConfigurationApiInternal = new PolicyConfiguration(pa.getProprietaRateLimitingList());
 				}
-				if(_policyConfiguration_api==null) {
-					throw new Exception("Policy configuration not found");
+				if(policyConfigurationApiInternal==null) {
+					throw new CoreException("Policy configuration not found");
 				}
 				else {
-					if(_policyConfiguration_api.isGestionePolicyRidefinita()) {
-						policyConfiguration_porta = _policyConfiguration_api;
+					if(policyConfigurationApiInternal.isGestionePolicyRidefinita()) {
+						policyConfigurationPorta = policyConfigurationApiInternal;
 					}
 					else {
-						policyConfiguration_porta = policyConfiguration_globale;
+						policyConfigurationPorta = policyConfigurationGlobale;
 					}
 				}
-				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_PORTA, policyConfiguration_porta);
+				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_PORTA, policyConfigurationPorta);
 				
 				// ** ConfigurazionePolicy per header http **
-				if(_policyConfiguration_api.isGestioneHttpHeadersRidefinita()) {
-					policyConfiguration_header_http = _policyConfiguration_api;
+				if(policyConfigurationApiInternal.isGestioneHttpHeadersRidefinita()) {
+					policyConfigurationHeaderHttp = policyConfigurationApiInternal;
 				}
 				else {
-					policyConfiguration_header_http = policyConfiguration_globale;
+					policyConfigurationHeaderHttp = policyConfigurationGlobale;
 				}
 				
 				// Gestore delle Policy
-				gestorePolicy_porta = GestorePolicyAttive.getInstance(policyConfiguration_porta.getType());
-				gestorePolicy_globale = GestorePolicyAttive.getInstance(policyConfiguration_globale.getType());
+				gestorePolicyPorta = GestorePolicyAttive.getInstance(policyConfigurationPorta.getType());
+				gestorePolicyGlobale = GestorePolicyAttive.getInstance(policyConfigurationGlobale.getType());
 				
 				// Gestore del Traffico
 				gestoreControlloTraffico = GestoreControlloTraffico.getInstance();
@@ -277,7 +282,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 				
 			}
 			
-			//System.out.println("PROCESS registerThread["+registerThread+"] datiControlloTraffico["+(datiControlloTraffico!=null)+"]");
+			/**System.out.println("PROCESS registerThread["+registerThread+"] datiControlloTraffico["+(datiControlloTraffico!=null)+"]");*/
 			
 		}catch(Exception e){
 			throw new HandlerException("Configurazione non disponibile: "+e.getMessage(), e);
@@ -311,13 +316,13 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					int policyViolateWarningOnly = 0;
 					int policyInErrore = 0;
 					
-					List<RisultatoVerificaPolicy> policyBloccanti = new ArrayList<RisultatoVerificaPolicy>();
+					List<RisultatoVerificaPolicy> policyBloccanti = new ArrayList<>();
 					
-					List<String> pddContext_uniqueIdsPolicy = new ArrayList<>();
-					List<IDUnivocoGroupByPolicy> pddContext_idUnivociGroupBy = new ArrayList<IDUnivocoGroupByPolicy>();
-					List<Boolean> pddContext_policyApplicabile = new ArrayList<Boolean>();
-					List<Boolean> pddContext_policyViolata = new ArrayList<Boolean>();
-					List<String> pddContext_api = new ArrayList<>();
+					List<String> pddContextUniqueIdsPolicy = new ArrayList<>();
+					List<IDUnivocoGroupByPolicy> pddContextIdUnivociGroupBy = new ArrayList<>();
+					List<Boolean> pddContextPolicyApplicabile = new ArrayList<>();
+					List<Boolean> pddContextPolicyViolata = new ArrayList<>();
+					List<String> pddContextApi = new ArrayList<>();
 					
 					DatiTempiRisposta datiTempiRisposta = null;
 					
@@ -333,7 +338,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						
 						Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttive.keySet().iterator();
 						while (it.hasNext()) {
-							TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+							TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = it.next();
 							ElencoIdPolicyAttive elencoPolicyAttivePerRisorsa = mapPolicyAttive.get(tipoRisorsaPolicyAttiva);
 						
 							msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_RISORSA, tipoRisorsaPolicyAttiva.getValue());
@@ -367,12 +372,12 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 										}catch(DriverConfigurazioneNotFound notFound) {
 											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ALIAS, idActive.getNome());
 											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, "");
-											throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente: "+notFound.getMessage(),notFound);
+											throw new CoreException("Istanza di Policy con id ["+idActive.getNome()+"] non esistente: "+notFound.getMessage(),notFound);
 										}
 										if(attivazionePolicy==null){
 											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ALIAS, idActive.getNome());
 											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, "");
-											throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente?");
+											throw new CoreException("Istanza di Policy con id ["+idActive.getNome()+"] non esistente?");
 										}
 										
 										msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ALIAS,
@@ -432,10 +437,10 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 														}
 													}
 												}catch(DriverConfigurazioneNotFound notFound) {
-													throw new Exception("Policy con id ["+idActive.getIdPolicy()+"] non esistente: "+notFound.getMessage(),notFound);
+													throw new CoreException("Policy con id ["+idActive.getIdPolicy()+"] non esistente: "+notFound.getMessage(),notFound);
 												}
 												if(configurazionePolicy==null){
-													throw new Exception("Policy con id ["+idActive.getIdPolicy()+"] non esistente?");
+													throw new CoreException("Policy con id ["+idActive.getIdPolicy()+"] non esistente?");
 												}
 												
 												org.openspcoop2.core.controllo_traffico.beans.ActivePolicy activePolicy = 
@@ -449,8 +454,8 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 												// Creo Gruppo
 												IDUnivocoGroupByPolicy idUnivocoGroupBy = InterceptorPolicyUtilities.convertToID(log,
 														datiTransazione, attivazionePolicy.getGroupBy(), context);
-												pddContext_idUnivociGroupBy.add(idUnivocoGroupBy);
-												pddContext_uniqueIdsPolicy.add(UniqueIdentifierUtilities.getUniqueId(attivazionePolicy));
+												pddContextIdUnivociGroupBy.add(idUnivocoGroupBy);
+												pddContextUniqueIdsPolicy.add(UniqueIdentifierUtilities.getUniqueId(attivazionePolicy));
 												
 												// Se la Policy richiede una condizione di applicabilità per degrado prestazionale
 												// e non ho ancora recuperato l'informazione sui tempi lo faccio adesso
@@ -463,24 +468,24 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 												IGestorePolicyAttive gestorePolicy = null;
 												PolicyConfiguration policyConfiguration = null;
 												if(attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().getNomePorta()!=null && !"".equals(attivazionePolicy.getFiltro().getNomePorta())) {
-													gestorePolicy = gestorePolicy_porta;
-													policyConfiguration = policyConfiguration_porta;
+													gestorePolicy = gestorePolicyPorta;
+													policyConfiguration = policyConfigurationPorta;
 													TipoRisorsaPolicyAttiva tipoRisorsaPolicy = TipoRisorsaPolicyAttiva.getTipo(activePolicy.getTipoRisorsaPolicy(), configurazionePolicy.isSimultanee());
 													if(!gestorePolicy.getType().isSupportedResource(tipoRisorsaPolicy)) {
 														// caso in cui viene configurata una policy su una specifica erogazione/fruizione, senza che nella porta stessa venga ridefinito un gestore specifico, e a livello di configurazione globale viene poi impostato un gestore non compatibile
 														log.error("Riscontrata policy '"+attivazionePolicy.getIdActivePolicy()+"' (alias:"+attivazionePolicy.getAlias()+") non compatibile con il tipo di gestore '"+gestorePolicy.getType()+"'; verrà utilizzato il gestore di default");
 														policyConfiguration = new PolicyConfiguration(true);
 														gestorePolicy = GestorePolicyAttive.getInstance(policyConfiguration.getType());
-														pddContext_api.add(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_DEFAULT);
+														pddContextApi.add(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_DEFAULT);
 													}
 													else {
-														pddContext_api.add(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_API);
+														pddContextApi.add(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_API);
 													}
 												}
 												else {
-													gestorePolicy = gestorePolicy_globale;
-													policyConfiguration = policyConfiguration_globale;
-													pddContext_api.add(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_GLOBAL);
+													gestorePolicy = gestorePolicyGlobale;
+													policyConfiguration = policyConfigurationGlobale;
+													pddContextApi.add(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_GLOBAL);
 												}
 												
 												RisultatoVerificaPolicy risultatoVerifica = PolicyVerifier.verifica(
@@ -489,7 +494,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 														activePolicy,
 														idUnivocoGroupBy, context.getPddContext(), 
 														msgDiag, tr, datiTransazione, pddCongestionata, datiTempiRisposta,
-														pddContext_policyApplicabile, pddContext_policyViolata,
+														pddContextPolicyApplicabile, pddContextPolicyViolata,
 														context.getStato());
 												
 												// Gestisco Risultato Verifica
@@ -636,19 +641,19 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						} // -- fine iterazione per tipo di risorsa
 						
 					}finally{
-						if(pddContext_idUnivociGroupBy.size()>0){
-							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_GROUP_BY_CONDITION, pddContext_idUnivociGroupBy);
-							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_UNIQUE_ID_POLICY,pddContext_uniqueIdsPolicy);
-							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_APPLICABILE,pddContext_policyApplicabile);
-							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_VIOLATA,pddContext_policyViolata);
-							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT,pddContext_api);
+						if(!pddContextIdUnivociGroupBy.isEmpty()){
+							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_GROUP_BY_CONDITION, pddContextIdUnivociGroupBy);
+							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_UNIQUE_ID_POLICY,pddContextUniqueIdsPolicy);
+							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_APPLICABILE,pddContextPolicyApplicabile);
+							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_VIOLATA,pddContextPolicyViolata);
+							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT,pddContextApi);
 						}
 					}
 
 					// Gestione header HTTP da aggiungere alla transazione
 					
 					Properties headerTrasportoRateLimiting = new Properties();
-					if(risultatiVerificaPolicyViolate.size()>0) {
+					if(!risultatiVerificaPolicyViolate.isEmpty()) {
 						// calcolo tempo maggiore
 						long ms = -1;
 						Map<TipoRisorsa,List<RisultatoVerificaPolicy>> risultatiVerificaPolicyViolateMap = new HashMap<>();
@@ -683,12 +688,12 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 								sec=1;
 							}
 
-							if(!policyConfiguration_header_http.isDisabledHttpHeaders_retryAfter()) {
+							if(!policyConfigurationHeaderHttp.isDisabledHttpHeaders_retryAfter()) {
 							
 								// aggiungo backoff
-								if(!policyConfiguration_header_http.isForceDisabledHttpHeaders_retryAfter_backoff()) {
-									if(policyConfiguration_header_http.getForceHttpHeaders_retryAfter_backoff()>0) {
-										sec = sec + getRandom().nextInt(policyConfiguration_header_http.getForceHttpHeaders_retryAfter_backoff());
+								if(!policyConfigurationHeaderHttp.isForceDisabledHttpHeaders_retryAfter_backoff()) {
+									if(policyConfigurationHeaderHttp.getForceHttpHeaders_retryAfter_backoff()>0) {
+										sec = sec + getRandom().nextInt(policyConfigurationHeaderHttp.getForceHttpHeaders_retryAfter_backoff());
 									}
 									else {
 										if(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()!=null && op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()>0) {
@@ -706,11 +711,11 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						}
 						if(risultatiVerificaPolicyViolateMap.size()>0) {
 							// produco anche i normali header
-							gestioneHeaderRateLimit(risultatiVerificaPolicyViolateMap, headerTrasportoRateLimiting, op2Properties, policyConfiguration_header_http);
+							gestioneHeaderRateLimit(risultatiVerificaPolicyViolateMap, headerTrasportoRateLimiting, op2Properties, policyConfigurationHeaderHttp);
 						}
 					}
 					else if(risultatiVerificaPolicyRispettate.size()>0) {
-						gestioneHeaderRateLimit(risultatiVerificaPolicyRispettate, headerTrasportoRateLimiting, op2Properties, policyConfiguration_header_http);
+						gestioneHeaderRateLimit(risultatiVerificaPolicyRispettate, headerTrasportoRateLimiting, op2Properties, policyConfigurationHeaderHttp);
 					}
 						
 					//Aggiungo nel pddContext e poi li recupero nei servizi
@@ -768,17 +773,16 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					}
 				}
 					
-			}catch(Exception e){
-							
-				if(e instanceof HandlerException){
-					throw (HandlerException)e;
-				}
-				else{
+			}
+			catch(HandlerException e){
+				throw e;
+			}
+			catch(Exception e){
 					
-					GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoGenericError(context.getPddContext());
-					
-					throw GeneratoreMessaggiErrore.getErroreProcessamento(e, context.getPddContext());
-				}
+				GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoGenericError(context.getPddContext());
+				
+				throw GeneratoreMessaggiErrore.getErroreProcessamento(e, context.getPddContext());
+
 			}
 			
 		}
@@ -787,9 +791,9 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 	
 	private void gestioneHeaderRateLimit(Map<TipoRisorsa,List<RisultatoVerificaPolicy>> risultatiVerificaPolicy, Properties headerTrasportoRateLimiting,
 			OpenSPCoop2Properties op2Properties,
-			PolicyConfiguration policyConfiguration_porta) {
+			PolicyConfiguration policyConfigurationPorta) {
 		
-		if(policyConfiguration_porta.isDisabledHttpHeaders()) {
+		if(policyConfigurationPorta.isDisabledHttpHeaders()) {
 			return;
 		}
 		
@@ -801,8 +805,8 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			
 			RisultatoVerificaPolicy risultatoUtilizzato = null;
 			RisultatoVerificaPolicy risultatoUtilizzatoSimultanee = null;
-			List<RisultatoVerificaPolicy> altrePolicy = new ArrayList<RisultatoVerificaPolicy>();
-			List<RisultatoVerificaPolicy> altrePolicySimultanee = new ArrayList<RisultatoVerificaPolicy>();
+			List<RisultatoVerificaPolicy> altrePolicy = new ArrayList<>();
+			List<RisultatoVerificaPolicy> altrePolicySimultanee = new ArrayList<>();
 			
 			for (RisultatoVerificaPolicy risultatoVerificaPolicy : risultato) {
 				if(TipoRisorsa.NUMERO_RICHIESTE.equals(tipoRisorsa) && risultatoVerificaPolicy.isSimultanee()) {
@@ -873,238 +877,236 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 				}
 			}
 			
-			if(!policyConfiguration_porta.isDisabledHttpHeaders_limit() && risultatoUtilizzatoSimultanee!=null) {
-				if(risultatoUtilizzatoSimultanee.getMaxValue()!=null) {
+			if(!policyConfigurationPorta.isDisabledHttpHeaders_limit() && risultatoUtilizzatoSimultanee!=null &&
+				risultatoUtilizzatoSimultanee.getMaxValue()!=null) {
+				try {
+					String [] headers = op2Properties.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit();
+					if(headers!=null && headers.length>0) {
+						for (String header : headers) {
+							headerTrasportoRateLimiting.put(header, risultatoUtilizzatoSimultanee.getMaxValue().longValue()+"");
+						}
+					}
+				}catch(Exception e) { 
+					// errore non dovrebbe succedere
+				}
+				
+				if(risultatoUtilizzatoSimultanee.getActualValue()!=null) {
+					long rimanenti = risultatoUtilizzatoSimultanee.getMaxValue().longValue() - risultatoUtilizzatoSimultanee.getActualValue().longValue();
+					if(rimanenti<0) {  // gli attuali conteggia anche quelle bloccate
+						rimanenti = 0;
+					}
 					try {
-						String [] headers = op2Properties.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit();
+						String [] headers = op2Properties.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining();
 						if(headers!=null && headers.length>0) {
 							for (String header : headers) {
-								headerTrasportoRateLimiting.put(header, risultatoUtilizzatoSimultanee.getMaxValue().longValue()+"");
+								headerTrasportoRateLimiting.put(header, rimanenti+"");
 							}
 						}
 					}catch(Exception e) { 
 						// errore non dovrebbe succedere
 					}
-					
-					if(risultatoUtilizzatoSimultanee.getActualValue()!=null) {
-						long rimanenti = risultatoUtilizzatoSimultanee.getMaxValue().longValue() - risultatoUtilizzatoSimultanee.getActualValue().longValue();
-						if(rimanenti<0) {  // gli attuali conteggia anche quelle bloccate
-							rimanenti = 0;
-						}
-						try {
-							String [] headers = op2Properties.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining();
-							if(headers!=null && headers.length>0) {
-								for (String header : headers) {
-									headerTrasportoRateLimiting.put(header, rimanenti+"");
-								}
-							}
-						}catch(Throwable e) { 
-							// errore non dovrebbe succedere
-						}
-					}
 				}
 			}
 			
-			if(risultatoUtilizzato!=null) {
-				if(risultatoUtilizzato.getMaxValue()!=null) {
+			if(risultatoUtilizzato!=null &&
+				risultatoUtilizzato.getMaxValue()!=null) {
 					
-					if(!policyConfiguration_porta.isDisabledHttpHeaders_limit()) {
-						try {
-							String [] headers = null;
-							boolean windows = false;
-							switch (tipoRisorsa) {
-							case DIMENSIONE_MASSIMA_MESSAGGIO:
-								// non viene usata
-								break;
-							case NUMERO_RICHIESTE:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderLimit();
-								windows = op2Properties.getControlloTrafficoNumeroRichiesteHeaderLimitWindows();
-								break;
-							case OCCUPAZIONE_BANDA:
-								headers = op2Properties.getControlloTrafficoOccupazioneBandaHeaderLimit();
-								windows = op2Properties.getControlloTrafficoOccupazioneBandaHeaderLimitWindows();
-								break;
-							case TEMPO_MEDIO_RISPOSTA:
-								headers = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderLimit();
-								windows = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows();
-								break;
-							case TEMPO_COMPLESSIVO_RISPOSTA:
-								headers = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderLimit();
-								windows = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows();
-								break;
-							case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit();
-								windows = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows();
-								break;
-							case NUMERO_RICHIESTE_FALLITE:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit();
-								windows = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows();
-								break;
-							case NUMERO_FAULT_APPLICATIVI:
-								headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderLimit();
-								windows = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows();
-								break;
-							case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit();
-								windows = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows();
-								break;
-							}
+				if(!policyConfigurationPorta.isDisabledHttpHeaders_limit()) {
+					try {
+						String [] headers = null;
+						boolean windows = false;
+						switch (tipoRisorsa) {
+						case DIMENSIONE_MASSIMA_MESSAGGIO:
+							// non viene usata
+							break;
+						case NUMERO_RICHIESTE:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroRichiesteHeaderLimitWindows();
+							break;
+						case OCCUPAZIONE_BANDA:
+							headers = op2Properties.getControlloTrafficoOccupazioneBandaHeaderLimit();
+							windows = op2Properties.getControlloTrafficoOccupazioneBandaHeaderLimitWindows();
+							break;
+						case TEMPO_MEDIO_RISPOSTA:
+							headers = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderLimit();
+							windows = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows();
+							break;
+						case TEMPO_COMPLESSIVO_RISPOSTA:
+							headers = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderLimit();
+							windows = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows();
+							break;
+						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows();
+							break;
+						case NUMERO_RICHIESTE_FALLITE:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows();
+							break;
+						case NUMERO_FAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows();
+							break;
+						case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows();
+							break;
+						}
+						
+						if(policyConfigurationPorta.isForceHttpHeaders_limit_no_windows()) {
+							windows = false;
+						}
+						else if(policyConfigurationPorta.isForceHttpHeaders_limit_windows()) {
+							windows = true;
+						}
+						
+						if(headers!=null && headers.length>0) {
 							
-							if(policyConfiguration_porta.isForceHttpHeaders_limit_no_windows()) {
-								windows = false;
-							}
-							else if(policyConfiguration_porta.isForceHttpHeaders_limit_windows()) {
-								windows = true;
-							}
+							Long maxValue = risultatoUtilizzato.getMaxValueBeforeNormalizing()!=null ? risultatoUtilizzato.getMaxValueBeforeNormalizing() : risultatoUtilizzato.getMaxValue();
 							
-							if(headers!=null && headers.length>0) {
-								
-								Long maxValue = risultatoUtilizzato.getMaxValueBeforeNormalizing()!=null ? risultatoUtilizzato.getMaxValueBeforeNormalizing() : risultatoUtilizzato.getMaxValue();
-								
-								StringBuilder sb = new StringBuilder("");
-								if(windows && risultatoUtilizzato.getMsWindow()!=null && maxValue!=null) {
-									long ms = risultatoUtilizzato.getMsWindow();
-									long sec = -1;
-									if(ms>1000) {
-										// trasformo in secondi
-										sec = ms / 1000;
-									}
-									if(sec>0) {
-										sb.append(", ").append(maxValue.longValue()).append(";w=").append(sec);
-									}
-									if(!altrePolicy.isEmpty()) {
-										for (RisultatoVerificaPolicy r : altrePolicy) {
-											
-											Long maxValueR = r.getMaxValueBeforeNormalizing()!=null ? r.getMaxValueBeforeNormalizing() : r.getMaxValue();
-											
-											if(r.getMsWindow()!=null && maxValueR!=null) {
-												ms = r.getMsWindow();
-												sec = -1;
-												if(ms>1000) {
-													// trasformo in secondi
-													sec = ms / 1000;
-												}
-												if(sec>0) {
-													sb.append(", ").append(maxValueR.longValue()).append(";w=").append(sec);
-												}
+							StringBuilder sb = new StringBuilder("");
+							if(windows && risultatoUtilizzato.getMsWindow()!=null && maxValue!=null) {
+								long ms = risultatoUtilizzato.getMsWindow();
+								long sec = -1;
+								if(ms>1000) {
+									// trasformo in secondi
+									sec = ms / 1000;
+								}
+								if(sec>0) {
+									sb.append(", ").append(maxValue.longValue()).append(";w=").append(sec);
+								}
+								if(!altrePolicy.isEmpty()) {
+									for (RisultatoVerificaPolicy r : altrePolicy) {
+										
+										Long maxValueR = r.getMaxValueBeforeNormalizing()!=null ? r.getMaxValueBeforeNormalizing() : r.getMaxValue();
+										
+										if(r.getMsWindow()!=null && maxValueR!=null) {
+											ms = r.getMsWindow();
+											sec = -1;
+											if(ms>1000) {
+												// trasformo in secondi
+												sec = ms / 1000;
+											}
+											if(sec>0) {
+												sb.append(", ").append(maxValueR.longValue()).append(";w=").append(sec);
 											}
 										}
 									}
 								}
-								
-								for (String header : headers) {
-									headerTrasportoRateLimiting.put(header, maxValue.longValue()+""+sb.toString());
-								}
-							}
-						}catch(Throwable e) { 
-							// errore non dovrebbe succedere
-						}
-					}
-					
-					if(!policyConfiguration_porta.isDisabledHttpHeaders_remaining() && risultatoUtilizzato.getActualValue()!=null) {
-						long rimanenti = risultatoUtilizzato.getMaxValue().longValue() - risultatoUtilizzato.getActualValue().longValue();
-						if(rimanenti<0) {  // gli attuali conteggia anche quelle bloccate
-							rimanenti = 0;
-						}
-						if(rimanenti==0 && !risultatoUtilizzato.isViolata() && !risultatoUtilizzato.isRemainingZeroValue()) {
-							rimanenti = 1; // gestione cluster
-						}
-						try {
-							String [] headers = null;
-							switch (tipoRisorsa) {
-							case DIMENSIONE_MASSIMA_MESSAGGIO:
-								// non viene usata
-								break;
-							case NUMERO_RICHIESTE:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderRemaining();
-								break;
-							case OCCUPAZIONE_BANDA:
-								headers = op2Properties.getControlloTrafficoOccupazioneBandaHeaderRemaining();
-								break;
-							case TEMPO_MEDIO_RISPOSTA:
-								// non ha senso
-								//headers = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderRemaining();
-								break;
-							case TEMPO_COMPLESSIVO_RISPOSTA:
-								headers = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderRemaining();
-								break;
-							case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining();
-								break;
-							case NUMERO_RICHIESTE_FALLITE:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining();
-								break;
-							case NUMERO_FAULT_APPLICATIVI:
-								headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining();
-								break;
-							case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining();
-								break;
-							}
-							if(headers!=null && headers.length>0) {
-								for (String header : headers) {
-									headerTrasportoRateLimiting.put(header, rimanenti+"");
-								}
-							}
-						}catch(Throwable e) { 
-							// errore non dovrebbe succedere
-						}
-					}
-				}
-				if(!policyConfiguration_porta.isDisabledHttpHeaders_reset() && risultatoUtilizzato.getMsBeforeResetCounters()!=null) {
-					
-					long ms = risultatoUtilizzato.getMsBeforeResetCounters().longValue();
-					long sec = -1;
-					if(ms>1000) {
-						// trasformo in secondi
-						sec = ms / 1000;
-					}
-					else if(ms>0) {
-						// genero comunque l'header approssimando l'intervallo al secondo
-						sec=1;
-					}
-					
-					if(sec>0) {
-						try {
-							String [] headers = null;
-							switch (tipoRisorsa) {
-							case DIMENSIONE_MASSIMA_MESSAGGIO:
-								// non viene usata
-								break;
-							case NUMERO_RICHIESTE:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderReset();
-								break;
-							case OCCUPAZIONE_BANDA:
-								headers = op2Properties.getControlloTrafficoOccupazioneBandaHeaderReset();
-								break;
-							case TEMPO_MEDIO_RISPOSTA:
-								headers = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderReset();
-								break;
-							case TEMPO_COMPLESSIVO_RISPOSTA:
-								headers = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderReset();
-								break;
-							case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset();
-								break;
-							case NUMERO_RICHIESTE_FALLITE:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderReset();
-								break;
-							case NUMERO_FAULT_APPLICATIVI:
-								headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderReset();
-								break;
-							case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
-								headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset();
-								break;
 							}
 							
-							if(headers!=null && headers.length>0) {
-								for (String header : headers) {
-									headerTrasportoRateLimiting.put(header, sec+"");
-								}
+							for (String header : headers) {
+								headerTrasportoRateLimiting.put(header, maxValue.longValue()+""+sb.toString());
 							}
-						}catch(Throwable e) { 
-							// errore non dovrebbe succedere
 						}
+					}catch(Exception e) { 
+						// errore non dovrebbe succedere
+					}
+				}
+				
+				if(!policyConfigurationPorta.isDisabledHttpHeaders_remaining() && risultatoUtilizzato.getActualValue()!=null) {
+					long rimanenti = risultatoUtilizzato.getMaxValue().longValue() - risultatoUtilizzato.getActualValue().longValue();
+					if(rimanenti<0) {  // gli attuali conteggia anche quelle bloccate
+						rimanenti = 0;
+					}
+					if(rimanenti==0 && !risultatoUtilizzato.isViolata() && !risultatoUtilizzato.isRemainingZeroValue()) {
+						rimanenti = 1; // gestione cluster
+					}
+					try {
+						String [] headers = null;
+						switch (tipoRisorsa) {
+						case DIMENSIONE_MASSIMA_MESSAGGIO:
+							// non viene usata
+							break;
+						case NUMERO_RICHIESTE:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderRemaining();
+							break;
+						case OCCUPAZIONE_BANDA:
+							headers = op2Properties.getControlloTrafficoOccupazioneBandaHeaderRemaining();
+							break;
+						case TEMPO_MEDIO_RISPOSTA:
+							// non ha senso
+							/**headers = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderRemaining();*/
+							break;
+						case TEMPO_COMPLESSIVO_RISPOSTA:
+							headers = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderRemaining();
+							break;
+						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining();
+							break;
+						case NUMERO_RICHIESTE_FALLITE:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining();
+							break;
+						case NUMERO_FAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining();
+							break;
+						case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining();
+							break;
+						}
+						if(headers!=null && headers.length>0) {
+							for (String header : headers) {
+								headerTrasportoRateLimiting.put(header, rimanenti+"");
+							}
+						}
+					}catch(Exception e) { 
+						// errore non dovrebbe succedere
+					}
+				}
+			}
+			if(!policyConfigurationPorta.isDisabledHttpHeaders_reset() && risultatoUtilizzato!=null && risultatoUtilizzato.getMsBeforeResetCounters()!=null) {
+				
+				long ms = risultatoUtilizzato.getMsBeforeResetCounters().longValue();
+				long sec = -1;
+				if(ms>1000) {
+					// trasformo in secondi
+					sec = ms / 1000;
+				}
+				else if(ms>0) {
+					// genero comunque l'header approssimando l'intervallo al secondo
+					sec=1;
+				}
+				
+				if(sec>0) {
+					try {
+						String [] headers = null;
+						switch (tipoRisorsa) {
+						case DIMENSIONE_MASSIMA_MESSAGGIO:
+							// non viene usata
+							break;
+						case NUMERO_RICHIESTE:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderReset();
+							break;
+						case OCCUPAZIONE_BANDA:
+							headers = op2Properties.getControlloTrafficoOccupazioneBandaHeaderReset();
+							break;
+						case TEMPO_MEDIO_RISPOSTA:
+							headers = op2Properties.getControlloTrafficoTempoMedioRispostaHeaderReset();
+							break;
+						case TEMPO_COMPLESSIVO_RISPOSTA:
+							headers = op2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderReset();
+							break;
+						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset();
+							break;
+						case NUMERO_RICHIESTE_FALLITE:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderReset();
+							break;
+						case NUMERO_FAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderReset();
+							break;
+						case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset();
+							break;
+						}
+						
+						if(headers!=null && headers.length>0) {
+							for (String header : headers) {
+								headerTrasportoRateLimiting.put(header, sec+"");
+							}
+						}
+					}catch(Exception e) { 
+						// errore non dovrebbe succedere
 					}
 				}
 			}
@@ -1125,28 +1127,26 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 		
 		boolean isPddCongestionataInformazioneIdentificataDalThread = false;
 		Object oPddCongestionataThread = pddContext.getObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA);
-		if(oPddCongestionataThread!=null && oPddCongestionataThread instanceof Boolean){
+		if(oPddCongestionataThread instanceof Boolean){
 			isPddCongestionataInformazioneIdentificataDalThread = (Boolean) oPddCongestionataThread;
 		}
 		
 		String idTransazione = null;
-		if(context!=null && context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+		if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
 			idTransazione = (String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		}
 		
 		boolean sync = true;
-		if(context!=null && context.getStato()!=null) {
-			if(context.getStato() instanceof StateMessage) {
-				StateMessage state = (StateMessage) context.getStato();
-				if(state.getConnectionDB()!=null) {
-					//System.out.println("SYNC FALSE CONNECTION FOUND!");
-					sync=false;
-				}
+		if(context.getStato() instanceof StateMessage) {
+			StateMessage state = (StateMessage) context.getStato();
+			if(state.getConnectionDB()!=null) {
+				/**System.out.println("SYNC FALSE CONNECTION FOUND!");*/
+				sync=false;
 			}
 		}
 		StatoTraffico statoControlloCongestione = gestoreControlloCongestione.getStatoControlloTraffico(idTransazione,sync);
 		if(statoControlloCongestione.isPddCongestionata()!=isPddCongestionataInformazioneIdentificataDalThread){
-			//System.out.println("Rilevata differenza tra controllo del traffico attivo PREINHANDLER ["+controlloTrafficoAttivoThread+"] e stato attuale["+statoControlloCongestione.getControlloTraffico()+"]");
+			/**System.out.println("Rilevata differenza tra controllo del traffico attivo PREINHANDLER ["+controlloTrafficoAttivoThread+"] e stato attuale["+statoControlloCongestione.getControlloTraffico()+"]");*/
 			pddContext.removeObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA);
 			pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA, statoControlloCongestione.isPddCongestionata());
 		}

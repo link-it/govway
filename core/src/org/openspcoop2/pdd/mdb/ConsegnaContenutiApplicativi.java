@@ -35,6 +35,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -137,10 +138,14 @@ import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.transazioni.FaseTracciamento;
+import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
+import org.openspcoop2.pdd.logger.transazioni.TracciamentoManager;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
+import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine;
@@ -161,6 +166,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.MapKey;
@@ -2401,10 +2407,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 
 			// --------------------- spedizione --------------------------
+						
 			Date dataPrimaInvocazioneConnettore = null;
 			Date dataTerminataInvocazioneConnettore = null;
 			if(invokerNonSupportato==false){
 				msgDiag.logPersonalizzato("consegnaInCorso");
+				
+				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutRequest(outRequestContext, this.log);
+				
 				// utilizzo connettore
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
 				dataPrimaInvocazioneConnettore = DateManager.getDate();
@@ -4670,5 +4681,30 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			serviziApplicativiAbilitatiForwardTo = (List<String>) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_SA);
 		}
 		return serviziApplicativiAbilitatiForwardTo;
+	}
+	
+	private void registraTracciaOutRequest(OutRequestContext outRequestContext, Logger log) throws CoreException, HandlerException, ProtocolException {
+
+		TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_REQUEST);
+		if(!tracciamentoManager.isTransazioniEnabled()) {
+			return;
+		}
+			
+		InformazioniTransazione info = new InformazioniTransazione();
+		info.setContext(outRequestContext.getPddContext());
+		info.setTipoPorta(outRequestContext.getTipoPorta());
+		info.setProtocolFactory(outRequestContext.getProtocolFactory());
+		info.setProtocollo(outRequestContext.getProtocollo());
+		info.setIntegrazione(outRequestContext.getIntegrazione());
+		info.setIdModulo(outRequestContext.getIdModulo());
+		
+		TransportRequestContext transportRequestContext = null;
+		if(outRequestContext.getMessaggio()!=null) {
+			transportRequestContext = outRequestContext.getMessaggio().getTransportRequestContext();
+		}
+		String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, outRequestContext.getProtocolFactory()), log);
+		
+		tracciamentoManager.invoke(info, esitoContext);
+		
 	}
 }

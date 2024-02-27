@@ -33,6 +33,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -45,6 +46,8 @@ import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
+import org.openspcoop2.pdd.logger.transazioni.FaseTracciamento;
+import org.openspcoop2.pdd.logger.transazioni.TransazioneUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -55,6 +58,7 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.resources.MapReader;
@@ -1681,7 +1685,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 
 	public List<SelectItem> getEsitiContesto() {
-		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+		return getEsitiContesto(false);
+	}
+	public List<SelectItem> getEsitiContesto(boolean addFasi) {
+		ArrayList<SelectItem> list = new ArrayList<>();
 
 		try{
 
@@ -1689,23 +1696,89 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING,esitoUtils.getEsitoContestoLabelFromValue(EsitoUtils.ALL_VALUE_AS_STRING)));
 			
-			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
-
-			List<String> esiti = esitiProperties.getEsitiTransactionContextCodeOrderLabel();
-			for (String esito : esiti) {
-
-				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoContestoLabelFromValue(esito));
-
-				list.add(si);
+			boolean addReqIn = false;
+			boolean addReqOut = false;
+			boolean addResOut = false;
+			if(addFasi) {
+				boolean erogazioni = !TipologiaRicerca.uscita.equals(this.tipologiaRicerca);
+				boolean fruizioni = !TipologiaRicerca.ingresso.equals(this.tipologiaRicerca);
+				addReqIn = DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).existsFaseTracciamentoDBRequestIn(erogazioni, fruizioni);
+				addReqOut = DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).existsFaseTracciamentoDBRequestOut(erogazioni, fruizioni);
+				addResOut = DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).existsFaseTracciamentoDBResponseOut(erogazioni, fruizioni);
 			}
+			
+			addEsitiContesto(addReqIn, addReqOut, addResOut, esitoUtils, list);
 
 		}catch(Exception e){
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 
 		return list;
 	}
-
+	private void addEsitiContesto(boolean addReqIn, boolean addReqOut, boolean addResOut, EsitoUtils esitoUtils, ArrayList<SelectItem> list) throws ProtocolException {
+		EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
+		List<String> esiti = esitiProperties.getEsitiTransactionContextCodeOrderLabel();
+		for (String esito : esiti) {
+			addEsitoContesto(addReqIn, addReqOut, addResOut, esitoUtils, list,
+					esito, esiti);
+		}
+	}
+	private void addEsitoContesto(boolean addReqIn, boolean addReqOut, boolean addResOut, EsitoUtils esitoUtils, ArrayList<SelectItem> list,
+			String esito, List<String> esiti) {
+		addEsitoContestoFasiIntermedie(addReqIn, addReqOut, addResOut, esitoUtils, list,
+				esito, esiti);
+		
+		String label = esitoUtils.getEsitoContestoLabelFromValue(esito);
+		if(addReqIn || addReqOut || addResOut) {
+			if(esiti.size()>1) {
+				label = label + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE;
+			}
+			else {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE;
+			}
+		}
+		SelectItem si = new SelectItem(esito, label);	
+		list.add(si);
+	}
+	private void addEsitoContestoFasiIntermedie(boolean addReqIn, boolean addReqOut, boolean addResOut, EsitoUtils esitoUtils, ArrayList<SelectItem> list,
+			String esito, List<String> esiti) {
+		if(addReqIn) {
+			String label = esitoUtils.getEsitoContestoLabelFromValue(esito);
+			if(esiti.size()>1) {
+				label = label + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}
+			else {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}
+			SelectItem si = new SelectItem(TransazioneUtilities.buildEsitoContext(esito, FaseTracciamento.IN_REQUEST), label);
+			list.add(si);
+		}
+		
+		if(addReqOut) {
+			String label = esitoUtils.getEsitoContestoLabelFromValue(esito);
+			if(esiti.size()>1) {
+				label = label + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}
+			else {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}
+			SelectItem si = new SelectItem(TransazioneUtilities.buildEsitoContext(esito, FaseTracciamento.OUT_REQUEST), label);
+			list.add(si);
+		}
+		
+		if(addResOut) {
+			String label = esitoUtils.getEsitoContestoLabelFromValue(esito);
+			if(esiti.size()>1) {
+				label = label + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
+			else {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
+			SelectItem si = new SelectItem(TransazioneUtilities.buildEsitoContext(esito, FaseTracciamento.OUT_RESPONSE), label);
+			list.add(si);
+		}
+	}
+	
 	public List<SelectItem> getTipiIdMessaggio() {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 		list.add(new SelectItem(TipoMessaggio.Richiesta.name(),TipoMessaggio.Richiesta.getLabel()));

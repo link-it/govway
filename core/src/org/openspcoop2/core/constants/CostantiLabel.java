@@ -141,6 +141,11 @@ public final class CostantiLabel {
 	public static final String LABEL_CONFIGURAZIONE_CORS= "Gestione CORS";
 	public static final String LABEL_CONFIGURAZIONE_CORS_ORIGIN= "Allow Origins";
 	
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN = "Richiesta ricevuta";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT = "Richiesta in consegna";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT = "Risposta in consegna";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE = "Risposta consegnata";
+	
     /**
      * PROPRIETA CONNETTORE
      */

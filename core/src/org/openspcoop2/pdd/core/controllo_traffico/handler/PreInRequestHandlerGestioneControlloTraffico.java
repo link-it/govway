@@ -17,8 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.handlers.transazioni;
+package org.openspcoop2.pdd.core.controllo_traffico.handler;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
@@ -46,7 +47,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PreInRequestHandler_GestioneControlloTraffico {
+public class PreInRequestHandlerGestioneControlloTraffico {
 
 	
 	public void process(PreInRequestContext context) throws HandlerException{
@@ -68,11 +69,11 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 			logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(propertiesReader.isControlloTrafficoDebug());
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
 			if(configPdDManager==null) {
-				throw new Exception("configPdDManager is null");
+				throw new CoreException("configPdDManager is null");
 			}
 			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico(context!=null ? context.getRequestInfo() : null);
 			if(configurazioneGenerale.getControlloTraffico()==null){
-				throw new Exception("Impostazione maxThreads non corretta?? ControlloTraffico is null");
+				throw new CoreException("Impostazione maxThreads non corretta?? ControlloTraffico is null");
 			}
 			
 			if(context!=null && context.getTipoPorta()!=null && context.getRequestInfo()!=null) {
@@ -91,12 +92,12 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 			maxThreadsEnabled = configurazioneGenerale.getControlloTraffico().isControlloMaxThreadsEnabled();
 			maxThreadsWarningOnly = configurazioneGenerale.getControlloTraffico().isControlloMaxThreadsWarningOnly();
 			
-			if(maxThreadsEnabled) {
+			if(maxThreadsEnabled!=null && maxThreadsEnabled.booleanValue()) {
 			
 				// Numero Massimo di richieste simultanee
 				maxThreads = configurazioneGenerale.getControlloTraffico().getControlloMaxThreadsSoglia();
 				if(maxThreads==null || maxThreads<=0l){
-					throw new Exception("Impostazione maxThreads non corretta?? ["+maxThreads+"]");
+					throw new CoreException("Impostazione maxThreads non corretta?? ["+maxThreads+"]");
 				}
 				
 				// Indicazione se abilitare o meno il controllo del traffico ed eventuale threshold
@@ -131,7 +132,7 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 		try{
 			
 			// salvataggio informazioni lette
-			if(maxThreadsEnabled) {
+			if(maxThreadsEnabled!=null && maxThreadsEnabled.booleanValue()) {
 				context.getPddContext().addObject(GeneratoreMessaggiErrore.PDD_CONTEXT_MAX_THREADS_THRESHOLD, maxThreads);
 				if(threshold!=null){
 					context.getPddContext().addObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD, threshold);
@@ -148,7 +149,7 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 			
 			// il metodo gestore.addThread((..) ha sollevato una eccezione.
 			
-			if(maxThreadsWarningOnly) {
+			if(maxThreadsWarningOnly!=null &&  maxThreadsWarningOnly.booleanValue()) {
 				
 				// Devo comunque impostare questa variabile nel contesto, in modo che l'handler di uscita rimuovi il thread.
 				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO, true);
@@ -185,7 +186,9 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 							}
 							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_VIOLATED_URL_INVOCAZIONE, urlInvocazione);
 						}
-					}catch(Exception eIgnore){}
+					}catch(Exception eIgnore){
+						// ignore
+					}
 					try{
 						Credential credenziali = req.getCredential();
 						String credenzialiFornite = "";
@@ -193,7 +196,9 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 							credenzialiFornite = credenziali.toString();
 							context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_VIOLATED_CREDENZIALI, credenzialiFornite);
 						}
-					}catch(Exception eIgnore){}
+					}catch(Exception eIgnore){
+						// ignore
+					}
 				}
 				
 				// Se l'eccezione è di tipo 'HandlerException' posso risollevarla immediatamente essendo stata generata dal metodo gestore.addThread((..)
