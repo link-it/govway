@@ -20,7 +20,7 @@
 		<httpcore.version>4.4.15</httpcore.version>
 
 		<httpcore.gov4j.version>4.4.15-gov4j-1</httpcore.gov4j.version>
-		<apache-mime4j.version>0.8.6</apache-mime4j.version>
+		<apache-mime4j.version>0.8.10</apache-mime4j.version>
 
 		<httpclient.version>4.5.13</httpclient.version>
 
