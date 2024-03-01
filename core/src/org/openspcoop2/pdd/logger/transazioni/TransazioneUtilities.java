@@ -350,7 +350,9 @@ public class TransazioneUtilities {
 			if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
 				boolean calcolaDataUscitaRispostaConDateAfterResponseSent = op2Properties.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent();
 				if(calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataRispostaSpedita()!=null) {
-					transactionDTO.setDataUscitaRisposta(info.getDataRispostaSpedita());
+					if(FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+						transactionDTO.setDataUscitaRisposta(info.getDataRispostaSpedita());
+					}
 				}
 				else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataPrimaSpedizioneRisposta()!=null) {
 					transactionDTO.setDataUscitaRisposta(info.getDataPrimaSpedizioneRisposta());
@@ -367,7 +369,8 @@ public class TransazioneUtilities {
 				if(calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataPrimaSpedizioneRisposta()!=null) {
 					transactionDTO.setDataUscitaRispostaStream(info.getDataPrimaSpedizioneRisposta());
 				}
-				else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataRispostaSpedita()!=null) {
+				else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataRispostaSpedita()!=null &&
+					FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
 					transactionDTO.setDataUscitaRispostaStream(info.getDataRispostaSpedita());
 				}
 				

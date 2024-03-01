@@ -17031,12 +17031,31 @@ public class ConsoleHelper implements IConsoleHelper {
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT,
 				dbStatoResOut,
 				true);
-		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT_COMPLETE, 
-				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE, 
-				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato), // hidden
-				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE,
-				dbStatoResOutComplete,
-				false);
+		if(this.core.isTracciamentoDatabaseRispostaConsegnataSelectEnabled()) {
+			addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT_COMPLETE, 
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE, 
+					!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato), // hidden
+					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE,
+					dbStatoResOutComplete,
+					false);
+		}
+		else {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT_COMPLETE);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE);
+			boolean hidden = !StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato);
+			if(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato)) {
+				dbStatoResOutComplete = org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.getValue();
+			}
+			if(hidden) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setType(DataElementType.TEXT);
+			}
+			de.setValue(dbStatoResOutComplete);
+			dati.add(de);
+		}
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_FILTRA_ESITI);

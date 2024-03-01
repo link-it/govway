@@ -1004,7 +1004,7 @@ public class TracciamentoManager {
 				if(this.debug)
 					this.logSqlDebug("["+idTransazione+"] recupero jdbcServiceManager effettuato");
 	
-				System.out.println("\n\n\n****** ["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] *******");
+				/**System.out.println("\n\n\n****** ["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] *******");*/
 				
 	
 	
@@ -1058,7 +1058,7 @@ public class TracciamentoManager {
 						}
 						if(this.debug)
 							this.logDebug("["+idTransazione+"] registrazione traccia richiesta...");
-						System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT TRACCIA RICHIESTA");
+						/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT TRACCIA RICHIESTA");*/
 						this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRichiesta());
 						if(this.debug)
 							this.logDebug("["+idTransazione+"] registrazione traccia richiesta completata");
@@ -1069,7 +1069,7 @@ public class TracciamentoManager {
 						}
 						if(this.debug)
 							this.logDebug("["+idTransazione+"] registrazione traccia risposta...");
-						System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT TRACCIA RISPOSTA");
+						/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT TRACCIA RISPOSTA");*/
 						this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRisposta());
 						if(this.debug)
 							this.logDebug("["+idTransazione+"] registrazione traccia risposta completata");
@@ -1111,7 +1111,7 @@ public class TracciamentoManager {
 							}
 							if(this.debug)
 								this.logDebug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] ...");
-							System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT DIAG ["+msgDiagnostico.getCodice()+"]");
+							/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT DIAG ["+msgDiagnostico.getCodice()+"]");*/
 							this.msgDiagnosticiOpenSPCoopAppender.log(connection,msgDiagnostico);
 							if(this.debug)
 								this.logDebug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] completata");
@@ -1448,14 +1448,14 @@ public class TracciamentoManager {
 		if(FaseTracciamento.IN_REQUEST.equals(this.fase) 
 				||
 				!isTransactionAlreadyRegistered(info)) {
-			System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT");
+			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT");*/
 			transazioneService.create(transazioneDTO);
 			if(!FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
 				addTransactionAlreadyRegistered(info);
 			}
 		}
 		else if(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && info.getTransazioneDaAggiornare()!=null){
-			System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE PUNTUALE");
+			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE PUNTUALE");*/
 			List<UpdateField> list = new ArrayList<>();
 			list.add(new UpdateField(Transazione.model().ESITO, transazioneDTO.getEsito()));
 			list.add(new UpdateField(Transazione.model().ESITO_SINCRONO, transazioneDTO.getEsitoSincrono()));
@@ -1476,7 +1476,7 @@ public class TracciamentoManager {
 			transazioneService.updateFields(transazioneDTO.getIdTransazione(), list.toArray(new UpdateField[1]));
 		}
 		else {
-			System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE");
+			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE");*/
 			transazioneService.update(transazioneDTO.getIdTransazione(), transazioneDTO);
 		}
 	}

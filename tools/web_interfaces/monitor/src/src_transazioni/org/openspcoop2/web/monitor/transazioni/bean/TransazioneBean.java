@@ -227,7 +227,9 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public boolean isEsitoOk(){	
-		return !isEsitoSendInCorso() && TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo());
+		return !isEsitoSendInCorso() && 
+				/**!isEsitoSendResponseInCorso() && rimane un esito OK, poi va aggiunta una categorizzazione*/  
+				TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo());
 	}
 	public boolean isEsitoFaultApplicativo(){	
 		return TransazioniEsitiUtils.isEsitoFaultApplicativo(this.getEsito(), this.getProtocollo());
@@ -239,11 +241,18 @@ public class TransazioneBean extends Transazione{
 		String esitoContesto = getEsitoContesto();
 		return TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto);
 	}
+	public boolean isEsitoSendResponseInCorso(){	
+		String esitoContesto = getEsitoContesto();
+		return TransazioneUtilities.isFaseResponseOut(esitoContesto);
+	}
 	
 	public String getEsitoIcona() {
 		String esitoContesto = getEsitoContesto();
 		if(TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_SEND_ICON_KEY);
+		}
+		if(TransazioneUtilities.isFaseResponseOut(esitoContesto)) {
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_SEND_RESPONSE_ICON_KEY);
 		}
 		if(TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo()))
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_OK_ICON_KEY);
@@ -296,6 +305,12 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public java.lang.String getEsitoLabelDescription() {
+		return getEsitoLabelDescription(false);
+	}
+	public java.lang.String getEsitoLabelDescriptionCheckResponseOut() {
+		return getEsitoLabelDescription(true);
+	}
+	private java.lang.String getEsitoLabelDescription(boolean verifyResponseOut) {
 		
 		String esitoContesto = getEsitoContesto();
 		if(TransazioneUtilities.isFaseRequestIn(esitoContesto)) {
@@ -306,6 +321,11 @@ public class TransazioneBean extends Transazione{
 		}
 		else {
 		
+			String prefixResponseOut = "";
+			if(verifyResponseOut && TransazioneUtilities.isFaseResponseOut(esitoContesto)) {
+				prefixResponseOut = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT+"<BR/>";
+			}
+			
 			Integer httpStatus = null;
 			if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
 				try {
@@ -322,7 +342,7 @@ public class TransazioneBean extends Transazione{
 					// ignore
 				}
 			}
-			return TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo(), httpStatus, httpInStatus, this.getTipoApi());
+			return prefixResponseOut+TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo(), httpStatus, httpInStatus, this.getTipoApi());
 			
 		}
 	}

@@ -115,7 +115,10 @@
 										<a4j:outputPanel layout="block" id="titoloInfoEsito_sendInCorso" styleClass="titoloEntry" rendered="#{item.esitoSendInCorso}">
 											<i class="material-icons md-24">outgoing_mail</i>
 										</a4j:outputPanel>	
-										<a4j:outputPanel layout="block" id="titoloInfoEsito_ok" styleClass="titoloEntry" rendered="#{item.esitoOk}">
+										<a4j:outputPanel layout="block" id="titoloInfoEsito_sendResponseInCorso" styleClass="titoloEntry" rendered="#{item.esitoSendResponseInCorso}">
+											<i class="material-icons md-24">pending</i>
+										</a4j:outputPanel>	
+										<a4j:outputPanel layout="block" id="titoloInfoEsito_ok" styleClass="titoloEntry" rendered="#{item.esitoOk and !item.esitoSendResponseInCorso}">
 											<i class="material-icons md-24">check</i>
 										</a4j:outputPanel>	
 										<a4j:outputPanel layout="block" id="titoloInfoEsito_fault" styleClass="titoloEntry" rendered="#{item.esitoFaultApplicativo}">
@@ -124,11 +127,11 @@
 										<a4j:outputPanel layout="block" id="titoloInfoEsito_ko" styleClass="titoloEntry" rendered="#{item.esitoKo}">
 											<i class="material-icons md-24">warning</i>
 										</a4j:outputPanel>	
-										<a4j:outputPanel layout="block" id="titoloInfoEsito_def" styleClass="titoloEntry" rendered="#{!item.esitoSendInCorso and !item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}">
+										<a4j:outputPanel layout="block" id="titoloInfoEsito_def" styleClass="titoloEntry" rendered="#{!item.esitoSendInCorso and !item.esitoSendResponseInCorso and !item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}">
 											<i class="material-icons md-24">warning</i>
 										</a4j:outputPanel>
 										<rich:toolTip for="entryInfoEsitoTransazioneTitolo">
-												<h:outputText value="#{item.esitoLabelDescription}" escape="false" />
+												<h:outputText value="#{item.esitoLabelDescriptionCheckResponseOut}" escape="false" />
 											</rich:toolTip>
 									</a4j:outputPanel>
 								</a4j:outputPanel>
@@ -216,7 +219,7 @@
 										<a4j:outputPanel layout="block" id="sottotitoloInfoEsitoTransazione" styleClass="metadatiEntry">
 											<h:outputText id="outEsito2" value="#{item.esitoLabelSyntetic}" />
 											<rich:toolTip for="entryInfoEsitoTransazioneSottotitolo">
-												<h:outputText value="#{item.esitoLabelDescription}" escape="false"/>
+												<h:outputText value="#{item.esitoLabelDescriptionCheckResponseOut}" escape="false"/>
 											</rich:toolTip>
 										</a4j:outputPanel>
 									</a4j:outputPanel>

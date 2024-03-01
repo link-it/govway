@@ -1217,6 +1217,12 @@ public class ControlStationCore {
 	public int getClusterAsyncUpdateCheckInterval() {
 		return this.clusterAsyncUpdateCheckInterval;
 	}
+	
+	/** Tracciamento */
+	private boolean isTracciamentoDatabaseRispostaConsegnataSelectEnabled;
+	public boolean isTracciamentoDatabaseRispostaConsegnataSelectEnabled() {
+		return this.isTracciamentoDatabaseRispostaConsegnataSelectEnabled;
+	}
 
 	/** Parametri pdd */
 	private int portaPubblica = 80;
@@ -2641,6 +2647,9 @@ public class ControlStationCore {
 		this.isClusterAsyncUpdate = core.isClusterAsyncUpdate;
 		this.clusterAsyncUpdateCheckInterval = core.clusterAsyncUpdateCheckInterval;
 		
+		/** Tracciamento */
+		this.isTracciamentoDatabaseRispostaConsegnataSelectEnabled = core.isTracciamentoDatabaseRispostaConsegnataSelectEnabled;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -3073,6 +3082,7 @@ public class ControlStationCore {
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
 			this.isClusterAsyncUpdate = consoleProperties.isClusterAsyncUpdate();
 			this.clusterAsyncUpdateCheckInterval = consoleProperties.getClusterAsyncUpdateCheckInterval();
+			this.isTracciamentoDatabaseRispostaConsegnataSelectEnabled = consoleProperties.isTracciamentoDatabaseRispostaConsegnataSelectEnabled();
 		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();

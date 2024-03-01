@@ -21,12 +21,14 @@ package org.openspcoop2.monitor.engine.condition;
 
 import java.util.List;
 
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.pdd.logger.transazioni.TransazioneUtilities;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -305,7 +307,25 @@ public class EsitoUtils {
 			}
 			
 			try{
-				return this.esitiProperties.getEsitoTransactionContextLabel((String)value);
+				boolean moreContext = this.esitiProperties.getEsitiTransactionContextCode().size()>1;
+				
+				String code = (String)value;
+				
+				String label = null;
+				if(TransazioneUtilities.isFaseRequestIn(code)) {
+					label = (moreContext ? this.esitiProperties.getEsitoTransactionContextLabel(TransazioneUtilities.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+				}
+				else if(TransazioneUtilities.isFaseRequestOut(code)) {
+					label = (moreContext ? this.esitiProperties.getEsitoTransactionContextLabel(TransazioneUtilities.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+				}
+				else if(TransazioneUtilities.isFaseResponseOut(code)) {
+					label = (moreContext ? this.esitiProperties.getEsitoTransactionContextLabel(TransazioneUtilities.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+				}
+				else {
+					label = this.esitiProperties.getEsitoTransactionContextLabel(code);
+				}
+				
+				return label;
 			}catch(Exception e){
 				this.logger.error("Conversione non riuscita: "+e.getMessage(),e);
 				return "Conversione non riuscita";

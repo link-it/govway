@@ -115,6 +115,7 @@ public class TransazioniCostanti {
 	public static final String DETTAGLIO_TRANSAZIONE_NOME_TAB_CONSEGNE_MULTIPLE = "consegneMultiple";
 
 	public static final String TRANSAZIONI_ELENCO_ESITO_SEND_ICON_KEY = "transazioni.elenco.esito.send.icon";
+	public static final String TRANSAZIONI_ELENCO_ESITO_SEND_RESPONSE_ICON_KEY = "transazioni.elenco.esito.sendResponse.icon";
 	public static final String TRANSAZIONI_ELENCO_ESITO_OK_ICON_KEY = "transazioni.elenco.esito.ok.icon";
 	public static final String TRANSAZIONI_ELENCO_ESITO_ERROR_ICON_KEY = "transazioni.elenco.esito.error.icon";
 	public static final String TRANSAZIONI_ELENCO_ESITO_WARNING_ICON_KEY = "transazioni.elenco.esito.warning.icon";
