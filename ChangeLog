@@ -1,3 +1,9 @@
+2024-03-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata risolta la seguente vulnerabilità relativa al jar di terza parte:
+	- CVE-2024-21742: aggiornata libreria 'org.apache.james:apache-mime4j-*' alla versione 0.8.10
+
 2024-02-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
