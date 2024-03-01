@@ -21,12 +21,14 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.token.validazione;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**
@@ -39,6 +41,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 public class IntrospectionTest extends ConfigLoader {
 
 	public static final String validazione = "TestValidazioneToken-Introspection";
+	public static final String validazioneRFC7662 = "TestValidazioneToken-IntrospectionRFC7662";
 		
 	@Test
 	public void success() throws Exception {
@@ -87,11 +90,38 @@ public class IntrospectionTest extends ConfigLoader {
 		headers.put("test-username", Utilities.username);
 		
 		File f = new File("/tmp/introspectionResponse.json");
-		f.delete();
+		if(f.exists()) {
+			f.delete();
+		}
 		
+		// L'API 'validazione' possiede un custom token policy che non interpreta il claim active, mentre validazioneRFC7662 utilizza il parser standard di introspection
+		
+		// Risposta 500
 		Utilities._test(logCore, validazione, "success", headers,  null,
 				"Risposta del servizio di Introspection non valida: Connessione terminata con errore (codice trasporto: 500)",
 				null, Utilities.getMapExpectedTokenInfoInvalid(tokenInvalid));
+		
+		// Risposta 500
+		Utilities._test(logCore, validazioneRFC7662, "success", headers,  null,
+				"Risposta del servizio di Introspection non valida: Connessione terminata con errore (codice trasporto: 500)",
+				null, Utilities.getMapExpectedTokenInfoInvalid(tokenInvalid));
+		
+		// Risposta 200 con active=false
+		try {
+			Date now = DateManager.getDate();
+			Date iat = new Date(now.getTime());
+			Date exp = new Date(now.getTime() + (1000*60));
+			String responseInvalid = "{\"active\": false,\"client_id\": \"l238j323ds-23ij4\",\"aud\": \"test\","+
+					"\"sub\":\"sub\",\"iss\": \"https://test/\",\"exp\": "+(exp.getTime()/1000)+",\"iat\": "+(iat.getTime()/1000)+","+
+					"\"email\":\"prova@prova.org\",\"username\":\"prova\"}";
+			FileSystemUtilities.writeFile(f, responseInvalid.getBytes());
+			
+			Utilities._test(logCore, validazioneRFC7662, "success", headers,  null,
+					"Validazione del token, tramite il servizio di Introspection (http://127.0.0.1:8080/TestService/echo?destFile=/tmp/introspectionResponse.json&destFileContentType=application/json), fallita: Token non valido",
+					null, Utilities.getMapExpectedTokenInfoInvalid(tokenInvalid));
+		}finally{
+			f.delete();
+		}
 	}
 		
 	

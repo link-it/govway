@@ -173,6 +173,12 @@ public class Utilities extends ConfigLoader {
 				error = "AuthorizationContentDeny";
 				msg = "Unauthorized request content";
 			}
+			else if(msgError.contains("Validazione del token, tramite il servizio di Introspection") &&  msgError.contains("fallita: Token non valido")) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				code = 401;
+				error = "TokenAuthenticationFailed";
+				msg = "Invalid token";
+			}
 			verifyKo(response, error, code, msg, true);
 		
 		}

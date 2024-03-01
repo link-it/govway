@@ -88,6 +88,7 @@ public class UserInfoTest extends ConfigLoader {
 		query.put("test-userinfo", tokenInvalid);
 		headers.put("test-username", Utilities.username);
 		
+		// serve ad eliminare il file creato con i precedenti test
 		File f = new File("/tmp/userinfoResponse.json");
 		f.delete();
 		
