@@ -29,6 +29,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
@@ -69,7 +70,8 @@ public class FileTraceManager {
 			InformazioniAttributi informazioniAttributi,
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
 			SecurityToken securityToken,
-			Context context) throws ProtocolException {
+			Context context,
+			FaseTracciamento trackingPhase) throws ProtocolException {
 		
 		Messaggio richiestaIngresso = null;
 		Messaggio richiestaUscita = null;
@@ -114,7 +116,8 @@ public class FileTraceManager {
 				richiestaIngresso, richiestaUscita,
 				rispostaIngresso, rispostaUscita,
 				infoConfigurazione,
-				this.config, !base64);
+				this.config, trackingPhase, 
+				!base64);
 		this.tBase64 = new Info(this.log, protocolFactory, transazioneDTO, credenzialiMittente, 
 				informazioniToken,
 				informazioniAttributi,
@@ -124,8 +127,9 @@ public class FileTraceManager {
 				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,
 				rispostaIngresso, rispostaUscita,
-				infoConfigurazione,
-				this.config, base64);
+				infoConfigurazione, 
+				this.config, trackingPhase,  
+				base64);
 		
 		this.dynamicMap.put("log", this.t);
 		this.dynamicMap.put("logBase64", this.tBase64);
@@ -208,10 +212,10 @@ public class FileTraceManager {
 
 	}
 	
-	public void invoke(TipoPdD tipoPdD, Context context) throws UtilsException {
-		this.invoke(tipoPdD, context, null);
+	public void invoke(TipoPdD tipoPdD, Context context, FaseTracciamento faseTracciamento) throws UtilsException {
+		this.invoke(tipoPdD, context, faseTracciamento, null);
 	}
-	public void invoke(TipoPdD tipoPdD, Context context, Map<String, String> outputMap) throws UtilsException {
+	public void invoke(TipoPdD tipoPdD, Context context, FaseTracciamento faseTracciamento, Map<String, String> outputMap) throws UtilsException {
 		List<String> topic = null;
 		Map<String, Topic> topicMap = null;
 		switch (tipoPdD) {
@@ -228,81 +232,107 @@ public class FileTraceManager {
 		}
 		if(topic!=null && !topic.isEmpty()) {
 			
-			boolean requestSent = false;
-			if(context!=null && context.containsKey(Costanti.RICHIESTA_INOLTRATA_BACKEND)) {
-				Object o = context.getObject(Costanti.RICHIESTA_INOLTRATA_BACKEND);
-				if(o instanceof String) {
-					String s = (String) o;
-					if(Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE.equals(s)) {
-						requestSent = true;
-					}
-				}
-			}
+			boolean requestSent = isRequestSent(context);
 			
 			List<Topic> topicInvoke = new ArrayList<>();
 			for (String topicName : topic) {
 				Topic topicConfig = topicMap.get(topicName);
-				
-				if(topicConfig.isOnlyRequestSent()) {
-					if(!requestSent) {
-						continue;
-					}
+				if(add(topicConfig, faseTracciamento, requestSent)) {
+					topicInvoke.add(topicConfig);
 				}
-				if(topicConfig.isOnlyInRequestContentDefined()) {
-					boolean contentDefined = this.t.getInRequestSize()>0;
-					if(!contentDefined) {
-						continue;
-					}
-				}
-				if(topicConfig.isOnlyOutRequestContentDefined()) {
-					boolean contentDefined = this.t.getOutRequestSize()>0;
-					if(!contentDefined) {
-						continue;
-					}
-				}
-				if(topicConfig.isOnlyInResponseContentDefined()) {
-					boolean contentDefined = this.t.getInResponseSize()>0;
-					if(!contentDefined) {
-						continue;
-					}
-				}
-				if(topicConfig.isOnlyOutResponseContentDefined()) {
-					boolean contentDefined = this.t.getOutResponseSize()>0;
-					if(!contentDefined) {
-						continue;
-					}
-				}
-				
-				topicInvoke.add(topicConfig);
+				/**else {
+					System.out.println("SKIP["+topicName+"] in fase ["+faseTracciamento+"]");
+				}*/
 			}
 			
-			if(topicInvoke!=null && !topicInvoke.isEmpty()) {
-				
-				this.resolveProperties();
-				
-				for (Topic topicConfig : topicInvoke) {
-					String value = this.resolve(topicConfig.getFormat());
-					if(outputMap!=null) {
-						outputMap.put(topicConfig.getNome(), value);
-					}
-					else {
-						switch (this.config.getLogSeverity()) {
-						case trace:
-							topicConfig.getLog().trace(value);		
-							break;
-						case debug:
-							topicConfig.getLog().debug(value);		
-							break;
-						case info:
-							topicConfig.getLog().info(value);		
-							break;
-						case warn:
-							topicConfig.getLog().warn(value);		
-							break;
-						case error:
-							topicConfig.getLog().error(value);		
-							break;
-						}
+			invoke(topicInvoke, outputMap);
+		}
+	}
+	
+	private boolean isRequestSent(Context context) {
+		boolean requestSent = false;
+		if(context!=null && context.containsKey(Costanti.RICHIESTA_INOLTRATA_BACKEND)) {
+			Object o = context.getObject(Costanti.RICHIESTA_INOLTRATA_BACKEND);
+			if(o instanceof String) {
+				String s = (String) o;
+				if(Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE.equals(s)) {
+					requestSent = true;
+				}
+			}
+		}
+		return requestSent;
+	}
+	
+	private boolean add(Topic topicConfig, FaseTracciamento faseTracciamento, boolean requestSent) {
+		if(!topicConfig.isEnabled(faseTracciamento)) {
+			/**System.out.println("R1");*/
+			return false;
+		}
+		
+		if(topicConfig.isOnlyRequestSent() &&
+			!requestSent) {
+			/**System.out.println("R1");*/
+			return false;
+		}
+		if(topicConfig.isOnlyInRequestContentDefined()) {
+			boolean contentDefined = this.t.getInRequestSize()>0;
+			if(!contentDefined) {
+				/**System.out.println("R3");*/
+				return false;
+			}
+		}
+		if(topicConfig.isOnlyOutRequestContentDefined()) {
+			boolean contentDefined = this.t.getOutRequestSize()>0;
+			if(!contentDefined) {
+				/**System.out.println("R4");*/
+				return false;
+			}
+		}
+		if(topicConfig.isOnlyInResponseContentDefined()) {
+			boolean contentDefined = this.t.getInResponseSize()>0;
+			if(!contentDefined) {
+				/**System.out.println("R5");*/
+				return false;
+			}
+		}
+		if(topicConfig.isOnlyOutResponseContentDefined()) {
+			boolean contentDefined = this.t.getOutResponseSize()>0;
+			if(!contentDefined) {
+				/**System.out.println("R6");*/
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private void invoke(List<Topic> topicInvoke, Map<String, String> outputMap) throws UtilsException {
+		if(topicInvoke!=null && !topicInvoke.isEmpty()) {
+			
+			this.resolveProperties();
+			
+			for (Topic topicConfig : topicInvoke) {
+				String value = this.resolve(topicConfig.getFormat());
+				if(outputMap!=null) {
+					outputMap.put(topicConfig.getNome(), value);
+				}
+				else {
+					switch (this.config.getLogSeverity()) {
+					case trace:
+						topicConfig.getLog().trace(value);		
+						break;
+					case debug:
+						topicConfig.getLog().debug(value);		
+						break;
+					case info:
+						topicConfig.getLog().info(value);		
+						break;
+					case warn:
+						topicConfig.getLog().warn(value);		
+						break;
+					case error:
+						topicConfig.getLog().error(value);		
+						break;
 					}
 				}
 			}

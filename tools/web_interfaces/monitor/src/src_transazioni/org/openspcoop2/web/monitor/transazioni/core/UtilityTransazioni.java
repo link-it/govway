@@ -45,7 +45,6 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
-import org.openspcoop2.pdd.logger.transazioni.TransazioneUtilities;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
@@ -431,14 +430,14 @@ public class UtilityTransazioni {
 			boolean moreContext = esitiProperties.getEsitiTransactionContextCode().size()>1;
 			
 			String label = null;
-			if(TransazioneUtilities.isFaseRequestIn(code)) {
-				label = (moreContext ? esitiProperties.getEsitoTransactionContextLabel(TransazioneUtilities.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			if(EsitoUtils.isFaseRequestIn(code)) {
+				label = (moreContext ? esitiProperties.getEsitoTransactionContextLabel(EsitoUtils.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 			}
-			else if(TransazioneUtilities.isFaseRequestOut(code)) {
-				label = (moreContext ? esitiProperties.getEsitoTransactionContextLabel(TransazioneUtilities.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			else if(EsitoUtils.isFaseRequestOut(code)) {
+				label = (moreContext ? esitiProperties.getEsitoTransactionContextLabel(EsitoUtils.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
 			}
-			else if(TransazioneUtilities.isFaseResponseOut(code)) {
-				label = (moreContext ? esitiProperties.getEsitoTransactionContextLabel(TransazioneUtilities.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			else if(EsitoUtils.isFaseResponseOut(code)) {
+				label = (moreContext ? esitiProperties.getEsitoTransactionContextLabel(EsitoUtils.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
 			}
 			else {
 				label = esitiProperties.getEsitoTransactionContextLabel(code);

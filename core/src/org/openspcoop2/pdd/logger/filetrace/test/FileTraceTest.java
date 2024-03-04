@@ -22,6 +22,8 @@ package org.openspcoop2.pdd.logger.filetrace.test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -44,6 +46,7 @@ import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.InformazioniJWTClientAssertion;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
@@ -115,6 +118,39 @@ public class FileTraceTest {
 		updateEnv(ENV_NAME_1, ENV_VALUE_1);
 		updateEnv(ENV_NAME_2, ENV_VALUE_2);
 		System.out.println("ENV inizializzata ("+ENV_NAME_1+":"+System.getenv(ENV_NAME_1)+") ("+ENV_NAME_2+":"+System.getenv(ENV_NAME_2)+")");
+		
+		FileSystemUtilities.mkdir(DIR_TMP);
+	}
+	public static void emptyDir() throws UtilsException, ReflectiveOperationException, IOException {	
+		
+		File dir = new File(DIR_TMP);
+		File [] childs = dir.listFiles();
+		if(childs!=null && childs.length>0) {
+			for (File file : childs) {
+	            if(file.isDirectory()) {
+	            	//System.out.println("ELIMINO DIR ["+file.getAbsolutePath()+"]");
+	            	boolean deleteDir = FileSystemUtilities.deleteDirNotEmpty(file,3);
+	        		if(!deleteDir) {
+	        			throw new UtilsException("Directory ["+file+"] non eliminata");
+	        		}
+				}
+				else {
+					// Sovrascrittura del contenuto del file con un FileOutputStream
+					//System.out.println("SVUOTO FILE ["+file.getAbsolutePath()+"]");
+	            	FileOutputStream fos = new FileOutputStream(file, false);
+	            	//fos.write("REINIT".getBytes());
+					fos.close();
+				}
+	        }
+		}
+		
+		System.out.println("Directory svuotata");
+		
+		updateEnv(ENV_NAME_1, ENV_VALUE_1);
+		updateEnv(ENV_NAME_2, ENV_VALUE_2);
+		System.out.println("ENV inizializzata ("+ENV_NAME_1+":"+System.getenv(ENV_NAME_1)+") ("+ENV_NAME_2+":"+System.getenv(ENV_NAME_2)+")");
+		
+		FileSystemUtilities.mkdir(DIR_TMP);
 	}
 	@SuppressWarnings({ "unchecked" })
 	private static void updateEnv(String name, String val) throws ReflectiveOperationException {
@@ -207,7 +243,19 @@ public class FileTraceTest {
 	
 	private static final String MSG_FAILED_PREFIX = "FAILED!! \nAtteso:\n";
 	
+	private static final String TRACKING_PHASE = "TRACKING_PHASE"; 
+	
 	public static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
+		for (FaseTracciamento fase : FaseTracciamento.values()) {
+			
+			emptyDir();
+			
+			test(tipoPdD, log4j, esito, requestWithPayload, fase);
+		}
+	}
+	
+	private static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload,
+			FaseTracciamento faseTracciamento) throws Exception{
 		
 		Logger log = LoggerWrapperFactory.getLogger(FileTraceTest.class);
 		ConfigurazionePdD confPdD = new ConfigurazionePdD();
@@ -501,6 +549,7 @@ public class FileTraceTest {
 		
 		
 		test(tipoPdD, log4j, requestWithPayload,
+				faseTracciamento,
 				log, config, credenzialiMittente, 
 				informazioniToken,
 				informazioniAttributi,
@@ -545,6 +594,7 @@ public class FileTraceTest {
 
 	
 	private static void test(TipoPdD tipoPdD, boolean log4j, boolean requestWithPayload,
+			FaseTracciamento faseTracciamento,
 			Logger log, FileTraceConfig config, 
 			CredenzialiMittente credenzialiMittente, 
 			InformazioniToken informazioniToken,
@@ -576,15 +626,6 @@ public class FileTraceTest {
 		confPdD.setLog(log);
 		ProtocolFactoryManager.initialize(log, confPdD, CostantiLabel.TRASPARENTE_PROTOCOL_NAME);
 		
-		FileTraceManager manager = new FileTraceManager(log, config);
-		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
-		manager.buildTransazioneInfo(protocolFactory, transazioneDTO, transaction,
-				informazioniToken,
-				informazioniAttributi,
-				informazioniNegoziazioneToken,
-				securityToken,
-				null);
-		
 		boolean requestSent = true;
 		if(transazioneDTO.getEsito()!=0) {
 			requestSent = false;
@@ -595,6 +636,18 @@ public class FileTraceTest {
 			context.addObject(Costanti.RICHIESTA_INOLTRATA_BACKEND, Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE);
 		}
 		
+		context.addObject(org.openspcoop2.utils.Map.newMapKey(TRACKING_PHASE), faseTracciamento.name());
+		
+		FileTraceManager manager = new FileTraceManager(log, config);
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+		manager.buildTransazioneInfo(protocolFactory, transazioneDTO, transaction,
+				informazioniToken,
+				informazioniAttributi,
+				informazioniNegoziazioneToken,
+				securityToken,
+				context,
+				faseTracciamento);
+						
 		if(log4j) {
 			
 			/** OUTPUT PRIMA INVOCAZIONE: 
@@ -606,7 +659,8 @@ public class FileTraceTest {
 			 * */
 			
 			System.out.println("Iterazione master ...");
-			manager.invoke(tipoPdD, context);	
+			manager.invoke(tipoPdD, context, faseTracciamento);	
+			Utilities.sleep(500);
 			System.out.println("Iterazione master ok");
 			
 			boolean compressExpected = true;
@@ -620,40 +674,55 @@ public class FileTraceTest {
 			System.out.println("Verifica log prodotti ...");
 			verificaFile(dirName, dirFile, 
 					erogazioni, requestWithPayload, !compressExpected,
-					transazioneDTO);
+					transazioneDTO,
+					true); // tutte FaseTracciamento.POST_OUT_RESPONSE.equals(faseTracciamento));
+			verificaFileTrackingPhase(dirName,dirFile,
+					erogazioni, faseTracciamento, !compressExpected);
 			System.out.println("Verifica log prodotti completata");
 			
 			int numeroInvocazioni = 2;
 			for (int i = 0; i < numeroInvocazioni; i++) {
 				System.out.println("Iterazione "+(i+1)+"/"+numeroInvocazioni+" ...");
-			manager.invoke(tipoPdD, context);	
+				manager.invoke(tipoPdD, context, faseTracciamento);	
+				Utilities.sleep(500);
 				System.out.println("Iterazione "+(i+1)+"/"+numeroInvocazioni+" ok");
 			}
 			
 			System.out.println("Verifica log compressi prodotti ...");
 			
 			verificaFile(dirName, dirFile,
-					erogazioni, requestWithPayload, compressExpected,
-					transazioneDTO);
+					erogazioni, requestWithPayload, compressExpected, // tutte (compressExpected && FaseTracciamento.POST_OUT_RESPONSE.equals(faseTracciamento)),
+					transazioneDTO,
+					true); // tutte FaseTracciamento.POST_OUT_RESPONSE.equals(faseTracciamento));
+			verificaFileTrackingPhase(dirName,dirFile,
+					erogazioni, faseTracciamento, compressExpected);
 			
 			System.out.println("Verifica log compressi prodotti completata");
 		}
 		else {
 		
 			Map<String, String> outputMap = new HashMap<>();
-			manager.invoke(tipoPdD, context, outputMap);
+			manager.invoke(tipoPdD, context, faseTracciamento, outputMap);
 			
 			int res = outputMap.size();
 			System.out.println("Terminato con "+res+" risultati");
 			int risultatiAttesi = 4;
+			//if(!FaseTracciamento.POST_OUT_RESPONSE.equals(faseTracciamento)) {
+			//	risultatiAttesi = 0;
+			//}
+			//	else 
 			if(!erogazioni && !requestSent) {
 				risultatiAttesi = 0;
 			}
 			else if(!requestWithPayload) {
 				risultatiAttesi = 3;
 			}
+			
+			// aggiungo topic tracking phase
+			risultatiAttesi++;
+			
 			if(res!=risultatiAttesi) {
-				throw new UtilsException("Attesi "+risultatiAttesi+" risultati");
+				throw new UtilsException("Attesi "+risultatiAttesi+" risultati, trovati '"+res+"'");
 			}
 			
 			if(outputMap.size()>0) {
@@ -706,6 +775,18 @@ public class FileTraceTest {
 								throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+logMsg);
 							}
 						}
+						else if("trackingPhaseInRequest".equals(topic) 
+								||
+								"trackingPhaseOutRequest".equals(topic)
+								||
+								"trackingPhaseOutResponse".equals(topic) 
+								||
+								"trackingPhasePostOutResponse".equals(topic)){
+							String atteso = getExpectedTrackingPhaseContent(erogazioni, faseTracciamento);
+							if(!logMsg.equals(atteso)) {
+								throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+logMsg);
+							}
+						}
 						else {
 							throw new UtilsException("FAILED!! topic sconosciuto");
 						}
@@ -740,6 +821,14 @@ public class FileTraceTest {
 						else if("responseBody".equals(topic)) {
 							if(!logMsg.equals(LOG_RESPONSE_BODY_PD)) {
 								throw new UtilsException(MSG_FAILED_PREFIX+LOG_RESPONSE_BODY_PD+"\nTrovato:\n"+logMsg);
+							}
+						}
+						else if("trackingPhaseRequest".equals(topic) 
+								||
+								"trackingPhaseResponse".equals(topic)){
+							String atteso = getExpectedTrackingPhaseContent(erogazioni, faseTracciamento);
+							if(!logMsg.equals(atteso)) {
+								throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+logMsg);
 							}
 						}
 						else {
@@ -813,7 +902,16 @@ public class FileTraceTest {
 	
 	private static void verificaFile(String dirName,String dirFile,
 			boolean erogazioni, boolean requestWithPayload, boolean compressExpected,
-			Transazione transazioneDTO) throws FileNotFoundException, UtilsException {
+			Transazione transazioneDTO,
+			boolean fileExpected) throws FileNotFoundException, UtilsException {
+		
+		boolean requestSent = true;
+		if(transazioneDTO.getEsito()!=0) {
+			requestSent = false;
+		}
+		if(!erogazioni && !requestSent) {
+			compressExpected = false;
+		}
 		
 		String fileSuffix = ".log";
 		String fileGzSuffix = "-1.log.gz";
@@ -836,7 +934,13 @@ public class FileTraceTest {
 		String sizeRequestBody = Utilities.convertBytesToFormatString(requestBody.length());
 		
 		String fileRequestBodyCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".requestBody"+dateFileCompress+fileGzSuffix;
-		String requestBodyCompress = getContentFile(fileRequestBodyCompress,true,compressExpected);
+		String requestBodyCompress = null;
+		if(!requestWithPayload) {
+			requestBodyCompress = getContentFile(fileRequestBodyCompress,true,false);
+		}
+		else { 
+			requestBodyCompress = getContentFile(fileRequestBodyCompress,true,compressExpected);
+		}
 		
 		
 		String fileResponse = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+".response"+""+fileSuffix;
@@ -857,6 +961,16 @@ public class FileTraceTest {
 		
 		String fileResponseBodyCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".responseBody"+dateFileCompress+fileGzSuffix;
 		String responseBodyCompress = getContentFile(fileResponseBodyCompress,true,compressExpected);
+		
+		if(!fileExpected) {
+			if(request!=null && request.length()>0) {
+				throw new UtilsException("File '"+fileRequest+"' not expected");
+			}
+			if(requestCompress!=null && requestCompress.length()>0) {
+				throw new UtilsException("File '"+fileRequestCompress+"' not expected");
+			}
+			return;
+		}
 		
 		
 		if(!compressExpected) {
@@ -908,10 +1022,14 @@ public class FileTraceTest {
 			}
 
 			// requestBody
-			if(!requestBody.contains(LOG_REQUEST_BODY_PA) && 
-					(requestBodyCompress == null || !requestBodyCompress.contains(LOG_REQUEST_BODY_PA)
-			)) {
-				throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_BODY_PA+nonTrovatoInFileMessage+fileRequestBody+nonTrovatoInFileCompressMessage+fileRequestBodyDecompressed);
+			if(requestWithPayload) {
+				if(!requestBody.contains(LOG_REQUEST_BODY_PA) && 
+						(requestBodyCompress == null || !requestBodyCompress.contains(LOG_REQUEST_BODY_PA)
+				)) {
+					throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_BODY_PA+nonTrovatoInFileMessage+fileRequestBody+nonTrovatoInFileCompressMessage+fileRequestBodyDecompressed);
+				}
+			}else if(requestBody.length()>0) {
+				throw new UtilsException("Content in '"+fileRequestBody+"' not expected");
 			}
 	
 			// response
@@ -941,46 +1059,207 @@ public class FileTraceTest {
 		}
 		else {
 			// request
-			if(requestWithPayload) {
-				if(!request.contains(LOG_REQUEST_PD_PUT) && 
-						(requestCompress==null || !requestCompress.contains(LOG_REQUEST_PD_PUT))
-				) {
-					throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PD_PUT+nonTrovatoInFileMessage+fileRequest+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
+			if(requestSent) {
+				if(requestWithPayload) {
+					if(!request.contains(LOG_REQUEST_PD_PUT) && 
+							(requestCompress==null || !requestCompress.contains(LOG_REQUEST_PD_PUT))
+					) {
+						throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PD_PUT+nonTrovatoInFileMessage+fileRequest+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
+					}
+				}
+				else {
+					if(!request.contains(LOG_REQUEST_PD_GET) && 
+							(requestCompress==null || !requestCompress.contains(LOG_REQUEST_PD_GET))
+					) {
+						throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PD_GET+nonTrovatoInFileMessage+fileRequest+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
+					}
 				}
 			}
-			else {
-				if(!request.contains(LOG_REQUEST_PD_GET) && 
-						(requestCompress==null || !requestCompress.contains(LOG_REQUEST_PD_GET))
-				) {
-					throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_PD_GET+nonTrovatoInFileMessage+fileRequest+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
-				}
+			else if(request.length()>0) {
+				throw new UtilsException("Content in '"+fileRequest+"' not expected");
 			}
 			
 			// requestBody
-			if(!requestBody.contains(LOG_REQUEST_BODY_PD) && 
-					(requestBodyCompress == null || !requestBodyCompress.contains(LOG_REQUEST_BODY_PD)
-			)) {
-				throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_BODY_PD+nonTrovatoInFileMessage+fileRequestBody+nonTrovatoInFileCompressMessage+fileRequestBodyDecompressed);
+			if(requestSent && requestWithPayload) {
+				if(!requestBody.contains(LOG_REQUEST_BODY_PD) && 
+						(requestBodyCompress == null || !requestBodyCompress.contains(LOG_REQUEST_BODY_PD)
+				)) {
+					throw new UtilsException(MSG_FAILED_PREFIX+LOG_REQUEST_BODY_PD+nonTrovatoInFileMessage+fileRequestBody+nonTrovatoInFileCompressMessage+fileRequestBodyDecompressed);
+				}
+			}else if(requestBody.length()>0) {
+				throw new UtilsException("Content in '"+fileRequestBody+"' not expected");
 			}
 			
 			// response
-			String atteso = LOG_RESPONSE_PD;
-			if(!requestWithPayload) {
-				atteso = atteso.replace("PUT", "GET");
-			}
-			if(!response.contains(atteso) &&
-					(responseCompress==null || !responseCompress.contains(atteso)) &&
-					(responseCompress2==null || !responseCompress2.contains(atteso))) {
-				throw new UtilsException(MSG_FAILED_PREFIX+atteso+nonTrovatoInFileMessage+fileResponse+nonTrovatoInFileCompressMessage+fileResponseDecompressed);
+			if(requestSent) {
+				String atteso = LOG_RESPONSE_PD;
+				if(!requestWithPayload) {
+					atteso = atteso.replace("PUT", "GET");
+				}
+				if(!response.contains(atteso) &&
+						(responseCompress==null || !responseCompress.contains(atteso)) &&
+						(responseCompress2==null || !responseCompress2.contains(atteso))) {
+					throw new UtilsException(MSG_FAILED_PREFIX+atteso+nonTrovatoInFileMessage+fileResponse+nonTrovatoInFileCompressMessage+fileResponseDecompressed);
+				}
+			}else if(response.length()>0) {
+				throw new UtilsException("Content in '"+fileResponse+"' not expected");
 			}
 			
 			// responseBody
-			if(!responseBody.contains(LOG_RESPONSE_BODY_PD) && 
-					(responseBodyCompress == null || !responseBodyCompress.contains(LOG_RESPONSE_BODY_PD)
-			)) {
-				throw new UtilsException(MSG_FAILED_PREFIX+LOG_RESPONSE_BODY_PD+nonTrovatoInFileMessage+fileResponseBody+nonTrovatoInFileCompressMessage+fileResponseBodyDecompressed);
+			if(requestSent) {
+				if(!responseBody.contains(LOG_RESPONSE_BODY_PD) && 
+						(responseBodyCompress == null || !responseBodyCompress.contains(LOG_RESPONSE_BODY_PD)
+				)) {
+					throw new UtilsException(MSG_FAILED_PREFIX+LOG_RESPONSE_BODY_PD+nonTrovatoInFileMessage+fileResponseBody+nonTrovatoInFileCompressMessage+fileResponseBodyDecompressed);
+				}
+			}else if(responseBody.length()>0) {
+				throw new UtilsException("Content in '"+fileResponseBody+"' not expected");
 			}
 
 		}
+	}
+	
+	
+	private static void verificaFileTrackingPhase(String dirName,String dirFile,
+			boolean erogazioni, FaseTracciamento faseTracciamento, boolean compressExpected) throws FileNotFoundException, UtilsException {
+		for (FaseTracciamento check : FaseTracciamento.values()) {
+			boolean fileExpected = true;
+			if(!check.equals(faseTracciamento)) {
+				if(erogazioni) {
+					fileExpected = false;
+				}
+				else if(FaseTracciamento.IN_REQUEST.equals(faseTracciamento) || FaseTracciamento.OUT_REQUEST.equals(faseTracciamento)) {
+					if(FaseTracciamento.OUT_RESPONSE.equals(check) || FaseTracciamento.POST_OUT_RESPONSE.equals(check)) {
+						fileExpected = false;
+					}	
+				}
+				else if(FaseTracciamento.OUT_RESPONSE.equals(faseTracciamento) || FaseTracciamento.POST_OUT_RESPONSE.equals(faseTracciamento)) {
+					if(FaseTracciamento.IN_REQUEST.equals(check) || FaseTracciamento.OUT_REQUEST.equals(check)) {
+						fileExpected = false;
+					}	
+				}
+			}
+			System.out.println("Controllo log tracking phase '"+faseTracciamento+"'; controllo per log '"+check+"', expected: "+fileExpected);
+			verificaFileTrackingPhase(dirName,dirFile,
+					erogazioni, faseTracciamento, check, fileExpected, compressExpected);
+		}
+	}
+	private static void verificaFileTrackingPhase(String dirName,String dirFile,
+			boolean erogazioni, FaseTracciamento faseTracciamentoInCorso, FaseTracciamento faseTracciamentoCheck, boolean fileExpected, boolean compressExpected) throws FileNotFoundException, UtilsException {
+		
+		String fileSuffix = ".log";
+		String fileGzSuffix = "-1.log.gz";
+		
+		String dirCompress = dirName+"/";
+		String dateFileCompress = "-"+dirFile;
+		
+		String expected = getExpectedTrackingPhaseContent(erogazioni, fileExpected ? faseTracciamentoInCorso : faseTracciamentoCheck);
+		
+		String topicName = "";
+		if(erogazioni) {
+			switch (faseTracciamentoInCorso) {
+			case IN_REQUEST:
+				topicName = "trackingPhaseInRequest";
+				break;
+			case OUT_REQUEST:
+				topicName = "trackingPhaseOutRequest";
+				break;
+			case OUT_RESPONSE:
+				topicName = "trackingPhaseOutResponse";
+				break;
+			case POST_OUT_RESPONSE:
+				topicName = "trackingPhasePostOutResponse";
+				break;
+			}
+		}
+		else {
+			switch (faseTracciamentoInCorso) {
+			case IN_REQUEST:
+			case OUT_REQUEST:
+				topicName = "trackingPhaseRequest";
+				break;
+			case OUT_RESPONSE:
+			case POST_OUT_RESPONSE:
+				topicName = "trackingPhaseResponse";
+				break;
+			}
+		}
+		
+		System.out.println("Verifico contenuto seguente in topic '"+topicName+"' : ["+expected+"]");
+		
+		String fileRequest = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+"."+topicName+""+""+fileSuffix;
+		String request = getContentFile(fileRequest,false, fileExpected);
+		String sizeRequest = Utilities.convertBytesToFormatString(request.length());
+		
+		String fileRequestCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+"."+topicName+""+dateFileCompress+fileGzSuffix;
+		String requestCompress = getContentFile(fileRequestCompress,true,compressExpected);
+		
+		if(!compressExpected) {
+			System.out.println("Attuale situazione log\n\t"+topicName+":"+sizeRequest);
+		}
+		
+		String nonTrovatoInFileMessage="\nNon trovato in file:";
+		String nonTrovatoInFileCompressMessage=" e nemmeno in file compresso:";
+		
+		String decompressed = ".decompressed";
+		String fileRequestDecompressed = fileRequest + decompressed;
+		if(requestCompress!=null) {
+			FileSystemUtilities.writeFile(fileRequestDecompressed, requestCompress.getBytes());
+		}
+			
+		if(!fileExpected) {
+			if(request!=null && request.length()>0 && request.contains(expected)) {
+				throw new UtilsException("File '"+fileRequest+"' contains content not expected: "+expected);
+			}
+			if(requestCompress!=null && requestCompress.length()>0 && requestCompress.contains(expected)) {
+				throw new UtilsException("File '"+fileRequestCompress+"' contains content not expected: "+expected);
+			}
+		}
+		else {
+		
+			if(!request.contains(expected) && 
+					(requestCompress==null || !requestCompress.contains(expected))
+			) {
+				throw new UtilsException(MSG_FAILED_PREFIX+expected+nonTrovatoInFileMessage+fileRequest+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
+			}
+			
+		}
+		
+	}
+	
+	private static String getExpectedTrackingPhaseContent(boolean erogazioni, FaseTracciamento faseTracciamento) {
+		
+		String suffix = "\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\"envValue\"|\"envValue2\"";
+		
+		String expected = "";
+		if(erogazioni) {
+			switch (faseTracciamento) {
+			case IN_REQUEST:
+				expected = "\"*FASE_IN_REQUEST*\"|\""+faseTracciamento.name()+suffix;
+				break;
+			case OUT_REQUEST:
+				expected = "\"*FASE_OUT_REQUEST*\"|\""+faseTracciamento.name()+suffix;
+				break;
+			case OUT_RESPONSE:
+				expected = "\"*FASE_OUT_RESPONSE*\"|\""+faseTracciamento.name()+suffix;
+				break;
+			case POST_OUT_RESPONSE:
+				expected = "\"*FASE_POST_OUT_RESPONSE*\"|\""+faseTracciamento.name()+suffix;
+				break;
+			}
+		}
+		else {
+			switch (faseTracciamento) {
+			case IN_REQUEST:
+			case OUT_REQUEST:
+				expected = "\"*FASE_REQUEST*\"|\""+faseTracciamento.name()+suffix;
+				break;
+			case OUT_RESPONSE:
+			case POST_OUT_RESPONSE:
+				expected = "\"*FASE_RESPONSE*\"|\""+faseTracciamento.name()+suffix;
+				break;
+			}
+		}
+		return expected;
 	}
 }

@@ -19,9 +19,9 @@
  */
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
-import org.openspcoop2.pdd.logger.transazioni.FaseTracciamento;
 import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
 import org.openspcoop2.pdd.logger.transazioni.TracciamentoManager;
 

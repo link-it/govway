@@ -51,6 +51,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -456,6 +457,7 @@ public class TracciamentoManager {
 		boolean dbEnabled = true;
 		boolean fileTraceEnabled = false;
 		File fileTraceConfig = null;
+		boolean fileTraceConfigGlobal = true;
 		try{
 			configurazioneTracciamento = getConfigurazioneTracciamento(idTransazione, context, tipoPorta, transaction);	
 			
@@ -481,6 +483,7 @@ public class TracciamentoManager {
 				fileTraceEnabled = configurazioneTracciamento.isFileTraceEnabled();
 				if(fileTraceEnabled) {
 					fileTraceConfig = configurazioneTracciamento.getFileTraceConfig();
+					fileTraceConfigGlobal = configurazioneTracciamento.isFileTraceConfigGlobal();
 				}
 				if(fileTraceEnabled) {
 					switch (this.fase) {
@@ -508,7 +511,6 @@ public class TracciamentoManager {
 		
 		boolean exitTransactionAfterRateLimitingRemoveThreadNoTraceDB = false;
 		boolean noFileTrace = false;
-		boolean fileTraceConfigGlobal = true;
 		if(!dbEnabled && !fileTraceEnabled) {
 			noFileTrace = true;
 			exitTransactionAfterRateLimitingRemoveThreadNoTraceDB = true;
@@ -1056,23 +1058,37 @@ public class TracciamentoManager {
 						if(times!=null) {
 							timeStart = DateManager.getTimeMillis();
 						}
-						if(this.debug)
-							this.logDebug("["+idTransazione+"] registrazione traccia richiesta...");
-						/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT TRACCIA RICHIESTA");*/
-						this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRichiesta());
-						if(this.debug)
-							this.logDebug("["+idTransazione+"] registrazione traccia richiesta completata");
+						if(transaction.getTracciaRichiesta().isStored()) {
+							if(this.debug)
+								this.logDebug("["+idTransazione+"] registrazione traccia richiesta skipped");
+						}
+						else {
+							if(this.debug)
+								this.logDebug("["+idTransazione+"] registrazione traccia richiesta...");
+							/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT TRACCIA RICHIESTA");*/
+							this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRichiesta());
+							if(this.debug)
+								this.logDebug("["+idTransazione+"] registrazione traccia richiesta completata");
+							transaction.getTracciaRichiesta().setStored(true);
+						}
 					}	
 					if( registraTracciaRisposta && transaction.getTracciaRisposta()!=null){
 						if(times!=null && timeStart==-1) {
 							timeStart = DateManager.getTimeMillis();
 						}
-						if(this.debug)
-							this.logDebug("["+idTransazione+"] registrazione traccia risposta...");
-						/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT TRACCIA RISPOSTA");*/
-						this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRisposta());
-						if(this.debug)
-							this.logDebug("["+idTransazione+"] registrazione traccia risposta completata");
+						if(transaction.getTracciaRisposta().isStored()) {
+							if(this.debug)
+								this.logDebug("["+idTransazione+"] registrazione traccia richiesta skipped");
+						}
+						else {
+							if(this.debug)
+								this.logDebug("["+idTransazione+"] registrazione traccia risposta...");
+							/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT TRACCIA RISPOSTA");*/
+							this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRisposta());
+							if(this.debug)
+								this.logDebug("["+idTransazione+"] registrazione traccia risposta completata");
+							transaction.getTracciaRisposta().setStored(true);
+						}
 					}	
 				}finally {
 					if(times!=null && timeStart>0) {
@@ -1131,67 +1147,76 @@ public class TracciamentoManager {
 				
 				/* ---- Inserimento dump ----- */
 				
-				if(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)) {
-					try {
-						timeStart = -1;
-						if(times!=null && transaction!=null && transaction.sizeMessaggi()>0) {
-							timeStart = DateManager.getTimeMillis();
+				try {
+					timeStart = -1;
+					if(times!=null && transaction!=null && transaction.sizeMessaggi()>0) {
+						timeStart = DateManager.getTimeMillis();
+					}
+					for(int i=0; i<transaction.sizeMessaggi(); i++){
+						Messaggio messaggio = transaction.getMessaggio(i);
+						if(messaggio.isStored()) {
+							if(this.debug)
+								this.logDebug("["+idTransazione+"] registrazione messaggio di tipo ["+messaggio.getTipoMessaggio()+"] skipped");
+							continue;
 						}
-						for(int i=0; i<transaction.sizeMessaggi(); i++){
-							Messaggio messaggio = transaction.getMessaggio(i);
+						try {
+							if(!FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)) {
+								initDump(this.tipoDatabaseRuntime, this.usePdDConnection);
+							}							
+							
+							if(messaggio.getProtocollo()==null) {
+								messaggio.setProtocollo(transazioneDTO.getProtocollo());
+							}
+							if(messaggio.getDominio()==null) {
+								messaggio.setDominio(idDominio);
+							}
+							if(messaggio.getTipoPdD()==null) {
+								messaggio.setTipoPdD(info.getTipoPorta());
+							}
+							if(messaggio.getIdFunzione()==null) {
+								messaggio.setIdFunzione(modulo);
+							}
+							if(messaggio.getIdBusta()==null &&
+								info.getProtocollo()!=null) {
+								messaggio.setIdBusta(info.getProtocollo().getIdRichiesta());
+							}
+							if(messaggio.getFruitore()==null &&
+								info.getProtocollo()!=null) {
+								messaggio.setFruitore(info.getProtocollo().getFruitore());
+							}
+							if(messaggio.getServizio()==null &&
+								info.getProtocollo()!=null) {
+								IDServizio idServizio = IDServizioFactory.getInstance().
+										getIDServizioFromValuesWithoutCheck(info.getProtocollo().getTipoServizio(), 
+												info.getProtocollo().getServizio(), 
+												info.getProtocollo().getErogatore()!=null ? info.getProtocollo().getErogatore().getTipo() : null, 
+												info.getProtocollo().getErogatore()!=null ? info.getProtocollo().getErogatore().getNome() : null,
+												info.getProtocollo().getVersioneServizio()!=null ? info.getProtocollo().getVersioneServizio() : -1);
+								messaggio.setServizio(idServizio);
+							}
+							if(this.debug)
+								this.logDebug("["+idTransazione+"] registrazione messaggio di tipo ["+messaggio.getTipoMessaggio()+"] ...");
+							/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT MESSAGGIO ["+messaggio.getTipoMessaggio()+"]");*/
+							this.dumpOpenSPCoopAppender.dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
+							if(this.debug)
+								this.logDebug("["+idTransazione+"] registrazione messaggio di tipo ["+messaggio.getTipoMessaggio()+"] completata");
+							messaggio.setStored(true);
+						}finally {
 							try {
-								if(messaggio.getProtocollo()==null) {
-									messaggio.setProtocollo(transazioneDTO.getProtocollo());
+								if(messaggio.getBody()!=null) {
+									messaggio.getBody().unlock();
+									messaggio.getBody().clearResources();
 								}
-								if(messaggio.getDominio()==null) {
-									messaggio.setDominio(idDominio);
-								}
-								if(messaggio.getTipoPdD()==null) {
-									messaggio.setTipoPdD(info.getTipoPorta());
-								}
-								if(messaggio.getIdFunzione()==null) {
-									messaggio.setIdFunzione(modulo);
-								}
-								if(messaggio.getIdBusta()==null &&
-									info.getProtocollo()!=null) {
-									messaggio.setIdBusta(info.getProtocollo().getIdRichiesta());
-								}
-								if(messaggio.getFruitore()==null &&
-									info.getProtocollo()!=null) {
-									messaggio.setFruitore(info.getProtocollo().getFruitore());
-								}
-								if(messaggio.getServizio()==null &&
-									info.getProtocollo()!=null) {
-									IDServizio idServizio = IDServizioFactory.getInstance().
-											getIDServizioFromValuesWithoutCheck(info.getProtocollo().getTipoServizio(), 
-													info.getProtocollo().getServizio(), 
-													info.getProtocollo().getErogatore()!=null ? info.getProtocollo().getErogatore().getTipo() : null, 
-													info.getProtocollo().getErogatore()!=null ? info.getProtocollo().getErogatore().getNome() : null,
-													info.getProtocollo().getVersioneServizio()!=null ? info.getProtocollo().getVersioneServizio() : -1);
-									messaggio.setServizio(idServizio);
-								}
-								if(this.debug)
-									this.logDebug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] ...");
-								this.dumpOpenSPCoopAppender.dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
-								if(this.debug)
-									this.logDebug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] completata");
-							}finally {
-								try {
-									if(messaggio.getBody()!=null) {
-										messaggio.getBody().unlock();
-										messaggio.getBody().clearResources();
-									}
-								}catch(Exception t){
-									this.logError("["+idTransazione+"] errore durante il rilascio delle risorse del messaggio: "+t.getMessage(),t);
-								}
+							}catch(Exception t){
+								this.logError("["+idTransazione+"] errore durante il rilascio delle risorse del messaggio: "+t.getMessage(),t);
 							}
 						}
-					}finally {
-						if(times!=null && timeStart>0) {
-							long timeEnd =  DateManager.getTimeMillis();
-							long timeProcess = timeEnd-timeStart;
-							times.insertContents = timeProcess;
-						}
+					}
+				}finally {
+					if(times!=null && timeStart>0) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.insertContents = timeProcess;
 					}
 				}
 
@@ -1414,8 +1439,9 @@ public class TracciamentoManager {
 					informazioniAttributi,
 					informazioniNegoziazioneToken,
 					securityToken,
-					info.getContext());
-			fileTraceManager.invoke(info.getTipoPorta(), info.getContext());
+					info.getContext(),
+					this.fase);
+			fileTraceManager.invoke(info.getTipoPorta(), info.getContext(), this.fase);
 		}catch (Throwable e) {
 			this.logError("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);
 		}finally {

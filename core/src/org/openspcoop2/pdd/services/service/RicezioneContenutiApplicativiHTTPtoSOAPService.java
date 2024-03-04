@@ -51,6 +51,7 @@ import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -71,7 +72,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.pdd.logger.transazioni.FaseTracciamento;
+import org.openspcoop2.pdd.logger.transazioni.ConfigurazioneTracciamento;
 import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
 import org.openspcoop2.pdd.logger.transazioni.TracciamentoManager;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
@@ -446,12 +447,13 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				logCore.error("Errore generazione diagnostico",e);
 			}
 			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pd);
-			boolean fileTrace_headers = configPdDManager.isTransazioniFileTraceEnabled(pd) && configPdDManager.isTransazioniFileTraceDumpBinarioHeadersEnabled(pd);
-			boolean fileTrace_payload = configPdDManager.isTransazioniFileTraceEnabled(pd) && configPdDManager.isTransazioniFileTraceDumpBinarioPayloadEnabled(pd);
+			ConfigurazioneTracciamento configurazioneTracciamento = new ConfigurazioneTracciamento(logCore, configPdDManager, pd);
+			boolean fileTraceHeaders = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioHeaderEnabled();
+			boolean fileTracePayload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioPayloadEnabled();
 			dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, 
 					dumpBinario, 
 					dumpConfigurazione,
-					fileTrace_headers, fileTrace_payload);
+					fileTraceHeaders, fileTracePayload);
 			if(dumpRaw.isActiveDumpRichiesta()) {
 				req = new DumpRawConnectorInMessage(logCore, req, 
 						(context!=null ? context.getPddContext(): null), 

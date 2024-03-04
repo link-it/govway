@@ -35,6 +35,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -80,6 +81,8 @@ public class Info {
 	private InformazioniAttributi informazioniAttributi;
 	private InformazioniNegoziazioneToken informazioniNegoziazioneToken;
 	private SecurityToken securityToken;
+	
+	private FaseTracciamento trackingPhase;
 	
 	private Traccia tracciaRichiesta;
 	private Traccia tracciaRisposta;
@@ -127,6 +130,7 @@ public class Info {
 			Messaggio rispostaIngresso, Messaggio rispostaUscita,
 			InfoConfigurazione infoConfigurazione,
 			FileTraceConfig config,
+			FaseTracciamento trackingPhase,
 			boolean base64) throws ProtocolException {
 		this.log = log;
 		this.protocolFactory = protocolFactory;
@@ -153,6 +157,7 @@ public class Info {
 		this.headerMultiValueSeparator = config.getHeaderMultiValueSeparator();
 		this.headerWhiteList = config.getHeaderWhiteList();
 		this.headerBlackList = config.getHeaderBlackList();
+		this.trackingPhase = trackingPhase;
 		this.base64 = base64;
 	}
 	
@@ -3688,6 +3693,13 @@ public class Info {
 	}
 	public java.lang.String getContextProperties(String propertySeparator, String valueSeparator, String defaultValue){
 		return correctValue(this.infoConfigurazione.getContextPropertiesAsString(propertySeparator,valueSeparator),defaultValue);
+	}
+	
+	
+	// Tracking Phase
+	
+	public String getTrackingPhase() {
+		return this.trackingPhase!=null ? this.trackingPhase.name() : "-";
 	}
 	
 

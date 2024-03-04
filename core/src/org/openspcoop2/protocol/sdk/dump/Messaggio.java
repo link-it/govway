@@ -92,6 +92,15 @@ public class Messaggio implements Serializable{
 	private String idBusta;
 	private IDSoggetto fruitore;
 	private IDServizio servizio;
+	
+    // indicazione store
+    private boolean stored = false;
+    public boolean isStored() {
+		return this.stored;
+	}
+	public void setStored(boolean stored) {
+		this.stored = stored;
+	}
 
 	
 	public Messaggio() {}

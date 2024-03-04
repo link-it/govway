@@ -56,6 +56,8 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -88,7 +90,6 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
-import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
@@ -327,7 +328,7 @@ public class TransazioneUtilities {
 				transactionDTO.setEsitoContesto(esitoContext);
 			}
 			// aggiungo fase all'esito
-			transactionDTO.setEsitoContesto(buildEsitoContext(transactionDTO.getEsitoContesto(), fase));
+			transactionDTO.setEsitoContesto(EsitoUtils.buildEsitoContext(transactionDTO.getEsitoContesto(), fase));
 						
 			
 			// ** Codice Risposta Uscita **
@@ -2025,41 +2026,4 @@ public class TransazioneUtilities {
 		return timeStart;
 	}
 	
-	private static final String SUFFIX_IN_REQUEST = "_irq";
-	private static final String SUFFIX_OUT_REQUEST = "_orq";
-	private static final String SUFFIX_OUT_RESPONSE = "_ors";
-	public static String buildEsitoContext(String esitoContext, FaseTracciamento fase) {
-		// non deve superare i 20 caratteri
-		if(esitoContext==null) {
-			esitoContext= CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD;
-		}
-		switch (fase) {
-		case IN_REQUEST:
-			return esitoContext + SUFFIX_IN_REQUEST;
-		case OUT_REQUEST:
-			return esitoContext + SUFFIX_OUT_REQUEST;
-		case OUT_RESPONSE:
-			return esitoContext + SUFFIX_OUT_RESPONSE;
-		default:
-			return esitoContext;
-		}
-	}
-	public static boolean isFaseIntermedia(String esito) {
-		return isFaseRequestIn(esito) || isFaseRequestOut(esito) || isFaseResponseOut(esito);
-	}
-	public static String getRawEsitoContext(String esito) {
-		if(isFaseIntermedia(esito) && esito.length()>SUFFIX_IN_REQUEST.length()) { // tutti e 3 stessa lunghezza
-			return esito.substring(0,esito.length()-SUFFIX_IN_REQUEST.length());
-		}
-		return esito;
-	}
-	public static boolean isFaseRequestIn(String esito) {
-		return esito!=null && esito.endsWith(SUFFIX_IN_REQUEST); 
-	}
-	public static boolean isFaseRequestOut(String esito) {
-		return esito!=null && esito.endsWith(SUFFIX_OUT_REQUEST); 
-	}
-	public static boolean isFaseResponseOut(String esito) {
-		return esito!=null && esito.endsWith(SUFFIX_OUT_RESPONSE); 
-	}
 }

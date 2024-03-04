@@ -45,9 +45,8 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
-import org.openspcoop2.pdd.logger.transazioni.FaseTracciamento;
-import org.openspcoop2.pdd.logger.transazioni.TransazioneUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -1750,7 +1749,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			else {
 				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 			}
-			SelectItem si = new SelectItem(TransazioneUtilities.buildEsitoContext(esito, FaseTracciamento.IN_REQUEST), label);
+			SelectItem si = new SelectItem(EsitoUtils.buildEsitoContext(esito, FaseTracciamento.IN_REQUEST), label);
 			list.add(si);
 		}
 		
@@ -1762,7 +1761,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			else {
 				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
 			}
-			SelectItem si = new SelectItem(TransazioneUtilities.buildEsitoContext(esito, FaseTracciamento.OUT_REQUEST), label);
+			SelectItem si = new SelectItem(EsitoUtils.buildEsitoContext(esito, FaseTracciamento.OUT_REQUEST), label);
 			list.add(si);
 		}
 		
@@ -1774,7 +1773,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			else {
 				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
 			}
-			SelectItem si = new SelectItem(TransazioneUtilities.buildEsitoContext(esito, FaseTracciamento.OUT_RESPONSE), label);
+			SelectItem si = new SelectItem(EsitoUtils.buildEsitoContext(esito, FaseTracciamento.OUT_RESPONSE), label);
 			list.add(si);
 		}
 	}

@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace;
+import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector;
 import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -63,6 +64,8 @@ public class ConfigurazioneTracciamento {
 	private boolean fileTraceEnabled = false;
 	private File fileTraceConfig = null;
 	private boolean fileTraceConfigGlobal = true;
+	private TracciamentoConfigurazioneFiletraceConnector fileTraceConfigDumpIn;
+	private TracciamentoConfigurazioneFiletraceConnector fileTraceConfigDumpOut;
 	
 	private String esitiConfig;
 	private List<String> esitiDaRegistrare;
@@ -174,11 +177,14 @@ public class ConfigurazioneTracciamento {
 			else {
 				this.fileTraceEnabled = true;
 				initFileTraceInternalConfig();
+				initFileTraceInternalDumpConfig();
 			}
 		}
 		else {
 			this.fileTraceEnabled = false;
 			this.fileTraceConfig = null;
+			this.fileTraceConfigDumpIn = null;
+			this.fileTraceConfigDumpOut = null;
 		}
 	}
 	private void initFileTraceExternalConfig() throws DriverConfigurazioneException, CoreException {
@@ -195,9 +201,7 @@ public class ConfigurazioneTracciamento {
 		if(this.isPA && this.pa!=null) {
 			this.fileTraceEnabled = this.configPdDManager.isTransazioniFileTraceEnabled(this.pa);
 			if(this.fileTraceEnabled) {
-				this.fileTraceConfig = this.configPdDManager.getFileTraceConfig(this.pa);
-				this.fileTraceConfigGlobal = this.op2Properties.isTransazioniFileTraceEnabled() && 
-						this.op2Properties.getTransazioniFileTraceConfig().getAbsolutePath().equals(this.fileTraceConfig.getAbsolutePath());
+				initFileTraceExternalConfigPortaApplicativa();
 			}
 			else {
 				this.fileTraceConfig = null;
@@ -206,14 +210,29 @@ public class ConfigurazioneTracciamento {
 		else if(this.isPD && this.pd!=null) {
 			this.fileTraceEnabled = this.configPdDManager.isTransazioniFileTraceEnabled(this.pd);
 			if(this.fileTraceEnabled) {
-				this.fileTraceConfig = this.configPdDManager.getFileTraceConfig(this.pd);
-				this.fileTraceConfigGlobal = this.op2Properties.isTransazioniFileTraceEnabled() && 
-						this.op2Properties.getTransazioniFileTraceConfig().getAbsolutePath().equals(this.fileTraceConfig.getAbsolutePath());
+				initFileTraceExternalConfigPortaDelegata();
 			}
 			else {
 				this.fileTraceConfig = null;
 			}
 		}
+	}
+	private void initFileTraceExternalConfigPortaApplicativa() throws DriverConfigurazioneException, CoreException {
+		this.fileTraceConfig = this.configPdDManager.getFileTraceConfig(this.pa);
+		this.fileTraceConfigGlobal = this.op2Properties.isTransazioniFileTraceEnabled() && 
+				this.op2Properties.getTransazioniFileTraceConfig().getAbsolutePath().equals(this.fileTraceConfig.getAbsolutePath());
+		
+		initFileTraceConfigPortaApplicativaDefaultDumpIn();
+		initFileTraceConfigPortaApplicativaDefaultDumpOut();
+		
+	}
+	private void initFileTraceExternalConfigPortaDelegata() throws DriverConfigurazioneException, CoreException {
+		this.fileTraceConfig = this.configPdDManager.getFileTraceConfig(this.pd);
+		this.fileTraceConfigGlobal = this.op2Properties.isTransazioniFileTraceEnabled() && 
+				this.op2Properties.getTransazioniFileTraceConfig().getAbsolutePath().equals(this.fileTraceConfig.getAbsolutePath());
+		
+		initFileTraceConfigPortaDelegataDefaultDumpIn();
+		initFileTraceConfigPortaDelegataDefaultDumpOut();
 	}
 	private void initFileTraceInternalConfig() throws DriverConfigurazioneException, CoreException {
 		if(this.configurazioneFileTrace!=null && this.configurazioneFileTrace.getConfig()!=null && StringUtils.isNotEmpty(this.configurazioneFileTrace.getConfig())) {
@@ -238,6 +257,83 @@ public class ConfigurazioneTracciamento {
 			}
 		}
 	}
+	private void initFileTraceInternalDumpConfig() throws DriverConfigurazioneException {
+		if(this.configurazioneFileTrace!=null && this.configurazioneFileTrace.getDumpIn()!=null) {
+			this.fileTraceConfigDumpIn = this.configurazioneFileTrace.getDumpIn();
+			this.fileTraceConfigDumpOut = this.configurazioneFileTrace.getDumpOut();
+		}
+		else {
+			if(this.isConfig) {
+				// utilizzo la configurazione di default
+				if(this.isPA && this.pa!=null) {
+					initFileTraceConfigPortaApplicativaDefaultDumpIn();
+					initFileTraceConfigPortaApplicativaDefaultDumpOut();
+				}
+				else if(this.isPD && this.pd!=null) {
+					initFileTraceConfigPortaDelegataDefaultDumpIn();
+					initFileTraceConfigPortaDelegataDefaultDumpOut();
+				}
+			}
+			else {
+				initFileTraceInternalDumpConfigPorte();
+			}
+		}
+	}
+	private void initFileTraceInternalDumpConfigPorte() throws DriverConfigurazioneException {
+		if(this.isPA && this.pa!=null) {
+			if(this.pa.getTracciamento()!=null && this.pa.getTracciamento().getFiletraceConfig()!=null) {
+				this.fileTraceConfigDumpIn = this.pa.getTracciamento().getFiletraceConfig().getDumpIn(); 
+				this.fileTraceConfigDumpOut = this.pa.getTracciamento().getFiletraceConfig().getDumpOut(); 
+			}
+			else {
+				initFileTraceConfigPortaApplicativaDefaultDumpIn();
+				initFileTraceConfigPortaApplicativaDefaultDumpOut();
+			}
+		}
+		else if(this.isPD && this.pd!=null) {
+			if(this.pd.getTracciamento()!=null && this.pd.getTracciamento().getFiletraceConfig()!=null) {
+				this.fileTraceConfigDumpIn = this.pd.getTracciamento().getFiletraceConfig().getDumpIn(); 
+				this.fileTraceConfigDumpOut = this.pd.getTracciamento().getFiletraceConfig().getDumpOut(); 
+			}
+			else {
+				initFileTraceConfigPortaDelegataDefaultDumpIn();
+				initFileTraceConfigPortaDelegataDefaultDumpOut();
+			}
+		}
+	}
+	private void initFileTraceConfigPortaApplicativaDefaultDumpIn() throws DriverConfigurazioneException {
+		boolean fileTraceHeaders = this.configPdDManager.isTransazioniFileTraceDumpBinarioHeadersEnabled(this.pa);
+		boolean fileTracePayload = this.configPdDManager.isTransazioniFileTraceDumpBinarioPayloadEnabled(this.pa);
+		this.fileTraceConfigDumpIn = new TracciamentoConfigurazioneFiletraceConnector();
+		this.fileTraceConfigDumpIn.setStato((fileTraceHeaders || fileTracePayload) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		this.fileTraceConfigDumpIn.setHeader(fileTraceHeaders ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		this.fileTraceConfigDumpIn.setPayload(fileTracePayload ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);		
+	}
+	private void initFileTraceConfigPortaApplicativaDefaultDumpOut() throws DriverConfigurazioneException {
+		boolean fileTraceHeaders = this.configPdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.pa);
+		boolean fileTracePayload = this.configPdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.pa);
+		this.fileTraceConfigDumpOut = new TracciamentoConfigurazioneFiletraceConnector();
+		this.fileTraceConfigDumpOut.setStato((fileTraceHeaders || fileTracePayload) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		this.fileTraceConfigDumpOut.setHeader(fileTraceHeaders ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		this.fileTraceConfigDumpOut.setPayload(fileTracePayload ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+	}
+	private void initFileTraceConfigPortaDelegataDefaultDumpIn() throws DriverConfigurazioneException {
+		boolean fileTraceHeaders = this.configPdDManager.isTransazioniFileTraceDumpBinarioHeadersEnabled(this.pd);
+		boolean fileTracePayload = this.configPdDManager.isTransazioniFileTraceDumpBinarioPayloadEnabled(this.pd);
+		this.fileTraceConfigDumpIn = new TracciamentoConfigurazioneFiletraceConnector();
+		this.fileTraceConfigDumpIn.setStato((fileTraceHeaders || fileTracePayload) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		this.fileTraceConfigDumpIn.setHeader(fileTraceHeaders ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		this.fileTraceConfigDumpIn.setPayload(fileTracePayload ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+	}
+	private void initFileTraceConfigPortaDelegataDefaultDumpOut() throws DriverConfigurazioneException {
+		boolean fileTraceHeaders = this.configPdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.pd);
+		boolean fileTracePayload = this.configPdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.pd);
+		this.fileTraceConfigDumpOut = new TracciamentoConfigurazioneFiletraceConnector();
+		this.fileTraceConfigDumpOut.setStato((fileTraceHeaders || fileTracePayload) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		this.fileTraceConfigDumpOut.setHeader(fileTraceHeaders ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		this.fileTraceConfigDumpOut.setPayload(fileTracePayload ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+	}
+	
 	public boolean isFileTraceEnabled() {
 		return this.fileTraceEnabled;
 	}
@@ -246,6 +342,28 @@ public class ConfigurazioneTracciamento {
 	}
 	public boolean isFileTraceConfigGlobal() {
 		return this.fileTraceConfigGlobal;
+	}
+	public TracciamentoConfigurazioneFiletraceConnector getFileTraceConfigDumpIn() {
+		return this.fileTraceConfigDumpIn;
+	}
+	public TracciamentoConfigurazioneFiletraceConnector getFileTraceConfigDumpOut() {
+		return this.fileTraceConfigDumpOut;
+	}
+	public boolean isTransazioniFileTraceDumpBinarioPayloadEnabled(){
+		return this.fileTraceConfigDumpIn!=null && StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpIn.getStato()) && 
+				StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpIn.getPayload());
+	}
+	public boolean isTransazioniFileTraceDumpBinarioHeaderEnabled(){
+		return this.fileTraceConfigDumpIn!=null && StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpIn.getStato()) && 
+				StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpIn.getHeader());
+	}
+	public boolean isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(){
+		return this.fileTraceConfigDumpOut!=null && StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpOut.getStato()) && 
+				StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpOut.getPayload());
+	}
+	public boolean isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled(){
+		return this.fileTraceConfigDumpOut!=null && StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpOut.getStato()) && 
+				StatoFunzionalita.ABILITATO.equals(this.fileTraceConfigDumpOut.getHeader());
 	}
 	public static File toFileTraceConfig(String name, String rootDir) throws CoreException {
 		File getTransazioniFileTraceConfig = new File(name);

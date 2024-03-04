@@ -375,6 +375,16 @@ public class FileSystemUtilities {
         }
     }
     
+    public static void deleteFile(File f) {
+    	try {
+    		if(f!=null) {
+    			java.nio.file.Files.delete(f.toPath());
+    		}
+		}catch(Exception e) {
+			// ignore
+		}
+    }
+    
     public static boolean moveToDir(String src,String destDir){
     	 // File (or directory) to be moved
         File file = new File(src);

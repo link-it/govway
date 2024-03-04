@@ -43,13 +43,13 @@ import org.openspcoop2.generic_project.exception.ExpressionNotImplementedExcepti
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.info.DatiEsitoTransazione;
 import org.openspcoop2.pdd.logger.info.DatiMittente;
 import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
 import org.openspcoop2.pdd.logger.info.InfoMittenteFormatUtils;
-import org.openspcoop2.pdd.logger.transazioni.TransazioneUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -239,19 +239,19 @@ public class TransazioneBean extends Transazione{
 	}
 	public boolean isEsitoSendInCorso(){	
 		String esitoContesto = getEsitoContesto();
-		return TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto);
+		return EsitoUtils.isFaseRequestIn(esitoContesto) || EsitoUtils.isFaseRequestOut(esitoContesto);
 	}
 	public boolean isEsitoSendResponseInCorso(){	
 		String esitoContesto = getEsitoContesto();
-		return TransazioneUtilities.isFaseResponseOut(esitoContesto);
+		return EsitoUtils.isFaseResponseOut(esitoContesto);
 	}
 	
 	public String getEsitoIcona() {
 		String esitoContesto = getEsitoContesto();
-		if(TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+		if(EsitoUtils.isFaseRequestIn(esitoContesto) || EsitoUtils.isFaseRequestOut(esitoContesto)) {
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_SEND_ICON_KEY);
 		}
-		if(TransazioneUtilities.isFaseResponseOut(esitoContesto)) {
+		if(EsitoUtils.isFaseResponseOut(esitoContesto)) {
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_SEND_RESPONSE_ICON_KEY);
 		}
 		if(TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo()))
@@ -267,10 +267,10 @@ public class TransazioneBean extends Transazione{
 	public java.lang.String getEsitoLabel() {
 		
 		String esitoContesto = getEsitoContesto();
-		if(TransazioneUtilities.isFaseRequestIn(esitoContesto)) {
+		if(EsitoUtils.isFaseRequestIn(esitoContesto)) {
 			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 		}
-		else if(TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+		else if(EsitoUtils.isFaseRequestOut(esitoContesto)) {
 			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
 		}
 		else {
@@ -283,10 +283,10 @@ public class TransazioneBean extends Transazione{
 	public java.lang.String getEsitoLabelSyntetic() {
 		
 		String esitoContesto = getEsitoContesto();
-		if(TransazioneUtilities.isFaseRequestIn(esitoContesto)) {
+		if(EsitoUtils.isFaseRequestIn(esitoContesto)) {
 			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 		}
-		else if(TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+		else if(EsitoUtils.isFaseRequestOut(esitoContesto)) {
 			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
 		}
 		else {
@@ -313,16 +313,16 @@ public class TransazioneBean extends Transazione{
 	private java.lang.String getEsitoLabelDescription(boolean verifyResponseOut) {
 		
 		String esitoContesto = getEsitoContesto();
-		if(TransazioneUtilities.isFaseRequestIn(esitoContesto)) {
+		if(EsitoUtils.isFaseRequestIn(esitoContesto)) {
 			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 		}
-		else if(TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+		else if(EsitoUtils.isFaseRequestOut(esitoContesto)) {
 			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
 		}
 		else {
 		
 			String prefixResponseOut = "";
-			if(verifyResponseOut && TransazioneUtilities.isFaseResponseOut(esitoContesto)) {
+			if(verifyResponseOut && EsitoUtils.isFaseResponseOut(esitoContesto)) {
 				prefixResponseOut = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT+"<BR/>";
 			}
 			
@@ -356,7 +356,7 @@ public class TransazioneBean extends Transazione{
 				String esitoContesto = getEsitoContesto();
 				/** return TransazioneUtilities.isFaseIntermedia(esitoContesto);*/
 				// la req_in e req_out viene riportata nell'esito
-				return TransazioneUtilities.isFaseResponseOut(esitoContesto);
+				return EsitoUtils.isFaseResponseOut(esitoContesto);
 			}
 		}catch(Exception e){
 			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo dei contesti: "+e.getMessage(),e);
@@ -372,7 +372,7 @@ public class TransazioneBean extends Transazione{
 		}catch(Exception e){
 			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo dei contesti: "+e.getMessage(),e);
 		}
-		if(TransazioneUtilities.isFaseRequestIn(esitoContesto)) {
+		if(EsitoUtils.isFaseRequestIn(esitoContesto)) {
 			/**
 			if(moreContext) {
 				return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
@@ -381,9 +381,9 @@ public class TransazioneBean extends Transazione{
 				return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 			}*/
 			// la req_in e req_out viene riportata nell'esito
-			return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo());
+			return TransazioniEsitiUtils.getEsitoContestoLabel(EsitoUtils.getRawEsitoContext(esitoContesto), this.getProtocollo());
 		}
-		else if(TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+		else if(EsitoUtils.isFaseRequestOut(esitoContesto)) {
 			/**if(moreContext) {
 				return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
 			}
@@ -391,11 +391,11 @@ public class TransazioneBean extends Transazione{
 				return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
 			}*/
 			// la req_in e req_out viene riportata nell'esito
-			return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo());
+			return TransazioniEsitiUtils.getEsitoContestoLabel(EsitoUtils.getRawEsitoContext(esitoContesto), this.getProtocollo());
 		}
-		else if(TransazioneUtilities.isFaseResponseOut(esitoContesto)) {
+		else if(EsitoUtils.isFaseResponseOut(esitoContesto)) {
 			if(moreContext) {
-				return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+				return TransazioniEsitiUtils.getEsitoContestoLabel(EsitoUtils.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
 			}
 			else {
 				return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
@@ -1409,7 +1409,7 @@ public class TransazioneBean extends Transazione{
 	
 	public String getCssColonnaEsito() {
 		String esitoContesto = getEsitoContesto();
-		if(TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+		if(EsitoUtils.isFaseRequestIn(esitoContesto) || EsitoUtils.isFaseRequestOut(esitoContesto)) {
 			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_OK;
 		}
 		if(this.isEsitoOk())
@@ -1424,7 +1424,7 @@ public class TransazioneBean extends Transazione{
 	
 	public String getCssColonnaLatenza() {
 		String esitoContesto = getEsitoContesto();
-		if(TransazioneUtilities.isFaseRequestIn(esitoContesto) || TransazioneUtilities.isFaseRequestOut(esitoContesto)) {
+		if(EsitoUtils.isFaseRequestIn(esitoContesto) || EsitoUtils.isFaseRequestOut(esitoContesto)) {
 			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_OK;
 		}
 		if(this.isEsitoOk())
