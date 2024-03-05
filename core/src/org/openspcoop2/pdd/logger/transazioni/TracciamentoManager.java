@@ -83,6 +83,7 @@ import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.date.DateManager;
@@ -643,6 +644,7 @@ public class TracciamentoManager {
 
 
 		Transazione transazioneDTO = null;
+		HandlerException fileTraceException = null;
 		try{
 			
 			RequestInfo requestInfo = null;
@@ -776,7 +778,7 @@ public class TracciamentoManager {
 						securityToken = SecurityTokenUtilities.readSecurityToken(context);
 					}
 					
-					logWithFileTrace(fileTraceConfig, fileTraceConfigGlobal,
+					fileTraceException = logWithFileTrace(fileTraceConfig, fileTraceConfigGlobal,
 							times,
 							transazioneDTO, transaction, 
 							informazioniToken,
@@ -784,6 +786,7 @@ public class TracciamentoManager {
 							informazioniNegoziazioneToken,
 							securityToken,
 							info,
+							requestInfo,
 							idTransazione); // anche qua vi e' un try catch con Throwable
 				}
 				
@@ -950,13 +953,23 @@ public class TracciamentoManager {
 				}
 	
 				
+				// DUMP
+				
+				boolean registrazioneContenuti = false;
+				for(int i=0; i<transaction.sizeMessaggi(); i++){
+					Messaggio messaggio = transaction.getMessaggio(i);
+					if(!messaggio.isStored()) {
+						registrazioneContenuti=true;
+						break;
+					}
+				}
 				
 				// CONTENUTI
-				boolean registrazioneRisorse = transaction.getTransactionServiceLibrary()!=null || transaction.sizeMessaggi()>0;
+				boolean registrazioneRisorse = transaction.getTransactionServiceLibrary()!=null || (transaction.getRisorse()!=null && !transaction.getRisorse().isEmpty()); /**transaction.sizeMessaggi()>0;*/
 				
 	
 				// AUTO-COMMIT
-				if(registraTracciaRichiesta || registraTracciaRisposta || registrazioneMessaggiDiagnostici || registrazioneRisorse){
+				if(registraTracciaRichiesta || registraTracciaRisposta || registrazioneMessaggiDiagnostici ||  registrazioneContenuti || registrazioneRisorse){
 					autoCommit = false; // devo registrare piu' informazioni oltre alla transazione
 				}
 				if(this.debug)
@@ -1006,10 +1019,10 @@ public class TracciamentoManager {
 				if(this.debug)
 					this.logSqlDebug("["+idTransazione+"] recupero jdbcServiceManager effettuato");
 	
-				/**System.out.println("\n\n\n****** ["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] *******");*/
+				/**System.out.println("\n\n\n****** ["+this.fase+"]["+transazioneDTO.getIdTransazione()+"] (autoCommit:"+autoCommit+") ["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] *******");*/
 				
 	
-	
+
 	
 				/* ---- Inserimento dati transazione ----- */
 	
@@ -1033,12 +1046,13 @@ public class TracciamentoManager {
 				if(this.debug)
 					this.logDebug("["+idTransazione+"] inserita transazione");
 	
-	
+
 	
 	
 	
 				/* ---- Inserimento dati tracce ----- */
 				
+				List<Traccia> tracceSalvate = new ArrayList<>();
 				try {
 					timeStart = -1;
 					
@@ -1069,7 +1083,12 @@ public class TracciamentoManager {
 							this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRichiesta());
 							if(this.debug)
 								this.logDebug("["+idTransazione+"] registrazione traccia richiesta completata");
-							transaction.getTracciaRichiesta().setStored(true);
+							if(autoCommit) {
+								transaction.getTracciaRichiesta().setStored(true);
+							}
+							else {
+								tracceSalvate.add(transaction.getTracciaRichiesta());
+							}
 						}
 					}	
 					if( registraTracciaRisposta && transaction.getTracciaRisposta()!=null){
@@ -1087,7 +1106,12 @@ public class TracciamentoManager {
 							this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRisposta());
 							if(this.debug)
 								this.logDebug("["+idTransazione+"] registrazione traccia risposta completata");
-							transaction.getTracciaRisposta().setStored(true);
+							if(autoCommit) {
+								transaction.getTracciaRisposta().setStored(true);
+							}
+							else {
+								tracceSalvate.add(transaction.getTracciaRisposta());
+							}
 						}
 					}	
 				}finally {
@@ -1099,11 +1123,12 @@ public class TracciamentoManager {
 				}
 	
 	
-	
+
 	
 	
 				/* ---- Inserimento messaggi diagnostici ----- */
 				
+				List<MsgDiagnostico> diagnosticiSalvati = new ArrayList<>();
 				try {
 					timeStart = -1;
 					if(registrazioneMessaggiDiagnostici){
@@ -1131,7 +1156,12 @@ public class TracciamentoManager {
 							this.msgDiagnosticiOpenSPCoopAppender.log(connection,msgDiagnostico);
 							if(this.debug)
 								this.logDebug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] completata");
-							msgDiagnostico.setStored(true);
+							if(autoCommit) {
+								msgDiagnostico.setStored(true);
+							}
+							else {
+								diagnosticiSalvati.add(msgDiagnostico);
+							}
 						}
 					}
 				}finally {
@@ -1144,9 +1174,13 @@ public class TracciamentoManager {
 	
 				
 				
+
+				
+				
 				
 				/* ---- Inserimento dump ----- */
 				
+				List<Messaggio> messaggiSalvati = new ArrayList<>();
 				try {
 					timeStart = -1;
 					if(times!=null && transaction!=null && transaction.sizeMessaggi()>0) {
@@ -1200,7 +1234,12 @@ public class TracciamentoManager {
 							this.dumpOpenSPCoopAppender.dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
 							if(this.debug)
 								this.logDebug("["+idTransazione+"] registrazione messaggio di tipo ["+messaggio.getTipoMessaggio()+"] completata");
-							messaggio.setStored(true);
+							if(autoCommit) {
+								messaggio.setStored(true);
+							}
+							else {
+								messaggiSalvati.add(messaggio);
+							}
 						}finally {
 							try {
 								if(messaggio.getBody()!=null) {
@@ -1226,6 +1265,7 @@ public class TracciamentoManager {
 				/* ---- Inserimento risorse contenuti (library personalizzata) ----- */
 				
 				if(registrazioneRisorse){
+					/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] RISORSE");*/
 					try {
 						if(times!=null) {
 							timeStart = DateManager.getTimeMillis();
@@ -1246,6 +1286,12 @@ public class TracciamentoManager {
 				}
 	
 				
+				String hdrTest = this.openspcoopProperties.getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommit();
+				if(hdrTest!=null && requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getHeaderFirstValue(hdrTest)!=null && 
+						this.fase.name().equals(requestInfo.getProtocolContext().getHeaderFirstValue(hdrTest))) {
+					throw new CoreException("Test Manually Exception generated in phase '"+this.fase+"'");
+				}
+				
 	
 				// COMMIT
 				if(!autoCommit) {
@@ -1254,6 +1300,23 @@ public class TracciamentoManager {
 							timeStart = DateManager.getTimeMillis();
 						}
 						connection.commit();
+						
+						if(!tracceSalvate.isEmpty()) {
+							for (Traccia traccia : tracceSalvate) {
+								traccia.setStored(true);
+							}
+						}
+						if(!diagnosticiSalvati.isEmpty()) {
+							for (MsgDiagnostico msgDiagnostico : diagnosticiSalvati) {
+								msgDiagnostico.setStored(true);
+							}
+						}
+						if(!messaggiSalvati.isEmpty()) {
+							for (Messaggio messaggio : messaggiSalvati) {
+								messaggio.setStored(true);
+							}
+						}
+						
 					}finally {
 						if(times!=null) {
 							long timeEnd =  DateManager.getTimeMillis();
@@ -1336,6 +1399,10 @@ public class TracciamentoManager {
 						
 		}
 		
+		
+		if(fileTraceException!=null) {
+			throw fileTraceException;
+		}
 	}
 
 	private ConfigurazioneTracciamento getConfigurazioneTracciamento(String idTransazione, Context context, TipoPdD tipoPorta, Transaction transaction){
@@ -1417,7 +1484,7 @@ public class TracciamentoManager {
 		
 	}
 	
-	private void logWithFileTrace(File fileTraceConfig, boolean fileTraceConfigGlobal,
+	private HandlerException logWithFileTrace(File fileTraceConfig, boolean fileTraceConfigGlobal,
 			TransazioniProcessTimes times,
 			Transazione transazioneDTO, Transaction transaction, 
 			InformazioniToken informazioniToken,
@@ -1425,6 +1492,7 @@ public class TracciamentoManager {
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
 			SecurityToken securityToken,
 			InformazioniTransazione info,
+			RequestInfo requestInfo,
 			String idTransazione) {
 		FileTraceManager fileTraceManager = null;
 		long timeStart = -1;
@@ -1441,9 +1509,21 @@ public class TracciamentoManager {
 					securityToken,
 					info.getContext(),
 					this.fase);
+			
+			String hdrTest = this.openspcoopProperties.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLog();
+			if(hdrTest!=null && requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getHeaderFirstValue(hdrTest)!=null && 
+					this.fase.name().equals(requestInfo.getProtocolContext().getHeaderFirstValue(hdrTest))) {
+				throw new CoreException("Test Manually Exception generated (fileTrace) in phase '"+this.fase+"'");
+			}
+			
 			fileTraceManager.invoke(info.getTipoPorta(), info.getContext(), this.fase);
+						
 		}catch (Throwable e) {
-			this.logError("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);
+			String error = "["+idTransazione+"] File trace fallito: "+e.getMessage();
+			this.logError(error,e);
+			if(throwFileTraceException()) {
+				return new HandlerException(error,e);
+			}
 		}finally {
 			try {
 				if(fileTraceManager!=null) {
@@ -1457,6 +1537,21 @@ public class TracciamentoManager {
 				long timeProcess = timeEnd-timeStart;
 				times.fileTrace = timeProcess;
 			}
+		}
+		
+		return null;
+	}
+	private boolean throwFileTraceException() {
+		switch (this.fase) {
+		case IN_REQUEST:
+			return this.openspcoopProperties.isTransazioniFileTraceRequestInThrowException();
+		case OUT_REQUEST:
+			return this.openspcoopProperties.isTransazioniFileTraceRequestOutThrowException();
+		case OUT_RESPONSE:
+			return this.openspcoopProperties.isTransazioniFileTraceResponseOutThrowException();
+		case POST_OUT_RESPONSE:
+		default:
+			return false;
 		}
 	}
 	
@@ -1474,14 +1569,14 @@ public class TracciamentoManager {
 		if(FaseTracciamento.IN_REQUEST.equals(this.fase) 
 				||
 				!isTransactionAlreadyRegistered(info)) {
-			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT");*/
+			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT con contesto["+transazioneDTO.getEsitoContesto()+"]");*/
 			transazioneService.create(transazioneDTO);
 			if(!FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
 				addTransactionAlreadyRegistered(info);
 			}
 		}
 		else if(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && info.getTransazioneDaAggiornare()!=null){
-			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE PUNTUALE");*/
+			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE PUNTUALE con contesto["+transazioneDTO.getEsitoContesto()+"]");*/
 			List<UpdateField> list = new ArrayList<>();
 			list.add(new UpdateField(Transazione.model().ESITO, transazioneDTO.getEsito()));
 			list.add(new UpdateField(Transazione.model().ESITO_SINCRONO, transazioneDTO.getEsitoSincrono()));
@@ -1502,7 +1597,7 @@ public class TracciamentoManager {
 			transazioneService.updateFields(transazioneDTO.getIdTransazione(), list.toArray(new UpdateField[1]));
 		}
 		else {
-			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE");*/
+			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE con contesto["+transazioneDTO.getEsitoContesto()+"]");*/
 			transazioneService.update(transazioneDTO.getIdTransazione(), transazioneDTO);
 		}
 	}

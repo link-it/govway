@@ -2340,25 +2340,30 @@ public class OpenSPCoop2Properties {
 					this.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails();
 				}
 
-				if(this.isTransazioniFileTraceEnabled()) {
-					if(this.isTransazioniFileTraceDumpBinarioPDEnabled()) {
-						this.isTransazioniFileTraceDumpBinarioPDHeadersEnabled();
-						this.isTransazioniFileTraceDumpBinarioPDPayloadEnabled();
-					}
-					if(this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()) {
-						this.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled();
-						this.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled();
-					}
-					if(this.isTransazioniFileTraceDumpBinarioPAEnabled()) {
-						this.isTransazioniFileTraceDumpBinarioPAHeadersEnabled();
-						this.isTransazioniFileTraceDumpBinarioPAPayloadEnabled();
-					}
-					if(this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()) {
-						this.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled();
-						this.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled();
-					}
-					this.getTransazioniFileTraceConfig();
+				this.isTransazioniFileTraceEnabled();
+				if(this.isTransazioniFileTraceDumpBinarioPDEnabled()) {
+					this.isTransazioniFileTraceDumpBinarioPDHeadersEnabled();
+					this.isTransazioniFileTraceDumpBinarioPDPayloadEnabled();
 				}
+				if(this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()) {
+					this.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled();
+					this.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled();
+				}
+				if(this.isTransazioniFileTraceDumpBinarioPAEnabled()) {
+					this.isTransazioniFileTraceDumpBinarioPAHeadersEnabled();
+					this.isTransazioniFileTraceDumpBinarioPAPayloadEnabled();
+				}
+				if(this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()) {
+					this.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled();
+					this.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled();
+				}
+				this.getTransazioniFileTraceConfig();
+				this.isTransazioniFileTraceRequestInThrowException();
+				this.isTransazioniFileTraceRequestOutThrowException();
+				this.isTransazioniFileTraceResponseOutThrowException();
+				
+				this.getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommit();
+				this.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLog();
 			}
 			
 			// Eventi
@@ -27576,6 +27581,117 @@ public class OpenSPCoop2Properties {
 		return state;
 	}
 	
+	private Boolean isTransazioniFileTraceRequestInThrowException = null;
+	public boolean isTransazioniFileTraceRequestInThrowException() {	
+		if(this.isTransazioniFileTraceRequestInThrowException==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.requestIn.throwException";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.logDebug(getMessaggioProprietaNonImpostata(pName,true));
+					name=""+true;
+				}
+				name = name.trim();
+				this.isTransazioniFileTraceRequestInThrowException = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+true+" : "+e.getMessage(),e);
+				this.isTransazioniFileTraceRequestInThrowException = true;
+			}    
+		}
+
+		return this.isTransazioniFileTraceRequestInThrowException;
+	}
+	
+	private Boolean isTransazioniFileTraceRequestOutThrowException = null;
+	public boolean isTransazioniFileTraceRequestOutThrowException() {	
+		if(this.isTransazioniFileTraceRequestOutThrowException==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.requestOut.throwException";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.logDebug(getMessaggioProprietaNonImpostata(pName,true));
+					name=""+true;
+				}
+				name = name.trim();
+				this.isTransazioniFileTraceRequestOutThrowException = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+true+" : "+e.getMessage(),e);
+				this.isTransazioniFileTraceRequestOutThrowException = true;
+			}    
+		}
+
+		return this.isTransazioniFileTraceRequestOutThrowException;
+	}
+	
+	private Boolean isTransazioniFileTraceResponseOutThrowException = null;
+	public boolean isTransazioniFileTraceResponseOutThrowException() {	
+		if(this.isTransazioniFileTraceResponseOutThrowException==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.responseOut.throwException";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.logDebug(getMessaggioProprietaNonImpostata(pName,true));
+					name=""+true;
+				}
+				name = name.trim();
+				this.isTransazioniFileTraceResponseOutThrowException = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+true+" : "+e.getMessage(),e);
+				this.isTransazioniFileTraceResponseOutThrowException = true;
+			}    
+		}
+
+		return this.isTransazioniFileTraceResponseOutThrowException;
+	}
+	
+	/* ------------- Testsuite ---------------------*/
+	
+	private String getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommit = null;
+	private Boolean getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommitRead = null;
+	public String getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommit() throws CoreException {	
+		if(this.getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommitRead==null){
+			String pName = "org.openspcoop2.pdd.transazioni.testsuite.manuallyFaultHeader.db.beforeCommit";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommit = name;
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+			this.getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommitRead=true;
+		}
+
+		return this.getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommit;
+	}
+	
+	private String getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLog = null;
+	private Boolean getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLogRead = null;
+	public String getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLog() throws CoreException {	
+		if(this.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLogRead==null){
+			String pName = "org.openspcoop2.pdd.transazioni.testsuite.manuallyFaultHeader.fileTrace.beforeLog";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLog = name;
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+			this.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLogRead=true;
+		}
+
+		return this.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLog;
+	}
 	
 	/* ------------- Eventi ---------------------*/
 	

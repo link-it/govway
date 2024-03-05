@@ -82,6 +82,8 @@ Di seguito vengono indicati tutti gli identificativi delle informazioni disponib
 
 - transactionType: tipo della transazione (Standard, Sistema ...).
 
+- trackingPhase: fase di tracciamento (IN_REQUEST, OUT_REQUEST, OUT_RESPONSE, POST_OUT_RESPONSE).
+
  
 
 
