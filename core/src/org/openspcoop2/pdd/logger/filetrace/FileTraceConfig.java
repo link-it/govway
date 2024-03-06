@@ -43,7 +43,7 @@ import org.openspcoop2.utils.properties.PropertiesReader;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**     
- * LogTraceConfig
+ * FileTraceConfig
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
@@ -138,6 +138,9 @@ public class FileTraceConfig {
 	private List<String> propertiesSortKeys = new ArrayList<>();
 	private Map<String, String> propertiesNames = new HashMap<>();
 	private Map<String, String> propertiesValues = new HashMap<>();
+	private Map<String, String> propertiesEncryptionMode = new HashMap<>();
+	
+	private Map<String, FileTraceEncryptConfig> encryptionMode = new HashMap<>();
 	
 	private List<String> topicErogazioni = new ArrayList<>();
 	private Map<String, Topic> topicErogazioniMap = new HashMap<>();
@@ -209,6 +212,10 @@ public class FileTraceConfig {
 			boolean erogazioni = true;
 			registerTopic(reader, erogazioni);
 			registerTopic(reader, !erogazioni);
+			
+			// ** Encryption mode
+			
+			this.encryptionMode = FileTraceEncryptConfig.parse(reader);
 			
 			// ** Format **
 			
@@ -397,32 +404,25 @@ public class FileTraceConfig {
 			}
 		}
 		
-		Properties propertiesMap = reader.readProperties("format.property.");
 		List<String> listPosition = new ArrayList<>();
 		List<String> listPnames = new ArrayList<>();
-		if(propertiesMap!=null && !propertiesMap.isEmpty()) {
-			for (Object s : propertiesMap.keySet()) {
-				String key = (String) s;
-				if(!key.contains(".") || key.length()<3 || key.startsWith(".") || key.endsWith(".")) {
-					throw new UtilsException("Format property 'format.property."+key+"' wrong (expected: format.property.<intPosition>.<nomeProperty>)");
-				}
-				int indexOf = key.indexOf(".");
-				String pos = key.substring(0, indexOf);
-				String nomeP = key.substring(indexOf+1,key.length());
-				String posPadded = StringUtils.leftPad(pos, 10, "0");
-				if(listPosition.contains(posPadded)) {
-					throw new UtilsException("Bad property 'format.property."+key+"': contains duplicate position '"+pos+"'");
-				}
-				if(listPnames.contains(nomeP)) {
-					throw new UtilsException("Bad property 'format.property."+key+"'. contains duplicate name '"+nomeP+"'");
-				}
-				listPosition.add(posPadded);
-				this.propertiesNames.put(posPadded, nomeP);
-				this.propertiesValues.put(posPadded, propertiesMap.getProperty(key));
-			}
-			Collections.sort(listPosition);
-			this.propertiesSortKeys = listPosition;
-		}
+				
+		String prefixProperty = "format.property.";
+		Properties propertiesMap = reader.readProperties(prefixProperty);
+		parseProperties(propertiesMap, prefixProperty,
+				listPosition, listPnames,
+				false,
+				reader);
+		
+		String prefixEncryptedProperty = "format.encryptedProperty.";
+		propertiesMap = reader.readProperties(prefixEncryptedProperty);
+		parseProperties(propertiesMap, prefixEncryptedProperty,
+				listPosition, listPnames,
+				true,
+				reader);		
+		
+		Collections.sort(listPosition);
+		this.propertiesSortKeys = listPosition;
 		
 		String tmp = getProperty(reader, "format.headers.separator", false);
 		if(tmp!=null) {
@@ -494,6 +494,73 @@ public class FileTraceConfig {
 		}
 	}
 	
+	private void parseProperties(Properties propertiesMap, String prefix,
+			List<String> listPosition, List<String> listPnames, 
+			boolean encrypted,
+			PropertiesReader reader) throws UtilsException {
+		if(propertiesMap!=null && !propertiesMap.isEmpty()) {
+			for (Object s : propertiesMap.keySet()) {
+				String key = (String) s;
+				parseProperty(key, propertiesMap, prefix,
+						listPosition, listPnames, 
+						encrypted,
+						reader);
+			}
+		}
+	}
+	private void parseProperty(String key, Properties propertiesMap, String prefix,
+			List<String> listPosition, List<String> listPnames, 
+			boolean encrypted,
+			PropertiesReader reader) throws UtilsException {
+		if(!key.contains(".") || key.length()<3 || key.startsWith(".") || key.endsWith(".")) {
+			throw new UtilsException("Format property '"+prefix+""+key+"' wrong (expected: "+prefix+"<intPosition>.<nomeProperty>)");
+		}
+		String prefixBad = "Bad property '"+prefix+""+key+"'";
+		
+		int indexOf = key.indexOf(".");
+		String pos = key.substring(0, indexOf);
+		String nomeP = key.substring(indexOf+1,key.length());
+		String posPadded = StringUtils.leftPad(pos, 10, "0");
+		if(listPosition.contains(posPadded)) {
+			throw new UtilsException(prefixBad+": contains duplicate position '"+pos+"'");
+		}
+		if(listPnames.contains(nomeP)) {
+			throw new UtilsException(prefixBad+". contains duplicate name '"+nomeP+"'");
+		}
+		listPosition.add(posPadded);
+		this.propertiesNames.put(posPadded, nomeP);
+		this.propertiesValues.put(posPadded, propertiesMap.getProperty(key));
+		
+		if(encrypted) {
+			parseEncryptedProperty(reader,
+					key, prefixBad, posPadded);
+		}
+	}
+	private void parseEncryptedProperty(PropertiesReader reader,
+			String key, String prefixBad, String posPadded) throws UtilsException {
+		String modeP = "format.encrypt."+key;
+		String mode = reader.getValue_convertEnvProperties(modeP);
+		if(this.encryptionMode==null || this.encryptionMode.isEmpty()) {
+			throw new UtilsException(prefixBad+": no encryption mode defined");	
+		}
+		if(mode==null || StringUtils.isEmpty(mode.trim())) {
+			if(this.encryptionMode.size()==1) {
+				// ce n'è solo una definita
+				this.propertiesEncryptionMode.put(posPadded, this.encryptionMode.keySet().iterator().next());
+			}
+			else {
+				throw new UtilsException(prefixBad+": undefined property '"+modeP+"'");
+			}
+		}
+		else {
+			mode = mode.trim();
+			if(!this.encryptionMode.containsKey(mode)) {
+				throw new UtilsException(prefixBad+": unknown encryption mode '"+mode+"'");
+			}
+			this.propertiesEncryptionMode.put(posPadded, mode);
+		}
+	}
+	
 	private String getProperty(PropertiesReader reader, String key, boolean required) throws UtilsException {
 		String tmp = reader.getValue(key);
 		if(tmp==null) {
@@ -547,6 +614,13 @@ public class FileTraceConfig {
 	}
 	public Map<String, String> getPropertiesValues() {
 		return this.propertiesValues;
+	}
+	public Map<String, String> getPropertiesEncryptionMode() {
+		return this.propertiesEncryptionMode;
+	}
+	
+	public Map<String, FileTraceEncryptConfig> getEncryptionMode() {
+		return this.encryptionMode;
 	}
 	
 	public List<String> getTopicErogazioni() {

@@ -1917,7 +1917,7 @@ public class RicezioneContenutiApplicativiService {
 			
 			InformazioniTransazione info = new InformazioniTransazione(postOutResponseContext);
 			
-			tracciamentoManager.invoke(info, postOutResponseContext.getEsito());
+			tracciamentoManager.invoke(info, postOutResponseContext.getEsito(), context.getResponseHeaders());
 			
 			return info.getTransazioneDaAggiornare();
 		}

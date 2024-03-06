@@ -379,13 +379,20 @@ public class TracciamentoManager {
 	}
 	
 	
+	public void invoke(InformazioniTransazione info, String esitoContext, java.util.Map<String, List<String>> headerInUscita) throws HandlerException {
+		invokeEngine(info, null, esitoContext, headerInUscita);
+	}
 	public void invoke(InformazioniTransazione info, String esitoContext) throws HandlerException {
-		invoke(info, null, esitoContext);
+		invokeEngine(info, null, esitoContext, null);
+	}
+	public void invoke(InformazioniTransazione info, EsitoTransazione esito, java.util.Map<String, List<String>> headerInUscita) throws HandlerException {
+		invokeEngine(info, esito, null, headerInUscita);
 	}
 	public void invoke(InformazioniTransazione info, EsitoTransazione esito) throws HandlerException {
-		invoke(info, esito, null);
+		invokeEngine(info, esito, null, null);
 	}
-	private void invoke(InformazioniTransazione info, EsitoTransazione esito, String esitoContext) throws HandlerException {
+	private void invokeEngine(InformazioniTransazione info, EsitoTransazione esito, String esitoContext,
+			java.util.Map<String, List<String>> headerInUscita) throws HandlerException {
 		
 		if(!this.transazioniEnabled) {
 			return;
@@ -398,7 +405,7 @@ public class TracciamentoManager {
 			timeStart = DateManager.getTimeMillis();
 		}
 		try {
-			invoke(info, esito, esitoContext, times);
+			invoke(info, esito, esitoContext, headerInUscita, times);
 		}finally {
 			if(times!=null) {
 				long timeEnd =  DateManager.getTimeMillis();
@@ -420,6 +427,7 @@ public class TracciamentoManager {
 	}
 	private void invoke(InformazioniTransazione info, 
 			EsitoTransazione esito, String esitoContext, 
+			java.util.Map<String, List<String>> headerInUscita,
 			TransazioniProcessTimes times) throws HandlerException {
 
 		if (info==null)
@@ -786,6 +794,7 @@ public class TracciamentoManager {
 							informazioniNegoziazioneToken,
 							securityToken,
 							info,
+							headerInUscita,
 							requestInfo,
 							idTransazione); // anche qua vi e' un try catch con Throwable
 				}
@@ -1492,6 +1501,7 @@ public class TracciamentoManager {
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
 			SecurityToken securityToken,
 			InformazioniTransazione info,
+			java.util.Map<String, List<String>> headerInUscita,
 			RequestInfo requestInfo,
 			String idTransazione) {
 		FileTraceManager fileTraceManager = null;
@@ -1508,6 +1518,7 @@ public class TracciamentoManager {
 					informazioniNegoziazioneToken,
 					securityToken,
 					info.getContext(),
+					headerInUscita,
 					this.fase);
 			
 			String hdrTest = this.openspcoopProperties.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLog();
@@ -1516,7 +1527,7 @@ public class TracciamentoManager {
 				throw new CoreException("Test Manually Exception generated (fileTrace) in phase '"+this.fase+"'");
 			}
 			
-			fileTraceManager.invoke(info.getTipoPorta(), info.getContext(), this.fase);
+			fileTraceManager.invoke(info.getTipoPorta(), info.getContext(), requestInfo, this.fase);
 						
 		}catch (Throwable e) {
 			String error = "["+idTransazione+"] File trace fallito: "+e.getMessage();

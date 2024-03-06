@@ -4704,7 +4704,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 		String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, outRequestContext.getProtocolFactory()), log);
 		
-		tracciamentoManager.invoke(info, esitoContext);
+		tracciamentoManager.invoke(info, esitoContext, 
+				outRequestContext.getConnettore()!=null ? outRequestContext.getConnettore().getHeaders() : null);
 		
 	}
 }

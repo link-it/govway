@@ -17,36 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.utils.random;
-
-import java.security.SecureRandom;
+package org.openspcoop2.pdd.logger.filetrace;
 
 /**
- * RandomUtilities
+ * HeaderFormat
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RandomUtilities {
+class HeaderFormat {
 
-	private static SecureRandom _rnd = null;
-	private static synchronized void initRandom() {
-		if(_rnd==null) {
-			_rnd = new SecureRandom();
-		}
+	HeaderFormat(String hdrsSeparator, String hdrSeparator, String hdrPrefix, String hdrSuffix){
+		this.hdrsSeparator = hdrsSeparator;
+		this.hdrSeparator = hdrSeparator;
+		this.hdrPrefix = hdrPrefix;
+		this.hdrSuffix = hdrSuffix;
 	}
-	public static SecureRandom getSecureRandom() {
-		if(_rnd==null) {
-			initRandom();
-		}
-		return _rnd;
-	}
-	public static java.util.Random getRandom() {
-		if(_rnd==null) {
-			initRandom();
-		}
-		return _rnd;
-	}
+	
+	String hdrsSeparator;
+	String hdrSeparator;
+	String hdrPrefix;
+	String hdrSuffix;
 	
 }

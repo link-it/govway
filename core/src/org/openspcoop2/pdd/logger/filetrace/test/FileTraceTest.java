@@ -71,6 +71,7 @@ import org.openspcoop2.protocol.sdk.PDNDTokenInfoDetails;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -88,6 +89,7 @@ import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.utils.security.Decrypt;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -107,6 +109,11 @@ public class FileTraceTest {
 	private static final String ENV_VALUE_1 = "envValue";
 	private static final String ENV_NAME_2 = "FILETRACE-TEST-ENV2";
 	private static final String ENV_VALUE_2 = "envValue2";
+	
+	private static final List<String> ENCRYPT_TEST = new ArrayList<>();
+	static {
+		ENCRYPT_TEST.add("encJavaSymm");
+	}
 	
 	public static void initDir() throws UtilsException, ReflectiveOperationException {
 		boolean deleteDir = FileSystemUtilities.deleteDirNotEmpty(DIR_TMP,3);
@@ -241,16 +248,52 @@ public class FileTraceTest {
 	
 	private static final String HEADER_TIPO_MESSAGGIO = "TipoMessaggio";
 	
+	private static final String HEADER_REQ_IN_NAME = "Req-In";
+	private static final String HEADER_REQ_IN_EXAMPLE_VALUE = "ReqInExampleValue";
+	private static final String HEADER_REQ_IN_2_NAME = "Req-In-2";
+	private static final String HEADER_REQ_IN_2_EXAMPLE_VALUE = "ReqInExampleValue2";
+	
+	private static final String HEADER_REQ_OUT_NAME = "Req-Out";
+	private static final String HEADER_REQ_OUT_EXAMPLE_VALUE = "ReqOutExampleValue";
+	private static final String HEADER_REQ_OUT_2_NAME = "Req-Out-2";
+	private static final String HEADER_REQ_OUT_2_EXAMPLE_VALUE = "ReqOutExampleValue2";
+	
+	private static final String HEADER_RES_IN_NAME = "Res-In";
+	private static final String HEADER_RES_IN_EXAMPLE_VALUE = "ResInExampleValue";
+	private static final String HEADER_RES_IN_2_NAME = "Res-In-2";
+	private static final String HEADER_RES_IN_2_EXAMPLE_VALUE = "ResInExampleValue2";
+	
+	private static final String HEADER_RES_OUT_NAME = "Res-Out";
+	private static final String HEADER_RES_OUT_EXAMPLE_VALUE = "ResOutExampleValue";
+	private static final String HEADER_RES_OUT_2_NAME = "Res-Out-2";
+	private static final String HEADER_RES_OUT_2_EXAMPLE_VALUE = "ResOutExampleValue2";
+	
 	private static final String MSG_FAILED_PREFIX = "FAILED!! \nAtteso:\n";
 	
 	private static final String TRACKING_PHASE = "TRACKING_PHASE"; 
 	
+	private static final String SECRET_KEY = "6d1d6fdeec3d92829cbadc000d3901a7"; 
+	
 	public static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
-		for (FaseTracciamento fase : FaseTracciamento.values()) {
+		
+		File fSecret = null;
+		try {
 			
-			emptyDir();
+			// // Chiave AES deve essere di 16, 24 o 32 byte che corrisponde a: 
+			// AES-128: Utilizza chiavi di 128 bit (16 byte).
+			// AES-192: Utilizza chiavi di 192 bit (24 byte).
+			// AES-256: Utilizza chiavi di 256 bit (32 byte).
+			fSecret = new File("/tmp/symmetric.secretkey");
+			FileSystemUtilities.writeFile(fSecret, SECRET_KEY.getBytes()); // test con 32
 			
-			test(tipoPdD, log4j, esito, requestWithPayload, fase);
+			for (FaseTracciamento fase : FaseTracciamento.values()) {
+				
+				emptyDir();
+				
+				test(tipoPdD, log4j, esito, requestWithPayload, fase);
+			}
+		}finally {
+			FileSystemUtilities.deleteFile(fSecret);
 		}
 	}
 	
@@ -468,6 +511,8 @@ public class FileTraceTest {
 		}
 		TransportUtils.addHeader(richiestaIngresso.getHeaders(),HEADER_CONTENT_XXX, HEADER_CONTENT_XXX_VALUE);
 		TransportUtils.addHeader(richiestaIngresso.getHeaders(),HEADER_TIPO_MESSAGGIO, "RICHIESTA_INGRESSO_DUMP_BINARIO");
+		TransportUtils.addHeader(richiestaIngresso.getHeaders(),HEADER_REQ_IN_NAME, HEADER_REQ_IN_EXAMPLE_VALUE);
+		TransportUtils.addHeader(richiestaIngresso.getHeaders(),HEADER_REQ_IN_2_NAME, HEADER_REQ_IN_2_EXAMPLE_VALUE);		
 		
 		Messaggio richiestaUscita = new Messaggio();
 		richiestaUscita.setTipoMessaggio(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
@@ -478,6 +523,8 @@ public class FileTraceTest {
 		}
 		TransportUtils.addHeader(richiestaUscita.getHeaders(),HEADER_CONTENT_XXX, HEADER_CONTENT_XXX_VALUE);
 		TransportUtils.addHeader(richiestaUscita.getHeaders(),HEADER_TIPO_MESSAGGIO, "RICHIESTA_USCITA_DUMP_BINARIO");
+		TransportUtils.addHeader(richiestaUscita.getHeaders(),HEADER_REQ_OUT_NAME, HEADER_REQ_OUT_EXAMPLE_VALUE);
+		TransportUtils.addHeader(richiestaUscita.getHeaders(),HEADER_REQ_OUT_2_NAME, HEADER_REQ_OUT_2_EXAMPLE_VALUE);		
 		
 		Messaggio rispostaIngresso = new Messaggio();
 		rispostaIngresso.setTipoMessaggio(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
@@ -486,6 +533,8 @@ public class FileTraceTest {
 		TransportUtils.addHeader(rispostaIngresso.getHeaders(),HttpConstants.CONTENT_TYPE, "text/xml; charset=\"UTF8\"; tipo=inResponse");
 		TransportUtils.addHeader(rispostaIngresso.getHeaders(),HEADER_CONTENT_XXX, HEADER_CONTENT_XXX_VALUE);
 		TransportUtils.addHeader(rispostaIngresso.getHeaders(),HEADER_TIPO_MESSAGGIO, "RISPOSTA_INGRESSO_DUMP_BINARIO");
+		TransportUtils.addHeader(rispostaIngresso.getHeaders(),HEADER_RES_IN_NAME, HEADER_RES_IN_EXAMPLE_VALUE);
+		TransportUtils.addHeader(rispostaIngresso.getHeaders(),HEADER_RES_IN_2_NAME, HEADER_RES_IN_2_EXAMPLE_VALUE);		
 		
 		Messaggio rispostaUscita = new Messaggio();
 		rispostaUscita.setTipoMessaggio(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);
@@ -494,6 +543,8 @@ public class FileTraceTest {
 		TransportUtils.addHeader(rispostaUscita.getHeaders(),HttpConstants.CONTENT_TYPE, "text/xml; charset=\"UTF8\"; tipo=outResponse");
 		TransportUtils.addHeader(rispostaUscita.getHeaders(),HEADER_CONTENT_XXX, HEADER_CONTENT_XXX_VALUE);
 		TransportUtils.addHeader(rispostaUscita.getHeaders(),HEADER_TIPO_MESSAGGIO, "RISPOSTA_USCITA_DUMP_BINARIO");
+		TransportUtils.addHeader(rispostaUscita.getHeaders(),HEADER_RES_OUT_NAME, HEADER_RES_OUT_EXAMPLE_VALUE);
+		TransportUtils.addHeader(rispostaUscita.getHeaders(),HEADER_RES_OUT_2_NAME, HEADER_RES_OUT_2_EXAMPLE_VALUE);	
 		
 		System.setProperty("javaProperty.1", "p1");
 		System.setProperty("javaProperty.2", "p2");
@@ -631,6 +682,8 @@ public class FileTraceTest {
 			requestSent = false;
 		}
 		
+		RequestInfo requestInfo = new RequestInfo();
+		
 		PdDContext context = new PdDContext();
 		if(requestSent) {
 			context.addObject(Costanti.RICHIESTA_INOLTRATA_BACKEND, Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE);
@@ -646,6 +699,7 @@ public class FileTraceTest {
 				informazioniNegoziazioneToken,
 				securityToken,
 				context,
+				null,
 				faseTracciamento);
 						
 		if(log4j) {
@@ -659,7 +713,7 @@ public class FileTraceTest {
 			 * */
 			
 			System.out.println("Iterazione master ...");
-			manager.invoke(tipoPdD, context, faseTracciamento);	
+			manager.invoke(tipoPdD, context, requestInfo, faseTracciamento);	
 			Utilities.sleep(500);
 			System.out.println("Iterazione master ok");
 			
@@ -678,12 +732,15 @@ public class FileTraceTest {
 					true); // tutte FaseTracciamento.POST_OUT_RESPONSE.equals(faseTracciamento));
 			verificaFileTrackingPhase(dirName,dirFile,
 					erogazioni, faseTracciamento, !compressExpected);
+			verificaFileEncrypted(dirName,dirFile, 
+					requestWithPayload, !compressExpected,
+					transazioneDTO);
 			System.out.println("Verifica log prodotti completata");
 			
 			int numeroInvocazioni = 2;
 			for (int i = 0; i < numeroInvocazioni; i++) {
 				System.out.println("Iterazione "+(i+1)+"/"+numeroInvocazioni+" ...");
-				manager.invoke(tipoPdD, context, faseTracciamento);	
+				manager.invoke(tipoPdD, context, requestInfo, faseTracciamento);	
 				Utilities.sleep(500);
 				System.out.println("Iterazione "+(i+1)+"/"+numeroInvocazioni+" ok");
 			}
@@ -696,13 +753,16 @@ public class FileTraceTest {
 					true); // tutte FaseTracciamento.POST_OUT_RESPONSE.equals(faseTracciamento));
 			verificaFileTrackingPhase(dirName,dirFile,
 					erogazioni, faseTracciamento, compressExpected);
+			verificaFileEncrypted(dirName,dirFile, 
+					requestWithPayload, compressExpected,
+					transazioneDTO);
 			
 			System.out.println("Verifica log compressi prodotti completata");
 		}
 		else {
 		
 			Map<String, String> outputMap = new HashMap<>();
-			manager.invoke(tipoPdD, context, faseTracciamento, outputMap);
+			manager.invoke(tipoPdD, context, requestInfo, faseTracciamento, outputMap);
 			
 			int res = outputMap.size();
 			System.out.println("Terminato con "+res+" risultati");
@@ -720,6 +780,9 @@ public class FileTraceTest {
 			
 			// aggiungo topic tracking phase
 			risultatiAttesi++;
+			
+			// aggiungo topic encrypted
+			risultatiAttesi = risultatiAttesi + ENCRYPT_TEST.size();
 			
 			if(res!=risultatiAttesi) {
 				throw new UtilsException("Attesi "+risultatiAttesi+" risultati, trovati '"+res+"'");
@@ -787,6 +850,9 @@ public class FileTraceTest {
 								throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+logMsg);
 							}
 						}
+						else if(ENCRYPT_TEST.contains(topic)){
+							verificaExpectedEncryptContent(topic, requestWithPayload, logMsg);
+						}
 						else {
 							throw new UtilsException("FAILED!! topic sconosciuto");
 						}
@@ -830,6 +896,9 @@ public class FileTraceTest {
 							if(!logMsg.equals(atteso)) {
 								throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+logMsg);
 							}
+						}
+						else if(ENCRYPT_TEST.contains(topic)){
+							verificaExpectedEncryptContent(topic, requestWithPayload, logMsg);
 						}
 						else {
 							throw new UtilsException("FAILED!! topic sconosciuto");
@@ -1261,5 +1330,89 @@ public class FileTraceTest {
 			}
 		}
 		return expected;
+	}
+	
+	
+	private static void verificaFileEncrypted(String dirName,String dirFile, boolean requestWithPayload, boolean compressExpected,
+			Transazione transazioneDTO) throws FileNotFoundException, UtilsException {
+		for (String tipoTest : ENCRYPT_TEST) {
+			verificaFileEncrypted(dirName,dirFile, tipoTest, requestWithPayload, compressExpected,
+				transazioneDTO);
+		}
+	}
+	private static void verificaFileEncrypted(String dirName,String dirFile, String tipoTest, boolean requestWithPayload, boolean compressExpected,
+			Transazione transazioneDTO) throws FileNotFoundException, UtilsException {
+		
+		System.out.println("Controllo log encoding '"+tipoTest+"'; compressExpected: "+compressExpected);
+				
+		String fileSuffix = ".log";
+		String fileGzSuffix = "-1.log.gz";
+		
+		String dirCompress = dirName+"/";
+		String dateFileCompress = "-"+dirFile;
+		
+		
+		String fileRequest = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+"."+tipoTest+""+""+fileSuffix;
+		String request = getContentFile(fileRequest,false, true);
+		String sizeRequest = Utilities.convertBytesToFormatString(request.length());
+		
+		String fileRequestCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+"."+tipoTest+""+dateFileCompress+fileGzSuffix;
+		String requestCompress = getContentFile(fileRequestCompress,true,compressExpected);
+		
+		
+		
+		if(!compressExpected) {
+			System.out.println("Attuale situazione log\n\t"+tipoTest+":"+sizeRequest);
+		}
+		
+		String nonTrovatoInFileMessage="\nNon atteso in file:";
+		String nonTrovatoInFileCompressMessage="\nNon atteso in file compresso:";
+		
+		String decompressed = ".decompressed";
+		String fileRequestDecompressed = fileRequest + decompressed;
+		if(requestCompress!=null) {
+			FileSystemUtilities.writeFile(fileRequestDecompressed, requestCompress.getBytes());
+		}
+			
+		
+		String atteso = getExpectedEncryptContent(tipoTest, requestWithPayload);
+		
+		
+		if(request.contains(atteso)) {
+			throw new UtilsException(MSG_FAILED_PREFIX+atteso+nonTrovatoInFileMessage+fileRequest);
+		}
+		if(compressExpected &&
+			requestCompress.contains(atteso)) {
+			throw new UtilsException(MSG_FAILED_PREFIX+atteso+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
+		}
+		
+	}
+	private static String getExpectedEncryptContent(String tipoTest, boolean requestWithPayload) {
+		if(requestWithPayload) {
+			return tipoTest+"|\"Req-In: ReqInExampleValue\"|\"Req-In-2: ReqInExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-REQ-IN**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJQ0hJRVNUQV9JTkdSRVNTT19EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1pblJlcXVlc3Q=|\"Req-Out: ReqOutExampleValue\"|\"Req-Out-2: ReqOutExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-REQ-OUT**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJQ0hJRVNUQV9VU0NJVEFfRFVNUF9CSU5BUklPCkNvbnRlbnQtVHlwZTogdGV4dC94bWw7IGNoYXJzZXQ9XCJVVEY4XCI7IHRpcG89b3V0UmVxdWVzdA==|\"Res-In: ResInExampleValue\"|\"Res-In-2: ResInExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-RES-IN**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX0lOR1JFU1NPX0RVTVBfQklOQVJJTwpDb250ZW50LVR5cGU6IHRleHQveG1sOyBjaGFyc2V0PVwiVVRGOFwiOyB0aXBvPWluUmVzcG9uc2U=|\"Res-Out: ResOutExampleValue\"|\"Res-Out-2: ResOutExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-RES-OUT**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX1VTQ0lUQV9EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1vdXRSZXNwb25zZQ==";
+		}
+		else {
+			return tipoTest+"|\"Req-In: ReqInExampleValue\"|\"Req-In-2: ReqInExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-REQ-IN**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJQ0hJRVNUQV9JTkdSRVNTT19EVU1QX0JJTkFSSU8=|\"Req-Out: ReqOutExampleValue\"|\"Req-Out-2: ReqOutExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-REQ-OUT**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJQ0hJRVNUQV9VU0NJVEFfRFVNUF9CSU5BUklP|\"Res-In: ResInExampleValue\"|\"Res-In-2: ResInExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-RES-IN**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX0lOR1JFU1NPX0RVTVBfQklOQVJJTwpDb250ZW50LVR5cGU6IHRleHQveG1sOyBjaGFyc2V0PVwiVVRGOFwiOyB0aXBvPWluUmVzcG9uc2U=|\"Res-Out: ResOutExampleValue\"|\"Res-Out-2: ResOutExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-RES-OUT**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX1VTQ0lUQV9EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1vdXRSZXNwb25zZQ==";
+		}
+	}
+	private static void verificaExpectedEncryptContent(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
+		if("encJavaSymm".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJavaSymm(tipoTest, requestWithPayload, trovato);
+		}
+	}
+	private static void verificaExpectedEncryptContentEncJavaSymm(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
+		String [] tmp = trovato.split("\\.");
+		if(tmp==null || tmp.length!=2) {
+			throw new UtilsException("Atteso formato iv.secret (base64)");
+		}
+		byte[]iv = Base64Utilities.decode(tmp[0]);
+		byte[]dataEncrypted = Base64Utilities.decode(tmp[1]);
+		Decrypt d = new Decrypt(SECRET_KEY.getBytes(), "AES", iv);
+		String decrypted = new String(d.decrypt(dataEncrypted, "AES/CBC/PKCS5Padding"));
+		
+		String atteso = getExpectedEncryptContent(tipoTest, requestWithPayload);
+		if(!decrypted.equals(atteso)) {
+			throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+decrypted);
+		}
 	}
 }

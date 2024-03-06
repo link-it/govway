@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.transazioni.Transazione;
@@ -39,6 +40,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
@@ -71,6 +73,7 @@ public class FileTraceManager {
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
 			SecurityToken securityToken,
 			Context context,
+			Map<String, List<String>> headerInUscita,
 			FaseTracciamento trackingPhase) throws ProtocolException {
 		
 		Messaggio richiestaIngresso = null;
@@ -100,6 +103,15 @@ public class FileTraceManager {
 			
 		}
 		
+		Map<String, List<String>> headerRichiestaUscita = null;
+		Map<String, List<String>> headerRispostaUscita = null;
+		if(FaseTracciamento.OUT_REQUEST.equals(trackingPhase)) {
+			headerRichiestaUscita = headerInUscita;
+		}
+		else if(FaseTracciamento.OUT_RESPONSE.equals(trackingPhase)) {
+			headerRispostaUscita = headerInUscita;
+		}
+		
 		CredenzialiMittente credenzialiMittente = transaction.getCredenzialiMittente();
 		
 		InfoConfigurazione infoConfigurazione = new InfoConfigurazione(transazioneDTO, context, credenzialiMittente);
@@ -113,8 +125,10 @@ public class FileTraceManager {
 				securityToken,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
-				richiestaIngresso, richiestaUscita,
-				rispostaIngresso, rispostaUscita,
+				richiestaIngresso, 
+				richiestaUscita, headerRichiestaUscita,
+				rispostaIngresso, 
+				rispostaUscita, headerRispostaUscita,
 				infoConfigurazione,
 				this.config, trackingPhase, 
 				!base64);
@@ -125,8 +139,10 @@ public class FileTraceManager {
 				securityToken,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
-				richiestaIngresso, richiestaUscita,
-				rispostaIngresso, rispostaUscita,
+				richiestaIngresso, 
+				richiestaUscita, headerRichiestaUscita,
+				rispostaIngresso, 
+				rispostaUscita, headerRispostaUscita,
 				infoConfigurazione, 
 				this.config, trackingPhase,  
 				base64);
@@ -212,10 +228,10 @@ public class FileTraceManager {
 
 	}
 	
-	public void invoke(TipoPdD tipoPdD, Context context, FaseTracciamento faseTracciamento) throws UtilsException {
-		this.invoke(tipoPdD, context, faseTracciamento, null);
+	public void invoke(TipoPdD tipoPdD, Context context, RequestInfo requestInfo, FaseTracciamento faseTracciamento) throws UtilsException {
+		this.invoke(tipoPdD, context, requestInfo, faseTracciamento, null);
 	}
-	public void invoke(TipoPdD tipoPdD, Context context, FaseTracciamento faseTracciamento, Map<String, String> outputMap) throws UtilsException {
+	public void invoke(TipoPdD tipoPdD, Context context, RequestInfo requestInfo, FaseTracciamento faseTracciamento, Map<String, String> outputMap) throws UtilsException {
 		List<String> topic = null;
 		Map<String, Topic> topicMap = null;
 		switch (tipoPdD) {
@@ -245,7 +261,7 @@ public class FileTraceManager {
 				}*/
 			}
 			
-			invoke(topicInvoke, outputMap);
+			invoke(topicInvoke, requestInfo, outputMap);
 		}
 	}
 	
@@ -306,10 +322,10 @@ public class FileTraceManager {
 		return true;
 	}
 	
-	private void invoke(List<Topic> topicInvoke, Map<String, String> outputMap) throws UtilsException {
+	private void invoke(List<Topic> topicInvoke, RequestInfo requestInfo, Map<String, String> outputMap) throws UtilsException {
 		if(topicInvoke!=null && !topicInvoke.isEmpty()) {
 			
-			this.resolveProperties();
+			this.resolveProperties(requestInfo);
 			
 			for (Topic topicConfig : topicInvoke) {
 				String value = this.resolve(topicConfig.getFormat());
@@ -339,7 +355,14 @@ public class FileTraceManager {
 		}
 	}
 		
-	private void resolveProperties() throws UtilsException {
+	private void resolveProperties(RequestInfo requestInfo) throws UtilsException {
+		
+		Map<String, String> propertiesEncryptionModes = this.config.getPropertiesEncryptionMode();
+		FileTraceEncrypt encrypt = null;
+		if(!propertiesEncryptionModes.isEmpty()) {
+			encrypt = new FileTraceEncrypt(requestInfo);
+		}
+		
 		List<String> properties = this.config.getPropertiesSortKeys();
 		if(properties!=null && !properties.isEmpty()) {
 			for (String sortKey : properties) {
@@ -347,6 +370,13 @@ public class FileTraceManager {
 				String pValue = this.config.getPropertiesValues().get(sortKey);
 				/**System.out.println("SORT ["+sortKey+"] ["+pName+"]");*/
 				String resolvedValue = this.resolve(pValue);
+				
+				String mode = propertiesEncryptionModes.get(sortKey);
+				if(encrypt!=null && mode!=null && StringUtils.isNotEmpty(mode)) {
+					FileTraceEncryptConfig encryptionConfig = this.config.getEncryptionMode().get(mode);
+					resolvedValue = encrypt.encrypt(encryptionConfig, resolvedValue);
+				}
+				
 				this.t.addProperty(pName, resolvedValue);
 				this.tBase64.addProperty(pName, resolvedValue);
 			}

@@ -39,7 +39,8 @@ public enum KeystoreType {
 	JCEKS ("jceks","JCEKS"),
 	JWK_SET ("jwk","JWK Set"),
 	PUBLIC_KEY ("public","Public Key"),
-	KEY_PAIR ("keys","Key Pair");
+	KEY_PAIR ("keys","Key Pair"),
+	SYMMETRIC_KEY ("symm", "Symmetric Key");
 	
 	
 	private final String nome;
