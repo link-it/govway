@@ -24,6 +24,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,10 +47,14 @@ import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.DiagnosticColumnType;
 import org.openspcoop2.core.transazioni.dao.IDumpMessaggioService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneService;
+import org.openspcoop2.core.transazioni.utils.TransazioneDaoExt;
 import org.openspcoop2.generic_project.beans.UpdateField;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -87,6 +92,8 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.date.UnitaTemporale;
 import org.slf4j.Logger;
 
 /**
@@ -1576,7 +1583,7 @@ public class TracciamentoManager {
 		}
 	}
 	private void registraTransazione(Transazione transazioneDTO, 
-			ITransazioneService transazioneService, InformazioniTransazione info) throws ServiceException, NotImplementedException, NotFoundException {
+			ITransazioneService transazioneService, InformazioniTransazione info) throws ServiceException, NotImplementedException, NotFoundException, ExpressionNotImplementedException, ExpressionException {
 		if(FaseTracciamento.IN_REQUEST.equals(this.fase) 
 				||
 				!isTransactionAlreadyRegistered(info)) {
@@ -1605,11 +1612,32 @@ public class TracciamentoManager {
 			list.add(new UpdateField(Transazione.model().FORMATO_FAULT_COOPERAZIONE, transazioneDTO.getFormatoFaultCooperazione()));
 			list.add(new UpdateField(Transazione.model().ERROR_LOG, transazioneDTO.getErrorLog()));
 			list.add(new UpdateField(Transazione.model().WARNING_LOG, transazioneDTO.getWarningLog()));
-			transazioneService.updateFields(transazioneDTO.getIdTransazione(), list.toArray(new UpdateField[1]));
+			
+			boolean isTransazioniUpdateUseDayInterval = this.openspcoopProperties.isTransazioniUpdateUseDayInterval();
+			if(isTransazioniUpdateUseDayInterval) {
+				IExpression condition = transazioneService.newExpression();
+				Date left = DateUtils.convertToLeftInterval(transazioneDTO.getDataIngressoRichiesta(), UnitaTemporale.GIORNALIERO);
+				condition.greaterEquals(Transazione.model().DATA_INGRESSO_RICHIESTA, left);
+				Date right = DateUtils.convertToRightInterval(transazioneDTO.getDataIngressoRichiesta(), UnitaTemporale.GIORNALIERO);
+				condition.lessEquals(Transazione.model().DATA_INGRESSO_RICHIESTA, right);
+				transazioneService.updateFields(transazioneDTO.getIdTransazione(), condition, list.toArray(new UpdateField[1]));
+			}
+			else {
+				transazioneService.updateFields(transazioneDTO.getIdTransazione(), list.toArray(new UpdateField[1]));
+			}
 		}
 		else {
 			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE con contesto["+transazioneDTO.getEsitoContesto()+"]");*/
-			transazioneService.update(transazioneDTO.getIdTransazione(), transazioneDTO);
+			
+			boolean isTransazioniUpdateUseDayInterval = this.openspcoopProperties.isTransazioniUpdateUseDayInterval();
+			if(isTransazioniUpdateUseDayInterval) {
+				TransazioneDaoExt ext = new TransazioneDaoExt(transazioneDTO);
+				ext.setUseDayIntervalForUpdate(true);
+				transazioneService.update(transazioneDTO.getIdTransazione(), ext);
+			}
+			else {
+				transazioneService.update(transazioneDTO.getIdTransazione(), transazioneDTO);
+			}
 		}
 	}
 	

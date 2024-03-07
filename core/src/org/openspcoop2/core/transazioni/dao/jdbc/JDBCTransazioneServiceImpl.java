@@ -21,11 +21,15 @@ package org.openspcoop2.core.transazioni.dao.jdbc;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.date.UnitaTemporale;
+import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
-
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceCRUDWithId;
@@ -36,6 +40,7 @@ import org.openspcoop2.generic_project.beans.UpdateModel;
 
 import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
+import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
@@ -47,6 +52,7 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
+import org.openspcoop2.core.transazioni.utils.TransazioneDaoExt;
 
 /**     
  * JDBCTransazioneServiceImpl
@@ -302,9 +308,20 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		);
 		
 	}
-
+	
 	@Override
-	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, String oldId, Transazione transazione, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
+	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, String oldId, Transazione transazioneParam, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
+		
+		Transazione transazione = null;
+		boolean useDayIntervalForUpdate = false;
+		if(transazioneParam instanceof TransazioneDaoExt) {
+			TransazioneDaoExt ext = (TransazioneDaoExt) transazioneParam;
+			transazione = ext.getWrapped();
+			useDayIntervalForUpdate = ext.isUseDayIntervalForUpdate();
+		}
+		else {
+			transazione = transazioneParam;
+		}
 		
 		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase())){
 			if(transazione.getFaultCooperazione()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getFaultCooperazione())) {
@@ -541,6 +558,18 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		}
 		sqlQueryObjectUpdate.addWhereCondition(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_TRANSAZIONE,false)+"=?");
 		lstObjects_transazione.add(new JDBCObject(longIdByLogicId, longIdByLogicId.getClass()));
+		
+		if(useDayIntervalForUpdate) {
+			
+			Date left = DateUtils.convertToLeftInterval(transazione.getDataIngressoRichiesta(), UnitaTemporale.GIORNALIERO);
+			sqlQueryObjectUpdate.addWhereCondition(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_INGRESSO_RICHIESTA,false)+">=?");
+			lstObjects_transazione.add(new JDBCObject(left, left.getClass()));
+			
+			Date right = DateUtils.convertToRightInterval(transazione.getDataIngressoRichiesta(), UnitaTemporale.GIORNALIERO);
+			sqlQueryObjectUpdate.addWhereCondition(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_INGRESSO_RICHIESTA,false)+"<=?");
+			lstObjects_transazione.add(new JDBCObject(right, right.getClass()));
+			
+		}
 
 		if(isUpdate_transazione) {
 			// Update transazione
@@ -554,24 +583,82 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		throw new NotImplementedException("Table without long id column PK");
 	}
 	
+	private static boolean efficiente = true;    
+    public static boolean isEfficiente() {
+		return efficiente;
+	}
+	public static void setEfficiente(boolean efficiente) {
+		JDBCTransazioneServiceImpl.efficiente = efficiente;
+	}
+	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, String id, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
-				this.getTransazioneFieldConverter().toTable(Transazione.model()), 
-				this.getMapTableToPKColumnEngine(), 
-				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
-				this.getTransazioneFieldConverter(), this, null, updateFields);
+		if(efficiente) {
+			updateFieldsOptimized(jdbcProperties, log, connection, sqlQueryObject, id, null, updateFields);
+		}
+		else {
+			GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+					this.getTransazioneFieldConverter().toTable(Transazione.model()), 
+					this.getMapTableToPKColumnEngine(), 
+					this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
+					this.getTransazioneFieldConverter(), this, null, updateFields);
+		}
 	}
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, String id, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
-				this.getTransazioneFieldConverter().toTable(Transazione.model()), 
-				this.getMapTableToPKColumnEngine(), 
-				this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
-				this.getTransazioneFieldConverter(), this, condition, updateFields);
+		if(efficiente) {
+			updateFieldsOptimized(jdbcProperties, log, connection, sqlQueryObject, id, condition, updateFields);
+		}
+		else {
+			GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+					this.getTransazioneFieldConverter().toTable(Transazione.model()), 
+					this.getMapTableToPKColumnEngine(), 
+					this.getRootTablePrimaryKeyValuesEngine(jdbcProperties, log, connection, sqlQueryObject, id),
+					this.getTransazioneFieldConverter(), this, condition, updateFields);
+		}
+	}
+	
+	private void updateFieldsOptimized(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, String id, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, SQLQueryObjectException, ExpressionException, JDBCAdapterException {
+	
+		String table = 	this.getTransazioneFieldConverter().toTable(Transazione.model());
+		
+		ISQLQueryObject sqlQueryObjectUpdate = sqlQueryObject.newSQLQueryObject();
+		sqlQueryObjectUpdate.setANDLogicOperator(true);
+		sqlQueryObjectUpdate.addUpdateTable(table);
+		
+		// update fields
+		java.util.List<JDBCObject> lstObjectsUpdate = new java.util.ArrayList<>();
+		for (UpdateField updateField : updateFields) {
+            sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(updateField.getField(),false), "?");
+            lstObjectsUpdate.add(new JDBCObject(updateField.getValue(), updateField.getField().getFieldType()));
+		}
+		
+		// id
+		sqlQueryObjectUpdate.addWhereCondition(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_TRANSAZIONE,false)+"=?");
+		lstObjectsUpdate.add(new JDBCObject(id, id.getClass()));
+		
+		// condition
+		if(condition instanceof JDBCExpression) {
+			JDBCExpression jdbc = (JDBCExpression) condition;
+			List<Object> oggetti = new ArrayList<>();
+			jdbc.toSqlForPreparedStatement(sqlQueryObjectUpdate, oggetti);
+			if(!oggetti.isEmpty()) {
+				for (Object object : oggetti) {
+					lstObjectsUpdate.add(new JDBCObject(object, object.getClass()));
+				}
+			}
+		}
+		
+		// execute
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
+		int updateRow = jdbcUtilities.executeUpdate(sqlQueryObjectUpdate.createSQLUpdate(), jdbcProperties.isShowSql(), 
+				lstObjectsUpdate.toArray(new JDBCObject[]{}));
+		String msg = "UpdateField["+table+"]: "+updateRow +" rows";
+		log.debug(msg);
 	}
 	
 	@Override

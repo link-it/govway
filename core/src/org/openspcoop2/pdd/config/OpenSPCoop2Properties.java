@@ -2331,6 +2331,8 @@ public class OpenSPCoop2Properties {
 				this.isTransazioniHttpStatusAsEvent_inResponseCode();
 				this.isTransazioniHttpStatusAsEvent_outResponseCode();
 				this.isTransazioniTipoApiAsEvent();
+				this.isTransazioniConnettoriMultipliAsEvent();
+				this.isTransazioniUpdateUseDayInterval();
 				
 				if(this.isTransazioniRegistrazioneSlowLog()) {
 					this.getTransazioniRegistrazioneSlowLogThresholdMs();
@@ -26757,6 +26759,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isTransazioniConnettoriMultipliAsEvent;
+	}
+	
+	private Boolean isTransazioniUpdateUseDayInterval = null;
+	public boolean isTransazioniUpdateUseDayInterval() {	
+		if(this.isTransazioniUpdateUseDayInterval==null){
+			String pName = "org.openspcoop2.pdd.transazioni.update.useDayInterval";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isTransazioniUpdateUseDayInterval = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isTransazioniUpdateUseDayInterval = true;
+			}    
+		}
+
+		return this.isTransazioniUpdateUseDayInterval;
 	}
 	
 	private Boolean isTransazioniRegistrazioneSlowLog = null;
