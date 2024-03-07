@@ -34,12 +34,12 @@ import org.openspcoop2.utils.UtilsException;
 public class SymmetricKeyUtils {
 
 	public static final String ALGO_AES = "AES";
+	public static final String ALGO_RIJNDAEL = "Rijndael";
 	
-	
-	public static SymmetricKeyUtils getInstance() throws UtilsException {
+	public static SymmetricKeyUtils getInstance() {
 		return new SymmetricKeyUtils();
 	}
-	public static SymmetricKeyUtils getInstance(String algo) throws UtilsException {
+	public static SymmetricKeyUtils getInstance(String algo) {
 		return new SymmetricKeyUtils(algo);
 	}
 	

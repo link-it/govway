@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.logger.filetrace;
 
 import java.security.Key;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
@@ -37,6 +38,7 @@ import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeystoreType;
+import org.openspcoop2.utils.certificate.SymmetricKeyUtils;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.security.Encrypt;
 import org.openspcoop2.utils.security.JOSESerialization;
@@ -44,6 +46,8 @@ import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonUtils;
 import org.openspcoop2.utils.security.JwtHeaders;
+
+import com.nimbusds.jose.jwk.KeyUse;
 
 /**     
  * FileTraceEncrypt
@@ -161,7 +165,12 @@ public class FileTraceEncrypt {
 		}
 		fileTraceEncryptKey.key = publicKeyStore.getPublicKey();
 		if(config.isJoseEngine()) {
-			config.generateKeyAlias();
+			if(config.getKeyId()!=null && StringUtils.isNotEmpty(config.getKeyId())) {
+				config.setKeyAlias(config.getKeyId());
+			}
+			else {
+				config.generateKeyAlias();
+			}
 			JWK jwk = new JWK(publicKeyStore.getPublicKey(), config.getKeyAlias());
 			JWKSet jwkSet = new JWKSet();
 			jwkSet.addJwk(jwk);
@@ -169,17 +178,24 @@ public class FileTraceEncrypt {
 		}
 	}
 	private void readSecretKey(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
-		SecretKeyStore secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), config.getKeyAlgorithm());
+		String algo = config.isJoseEngine() ? SymmetricKeyUtils.ALGO_AES : config.getKeyAlgorithm();
+		SecretKeyStore secretKeyStore = GestoreKeystoreCache.getSecretKeyStore(this.requestInfo, config.getKeyPath(), algo);
 		if(secretKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}
 		fileTraceEncryptKey.key = secretKeyStore.getSecretKey();
 		fileTraceEncryptKey.secret = true;
 		if(config.isJoseEngine()) {
-			config.generateKeyAlias();
-			JWK jwk = new JWK(secretKeyStore.getSecretKey(), config.getKeyAlias());
+			if(config.getKeyId()!=null && StringUtils.isNotEmpty(config.getKeyId())) {
+				config.setKeyAlias(config.getKeyId());
+			}
+			else {
+				config.generateKeyAlias();
+			}
+			JWK jwk = new JWK(secretKeyStore.getSecretKey(), config.getKeyAlias(), KeyUse.ENCRYPTION);
 			JWKSet jwkSet = new JWKSet();
 			jwkSet.addJwk(jwk);
+			jwkSet.getJson(); // rebuild
 			fileTraceEncryptKey.jsonWebKeys = jwkSet.getJsonWebKeys();
 		}
 	}

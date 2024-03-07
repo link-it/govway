@@ -25,7 +25,6 @@ import java.io.Serializable;
 import javax.crypto.SecretKey;
 
 import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.SymmetricKeyUtils;
 
 /**
@@ -60,7 +59,7 @@ public class SecretKeyStore implements Serializable {
 	
 		this.secretKeyPath = secretKeyPath;
 				
-		this.algorithm = algorithm==null ? KeyUtils.ALGO_RSA : algorithm;
+		this.algorithm = algorithm==null ? SymmetricKeyUtils.ALGO_AES : algorithm;
 		
 		this.secretKeyContent = StoreUtils.readContent("SecretKey", this.secretKeyPath);
 			
@@ -74,7 +73,7 @@ public class SecretKeyStore implements Serializable {
 			}
 			this.secretKeyContent = secretKey;
 
-			this.algorithm = algorithm==null ? KeyUtils.ALGO_RSA : algorithm;
+			this.algorithm = algorithm==null ? SymmetricKeyUtils.ALGO_AES : algorithm;
 			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);

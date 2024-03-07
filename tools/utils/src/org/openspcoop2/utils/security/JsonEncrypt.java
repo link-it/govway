@@ -21,11 +21,8 @@
 
 package org.openspcoop2.utils.security;
 
-import java.security.PublicKey;
 import java.util.Iterator;
 import java.util.Properties;
-
-import javax.crypto.SecretKey;
 
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm;
@@ -75,8 +72,8 @@ public class JsonEncrypt {
 			this.provider = JsonUtils.getJweEncryptionProvider(props);
 			if(this.provider==null) {
 				
-				KeyAlgorithm keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
-				if (KeyAlgorithm.DIRECT.equals(keyAlgorithm)) {
+				KeyAlgorithm keyAlgorithmP = JweUtils.getKeyEncryptionAlgorithm(props, null);
+				if (KeyAlgorithm.DIRECT.equals(keyAlgorithmP)) {
 					this.provider = JsonUtils.getJweEncryptionProviderFromJWKSymmetric(props, this.headers);
 				}
 				else {
@@ -86,9 +83,9 @@ public class JsonEncrypt {
 			
 			this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, ContentAlgorithm.A256GCM);
 			this.keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
-//			if(this.keyAlgorithm==null) {
+/**			if(this.keyAlgorithm==null) {
 //				throw new Exception("KeyAlgorithm undefined");
-//			}
+//			}*/
 						
 			this.jwtHeaders = jwtHeaders;
 			
@@ -125,7 +122,7 @@ public class JsonEncrypt {
 				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
 			}
 			
-			this.provider = JweUtils.createJweEncryptionProvider( (PublicKey) keystore.getPublicKey(alias), this.keyAlgorithm, this.contentAlgorithm, compression);
+			this.provider = JweUtils.createJweEncryptionProvider( keystore.getPublicKey(alias), this.keyAlgorithm, this.contentAlgorithm, compression);
 			
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
@@ -161,7 +158,12 @@ public class JsonEncrypt {
 				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
 			}
 			
-			this.provider = JweUtils.createJweEncryptionProvider( (SecretKey) keystore.getSecretKey(alias, passwordPrivateKey), this.keyAlgorithm, this.contentAlgorithm, compression);
+			if (KeyAlgorithm.DIRECT.equals(this.keyAlgorithm)) {
+				this.provider = JweUtils.getDirectKeyJweEncryption(keystore.getSecretKey(alias, passwordPrivateKey), this.contentAlgorithm);
+			}
+			else {
+				this.provider = JweUtils.createJweEncryptionProvider(keystore.getSecretKey(alias, passwordPrivateKey), this.keyAlgorithm, this.contentAlgorithm, compression);
+			}
 			
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
@@ -201,7 +203,12 @@ public class JsonEncrypt {
 				if(jsonWebKey.getAlgorithm()==null) {
 					jsonWebKey.setAlgorithm(contentAlgorithm);
 				}
-				this.provider = JweUtils.getDirectKeyJweEncryption(JwkUtils.toSecretKey(jsonWebKey), this.contentAlgorithm);
+				if (KeyAlgorithm.DIRECT.equals(this.keyAlgorithm)) {
+					this.provider = JweUtils.getDirectKeyJweEncryption(JwkUtils.toSecretKey(jsonWebKey), this.contentAlgorithm);
+				}
+				else {
+					this.provider = JweUtils.createJweEncryptionProvider(JwkUtils.toSecretKey(jsonWebKey), this.keyAlgorithm, this.contentAlgorithm, compression);
+				}
 				if(this.provider==null) {
 					throw new Exception("(JsonWebKey) JwsEncryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
 				}

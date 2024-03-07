@@ -59,6 +59,7 @@ public class FileTraceEncryptConfig {
 	private String keyAlgorithm;
 	private String keyAlias;
 	private String keyPassword;
+	private String keyId;
 	
 	private String contentAlgorithm;
 	
@@ -88,6 +89,7 @@ public class FileTraceEncryptConfig {
 	private static final String KEY_ALGORITHM = ".key.algorithm";
 	private static final String KEY_ALIAS = ".key.alias";
 	private static final String KEY_PASSWORD = ".key.password";
+	private static final String KEY_ID = ".key.id";
 	
 	private static final String CONTENT_ALGORITHM = ".algorithm";
 	
@@ -172,12 +174,18 @@ public class FileTraceEncryptConfig {
 		}
 	}
 	private static void parseEngineJose(String encMode, Properties propertiesMap, 
-			FileTraceEncryptConfig c)  {
+			FileTraceEncryptConfig c) throws UtilsException  {
 		c.joseIncludeCert = parseEngineJoseProperty(encMode+JOSE_INCLUDE_CERT, propertiesMap);
 		c.joseIncludePublicKey = parseEngineJoseProperty(encMode+JOSE_INCLUDE_PUBLIC_KEY, propertiesMap);
 		c.joseIncludeKeyId = parseEngineJoseProperty(encMode+JOSE_INCLUDE_KEY_ID, propertiesMap);
 		c.joseIncludeCertSha1 = parseEngineJoseProperty(encMode+JOSE_INCLUDE_CERT_SHA1, propertiesMap);
 		c.joseIncludeCertSha256 = parseEngineJoseProperty(encMode+JOSE_INCLUDE_CERT_SHA256, propertiesMap);
+		
+		String keyIdPName = encMode+KEY_ID;
+		String keyId = propertiesMap.getProperty(keyIdPName);
+		if(keyId!=null) {
+			c.keyId = keyId.trim();
+		}
 	}
 	private static boolean parseEngineJoseProperty(String pName, Properties propertiesMap) {
 		String v = propertiesMap.getProperty(pName);
@@ -327,12 +335,19 @@ public class FileTraceEncryptConfig {
 	public String getKeyAlias() {
 		return this.keyAlias;
 	}
+	public void setKeyAlias(String keyAlias) {
+		this.keyAlias = keyAlias;
+	}
 	public void generateKeyAlias() {
 		this.keyAlias = UUID.randomUUID().toString();
 	}
 	
 	public String getKeyPassword() {
 		return this.keyPassword;
+	}
+	
+	public String getKeyId() {
+		return this.keyId;
 	}
 	
 	public String getContentAlgorithm() {

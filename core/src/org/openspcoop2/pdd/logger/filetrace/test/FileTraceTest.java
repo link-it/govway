@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -34,6 +35,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.crypto.SecretKey;
+
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -80,19 +84,28 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.JWK;
+import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.SymmetricKeyUtils;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.CompressorType;
 import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.security.Decrypt;
+import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWTOptions;
+import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
+
+import com.nimbusds.jose.jwk.KeyUse;
 
 /**     
  * Test
@@ -113,6 +126,8 @@ public class FileTraceTest {
 	private static final List<String> ENCRYPT_TEST = new ArrayList<>();
 	static {
 		ENCRYPT_TEST.add("encJavaSymm");
+		ENCRYPT_TEST.add("encJoseSymm");
+		ENCRYPT_TEST.add("encJoseSymmDirect");
 	}
 	
 	public static void initDir() throws UtilsException, ReflectiveOperationException {
@@ -166,6 +181,8 @@ public class FileTraceTest {
 	    field.setAccessible(true);
 	    ((Map<String, String>) field.get(env)).put(name, val);
 	}
+	
+	
 	
 	public static void main(String [] args) throws Exception{
 
@@ -278,6 +295,7 @@ public class FileTraceTest {
 		
 		File fSecret = null;
 		try {
+			Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
 			
 			// // Chiave AES deve essere di 16, 24 o 32 byte che corrisponde a: 
 			// AES-128: Utilizza chiavi di 128 bit (16 byte).
@@ -293,6 +311,8 @@ public class FileTraceTest {
 				test(tipoPdD, log4j, esito, requestWithPayload, fase);
 			}
 		}finally {
+			Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+			
 			FileSystemUtilities.deleteFile(fSecret);
 		}
 	}
@@ -1399,6 +1419,9 @@ public class FileTraceTest {
 		if("encJavaSymm".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaSymm(tipoTest, requestWithPayload, trovato);
 		}
+		else if("encJoseSymm".equals(tipoTest) || "encJoseSymmDirect".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJoseSymm(tipoTest, requestWithPayload, trovato);
+		}
 	}
 	private static void verificaExpectedEncryptContentEncJavaSymm(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
 		String [] tmp = trovato.split("\\.");
@@ -1410,9 +1433,77 @@ public class FileTraceTest {
 		Decrypt d = new Decrypt(SECRET_KEY.getBytes(), "AES", iv);
 		String decrypted = new String(d.decrypt(dataEncrypted, "AES/CBC/PKCS5Padding"));
 		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
+	private static void verificaExpectedEncryptContentEncJoseSymm(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
+		
+		String contentAlgo = "A256GCM";
+		
+		String keyAlgo = "DIRECT";
+		String kid = null;
+		if("encJoseSymm".equals(tipoTest)) {
+			// Devo levare la prima parte
+			trovato = trovato.substring("encJoseSymm|".length());
+			keyAlgo = "A256KW";
+			kid = "myKEY";
+		}
+		
+		// check header
+		Map<String, Object> check = new HashMap<>();
+		check.put("alg", "DIRECT".equals(keyAlgo) ? "dir" : keyAlgo);
+		check.put("enc", contentAlgo);
+		if(kid!=null) {
+			check.put("kid", kid);
+		}
+		else {
+			check.put("kid", true);
+		}
+		verifica(trovato, check);
+		
+		SecretKey s = SymmetricKeyUtils.getInstance("AES").getSecretKey(SECRET_KEY.getBytes());
+		JWK jwk = new JWK(s, "kid", KeyUse.ENCRYPTION);
+		JWKSet jwkSet = new JWKSet();
+		jwkSet.addJwk(jwk);
+		jwkSet.getJson(); // rebuild	
+		JsonDecrypt decryptJose = new JsonDecrypt(jwkSet.getJsonWebKeys(), true, "kid", keyAlgo, contentAlgo,
+				new JWTOptions(JOSESerialization.COMPACT));
+		decryptJose.decrypt(trovato);
+		String decrypted = decryptJose.getDecodedPayload();
+			
+		verifica(tipoTest, requestWithPayload, 
+				"encJoseSymm".equals(tipoTest) ? "encJoseSymm|"+decrypted : decrypted);
+	}
+	private static void verifica(String tipoTest, boolean requestWithPayload, String decrypted) throws UtilsException {
 		String atteso = getExpectedEncryptContent(tipoTest, requestWithPayload);
 		if(!decrypted.equals(atteso)) {
 			throw new UtilsException(MSG_FAILED_PREFIX+atteso+"\nTrovato:\n"+decrypted);
+		}		
+	}
+	private static void verifica(String token, Map<String, Object> check) throws UtilsException {
+		//System.out.println("----token ["+token+"] ");
+		String [] tmp = token.split("\\.");
+		if(tmp==null || tmp.length<2) {
+			throw new UtilsException("Atteso formato JWE");
+		}
+		String hdr = new String(Base64Utilities.decode(tmp[0]));
+		try {
+			for (String claim : check.keySet()) {
+				//System.out.println("CERCO ["+hdr+"] in ["+"$."+claim+"]");
+				String v = JsonPathExpressionEngine.extractAndConvertResultAsString(hdr, "$."+claim, LoggerWrapperFactory.getLogger(FileTraceTest.class));
+				Object o = check.get(claim);
+				if(o instanceof Boolean) {
+					if(v==null || StringUtils.isEmpty(v)) {
+						throw new UtilsException("Atteso nell'header JWE ("+hdr+") il claim '"+claim+"'");
+					}
+				}
+				else {
+					if(!v.equals(o)) {
+						throw new UtilsException("Atteso nell'header JWE ("+hdr+") il claim '"+claim+"' valorizzato con '"+o+"'");
+					}
+				}
+			}
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 }

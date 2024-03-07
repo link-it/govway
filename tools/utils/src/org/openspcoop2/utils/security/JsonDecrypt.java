@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.crypto.SecretKey;
-
 import org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm;
 import org.apache.cxf.rs.security.jose.jwe.JweCompactConsumer;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionOutput;
@@ -201,9 +199,16 @@ public class JsonDecrypt {
 			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgo  = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.getAlgorithm(keyAlgorithm);
 			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgo = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
 			if(secretKey) {
-				this.provider = JweUtils.createJweDecryptionProvider( (SecretKey) keystore.getSecretKey(alias, passwordPrivateKey), keyAlgo, contentAlgo);
+				
+				if (KeyAlgorithm.DIRECT.equals(keyAlgo)) {
+					this.provider = JweUtils.getDirectKeyJweDecryption(keystore.getSecretKey(alias, passwordPrivateKey), contentAlgo);
+				}
+				else {
+					this.provider = JweUtils.createJweDecryptionProvider( keystore.getSecretKey(alias, passwordPrivateKey), keyAlgo, contentAlgo);
+				}
+
 			}else {
-				PrivateKey privateKey = (PrivateKey) keystore.getPrivateKey(alias, passwordPrivateKey);
+				PrivateKey privateKey = keystore.getPrivateKey(alias, passwordPrivateKey);
 				this.provider = JweUtils.createJweDecryptionProvider( privateKey, keyAlgo, contentAlgo);
 				try {
 					this.provider.getKeyAlgorithm();
@@ -248,7 +253,12 @@ public class JsonDecrypt {
 				if(jsonWebKey.getAlgorithm()==null) {
 					jsonWebKey.setAlgorithm(contentAlgorithm);
 				}
-				this.provider = JweUtils.getDirectKeyJweDecryption(JwkUtils.toSecretKey(jsonWebKey), contentAlgo);
+				if (KeyAlgorithm.DIRECT.equals(keyAlgo)) {
+					this.provider = JweUtils.getDirectKeyJweDecryption(JwkUtils.toSecretKey(jsonWebKey), contentAlgo);
+				}
+				else {
+					this.provider = JweUtils.createJweDecryptionProvider( JwkUtils.toSecretKey(jsonWebKey), keyAlgo, contentAlgo);
+				}
 				if(this.provider==null) {
 					throw new Exception("(JsonWebKey) JwsDecryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
 				}
