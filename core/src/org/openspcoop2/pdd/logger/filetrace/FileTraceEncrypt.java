@@ -37,9 +37,12 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.SymmetricKeyUtils;
-import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.security.Encrypt;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWEOptions;
@@ -102,6 +105,7 @@ public class FileTraceEncrypt {
 			throw new UtilsException(e.getMessage(),e);
 		}
 		
+		/**System.out.println("CONF ["+config.getName()+"] java["+config.isJavaEngine()+"] jose["+config.isJoseEngine()+"]");*/
 		if(config.isJavaEngine()) {
 			return encJava(fileTraceEncryptKey, config, value);
 		} 
@@ -159,7 +163,25 @@ public class FileTraceEncrypt {
 		/**}*/
 	}
 	private void readPublicKey(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config) throws UtilsException, SecurityException {
-		PublicKeyStore publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), config.getKeyAlgorithm());
+		String algo = config.getKeyAlgorithm();
+		if(config.isJoseEngine()) {
+			if(config.getKeyAlgorithm().contains(KeyUtils.ALGO_RSA)) {
+				algo = KeyUtils.ALGO_RSA;
+			}
+			else if(config.getKeyAlgorithm().contains(KeyUtils.ALGO_DSA)) {
+				algo = KeyUtils.ALGO_DSA;
+			}
+			else if(config.getKeyAlgorithm().contains(KeyUtils.ALGO_DH)) {
+				algo = KeyUtils.ALGO_DH;
+			}
+			else if(config.getKeyAlgorithm().contains(KeyUtils.ALGO_EC)) {
+				algo = KeyUtils.ALGO_EC;
+			}
+			else {
+				algo = KeyUtils.ALGO_RSA;
+			}
+		}
+		PublicKeyStore publicKeyStore = GestoreKeystoreCache.getPublicKeyStore(this.requestInfo, config.getKeyPath(), algo);
 		if(publicKeyStore==null) {
 			throw new UtilsException(getKeyError(config));
 		}
@@ -174,6 +196,7 @@ public class FileTraceEncrypt {
 			JWK jwk = new JWK(publicKeyStore.getPublicKey(), config.getKeyAlias());
 			JWKSet jwkSet = new JWKSet();
 			jwkSet.addJwk(jwk);
+			jwkSet.getJson(); // rebuild
 			fileTraceEncryptKey.jsonWebKeys = jwkSet.getJsonWebKeys();
 		}
 	}
@@ -201,18 +224,30 @@ public class FileTraceEncrypt {
 	}
 	
 	private String encJava(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config, String value) throws UtilsException {
+		
 		Encrypt encrypt = new Encrypt(fileTraceEncryptKey.key);
 		
 		if(fileTraceEncryptKey.secret) {
 			encrypt.initIV(config.getContentAlgorithm());
 		}
 		
+		byte [] encrypted = null;
+		try {
+			/**System.out.println("encrypt ["+config.getContentAlgorithm()+"]...");*/
+			FileSystemUtilities.writeFile("/tmp/con", value.getBytes());
+			encrypted = encrypt.encrypt(value.getBytes(), config.getContentAlgorithm());
+			/**System.out.println("encrypt ok");*/
+		}catch(Exception e) {
+			/**System.out.println("encrypt ERROR: "+e.getMessage());*/
+			throw new UtilsException(e.getMessage(),e);
+		}
+		
 		String en = null;
 		if(config.isJavaBase64Encoding()) {
-			en = encrypt.encryptBase64AsString(value, Charset.UTF_8.getValue(), config.getContentAlgorithm());
+			en = Base64Utilities.encodeAsString(encrypted);
 		}
 		else if(config.isJavaHexEncoding()) {
-			en = encrypt.encryptHexBinaryAsString(value, Charset.UTF_8.getValue(), config.getContentAlgorithm());
+			en = HexBinaryUtilities.encodeAsString(encrypted);
 		}
 		else {
 			throw new UtilsException("Java algorithm undefined in keystore ["+config.getKeystoreType().getNome()+"] '"+config.getKeystorePath()+"'");

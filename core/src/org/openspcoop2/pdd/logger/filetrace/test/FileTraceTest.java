@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,6 +80,9 @@ import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.MerlinKeystore;
+import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -86,13 +91,16 @@ import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.SymmetricKeyUtils;
+import org.openspcoop2.utils.certificate.test.KeystoreTest;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.CompressorType;
 import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
+import org.openspcoop2.utils.io.HexBinaryUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
@@ -101,6 +109,7 @@ import org.openspcoop2.utils.security.Decrypt;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
+import org.openspcoop2.utils.security.test.EncryptTest;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -128,6 +137,13 @@ public class FileTraceTest {
 		ENCRYPT_TEST.add("encJavaSymm");
 		ENCRYPT_TEST.add("encJoseSymm");
 		ENCRYPT_TEST.add("encJoseSymmDirect");
+		
+		ENCRYPT_TEST.add("encJavaJCEKS");
+		ENCRYPT_TEST.add("encJoseJCEKS");
+		ENCRYPT_TEST.add("encJoseJCEKSDirect");
+		
+		ENCRYPT_TEST.add("encJavaPublic");
+		ENCRYPT_TEST.add("encJosePublic");
 	}
 	
 	public static void initDir() throws UtilsException, ReflectiveOperationException {
@@ -294,6 +310,9 @@ public class FileTraceTest {
 	public static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
 		
 		File fSecret = null;
+		File fKeystoreJCEKS = null;
+		File fPublic = null;
+		File fPrivate = null;
 		try {
 			Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
 			
@@ -304,6 +323,20 @@ public class FileTraceTest {
 			fSecret = new File("/tmp/symmetric.secretkey");
 			FileSystemUtilities.writeFile(fSecret, SECRET_KEY.getBytes()); // test con 32
 			
+			try( InputStream isKeystoreJCEKS = EncryptTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/example.jceks")){
+				byte [] b = Utilities.getAsByteArray(isKeystoreJCEKS);
+				fKeystoreJCEKS = new File("/tmp/keystore.jceks");
+				FileSystemUtilities.writeFile(fKeystoreJCEKS, b);
+			}
+			
+			byte [] publicKey = Utilities.getAsByteArray(KeystoreTest.class.getResourceAsStream(KeystoreTest.PREFIX+"client-test.rsa.publicKey.pem"));
+			fPublic = new File("/tmp/publicKey.pem");
+			FileSystemUtilities.writeFile(fPublic, publicKey);
+			
+			byte [] privateKey = Utilities.getAsByteArray(KeystoreTest.class.getResourceAsStream(KeystoreTest.PREFIX+"client-test.rsa.pkcs8.privateKey.der"));
+			fPrivate = new File("/tmp/privateKey.pem");
+			FileSystemUtilities.writeFile(fPrivate, privateKey);
+						
 			for (FaseTracciamento fase : FaseTracciamento.values()) {
 				
 				emptyDir();
@@ -314,6 +347,11 @@ public class FileTraceTest {
 			Security.removeProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
 			
 			FileSystemUtilities.deleteFile(fSecret);
+			
+			FileSystemUtilities.deleteFile(fKeystoreJCEKS);
+			
+			FileSystemUtilities.deleteFile(fPublic);
+			FileSystemUtilities.deleteFile(fPrivate);
 		}
 	}
 	
@@ -1408,6 +1446,12 @@ public class FileTraceTest {
 		
 	}
 	private static String getExpectedEncryptContent(String tipoTest, boolean requestWithPayload) {
+		
+		if("encJavaPublic".equals(tipoTest)) {
+			// supporta solo una stringa corta di dati. Se troppo lunga si ottiene l'errore: 'too much data for RSA block'
+			return tipoTest+"|informazioneCorta";
+		}
+		
 		if(requestWithPayload) {
 			return tipoTest+"|\"Req-In: ReqInExampleValue\"|\"Req-In-2: ReqInExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-REQ-IN**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJQ0hJRVNUQV9JTkdSRVNTT19EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1pblJlcXVlc3Q=|\"Req-Out: ReqOutExampleValue\"|\"Req-Out-2: ReqOutExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-REQ-OUT**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJQ0hJRVNUQV9VU0NJVEFfRFVNUF9CSU5BUklPCkNvbnRlbnQtVHlwZTogdGV4dC94bWw7IGNoYXJzZXQ9XCJVVEY4XCI7IHRpcG89b3V0UmVxdWVzdA==|\"Res-In: ResInExampleValue\"|\"Res-In-2: ResInExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-RES-IN**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX0lOR1JFU1NPX0RVTVBfQklOQVJJTwpDb250ZW50LVR5cGU6IHRleHQveG1sOyBjaGFyc2V0PVwiVVRGOFwiOyB0aXBvPWluUmVzcG9uc2U=|\"Res-Out: ResOutExampleValue\"|\"Res-Out-2: ResOutExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-RES-OUT**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX1VTQ0lUQV9EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1vdXRSZXNwb25zZQ==";
 		}
@@ -1415,12 +1459,26 @@ public class FileTraceTest {
 			return tipoTest+"|\"Req-In: ReqInExampleValue\"|\"Req-In-2: ReqInExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-REQ-IN**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJQ0hJRVNUQV9JTkdSRVNTT19EVU1QX0JJTkFSSU8=|\"Req-Out: ReqOutExampleValue\"|\"Req-Out-2: ReqOutExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-REQ-OUT**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJQ0hJRVNUQV9VU0NJVEFfRFVNUF9CSU5BUklP|\"Res-In: ResInExampleValue\"|\"Res-In-2: ResInExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-RES-IN**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX0lOR1JFU1NPX0RVTVBfQklOQVJJTwpDb250ZW50LVR5cGU6IHRleHQveG1sOyBjaGFyc2V0PVwiVVRGOFwiOyB0aXBvPWluUmVzcG9uc2U=|\"Res-Out: ResOutExampleValue\"|\"Res-Out-2: ResOutExampleValue2\"|\"Content-XXX: ADEDE\"|**HDR-RES-OUT**|Q29udGVudC1YWFg6IEFERURFClRpcG9NZXNzYWdnaW86IFJJU1BPU1RBX1VTQ0lUQV9EVU1QX0JJTkFSSU8KQ29udGVudC1UeXBlOiB0ZXh0L3htbDsgY2hhcnNldD1cIlVURjhcIjsgdGlwbz1vdXRSZXNwb25zZQ==";
 		}
 	}
-	private static void verificaExpectedEncryptContent(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
+	private static void verificaExpectedEncryptContent(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, SecurityException, FileNotFoundException {
 		if("encJavaSymm".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaSymm(tipoTest, requestWithPayload, trovato);
 		}
 		else if("encJoseSymm".equals(tipoTest) || "encJoseSymmDirect".equals(tipoTest)) {
-			verificaExpectedEncryptContentEncJoseSymm(tipoTest, requestWithPayload, trovato);
+			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
+		}
+		
+		else if("encJavaJCEKS".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJavaJCEKS(tipoTest, requestWithPayload, trovato);
+		}
+		else if("encJoseJCEKS".equals(tipoTest) || "encJoseJCEKSDirect".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
+		}
+		
+		else if("encJavaPublic".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJavaPublic(tipoTest, requestWithPayload, trovato);
+		}
+		else if("encJosePublic".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
 		}
 	}
 	private static void verificaExpectedEncryptContentEncJavaSymm(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
@@ -1435,16 +1493,29 @@ public class FileTraceTest {
 		
 		verifica(tipoTest, requestWithPayload, decrypted);
 	}
-	private static void verificaExpectedEncryptContentEncJoseSymm(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
+	private static void verificaExpectedEncryptContentEncJose(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, SecurityException, FileNotFoundException {
 		
 		String contentAlgo = "A256GCM";
 		
 		String keyAlgo = "DIRECT";
 		String kid = null;
+		boolean expectedKid = true;
 		if("encJoseSymm".equals(tipoTest)) {
 			// Devo levare la prima parte
 			trovato = trovato.substring("encJoseSymm|".length());
 			keyAlgo = "A256KW";
+			kid = "myKEY";
+		}
+		else if("encJoseJCEKS".equals(tipoTest)) {
+			keyAlgo = "A256KW";
+			kid = "openspcoop";
+		}
+		else if("encJoseJCEKSDirect".equals(tipoTest)) {
+			expectedKid = false;
+		}
+		else if("encJosePublic".equals(tipoTest)) {
+			keyAlgo = "RSA-OAEP-256";
+			contentAlgo = "A256GCM";
 			kid = "myKEY";
 		}
 		
@@ -1456,23 +1527,80 @@ public class FileTraceTest {
 			check.put("kid", kid);
 		}
 		else {
-			check.put("kid", true);
+			check.put("kid", expectedKid);
+		}
+		if("encJosePublic".equals(tipoTest)) {
+			check.put("jwk", true);
 		}
 		verifica(trovato, check);
 		
-		SecretKey s = SymmetricKeyUtils.getInstance("AES").getSecretKey(SECRET_KEY.getBytes());
-		JWK jwk = new JWK(s, "kid", KeyUse.ENCRYPTION);
-		JWKSet jwkSet = new JWKSet();
-		jwkSet.addJwk(jwk);
-		jwkSet.getJson(); // rebuild	
-		JsonDecrypt decryptJose = new JsonDecrypt(jwkSet.getJsonWebKeys(), true, "kid", keyAlgo, contentAlgo,
-				new JWTOptions(JOSESerialization.COMPACT));
+		JsonDecrypt decryptJose = null;
+		if("encJoseSymm".equals(tipoTest) || "encJoseSymmDirect".equals(tipoTest)) {
+			SecretKey s = SymmetricKeyUtils.getInstance("AES").getSecretKey(SECRET_KEY.getBytes());
+			JWK jwk = new JWK(s, "kid", KeyUse.ENCRYPTION);
+			JWKSet jwkSet = new JWKSet();
+			jwkSet.addJwk(jwk);
+			jwkSet.getJson(); // rebuild	
+			decryptJose = new JsonDecrypt(jwkSet.getJsonWebKeys(), true, "kid", keyAlgo, contentAlgo,
+					new JWTOptions(JOSESerialization.COMPACT));
+		}
+		else if("encJoseJCEKS".equals(tipoTest) || "encJoseJCEKSDirect".equals(tipoTest)) {
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(new RequestInfo(),
+					"/tmp/keystore.jceks", "jceks", 
+					"123456");
+			decryptJose = new JsonDecrypt(merlinKs.getKeyStore(), true, "openspcoop", "key123456", keyAlgo, contentAlgo,
+					new JWTOptions(JOSESerialization.COMPACT));
+		}
+		else if("encJosePublic".equals(tipoTest)) {
+			byte [] privateKey = FileSystemUtilities.readBytesFromFile("/tmp/privateKey.pem");
+			PrivateKey privKey = KeyUtils.getInstance().readPKCS8PrivateKeyDERFormat(privateKey);
+			
+			byte [] publicKey = FileSystemUtilities.readBytesFromFile("/tmp/publicKey.pem");
+			PublicKey pKey = KeyUtils.getInstance().readPublicKeyPEMFormat(publicKey);
+			
+			JWK jwk = new JWK(pKey, privKey, "kid", KeyUse.ENCRYPTION);
+			JWKSet jwkSet = new JWKSet();
+			jwkSet.addJwk(jwk);
+			jwkSet.getJson(); // rebuild	
+			decryptJose = new JsonDecrypt(jwkSet.getJsonWebKeys(), false, "kid", keyAlgo, contentAlgo,
+					new JWTOptions(JOSESerialization.COMPACT));
+		}
+		
 		decryptJose.decrypt(trovato);
 		String decrypted = decryptJose.getDecodedPayload();
 			
 		verifica(tipoTest, requestWithPayload, 
 				"encJoseSymm".equals(tipoTest) ? "encJoseSymm|"+decrypted : decrypted);
 	}
+	
+	private static void verificaExpectedEncryptContentEncJavaJCEKS(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, SecurityException {
+		String [] tmp = trovato.split("\\.");
+		if(tmp==null || tmp.length!=2) {
+			throw new UtilsException("Atteso formato iv.secret (base64)");
+		}
+		byte[]iv = HexBinaryUtilities.decode(tmp[0]);
+		byte[]dataEncrypted = HexBinaryUtilities.decode(tmp[1]);
+		
+		MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(new RequestInfo(),
+				"/tmp/keystore.jceks", "jceks", 
+				"123456");
+		SecretKey secretKey = merlinKs.getKeyStore().getSecretKey("openspcoop", "key123456");
+		Decrypt d = new Decrypt(secretKey, iv);
+		String decrypted = new String(d.decrypt(dataEncrypted, "AES/CBC/PKCS5Padding"));
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
+	private static void verificaExpectedEncryptContentEncJavaPublic(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, FileNotFoundException {
+		byte[]dataEncrypted = Base64Utilities.decode(trovato);
+		byte [] privateKey = FileSystemUtilities.readBytesFromFile("/tmp/privateKey.pem");
+		PrivateKey privKey = KeyUtils.getInstance().readPKCS8PrivateKeyDERFormat(privateKey);
+		Decrypt d = new Decrypt(privKey);
+		String decrypted = new String(d.decrypt(dataEncrypted, "RSA"));
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
+	
+	
 	private static void verifica(String tipoTest, boolean requestWithPayload, String decrypted) throws UtilsException {
 		String atteso = getExpectedEncryptContent(tipoTest, requestWithPayload);
 		if(!decrypted.equals(atteso)) {
@@ -1489,11 +1617,24 @@ public class FileTraceTest {
 		try {
 			for (String claim : check.keySet()) {
 				//System.out.println("CERCO ["+hdr+"] in ["+"$."+claim+"]");
-				String v = JsonPathExpressionEngine.extractAndConvertResultAsString(hdr, "$."+claim, LoggerWrapperFactory.getLogger(FileTraceTest.class));
+				String v = null;
+				try {
+					v = JsonPathExpressionEngine.extractAndConvertResultAsString(hdr, "$."+claim, LoggerWrapperFactory.getLogger(FileTraceTest.class));
+				}catch(org.openspcoop2.utils.json.JsonPathNotFoundException notFound) {
+					// ignore
+				}
 				Object o = check.get(claim);
 				if(o instanceof Boolean) {
-					if(v==null || StringUtils.isEmpty(v)) {
-						throw new UtilsException("Atteso nell'header JWE ("+hdr+") il claim '"+claim+"'");
+					boolean res = (Boolean) o;
+					if(res) {
+						if(v==null || StringUtils.isEmpty(v)) {
+							throw new UtilsException("Atteso nell'header JWE ("+hdr+") il claim '"+claim+"'");
+						}
+					}
+					else {
+						if(v!=null && StringUtils.isNotEmpty(v)) {
+							throw new UtilsException("Nell'header JWE ("+hdr+") non è atteso il claim '"+claim+"'");
+						}
 					}
 				}
 				else {

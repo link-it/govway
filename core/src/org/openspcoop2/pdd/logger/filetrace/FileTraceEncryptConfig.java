@@ -174,7 +174,7 @@ public class FileTraceEncryptConfig {
 		}
 	}
 	private static void parseEngineJose(String encMode, Properties propertiesMap, 
-			FileTraceEncryptConfig c) throws UtilsException  {
+			FileTraceEncryptConfig c)  {
 		c.joseIncludeCert = parseEngineJoseProperty(encMode+JOSE_INCLUDE_CERT, propertiesMap);
 		c.joseIncludePublicKey = parseEngineJoseProperty(encMode+JOSE_INCLUDE_PUBLIC_KEY, propertiesMap);
 		c.joseIncludeKeyId = parseEngineJoseProperty(encMode+JOSE_INCLUDE_KEY_ID, propertiesMap);
@@ -263,6 +263,10 @@ public class FileTraceEncryptConfig {
 			c.keystorePassword = keystorePassword.trim();
 		}
 		
+		parseKeystoreKey(encMode, propertiesMap, c);
+	}
+	private static void parseKeystoreKey(String encMode, Properties propertiesMap, 
+			FileTraceEncryptConfig c) throws UtilsException {
 		String keyAliasPName = encMode+KEY_ALIAS;
 		String keyAlias = propertiesMap.getProperty(keyAliasPName);
 		if(keyAlias==null || StringUtils.isEmpty(keyAlias.trim())) {
@@ -276,6 +280,13 @@ public class FileTraceEncryptConfig {
 			if(keyPassword!=null) {
 				c.keyPassword = keyPassword.trim();
 			}
+			
+			String keyAlgoPName = encMode+KEY_ALGORITHM;
+			String keyAlgo = propertiesMap.getProperty(keyAlgoPName);
+			if(keyAlgo==null || StringUtils.isEmpty(keyAlgo.trim())) {
+				throw new UtilsException(DEBUG_PREFIX+keyAlgoPName+"'"+UNDEFINED);
+			}
+			c.keyAlgorithm = keyAlgo.trim();
 		}
 	}
 	private static void parseKey(String encMode, Properties propertiesMap, 
@@ -287,14 +298,14 @@ public class FileTraceEncryptConfig {
 		}
 		c.keyPath = keyPath.trim();
 						
-		if(KeystoreType.SYMMETRIC_KEY.equals(c.keystoreType)){
-			String keyAlgoPName = encMode+KEY_ALGORITHM;
-			String keyAlgo = propertiesMap.getProperty(keyAlgoPName);
-			if(keyAlgo==null || StringUtils.isEmpty(keyAlgo.trim())) {
-				throw new UtilsException(DEBUG_PREFIX+keyAlgoPName+"'"+UNDEFINED);
-			}
-			c.keyAlgorithm = keyAlgo.trim();
+		
+		String keyAlgoPName = encMode+KEY_ALGORITHM;
+		String keyAlgo = propertiesMap.getProperty(keyAlgoPName);
+		if(keyAlgo==null || StringUtils.isEmpty(keyAlgo.trim())) {
+			throw new UtilsException(DEBUG_PREFIX+keyAlgoPName+"'"+UNDEFINED);
 		}
+		c.keyAlgorithm = keyAlgo.trim();
+		
 	}
 	
 	public String getName() {
