@@ -106,6 +106,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.security.Decrypt;
+import org.openspcoop2.utils.security.DecryptWrapKey;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
@@ -143,6 +144,8 @@ public class FileTraceTest {
 		ENCRYPT_TEST.add("encJoseJCEKSDirect");
 		
 		ENCRYPT_TEST.add("encJavaPublic");
+		ENCRYPT_TEST.add("encJavaPublicWrapKey");
+		ENCRYPT_TEST.add("encJavaPublicWrapKeyHex");
 		ENCRYPT_TEST.add("encJosePublic");
 	}
 	
@@ -1477,6 +1480,9 @@ public class FileTraceTest {
 		else if("encJavaPublic".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaPublic(tipoTest, requestWithPayload, trovato);
 		}
+		else if("encJavaPublicWrapKey".equals(tipoTest) || "encJavaPublicWrapKeyHex".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJavaPublicWrapKey(tipoTest, requestWithPayload, trovato);
+		}
 		else if("encJosePublic".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
 		}
@@ -1596,6 +1602,41 @@ public class FileTraceTest {
 		PrivateKey privKey = KeyUtils.getInstance().readPKCS8PrivateKeyDERFormat(privateKey);
 		Decrypt d = new Decrypt(privKey);
 		String decrypted = new String(d.decrypt(dataEncrypted, "RSA"));
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
+	private static void verificaExpectedEncryptContentEncJavaPublicWrapKey(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, SecurityException, FileNotFoundException {
+		
+		boolean base64 = true;
+		String mode = "base64";
+		if("encJavaPublicWrapKeyHex".equals(tipoTest)) {
+			base64 = false;
+			mode = "hex";
+		}
+		
+		String [] tmp = trovato.split("\\.");
+		if(tmp==null || tmp.length!=3) {
+			throw new UtilsException("Atteso formato wrappedKey.iv.secret ("+mode+")");
+		}
+		byte[]wrappedKey = null;
+		byte[]iv = null;
+		byte[]dataEncrypted = null;
+		if(base64) {
+			wrappedKey = Base64Utilities.decode(tmp[0]);
+			iv = Base64Utilities.decode(tmp[1]);
+			dataEncrypted = Base64Utilities.decode(tmp[2]);
+		}
+		else {
+			wrappedKey = HexBinaryUtilities.decode(tmp[0]);
+			iv = HexBinaryUtilities.decode(tmp[1]);
+			dataEncrypted = HexBinaryUtilities.decode(tmp[2]);
+		}
+		
+		byte [] privateKey = FileSystemUtilities.readBytesFromFile("/tmp/privateKey.pem");
+		PrivateKey privKey = KeyUtils.getInstance().readPKCS8PrivateKeyDERFormat(privateKey);
+		
+		DecryptWrapKey d = new DecryptWrapKey(privKey);
+		String decrypted = new String(d.decrypt(dataEncrypted, wrappedKey, iv, "RSA/ECB/OAEPWithSHA-256AndMGF1Padding", "AES/CBC/PKCS5Padding"));
 		
 		verifica(tipoTest, requestWithPayload, decrypted);
 	}

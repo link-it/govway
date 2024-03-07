@@ -60,6 +60,7 @@ public class FileTraceEncryptConfig {
 	private String keyAlias;
 	private String keyPassword;
 	private String keyId;
+	private boolean keyWrap = false;
 	
 	private String contentAlgorithm;
 	
@@ -90,6 +91,7 @@ public class FileTraceEncryptConfig {
 	private static final String KEY_ALIAS = ".key.alias";
 	private static final String KEY_PASSWORD = ".key.password";
 	private static final String KEY_ID = ".key.id";
+	private static final String KEY_WRAP = ".key.wrap";
 	
 	private static final String CONTENT_ALGORITHM = ".algorithm";
 	
@@ -167,6 +169,12 @@ public class FileTraceEncryptConfig {
 			if(!JAVA_ENCODING_BASE64.equals(c.javaEncoding) &&
 					!JAVA_ENCODING_HEX.equals(c.javaEncoding)) {
 				throw new UtilsException(DEBUG_PREFIX+encodingPName+"' with unsupported encryption mode '"+c.javaEncoding+"'");
+			}
+			
+			String keyWrapPName = encMode+KEY_WRAP;
+			String keyWrap = propertiesMap.getProperty(keyWrapPName);
+			if(keyWrap!=null && StringUtils.isNotEmpty(keyWrap.trim())) {
+				c.keyWrap = "true".equalsIgnoreCase(keyWrap);
 			}
 		}
 		else if(ENCRYPTIONT_ENGINE_JOSE.equals(c.encryptionEngine)) {
@@ -305,7 +313,6 @@ public class FileTraceEncryptConfig {
 			throw new UtilsException(DEBUG_PREFIX+keyAlgoPName+"'"+UNDEFINED);
 		}
 		c.keyAlgorithm = keyAlgo.trim();
-		
 	}
 	
 	public String getName() {
@@ -359,6 +366,10 @@ public class FileTraceEncryptConfig {
 	
 	public String getKeyId() {
 		return this.keyId;
+	}
+	
+	public boolean isKeyWrap() {
+		return this.keyWrap;
 	}
 	
 	public String getContentAlgorithm() {
