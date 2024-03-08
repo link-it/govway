@@ -89,7 +89,7 @@ public class JsonEncrypt {
 						
 			this.jwtHeaders = jwtHeaders;
 			
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
@@ -125,7 +125,7 @@ public class JsonEncrypt {
 			this.provider = JweUtils.createJweEncryptionProvider( keystore.getPublicKey(alias), this.keyAlgorithm, this.contentAlgorithm, compression);
 			
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
@@ -166,7 +166,7 @@ public class JsonEncrypt {
 			}
 			
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
@@ -210,14 +210,14 @@ public class JsonEncrypt {
 					this.provider = JweUtils.createJweEncryptionProvider(JwkUtils.toSecretKey(jsonWebKey), this.keyAlgorithm, this.contentAlgorithm, compression);
 				}
 				if(this.provider==null) {
-					throw new Exception("(JsonWebKey) JwsEncryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
+					throw new UtilsException("(JsonWebKey) JwsEncryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
 				}
 			}else {
 				this.provider = JweUtils.createJweEncryptionProvider(JwkUtils.toRSAPublicKey(jsonWebKey), this.keyAlgorithm, this.contentAlgorithm, compression);
 			}
 			
 			this.jwtHeaders = jwtHeaders;
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
@@ -230,21 +230,21 @@ public class JsonEncrypt {
 				default: throw new UtilsException("Unsupported serialization '"+this.options.getSerialization()+"'");
 			}
 		}
-		catch(Throwable t) {
+		catch(Exception t) {
 			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 
 	private String encryptCompact(String jsonString) throws Exception {	
-		JweHeaders headers = null;
+		JweHeaders headersBuild = null;
 		if(this.keyAlgorithm!=null) {
-			headers = new JweHeaders(this.keyAlgorithm,this.contentAlgorithm,this.options.isDeflate());
+			headersBuild = new JweHeaders(this.keyAlgorithm,this.contentAlgorithm,this.options.isDeflate());
 		}
 		else {
-			headers = new JweHeaders(this.contentAlgorithm,this.options.isDeflate());
+			headersBuild = new JweHeaders(this.contentAlgorithm,this.options.isDeflate());
 		}
-		fillJwtHeaders(headers, this.keyAlgorithm);
-		return this.provider.encrypt(jsonString.getBytes(), headers);
+		fillJwtHeaders(headersBuild, this.keyAlgorithm);
+		return this.provider.encrypt(jsonString.getBytes(), headersBuild);
 	}
 
 
@@ -272,14 +272,13 @@ public class JsonEncrypt {
 	}
 	
 	private void fillJwtHeaders(JweHeaders headers, org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgo) throws Exception {
-		if(this.headers!=null) {
-			if(this.headers.asMap()!=null && !this.headers.asMap().isEmpty()) {
-				Iterator<String> itKeys = this.headers.asMap().keySet().iterator();
-				while (itKeys.hasNext()) {
-					String key = (String) itKeys.next();
-					if(!headers.containsHeader(key)) {
-						headers.setHeader(key, this.headers.getHeader(key));
-					}
+		if(this.headers!=null &&
+			this.headers.asMap()!=null && !this.headers.asMap().isEmpty()) {
+			Iterator<String> itKeys = this.headers.asMap().keySet().iterator();
+			while (itKeys.hasNext()) {
+				String key = itKeys.next();
+				if(!headers.containsHeader(key)) {
+					headers.setHeader(key, this.headers.getHeader(key));
 				}
 			}
 		}

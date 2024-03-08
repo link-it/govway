@@ -155,10 +155,13 @@ public class FileTraceEncrypt {
 		if(jwk==null) {
 			throw new UtilsException("Accesso al keystore ["+config.getKeystoreType().getNome()+"] '"+config.getKeystorePath()+"' non riuscito per l'alias '"+config.getKeyAlias()+"'");
 		}
-		if(config.getKeyAlgorithm().contains("RSA")) {
+		if(jwk.getAlgorithm()==null) {
+			jwk.setAlgorithm(config.isJavaEngine() ? "A256GCM" : config.getContentAlgorithm());
+		}
+		if(config.getKeyAlgorithm().contains(KeyUtils.ALGO_RSA)) {
 			fileTraceEncryptKey.key = JwkUtils.toRSAPublicKey(jwk);
 		}
-		else if(config.getKeyAlgorithm().contains("EC")) {
+		else if(config.getKeyAlgorithm().contains(KeyUtils.ALGO_EC)) {
 			fileTraceEncryptKey.key = JwkUtils.toECPublicKey(jwk);
 		}
 		else {
@@ -269,7 +272,13 @@ public class FileTraceEncrypt {
 	
 	private String encJavaKeyWrap(FileTraceEncryptKey fileTraceEncryptKey, FileTraceEncryptConfig config, String value) throws UtilsException {
 		
-		EncryptWrapKey encrypt = new EncryptWrapKey(fileTraceEncryptKey.key);
+		EncryptWrapKey encrypt = null;
+		if(fileTraceEncryptKey.ks!=null) {
+			encrypt = new EncryptWrapKey(fileTraceEncryptKey.ks, config.getKeyAlias());
+		}
+		else {
+			encrypt = new EncryptWrapKey(fileTraceEncryptKey.key);
+		}
 				
 		byte [] encrypted = null;
 		try {

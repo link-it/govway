@@ -288,14 +288,15 @@ public class FileTraceEncryptConfig {
 			if(keyPassword!=null) {
 				c.keyPassword = keyPassword.trim();
 			}
-			
-			String keyAlgoPName = encMode+KEY_ALGORITHM;
-			String keyAlgo = propertiesMap.getProperty(keyAlgoPName);
-			if(keyAlgo==null || StringUtils.isEmpty(keyAlgo.trim())) {
-				throw new UtilsException(DEBUG_PREFIX+keyAlgoPName+"'"+UNDEFINED);
-			}
-			c.keyAlgorithm = keyAlgo.trim();
 		}
+		
+		String keyAlgoPName = encMode+KEY_ALGORITHM;
+		String keyAlgo = propertiesMap.getProperty(keyAlgoPName);
+		if(keyAlgo==null || StringUtils.isEmpty(keyAlgo.trim())) {
+			throw new UtilsException(DEBUG_PREFIX+keyAlgoPName+"'"+UNDEFINED);
+		}
+		c.keyAlgorithm = keyAlgo.trim();
+		
 	}
 	private static void parseKey(String encMode, Properties propertiesMap, 
 			FileTraceEncryptConfig c) throws UtilsException {

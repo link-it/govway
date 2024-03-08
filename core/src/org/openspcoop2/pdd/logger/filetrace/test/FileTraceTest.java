@@ -40,6 +40,8 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
+import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -110,7 +112,9 @@ import org.openspcoop2.utils.security.DecryptWrapKey;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
+import org.openspcoop2.utils.security.JsonUtils;
 import org.openspcoop2.utils.security.test.EncryptTest;
+import org.openspcoop2.utils.security.test.SignatureTest;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -147,6 +151,16 @@ public class FileTraceTest {
 		ENCRYPT_TEST.add("encJavaPublicWrapKey");
 		ENCRYPT_TEST.add("encJavaPublicWrapKeyHex");
 		ENCRYPT_TEST.add("encJosePublic");
+		
+		ENCRYPT_TEST.add("encJavaJWKsSymm");
+		ENCRYPT_TEST.add("encJavaJWKsAsymm");
+		ENCRYPT_TEST.add("encJoseJWKsSymm");
+		ENCRYPT_TEST.add("encJoseJWKsAsymm");
+		
+		ENCRYPT_TEST.add("encJavaJKS");
+		ENCRYPT_TEST.add("encJoseJKS");
+		ENCRYPT_TEST.add("encJavaPKCS12");
+		ENCRYPT_TEST.add("encJosePKCS12");
 	}
 	
 	public static void initDir() throws UtilsException, ReflectiveOperationException {
@@ -316,6 +330,12 @@ public class FileTraceTest {
 		File fKeystoreJCEKS = null;
 		File fPublic = null;
 		File fPrivate = null;
+		File fJWKsSymm = null;
+		File fJWKsPub = null;
+		File fJWKsPriv = null;
+		File fJKSPub = null;
+		File fJKSPriv = null;
+		File fP12 = null;
 		try {
 			Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
 			
@@ -340,6 +360,43 @@ public class FileTraceTest {
 			fPrivate = new File("/tmp/privateKey.pem");
 			FileSystemUtilities.writeFile(fPrivate, privateKey);
 						
+			try( InputStream isKeystoreJWKs = SignatureTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/keystore_symmetricKey_example.jwks") ){
+				byte [] b = Utilities.getAsByteArray(isKeystoreJWKs);
+				fJWKsSymm = new File("/tmp/symmetric.jwk");
+				FileSystemUtilities.writeFile(fJWKsSymm, b);
+			}
+			
+			try( InputStream isKeystoreJWKs = SignatureTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/truststore_example.jwks") ){
+				byte [] b = Utilities.getAsByteArray(isKeystoreJWKs);
+				fJWKsPub = new File("/tmp/public.jwk");
+				FileSystemUtilities.writeFile(fJWKsPub, b);
+			}
+			
+			try( InputStream isKeystoreJWKs = SignatureTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/keystore_example.jwks") ){
+				byte [] b = Utilities.getAsByteArray(isKeystoreJWKs);
+				fJWKsPriv = new File("/tmp/private.jwk");
+				FileSystemUtilities.writeFile(fJWKsPriv, b);
+			}
+			
+			try( InputStream isKeystoreJWKs = SignatureTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/truststore_example.jks") ){
+				byte [] b = Utilities.getAsByteArray(isKeystoreJWKs);
+				fJKSPub = new File("/tmp/truststore.jks");
+				FileSystemUtilities.writeFile(fJKSPub, b);
+			}
+			
+			try( InputStream isKeystoreJWKs = SignatureTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/keystore_example.jks") ){
+				byte [] b = Utilities.getAsByteArray(isKeystoreJWKs);
+				fJKSPriv = new File("/tmp/keystore.jks");
+				FileSystemUtilities.writeFile(fJKSPriv, b);
+			}
+			
+			try( InputStream isKeystoreJWKs = SignatureTest.class.getResourceAsStream("/org/openspcoop2/utils/security/test/keystore_example.p12") ){
+				byte [] b = Utilities.getAsByteArray(isKeystoreJWKs);
+				fP12 = new File("/tmp/keystore.p12");
+				FileSystemUtilities.writeFile(fP12, b);
+			}
+		
+			
 			for (FaseTracciamento fase : FaseTracciamento.values()) {
 				
 				emptyDir();
@@ -355,6 +412,14 @@ public class FileTraceTest {
 			
 			FileSystemUtilities.deleteFile(fPublic);
 			FileSystemUtilities.deleteFile(fPrivate);
+			
+			FileSystemUtilities.deleteFile(fJWKsSymm);
+			FileSystemUtilities.deleteFile(fJWKsPub);
+			FileSystemUtilities.deleteFile(fJWKsPriv);
+			
+			FileSystemUtilities.deleteFile(fJKSPub);
+			FileSystemUtilities.deleteFile(fJKSPriv);
+			FileSystemUtilities.deleteFile(fP12);
 		}
 	}
 	
@@ -1486,6 +1551,24 @@ public class FileTraceTest {
 		else if("encJosePublic".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
 		}
+		
+		else if("encJavaJWKsSymm".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJavaJWKsSymm(tipoTest, requestWithPayload, trovato);
+		}
+		else if("encJavaJWKsAsymm".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJavaJWKsPublicWrapKey(tipoTest, requestWithPayload, trovato);
+		}
+		else if("encJoseJWKsSymm".equals(tipoTest) || "encJoseJWKsAsymm".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
+		}
+		
+		else if("encJavaJKS".equals(tipoTest) || "encJavaPKCS12".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJavaKeystorePublicWrapKey(tipoTest, requestWithPayload, trovato);
+		}
+		else if("encJoseJKS".equals(tipoTest) || "encJosePKCS12".equals(tipoTest)) {
+			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
+		}
+		
 	}
 	private static void verificaExpectedEncryptContentEncJavaSymm(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException {
 		String [] tmp = trovato.split("\\.");
@@ -1524,6 +1607,16 @@ public class FileTraceTest {
 			contentAlgo = "A256GCM";
 			kid = "myKEY";
 		}
+		else if("encJoseJWKsSymm".equals(tipoTest) ) {
+			keyAlgo = "A256KW";
+			contentAlgo = "A256GCM";
+			expectedKid = false;
+		}
+		else if("encJoseJWKsAsymm".equals(tipoTest) || "encJoseJKS".equals(tipoTest) || "encJosePKCS12".equals(tipoTest)) {
+			keyAlgo = "RSA-OAEP-256";
+			contentAlgo = "A256GCM";
+			kid = "openspcoop";
+		}
 		
 		// check header
 		Map<String, Object> check = new HashMap<>();
@@ -1535,8 +1628,14 @@ public class FileTraceTest {
 		else {
 			check.put("kid", expectedKid);
 		}
-		if("encJosePublic".equals(tipoTest)) {
+		if("encJosePublic".equals(tipoTest) || "encJoseJWKsAsymm".equals(tipoTest)) {
 			check.put("jwk", true);
+		}
+		if("encJoseJKS".equals(tipoTest)) {
+			check.put("x5t", true);
+		}
+		if("encJosePKCS12".equals(tipoTest)) {
+			check.put("x5t#S256", true);
 		}
 		verifica(trovato, check);
 		
@@ -1570,6 +1669,27 @@ public class FileTraceTest {
 			jwkSet.getJson(); // rebuild	
 			decryptJose = new JsonDecrypt(jwkSet.getJsonWebKeys(), false, "kid", keyAlgo, contentAlgo,
 					new JWTOptions(JOSESerialization.COMPACT));
+		}
+		else if("encJoseJWKsSymm".equals(tipoTest) ) {
+			JWKSet jwkSet = new JWKSet(FileSystemUtilities.readFile("/tmp/symmetric.jwk"));
+			decryptJose = new JsonDecrypt(jwkSet.getJsonWebKeys(), true, "openspcoop", keyAlgo, contentAlgo,
+					new JWTOptions(JOSESerialization.COMPACT));
+		}
+		else if("encJoseJWKsAsymm".equals(tipoTest) ) {
+			JWKSet jwkSet = new JWKSet(FileSystemUtilities.readFile("/tmp/private.jwk"));
+			decryptJose = new JsonDecrypt(jwkSet.getJsonWebKeys(), false, "openspcoop", keyAlgo, contentAlgo,
+					new JWTOptions(JOSESerialization.COMPACT));
+		}
+		else if("encJoseJKS".equals(tipoTest) || "encJosePKCS12".equals(tipoTest) ) {
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(new RequestInfo(),
+					"encJoseJKS".equals(tipoTest) ? "/tmp/keystore.jks" : "/tmp/keystore.p12", 
+					"encJoseJKS".equals(tipoTest) ? "jks" : "pkcs12",		
+					"123456");
+			decryptJose = new JsonDecrypt(merlinKs.getKeyStore(), false, "openspcoop", "key123456", keyAlgo, contentAlgo,
+					new JWTOptions(JOSESerialization.COMPACT));
+		}
+		else {
+			throw new UtilsException("Tipo '"+tipoTest+"' non supportato");
 		}
 		
 		decryptJose.decrypt(trovato);
@@ -1641,6 +1761,78 @@ public class FileTraceTest {
 		verifica(tipoTest, requestWithPayload, decrypted);
 	}
 	
+	private static void verificaExpectedEncryptContentEncJavaJWKsSymm(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, FileNotFoundException {
+		String [] tmp = trovato.split("\\.");
+		if(tmp==null || tmp.length!=2) {
+			throw new UtilsException("Atteso formato iv.secret (base64)");
+		}
+		byte[]iv = Base64Utilities.decode(tmp[0]);
+		byte[]dataEncrypted = Base64Utilities.decode(tmp[1]);
+		
+		JWKSet jwkSet = new JWKSet(FileSystemUtilities.readFile("/tmp/symmetric.jwk"));
+		JsonWebKey jwk = JsonUtils.readKey(jwkSet.getJsonWebKeys(),"openspcoop");
+		if(jwk.getAlgorithm()==null) {
+			jwk.setAlgorithm("A256GCM");
+		}
+		SecretKey key = JwkUtils.toSecretKey(jwk);
+		
+		Decrypt d = new Decrypt(key, iv);
+		String decrypted = new String(d.decrypt(dataEncrypted, "AES/CBC/PKCS5Padding"));
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
+	
+	private static void verificaExpectedEncryptContentEncJavaJWKsPublicWrapKey(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, SecurityException, FileNotFoundException {
+		
+		String mode = "base64";
+		String [] tmp = trovato.split("\\.");
+		if(tmp==null || tmp.length!=3) {
+			throw new UtilsException("Atteso formato wrappedKey.iv.secret ("+mode+")");
+		}
+		byte[]wrappedKey = null;
+		byte[]iv = null;
+		byte[]dataEncrypted = null;
+		wrappedKey = Base64Utilities.decode(tmp[0]);
+		iv = Base64Utilities.decode(tmp[1]);
+		dataEncrypted = Base64Utilities.decode(tmp[2]);
+		
+		JWKSet jwkSet = new JWKSet(FileSystemUtilities.readFile("/tmp/private.jwk"));
+		JsonWebKey jwk = JsonUtils.readKey(jwkSet.getJsonWebKeys(),"openspcoop");
+		if(jwk.getAlgorithm()==null) {
+			jwk.setAlgorithm("A256GCM");
+		}
+		PrivateKey privKey = JwkUtils.toRSAPrivateKey(jwk);
+		
+		DecryptWrapKey d = new DecryptWrapKey(privKey);
+		String decrypted = new String(d.decrypt(dataEncrypted, wrappedKey, iv, "RSA/ECB/OAEPWithSHA-256AndMGF1Padding", "AES/CBC/PKCS5Padding"));
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
+	
+	private static void verificaExpectedEncryptContentEncJavaKeystorePublicWrapKey(String tipoTest, boolean requestWithPayload, String trovato) throws UtilsException, SecurityException, FileNotFoundException {
+		
+		String mode = "base64";
+		String [] tmp = trovato.split("\\.");
+		if(tmp==null || tmp.length!=3) {
+			throw new UtilsException("Atteso formato wrappedKey.iv.secret ("+mode+")");
+		}
+		byte[]wrappedKey = null;
+		byte[]iv = null;
+		byte[]dataEncrypted = null;
+		wrappedKey = Base64Utilities.decode(tmp[0]);
+		iv = Base64Utilities.decode(tmp[1]);
+		dataEncrypted = Base64Utilities.decode(tmp[2]);
+		
+		MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(new RequestInfo(),
+				"encJavaJKS".equals(tipoTest) ? "/tmp/keystore.jks" : "/tmp/keystore.p12", 
+				"encJavaJKS".equals(tipoTest) ? "jks" : "pkcs12",		
+				"123456");
+
+		DecryptWrapKey d = new DecryptWrapKey(merlinKs.getKeyStore(), "openspcoop", "key123456");
+		String decrypted = new String(d.decrypt(dataEncrypted, wrappedKey, iv, "RSA/ECB/OAEPWithSHA-256AndMGF1Padding", "AES/CBC/PKCS5Padding"));
+		
+		verifica(tipoTest, requestWithPayload, decrypted);
+	}
 	
 	private static void verifica(String tipoTest, boolean requestWithPayload, String decrypted) throws UtilsException {
 		String atteso = getExpectedEncryptContent(tipoTest, requestWithPayload);
@@ -1649,7 +1841,7 @@ public class FileTraceTest {
 		}		
 	}
 	private static void verifica(String token, Map<String, Object> check) throws UtilsException {
-		//System.out.println("----token ["+token+"] ");
+		/**System.out.println("----token ["+token+"] ");*/
 		String [] tmp = token.split("\\.");
 		if(tmp==null || tmp.length<2) {
 			throw new UtilsException("Atteso formato JWE");
@@ -1657,7 +1849,7 @@ public class FileTraceTest {
 		String hdr = new String(Base64Utilities.decode(tmp[0]));
 		try {
 			for (String claim : check.keySet()) {
-				//System.out.println("CERCO ["+hdr+"] in ["+"$."+claim+"]");
+				/**System.out.println("CERCO ["+hdr+"] in ["+"$."+claim+"]");*/
 				String v = null;
 				try {
 					v = JsonPathExpressionEngine.extractAndConvertResultAsString(hdr, "$."+claim, LoggerWrapperFactory.getLogger(FileTraceTest.class));
