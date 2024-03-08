@@ -19,6 +19,17 @@ Per default tutte le comunicazioni gestite dal gateway vengono veicolati nei top
 
 - *log.topic.<erogazioni/fruizioni>.<nomeTopic>.[in/out>][Request/Response]ContentDefined* : se abilitata, verranno riversate informazioni sul topic solo se la richiesta o risposta indicata, in ingresso o uscita dal gateway, possiede un payload http.
 
+- *log.topic.<erogazioni/fruizioni>.<nomeTopic>.trackingPhases* : consente di indicare un elenco, separato da virgola, di fasi di tracciamento (descritte nella sezione :ref:`tracciamentoTransazioniFasi`) su cui il topic verrà applicato; se non presenti un topic verrà applicato su tutte le fasi abilitate. Le fasi sono indicabili tramite le seguenti keyword:
+
+    - *inRequest*: rappresenta la fase '*Richiesta ricevuta*';
+
+    - *outRequest*: rappresenta la fase '*Richiesta in consegna*';
+
+    - *outResponse*: rappresenta la fase '*Risposta in consegna*';
+
+    - *postOutResponse*: rappresenta la fase '*Risposta consegnata*'.
+
+
 Nell'esempio seguente il topic relativo alle fruizioni viene alimentato solamente se il gateway è riuscito a contattare il backend e la richiesta possedeva un payload http (vengono escluse ad esempio le HTTP GET).
 Sui topic delle erogazioni viene invece attivato solamente il controllo sul payload http per il topic 'inputRequest'.
 
@@ -30,6 +41,17 @@ Sui topic delle erogazioni viene invece attivato solamente il controllo sul payl
       # Fruizioni (Filtro per RequestSent + Payload HTTP)
       topic.fruizioni.output.requestSent=true
       topic.fruizioni.output.outRequestContentDefined=true
+
+Nell'esempio seguente viene definito, per le erogazioni, un topic specifico per la fase di consegna della richiesta e uno per la risposta, oltre ad un altro topic in cui confluiscono log relativi alla fase di ricezione della richiesta e risposta consegnata.
+
+   ::
+
+      # Consegna della richiesta
+      topic.erogazioni.esempioConsegnaRichiesta.trackingPhases=outRequest
+      # Consegna della risposta
+      topic.erogazioni.esempioConsegnaRisposta.trackingPhases=outResponse
+      # Log della transazione
+      topic.erogazioni.requests.trackingPhases=inRequest,postOutResponse
 
 La generazione dei file di log è gestita dalle seguenti proprietà:
 
@@ -136,7 +158,7 @@ Le informazioni prodotte ad esempio per il topic inputRequest saranno le seguent
 
 Nell'esempio appena riportato si può notare come i 3 topic utilizzano una parte comune. È possibile ottimizzare le informazioni configurate attraverso la definizione di proprietà '*format.property.<posizione>.<nomeProprietà>=<valoreProprietà>*'. Le proprietà verranno risolte in ordine lessicografico rispetto alla posizione indicata, in modo da garantire la corretta risoluzione se si hanno proprietà che sono definite tramite altre proprietà.
 
-Di seguito il precedente esempio ridefinto tramite proprietà:
+Di seguito il precedente esempio ridefinito tramite proprietà:
 
    ::
 
@@ -164,7 +186,7 @@ Di seguito un esempio di configurazione che effettua l'escape del carattere '\\"
 .. note::
       In caso di configurazione globale (attivata da file govway_local.properties come indicato in :ref:`avanzate_fileTrace`), anche se la configurazione viene modificata non sarà utilizzata dal Gateway fino ad un suo riavvio. È possibile forzare la rilettura immediata accendendo alla voce 'Strumenti - Runtime' della console di gestione e selezionando 'Aggiorna la configurazione' nella sezione "Informazioni Tracciamento - File Trace' (:numref:`UpdateFileTrace`)".
 
-      .. figure:: ../../_figure_console/UpdateFileTrace.png
+      .. figure:: ../../../_figure_console/UpdateFileTrace.png
        :scale: 70%
        :align: center
        :name: UpdateFileTrace

@@ -540,34 +540,10 @@ I tipi di messaggi disponibili sono:
 - outResponse: risposta ritornata a client.
 
 .. note::
+      È disponibile inoltre l'operazione 'remove<MessageType>Header(name)' (utilizzare la prima lettera maiuscola per MessageType) che consente di ottenere il valore dell'header http indicato come parametro e nello stesso tempo di eliminarlo dalla lista di header ritornati da un successivo accesso alla risorsa '<messageType>Headers'.
+
+.. note::
       Le informazioni sui 4 tipi di messaggio saranno disponibili solamente se è stata abilitata la funzionalità di dump per ciascun tipo nel file di configurazione locale '/etc/govway/govway_local.properties' (assumendo sia /etc/govway la directory di configurazione indicata in fase di installazione) o tramite le :ref:`configProprieta` come indicato in :ref:`avanzate_fileTrace`. 
-      Di seguito un estratto della configurazione globale che riporta l'abilitazione dei 4 tipi:
-
-         ::
-
-            # ================================================
-            # FileTrace
-            ...
-            #
-            # Indicazione se nella funzionalità è consentito l'accesso ai contenuti
-            # -- Fruizioni --
-            # inRequest/outResponse
-            org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.enabled=true
-            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.payload.enabled=true
-            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.headers.enabled=true
-            # outRequest/inResponse
-            org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.enabled=true
-            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.payload.enabled=true
-            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.headers.enabled=true
-            # -- Erogazioni --
-            # inRequest/outResponse
-            org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.enabled=true
-            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.payload.enabled=true
-            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.headers.enabled=true
-            # outRequest/inResponse
-            org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.enabled=true
-            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.payload.enabled=true
-            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.headers.enabled=true
             ...
 	
 
