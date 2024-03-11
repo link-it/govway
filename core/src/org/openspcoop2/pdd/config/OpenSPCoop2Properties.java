@@ -2542,6 +2542,8 @@ public class OpenSPCoop2Properties {
 				if(this.isStatisticheGenerazioneBaseMensileEnabled()) {
 					this.isStatisticheGenerazioneBaseMensileEnabledUltimoMese();
 				}
+				this.isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie();
+				this.getStatisticheGenerazioneTradeOffMs();
 				this.getStatisticheOrarieGenerazioneTimerIntervalSeconds();
 				this.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds();
 				this.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds();
@@ -31136,6 +31138,53 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isStatisticheGenerazioneBaseMensileEnabledUltimoMese;
+	}
+	
+	private Boolean isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie = null;
+	public boolean isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie() {	
+		if(this.isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie==null){
+			String pName = "org.openspcoop2.pdd.statistiche.generazione.attendiCompletamentoTransazioniInFasiIntermedie";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				this.isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie = true;
+			}    
+		}
+
+		return this.isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie;
+	}
+	
+	private Long getStatisticheGenerazioneTradeOffMs = null;
+	public long getStatisticheGenerazioneTradeOffMs() {	
+		if(this.getStatisticheGenerazioneTradeOffMs==null){
+			String pName = "org.openspcoop2.pdd.statistiche.generazione.tradeOffSeconds";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata");
+					name="-1";
+				}
+				name = name.trim();
+				this.getStatisticheGenerazioneTradeOffMs = Long.parseLong(name);
+				if(this.getStatisticheGenerazioneTradeOffMs>0) {
+					this.getStatisticheGenerazioneTradeOffMs = this.getStatisticheGenerazioneTradeOffMs * 1000l; // traduco in ms
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=300 : "+e.getMessage(),e);
+				this.getStatisticheGenerazioneTradeOffMs = 300l * 1000l;  // traduco in ms
+			}    
+		}
+
+		return this.getStatisticheGenerazioneTradeOffMs;
 	}
 
 	// NOTA: DEVE ESSERE RILETTO TUTTE LE VOLTE CHE VIENE CHIAMATO!!!!!!!

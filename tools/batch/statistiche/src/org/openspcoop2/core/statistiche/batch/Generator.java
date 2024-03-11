@@ -131,21 +131,23 @@ public class Generator {
 			switch (tipoStatistica) {
 			case STATISTICHE_ORARIE:
 				statisticsConfig.setStatisticheOrarie(true);
-				statisticsConfig.setStatisticheOrarie_gestioneUltimoIntervallo(true);
+				statisticsConfig.setStatisticheOrarieGestioneUltimoIntervallo(true);
 				break;
 			case STATISTICHE_GIORNALIERE:
 				statisticsConfig.setStatisticheGiornaliere(true);
-				statisticsConfig.setStatisticheGiornaliere_gestioneUltimoIntervallo(true);
+				statisticsConfig.setStatisticheGiornaliereGestioneUltimoIntervallo(true);
 				break;
 			case STATISTICHE_SETTIMANALI:
 				statisticsConfig.setStatisticheSettimanali(true);
-				statisticsConfig.setStatisticheSettimanali_gestioneUltimoIntervallo(true);
+				statisticsConfig.setStatisticheSettimanaliGestioneUltimoIntervallo(true);
 				break;
 			case STATISTICHE_MENSILI:
 				statisticsConfig.setStatisticheMensili(true);
-				statisticsConfig.setStatisticheMensili_gestioneUltimoIntervallo(true);
+				statisticsConfig.setStatisticheMensiliGestioneUltimoIntervallo(true);
 				break;
 			}
+			statisticsConfig.setWaitMsBeforeNextInterval(generatorProperties.getGenerazioneTradeOffMs());
+			statisticsConfig.setWaitStatiInConsegna(generatorProperties.isGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie());
 			
 			// aggiorno configurazione per forceIndex
 			statisticsConfig.setForceIndexConfig(generatorProperties.getStatisticheGenerazioneForceIndexConfig());
