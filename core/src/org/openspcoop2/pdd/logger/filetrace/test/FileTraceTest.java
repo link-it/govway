@@ -94,7 +94,10 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyUtils;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.SymmetricKeyUtils;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.test.KeystoreTest;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -161,6 +164,8 @@ public class FileTraceTest {
 		ENCRYPT_TEST.add("encJoseJKS");
 		ENCRYPT_TEST.add("encJavaPKCS12");
 		ENCRYPT_TEST.add("encJosePKCS12");
+		ENCRYPT_TEST.add("encJavaPKCS11");
+		ENCRYPT_TEST.add("encJosePKCS11");
 	}
 	
 	public static void initDir() throws UtilsException, ReflectiveOperationException {
@@ -336,6 +341,7 @@ public class FileTraceTest {
 		File fJKSPub = null;
 		File fJKSPriv = null;
 		File fP12 = null;
+		File fKeystoreP11 = null;
 		try {
 			Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
 			
@@ -396,6 +402,17 @@ public class FileTraceTest {
 				FileSystemUtilities.writeFile(fP12, b);
 			}
 		
+			fKeystoreP11 = File.createTempFile("keystore_hsm", ".properties");
+			FileSystemUtilities.writeFile(fKeystoreP11, Utilities.getAsByteArray(SignatureTest.class.getResourceAsStream(KeystoreTest.PREFIX+"govway_test_hsm.properties")) );
+			HSMManager.init(fKeystoreP11, true, LoggerWrapperFactory.getLogger(FileTraceTest.class), true);
+			HSMManager hsmManager = HSMManager.getInstance();
+			boolean uniqueProviderInstance = true;		
+			hsmManager.providerInit(LoggerWrapperFactory.getLogger(FileTraceTest.class), uniqueProviderInstance);
+			System.out.println("PKCS11 Keystore registered: "+hsmManager.getKeystoreTypes());
+			org.openspcoop2.utils.certificate.KeyStore keystoreP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_CLIENT1);
+			if(!KeystoreType.PKCS11.getNome().equalsIgnoreCase(keystoreP11.getKeystoreType())) {
+				throw new Exception("Atteso tipo PKCS11, trovato '"+keystoreP11.getKeystoreType()+"'");
+			}
 			
 			for (FaseTracciamento fase : FaseTracciamento.values()) {
 				
@@ -420,6 +437,7 @@ public class FileTraceTest {
 			FileSystemUtilities.deleteFile(fJKSPub);
 			FileSystemUtilities.deleteFile(fJKSPriv);
 			FileSystemUtilities.deleteFile(fP12);
+			FileSystemUtilities.deleteFile(fKeystoreP11);
 		}
 	}
 	
@@ -1562,10 +1580,10 @@ public class FileTraceTest {
 			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
 		}
 		
-		else if("encJavaJKS".equals(tipoTest) || "encJavaPKCS12".equals(tipoTest)) {
+		else if("encJavaJKS".equals(tipoTest) || "encJavaPKCS12".equals(tipoTest) || "encJavaPKCS11".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJavaKeystorePublicWrapKey(tipoTest, requestWithPayload, trovato);
 		}
-		else if("encJoseJKS".equals(tipoTest) || "encJosePKCS12".equals(tipoTest)) {
+		else if("encJoseJKS".equals(tipoTest) || "encJosePKCS12".equals(tipoTest) || "encJosePKCS11".equals(tipoTest)) {
 			verificaExpectedEncryptContentEncJose(tipoTest, requestWithPayload, trovato);
 		}
 		
@@ -1616,6 +1634,11 @@ public class FileTraceTest {
 			keyAlgo = "RSA-OAEP-256";
 			contentAlgo = "A256GCM";
 			kid = "openspcoop";
+		}
+		else if("encJosePKCS11".equals(tipoTest)) {
+			keyAlgo = "RSA1_5";
+			contentAlgo = "A256GCM";
+			kid = KeystoreTest.ALIAS_PKCS11_CLIENT1;
 		}
 		
 		// check header
@@ -1686,6 +1709,14 @@ public class FileTraceTest {
 					"encJoseJKS".equals(tipoTest) ? "jks" : "pkcs12",		
 					"123456");
 			decryptJose = new JsonDecrypt(merlinKs.getKeyStore(), false, "openspcoop", "key123456", keyAlgo, contentAlgo,
+					new JWTOptions(JOSESerialization.COMPACT));
+		}
+		else if("encJosePKCS11".equals(tipoTest) ) {
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(new RequestInfo(),
+					HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED, 
+					KeystoreTest.PKCS11_CLIENT1,		
+					HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED);
+			decryptJose = new JsonDecrypt(merlinKs.getKeyStore(), false, KeystoreTest.ALIAS_PKCS11_CLIENT1, KeystoreTest.PASSWORD, keyAlgo, contentAlgo,
 					new JWTOptions(JOSESerialization.COMPACT));
 		}
 		else {
@@ -1823,13 +1854,35 @@ public class FileTraceTest {
 		iv = Base64Utilities.decode(tmp[1]);
 		dataEncrypted = Base64Utilities.decode(tmp[2]);
 		
+		String path = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+		String tipo = KeystoreTest.PKCS11_CLIENT1;
+		String pwd = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+		String alias = KeystoreTest.ALIAS_PKCS11_CLIENT1;
+		String keyPWD = KeystoreTest.PASSWORD;
+		String keyAlgo = "RSA/ECB/PKCS1Padding";
+		if("encJavaJKS".equals(tipoTest)) {
+			path = "/tmp/keystore.jks";
+			tipo = "jks";
+			pwd = "123456";
+			alias = "openspcoop";
+			keyPWD = "key123456";
+			keyAlgo = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+		}
+		else if("encJavaPKCS12".equals(tipoTest)) {
+			path = "/tmp/keystore.p12";
+			tipo = "pkcs12";
+			pwd = "123456";
+			alias = "openspcoop";
+			keyPWD = "key123456";
+			keyAlgo = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+		}
 		MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(new RequestInfo(),
-				"encJavaJKS".equals(tipoTest) ? "/tmp/keystore.jks" : "/tmp/keystore.p12", 
-				"encJavaJKS".equals(tipoTest) ? "jks" : "pkcs12",		
-				"123456");
+				path, 
+				tipo,		
+				pwd);
 
-		DecryptWrapKey d = new DecryptWrapKey(merlinKs.getKeyStore(), "openspcoop", "key123456");
-		String decrypted = new String(d.decrypt(dataEncrypted, wrappedKey, iv, "RSA/ECB/OAEPWithSHA-256AndMGF1Padding", "AES/CBC/PKCS5Padding"));
+		DecryptWrapKey d = new DecryptWrapKey(merlinKs.getKeyStore(), alias, keyPWD);
+		String decrypted = new String(d.decrypt(dataEncrypted, wrappedKey, iv, keyAlgo, "AES/CBC/PKCS5Padding"));
 		
 		verifica(tipoTest, requestWithPayload, decrypted);
 	}

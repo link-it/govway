@@ -1,6 +1,6 @@
 .. _avanzate_fileTrace:
 
-Configurazione della Tracciatura su File
+Configurazione Tracciamento su File
 -----------------------------------------
 
 Nella sezione :ref:`avanzate_fileTrace_format` viene descritto il formato del file di configurazione che definisce i log emessi su file. Il path al file di configurazione deve essere indicato nella sezione 'Configurazione FileTrace' presente nella maschera di configurazione del tracciamento descritta nella sezione :ref:`tracciamentoTransazioni`, ridefinendo il comportamento di default come mostrato in figura :numref:`tracciamentoFileTraceConfigurazioneParametriFig`.

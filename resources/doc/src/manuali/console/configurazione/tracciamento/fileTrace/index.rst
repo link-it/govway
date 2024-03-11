@@ -64,3 +64,5 @@ Maggiori dettagli sulla configurazione e sul formato dei log vengono forniti nel
 	config
         formato
 	info
+        proprieta
+        proprietaCifrate

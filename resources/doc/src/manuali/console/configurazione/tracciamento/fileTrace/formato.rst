@@ -156,7 +156,7 @@ Le informazioni prodotte ad esempio per il topic inputRequest saranno le seguent
       "req"|"b4355a45-71cc-4293-b3b7-a4622af8ea84"|"govway"|"2020-06-26 12:48:00:102"|"+0200"|"192.168.1.22"|"HTTP/1.1"|"POST"
 
 
-Nell'esempio appena riportato si può notare come i 3 topic utilizzano una parte comune. È possibile ottimizzare le informazioni configurate attraverso la definizione di proprietà '*format.property.<posizione>.<nomeProprietà>=<valoreProprietà>*'. Le proprietà verranno risolte in ordine lessicografico rispetto alla posizione indicata, in modo da garantire la corretta risoluzione se si hanno proprietà che sono definite tramite altre proprietà.
+Nell'esempio appena riportato si può notare come i 3 topic utilizzano una parte comune. È possibile ottimizzare le informazioni configurate attraverso la definizione di proprietà '*format.property.<posizione>.<nomeProprietà>=<valoreProprietà>*'. Le proprietà verranno risolte in ordine lessicografico rispetto alla posizione indicata, in modo da garantire la corretta risoluzione se si hanno proprietà che sono definite tramite altre proprietà. Maggiori dettagli vengono forniti nella sezione :ref:`avanzate_fileTrace_proprieta`.
 
 Di seguito il precedente esempio ridefinito tramite proprietà:
 
