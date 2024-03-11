@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -61,6 +62,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.handler.PostOutResponseHandlerGestioneControlloTraffico;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -75,13 +77,16 @@ import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceManager;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
@@ -89,6 +94,7 @@ import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.date.DateManager;
@@ -386,20 +392,27 @@ public class TracciamentoManager {
 	}
 	
 	
-	public void invoke(InformazioniTransazione info, String esitoContext, java.util.Map<String, List<String>> headerInUscita) throws HandlerException {
-		invokeEngine(info, null, esitoContext, headerInUscita);
+	public void invoke(InformazioniTransazione info, String esitoContext, java.util.Map<String, List<String>> headerInUscita,
+			org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore) throws HandlerException {
+		invokeEngine(info, null, esitoContext, headerInUscita,
+				msgdiagErrore);
 	}
-	public void invoke(InformazioniTransazione info, String esitoContext) throws HandlerException {
-		invokeEngine(info, null, esitoContext, null);
+	public void invoke(InformazioniTransazione info, String esitoContext,
+			org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore) throws HandlerException {
+		invokeEngine(info, null, esitoContext, null,
+				msgdiagErrore);
 	}
-	public void invoke(InformazioniTransazione info, EsitoTransazione esito, java.util.Map<String, List<String>> headerInUscita) throws HandlerException {
-		invokeEngine(info, esito, null, headerInUscita);
+	public void invoke(InformazioniTransazione info, EsitoTransazione esito, java.util.Map<String, List<String>> headerInUscita,
+			org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore) throws HandlerException {
+		invokeEngine(info, esito, null, headerInUscita,
+				msgdiagErrore);
 	}
 	public void invoke(InformazioniTransazione info, EsitoTransazione esito) throws HandlerException {
-		invokeEngine(info, esito, null, null);
+		invokeEngine(info, esito, null, null, null);
 	}
 	private void invokeEngine(InformazioniTransazione info, EsitoTransazione esito, String esitoContext,
-			java.util.Map<String, List<String>> headerInUscita) throws HandlerException {
+			java.util.Map<String, List<String>> headerInUscita,
+			org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore) throws HandlerException {
 		
 		if(!this.transazioniEnabled) {
 			return;
@@ -412,8 +425,15 @@ public class TracciamentoManager {
 			timeStart = DateManager.getTimeMillis();
 		}
 		try {
-			invoke(info, esito, esitoContext, headerInUscita, times);
-		}finally {
+			invoke(info, esito, esitoContext, headerInUscita, 
+					msgdiagErrore,
+					times);
+		}
+		catch(HandlerException he) {
+			he.setIntegrationFunctionError(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE);
+			throw he;
+		}
+		finally {
 			if(times!=null) {
 				long timeEnd =  DateManager.getTimeMillis();
 				long timeProcess = timeEnd-timeStart;
@@ -435,6 +455,7 @@ public class TracciamentoManager {
 	private void invoke(InformazioniTransazione info, 
 			EsitoTransazione esito, String esitoContext, 
 			java.util.Map<String, List<String>> headerInUscita,
+			org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore,
 			TransazioniProcessTimes times) throws HandlerException {
 
 		if (info==null)
@@ -470,50 +491,71 @@ public class TracciamentoManager {
 		/* ---- Verifica Configurazione della Transazione per registrazione nello storico ----- */
 		
 		ConfigurazioneTracciamento configurazioneTracciamento = null;
-		boolean dbEnabled = true;
-		boolean fileTraceEnabled = false;
+		boolean dbEnabledBloccante = true;
+		boolean dbEnabledNonBloccante = false;
+		boolean fileTraceEnabledBloccante = false;
+		boolean fileTraceEnabledNonBloccante = false;
 		File fileTraceConfig = null;
 		boolean fileTraceConfigGlobal = true;
 		try{
+			if(msgdiagErrore==null) {
+				String nomePorta = null;
+				if(transaction!=null && transaction.getRequestInfo()!=null && 
+						transaction.getRequestInfo().getProtocolContext()!=null &&
+						transaction.getRequestInfo().getProtocolContext().getInterfaceName()!=null) {
+					nomePorta = transaction.getRequestInfo().getProtocolContext().getInterfaceName();
+				}
+				RequestInfo requestInfo = transaction.getRequestInfo();
+				msgdiagErrore = org.openspcoop2.pdd.logger.MsgDiagnostico.newInstance(info.getTipoPorta(),info.getIdModulo(), nomePorta, requestInfo, this.configPdDManager);
+				msgdiagErrore.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
+				msgdiagErrore.setPddContext(info.getContext(), info.getProtocolFactory());
+			}
+			
 			configurazioneTracciamento = getConfigurazioneTracciamento(idTransazione, context, tipoPorta, transaction);	
 			
 			if(configurazioneTracciamento!=null) {
-				dbEnabled = configurazioneTracciamento.isDbEnabled();
-				if(dbEnabled) {
+				dbEnabledBloccante = configurazioneTracciamento.isDbEnabled();
+				if(dbEnabledBloccante) {
 					switch (this.fase) {
 					case IN_REQUEST:
-						dbEnabled = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestInEnabled();
+						dbEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestInEnabledBloccante();
+						dbEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestInEnabledNonBloccante();
 						break;
 					case OUT_REQUEST:
-						dbEnabled = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestOutEnabled();
+						dbEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestOutEnabledBloccante();
+						dbEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestOutEnabledNonBloccante();
 						break;
 					case OUT_RESPONSE:
-						dbEnabled = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBResponseOutEnabled();
+						dbEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBResponseOutEnabledBloccante();
+						dbEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBResponseOutEnabledNonBloccante();
 						break;
 					case POST_OUT_RESPONSE:
-						dbEnabled = configurazioneTracciamento.getRegole()==null || configurazioneTracciamento.getRegole().isTracciamentoDBResponseOutCompleteEnabled();
+						dbEnabledBloccante = configurazioneTracciamento.getRegole()==null || configurazioneTracciamento.getRegole().isTracciamentoDBResponseOutCompleteEnabled();
 						break;
 					}
 				}
 				
-				fileTraceEnabled = configurazioneTracciamento.isFileTraceEnabled();
-				if(fileTraceEnabled) {
+				fileTraceEnabledBloccante = configurazioneTracciamento.isFileTraceEnabled();
+				if(fileTraceEnabledBloccante) {
 					fileTraceConfig = configurazioneTracciamento.getFileTraceConfig();
 					fileTraceConfigGlobal = configurazioneTracciamento.isFileTraceConfigGlobal();
 				}
-				if(fileTraceEnabled) {
+				if(fileTraceEnabledBloccante) {
 					switch (this.fase) {
 					case IN_REQUEST:
-						fileTraceEnabled = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestInEnabled();
+						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestInEnabledBloccante();
+						fileTraceEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestInEnabledNonBloccante();
 						break;
 					case OUT_REQUEST:
-						fileTraceEnabled = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestOutEnabled();
+						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestOutEnabledBloccante();
+						fileTraceEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestOutEnabledNonBloccante();
 						break;
 					case OUT_RESPONSE:
-						fileTraceEnabled = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabled();
+						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabledBloccante();
+						fileTraceEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabledNonBloccante();
 						break;
 					case POST_OUT_RESPONSE:
-						fileTraceEnabled = configurazioneTracciamento.getRegole()==null || configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutCompleteEnabled();
+						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()==null || configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutCompleteEnabled();
 						break;
 					}
 				}
@@ -527,7 +569,10 @@ public class TracciamentoManager {
 		
 		boolean exitTransactionAfterRateLimitingRemoveThreadNoTraceDB = false;
 		boolean noFileTrace = false;
-		if(!dbEnabled && !fileTraceEnabled) {
+		if(!dbEnabledBloccante && !dbEnabledNonBloccante
+				&&
+				!fileTraceEnabledBloccante && !fileTraceEnabledNonBloccante
+			) {
 			noFileTrace = true;
 			exitTransactionAfterRateLimitingRemoveThreadNoTraceDB = true;
 		}
@@ -599,7 +644,7 @@ public class TracciamentoManager {
 									exitTransactionAfterRateLimitingRemoveThreadNoTraceDB = true;
 								}
 								else if(FaseTracciamento.OUT_RESPONSE.equals(this.fase) &&
-									dbEnabled) {
+									(dbEnabledBloccante || dbEnabledNonBloccante)) {
 									this.disableTransactionFilterDB(info);
 								}
 								
@@ -607,7 +652,7 @@ public class TracciamentoManager {
 									noFileTrace = true;
 								}
 								else if(FaseTracciamento.OUT_RESPONSE.equals(this.fase) &&
-										fileTraceEnabled) {
+										(fileTraceEnabledBloccante || fileTraceEnabledNonBloccante)) {
 									this.disableTransactionFilterFileTrace(info);
 								}
 							}
@@ -624,10 +669,10 @@ public class TracciamentoManager {
 				this.logError(prefixIdTransazione+"errore durante la lettura della configurazione del tracciamento da effettuare rispetto agli esiti: "+e.getMessage(),e);
 			}
 			
-			if(!exitTransactionAfterRateLimitingRemoveThreadNoTraceDB && !dbEnabled) {
+			if(!exitTransactionAfterRateLimitingRemoveThreadNoTraceDB && !dbEnabledBloccante && !dbEnabledNonBloccante) {
 				exitTransactionAfterRateLimitingRemoveThreadNoTraceDB = true;
 			}
-			if(!noFileTrace && !fileTraceEnabled) {
+			if(!noFileTrace && !fileTraceEnabledBloccante && !fileTraceEnabledNonBloccante) {
 				noFileTrace = true;
 			}
 			
@@ -775,7 +820,7 @@ public class TracciamentoManager {
 				}
 				
 				// ### FileTrace ###
-				if(fileTraceEnabled && !noFileTrace) {
+				if((fileTraceEnabledBloccante || fileTraceEnabledNonBloccante) && !noFileTrace) {
 					
 					InformazioniToken informazioniToken = null;
 					InformazioniAttributi informazioniAttributi = null;
@@ -795,7 +840,7 @@ public class TracciamentoManager {
 					
 					fileTraceException = logWithFileTrace(fileTraceConfig, fileTraceConfigGlobal,
 							times,
-							transazioneDTO, transaction, 
+							transazioneDTO, transaction, esito,
 							informazioniToken,
 							informazioniAttributi,
 							informazioniNegoziazioneToken,
@@ -803,7 +848,9 @@ public class TracciamentoManager {
 							info,
 							headerInUscita,
 							requestInfo,
-							idTransazione); // anche qua vi e' un try catch con Throwable
+							idTransazione,
+							fileTraceEnabledBloccante,
+							msgdiagErrore); // anche qua vi e' un try catch con Throwable
 				}
 				
 			}
@@ -814,6 +861,12 @@ public class TracciamentoManager {
 			else if(exitTransactionAfterRateLimitingRemoveThreadNoTraceDB){
 				// La risorsa viene rilasciata nel finally
 				/**this.releaseResources(transaction, idTransazione, context);*/
+				
+				// se non devo tracciare su db ma ho avuto un errore su file trace devo registrarlo
+				if(fileTraceException!=null) {
+					throw fileTraceException;
+				}
+				
 				return;
 			}
 			
@@ -833,6 +886,12 @@ public class TracciamentoManager {
 				// NOTA: Da fare thread che ripulisce header di trasporto o dump messaggi non associati a transazioni.
 				// La risorsa viene rilasciata nel finally
 				/**this._releaseResources(transaction, idTransazione, context);*/
+				
+				// se non devo tracciare su db ma ho avuto un errore su file trace devo registrarlo
+				if(fileTraceException!=null) {
+					throw fileTraceException;
+				}
+				
 				return;
 			}
 			
@@ -858,6 +917,7 @@ public class TracciamentoManager {
 					(FaseTracciamento.OUT_RESPONSE.equals(this.fase));
 			boolean registrazioneMessaggiDiagnostici = true;
 			boolean registrazioneDumpMessaggi = true;
+			boolean insertTransazione = false;
 			try {
 				
 	
@@ -1050,8 +1110,9 @@ public class TracciamentoManager {
 					if(times!=null) {
 						timeStart = DateManager.getTimeMillis();
 					}
-					registraTransazione(transazioneDTO,
-							transazioneService, info);
+					insertTransazione = registraTransazione(transazioneDTO,
+							transazioneService, info,
+							autoCommit);
 				}finally {
 					if(times!=null) {
 						long timeEnd =  DateManager.getTimeMillis();
@@ -1341,6 +1402,13 @@ public class TracciamentoManager {
 						}
 					}
 				}
+				
+				
+				// DOPO COMMIT RIUSCITO
+				if(!autoCommit && insertTransazione &&
+					!FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
+					addTransactionAlreadyRegistered(info);
+				}
 	
 	
 			} catch (SQLException sqlEx) {
@@ -1356,7 +1424,13 @@ public class TracciamentoManager {
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura della transazione sul database (sql): " + sqlEx.getLocalizedMessage();
 				this.logError("["+idTransazione+"] "+msg,sqlEx);
-				throw new HandlerException(msg,sqlEx);			
+				if(!FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
+					logRegistrazioneNonRiuscita(msgdiagErrore, false, sqlEx, idTransazione, 
+							null, null);
+				}
+				if(dbEnabledBloccante) {
+					throw new HandlerException(msg,sqlEx);
+				}
 			}  catch (Exception e) {
 				errore = true;
 				try{
@@ -1370,7 +1444,13 @@ public class TracciamentoManager {
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura della transazione sul database: " + e.getLocalizedMessage();
 				this.logError("["+idTransazione+"] "+msg,e);
-				throw new HandlerException(msg,e);	
+				if(!FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
+					logRegistrazioneNonRiuscita(msgdiagErrore, false, e, idTransazione, 
+							null, null);
+				}
+				if(dbEnabledBloccante) {
+					throw new HandlerException(msg,e);
+				}
 			} finally {
 				
 				// Ripristino Autocomit
@@ -1502,7 +1582,7 @@ public class TracciamentoManager {
 	
 	private HandlerException logWithFileTrace(File fileTraceConfig, boolean fileTraceConfigGlobal,
 			TransazioniProcessTimes times,
-			Transazione transazioneDTO, Transaction transaction, 
+			Transazione transazioneDTO, Transaction transaction, EsitoTransazione esito,
 			InformazioniToken informazioniToken,
 			InformazioniAttributi informazioniAttributi,
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
@@ -1510,7 +1590,9 @@ public class TracciamentoManager {
 			InformazioniTransazione info,
 			java.util.Map<String, List<String>> headerInUscita,
 			RequestInfo requestInfo,
-			String idTransazione) {
+			String idTransazione,
+			boolean fileTraceEnabledBloccante,
+			org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore) {
 		FileTraceManager fileTraceManager = null;
 		long timeStart = -1;
 		try {
@@ -1539,7 +1621,14 @@ public class TracciamentoManager {
 		}catch (Throwable e) {
 			String error = "["+idTransazione+"] File trace fallito: "+e.getMessage();
 			this.logError(error,e);
-			if(throwFileTraceException()) {
+			BooleanNullable changeEsito = BooleanNullable.NULL();
+			logRegistrazioneNonRiuscita(msgdiagErrore, true, e, idTransazione,
+					transaction, changeEsito);
+			if(changeEsito.getValue()!=null && changeEsito.getValue().booleanValue()) {
+				esito = ServicesUtils.updateEsitoConAnomalie(esito, this.log, info.getProtocolFactory());
+				transazioneDTO.setEsito(esito.getCode());
+			}
+			if(fileTraceEnabledBloccante) {
 				return new HandlerException(error,e);
 			}
 		}finally {
@@ -1559,19 +1648,6 @@ public class TracciamentoManager {
 		
 		return null;
 	}
-	private boolean throwFileTraceException() {
-		switch (this.fase) {
-		case IN_REQUEST:
-			return this.openspcoopProperties.isTransazioniFileTraceRequestInThrowException();
-		case OUT_REQUEST:
-			return this.openspcoopProperties.isTransazioniFileTraceRequestOutThrowException();
-		case OUT_RESPONSE:
-			return this.openspcoopProperties.isTransazioniFileTraceResponseOutThrowException();
-		case POST_OUT_RESPONSE:
-		default:
-			return false;
-		}
-	}
 	
 	private static final MapKey<String> TRANSACTION_REGISTERED = org.openspcoop2.utils.Map.newMapKey("TRANSACTION_REGISTERED");
 	private boolean isTransactionAlreadyRegistered(InformazioniTransazione info) {
@@ -1582,16 +1658,20 @@ public class TracciamentoManager {
 			info.getContext().put(TRANSACTION_REGISTERED, "true");
 		}
 	}
-	private void registraTransazione(Transazione transazioneDTO, 
-			ITransazioneService transazioneService, InformazioniTransazione info) throws ServiceException, NotImplementedException, NotFoundException, ExpressionNotImplementedException, ExpressionException {
+	private boolean registraTransazione(Transazione transazioneDTO, 
+			ITransazioneService transazioneService, InformazioniTransazione info,
+			boolean autoCommit) throws ServiceException, NotImplementedException, NotFoundException, ExpressionNotImplementedException, ExpressionException {
 		if(FaseTracciamento.IN_REQUEST.equals(this.fase) 
 				||
 				!isTransactionAlreadyRegistered(info)) {
 			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] INSERT con contesto["+transazioneDTO.getEsitoContesto()+"]");*/
 			transazioneService.create(transazioneDTO);
-			if(!FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
+			/**
+			 * DEVO AGGIUNGERLO DOPO IL COMMIT */
+			if(autoCommit && !FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
 				addTransactionAlreadyRegistered(info);
 			}
+			return true;
 		}
 		else if(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && info.getTransazioneDaAggiornare()!=null){
 			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE PUNTUALE con contesto["+transazioneDTO.getEsitoContesto()+"]");*/
@@ -1625,6 +1705,7 @@ public class TracciamentoManager {
 			else {
 				transazioneService.updateFields(transazioneDTO.getIdTransazione(), list.toArray(new UpdateField[1]));
 			}
+			return false;
 		}
 		else {
 			/**System.out.println("["+this.fase+"]["+transazioneDTO.getIdTransazione()+"]["+transazioneDTO.getPddRuolo()+"]["+transazioneDTO.getPddCodice()+"]["+transazioneDTO.getNomeServizio()+"] UPDATE con contesto["+transazioneDTO.getEsitoContesto()+"]");*/
@@ -1638,7 +1719,44 @@ public class TracciamentoManager {
 			else {
 				transazioneService.update(transazioneDTO.getIdTransazione(), transazioneDTO);
 			}
+			return false;
 		}
 	}
 	
+	private void logRegistrazioneNonRiuscita(org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore, boolean fileTrace, Throwable e, String idTransazione,
+			Transaction transaction, BooleanNullable changeEsito) {
+		if(fileTrace || !FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
+			try {
+				msgdiagErrore.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE, e.getMessage());
+				msgdiagErrore.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, fileTrace ? "fileTrace" : "database");
+				switch (this.fase) {
+				case IN_REQUEST:
+					msgdiagErrore.addKeyword(CostantiPdD.KEY_FASE_TRACCIAMENTO, CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN);
+					break;
+				case OUT_REQUEST:
+					msgdiagErrore.addKeyword(CostantiPdD.KEY_FASE_TRACCIAMENTO, CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT);
+					break;
+				case OUT_RESPONSE:
+					msgdiagErrore.addKeyword(CostantiPdD.KEY_FASE_TRACCIAMENTO, CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT);
+					break;
+				case POST_OUT_RESPONSE:
+					msgdiagErrore.addKeyword(CostantiPdD.KEY_FASE_TRACCIAMENTO, CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE);
+					break;
+				}
+				if(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && transaction!=null) {
+					// siamo per forza in fileTrace
+					msgdiagErrore.addLogPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO, "registrazioneTransazioneNonRiuscita", transaction);
+					if(changeEsito!=null) {
+						changeEsito.setValue(true);
+					}
+				}
+				else {
+					msgdiagErrore.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO, "registrazioneTransazioneNonRiuscita");
+				}
+			}catch(Throwable t) {
+				String error = "["+idTransazione+"] Registrazione dell'anomalia avvenuta durante il tracciamento non riuscita: "+t.getMessage();
+				this.log.error(error,t);
+			}
+		}
+	}
 }

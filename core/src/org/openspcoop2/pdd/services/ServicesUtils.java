@@ -65,6 +65,7 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -74,6 +75,7 @@ import org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
+import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -86,14 +88,18 @@ import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.TimeoutIOException;
@@ -766,6 +772,39 @@ public class ServicesUtils {
 			logCore.error("Lettura wsdl fallita: "+e.getMessage(),e);
 			throw new ConnectorException("Lettura wsdl fallita: "+e.getMessage(),e);
 		}
+	}
+	
+	
+	public static void processTrackingException(Exception e, Logger log, FaseTracciamento fase) throws HandlerException {
+		HandlerException he = null;
+		if(e instanceof HandlerException) {
+			he = (HandlerException) e;
+			if(he.getIntegrationFunctionError()==null) {
+				he.setIntegrationFunctionError(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE);
+				String msg = "Tracciamento '"+fase.name()+"' fallito: "+e.getMessage();
+				log.error(msg,e);
+			}
+		}
+		else {
+			he = new HandlerException();
+			he.setIntegrationFunctionError(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE);
+			String msg = "Tracciamento '"+fase.name()+"' fallito: "+e.getMessage();
+			log.error(msg,e);
+		}
+		throw he;
+	}
+	
+	public static EsitoTransazione updateEsitoConAnomalie(EsitoTransazione esito, Logger log, IProtocolFactory<?> protocolFactory) {
+		try {
+			if(EsitoTransazioneName.OK.equals(esito.getName())) {
+				EsitiProperties esitiProperties = EsitiProperties.getInstance(log, protocolFactory);
+				esito = esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.OK_PRESENZA_ANOMALIE, esito.getContextType()); 
+			}
+		}catch(Exception e) {
+			String msg = "Update esito con anomalie fallito: "+e.getMessage();
+			log.error(msg,e);
+		}
+		return esito;
 	}
 }
 

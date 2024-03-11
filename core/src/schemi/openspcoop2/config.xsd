@@ -1409,9 +1409,9 @@
 	<xsd:complexType name="tracciamento-configurazione">
 		<xsd:attribute name="stato" type="StatoFunzionalitaConPersonalizzazione" use="optional"/> <!-- default cambia se per database o filetrace -->
 		<xsd:attribute name="filtro-esiti" type="StatoFunzionalita" use="optional"/> <!-- default cambia se per database o filetrace -->
-		<xsd:attribute name="request-in" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="request-out" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="response-out" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="request-in" type="StatoFunzionalitaBloccante" default="disabilitato"/>
+		<xsd:attribute name="request-out" type="StatoFunzionalitaBloccante" default="disabilitato"/>
+		<xsd:attribute name="response-out" type="StatoFunzionalitaBloccante" default="disabilitato"/>
 		<xsd:attribute name="response-out-complete" type="StatoFunzionalita" default="abilitato"/>
 	</xsd:complexType>
 	<xsd:complexType name="tracciamento-configurazione-filetrace">
@@ -2441,6 +2441,13 @@
 			<xsd:enumeration value="disabilitato"/>
 			<xsd:enumeration value="personalizzato"/>
 			<xsd:enumeration value="configurazioneEsterna"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StatoFunzionalitaBloccante">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="abilitato"/>
+			<xsd:enumeration value="nonBloccante"/>
+			<xsd:enumeration value="disabilitato"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="MTOMProcessorType">

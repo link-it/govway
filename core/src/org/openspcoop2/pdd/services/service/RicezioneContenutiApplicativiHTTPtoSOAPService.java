@@ -33,7 +33,6 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -97,7 +96,6 @@ import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -767,7 +765,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
 			
 			// se il tracciamento lo prevedo emetto un log
-			registraTracciaInRequest(context, protocolFactory, logCore);
+			registraTracciaInRequest(context, protocolFactory, logCore, msgDiag);
 			
 			// Invocazione...
 			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context, this.generatoreErrore);
@@ -1089,6 +1087,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		long lengthOutResponse = -1;
 		boolean erroreConnessioneClient = false;
 		boolean sendInvoked = false;
+		boolean registraTracciaOutResponse = false;
 		try{
 			if(responseMessage!=null && !responseMessage.isForcedEmptyResponse() && (responseMessage.getForcedResponse()==null)){
 					
@@ -1165,12 +1164,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					res.sendResponseHeaders(responseMessage);					
 					
 					// se il tracciamento lo prevedo emetto un log
+					registraTracciaOutResponse = true;
 					transazioneDaAggiornare = registraTracciaOutResponse(context, protocolFactory, postOutResponseContext,
 							dataAccettazioneRichiesta, dataIngressoRichiesta,
 							dataPrimaSpedizioneRisposta, dataRispostaSpedita,
 							esito, statoServletResponse,
 							idModulo, req,  requestMessage, inputBody,
-							responseMessage, erroreConsegnaRisposta, lengthOutResponse);
+							responseMessage, erroreConsegnaRisposta, lengthOutResponse,
+							msgDiag);
 					
 					// contenuto
 					if(risposta!=null){
@@ -1220,12 +1221,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 							pddContext);
 					
 					// se il tracciamento lo prevedo emetto un log
+					registraTracciaOutResponse = true;
 					transazioneDaAggiornare = registraTracciaOutResponse(context, protocolFactory, postOutResponseContext,
 							dataAccettazioneRichiesta, dataIngressoRichiesta,
 							dataPrimaSpedizioneRisposta, dataRispostaSpedita,
 							esito, statoServletResponse,
 							idModulo, req,  requestMessage, inputBody,
-							responseMessage, erroreConsegnaRisposta, lengthOutResponse);
+							responseMessage, erroreConsegnaRisposta, lengthOutResponse,
+							msgDiag);
 					
 					// contenuto
 					Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Pre scrittura risposta");
@@ -1312,12 +1315,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						pddContext);
 				
 				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutResponse = true;
 				transazioneDaAggiornare = registraTracciaOutResponse(context, protocolFactory, postOutResponseContext,
 						dataAccettazioneRichiesta, dataIngressoRichiesta,
 						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
 						esito, statoServletResponse,
 						idModulo, req,  requestMessage, inputBody,
-						responseMessage, erroreConsegnaRisposta, lengthOutResponse);
+						responseMessage, erroreConsegnaRisposta, lengthOutResponse,
+						msgDiag);
 				
 				if(response!=null) {
 					sendInvoked = true;
@@ -1344,12 +1349,15 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				// carico-vuoto
 				
 				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutResponse = true;
 				transazioneDaAggiornare = registraTracciaOutResponse(context, protocolFactory, postOutResponseContext,
 						dataAccettazioneRichiesta, dataIngressoRichiesta,
 						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
 						esito, statoServletResponse,
 						idModulo, req,  requestMessage, inputBody,
-						responseMessage, erroreConsegnaRisposta, lengthOutResponse);
+						responseMessage, erroreConsegnaRisposta, lengthOutResponse,
+						msgDiag);
+
 			}
 			
 		}catch(Throwable e){
@@ -1397,7 +1405,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						informazioniErrori_error.setContenutoRispostaNonRiconosciuto(true);
 					} 
 					else{
-						rispostaErrore = this.generatoreErrore.buildAsByteArray(pddContext, IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,
+						IntegrationFunctionError ife = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+						if(e instanceof HandlerException) {
+							HandlerException he = (HandlerException) e;
+							if(he.getIntegrationFunctionError()!=null) {
+								ife = he.getIntegrationFunctionError();
+							}
+						}
+						rispostaErrore = this.generatoreErrore.buildAsByteArray(pddContext, ife,
 								ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.
 								getErrore426_ServletError(false, e),
 								returnCode);
@@ -1428,12 +1443,16 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					res.setContentType("text/xml");
 					
 					// se il tracciamento lo prevedo emetto un log
-					transazioneDaAggiornare = registraTracciaOutResponse(context, protocolFactory, postOutResponseContext,
+					// se ho già provato prima a tracciare non lo faccio un'altra volta
+					if(!registraTracciaOutResponse) {
+						transazioneDaAggiornare = registraTracciaOutResponse(context, protocolFactory, postOutResponseContext,
 							dataAccettazioneRichiesta, dataIngressoRichiesta,
 							dataPrimaSpedizioneRisposta, dataRispostaSpedita,
 							esito, statoServletResponse,
 							idModulo, req,  requestMessage, inputBody,
-							responseMessage, erroreConsegnaRisposta, lengthOutResponse);
+							responseMessage, erroreConsegnaRisposta, lengthOutResponse,
+							msgDiag);
+					}
 					
 					// contenuto
 					res.sendResponse(DumpByteArrayOutputStream.newInstance(rispostaErrore));
@@ -1549,7 +1568,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
 			}
 		}
-		
+		else if(EsitoTransazioneName.OK.equals(esito.getName()) && context!=null && context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.EMESSI_DIAGNOSTICI_ERRORE)) {
+			// caso di errore generato durante il tracciamento dopo aver calcolato l'esito, in cui non viene sollevata una eccezione
+			esito = ServicesUtils.updateEsitoConAnomalie(esito, logCore, protocolFactory);
+		}
 		
 		
 		
@@ -1708,58 +1730,75 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		}		
 	}
 
-	private Transazione registraTracciaOutResponse(RicezioneContenutiApplicativiContext context, IProtocolFactory<?> protocolFactory, PostOutResponseContext postOutResponseContext,
+	private Transazione registraTracciaOutResponse(RicezioneContenutiApplicativiContext context, 
+			IProtocolFactory<?> protocolFactory, 
+			PostOutResponseContext postOutResponseContext,
 			Date dataAccettazioneRichiesta, Date dataIngressoRichiesta,
 			Date dataPrimaSpedizioneRisposta, Date dataRispostaSpedita,
 			EsitoTransazione esito, int statoServletResponse,
 			String idModulo, ConnectorInMessage req, OpenSPCoop2Message requestMessage, byte[] inputBody,
-			OpenSPCoop2Message responseMessage, Throwable erroreConsegnaRisposta, long lengthOutResponse) throws CoreException, HandlerException, ConnectorException {
+			OpenSPCoop2Message responseMessage, Throwable erroreConsegnaRisposta, long lengthOutResponse,
+			MsgDiagnostico msgDiag) throws HandlerException {
 
-		if(postOutResponseContext!=null) {
-			updateContext(context, protocolFactory, postOutResponseContext,
-					dataAccettazioneRichiesta, dataIngressoRichiesta,
-					dataPrimaSpedizioneRisposta, dataRispostaSpedita,
-					esito, statoServletResponse,
-					idModulo, req,  requestMessage, inputBody,
-					responseMessage, erroreConsegnaRisposta, lengthOutResponse);
-			
-			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_RESPONSE);
-			if(!tracciamentoManager.isTransazioniEnabled()) {
-				return null;
+		try {
+		
+			if(postOutResponseContext!=null) {
+				updateContext(context, protocolFactory, postOutResponseContext,
+						dataAccettazioneRichiesta, dataIngressoRichiesta,
+						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
+						esito, statoServletResponse,
+						idModulo, req,  requestMessage, inputBody,
+						responseMessage, erroreConsegnaRisposta, lengthOutResponse);
+				
+				TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_RESPONSE);
+				if(!tracciamentoManager.isTransazioniEnabled()) {
+					return null;
+				}
+				
+				InformazioniTransazione info = new InformazioniTransazione(postOutResponseContext);
+				
+				tracciamentoManager.invoke(info, postOutResponseContext.getEsito(), context.getResponseHeaders(), msgDiag);
+				
+				return info.getTransazioneDaAggiornare();
 			}
-			
-			InformazioniTransazione info = new InformazioniTransazione(postOutResponseContext);
-			
-			tracciamentoManager.invoke(info, postOutResponseContext.getEsito(), context.getResponseHeaders());
-			
-			return info.getTransazioneDaAggiornare();
+
+		}catch(Exception e) {
+			ServicesUtils.processTrackingException(e, postOutResponseContext.getLogCore(), FaseTracciamento.OUT_RESPONSE);
 		}
+		
 		return null;
 	}
 	
 	private void registraTracciaInRequest(RicezioneContenutiApplicativiContext context,
-			IProtocolFactory<?> protocolFactory, Logger log) throws CoreException, HandlerException, ProtocolException {
-
-		TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.IN_REQUEST);
-		if(!tracciamentoManager.isTransazioniEnabled()) {
-			return;
-		}
+			IProtocolFactory<?> protocolFactory, Logger log, 
+			MsgDiagnostico msgDiag) throws HandlerException{
+		
+		try {
+		
+			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.IN_REQUEST);
+			if(!tracciamentoManager.isTransazioniEnabled()) {
+				return;
+			}
+				
+			InformazioniTransazione info = new InformazioniTransazione();
+			info.setContext(context.getPddContext());
+			info.setTipoPorta(context.getTipoPorta());
+			info.setProtocolFactory(protocolFactory);
+			info.setProtocollo(context.getProtocol());
+			info.setIntegrazione(context.getIntegrazione());
+			info.setIdModulo(context.getIdModulo());
 			
-		InformazioniTransazione info = new InformazioniTransazione();
-		info.setContext(context.getPddContext());
-		info.setTipoPorta(context.getTipoPorta());
-		info.setProtocolFactory(protocolFactory);
-		info.setProtocollo(context.getProtocol());
-		info.setIntegrazione(context.getIntegrazione());
-		info.setIdModulo(context.getIdModulo());
-		
-		TransportRequestContext transportRequestContext = null;
-		if(context.getMessageRequest()!=null) {
-			transportRequestContext = context.getMessageRequest().getTransportRequestContext();
+			TransportRequestContext transportRequestContext = null;
+			if(context.getMessageRequest()!=null) {
+				transportRequestContext = context.getMessageRequest().getTransportRequestContext();
+			}
+			String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, protocolFactory), log);
+			
+			tracciamentoManager.invoke(info, esitoContext, msgDiag);
+			
+		}catch(Exception e) {
+			ServicesUtils.processTrackingException(e, log, FaseTracciamento.IN_REQUEST);
 		}
-		String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, protocolFactory), log);
-		
-		tracciamentoManager.invoke(info, esitoContext);
 		
 	}
 }

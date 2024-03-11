@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import java.io.Serializable;
 
@@ -37,9 +38,9 @@ import java.io.Serializable;
  * &lt;complexType name="tracciamento-configurazione"&gt;
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConPersonalizzazione" use="optional"/&gt;
  * 		&lt;attribute name="filtro-esiti" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/&gt;
- * 		&lt;attribute name="request-in" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
- * 		&lt;attribute name="request-out" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
- * 		&lt;attribute name="response-out" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="request-in" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaBloccante" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="request-out" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaBloccante" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="response-out" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaBloccante" use="optional" default="disabilitato"/&gt;
  * 		&lt;attribute name="response-out-complete" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -101,7 +102,7 @@ public class TracciamentoConfigurazione extends org.openspcoop2.utils.beans.Base
   }
 
   public void setRequestInRawEnumValue(String value) {
-    this.requestIn = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+    this.requestIn = (StatoFunzionalitaBloccante) StatoFunzionalitaBloccante.toEnumConstantFromString(value);
   }
 
   public String getRequestInRawEnumValue() {
@@ -112,16 +113,16 @@ public class TracciamentoConfigurazione extends org.openspcoop2.utils.beans.Base
     }
   }
 
-  public org.openspcoop2.core.config.constants.StatoFunzionalita getRequestIn() {
+  public org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante getRequestIn() {
     return this.requestIn;
   }
 
-  public void setRequestIn(org.openspcoop2.core.config.constants.StatoFunzionalita requestIn) {
+  public void setRequestIn(org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante requestIn) {
     this.requestIn = requestIn;
   }
 
   public void setRequestOutRawEnumValue(String value) {
-    this.requestOut = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+    this.requestOut = (StatoFunzionalitaBloccante) StatoFunzionalitaBloccante.toEnumConstantFromString(value);
   }
 
   public String getRequestOutRawEnumValue() {
@@ -132,16 +133,16 @@ public class TracciamentoConfigurazione extends org.openspcoop2.utils.beans.Base
     }
   }
 
-  public org.openspcoop2.core.config.constants.StatoFunzionalita getRequestOut() {
+  public org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante getRequestOut() {
     return this.requestOut;
   }
 
-  public void setRequestOut(org.openspcoop2.core.config.constants.StatoFunzionalita requestOut) {
+  public void setRequestOut(org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante requestOut) {
     this.requestOut = requestOut;
   }
 
   public void setResponseOutRawEnumValue(String value) {
-    this.responseOut = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+    this.responseOut = (StatoFunzionalitaBloccante) StatoFunzionalitaBloccante.toEnumConstantFromString(value);
   }
 
   public String getResponseOutRawEnumValue() {
@@ -152,11 +153,11 @@ public class TracciamentoConfigurazione extends org.openspcoop2.utils.beans.Base
     }
   }
 
-  public org.openspcoop2.core.config.constants.StatoFunzionalita getResponseOut() {
+  public org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante getResponseOut() {
     return this.responseOut;
   }
 
-  public void setResponseOut(org.openspcoop2.core.config.constants.StatoFunzionalita responseOut) {
+  public void setResponseOut(org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante responseOut) {
     this.responseOut = responseOut;
   }
 
@@ -200,19 +201,19 @@ public class TracciamentoConfigurazione extends org.openspcoop2.utils.beans.Base
   protected java.lang.String requestInRawEnumValue;
 
   @XmlAttribute(name="request-in",required=false)
-  protected StatoFunzionalita requestIn = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+  protected StatoFunzionalitaBloccante requestIn = (StatoFunzionalitaBloccante) StatoFunzionalitaBloccante.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String requestOutRawEnumValue;
 
   @XmlAttribute(name="request-out",required=false)
-  protected StatoFunzionalita requestOut = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+  protected StatoFunzionalitaBloccante requestOut = (StatoFunzionalitaBloccante) StatoFunzionalitaBloccante.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String responseOutRawEnumValue;
 
   @XmlAttribute(name="response-out",required=false)
-  protected StatoFunzionalita responseOut = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+  protected StatoFunzionalitaBloccante responseOut = (StatoFunzionalitaBloccante) StatoFunzionalitaBloccante.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String responseOutCompleteRawEnumValue;

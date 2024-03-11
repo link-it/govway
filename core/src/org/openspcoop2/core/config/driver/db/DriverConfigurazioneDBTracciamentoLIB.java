@@ -194,9 +194,9 @@ public class DriverConfigurazioneDBTracciamentoLIB {
 				
 				tracciamentoConfig.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalitaConPersonalizzazione(rs1.getString("stato")));
 				tracciamentoConfig.setFiltroEsiti(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("filtro_esiti")));
-				tracciamentoConfig.setRequestIn(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("request_in")));
-				tracciamentoConfig.setRequestOut(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("request_out")));
-				tracciamentoConfig.setResponseOut(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("response_out")));
+				tracciamentoConfig.setRequestIn(DriverConfigurazioneDBLib.getEnumStatoFunzionalitaBloccante(rs1.getString("request_in")));
+				tracciamentoConfig.setRequestOut(DriverConfigurazioneDBLib.getEnumStatoFunzionalitaBloccante(rs1.getString("request_out")));
+				tracciamentoConfig.setResponseOut(DriverConfigurazioneDBLib.getEnumStatoFunzionalitaBloccante(rs1.getString("response_out")));
 				tracciamentoConfig.setResponseOutComplete(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(rs1.getString("response_out_complete")));
 				
 			}

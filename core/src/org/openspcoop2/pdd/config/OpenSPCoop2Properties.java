@@ -2360,9 +2360,6 @@ public class OpenSPCoop2Properties {
 					this.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled();
 				}
 				this.getTransazioniFileTraceConfig();
-				this.isTransazioniFileTraceRequestInThrowException();
-				this.isTransazioniFileTraceRequestOutThrowException();
-				this.isTransazioniFileTraceResponseOutThrowException();
 				
 				this.getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommit();
 				this.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLog();
@@ -27605,71 +27602,6 @@ public class OpenSPCoop2Properties {
 		return state;
 	}
 	
-	private Boolean isTransazioniFileTraceRequestInThrowException = null;
-	public boolean isTransazioniFileTraceRequestInThrowException() {	
-		if(this.isTransazioniFileTraceRequestInThrowException==null){
-			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.requestIn.throwException";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null || "".equals(name)){
-					this.logDebug(getMessaggioProprietaNonImpostata(pName,true));
-					name=""+true;
-				}
-				name = name.trim();
-				this.isTransazioniFileTraceRequestInThrowException = Boolean.parseBoolean(name);
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+true+" : "+e.getMessage(),e);
-				this.isTransazioniFileTraceRequestInThrowException = true;
-			}    
-		}
-
-		return this.isTransazioniFileTraceRequestInThrowException;
-	}
-	
-	private Boolean isTransazioniFileTraceRequestOutThrowException = null;
-	public boolean isTransazioniFileTraceRequestOutThrowException() {	
-		if(this.isTransazioniFileTraceRequestOutThrowException==null){
-			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.requestOut.throwException";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null || "".equals(name)){
-					this.logDebug(getMessaggioProprietaNonImpostata(pName,true));
-					name=""+true;
-				}
-				name = name.trim();
-				this.isTransazioniFileTraceRequestOutThrowException = Boolean.parseBoolean(name);
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+true+" : "+e.getMessage(),e);
-				this.isTransazioniFileTraceRequestOutThrowException = true;
-			}    
-		}
-
-		return this.isTransazioniFileTraceRequestOutThrowException;
-	}
-	
-	private Boolean isTransazioniFileTraceResponseOutThrowException = null;
-	public boolean isTransazioniFileTraceResponseOutThrowException() {	
-		if(this.isTransazioniFileTraceResponseOutThrowException==null){
-			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.responseOut.throwException";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null || "".equals(name)){
-					this.logDebug(getMessaggioProprietaNonImpostata(pName,true));
-					name=""+true;
-				}
-				name = name.trim();
-				this.isTransazioniFileTraceResponseOutThrowException = Boolean.parseBoolean(name);
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+true+" : "+e.getMessage(),e);
-				this.isTransazioniFileTraceResponseOutThrowException = true;
-			}    
-		}
-
-		return this.isTransazioniFileTraceResponseOutThrowException;
-	}
 	
 	/* ------------- Testsuite ---------------------*/
 	

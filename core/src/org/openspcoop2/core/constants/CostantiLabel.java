@@ -146,6 +146,10 @@ public final class CostantiLabel {
 	public static final String LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT = "Risposta in consegna";
 	public static final String LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE = "Risposta consegnata";
 	
+	public static final String LABEL_ABILITATO_BLOCCANTE = "abilitato (bloccante)";
+	public static final String LABEL_ABILITATO_NON_BLOCCANTE = "abilitato (non bloccante)";
+	public static final String LABEL_DISABILITATO = "disabilitato";
+	
     /**
      * PROPRIETA CONNETTORE
      */

@@ -29,6 +29,7 @@ import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.constants.CostantiLabel;
@@ -2159,6 +2160,8 @@ public class ConfigurazioneCostanti {
 	public static final String DEFAULT_VALUE_ABILITATO = StatoFunzionalita.ABILITATO.toString();
 	public static final String DEFAULT_VALUE_DISABILITATO = StatoFunzionalita.DISABILITATO.toString();
 	
+	public static final String DEFAULT_VALUE_NON_BLOCCANTE = StatoFunzionalitaBloccante.NON_BLOCCANTE.toString();
+	
 	public static final String TRACCIAMENTO_ESITI_PERSONALIZZATO = StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue();
 	public static final String TRACCIAMENTO_ESITI_CONFIGURAZIONE_ESTERNA = StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.getValue();
 	
@@ -2212,16 +2215,16 @@ public class ConfigurazioneCostanti {
 		
 	
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.ABILITATO.getValue();
-	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_IN = org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.getValue();
-	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_OUT = org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.getValue();
-	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT = org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_IN = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_OUT = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE = org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.getValue();
 	public static final boolean DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_FILTRA_ESITI = true;
 
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.getValue();
-	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_IN = org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.getValue();
-	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_OUT = org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.getValue();
-	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT = org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_IN = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_OUT = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT_COMPLETE = org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.getValue();
 	public static final boolean DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_FILTRA_ESITI = false;
 	

@@ -35,7 +35,6 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
 import org.apache.commons.io.output.NullOutputStream;
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -2414,7 +2413,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				msgDiag.logPersonalizzato("consegnaInCorso");
 				
 				// se il tracciamento lo prevedo emetto un log
-				registraTracciaOutRequest(outRequestContext, this.log);
+				registraTracciaOutRequest(outRequestContext, this.log, msgDiag);
 				
 				// utilizzo connettore
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
@@ -4683,29 +4682,36 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		return serviziApplicativiAbilitatiForwardTo;
 	}
 	
-	private void registraTracciaOutRequest(OutRequestContext outRequestContext, Logger log) throws CoreException, HandlerException, ProtocolException {
+	private void registraTracciaOutRequest(OutRequestContext outRequestContext, Logger log, MsgDiagnostico msgDiag) throws HandlerException {
 
-		TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_REQUEST);
-		if(!tracciamentoManager.isTransazioniEnabled()) {
-			return;
-		}
+		try {
+		
+			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_REQUEST);
+			if(!tracciamentoManager.isTransazioniEnabled()) {
+				return;
+			}
+				
+			InformazioniTransazione info = new InformazioniTransazione();
+			info.setContext(outRequestContext.getPddContext());
+			info.setTipoPorta(outRequestContext.getTipoPorta());
+			info.setProtocolFactory(outRequestContext.getProtocolFactory());
+			info.setProtocollo(outRequestContext.getProtocollo());
+			info.setIntegrazione(outRequestContext.getIntegrazione());
+			info.setIdModulo(outRequestContext.getIdModulo());
 			
-		InformazioniTransazione info = new InformazioniTransazione();
-		info.setContext(outRequestContext.getPddContext());
-		info.setTipoPorta(outRequestContext.getTipoPorta());
-		info.setProtocolFactory(outRequestContext.getProtocolFactory());
-		info.setProtocollo(outRequestContext.getProtocollo());
-		info.setIntegrazione(outRequestContext.getIntegrazione());
-		info.setIdModulo(outRequestContext.getIdModulo());
-		
-		TransportRequestContext transportRequestContext = null;
-		if(outRequestContext.getMessaggio()!=null) {
-			transportRequestContext = outRequestContext.getMessaggio().getTransportRequestContext();
+			TransportRequestContext transportRequestContext = null;
+			if(outRequestContext.getMessaggio()!=null) {
+				transportRequestContext = outRequestContext.getMessaggio().getTransportRequestContext();
+			}
+			String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, outRequestContext.getProtocolFactory()), log);
+			
+			tracciamentoManager.invoke(info, esitoContext, 
+					outRequestContext.getConnettore()!=null ? outRequestContext.getConnettore().getHeaders() : null,
+							msgDiag);
+			
+		}catch(Exception e) {
+			ServicesUtils.processTrackingException(e, log, FaseTracciamento.OUT_REQUEST);
 		}
-		String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, outRequestContext.getProtocolFactory()), log);
-		
-		tracciamentoManager.invoke(info, esitoContext, 
-				outRequestContext.getConnettore()!=null ? outRequestContext.getConnettore().getHeaders() : null);
 		
 	}
 }

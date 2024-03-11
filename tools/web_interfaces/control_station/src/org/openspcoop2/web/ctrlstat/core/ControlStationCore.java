@@ -76,6 +76,7 @@ import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.TracciamentoConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
@@ -8812,9 +8813,9 @@ public class ControlStationCore {
 		TracciamentoConfigurazione database = new TracciamentoConfigurazione();
 		database.setStato(StatoFunzionalitaConPersonalizzazione.toEnumConstant(dbStato));
 		if(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(database.getStato())) {
-			database.setRequestIn(StatoFunzionalita.toEnumConstant(dbStatoReqIn));
-			database.setRequestOut(StatoFunzionalita.toEnumConstant(dbStatoReqOut));
-			database.setResponseOut(StatoFunzionalita.toEnumConstant(dbStatoResOut));
+			database.setRequestIn(StatoFunzionalitaBloccante.toEnumConstant(dbStatoReqIn));
+			database.setRequestOut(StatoFunzionalitaBloccante.toEnumConstant(dbStatoReqOut));
+			database.setResponseOut(StatoFunzionalitaBloccante.toEnumConstant(dbStatoResOut));
 			database.setResponseOutComplete(StatoFunzionalita.toEnumConstant(dbStatoResOutComplete));
 		}
 		if(!StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(database.getStato())) {
@@ -8828,9 +8829,9 @@ public class ControlStationCore {
 		TracciamentoConfigurazione filetrace = new TracciamentoConfigurazione();
 		filetrace.setStato(StatoFunzionalitaConPersonalizzazione.toEnumConstant(fsStato));
 		if(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(filetrace.getStato())) {
-			filetrace.setRequestIn(StatoFunzionalita.toEnumConstant(fsStatoReqIn));
-			filetrace.setRequestOut(StatoFunzionalita.toEnumConstant(fsStatoReqOut));
-			filetrace.setResponseOut(StatoFunzionalita.toEnumConstant(fsStatoResOut));
+			filetrace.setRequestIn(StatoFunzionalitaBloccante.toEnumConstant(fsStatoReqIn));
+			filetrace.setRequestOut(StatoFunzionalitaBloccante.toEnumConstant(fsStatoReqOut));
+			filetrace.setResponseOut(StatoFunzionalitaBloccante.toEnumConstant(fsStatoResOut));
 			filetrace.setResponseOutComplete(StatoFunzionalita.toEnumConstant(fsStatoResOutComplete));
 		}
 		if(!StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(filetrace.getStato())) {

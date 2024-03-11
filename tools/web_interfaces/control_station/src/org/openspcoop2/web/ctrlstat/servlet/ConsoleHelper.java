@@ -17013,19 +17013,19 @@ public class ConsoleHelper implements IConsoleHelper {
 				true,
 				true,
 				false);
-		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_REQ_IN, 
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_REQ_IN, 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_IN, 
 				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato), // hidden
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_IN,
 				dbStatoReqIn,
 				true);
-		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_REQ_OUT, 
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_REQ_OUT, 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_OUT, 
 				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato), // hidden
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_OUT,
 				dbStatoReqOut,
 				true);
-		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT, 
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT, 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT, 
 				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato), // hidden
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT,
@@ -17094,19 +17094,19 @@ public class ConsoleHelper implements IConsoleHelper {
 				true,
 				true,
 				!porta);
-		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_REQ_IN, 
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_REQ_IN, 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_IN, 
 				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato), // hidden
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_IN,
 				fsStatoReqIn,
 				true);
-		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_REQ_OUT, 
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_REQ_OUT, 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_OUT, 
 				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato), // hidden
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_OUT,
 				fsStatoReqOut,
 				true);
-		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_RES_OUT, 
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_RES_OUT, 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT, 
 				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato), // hidden
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT,
@@ -17138,19 +17138,38 @@ public class ConsoleHelper implements IConsoleHelper {
 		/**this.impostaAperturaTitle(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE);*/
 	}
 	private void addTransazioniStatoElement(List<DataElement> dati, String label, String name, boolean hidden, String defaultValue, String value, boolean postback) {
-		addTransazioniStatoElement(dati, label, name, hidden, defaultValue, value, postback, false, false);
+		addTransazioniStatoElement(dati, label, name, hidden, defaultValue, value, postback, false, false, false);
+	}
+	private void addTransazioniStatoElementBloccante(List<DataElement> dati, String label, String name, boolean hidden, String defaultValue, String value, boolean postback) {
+		addTransazioniStatoElement(dati, label, name, hidden, defaultValue, value, postback, false, false, true);
 	}
 	private void addTransazioniStatoElement(List<DataElement> dati, String label, String name, boolean hidden, String defaultValue, String value, boolean postback, 
 			boolean personalizzato, boolean configurazioneEsterna) {
+		addTransazioniStatoElement(dati, label, name, hidden, defaultValue, value, postback, 
+				personalizzato, configurazioneEsterna, false);
+	}
+	private void addTransazioniStatoElement(List<DataElement> dati, String label, String name, boolean hidden, String defaultValue, String value, boolean postback, 
+			boolean personalizzato, boolean configurazioneEsterna, boolean bloccante) {
 		
 		List<String> values = new ArrayList<>();
 		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
+		if(bloccante) {
+			values.add(ConfigurazioneCostanti.DEFAULT_VALUE_NON_BLOCCANTE);
+		}
 		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);	
 		if(personalizzato) {
 			values.add(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO);
 		}
 		if(configurazioneEsterna) {
 			values.add(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_CONFIGURAZIONE_ESTERNA);
+		}
+		
+		List<String> labels = null;
+		if(bloccante) {
+			labels = new ArrayList<>();
+			labels.add(CostantiLabel.LABEL_ABILITATO_BLOCCANTE);
+			labels.add(CostantiLabel.LABEL_ABILITATO_NON_BLOCCANTE);
+			labels.add(CostantiLabel.LABEL_DISABILITATO);
 		}
 		
 		DataElement de = new DataElement();
@@ -17163,6 +17182,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		else {
 			de.setType(DataElementType.SELECT);
 			de.setValues(values);
+			if(labels!=null) {
+				de.setLabels(labels);
+			}
 			de.setValoreDefaultSelect(defaultValue);
 			de.setPostBack_viaPOST(postback);
 			de.setSelected(value);

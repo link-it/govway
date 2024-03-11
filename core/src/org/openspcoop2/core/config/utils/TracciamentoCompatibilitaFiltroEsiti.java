@@ -49,24 +49,45 @@ public class TracciamentoCompatibilitaFiltroEsiti {
 		return !org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(this.database.getStato());
 	}
 	
-	public boolean isTracciamentoDBRequestInEnabled() {
+	public boolean isTracciamentoDBRequestInEnabledBloccante() {
 		return this.database!=null && 
 				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.database.getStato()) &&
 				this.database.getRequestIn()!=null &&
-				org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(this.database.getRequestIn());
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.equals(this.database.getRequestIn());
 	}
-	public boolean isTracciamentoDBRequestOutEnabled() {
+	public boolean isTracciamentoDBRequestInEnabledNonBloccante() {
+		return this.database!=null && 
+				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.database.getStato()) &&
+				this.database.getRequestIn()!=null &&
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.equals(this.database.getRequestIn());
+	}
+	
+	public boolean isTracciamentoDBRequestOutEnabledBloccante() {
 		return this.database!=null && 
 				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.database.getStato()) &&
 				this.database.getRequestOut()!=null &&
-				org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(this.database.getRequestOut());
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.equals(this.database.getRequestOut());
 	}
-	public boolean isTracciamentoDBResponseOutEnabled() {
+	public boolean isTracciamentoDBRequestOutEnabledNonBloccante() {
+		return this.database!=null && 
+				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.database.getStato()) &&
+				this.database.getRequestOut()!=null &&
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.equals(this.database.getRequestOut());
+	}
+	
+	public boolean isTracciamentoDBResponseOutEnabledBloccante() {
 		return this.database!=null && 
 				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.database.getStato()) &&
 				this.database.getResponseOut()!=null &&
-				org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(this.database.getResponseOut());
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.equals(this.database.getResponseOut());
 	}
+	public boolean isTracciamentoDBResponseOutEnabledNonBloccante() {
+		return this.database!=null && 
+				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.database.getStato()) &&
+				this.database.getResponseOut()!=null &&
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.equals(this.database.getResponseOut());
+	}
+	
 	public boolean isTracciamentoDBResponseOutCompleteEnabled() {
 		if (this.database==null ||
 				this.database.getStato()==null) {
@@ -105,7 +126,7 @@ public class TracciamentoCompatibilitaFiltroEsiti {
 		// se e' abilitata la registrazione iniziale, non può essere effettuato alcun filtro sull'esito. 
 		// gli altri filtri invece possono essere sensati, a patto che non sia già stata effettuata una registrazione
 		// nel contesto, prima di fare lo skip, verrà verificato se è già stata attuata una registrazione
-		return !isTracciamentoDBRequestInEnabled();
+		return !isTracciamentoDBRequestInEnabledBloccante() && !isTracciamentoDBRequestInEnabledNonBloccante();
 	}
 	
 	
@@ -126,24 +147,45 @@ public class TracciamentoCompatibilitaFiltroEsiti {
 		return org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(this.filetrace.getStato());
 	}
 	
-	public boolean isTracciamentoFileTraceRequestInEnabled() {
+	public boolean isTracciamentoFileTraceRequestInEnabledBloccante() {
 		return this.filetrace!=null && 
 				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.filetrace.getStato()) &&
 				this.filetrace.getRequestIn()!=null &&
-				org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(this.filetrace.getRequestIn());
+				(org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.equals(this.filetrace.getRequestIn()));
 	}
-	public boolean isTracciamentoFileTraceRequestOutEnabled() {
+	public boolean isTracciamentoFileTraceRequestInEnabledNonBloccante() {
+		return this.filetrace!=null && 
+				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.filetrace.getStato()) &&
+				this.filetrace.getRequestIn()!=null &&
+				(org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.equals(this.filetrace.getRequestIn()));
+	}
+	
+	public boolean isTracciamentoFileTraceRequestOutEnabledBloccante() {
 		return this.filetrace!=null && 
 				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.filetrace.getStato()) &&
 				this.filetrace.getRequestOut()!=null &&
-				org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(this.filetrace.getRequestOut());
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.equals(this.filetrace.getRequestOut());
 	}
-	public boolean isTracciamentoFileTraceResponseOutEnabled() {
+	public boolean isTracciamentoFileTraceRequestOutEnabledNonBloccante() {
+		return this.filetrace!=null && 
+				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.filetrace.getStato()) &&
+				this.filetrace.getRequestOut()!=null &&
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.equals(this.filetrace.getRequestOut());
+	}
+	
+	public boolean isTracciamentoFileTraceResponseOutEnabledBloccante() {
 		return this.filetrace!=null && 
 				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.filetrace.getStato()) &&
 				this.filetrace.getResponseOut()!=null &&
-				org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(this.filetrace.getResponseOut());
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.equals(this.filetrace.getResponseOut());
 	}
+	public boolean isTracciamentoFileTraceResponseOutEnabledNonBloccante() {
+		return this.filetrace!=null && 
+				org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(this.filetrace.getStato()) &&
+				this.filetrace.getResponseOut()!=null &&
+				org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.equals(this.filetrace.getResponseOut());
+	}
+	
 	public boolean isTracciamentoFileTraceResponseOutCompleteEnabled() {
 		if (this.filetrace==null ||
 				this.filetrace.getStato()==null) {
@@ -182,7 +224,7 @@ public class TracciamentoCompatibilitaFiltroEsiti {
 		// se e' abilitata la registrazione iniziale, non può essere effettuato alcun filtro sull'esito. 
 		// gli altri filtri invece possono essere sensati, a patto che non sia già stata effettuata una registrazione
 		// nel contesto, prima di fare lo skip, verrà verificato se è già stata attuata una registrazione
-		return !isTracciamentoFileTraceRequestInEnabled();
+		return !isTracciamentoFileTraceRequestInEnabledBloccante() && !isTracciamentoFileTraceRequestInEnabledNonBloccante();
 	}
 
 	
@@ -195,15 +237,39 @@ public class TracciamentoCompatibilitaFiltroEsiti {
 		return this.isTracciamentoDBEnabled() || this.isTracciamentoFileTraceEnabled();
 	}
 	
-	public boolean isTracciamentoRequestInEnabled() {
-		return this.isTracciamentoDBRequestInEnabled() || this.isTracciamentoFileTraceRequestInEnabled();
+	public boolean isTracciamentoRequestInEnabledBloccante() {
+		return this.isTracciamentoDBRequestInEnabledBloccante() || this.isTracciamentoFileTraceRequestInEnabledBloccante();
 	}
-	public boolean isTracciamentoRequestOutEnabled() {
-		return this.isTracciamentoDBRequestOutEnabled() || this.isTracciamentoFileTraceRequestOutEnabled();
+	public boolean isTracciamentoRequestInEnabledNonBloccante() {
+		return this.isTracciamentoDBRequestInEnabledNonBloccante() || this.isTracciamentoFileTraceRequestInEnabledNonBloccante();
 	}
-	public boolean isTracciamentoResponseOutEnabled() {
-		return this.isTracciamentoDBResponseOutEnabled() || this.isTracciamentoFileTraceResponseOutEnabled();
+	@SuppressWarnings("unused")
+	private boolean isTracciamentoRequestInEnabled() {
+		return isTracciamentoRequestInEnabledBloccante() || isTracciamentoRequestInEnabledNonBloccante();
 	}
+	
+	public boolean isTracciamentoRequestOutEnabledBloccante() {
+		return this.isTracciamentoDBRequestOutEnabledBloccante() || this.isTracciamentoFileTraceRequestOutEnabledBloccante();
+	}
+	public boolean isTracciamentoRequestOutEnabledNonBloccante() {
+		return this.isTracciamentoDBRequestOutEnabledNonBloccante() || this.isTracciamentoFileTraceRequestOutEnabledNonBloccante();
+	}
+	@SuppressWarnings("unused")
+	private boolean isTracciamentoRequestOutEnabled() {
+		return isTracciamentoRequestOutEnabledBloccante() || isTracciamentoRequestOutEnabledNonBloccante();
+	}
+	
+	public boolean isTracciamentoResponseOutEnabledBloccante() {
+		return this.isTracciamentoDBResponseOutEnabledBloccante() || this.isTracciamentoFileTraceResponseOutEnabledBloccante();
+	}
+	public boolean isTracciamentoResponseOutEnabledNonBloccante() {
+		return this.isTracciamentoDBResponseOutEnabledNonBloccante() || this.isTracciamentoFileTraceResponseOutEnabledNonBloccante();
+	}
+	@SuppressWarnings("unused")
+	private boolean isTracciamentoResponseOutEnabled() {
+		return isTracciamentoResponseOutEnabledBloccante() || isTracciamentoResponseOutEnabledNonBloccante();
+	}
+	
 	public boolean isTracciamentoResponseOutCompleteEnabled() {
 		return this.isTracciamentoDBResponseOutCompleteEnabled() || this.isTracciamentoFileTraceResponseOutCompleteEnabled();
 	}
@@ -215,13 +281,21 @@ public class TracciamentoCompatibilitaFiltroEsiti {
 		boolean dbCase = false;
 		boolean filetraceCase = false;
 		if(this.isFilterDBEnabled() &&
-			(this.isTracciamentoDBRequestOutEnabled() || this.isTracciamentoDBResponseOutEnabled()) 
-			) {
+			(
+					this.isTracciamentoDBRequestOutEnabledBloccante() || this.isTracciamentoDBRequestOutEnabledNonBloccante() 
+					||
+					this.isTracciamentoDBResponseOutEnabledBloccante() || this.isTracciamentoDBResponseOutEnabledNonBloccante()
+			) 
+		) {
 			dbCase = true;
 		}
 		if(this.isFilterFileTraceEnabled() &&
-			(this.isTracciamentoFileTraceRequestOutEnabled() || this.isTracciamentoFileTraceResponseOutEnabled()) 
-			) {
+			(
+					this.isTracciamentoFileTraceRequestOutEnabledBloccante() ||  this.isTracciamentoFileTraceRequestOutEnabledNonBloccante()
+					|| 
+					this.isTracciamentoFileTraceResponseOutEnabledBloccante() || this.isTracciamentoFileTraceResponseOutEnabledNonBloccante()
+			) 
+		) {
 			filetraceCase = true;
 		}
 		

@@ -96,7 +96,6 @@ import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -844,7 +843,7 @@ public class RicezioneBusteService  {
 					msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
 			
 					// se il tracciamento lo prevedo emetto un log
-					registraTracciaInRequest(context, protocolFactory, logCore);
+					registraTracciaInRequest(context, protocolFactory, logCore, msgDiag);
 					
 					// Invocazione...
 					RicezioneBuste gestoreRichiesta = new RicezioneBuste(context, this.generatoreErrore);
@@ -1272,6 +1271,7 @@ public class RicezioneBusteService  {
 		boolean erroreResponseTimeout = false;
 		boolean erroreResponsePayloadTooLarge = false;
 		boolean sendInvoked = false;
+		boolean registraTracciaOutResponse = false;
 		try{
 
 			// Invio la risposta
@@ -1354,12 +1354,14 @@ public class RicezioneBusteService  {
 						pddContext);
 				
 				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutResponse = true;
 				transazioneDaAggiornare = registraTracciaOutResponse(context, postOutResponseContext,
 						dataAccettazioneRichiesta, dataIngressoRichiesta,
 						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
 						esito, statoServletResponse,
 						idModulo, req, requestMessage, 
-						responseMessage, erroreConsegnaRisposta, responseMessageError);
+						responseMessage, erroreConsegnaRisposta, responseMessageError,
+						msgDiag);
 				
 				// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 				// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
@@ -1441,12 +1443,14 @@ public class RicezioneBusteService  {
 						pddContext);
 				
 				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutResponse = true;
 				transazioneDaAggiornare = registraTracciaOutResponse(context, postOutResponseContext,
 						dataAccettazioneRichiesta, dataIngressoRichiesta,
 						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
 						esito, statoServletResponse,
 						idModulo, req, requestMessage, 
-						responseMessage, erroreConsegnaRisposta, responseMessageError);
+						responseMessage, erroreConsegnaRisposta, responseMessageError,
+						msgDiag);
 				
 				if(response!=null) {
 					sendInvoked = true;
@@ -1474,12 +1478,14 @@ public class RicezioneBusteService  {
 						pddContext);
 				
 				// se il tracciamento lo prevedo emetto un log
+				registraTracciaOutResponse = true;
 				transazioneDaAggiornare = registraTracciaOutResponse(context, postOutResponseContext,
 						dataAccettazioneRichiesta, dataIngressoRichiesta,
 						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
 						esito, statoServletResponse,
 						idModulo, req, requestMessage, 
-						responseMessage, erroreConsegnaRisposta, responseMessageError);
+						responseMessage, erroreConsegnaRisposta, responseMessageError,
+						msgDiag);
 			}
 			
 		}catch(Throwable e){
@@ -1523,8 +1529,16 @@ public class RicezioneBusteService  {
 						responseMessageError = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
 								ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
 								getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
-					} else {
-						responseMessageError = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,
+					} 
+					else {
+						IntegrationFunctionError ife = IntegrationFunctionError.INTERNAL_RESPONSE_ERROR;
+						if(e instanceof HandlerException) {
+							HandlerException he = (HandlerException) e;
+							if(he.getIntegrationFunctionError()!=null) {
+								ife = he.getIntegrationFunctionError();
+							}
+						}
+						responseMessageError = this.generatoreErrore.buildErroreProcessamento(pddContext, ife,
 								ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(false, e));
 					}
 					// transfer length
@@ -1559,12 +1573,16 @@ public class RicezioneBusteService  {
 							pddContext);
 					
 					// se il tracciamento lo prevedo emetto un log
-					transazioneDaAggiornare = registraTracciaOutResponse(context, postOutResponseContext,
+					// se ho già provato prima a tracciare non lo faccio un'altra volta
+					if(!registraTracciaOutResponse) {
+						transazioneDaAggiornare = registraTracciaOutResponse(context, postOutResponseContext,
 							dataAccettazioneRichiesta, dataIngressoRichiesta,
 							dataPrimaSpedizioneRisposta, dataRispostaSpedita,
 							esito, statoServletResponse,
 							idModulo, req, requestMessage, 
-							responseMessage, erroreConsegnaRisposta, responseMessageError);
+							responseMessage, erroreConsegnaRisposta, responseMessageError,
+							msgDiag);
+					}
 					
 					// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 					// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
@@ -1586,7 +1604,19 @@ public class RicezioneBusteService  {
 				logCore.error("Generazione di un risposta errore non riuscita",error);
 				statoServletResponse = 500;
 				try{
-					responseMessageError = this.generatoreErrore.buildFault(error, pddContext);
+					IntegrationFunctionError ife = null;
+					if(error instanceof HandlerException) {
+						HandlerException he = (HandlerException) error;
+						if(he.getIntegrationFunctionError()!=null) {
+							ife = he.getIntegrationFunctionError();
+						}
+					}
+					if(ife!=null) {
+						responseMessageError = this.generatoreErrore.buildFault(error, pddContext, ife);
+					}
+					else {
+						responseMessageError = this.generatoreErrore.buildFault(error, pddContext);
+					}
 					if(responseMessageError!=null && responseMessageError.getForcedResponseCode()!=null) {
 						try{
 							statoServletResponse = Integer.parseInt(responseMessageError.getForcedResponseCode());
@@ -1727,6 +1757,10 @@ public class RicezioneBusteService  {
 			}catch(Exception eBuildError){
 				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
 			}
+		}
+		else if(EsitoTransazioneName.OK.equals(esito.getName()) && context!=null && context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.EMESSI_DIAGNOSTICI_ERRORE)) {
+			// caso di errore generato durante il tracciamento dopo aver calcolato l'esito, in cui non viene sollevata una eccezione
+			esito = ServicesUtils.updateEsitoConAnomalie(esito, logCore, protocolFactory);
 		}
 		
 		
@@ -1916,53 +1950,68 @@ public class RicezioneBusteService  {
 			Date dataPrimaSpedizioneRisposta, Date dataRispostaSpedita,
 			EsitoTransazione esito, int statoServletResponse,
 			String idModulo, ConnectorInMessage req, OpenSPCoop2Message requestMessage, 
-			OpenSPCoop2Message responseMessage, Throwable erroreConsegnaRisposta, OpenSPCoop2Message responseMessageError) throws CoreException, HandlerException, ConnectorException {
+			OpenSPCoop2Message responseMessage, Throwable erroreConsegnaRisposta, OpenSPCoop2Message responseMessageError, 
+			MsgDiagnostico msgDiag) throws HandlerException {
 
-		if(postOutResponseContext!=null) {
-			updateContext(context, postOutResponseContext,
-					dataAccettazioneRichiesta, dataIngressoRichiesta,
-					dataPrimaSpedizioneRisposta, dataRispostaSpedita,
-					esito, statoServletResponse,
-					idModulo, req, requestMessage, 
-					responseMessage, erroreConsegnaRisposta, responseMessageError);
-			
-			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_RESPONSE);
-			if(!tracciamentoManager.isTransazioniEnabled()) {
-				return null;
+		try {
+		
+			if(postOutResponseContext!=null) {
+				updateContext(context, postOutResponseContext,
+						dataAccettazioneRichiesta, dataIngressoRichiesta,
+						dataPrimaSpedizioneRisposta, dataRispostaSpedita,
+						esito, statoServletResponse,
+						idModulo, req, requestMessage, 
+						responseMessage, erroreConsegnaRisposta, responseMessageError);
+				
+				TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.OUT_RESPONSE);
+				if(!tracciamentoManager.isTransazioniEnabled()) {
+					return null;
+				}
+				
+				InformazioniTransazione info = new InformazioniTransazione(postOutResponseContext);
+				
+				tracciamentoManager.invoke(info, postOutResponseContext.getEsito(), context.getResponseHeaders(), msgDiag);
+				
+				return info.getTransazioneDaAggiornare();
 			}
 			
-			InformazioniTransazione info = new InformazioniTransazione(postOutResponseContext);
-			
-			tracciamentoManager.invoke(info, postOutResponseContext.getEsito(), context.getResponseHeaders());
-			
-			return info.getTransazioneDaAggiornare();
+		}catch(Exception e) {
+			ServicesUtils.processTrackingException(e, postOutResponseContext.getLogCore(), FaseTracciamento.OUT_RESPONSE);
 		}
+		
 		return null;
 	}
 	
 	private void registraTracciaInRequest(RicezioneBusteContext context,
-			IProtocolFactory<?> protocolFactory, Logger log) throws CoreException, HandlerException, ProtocolException {
+			IProtocolFactory<?> protocolFactory, Logger log,
+			MsgDiagnostico msgDiag) throws HandlerException {
 
-		TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.IN_REQUEST);
-		if(!tracciamentoManager.isTransazioniEnabled()) {
-			return;
-		}
+		try {
+		
+			TracciamentoManager tracciamentoManager = new TracciamentoManager(FaseTracciamento.IN_REQUEST);
+			if(!tracciamentoManager.isTransazioniEnabled()) {
+				return;
+			}
+				
+			InformazioniTransazione info = new InformazioniTransazione();
+			info.setContext(context.getPddContext());
+			info.setTipoPorta(context.getTipoPorta());
+			info.setProtocolFactory(protocolFactory);
+			info.setProtocollo(context.getProtocol());
+			info.setIntegrazione(context.getIntegrazione());
+			info.setIdModulo(context.getIdModulo());
 			
-		InformazioniTransazione info = new InformazioniTransazione();
-		info.setContext(context.getPddContext());
-		info.setTipoPorta(context.getTipoPorta());
-		info.setProtocolFactory(protocolFactory);
-		info.setProtocollo(context.getProtocol());
-		info.setIntegrazione(context.getIntegrazione());
-		info.setIdModulo(context.getIdModulo());
-		
-		TransportRequestContext transportRequestContext = null;
-		if(context.getMessageRequest()!=null) {
-			transportRequestContext = context.getMessageRequest().getTransportRequestContext();
+			TransportRequestContext transportRequestContext = null;
+			if(context.getMessageRequest()!=null) {
+				transportRequestContext = context.getMessageRequest().getTransportRequestContext();
+			}
+			String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, protocolFactory), log);
+			
+			tracciamentoManager.invoke(info, esitoContext, msgDiag);
+			
+		}catch(Exception e) {
+			ServicesUtils.processTrackingException(e, log, FaseTracciamento.IN_REQUEST);
 		}
-		String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, protocolFactory), log);
-		
-		tracciamentoManager.invoke(info, esitoContext);
 		
 	}
 }
