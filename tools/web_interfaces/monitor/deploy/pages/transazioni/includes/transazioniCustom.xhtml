@@ -121,10 +121,10 @@
 										<a4j:outputPanel layout="block" id="titoloInfoEsito_ok" styleClass="titoloEntry" rendered="#{item.esitoOk and !item.esitoSendResponseInCorso}">
 											<i class="material-icons md-24">check</i>
 										</a4j:outputPanel>	
-										<a4j:outputPanel layout="block" id="titoloInfoEsito_fault" styleClass="titoloEntry" rendered="#{item.esitoFaultApplicativo}">
+										<a4j:outputPanel layout="block" id="titoloInfoEsito_fault" styleClass="titoloEntry" rendered="#{item.esitoFaultApplicativo and !item.esitoSendResponseInCorso}">
 											<i class="material-icons md-24">error</i>
 										</a4j:outputPanel>	
-										<a4j:outputPanel layout="block" id="titoloInfoEsito_ko" styleClass="titoloEntry" rendered="#{item.esitoKo}">
+										<a4j:outputPanel layout="block" id="titoloInfoEsito_ko" styleClass="titoloEntry" rendered="#{item.esitoKo and !item.esitoSendResponseInCorso}">
 											<i class="material-icons md-24">warning</i>
 										</a4j:outputPanel>	
 										<a4j:outputPanel layout="block" id="titoloInfoEsito_def" styleClass="titoloEntry" rendered="#{!item.esitoSendInCorso and !item.esitoSendResponseInCorso and !item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}">

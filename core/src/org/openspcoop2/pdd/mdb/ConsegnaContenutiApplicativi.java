@@ -602,6 +602,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		
 		ResponseCachingConfigurazione responseCachingConfig = null;
 		
+		IntegrationContext integrationContext = null;
+		ProtocolContext protocolContext = null;
+		
 		if(richiestaApplicativa!=null){
 			identitaPdD = richiestaApplicativa.getDominio();
 			soggettoFruitore = richiestaApplicativa.getSoggettoFruitore();
@@ -630,6 +633,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			idCorrelazioneApplicativa = richiestaApplicativa.getIdCorrelazioneApplicativa();
 
 			localForward = richiestaApplicativa.isLocalForward();
+			
+			integrationContext = richiestaApplicativa.getIntegrazione();
+			protocolContext = richiestaApplicativa.getProtocol();
 			
 		}else{
 			identitaPdD = richiestaDelegata.getDominio();
@@ -660,6 +666,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			profiloGestione = richiestaDelegata.getProfiloGestione();
 			servizioApplicativoFruitore = richiestaDelegata.getServizioApplicativo();
 			idCorrelazioneApplicativa = richiestaDelegata.getIdCorrelazioneApplicativa();
+			
+			integrationContext = richiestaDelegata.getIntegrazione();
+			protocolContext = richiestaDelegata.getProtocol();
 		}
 		
 		IDServizio servizioHeaderIntegrazione = null;
@@ -2201,7 +2210,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				outRequestContext.setTransazioneApplicativoServer(transazioneApplicativoServer);
 				
 				// Contesto
-				ProtocolContext protocolContext = new ProtocolContext();
+				if(protocolContext==null) {
+					protocolContext = new ProtocolContext();
+				}
 				protocolContext.setIdRichiesta(idMessaggioConsegna);
 				if(idMessaggioPreBehaviour!=null){
 					protocolContext.setIdRichiesta(idMessaggioPreBehaviour);
@@ -2239,7 +2250,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				outRequestContext.setProtocollo(protocolContext);
 				
 				// Integrazione
-				IntegrationContext integrationContext = new IntegrationContext();
+				if(integrationContext==null) {
+					integrationContext = new IntegrationContext();
+				}
 				integrationContext.setIdCorrelazioneApplicativa(idCorrelazioneApplicativa);
 				integrationContext.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 				integrationContext.addServizioApplicativoErogatore(servizioApplicativo);

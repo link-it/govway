@@ -1360,6 +1360,8 @@ public class RicezioneContenutiApplicativi {
 		RichiestaDelegata richiestaDelegata = new RichiestaDelegata(
 				identificativoPortaDelegata, null,
 				idModuloInAttesa, proprietaErroreAppl, identitaPdD);
+		richiestaDelegata.setIntegrazione(this.msgContext.getIntegrazione());
+		richiestaDelegata.setProtocol(this.msgContext.getProtocol());
 		IDServizio idServizio = null;
 		try {
 			if(portaDelegata==null) {
@@ -4060,6 +4062,8 @@ public class RicezioneContenutiApplicativi {
 				
 				if(erroreConfigurazione==null){
 					ra = new RichiestaApplicativa(soggettoFruitore,idServizio.getSoggettoErogatore(), idPA);
+					ra.setIntegrazione(this.msgContext.getIntegrazione());
+					ra.setProtocol(this.msgContext.getProtocol());
 					pa = configurazionePdDReader.getPortaApplicativaSafeMethod(ra.getIdPortaApplicativa(), requestInfo);
 					if(pa.sizeServizioApplicativoList()<=0){
 						erroreConfigurazione = "non risultano registrati servizi applicativi erogatori associati alla porta applicativa ("+pa.getNome()

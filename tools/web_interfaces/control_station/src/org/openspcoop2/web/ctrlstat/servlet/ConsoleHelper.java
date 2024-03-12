@@ -115,6 +115,7 @@ import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
@@ -17061,7 +17062,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_FILTRA_ESITI);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_FILTRA_ESITI);
 		if(StatoFunzionalitaConPersonalizzazione.DISABILITATO.getValue().equals(dbStato) ||
-				(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato) && StatoFunzionalita.ABILITATO.getValue().equals(dbStatoReqIn))) {
+				(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato) && 
+						(StatoFunzionalitaBloccante.ABILITATO.getValue().equals(dbStatoReqIn) || StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue().equals(dbStatoReqIn)))) {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(null);
 		}
@@ -17123,7 +17125,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_FILTRA_ESITI);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_FILTRA_ESITI);
 		if(StatoFunzionalitaConPersonalizzazione.DISABILITATO.getValue().equals(fsStato) ||
-				(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato) && StatoFunzionalita.ABILITATO.getValue().equals(fsStatoReqIn))) {
+				(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato) && 
+						(StatoFunzionalitaBloccante.ABILITATO.getValue().equals(fsStatoReqIn) || StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue().equals(fsStatoReqIn)))) {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(null);
 		}

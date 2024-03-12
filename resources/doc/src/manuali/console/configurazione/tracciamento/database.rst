@@ -12,7 +12,7 @@ Ogni richiesta ricevuta dal gateway viene gestita tramite un processo riassumibi
 
     Fasi di tracciamento su database: configurazione di default
 
-Nel caso siano state attivate ulteriori fasi di tracciamento descritte nella sezione :ref:`tracciamentoTransazioniFasi`, il *processo di failover* si attiva solamente in caso di problematiche di tracciamento durante l'ultima fase dopo che la risposta al client è già stata consegnata (figura :numref:`transazioniDBFasiCustomFig`). Se invece avvengono problematiche (es. connessione al database non disponibile) nelle prime tre fase, la transazione può terminare con errore e restituire un fault al client se la fase è configurata come '*bloccante*' (figura :numref:`transazioniDBFasiErrorFig`). 
+Nel caso siano state attivate ulteriori fasi di tracciamento descritte nella sezione :ref:`tracciamentoTransazioniFasi`, il *processo di failover* si attiva solamente in caso di problematiche di tracciamento durante l'ultima fase dopo che la risposta al client è già stata consegnata (figura :numref:`transazioniDBFasiCustomFig`). 
 
 .. figure:: ../../_figure_console/TracciamentoDBFasiCustom.png
     :scale: 70%
@@ -21,6 +21,8 @@ Nel caso siano state attivate ulteriori fasi di tracciamento descritte nella sez
 
     Fasi di tracciamento su database: configurazione personalizzata
 
+La figura :numref:`transazioniDBFasiErrorFig` mostra uno scenario in cui il tracciamento su database non va a buon fine già nelle prime fasi ed essendo configurate come '*bloccanti*' la transazione terminare con errore e viene restituito un fault al client. Nell'ultima fase viene attivato il *processo di failover*.
+
 .. figure:: ../../_figure_console/TracciamentoDBFasiError.png
     :scale: 70%
     :align: center
@@ -28,7 +30,7 @@ Nel caso siano state attivate ulteriori fasi di tracciamento descritte nella sez
 
     Fasi di tracciamento su database: configurazione personalizzata con errore durante il tracciamento con fasi bloccanti
 
-La figura :numref:`transazioniDBFasiErrorFailOverFig` mostra uno scenario in cui il tracciamento su database non va a buon fine già nelle prime fasi che però essendo configurate come '*non bloccanti*' fanno terminare correttamente la richiesta. Durante il tracciamento nell'ultima fase si attiva il *processo di failover*.
+La figura :numref:`transazioniDBFasiErrorFailOverFig` mostra uno scenario simile al precedente dove però le fasi sono configurate come '*non bloccanti*' e quindi il mancato tracciamento non inficia sulla corretta gestione della richiesta. Nell'ultima fase viene attivato il *processo di failover*.
 
 .. figure:: ../../_figure_console/TracciamentoDBFasiErrorFailOver.png
     :scale: 70%

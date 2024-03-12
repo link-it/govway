@@ -56,7 +56,7 @@ Nella figura :numref:`transazioniFasiCustomErrorFig` viene raffigurato uno scena
 
     Fasi di tracciamento: configurazione personalizzata con errore bloccante durante il tracciamento
 
-Invece nella figura :numref:`transazioniFasiCustomErrorNonBloccanteFig` viene raffigurato uno scenario in cui avvengono problematiche (es. connessione al database non disponibile) ma le fase di tracciamento al database sono state configurate come *non bloccanti* e il tracciamento tramite FileTrace può proseguire correttamente. L'ultima fase di tracciamento su database avvierà un *processo di failover*, descritto nella sezione :ref:`tracciamentoTransazioniDB`, che consentirà di recuperare la traccia in un secondo momento.
+Invece nella figura :numref:`transazioniFasiCustomErrorNonBloccanteFig` viene raffigurato uno scenario in cui avvengono problematiche (es. connessione al database non disponibile) ma le fase di tracciamento al database sono state configurate come *non bloccanti* e il tracciamento tramite FileTrace può proseguire correttamente. 
 
 .. figure:: ../../_figure_console/TracciamentoFasiCustomErrorNonBloccante.png
     :scale: 70%
@@ -64,6 +64,8 @@ Invece nella figura :numref:`transazioniFasiCustomErrorNonBloccanteFig` viene ra
     :name: transazioniFasiCustomErrorNonBloccanteFig
 
     Fasi di tracciamento: configurazione personalizzata con errore bloccante durante il tracciamento
+
+In entrambi gli scenari raffigurati in :numref:`transazioniFasiCustomErrorFig` e :numref:`transazioniFasiCustomErrorNonBloccanteFig` l'ultima fase di tracciamento su database avvierà un *processo di failover*, descritto nella sezione :ref:`tracciamentoTransazioniDB`, che consentirà di recuperare la traccia e riversarla su database in un secondo momento.
 
 **Tracciamento filtrato per Esiti**
 

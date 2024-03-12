@@ -360,6 +360,8 @@ public class InoltroBuste extends GenericLib{
 			esito.setEsitoInvocazione(false); 
 			return esito;
 		}
+		IntegrationContext integrationContext = richiestaDelegata.getIntegrazione();
+		ProtocolContext protocolContext = richiestaDelegata.getProtocol();
 		
 		Busta bustaRichiesta = inoltroBusteMsg.getBusta();
 		if(bustaRichiesta==null) {
@@ -2116,7 +2118,9 @@ public class InoltroBuste extends GenericLib{
 				outRequestContext.setMessaggio(requestMessageTrasformato);
 				
 				// Contesto
-				ProtocolContext protocolContext = new ProtocolContext();
+				if(protocolContext==null) {
+					protocolContext = new ProtocolContext();
+				}
 				protocolContext.setFruitore(soggettoFruitore);
 				if(bustaRichiesta!=null){
 					protocolContext.setIndirizzoFruitore(bustaRichiesta.getIndirizzoMittente());
@@ -2147,7 +2151,9 @@ public class InoltroBuste extends GenericLib{
 				outRequestContext.setProtocollo(protocolContext);
 				
 				// Integrazione
-				IntegrationContext integrationContext = new IntegrationContext();
+				if(integrationContext==null) {
+					integrationContext = new IntegrationContext();
+				}
 				integrationContext.setIdCorrelazioneApplicativa(idCorrelazioneApplicativa);
 				integrationContext.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 				integrationContext.setGestioneStateless(portaDiTipoStateless);

@@ -912,15 +912,18 @@ public class TracciamentoManager {
 			boolean registraTracciaRichiesta = (FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && info.getTransazioneDaAggiornare()==null)
 					||
 					(FaseTracciamento.OUT_RESPONSE.equals(this.fase));
+			boolean registraTracciaRichiestaInfoTransazione = false; 
 			boolean registraTracciaRisposta = (FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && info.getTransazioneDaAggiornare()==null)
 					||
 					(FaseTracciamento.OUT_RESPONSE.equals(this.fase));
+			boolean registraTracciaRispostaInfoTransazione = false; 
 			boolean registrazioneMessaggiDiagnostici = true;
 			boolean registrazioneDumpMessaggi = true;
 			boolean insertTransazione = false;
 			try {
 				
-	
+
+					
 				/* ---- Recupero informazioni sulla modalita' di salvataggio delle tracce ----- */
 	
 				String informazioneTracciaRichiestaDaSalvare = null;
@@ -936,6 +939,9 @@ public class TracciamentoManager {
 							registraTracciaRichiesta
 							&& 
 							this.salvataggioTracceManager!=null) {
+						
+						registraTracciaRichiestaInfoTransazione = true;
+						
 						StatoSalvataggioTracce statoTracciaRichiesta =  
 								this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRichiesta(this.log, info, transaction, transazioneDTO, pddStateless);
 						if(statoTracciaRichiesta!=null) {
@@ -961,6 +967,9 @@ public class TracciamentoManager {
 							registraTracciaRisposta
 							&& 
 							this.salvataggioTracceManager!=null) {
+						
+						registraTracciaRispostaInfoTransazione = true;
+						
 						StatoSalvataggioTracce statoTracciaRisposta =  
 								this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRisposta(this.log, info, transaction, transazioneDTO, pddStateless);
 						if(statoTracciaRisposta!=null) {
@@ -1052,6 +1061,23 @@ public class TracciamentoManager {
 					this.logSqlDebug("["+idTransazione+"] AutoCommit: "+this.debug);
 	
 	
+				
+				
+				
+				
+				
+				// Dopo aver assegnato tutti i valori all'oggetto transazione, in modo da poterlo salvare su filesystem
+				if(
+						(FaseTracciamento.OUT_RESPONSE.equals(this.fase) && this.openspcoopProperties.isTransazioniTracciamentoDBOutResponseThrowRequestException() )
+						||
+						(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && this.openspcoopProperties.isTransazioniTracciamentoDBPostOutResponseThrowRequestException() )
+						) {
+					throwTrackingExceptionIfExists(info);
+				}
+				
+				
+				
+				
 	
 	
 	
@@ -1112,7 +1138,7 @@ public class TracciamentoManager {
 					}
 					insertTransazione = registraTransazione(transazioneDTO,
 							transazioneService, info,
-							autoCommit);
+							autoCommit, registraTracciaRichiestaInfoTransazione, registraTracciaRispostaInfoTransazione);
 				}finally {
 					if(times!=null) {
 						long timeEnd =  DateManager.getTimeMillis();
@@ -1428,8 +1454,10 @@ public class TracciamentoManager {
 					logRegistrazioneNonRiuscita(msgdiagErrore, false, sqlEx, idTransazione, 
 							null, null);
 				}
+				HandlerException errorDB = new HandlerException(msg,sqlEx); 
+				addTrackingException(info, errorDB);
 				if(dbEnabledBloccante) {
-					throw new HandlerException(msg,sqlEx);
+					throw errorDB;
 				}
 			}  catch (Exception e) {
 				errore = true;
@@ -1448,8 +1476,10 @@ public class TracciamentoManager {
 					logRegistrazioneNonRiuscita(msgdiagErrore, false, e, idTransazione, 
 							null, null);
 				}
+				HandlerException errorDB = new HandlerException(msg,e); 
+				addTrackingException(info, errorDB);
 				if(dbEnabledBloccante) {
-					throw new HandlerException(msg,e);
+					throw errorDB;
 				}
 			} finally {
 				
@@ -1649,6 +1679,28 @@ public class TracciamentoManager {
 		return null;
 	}
 	
+	
+	private static final MapKey<String> TRACKING_EXCEPTION = org.openspcoop2.utils.Map.newMapKey("TRACKING_EXCEPTION");
+	private static final MapKey<String> TRACKING_EXCEPTION_PHASE = org.openspcoop2.utils.Map.newMapKey("TRACKING_EXCEPTION_PHASE");
+	private void throwTrackingExceptionIfExists(InformazioniTransazione info) throws HandlerException {
+		if(info!=null && info.getContext()!=null && info.getContext().containsKey(TRACKING_EXCEPTION)) {
+			HandlerException e = (HandlerException) info.getContext().get(TRACKING_EXCEPTION);
+			FaseTracciamento fase = (FaseTracciamento) info.getContext().get(TRACKING_EXCEPTION_PHASE);
+			String label = FaseTracciamento.IN_REQUEST.equals(fase) ? CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN : CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			throw new HandlerException("database rilevato non disponibile nella fase '"+label+"': "+e.getMessage(),e);
+		}
+	}
+	private void addTrackingException(InformazioniTransazione info, HandlerException e) {
+		if(info!=null && info.getContext()!=null && 
+				(FaseTracciamento.IN_REQUEST.equals(this.fase) || FaseTracciamento.OUT_REQUEST.equals(this.fase)) &&
+				(this.openspcoopProperties.isTransazioniTracciamentoDBOutResponseThrowRequestException() || this.openspcoopProperties.isTransazioniTracciamentoDBPostOutResponseThrowRequestException())
+			) {
+			info.getContext().put(TRACKING_EXCEPTION, e);
+			info.getContext().put(TRACKING_EXCEPTION_PHASE, this.fase);
+		}
+	}
+	
+	
 	private static final MapKey<String> TRANSACTION_REGISTERED = org.openspcoop2.utils.Map.newMapKey("TRANSACTION_REGISTERED");
 	private boolean isTransactionAlreadyRegistered(InformazioniTransazione info) {
 		return info!=null && info.getContext()!=null && info.getContext().containsKey(TRANSACTION_REGISTERED);
@@ -1660,7 +1712,7 @@ public class TracciamentoManager {
 	}
 	private boolean registraTransazione(Transazione transazioneDTO, 
 			ITransazioneService transazioneService, InformazioniTransazione info,
-			boolean autoCommit) throws ServiceException, NotImplementedException, NotFoundException, ExpressionNotImplementedException, ExpressionException {
+			boolean autoCommit, boolean registraTracciaRichiestaInfoTransazione, boolean registraTracciaRispostaInfoTransazione) throws ServiceException, NotImplementedException, NotFoundException, ExpressionNotImplementedException, ExpressionException {
 		if(FaseTracciamento.IN_REQUEST.equals(this.fase) 
 				||
 				!isTransactionAlreadyRegistered(info)) {
@@ -1692,6 +1744,24 @@ public class TracciamentoManager {
 			list.add(new UpdateField(Transazione.model().FORMATO_FAULT_COOPERAZIONE, transazioneDTO.getFormatoFaultCooperazione()));
 			list.add(new UpdateField(Transazione.model().ERROR_LOG, transazioneDTO.getErrorLog()));
 			list.add(new UpdateField(Transazione.model().WARNING_LOG, transazioneDTO.getWarningLog()));
+			
+			// ** dati tracce **
+			if(this.salvataggioTracceManager!=null) {
+				if(registraTracciaRichiestaInfoTransazione) {
+					list.add(new UpdateField(Transazione.model().TRACCIA_RICHIESTA, transazioneDTO.getTracciaRichiesta()));
+				}
+				if(registraTracciaRispostaInfoTransazione) {
+					list.add(new UpdateField(Transazione.model().TRACCIA_RISPOSTA, transazioneDTO.getTracciaRisposta()));
+				}
+			}
+			// ** dati diagnostica **
+			if(this.salvataggioDiagnosticiManager!=null){
+				list.add(new UpdateField(Transazione.model().DIAGNOSTICI, transazioneDTO.getDiagnostici()));
+				list.add(new UpdateField(Transazione.model().DIAGNOSTICI_LIST_1, transazioneDTO.getDiagnosticiList1()));
+				list.add(new UpdateField(Transazione.model().DIAGNOSTICI_LIST_2, transazioneDTO.getDiagnosticiList2()));
+				list.add(new UpdateField(Transazione.model().DIAGNOSTICI_LIST_EXT, transazioneDTO.getDiagnosticiListExt()));
+				list.add(new UpdateField(Transazione.model().DIAGNOSTICI_EXT, transazioneDTO.getDiagnosticiExt()));
+			}
 			
 			boolean isTransazioniUpdateUseDayInterval = this.openspcoopProperties.isTransazioniUpdateUseDayInterval();
 			if(isTransazioniUpdateUseDayInterval) {
