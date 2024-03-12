@@ -117,6 +117,8 @@ import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneU
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneView;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyItem;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
+import org.openspcoop2.core.config.rs.server.model.RegistrazioneDiagnosticiConfigurazione;
+import org.openspcoop2.core.config.rs.server.model.RegistrazioneTransazioniConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.StatoFunzionalitaConWarningEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipalToken;
@@ -2785,6 +2787,40 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
+     * Restituisce la configurazione relativa alla registrazione dei diagnostici
+     *
+     * Questa operazione consente di ottenere la configurazione relativa alla registrazione dei diagnostici
+     *
+     */
+	@Override
+    public RegistrazioneDiagnosticiConfigurazione getErogazioneRegistrazioneDiagnostici(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);	
+			final RegistrazioneDiagnosticiConfigurazione ret = ErogazioniApiHelper.fromDiagnosticiConfigurazione(pa.getTracciamento());
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+    /**
      * Restituisce la configurazione relativa alla registrazione dei messaggi
      *
      * Questa operazione consente di ottenere la configurazione relativa alla registrazione dei messaggi
@@ -2809,6 +2845,40 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+    
+    /**
+     * Restituisce la configurazione relativa alla registrazione delle transazioni
+     *
+     * Questa operazione consente di ottenere la configurazione relativa alla registrazione delle transazioni
+     *
+     */
+	@Override
+    public RegistrazioneTransazioniConfigurazione getErogazioneRegistrazioneTransazioni(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);	
+			final RegistrazioneTransazioniConfigurazione ret = ErogazioniApiHelper.fromTransazioniConfigurazione(pa.getTracciamento(), env);
+        
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -3454,6 +3524,43 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
+     * Consente di modificare la configurazione relativa alla registrazione dei diagnostici
+     *
+     * Questa operazione consente di aggiornare la configurazione relativa alla registrazione dei diagnostici
+     *
+     */
+	@Override
+    public void updateErogazioneRegistrazioneDiagnostici(RegistrazioneDiagnosticiConfigurazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			ErogazioniApiHelper.updateTracciamento(body, pa, env);
+			
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+        
+			context.getLogger().info("Invocazione completata con successo");
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+    /**
      * Consente di modificare la configurazione relativa alla registrazione dei messaggi
      *
      * Questa operazione consente di aggiornare la configurazione relativa alla registrazione dei messaggi
@@ -3494,6 +3601,43 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 		}
     }
     
+    /**
+     * Consente di modificare la configurazione relativa alla registrazione delle transazioni
+     *
+     * Questa operazione consente di aggiornare la configurazione relativa alla registrazione delle transazioni
+     *
+     */
+	@Override
+    public void updateErogazioneRegistrazioneTransazioni(RegistrazioneTransazioniConfigurazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			ErogazioniApiHelper.updateTracciamento(body, pa, env);
+			
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+        
+			context.getLogger().info("Invocazione completata con successo");
+        
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Consente di modificare lo stato del gruppo
      *

@@ -110,6 +110,8 @@ import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneUp
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneView;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyItem;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
+import org.openspcoop2.core.config.rs.server.model.RegistrazioneDiagnosticiConfigurazione;
+import org.openspcoop2.core.config.rs.server.model.RegistrazioneTransazioniConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.StatoFunzionalitaConWarningEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipalToken;
@@ -2322,7 +2324,40 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
     }
-    
+
+    /**
+     * Restituisce la configurazione relativa alla registrazione dei diagnostici
+     *
+     * Questa operazione consente di ottenere la configurazione relativa alla registrazione dei diagnostici
+     *
+     */
+	@Override
+    public RegistrazioneDiagnosticiConfigurazione getFruizioneRegistrazioneDiagnostici(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			final RegistrazioneDiagnosticiConfigurazione ret = ErogazioniApiHelper.fromDiagnosticiConfigurazione(pd.getTracciamento());
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }    
+
     /**
      * Restituisce la configurazione relativa alla registrazione dei messaggi
      *
@@ -2355,6 +2390,39 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+    /**
+     * Restituisce la configurazione relativa alla registrazione delle transazioni
+     *
+     * Questa operazione consente di ottenere la configurazione relativa alla registrazione delle transazioni
+     *
+     */
+	@Override
+    public RegistrazioneTransazioniConfigurazione getFruizioneRegistrazioneTransazioni(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+            
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			final RegistrazioneTransazioniConfigurazione ret = ErogazioniApiHelper.fromTransazioniConfigurazione(pd.getTracciamento(), env);
+        
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Restituisce l'indicazione sullo stato del gruppo
      *
@@ -2986,6 +3054,43 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
     }
     
     /**
+     * Consente di modificare la configurazione relativa alla registrazione dei diagnostici
+     *
+     * Questa operazione consente di aggiornare la configurazione relativa alla registrazione dei diagnostici
+     *
+     */
+	@Override
+    public void updateFruizioneRegistrazioneDiagnostici(RegistrazioneDiagnosticiConfigurazione body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);	
+
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			
+			ErogazioniApiHelper.updateTracciamento(body, pd, env);
+			
+			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+			
+			context.getLogger().info("Invocazione completata con successo");
+        
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+    /**
      * Consente di modificare la configurazione relativa alla registrazione dei messaggi
      *
      * Questa operazione consente di aggiornare la configurazione relativa alla registrazione dei messaggi
@@ -3024,6 +3129,43 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+    /**
+     * Consente di modificare la configurazione relativa alla registrazione delle transazioni
+     *
+     * Questa operazione consente di aggiornare la configurazione relativa alla registrazione delle transazioni
+     *
+     */
+	@Override
+    public void updateFruizioneRegistrazioneTransazioni(RegistrazioneTransazioniConfigurazione body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);	
+
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			
+			ErogazioniApiHelper.updateTracciamento(body, pd, env);
+			
+			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+        
+			context.getLogger().info("Invocazione completata con successo");
+        
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Consente di modificare lo stato del gruppo
      *

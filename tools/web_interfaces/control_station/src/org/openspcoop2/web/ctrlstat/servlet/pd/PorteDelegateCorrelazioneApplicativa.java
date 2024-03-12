@@ -34,12 +34,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.TracciamentoConfigurazione;
-import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace;
-import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletraceConnector;
-import org.openspcoop2.core.config.Transazioni;
-import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.utils.TracciamentoCompatibilitaFiltroEsiti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -762,91 +757,24 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 					ca.setScadenza(scadcorr);
 				pde.setCorrelazioneApplicativa(ca);
 	
-				PortaTracciamento portaTracciamento = pde.getTracciamento();
-				if(portaTracciamento==null) {
-					portaTracciamento = new PortaTracciamento();
-					pde.setTracciamento(portaTracciamento);
-				}
-				
-				portaTracciamento.setStato(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoStato) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
-				if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoStato)) {
-					if(config==null) {
-						config = porteDelegateCore.getConfigurazioneGenerale();
-					}
-					if(config.getTracciamento()!=null && config.getTracciamento().getPortaDelegata()!=null) {
-						portaTracciamento.setDatabase(config.getTracciamento().getPortaDelegata().getDatabase());
-						portaTracciamento.setFiletrace(config.getTracciamento().getPortaDelegata().getFiletrace());
-						if(portaTracciamento.getFiletrace()!=null && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(portaTracciamento.getFiletrace().getStato())) {
-							portaTracciamento.getFiletrace().setStato(org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO);
-						}
-						portaTracciamento.setFiletraceConfig(config.getTracciamento().getPortaDelegata().getFiletraceConfig());
-						portaTracciamento.setEsiti(config.getTracciamento().getPortaDelegata().getEsiti());
-						portaTracciamento.setTransazioni(config.getTracciamento().getPortaDelegata().getTransazioni());
-					}
-				}
-				
-				if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(statoDiagnostici)) {
-					portaTracciamento.setSeverita(Severita.toEnumConstant(severita));
-				}
-				else {
-					portaTracciamento.setSeverita(null);
-				}
+				PorteDelegateUtilities.initTracciamento(pde, porteDelegateCore, config,
+						tracciamentoStato, statoDiagnostici, severita);
 				
 			}
 			else if(ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO_PORTA.equals(tipoConfigurazione)) {
 				
-				PortaTracciamento portaTracciamento = pde.getTracciamento();
-				if(portaTracciamento==null) {
-					portaTracciamento = new PortaTracciamento();
-					pde.setTracciamento(portaTracciamento);
-				}
-				
-				TracciamentoConfigurazione database = porteDelegateCore.buildTracciamentoConfigurazioneDatabase(dbStato,
+				PorteDelegateUtilities.setTracciamentoTransazioni(pde, porteDelegateCore,
+						dbStato,
 						dbStatoReqIn, dbStatoReqOut, dbStatoResOut, dbStatoResOutComplete,
-						dbFiltroEsiti);
-				portaTracciamento.setDatabase(database);
-				
-				TracciamentoConfigurazione filetrace = porteDelegateCore.buildTracciamentoConfigurazioneFiletrace(fsStato,
+						dbFiltroEsiti,
+						fsStato,
 						fsStatoReqIn, fsStatoReqOut, fsStatoResOut, fsStatoResOutComplete,
-						fsFiltroEsiti);
-				portaTracciamento.setFiletrace(filetrace);
-				
-				if(StringUtils.isEmpty(nuovaConfigurazioneEsiti)) {
-					portaTracciamento.setEsiti(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"");
-				}
-				else {
-					portaTracciamento.setEsiti(nuovaConfigurazioneEsiti);
-				}
-				
-				if(portaTracciamento.getTransazioni()==null) {
-					portaTracciamento.setTransazioni( new Transazioni() );
-				}
-				portaTracciamento.getTransazioni().setTempiElaborazione(StatoFunzionalita.toEnumConstant(transazioniTempiElaborazione));
-				portaTracciamento.getTransazioni().setToken(StatoFunzionalita.toEnumConstant(transazioniToken));
-				
-				if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(fileTraceStato)) {
-					portaTracciamento.setFiletraceConfig(new TracciamentoConfigurazioneFiletrace());
-					portaTracciamento.getFiletraceConfig().setConfig(fileTraceConfigFile);
-					
-					portaTracciamento.getFiletraceConfig().setDumpIn(new TracciamentoConfigurazioneFiletraceConnector());			
-					portaTracciamento.getFiletraceConfig().getDumpIn().setStato(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceClient) ?
-							StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
-					portaTracciamento.getFiletraceConfig().getDumpIn().setHeader(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceClientHdr) ?
-							StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
-					portaTracciamento.getFiletraceConfig().getDumpIn().setPayload(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceClientBody) ?
-							StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
-					
-					portaTracciamento.getFiletraceConfig().setDumpOut(new TracciamentoConfigurazioneFiletraceConnector());			
-					portaTracciamento.getFiletraceConfig().getDumpOut().setStato(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceServer) ?
-							StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
-					portaTracciamento.getFiletraceConfig().getDumpOut().setHeader(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceServerHdr) ?
-							StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
-					portaTracciamento.getFiletraceConfig().getDumpOut().setPayload(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceServerBody) ?
-							StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
-				}
-				else {
-					portaTracciamento.setFiletraceConfig(null);
-				}
+						fsFiltroEsiti,
+						nuovaConfigurazioneEsiti,
+						transazioniTempiElaborazione, transazioniToken,
+						fileTraceStato, fileTraceConfigFile,
+						fileTraceClient, fileTraceClientHdr, fileTraceClientBody,
+						fileTraceServer, fileTraceServerHdr, fileTraceServerBody);
 				
 			}
 			
