@@ -87,6 +87,7 @@ import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
@@ -775,7 +776,7 @@ public class ServicesUtils {
 	}
 	
 	
-	public static void processTrackingException(Exception e, Logger log, FaseTracciamento fase) throws HandlerException {
+	public static void processTrackingException(Exception e, Logger log, FaseTracciamento fase, Context context) throws HandlerException {
 		HandlerException he = null;
 		if(e instanceof HandlerException) {
 			he = (HandlerException) e;
@@ -791,6 +792,7 @@ public class ServicesUtils {
 			String msg = "Tracciamento '"+fase.name()+"' fallito: "+e.getMessage();
 			log.error(msg,e);
 		}
+		context.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TRACCIAMENTO, "true");
 		throw he;
 	}
 	

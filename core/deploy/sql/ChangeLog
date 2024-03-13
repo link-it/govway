@@ -1,3 +1,12 @@
+2024-03-13  Andrea Poli <apoli@link.it>
+
+	Aggiunto nuovo esito che indica un tracciamento fallito
+
+	INSERT INTO transazioni_esiti (govway_status, govway_status_key, govway_status_detail, govway_status_description, govway_status_class) VALUES ( 53 , 'ERRORE_TRACCIAMENTO' , 'Tracciamento Fallito' , 'Sono emersi degli errori durante il tracciamento' , (select id from transazioni_classe_esiti WHERE govway_status=10) );
+
+	update configurazione set tracciamento_esiti = CONCAT(tracciamento_esiti, ',53') where tracciamento_esiti is not null;
+	update configurazione set tracciamento_esiti_pd = CONCAT(tracciamento_esiti_pd, ',53') where tracciamento_esiti_pd is not null;
+
 2024-02-16  Andrea Poli <apoli@link.it>
 
 	Aggiunti criterio di personalizzazione dei dati di una transazione salvata su database o tramite fileTrace.

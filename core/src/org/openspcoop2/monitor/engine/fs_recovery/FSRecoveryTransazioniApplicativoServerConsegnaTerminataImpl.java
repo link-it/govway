@@ -29,6 +29,8 @@ import org.openspcoop2.core.transazioni.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.slf4j.Logger;
 
 /**
@@ -44,26 +46,26 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 	private DAOFactory daoFactory;
 	private Logger daoFactoryLogger;
 	private ServiceManagerProperties daoFactoryServiceManagerProperties;
-	private long gestioneSerializableDB_AttesaAttiva;
-	private int gestioneSerializableDB_CheckInterval;
+	private long gestioneSerializableDBAttesaAttiva;
+	private int gestioneSerializableDBCheckInterval;
 	
 	public FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl( 
 			Logger log,
 			boolean debug,
 			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
-			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
+			long gestioneSerializableDBAttesaAttiva, int gestioneSerializableDBCheckInterval,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM, 
 			File directory, File directoryDLQ,
 			int tentativi,
-			int minutiAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, minutiAttesaProcessingFile);
+			long msAttesaProcessingFile) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
 		
 		this.transazioniSM = transazioniSM;
 		this.daoFactory = daoFactory;
 		this.daoFactoryLogger = daoFactoryLogger;
 		this.daoFactoryServiceManagerProperties = daoFactoryServiceManagerProperties;
-		this.gestioneSerializableDB_AttesaAttiva = gestioneSerializableDB_AttesaAttiva;
-		this.gestioneSerializableDB_CheckInterval = gestioneSerializableDB_CheckInterval;
+		this.gestioneSerializableDBAttesaAttiva = gestioneSerializableDBAttesaAttiva;
+		this.gestioneSerializableDBCheckInterval = gestioneSerializableDBCheckInterval;
 	}
 
 	@Override
@@ -74,9 +76,14 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 	}
 	
 	@Override
-	public void insertObject(File file, Connection connection) throws Exception {
+	public void insertObject(File file, Connection connection) throws UtilsException, UtilsMultiException {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
-		TransazioneApplicativoServer transazioneApplicativoServer = deserializer.readTransazioneApplicativoServer(file);
+		TransazioneApplicativoServer transazioneApplicativoServer = null;
+		try {
+			transazioneApplicativoServer = deserializer.readTransazioneApplicativoServer(file);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 			
 		int esitoConsegnaMultipla = -1;
 		int esitoConsegnaMultiplaInCorso = -1;
@@ -105,7 +112,11 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 			try{
 			
 				boolean autoCommit = false;
-				connection.setAutoCommit(autoCommit);
+				try {
+					connection.setAutoCommit(autoCommit);
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
+				}
 				
 				boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
 				boolean consegnaInErrore = false;
@@ -130,7 +141,7 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 						this.debug,
 						esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 						esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
-						this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval,
+						this.gestioneSerializableDBAttesaAttiva,this.gestioneSerializableDBCheckInterval,
 						null);
 				
 				

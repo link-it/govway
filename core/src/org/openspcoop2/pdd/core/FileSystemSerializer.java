@@ -57,7 +57,7 @@ public class FileSystemSerializer {
 	
 	public FileSystemSerializer() throws Exception{
 		
-		this.directory = OpenSPCoop2Properties.getInstance().getFileSystemRecovery_repository();
+		this.directory = OpenSPCoop2Properties.getInstance().getFileSystemRecoveryRepository();
 		if(this.directory.exists()==false){
 			if(this.directory.mkdir()==false){
 				throw new Exception("Directory ["+this.directory.getAbsolutePath()+"] non esistente e creazione non riuscita");

@@ -2584,7 +2584,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				
 				// recovery
-				File dirRecovery = propertiesReader.getFileSystemRecovery_repository();
+				File dirRecovery = propertiesReader.getFileSystemRecoveryRepository();
 				FileSystemUtilities.mkdir(dirRecovery, configMkdir);
 				FileSystemSerializer fs = FileSystemSerializer.getInstance();
 				FileSystemUtilities.mkdir(fs.getDirTransazioni().getAbsolutePath(), configMkdir);

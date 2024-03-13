@@ -1070,8 +1070,14 @@ public class TracciamentoManager {
 				if(
 						(FaseTracciamento.OUT_RESPONSE.equals(this.fase) && this.openspcoopProperties.isTransazioniTracciamentoDBOutResponseThrowRequestException() )
 						||
-						(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && this.openspcoopProperties.isTransazioniTracciamentoDBPostOutResponseThrowRequestException() )
-						) {
+						(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && 
+								(
+										this.openspcoopProperties.isTransazioniTracciamentoDBPostOutResponseThrowRequestException() 
+										||
+										this.openspcoopProperties.isTransazioniTracciamentoDBPostOutResponseThrowResponseException()
+								)
+						)
+					) {
 					throwTrackingExceptionIfExists(info);
 				}
 				
@@ -1685,18 +1691,53 @@ public class TracciamentoManager {
 	private void throwTrackingExceptionIfExists(InformazioniTransazione info) throws HandlerException {
 		if(info!=null && info.getContext()!=null && info.getContext().containsKey(TRACKING_EXCEPTION)) {
 			HandlerException e = (HandlerException) info.getContext().get(TRACKING_EXCEPTION);
-			FaseTracciamento fase = (FaseTracciamento) info.getContext().get(TRACKING_EXCEPTION_PHASE);
-			String label = FaseTracciamento.IN_REQUEST.equals(fase) ? CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN : CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			FaseTracciamento faseExc = (FaseTracciamento) info.getContext().get(TRACKING_EXCEPTION_PHASE);
+			String label = null;
+			if(FaseTracciamento.IN_REQUEST.equals(faseExc)) {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}
+			else if(FaseTracciamento.OUT_REQUEST.equals(faseExc)) {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}
+			else {
+				label = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
 			throw new HandlerException("database rilevato non disponibile nella fase '"+label+"': "+e.getMessage(),e);
 		}
 	}
 	private void addTrackingException(InformazioniTransazione info, HandlerException e) {
-		if(info!=null && info.getContext()!=null && 
-				(FaseTracciamento.IN_REQUEST.equals(this.fase) || FaseTracciamento.OUT_REQUEST.equals(this.fase)) &&
-				(this.openspcoopProperties.isTransazioniTracciamentoDBOutResponseThrowRequestException() || this.openspcoopProperties.isTransazioniTracciamentoDBPostOutResponseThrowRequestException())
-			) {
-			info.getContext().put(TRACKING_EXCEPTION, e);
-			info.getContext().put(TRACKING_EXCEPTION_PHASE, this.fase);
+		if(info!=null && info.getContext()!=null && !info.getContext().containsKey(TRACKING_EXCEPTION)) { 
+			boolean add = false;
+			if (
+					(
+						(
+								FaseTracciamento.IN_REQUEST.equals(this.fase) || 
+								FaseTracciamento.OUT_REQUEST.equals(this.fase)
+						) 
+						&&
+						(
+								this.openspcoopProperties.isTransazioniTracciamentoDBOutResponseThrowRequestException() 
+								|| 
+								this.openspcoopProperties.isTransazioniTracciamentoDBPostOutResponseThrowRequestException()
+						)
+					)
+					||
+					(
+						(
+								FaseTracciamento.OUT_RESPONSE.equals(this.fase)
+						) 
+						&&
+						(
+								this.openspcoopProperties.isTransazioniTracciamentoDBPostOutResponseThrowResponseException()
+						)
+					)
+			){
+				add = true;
+			}
+			if(add) {
+				info.getContext().put(TRACKING_EXCEPTION, e);
+				info.getContext().put(TRACKING_EXCEPTION_PHASE, this.fase);
+			}
 		}
 	}
 	

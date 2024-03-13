@@ -74,6 +74,7 @@ public class Costanti {
 	public static final MapKey<String> ERRORE_TRASFORMAZIONE_RICHIESTA = Map.newMapKey("ERRORE_TRASFORMAZIONE_RICHIESTA");
 	public static final MapKey<String> ERRORE_TRASFORMAZIONE_RISPOSTA = Map.newMapKey("ERRORE_TRASFORMAZIONE_RISPOSTA");
 	public static final MapKey<String> ERRORE_SOSPENSIONE = Map.newMapKey("ERRORE_SOSPENSIONE");
+	public static final MapKey<String> ERRORE_TRACCIAMENTO = Map.newMapKey("ERRORE_TRACCIAMENTO");
 	public static final MapKey<String> ERRORE_GENERICO = Map.newMapKey("ERRORE_GENERICO");
 	public static final MapKey<String> TOKEN_NON_PRESENTE = Map.newMapKey("TOKEN_NON_PRESENTE");
 	public static final MapKey<String> ERRORE_AUTENTICAZIONE_TOKEN = Map.newMapKey("ERRORE_AUTENTICAZIONE_TOKEN");

@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.OpenspcoopAppender;
@@ -73,6 +74,9 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 	private boolean recoveryEventi;
 	private boolean recoveryTransazioni;
 	
+	private long recoveryEventiProcessingFileAfterMs;
+	private long recoveryTransazioniProcessingFileAfterMs;
+	
 	private OpenSPCoop2Properties properties;
 	
 	/** Database */
@@ -90,8 +94,11 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 	private IDumpProducer loggerDumpOpenSPCoopAppender = null; 
 	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled = false;
 
-	/** Costruttore */
-	public TimerFileSystemRecoveryThread(Logger logCore, Logger logSql) throws Exception{
+	private static final String ID_TIMER = "__timerFileSystemRecovery";
+	
+	/** Costruttore 
+	 * @throws CoreException */
+	public TimerFileSystemRecoveryThread(Logger logCore, Logger logSql) throws TimerException, CoreException{
 	
 		this.properties = OpenSPCoop2Properties.getInstance();
 		
@@ -105,12 +112,15 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 		this.recoveryEventi = this.properties.isFileSystemRecoveryTimerEventEnabled();
 		this.recoveryTransazioni = this.properties.isFileSystemRecoveryTimerTransactionEnabled();
 		
+		this.recoveryEventiProcessingFileAfterMs = this.properties.getFileSystemRecoveryEventsProcessingFileAfterMs();
+		this.recoveryTransazioniProcessingFileAfterMs = this.properties.getFileSystemRecoveryTransactionProcessingFileAfterMs();
+		
 		DAOFactoryProperties daoFactoryProperties = null;
 		try{
 			
 			this.tipoDatabaseRuntime = this.properties.getDatabaseType();			
 			if(this.tipoDatabaseRuntime==null){
-				throw new Exception("Tipo Database non definito");
+				throw new TimerException("Tipo Database non definito");
 			}
 
 			// DAOFactory
@@ -131,7 +141,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 			}
 			
 		}catch(Exception e){
-			throw new Exception("Errore durante l'inizializzazione del datasource: "+e.getMessage(),e);
+			throw new TimerException("Errore durante l'inizializzazione del datasource: "+e.getMessage(),e);
 		}
 		
 		if(this.recoveryTransazioni){
@@ -143,8 +153,8 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 				// Init
 				this.loggerTracciamentoOpenSPCoopAppender = new org.openspcoop2.pdd.logger.TracciamentoOpenSPCoopProtocolAppender();
 				OpenspcoopAppender tracciamentoOpenSPCoopAppender = new OpenspcoopAppender();
-				tracciamentoOpenSPCoopAppender.setTipo("__timerFileSystemRecovery");
-				List<Property> tracciamentoOpenSPCoopAppenderProperties = new ArrayList<Property>();
+				tracciamentoOpenSPCoopAppender.setTipo(ID_TIMER);
+				List<Property> tracciamentoOpenSPCoopAppenderProperties = new ArrayList<>();
 	
 				// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
 				OpenSPCoopAppenderUtilities.addParameters(this.daoFactoryLogger, tracciamentoOpenSPCoopAppenderProperties, 
@@ -161,7 +171,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 				this.loggerTracciamentoOpenSPCoopAppender.isAlive();
 				
 			}catch(Exception e){
-				throw new Exception("Errore durante l'inizializzazione del TracciamentoAppender: "+e.getMessage(),e);
+				throw new TimerException("Errore durante l'inizializzazione del TracciamentoAppender: "+e.getMessage(),e);
 			} 
 			
 			try{
@@ -169,8 +179,8 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 				// Init
 				this.loggerMsgDiagnosticoOpenSPCoopAppender = new org.openspcoop2.pdd.logger.MsgDiagnosticoOpenSPCoopProtocolAppender();
 				OpenspcoopAppender diagnosticoOpenSPCoopAppender = new OpenspcoopAppender();
-				diagnosticoOpenSPCoopAppender.setTipo("__timerFileSystemRecovery");
-				List<Property> diagnosticoOpenSPCoopAppenderProperties = new ArrayList<Property>();
+				diagnosticoOpenSPCoopAppender.setTipo(ID_TIMER);
+				List<Property> diagnosticoOpenSPCoopAppenderProperties = new ArrayList<>();
 	
 				// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
 				OpenSPCoopAppenderUtilities.addParameters(this.daoFactoryLogger, diagnosticoOpenSPCoopAppenderProperties, 
@@ -187,7 +197,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 				this.loggerMsgDiagnosticoOpenSPCoopAppender.isAlive();
 				
 			}catch(Exception e){
-				throw new Exception("Errore durante l'inizializzazione del DiagnosticoAppender: "+e.getMessage(),e);
+				throw new TimerException("Errore durante l'inizializzazione del DiagnosticoAppender: "+e.getMessage(),e);
 			} 
 			
 			try{
@@ -195,8 +205,8 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 				// Init
 				this.loggerDumpOpenSPCoopAppender = new org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender();
 				OpenspcoopAppender dumpOpenSPCoopAppender = new OpenspcoopAppender();
-				dumpOpenSPCoopAppender.setTipo("__timerFileSystemRecovery");
-				List<Property> dumpOpenSPCoopAppenderProperties = new ArrayList<Property>();
+				dumpOpenSPCoopAppender.setTipo(ID_TIMER);
+				List<Property> dumpOpenSPCoopAppenderProperties = new ArrayList<>();
 	
 				// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
 				OpenSPCoopAppenderUtilities.addParameters(this.daoFactoryLogger, dumpOpenSPCoopAppenderProperties, 
@@ -216,7 +226,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 				this.transazioniRegistrazioneDumpHeadersCompactEnabled = this.properties.isTransazioniRegistrazioneDumpHeadersCompactEnabled();
 				
 			}catch(Exception e){
-				throw new Exception("Errore durante l'inizializzazione del DumpAppender: "+e.getMessage(),e);
+				throw new TimerException("Errore durante l'inizializzazione del DumpAppender: "+e.getMessage(),e);
 			} 
 			
 		}
@@ -237,13 +247,18 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 			
 			this.conf.setDefaultProtocol(this.properties.getDefaultProtocolName());
 			
-			this.conf.setRepository(this.properties.getFileSystemRecovery_repository().getAbsolutePath());
+			this.conf.setRepository(this.properties.getFileSystemRecoveryRepository().getAbsolutePath());
 			
 			this.conf.setRipristinoEventi(this.recoveryEventi);
 			
 			this.conf.setRipristinoTransazioni(this.recoveryTransazioni);
 			
 			this.conf.setTentativi(this.properties.getFileSystemRecoveryMaxAttempts());
+			
+			this.conf.setProcessingEventFileAfterMs(this.recoveryEventiProcessingFileAfterMs);
+			
+			this.conf.setProcessingTransactionFileAfterMs(this.recoveryTransazioniProcessingFileAfterMs);
+			
 			return true;
 		}catch(Exception e){
 			this.logCore.error("Errore durante il recovery da file system (InitConfigurazione): "+e.getMessage(),e);
@@ -266,7 +281,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 				}
 				Connection con = (Connection) r.getResource();
 				if(con == null)
-					throw new Exception("Connessione non disponibile");	
+					throw new TimerException("Connessione non disponibile");	
 	
 				org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
 				if(this.recoveryTransazioni){

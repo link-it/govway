@@ -1976,7 +1976,7 @@ public class RicezioneBusteService  {
 			}
 			
 		}catch(Exception e) {
-			ServicesUtils.processTrackingException(e, postOutResponseContext.getLogCore(), FaseTracciamento.OUT_RESPONSE);
+			ServicesUtils.processTrackingException(e, postOutResponseContext.getLogCore(), FaseTracciamento.OUT_RESPONSE, context.getPddContext());
 		}
 		
 		return null;
@@ -2010,7 +2010,7 @@ public class RicezioneBusteService  {
 			tracciamentoManager.invoke(info, esitoContext, msgDiag);
 			
 		}catch(Exception e) {
-			ServicesUtils.processTrackingException(e, log, FaseTracciamento.IN_REQUEST);
+			ServicesUtils.processTrackingException(e, log, FaseTracciamento.IN_REQUEST, context.getPddContext());
 		}
 		
 	}

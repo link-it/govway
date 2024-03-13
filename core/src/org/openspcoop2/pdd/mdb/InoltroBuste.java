@@ -5533,7 +5533,7 @@ public class InoltroBuste extends GenericLib{
 							msgDiag);
 			
 		}catch(Exception e) {
-			ServicesUtils.processTrackingException(e, log, FaseTracciamento.OUT_REQUEST);
+			ServicesUtils.processTrackingException(e, log, FaseTracciamento.OUT_REQUEST, outRequestContext.getPddContext());
 		}
 		
 	}
