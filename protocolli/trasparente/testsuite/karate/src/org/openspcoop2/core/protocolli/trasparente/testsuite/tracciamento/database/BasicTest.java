@@ -22,6 +22,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.tracciamento.datab
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.token.validazione.ValidazioneJWTTest;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.tracciamento.TestTracciamentoCostanti;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.tracciamento.TracciamentoUtils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.tracciamento.TracciamentoVerifica;
@@ -110,5 +111,283 @@ public class BasicTest extends ConfigLoader {
 	
 	
 	
+	
+	
+	
+	
+	public TracciamentoVerifica getAbilitato() {
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		return tracciamentoVerifica;
+	}
+	@Test
+	public void erogazioneAbilitato() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.EROGAZIONE,
+				API, TestTracciamentoCostanti.RISORSA_ABILITATO, 
+				getAbilitato(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	@Test
+	public void fruizioneAbilitato() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.FRUIZIONE,
+				API, TestTracciamentoCostanti.RISORSA_ABILITATO, 
+				getAbilitato(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	
+	
+	
+	public TracciamentoVerifica getAbilitatoError() {
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.POST_OUT_RESPONSE;
+		
+		return tracciamentoVerifica;
+	}
+	@Test
+	public void erogazioneAbilitatoError() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.EROGAZIONE,
+				API, TestTracciamentoCostanti.RISORSA_ABILITATO, 
+				getAbilitatoError(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	@Test
+	public void fruizioneAbilitatoError() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.FRUIZIONE,
+				API, TestTracciamentoCostanti.RISORSA_ABILITATO, 
+				getAbilitatoError(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	
+	
+	
+	
+	
+	
+	
+	public TracciamentoVerifica getDisabilitato() {
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.FALSE();
+		return tracciamentoVerifica;
+	}
+	@Test
+	public void erogazioneDisabilitato() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.EROGAZIONE,
+				API, TestTracciamentoCostanti.RISORSA_DISABILITATO, 
+				getDisabilitato(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	@Test
+	public void fruizioneDisabilitato() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.FRUIZIONE,
+				API, TestTracciamentoCostanti.RISORSA_DISABILITATO, 
+				getDisabilitato(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+
+	
+	
+	
+	
+	
+	public TracciamentoVerifica getFaultNonTracciato() {
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.FALSE();
+		
+		tracciamentoVerifica.queryParameters.put("problem", "true");
+		
+		return tracciamentoVerifica;
+	}
+	@Test
+	public void erogazioneFaultNonTracciato() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.EROGAZIONE,
+				API, TestTracciamentoCostanti.RISORSA_FAULT, 
+				getFaultNonTracciato(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	@Test
+	public void fruizioneFaultNonTracciato() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.FRUIZIONE,
+				API, TestTracciamentoCostanti.RISORSA_FAULT, 
+				getFaultNonTracciato(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	
+	
+	
+	
+	public TracciamentoVerifica getFaultTracciato() {
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.queryParameters.put("problem", "true");
+		
+		return tracciamentoVerifica;
+	}
+	@Test
+	public void erogazioneFaultTracciato() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.EROGAZIONE,
+				API, TestTracciamentoCostanti.RISORSA_DEFAULT, 
+				getFaultTracciato(),
+				true, // expectedOk,
+				TestTracciamentoCostanti.DETAIL_MESSAGGIO, true, TestTracciamentoCostanti.DETAIL_MESSAGGIO );// diagnosticoErrore, error, detail)
+	}
+	@Test
+	public void fruizioneFaultTracciato() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.FRUIZIONE,
+				API, TestTracciamentoCostanti.RISORSA_DEFAULT, 
+				getFaultTracciato(),
+				true, // expectedOk,
+				TestTracciamentoCostanti.DETAIL, true, "errore HTTP 500" );// diagnosticoErrore, error, detail)
+	}
+	
+	
+	
+	
+	
+	
+	public TracciamentoVerifica getInformazioni() throws Exception {
+		
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		tracciamentoVerifica.checkInfo = true;
+		tracciamentoVerifica.headers.put(TestTracciamentoCostanti.HTTP_TOKEN, 
+				ValidazioneJWTTest.buildJWT(true, 
+						tracciamentoVerifica.mapExpectedTokenInfo));
+		tracciamentoVerifica.tempiElaborazioneExpected = false; // non vengono tracciati
+		
+		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		return tracciamentoVerifica;
+	}
+	@Test
+	public void erogazioneInformazioni() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.EROGAZIONE,
+				API, TestTracciamentoCostanti.RISORSA_INFO, 
+				getInformazioni(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	@Test
+	public void fruizioneInformazioni() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.FRUIZIONE,
+				API, TestTracciamentoCostanti.RISORSA_INFO, 
+				getInformazioni(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	
+	
+	
+	
+	
+	public TracciamentoVerifica getInformazioniInvertite() throws Exception {
+		
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		tracciamentoVerifica.checkInfo = true;
+		tracciamentoVerifica.headers.put(TestTracciamentoCostanti.HTTP_TOKEN, 
+				ValidazioneJWTTest.buildJWT(true, 
+						tracciamentoVerifica.mapExpectedTokenInfo));
+		tracciamentoVerifica.mapExpectedTokenInfo.clear(); // non vengono tracciate
+		tracciamentoVerifica.tempiElaborazioneExpected = true;
+		
+		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		return tracciamentoVerifica;
+	}
+	@Test
+	public void erogazioneInformazioniInvertite() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.EROGAZIONE,
+				API, TestTracciamentoCostanti.RISORSA_INFO_INVERTITE, 
+				getInformazioniInvertite(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
+	@Test
+	public void fruizioneInformazioniInvertite() throws Exception {
+		
+		TracciamentoUtils.test(
+				logCore,
+				TipoServizio.FRUIZIONE,
+				API, TestTracciamentoCostanti.RISORSA_INFO_INVERTITE, 
+				getInformazioniInvertite(),
+				true, // expectedOk,
+				null, false );// diagnosticoErrore, error, detail)
+	}
 }
 

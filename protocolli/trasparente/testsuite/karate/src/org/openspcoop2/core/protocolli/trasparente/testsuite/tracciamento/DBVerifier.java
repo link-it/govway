@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.DbUtils;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
@@ -242,5 +243,56 @@ public class DBVerifier {
 				;
 		assertEquals("IdTransazione: "+idTransazione, 0, count);
 		
+	}
+	
+	
+	
+	public static void verifyInfo(String idTransazione, List<String> tokenInfoCheck, boolean tempiElaborazioneExpected ) throws Exception  {
+		
+		String query = "select token_info, tempi_elaborazione from transazioni where id=?";
+		log().info("select: "+query);
+		
+		String msg = "IdTransazione: "+idTransazione;
+		
+		List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione);
+		assertNotNull(msg, rows);
+		assertEquals(msg, 1, rows.size());
+					
+		Map<String, Object> row = rows.get(0);
+		for (String key : row.keySet()) {
+			log().debug("Row["+key+"]="+row.get(key));
+		}
+		
+		Object otoken_info = row.get("token_info");
+		if(tokenInfoCheck!=null && tokenInfoCheck.size()>0) {
+			assertNotNull(msg,otoken_info);
+			assertTrue(msg+" otoken_info classe '"+otoken_info.getClass().getName()+"'", (otoken_info instanceof String));
+			String tokenInfo = null;
+			if(otoken_info instanceof String) {
+				tokenInfo = (String)otoken_info;
+			}
+			assertNotNull(msg+" (token info string)",tokenInfo);
+			for (String info: tokenInfoCheck) {
+				assertTrue(msg+" tokenInfo contains '"+info+"' (token:"+tokenInfo+")", (tokenInfo.contains(info)));
+			}
+		}
+		else {
+			assertNull(msg,otoken_info);
+		}
+		
+		Object oTempiElaborazione = row.get("tempi_elaborazione");
+		if(tempiElaborazioneExpected) {
+			assertNotNull(msg,oTempiElaborazione);
+			assertTrue(msg+" oTempiElaborazione classe '"+oTempiElaborazione.getClass().getName()+"'", (oTempiElaborazione instanceof String));
+			String tempiElaborazione = null;
+			if(oTempiElaborazione instanceof String) {
+				tempiElaborazione = (String)oTempiElaborazione;
+			}
+			assertNotNull(msg+" (tempiElaborazione string)",tempiElaborazione);
+			assertTrue(msg+" tempiElaborazione ("+tempiElaborazione+")", StringUtils.isNoneEmpty(tempiElaborazione.trim()));
+		}
+		else {
+			assertNull(msg,oTempiElaborazione);
+		}
 	}
 }

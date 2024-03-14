@@ -1068,6 +1068,8 @@ public class TracciamentoManager {
 				
 				// Dopo aver assegnato tutti i valori all'oggetto transazione, in modo da poterlo salvare su filesystem
 				if(
+						(FaseTracciamento.OUT_REQUEST.equals(this.fase) && this.openspcoopProperties.isTransazioniTracciamentoDBOutRequestThrowRequestException() )
+						||
 						(FaseTracciamento.OUT_RESPONSE.equals(this.fase) && this.openspcoopProperties.isTransazioniTracciamentoDBOutResponseThrowRequestException() )
 						||
 						(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && 
@@ -1709,6 +1711,16 @@ public class TracciamentoManager {
 		if(info!=null && info.getContext()!=null && !info.getContext().containsKey(TRACKING_EXCEPTION)) { 
 			boolean add = false;
 			if (
+					(
+						(
+								FaseTracciamento.OUT_REQUEST.equals(this.fase)
+						) 
+						&&
+						(
+								this.openspcoopProperties.isTransazioniTracciamentoDBOutRequestThrowRequestException()
+						)
+					)
+					||
 					(
 						(
 								FaseTracciamento.IN_REQUEST.equals(this.fase) || 

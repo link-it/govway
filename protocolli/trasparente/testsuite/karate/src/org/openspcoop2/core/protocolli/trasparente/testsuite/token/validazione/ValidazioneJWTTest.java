@@ -1237,7 +1237,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				false, false,
 				null);
 	}
-	private static String buildJWT(boolean requiredClaims,
+	public static String buildJWT(boolean requiredClaims,
 			List<String> mapExpectedTokenInfo) throws Exception {
 		return buildJWT(requiredClaims,
 				true, true, true, true, true,

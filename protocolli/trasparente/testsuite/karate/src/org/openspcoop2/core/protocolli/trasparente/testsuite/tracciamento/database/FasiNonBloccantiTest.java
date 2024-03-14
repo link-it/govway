@@ -35,9 +35,9 @@ import org.openspcoop2.utils.BooleanNullable;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class FasiBloccantiTest extends ConfigLoader {
+public class FasiNonBloccantiTest extends ConfigLoader {
 	
-	private static final String API = "TestTracciamentoDatabaseBloccante";
+	private static final String API = "TestTracciamentoDatabaseNonBloccante";
 	
 	
 	public TracciamentoVerifica get4Fasi() {
@@ -76,7 +76,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 	public TracciamentoVerifica get4FasiRequestInError() {
 		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutRequest = BooleanNullable.NULL();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
 		
@@ -94,7 +94,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiRequestInError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
@@ -107,7 +107,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiRequestInError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
@@ -139,7 +139,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiRequestOutError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
@@ -152,7 +152,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiRequestOutError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
@@ -185,7 +185,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiResponseOutError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
@@ -198,7 +198,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiResponseOutError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
@@ -289,7 +289,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 	public TracciamentoVerifica getInRequestError() {
 		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutRequest = BooleanNullable.NULL();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
 		
@@ -307,7 +307,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST, 
 				getInRequestError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
@@ -320,7 +320,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST, 
 				getInRequestError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
@@ -387,7 +387,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST, 
 				getOutRequestError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
@@ -400,7 +400,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST, 
 				getOutRequestError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
@@ -467,7 +467,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_RESPONSE, 
 				getOutResponseError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
@@ -480,7 +480,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_RESPONSE, 
 				getOutResponseError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
@@ -529,7 +529,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 	public TracciamentoVerifica getInRequestErrorOutRequest() {
 		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutRequest = BooleanNullable.NULL();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
 		
@@ -550,7 +550,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_REQUEST, 
 				getInRequestErrorOutRequest(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
@@ -563,7 +563,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_REQUEST, 
 				getInRequestErrorOutRequest(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
@@ -595,7 +595,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_REQUEST, 
 				getInRequestOutRequestError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
@@ -608,7 +608,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_REQUEST, 
 				getInRequestOutRequestError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
@@ -657,7 +657,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 	public TracciamentoVerifica getInRequestErrorOutResponse() {
 		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutRequest = BooleanNullable.NULL();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
 		
@@ -678,7 +678,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_RESPONSE, 
 				getInRequestErrorOutResponse(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
@@ -691,7 +691,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_RESPONSE, 
 				getInRequestErrorOutResponse(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
@@ -723,7 +723,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_RESPONSE, 
 				getInRequestOutResponseError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
@@ -736,7 +736,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_RESPONSE, 
 				getInRequestOutResponseError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
@@ -806,7 +806,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST_OUT_RESPONSE, 
 				getOutRequestErrorOutResponse(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
@@ -819,7 +819,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST_OUT_RESPONSE, 
 				getOutRequestErrorOutResponse(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
@@ -851,7 +851,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST_OUT_RESPONSE, 
 				getOutRequestOutResponseError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
@@ -864,7 +864,7 @@ public class FasiBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST_OUT_RESPONSE, 
 				getOutRequestOutResponseError(),
-				false, // expectedOk,
+				true, // expectedOk,
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
 				true, 
 				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);

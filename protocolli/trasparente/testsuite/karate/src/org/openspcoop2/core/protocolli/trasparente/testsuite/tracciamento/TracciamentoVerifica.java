@@ -20,6 +20,11 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.tracciamento;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.utils.BooleanNullable;
 
@@ -64,6 +69,13 @@ public class TracciamentoVerifica {
 	
 	public BooleanNullable verificaPostOutResponse = null;
 	
+	public Map<String, String> queryParameters = new HashMap<>();
+	
+	public Map<String, String> headers = new HashMap<>();
+	
+	public boolean checkInfo = false;
+	public List<String> mapExpectedTokenInfo = new ArrayList<>();
+	public boolean tempiElaborazioneExpected;
 	
 	
 	public boolean check(FaseTracciamento fase, FaseTracciamento from) {

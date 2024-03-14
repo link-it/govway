@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
@@ -113,6 +114,11 @@ public class TracciamentoUtils {
 				? System.getProperty("govway_base_path") + "/"+apiInvoke+"/"+operazione
 				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/"+apiInvoke+"/"+operazione;
 		url=url+"?test="+operazione;
+		if(!tracciamentoVerifica.queryParameters.isEmpty()) {
+			for (Map.Entry<String,String> entry : tracciamentoVerifica.queryParameters.entrySet()) {
+				url=url+"&"+entry.getKey()+"="+entry.getValue();
+			}
+		}
 		
 		HttpRequest request = new HttpRequest();
 		request.setReadTimeout(20000);
@@ -131,6 +137,12 @@ public class TracciamentoUtils {
 			}
 			else {
 				request.addHeader("GovWay-TestSuite-GenerateFault-TracciamentoFileTrace-Log", tracciamentoVerifica.faseTracciamentoErrore.name());
+			}
+		}
+		
+		if(!tracciamentoVerifica.headers.isEmpty()) {
+			for (Map.Entry<String,String> entry : tracciamentoVerifica.headers.entrySet()) {
+				request.addHeader(entry.getKey(),entry.getValue());
 			}
 		}
 		
@@ -256,10 +268,20 @@ public class TracciamentoUtils {
 		
 		if(diagnosticoErrore!=null) {
 			if(expectedOk) {
-				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK_PRESENZA_ANOMALIE);
+				if(tracciamentoVerifica.queryParameters.containsKey("problem")) {
+					esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO);
+				}
+				else {
+					esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK_PRESENZA_ANOMALIE);
+				}
 			}
 			else {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TRACCIAMENTO);
+			}
+		}
+		else {
+			if(tracciamentoVerifica.queryParameters.containsKey("problem")) {
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO);
 			}
 		}
 		
@@ -304,7 +326,12 @@ public class TracciamentoUtils {
 			verifyKo(response, API_UNAVAILABLE, 503, API_UNAVAILABLE_MESSAGE);
 		}
 		else {
-			verifyOk(response, 200, contentType);
+			if(tracciamentoVerifica.queryParameters.containsKey("problem")) {
+				verifyOk(response, 500, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+			}
+			else {
+				verifyOk(response, 200, contentType);
+			}
 		}
 		
 		if(tracciamentoVerifica.faseTracciamentoErrore!=null && tracciamentoVerifica.faseTracciamentoErroreDB) {
@@ -321,6 +348,11 @@ public class TracciamentoUtils {
 							tracciamentoVerifica.checkDiagnostico(FaseTracciamento.POST_OUT_RESPONSE) ? diagnosticoErrore : null, 
 							tracciamentoVerifica.checkLogDetail(FaseTracciamento.POST_OUT_RESPONSE) ? error : false, 
 							tracciamentoVerifica.checkLogDetail(FaseTracciamento.POST_OUT_RESPONSE) ? detail : null);
+					
+					if(tracciamentoVerifica.checkInfo) {
+						logInfo(logCore,"Verifica tracciamento info "+tracciamentoVerifica.getTipoVerifica()+" su fase '"+FaseTracciamento.POST_OUT_RESPONSE+"'");
+						DBVerifier.verifyInfo(idTransazione, tracciamentoVerifica.mapExpectedTokenInfo, tracciamentoVerifica.tempiElaborazioneExpected);
+					}
 				}
 				else {
 					DBVerifier.verifyNotExpected(idTransazione,

@@ -2342,6 +2342,7 @@ public class OpenSPCoop2Properties {
 					this.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails();
 				}
 				
+				this.isTransazioniTracciamentoDBOutRequestThrowRequestException();
 				this.isTransazioniTracciamentoDBOutResponseThrowRequestException();
 				this.isTransazioniTracciamentoDBPostOutResponseThrowRequestException();
 				this.isTransazioniTracciamentoDBPostOutResponseThrowResponseException();
@@ -26923,6 +26924,28 @@ public class OpenSPCoop2Properties {
 	
 	
 	// TracciamentoDB
+
+	private Boolean isTransazioniTracciamentoDBOutRequestThrowRequestException = null;
+	public boolean isTransazioniTracciamentoDBOutRequestThrowRequestException() {	
+		if(this.isTransazioniTracciamentoDBOutRequestThrowRequestException==null){
+			String pName = "org.openspcoop2.pdd.transazioni.tracciamentoDB.outRequest.throwRequestException";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isTransazioniTracciamentoDBOutRequestThrowRequestException = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isTransazioniTracciamentoDBOutRequestThrowRequestException = true;
+			}    
+		}
+
+		return this.isTransazioniTracciamentoDBOutRequestThrowRequestException;
+	}
 	
 	private Boolean isTransazioniTracciamentoDBOutResponseThrowRequestException = null;
 	public boolean isTransazioniTracciamentoDBOutResponseThrowRequestException() {	
