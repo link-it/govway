@@ -53,6 +53,11 @@ public class TracciamentoVerifica {
 		return check(fase, this.checkLogDetailFromFase);
 	}
 	
+	public Boolean forzaVerificaDBInRequest = null;
+	public Boolean forzaVerificaDBOutRequest = null;
+	public Boolean forzaVerificaDBOutResponse = null;
+	public Boolean forzaVerificaDBPostOutResponse = null;
+	
 	public boolean verificaDB = true;
 	public String getTipoVerifica() {
 		return this.verificaDB ? "database" : "filetrace";
@@ -77,6 +82,8 @@ public class TracciamentoVerifica {
 	public List<String> mapExpectedTokenInfo = new ArrayList<>();
 	public boolean tempiElaborazioneExpected;
 	
+	public boolean client = true;
+	public boolean server = true;
 	
 	public boolean check(FaseTracciamento fase, FaseTracciamento from) {
 		if(from==null) {

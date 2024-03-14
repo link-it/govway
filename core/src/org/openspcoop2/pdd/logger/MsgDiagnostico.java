@@ -1163,7 +1163,7 @@ public class MsgDiagnostico {
 	}
 	
 	
-	public void addLogPersonalizzato(String idModuloFunzionale,String idDiagnostico, Transaction transaction){
+	public void addLogPersonalizzato(String idModuloFunzionale,String idDiagnostico, Transaction transaction, StringBuilder errorLog){
 
 		if(this.msgDiagPropertiesReader==null){
 			logError("MsgDiagnostico.logPersonalizzato [Risorsa non inizializzata], messaggio per idModuloFunzionale["+idModuloFunzionale+"] idDiagnostico["+idDiagnostico+"]");
@@ -1224,6 +1224,9 @@ public class MsgDiagnostico {
 			// Replace keyword
 			String msgReplaceKey = this.replaceKeywords(messaggio);	
 			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = this.getMsgDiagnostico(gdo, severitaLivelloOpenSPCoop2, msgReplaceKey, codiceDiagnostico);
+			if(errorLog!=null) {
+				errorLog.append(msgDiag.getMessaggio());
+			}
 			transaction.addMsgDiagnostico(msgDiag);
 		}catch(Exception e){
 			logError("MsgDiagnostico.logPersonalizzato error "+e.getMessage(),e);

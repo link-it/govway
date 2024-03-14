@@ -78,10 +78,26 @@ public class TracciamentoUtils {
 		File request = null;
 		File response = null;
 		File postResponse = null;
+		
+
 		try {
 			request = File.createTempFile("requestCheckTracciamento", ".check");
 			response = File.createTempFile("responseCheckTracciamento", ".check");
 			postResponse = File.createTempFile("postResponseCheckTracciamento", ".check");
+			
+			FileSystemUtilities.clearFile(TestTracciamentoCostanti.fileTraceProps);
+			FileSystemUtilities.clearFile(TestTracciamentoCostanti.fileTraceLogProps);
+			FileSystemUtilities.writeFile(TestTracciamentoCostanti.fileTraceLogProps, 
+					Utilities.getAsByteArray(TracciamentoUtils.class.getResourceAsStream("/org/openspcoop2/core/protocolli/trasparente/testsuite/tracciamento/testfileTrace.log4j2.properties")));
+			FileSystemUtilities.writeFile(TestTracciamentoCostanti.fileTraceProps, 
+					Utilities.getAsByteArray(TracciamentoUtils.class.getResourceAsStream("/org/openspcoop2/core/protocolli/trasparente/testsuite/tracciamento/testFileTrace.properties")));
+			
+			FileSystemUtilities.clearFile(TestTracciamentoCostanti.fileTraceInRequestProps);
+			FileSystemUtilities.clearFile(TestTracciamentoCostanti.fileTraceOutRequestProps);
+			FileSystemUtilities.clearFile(TestTracciamentoCostanti.fileTraceOutResponseProps);
+			FileSystemUtilities.clearFile(TestTracciamentoCostanti.fileTracePostOutResponseProps); 
+			
+			org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetAllCache(logCore);
 			
 			return test(
 					request, response, postResponse,
@@ -96,6 +112,16 @@ public class TracciamentoUtils {
 			FileSystemUtilities.deleteFile(request);
 			FileSystemUtilities.deleteFile(response);
 			/**FileSystemUtilities.deleteFile(postResponse); LO DEVE ELIMINARE L'HANDLER*/
+			
+			/**NON ELIMINARLI
+			 * FileSystemUtilities.deleteFile(TestTracciamentoCostanti.fileTraceProps);
+			FileSystemUtilities.deleteFile(TestTracciamentoCostanti.fileTraceLogProps);*/
+			
+			/**NON ELIMINARLI
+			 * FileSystemUtilities.deleteFile(TestTracciamentoCostanti.fileTraceInRequestProps);
+			FileSystemUtilities.deleteFile(TestTracciamentoCostanti.fileTraceOutRequestProps);
+			FileSystemUtilities.deleteFile(TestTracciamentoCostanti.fileTraceOutResponseProps);
+			FileSystemUtilities.deleteFile(TestTracciamentoCostanti.fileTracePostOutResponseProps);*/ 
 		}
 		
 	}
@@ -128,6 +154,12 @@ public class TracciamentoUtils {
 		request.setMethod(HttpRequestMethod.POST);
 		request.setContentType(contentType);
 		request.setContent(content);
+		
+		String contentVerificaFileTraceRequest = new String(content);
+		String contentVerificaFileTraceResponse = new String(content);
+		if(tracciamentoVerifica.queryParameters.containsKey("problem")) {
+			contentVerificaFileTraceResponse = TestTracciamentoCostanti.DETAIL;
+		}
 		
 		request.setUrl(url);
 		
@@ -181,8 +213,9 @@ public class TracciamentoUtils {
 
 		if(tracciamentoVerifica.verificaInRequest!=null && tracciamentoVerifica.verificaInRequest.getValue()!=null) {
 			logInfo(logCore,"Verifica tracciamento "+tracciamentoVerifica.getTipoVerifica()+" su fase '"+FaseTracciamento.IN_REQUEST+"'; expected:"+tracciamentoVerifica.verificaInRequest.getValue());
-			if(tracciamentoVerifica.verificaDB) {
-				if(tracciamentoVerifica.verificaInRequest.getValue().booleanValue()) {
+			if(tracciamentoVerifica.verificaDB || tracciamentoVerifica.forzaVerificaDBInRequest!=null) {
+				if(tracciamentoVerifica.verificaInRequest.getValue().booleanValue() ||
+						(tracciamentoVerifica.forzaVerificaDBInRequest!=null && tracciamentoVerifica.forzaVerificaDBInRequest.booleanValue())) {
 					DBVerifier.verify(api, operazione, credenzialeUnivoca, esitoExpected, 
 							FaseTracciamento.IN_REQUEST, 
 							tracciamentoVerifica.checkDiagnostico(FaseTracciamento.IN_REQUEST) ? diagnosticoErrore : null, 
@@ -193,6 +226,12 @@ public class TracciamentoUtils {
 					DBVerifier.verifyNotExpected(api, operazione, credenzialeUnivoca,
 							FaseTracciamento.IN_REQUEST);
 				}
+			}
+			else {
+				FileTraceParser.parse(FaseTracciamento.IN_REQUEST, tracciamentoVerifica.client, tracciamentoVerifica.server, 
+						contentVerificaFileTraceRequest, contentVerificaFileTraceResponse, 
+						tracciamentoVerifica.verificaInRequest.getValue().booleanValue(),
+						tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty());
 			}
 		}
 		
@@ -224,8 +263,9 @@ public class TracciamentoUtils {
 			
 			if(tracciamentoVerifica.verificaOutRequest!=null && tracciamentoVerifica.verificaOutRequest.getValue()!=null) {
 				logInfo(logCore,"Verifica tracciamento "+tracciamentoVerifica.getTipoVerifica()+" su fase '"+FaseTracciamento.OUT_REQUEST+"'; expected:"+tracciamentoVerifica.verificaOutRequest.getValue());
-				if(tracciamentoVerifica.verificaDB) {
-					if(tracciamentoVerifica.verificaOutRequest.getValue().booleanValue()) {
+				if(tracciamentoVerifica.verificaDB || tracciamentoVerifica.forzaVerificaDBOutRequest!=null) {
+					if(tracciamentoVerifica.verificaOutRequest.getValue().booleanValue() ||
+							(tracciamentoVerifica.forzaVerificaDBOutRequest!=null && tracciamentoVerifica.forzaVerificaDBOutRequest.booleanValue())) {
 						DBVerifier.verify(api, operazione, credenzialeUnivoca, esitoExpected, 
 								FaseTracciamento.OUT_REQUEST, 
 								tracciamentoVerifica.checkDiagnostico(FaseTracciamento.OUT_REQUEST) ? diagnosticoErrore : null, 
@@ -236,6 +276,12 @@ public class TracciamentoUtils {
 						DBVerifier.verifyNotExpected(api, operazione, credenzialeUnivoca,
 								FaseTracciamento.OUT_REQUEST);
 					}
+				}
+				else {
+					FileTraceParser.parse(FaseTracciamento.OUT_REQUEST, tracciamentoVerifica.client, tracciamentoVerifica.server, 
+							contentVerificaFileTraceRequest, contentVerificaFileTraceResponse, 
+							tracciamentoVerifica.verificaOutRequest.getValue().booleanValue(),
+							tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty());
 				}
 			}
 			
@@ -287,8 +333,9 @@ public class TracciamentoUtils {
 		
 		if(tracciamentoVerifica.verificaOutResponse!=null && tracciamentoVerifica.verificaOutResponse.getValue()!=null) {
 			logInfo(logCore,"Verifica tracciamento "+tracciamentoVerifica.getTipoVerifica()+" su fase '"+FaseTracciamento.OUT_RESPONSE+"'; expected:"+tracciamentoVerifica.verificaOutResponse.getValue());
-			if(tracciamentoVerifica.verificaDB) {
-				if(tracciamentoVerifica.verificaOutResponse.getValue().booleanValue()) {
+			if(tracciamentoVerifica.verificaDB || tracciamentoVerifica.forzaVerificaDBOutResponse!=null) {
+				if(tracciamentoVerifica.verificaOutResponse.getValue().booleanValue() ||
+						(tracciamentoVerifica.forzaVerificaDBOutResponse!=null && tracciamentoVerifica.forzaVerificaDBOutResponse.booleanValue())) {
 					DBVerifier.verify(api, operazione, credenzialeUnivoca, esitoExpected, 
 							FaseTracciamento.OUT_RESPONSE, 
 							tracciamentoVerifica.checkDiagnostico(FaseTracciamento.OUT_RESPONSE) ? diagnosticoErrore : null, 
@@ -299,6 +346,12 @@ public class TracciamentoUtils {
 					DBVerifier.verifyNotExpected(api, operazione, credenzialeUnivoca,
 							FaseTracciamento.OUT_RESPONSE);
 				}
+			}
+			else {
+				FileTraceParser.parse(FaseTracciamento.OUT_RESPONSE, tracciamentoVerifica.client, tracciamentoVerifica.server, 
+						contentVerificaFileTraceRequest, contentVerificaFileTraceResponse, 
+						tracciamentoVerifica.verificaOutResponse.getValue().booleanValue(),
+						tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty());
 			}
 		}
 		
@@ -341,8 +394,9 @@ public class TracciamentoUtils {
 				
 		if(tracciamentoVerifica.verificaPostOutResponse!=null && tracciamentoVerifica.verificaPostOutResponse.getValue()!=null) {
 			logInfo(logCore,"Verifica tracciamento "+tracciamentoVerifica.getTipoVerifica()+" su fase '"+FaseTracciamento.POST_OUT_RESPONSE+"'; expected:"+tracciamentoVerifica.verificaPostOutResponse.getValue());
-			if(tracciamentoVerifica.verificaDB) {
-				if(tracciamentoVerifica.verificaPostOutResponse.getValue().booleanValue()) {
+			if(tracciamentoVerifica.verificaDB || tracciamentoVerifica.forzaVerificaDBPostOutResponse!=null) {
+				if(tracciamentoVerifica.verificaPostOutResponse.getValue().booleanValue() ||
+						(tracciamentoVerifica.forzaVerificaDBPostOutResponse!=null && tracciamentoVerifica.forzaVerificaDBPostOutResponse.booleanValue())) {
 					DBVerifier.verify(idTransazione, esitoExpected, 
 							FaseTracciamento.POST_OUT_RESPONSE, 
 							tracciamentoVerifica.checkDiagnostico(FaseTracciamento.POST_OUT_RESPONSE) ? diagnosticoErrore : null, 
@@ -358,6 +412,12 @@ public class TracciamentoUtils {
 					DBVerifier.verifyNotExpected(idTransazione,
 							FaseTracciamento.POST_OUT_RESPONSE);
 				}
+			}
+			else {
+				FileTraceParser.parse(FaseTracciamento.POST_OUT_RESPONSE, tracciamentoVerifica.client, tracciamentoVerifica.server, 
+						contentVerificaFileTraceRequest, contentVerificaFileTraceResponse, 
+						tracciamentoVerifica.verificaPostOutResponse.getValue().booleanValue(),
+						tracciamentoVerifica.checkInfo && !tracciamentoVerifica.mapExpectedTokenInfo.isEmpty());
 			}
 		}
 		

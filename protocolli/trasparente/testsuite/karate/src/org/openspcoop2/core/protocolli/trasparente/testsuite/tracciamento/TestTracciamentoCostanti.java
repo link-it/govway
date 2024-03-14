@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.core.protocolli.trasparente.testsuite.tracciamento;
 
+import java.io.File;
+
 /**
 * TestTracciamentoCostanti
 *
@@ -48,13 +50,29 @@ public class TestTracciamentoCostanti {
 	public static final String RISORSA_IN_REQUEST_OUT_REQUEST = "inRequest-outRequest";
 	public static final String RISORSA_IN_REQUEST_OUT_RESPONSE = "inRequest-outResponse";
 	public static final String RISORSA_OUT_REQUEST_OUT_RESPONSE = "outRequest-outResponse";
+	public static final String RISORSA_DUMP_SERVER_DISABLED = "dumpServerDisabled";
+	public static final String RISORSA_DUMP_CLIENT_DISABLED = "dumpClientDisabled";
+	public static final String RISORSA_EXTERNAL_CONFIG_PROPERTIES = "externalConfigProperties";
+	public static final String RISORSA_RIDEFINITO_CONFIG_PROPERTIES = "ridefinitoConfigProperties";
 	
 	public static final String ERRORE_DATABASE_FASE_IN_REQUEST = "Errore durante il tracciamento 'database' (fase: Richiesta ricevuta): Test Manually Exception generated in phase 'IN_REQUEST'";
 	public static final String ERRORE_DATABASE_FASE_OUT_REQUEST = "Errore durante il tracciamento 'database' (fase: Richiesta in consegna): Test Manually Exception generated in phase 'OUT_REQUEST'";
 	public static final String ERRORE_DATABASE_FASE_OUT_RESPONSE = "Errore durante il tracciamento 'database' (fase: Risposta in consegna): Test Manually Exception generated in phase 'OUT_RESPONSE'";
 	
+	public static final String ERRORE_FILETRACE_FASE_IN_REQUEST = "Errore durante il tracciamento 'fileTrace' (fase: Richiesta ricevuta): Test Manually Exception generated (fileTrace) in phase 'IN_REQUEST'";
+	public static final String ERRORE_FILETRACE_FASE_OUT_REQUEST = "Errore durante il tracciamento 'fileTrace' (fase: Richiesta in consegna): Test Manually Exception generated (fileTrace) in phase 'OUT_REQUEST'";
+	public static final String ERRORE_FILETRACE_FASE_OUT_RESPONSE = "Errore durante il tracciamento 'fileTrace' (fase: Risposta in consegna): Test Manually Exception generated (fileTrace) in phase 'OUT_RESPONSE'";
+	public static final String ERRORE_FILETRACE_FASE_POST_OUT_RESPONSE = "Errore durante il tracciamento 'fileTrace' (fase: Risposta consegnata): Test Manually Exception generated (fileTrace) in phase 'POST_OUT_RESPONSE'";
+		
 	public static final String DETAIL = "{\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
 	public static final String DETAIL_MESSAGGIO = "Ricevuto un Problem Detail (RFC 7807) in seguito all'invio del messaggio applicativo: "+DETAIL;
 	
+	public static final File fileTraceProps = new File("/tmp/testfileTrace.properties");
+	public static final File fileTraceLogProps = new File("/tmp/testfileTrace.log4j2.properties");
+	
+	public static final File fileTraceInRequestProps = new File("/tmp/trackingPhaseInRequest.log");
+	public static final File fileTraceOutRequestProps = new File("/tmp/trackingPhaseOutRequest.log");
+	public static final File fileTraceOutResponseProps = new File("/tmp/trackingPhaseOutResponse.log");
+	public static final File fileTracePostOutResponseProps = new File("/tmp/trackingPhasePostOutResponse.log");
 	
 }

@@ -555,7 +555,9 @@ public class TracciamentoManager {
 						fileTraceEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabledNonBloccante();
 						break;
 					case POST_OUT_RESPONSE:
-						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()==null || configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutCompleteEnabled();
+						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()==null || 
+							configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutCompleteEnabled() ||
+							configurazioneTracciamento.isInitFileTraceByExternalPropertyPort();
 						break;
 					}
 				}
@@ -1460,7 +1462,7 @@ public class TracciamentoManager {
 				this.logError("["+idTransazione+"] "+msg,sqlEx);
 				if(!FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
 					logRegistrazioneNonRiuscita(msgdiagErrore, false, sqlEx, idTransazione, 
-							null, null);
+							null, null, null);
 				}
 				HandlerException errorDB = new HandlerException(msg,sqlEx); 
 				addTrackingException(info, errorDB);
@@ -1482,7 +1484,7 @@ public class TracciamentoManager {
 				this.logError("["+idTransazione+"] "+msg,e);
 				if(!FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
 					logRegistrazioneNonRiuscita(msgdiagErrore, false, e, idTransazione, 
-							null, null);
+							null, null, null);
 				}
 				HandlerException errorDB = new HandlerException(msg,e); 
 				addTrackingException(info, errorDB);
@@ -1660,11 +1662,15 @@ public class TracciamentoManager {
 			String error = "["+idTransazione+"] File trace fallito: "+e.getMessage();
 			this.logError(error,e);
 			BooleanNullable changeEsito = BooleanNullable.NULL();
+			StringBuilder errorLog = new StringBuilder();
 			logRegistrazioneNonRiuscita(msgdiagErrore, true, e, idTransazione,
-					transaction, changeEsito);
+					transaction, changeEsito, errorLog);
 			if(changeEsito.getValue()!=null && changeEsito.getValue().booleanValue()) {
 				esito = ServicesUtils.updateEsitoConAnomalie(esito, this.log, info.getProtocolFactory());
 				transazioneDTO.setEsito(esito.getCode());
+				if(transazioneDTO.getErrorLog()==null) {
+					transazioneDTO.setErrorLog(errorLog.toString());
+				}
 			}
 			if(fileTraceEnabledBloccante) {
 				return new HandlerException(error,e);
@@ -1847,7 +1853,7 @@ public class TracciamentoManager {
 	}
 	
 	private void logRegistrazioneNonRiuscita(org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore, boolean fileTrace, Throwable e, String idTransazione,
-			Transaction transaction, BooleanNullable changeEsito) {
+			Transaction transaction, BooleanNullable changeEsito, StringBuilder sbErrorLog) {
 		if(fileTrace || !FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase)){
 			try {
 				msgdiagErrore.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE, e.getMessage());
@@ -1868,7 +1874,7 @@ public class TracciamentoManager {
 				}
 				if(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && transaction!=null) {
 					// siamo per forza in fileTrace
-					msgdiagErrore.addLogPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO, "registrazioneTransazioneNonRiuscita", transaction);
+					msgdiagErrore.addLogPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO, "registrazioneTransazioneNonRiuscita", transaction, sbErrorLog);
 					if(changeEsito!=null) {
 						changeEsito.setValue(true);
 					}

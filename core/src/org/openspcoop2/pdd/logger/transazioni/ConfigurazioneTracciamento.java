@@ -181,10 +181,13 @@ public class ConfigurazioneTracciamento {
 			}
 		}
 		else {
-			this.fileTraceEnabled = false;
-			this.fileTraceConfig = null;
-			this.fileTraceConfigDumpIn = null;
-			this.fileTraceConfigDumpOut = null;
+			initFileTraceExternalConfig();
+			if(!this.fileTraceEnabled) {
+				this.fileTraceEnabled = false;
+				this.fileTraceConfig = null;
+				this.fileTraceConfigDumpIn = null;
+				this.fileTraceConfigDumpOut = null;
+			}
 		}
 	}
 	private void initFileTraceExternalConfig() throws DriverConfigurazioneException, CoreException {
@@ -197,10 +200,15 @@ public class ConfigurazioneTracciamento {
 			initFileTraceExternalConfigPorta();
 		}
 	}
+	private boolean initFileTraceByExternalPropertyPort = false;
+	public boolean isInitFileTraceByExternalPropertyPort() {
+		return this.initFileTraceByExternalPropertyPort;
+	}
 	private void initFileTraceExternalConfigPorta() throws DriverConfigurazioneException, CoreException {
 		if(this.isPA && this.pa!=null) {
 			this.fileTraceEnabled = this.configPdDManager.isTransazioniFileTraceEnabled(this.pa);
 			if(this.fileTraceEnabled) {
+				this.initFileTraceByExternalPropertyPort = true;
 				initFileTraceExternalConfigPortaApplicativa();
 			}
 			else {
@@ -210,6 +218,7 @@ public class ConfigurazioneTracciamento {
 		else if(this.isPD && this.pd!=null) {
 			this.fileTraceEnabled = this.configPdDManager.isTransazioniFileTraceEnabled(this.pd);
 			if(this.fileTraceEnabled) {
+				this.initFileTraceByExternalPropertyPort = true;
 				initFileTraceExternalConfigPortaDelegata();
 			}
 			else {
