@@ -497,6 +497,7 @@ public class TracciamentoManager {
 		boolean fileTraceEnabledNonBloccante = false;
 		File fileTraceConfig = null;
 		boolean fileTraceConfigGlobal = true;
+		boolean existsAnotherFiletraceTrackingPhase = false;
 		try{
 			if(msgdiagErrore==null) {
 				String nomePorta = null;
@@ -519,7 +520,7 @@ public class TracciamentoManager {
 					switch (this.fase) {
 					case IN_REQUEST:
 						dbEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestInEnabledBloccante();
-						dbEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestInEnabledNonBloccante();
+						dbEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestInEnabledNonBloccante();						
 						break;
 					case OUT_REQUEST:
 						dbEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoDBRequestOutEnabledBloccante();
@@ -545,14 +546,53 @@ public class TracciamentoManager {
 					case IN_REQUEST:
 						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestInEnabledBloccante();
 						fileTraceEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestInEnabledNonBloccante();
+						
+						// per ripulire le risorse
+						if(this.openspcoopProperties.isTransazioniFileTraceDumpBinarioReleaseInLastTrackingPhase() && configurazioneTracciamento.isFileTraceEnabled()) {
+							existsAnotherFiletraceTrackingPhase = 
+									// postOutResponse
+									(configurazioneTracciamento.getRegole()==null || 
+											configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutCompleteEnabled() ||
+											configurazioneTracciamento.isInitFileTraceByExternalPropertyPort())
+									|| 
+									// outRequest
+									(configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestOutEnabledBloccante() || configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestOutEnabledNonBloccante())
+									||
+									// outResponse
+									(configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabledBloccante() || configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabledNonBloccante())
+									;
+						}
 						break;
 					case OUT_REQUEST:
 						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestOutEnabledBloccante();
 						fileTraceEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceRequestOutEnabledNonBloccante();
+						
+						// per ripulire le risorse
+						if(this.openspcoopProperties.isTransazioniFileTraceDumpBinarioReleaseInLastTrackingPhase() && configurazioneTracciamento.isFileTraceEnabled()) {
+							existsAnotherFiletraceTrackingPhase = 
+									// postOutResponse
+									(configurazioneTracciamento.getRegole()==null || 
+											configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutCompleteEnabled() ||
+											configurazioneTracciamento.isInitFileTraceByExternalPropertyPort())
+									|| 
+									// outResponse
+									(configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabledBloccante() || configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabledNonBloccante())
+									;
+						}
 						break;
 					case OUT_RESPONSE:
 						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabledBloccante();
 						fileTraceEnabledNonBloccante = configurazioneTracciamento.getRegole()!=null && configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutEnabledNonBloccante();
+						
+						// per ripulire le risorse
+						if(this.openspcoopProperties.isTransazioniFileTraceDumpBinarioReleaseInLastTrackingPhase() && configurazioneTracciamento.isFileTraceEnabled()) {
+							existsAnotherFiletraceTrackingPhase = 
+									// postOutResponse
+									(configurazioneTracciamento.getRegole()==null || 
+											configurazioneTracciamento.getRegole().isTracciamentoFileTraceResponseOutCompleteEnabled() ||
+											configurazioneTracciamento.isInitFileTraceByExternalPropertyPort())
+									;
+						}
 						break;
 					case POST_OUT_RESPONSE:
 						fileTraceEnabledBloccante = configurazioneTracciamento.getRegole()==null || 
@@ -852,7 +892,8 @@ public class TracciamentoManager {
 							requestInfo,
 							idTransazione,
 							fileTraceEnabledBloccante,
-							msgdiagErrore); // anche qua vi e' un try catch con Throwable
+							msgdiagErrore,
+							existsAnotherFiletraceTrackingPhase); // anche qua vi e' un try catch con Throwable
 				}
 				
 			}
@@ -1632,7 +1673,8 @@ public class TracciamentoManager {
 			RequestInfo requestInfo,
 			String idTransazione,
 			boolean fileTraceEnabledBloccante,
-			org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore) {
+			org.openspcoop2.pdd.logger.MsgDiagnostico msgdiagErrore,
+			boolean existsAnotherFiletraceTrackingPhase) {
 		FileTraceManager fileTraceManager = null;
 		long timeStart = -1;
 		try {
@@ -1677,7 +1719,7 @@ public class TracciamentoManager {
 			}
 		}finally {
 			try {
-				if(fileTraceManager!=null) {
+				if(!existsAnotherFiletraceTrackingPhase && fileTraceManager!=null) {
 					fileTraceManager.cleanResourcesForOnlyFileTrace(transaction);
 				}
 			}catch(Exception eClean) {

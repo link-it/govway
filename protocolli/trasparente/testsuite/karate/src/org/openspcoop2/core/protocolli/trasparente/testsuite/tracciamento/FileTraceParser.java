@@ -42,7 +42,8 @@ public class FileTraceParser {
 
 	public static FileTraceParser parse( FaseTracciamento fase, boolean client, boolean server, 
 			String contentRequest, String contentResponse, 
-			boolean expected, boolean tokenInfoExpected) throws FileNotFoundException, UtilsException {
+			boolean expected, boolean tokenInfoExpected,
+			String logDiagnostico) throws FileNotFoundException, UtilsException {
 		
 		File file = null;
 		boolean token = false;
@@ -82,7 +83,8 @@ public class FileTraceParser {
 				throw new UtilsException("File '"+file.getAbsolutePath()+"' non atteso");
 			}
 			FileTraceParser f = new FileTraceParser(file);
-			f.check(fase, client, server, contentRequest, contentResponse, token);
+			f.check(fase, client, server, contentRequest, contentResponse, token,
+					logDiagnostico);
 			return f;
 		}
 		else {
@@ -142,14 +144,16 @@ public class FileTraceParser {
 	
 	public void check(FaseTracciamento fase, boolean client, boolean server, 
 			String contentRequest, String contentResponse, 
-			boolean tokenInfoExpected) throws UtilsException {
+			boolean tokenInfoExpected,
+			String logDiagnostico) throws UtilsException {
 		try {
 			String v = this.values.get("Fase");
 			if(!fase.name().equals(v)) {
 				throw new Exception("Attesa fase '"+fase+"' trovata '"+v+"'");
 			}
 			
-			checkContent(fase, client, server, contentRequest, contentResponse);
+			checkContent(fase, client, server, contentRequest, contentResponse,
+					logDiagnostico);
 			
 			String tokenInfo = this.values.get("TokenInfo");
 			if(tokenInfo==null || StringUtils.isEmpty(tokenInfo.trim())) {
@@ -172,7 +176,12 @@ public class FileTraceParser {
 		}
 	}
 	
-	public void checkContent(FaseTracciamento fase, boolean client, boolean server, String contentRequest, String contentResponse) throws UtilsException {
+	public void checkContent(FaseTracciamento fase, boolean client, boolean server, String contentRequest, String contentResponse,
+			String logDiagnostico) throws UtilsException {
+		
+		boolean erroreInRequest = TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST.equals(logDiagnostico);
+		boolean erroreOutRequest = TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST.equals(logDiagnostico);
+		boolean erroreOutResponse = TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE.equals(logDiagnostico);
 		
 		// inRequest
 		String key = getPrefix(true, true);
@@ -185,11 +194,14 @@ public class FileTraceParser {
 			check(key, false, false, contentRequest);
 			break;
 		case OUT_REQUEST:
-			check(key, true, false, contentRequest);
+			check(key, (erroreInRequest || erroreOutRequest) ? false : true, false, contentRequest);
 			break;
 		case OUT_RESPONSE:
 		case POST_OUT_RESPONSE:
-			check(key, server, server, contentRequest);
+			check(key, 
+					(erroreInRequest || erroreOutRequest) ? false : server, 
+					(erroreInRequest || erroreOutRequest) ? false : server, 
+					contentRequest);
 			break;
 		}
 		
@@ -201,10 +213,16 @@ public class FileTraceParser {
 			check(key, false, false, contentResponse);
 			break;
 		case OUT_RESPONSE:
-			check(key, server, server, contentResponse);
+			check(key, 
+					(erroreInRequest || erroreOutRequest) ? false : server, 
+					(erroreInRequest || erroreOutRequest) ? false : server, 
+					contentResponse);
 			break;
 		case POST_OUT_RESPONSE:
-			check(key, server, server, contentResponse);
+			check(key, 
+					(erroreInRequest || erroreOutRequest) ? false : server, 
+					(erroreInRequest || erroreOutRequest) ? false : server, 
+					contentResponse);
 			break;
 		}
 		
@@ -213,11 +231,14 @@ public class FileTraceParser {
 		switch (fase) {
 		case IN_REQUEST:
 		case OUT_REQUEST:
+			check(key, false, false, contentResponse);
+			break;
 		case OUT_RESPONSE:
 			check(key, true, false, contentResponse);
 			break;
 		case POST_OUT_RESPONSE:
-			check(key, client, client, contentResponse);
+			check(key, client, client, 
+					(erroreInRequest || erroreOutRequest || erroreOutResponse) ? TestTracciamentoCostanti.ERRORE_503_PREFIX  :contentResponse);
 			break;
 		}
 	}
@@ -251,8 +272,15 @@ public class FileTraceParser {
 				throw new UtilsException("Payload '"+payload+"' non atteso");
 			}
 			String c = new String(Base64Utilities.decode(contentFound));
-			if(!content.equals(c)) {
-				throw new UtilsException("Payload '"+payload+"' differente da quello atteso");
+			if(TestTracciamentoCostanti.ERRORE_503_PREFIX.equals(content)) {
+				if(c.startsWith(content)) {
+					throw new UtilsException("Payload '"+payload+"' differente da quello atteso");
+				}
+			}
+			else {
+				if(!content.equals(c)) {
+					throw new UtilsException("Payload '"+payload+"' differente da quello atteso");
+				}
 			}
 		}
 

@@ -88,6 +88,10 @@ public class BasicTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse=true;
+		
+		tracciamentoVerifica.verificaContenuti = false;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -125,6 +129,8 @@ public class BasicTest extends ConfigLoader {
 		
 		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.POST_OUT_RESPONSE;
+		
+		tracciamentoVerifica.verificaContenuti = false;
 		
 		return tracciamentoVerifica;
 	}

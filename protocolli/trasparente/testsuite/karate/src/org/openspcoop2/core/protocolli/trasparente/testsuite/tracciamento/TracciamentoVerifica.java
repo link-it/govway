@@ -85,6 +85,8 @@ public class TracciamentoVerifica {
 	public boolean client = true;
 	public boolean server = true;
 	
+	public Boolean verificaContenuti = null;
+	
 	public boolean check(FaseTracciamento fase, FaseTracciamento from) {
 		if(from==null) {
 			return true;

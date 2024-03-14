@@ -67,6 +67,8 @@ public class TestTracciamentoCostanti {
 	public static final String DETAIL = "{\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
 	public static final String DETAIL_MESSAGGIO = "Ricevuto un Problem Detail (RFC 7807) in seguito all'invio del messaggio applicativo: "+DETAIL;
 	
+	public static final String ERRORE_503_PREFIX = "{\"type\":\"https://govway.org/handling-errors/503/APIUnavailable.html\",\"title\":\"APIUnavailable\",\"status\":503,\"detail\":\"The API Implementation is temporary unavailable\",";
+	
 	public static final File fileTraceProps = new File("/tmp/testfileTrace.properties");
 	public static final File fileTraceLogProps = new File("/tmp/testfileTrace.log4j2.properties");
 	

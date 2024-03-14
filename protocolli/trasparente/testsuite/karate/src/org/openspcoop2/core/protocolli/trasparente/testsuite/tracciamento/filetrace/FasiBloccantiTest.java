@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.core.protocolli.trasparente.testsuite.tracciamento.database;
+package org.openspcoop2.core.protocolli.trasparente.testsuite.tracciamento.filetrace;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -35,19 +35,20 @@ import org.openspcoop2.utils.BooleanNullable;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class FasiNonBloccantiTest extends ConfigLoader {
+public class FasiBloccantiTest extends ConfigLoader {
 	
-	private static final String API = "TestTracciamentoDatabaseNonBloccante";
+	private static final String API = "TestTracciamentoFiletraceBloccante";
 	
 	
 	public TracciamentoVerifica get4Fasi() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.verificaContenuti = true;
+		tracciamentoVerifica.verificaContenuti = false;
 		
 		return tracciamentoVerifica;
 	}
@@ -77,13 +78,16 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica get4FasiRequestInError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.NULL();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.IN_REQUEST;
 		
 		return tracciamentoVerifica;
@@ -97,10 +101,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiRequestInError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST);
 	}
 	@Test
 	public void fruizione4fasiRequestInError() throws Exception {
@@ -110,23 +114,26 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiRequestInError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST);
 	}
 	
 	
 	
 	
 	public TracciamentoVerifica get4FasiRequestOutError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.OUT_REQUEST;
 		tracciamentoVerifica.checkDiagnosticFromFase = FaseTracciamento.OUT_REQUEST;
 		tracciamentoVerifica.checkLogDetailFromFase = FaseTracciamento.OUT_REQUEST;
@@ -142,10 +149,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiRequestOutError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST);
 	}
 	@Test
 	public void fruizione4fasiRequestOutError() throws Exception {
@@ -155,10 +162,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiRequestOutError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST);
 	}
 	
 	
@@ -166,13 +173,16 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica get4FasiResponseOutError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.OUT_RESPONSE;
 		tracciamentoVerifica.checkDiagnosticFromFase = FaseTracciamento.OUT_RESPONSE;
 		tracciamentoVerifica.checkLogDetailFromFase = FaseTracciamento.OUT_RESPONSE;
@@ -188,10 +198,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiResponseOutError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE);
 	}
 	@Test
 	public void fruizione4fasiResponseOutError() throws Exception {
@@ -201,10 +211,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiResponseOutError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE);
 	}
 	
 	
@@ -212,13 +222,16 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica get4FasiResponsePostOutError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.POST_OUT_RESPONSE;
 		tracciamentoVerifica.checkDiagnosticFromFase = FaseTracciamento.POST_OUT_RESPONSE;
 		tracciamentoVerifica.checkLogDetailFromFase = FaseTracciamento.POST_OUT_RESPONSE;
@@ -235,7 +248,9 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiResponsePostOutError(),
 				true, // expectedOk,
-				null, false );// diagnosticoErrore, error, detail)
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_POST_OUT_RESPONSE, 
+				true, 
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_POST_OUT_RESPONSE);
 	}
 	@Test
 	public void fruizione4fasiResponsePostOutError() throws Exception {
@@ -246,7 +261,9 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				API, TestTracciamentoCostanti.RISORSA_4FASI, 
 				get4FasiResponsePostOutError(),
 				true, // expectedOk,
-				null, false );// diagnosticoErrore, error, detail)
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_POST_OUT_RESPONSE, 
+				true, 
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_POST_OUT_RESPONSE);
 	}
 
 	
@@ -257,13 +274,14 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getInRequest() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.verificaContenuti = true;
+		tracciamentoVerifica.verificaContenuti = false;
 		
 		return tracciamentoVerifica;
 	}
@@ -293,13 +311,16 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getInRequestError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.NULL();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.IN_REQUEST;
 		
 		return tracciamentoVerifica;
@@ -313,10 +334,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST, 
 				getInRequestError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST);
 	}
 	@Test
 	public void fruizioneInRequestError() throws Exception {
@@ -326,10 +347,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST, 
 				getInRequestError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST);
 	}
 	
 	
@@ -340,13 +361,14 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getOutRequest() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.verificaContenuti = true;
+		tracciamentoVerifica.verificaContenuti = false;
 		
 		return tracciamentoVerifica;
 	}
@@ -376,13 +398,16 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getOutRequestError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.OUT_REQUEST;
 		
 		return tracciamentoVerifica;
@@ -396,10 +421,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST, 
 				getOutRequestError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST);
 	}
 	@Test
 	public void fruizioneOutRequestError() throws Exception {
@@ -409,10 +434,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST, 
 				getOutRequestError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST);
 	}
 	
 	
@@ -423,13 +448,14 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getOutResponse() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.verificaContenuti = true;
+		tracciamentoVerifica.verificaContenuti = false;
 		
 		return tracciamentoVerifica;
 	}
@@ -459,13 +485,16 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getOutResponseError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.OUT_RESPONSE;
 		
 		return tracciamentoVerifica;
@@ -479,10 +508,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_RESPONSE, 
 				getOutResponseError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE);
 	}
 	@Test
 	public void fruizioneOutResponseError() throws Exception {
@@ -492,10 +521,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_RESPONSE, 
 				getOutResponseError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE);
 	}
 
 	
@@ -506,13 +535,14 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getInRequestOutRequest() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.verificaContenuti = true;
+		tracciamentoVerifica.verificaContenuti = false;
 		
 		return tracciamentoVerifica;
 	}
@@ -542,13 +572,16 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getInRequestErrorOutRequest() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.NULL();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.IN_REQUEST;
 		
 		tracciamentoVerifica.checkDiagnosticFromFase = FaseTracciamento.IN_REQUEST;
@@ -565,10 +598,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_REQUEST, 
 				getInRequestErrorOutRequest(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST);
 	}
 	@Test
 	public void fruizioneInRequestErrorOutRequest() throws Exception {
@@ -578,22 +611,25 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_REQUEST, 
 				getInRequestErrorOutRequest(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST);
 	}
 
 	
 	
 	public TracciamentoVerifica getInRequestOutRequestError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.OUT_REQUEST;
 		
 		tracciamentoVerifica.checkDiagnosticFromFase = FaseTracciamento.OUT_REQUEST;
@@ -610,10 +646,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_REQUEST, 
 				getInRequestOutRequestError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST);
 	}
 	@Test
 	public void fruizioneInRequestOutRequestError() throws Exception {
@@ -623,10 +659,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_REQUEST, 
 				getInRequestOutRequestError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST);
 	}
 
 	
@@ -637,13 +673,14 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getInRequestOutResponse() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.verificaContenuti = true;
+		tracciamentoVerifica.verificaContenuti = false;
 		
 		return tracciamentoVerifica;
 	}
@@ -673,13 +710,16 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getInRequestErrorOutResponse() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutRequest = BooleanNullable.NULL();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.IN_REQUEST;
 		
 		tracciamentoVerifica.checkDiagnosticFromFase = FaseTracciamento.IN_REQUEST;
@@ -696,10 +736,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_RESPONSE, 
 				getInRequestErrorOutResponse(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST);
 	}
 	@Test
 	public void fruizioneInRequestErrorOutResponse() throws Exception {
@@ -709,22 +749,25 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_RESPONSE, 
 				getInRequestErrorOutResponse(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_IN_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_IN_REQUEST);
 	}
 
 	
 	
 	public TracciamentoVerifica getInRequestOutResponseError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.OUT_RESPONSE;
 		
 		tracciamentoVerifica.checkDiagnosticFromFase = FaseTracciamento.OUT_RESPONSE;
@@ -741,10 +784,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_RESPONSE, 
 				getInRequestOutResponseError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE);
 	}
 	@Test
 	public void fruizioneInRequestOutResponseError() throws Exception {
@@ -754,10 +797,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_IN_REQUEST_OUT_RESPONSE, 
 				getInRequestOutResponseError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE);
 	}
 
 	
@@ -768,13 +811,14 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getOutRequestOutResponse() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.verificaContenuti = true;
+		tracciamentoVerifica.verificaContenuti = false;
 		
 		return tracciamentoVerifica;
 	}
@@ -804,13 +848,16 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 	
 	
 	public TracciamentoVerifica getOutRequestErrorOutResponse() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
-		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
+		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.OUT_REQUEST;
 		
 		tracciamentoVerifica.checkDiagnosticFromFase = FaseTracciamento.OUT_REQUEST;
@@ -827,10 +874,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST_OUT_RESPONSE, 
 				getOutRequestErrorOutResponse(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST);
 	}
 	@Test
 	public void fruizioneOutRequestErrorOutResponse() throws Exception {
@@ -840,22 +887,25 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST_OUT_RESPONSE, 
 				getOutRequestErrorOutResponse(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_REQUEST);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_REQUEST);
 	}
 
 	
 	
 	public TracciamentoVerifica getOutRequestOutResponseError() {
-		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(true);
+		TracciamentoVerifica tracciamentoVerifica = new TracciamentoVerifica(false);
 		tracciamentoVerifica.verificaInRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		tracciamentoVerifica.forzaVerificaDBPostOutResponse = true;
 		
-		tracciamentoVerifica.faseTracciamentoErroreDB = true;
+		tracciamentoVerifica.verificaContenuti = false;
+		
+		tracciamentoVerifica.faseTracciamentoErroreDB = false;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.OUT_RESPONSE;
 		
 		tracciamentoVerifica.checkDiagnosticFromFase = FaseTracciamento.OUT_RESPONSE;
@@ -872,10 +922,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.EROGAZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST_OUT_RESPONSE, 
 				getOutRequestOutResponseError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE);
 	}
 	@Test
 	public void fruizioneOutRequestOutResponseError() throws Exception {
@@ -885,10 +935,10 @@ public class FasiNonBloccantiTest extends ConfigLoader {
 				TipoServizio.FRUIZIONE,
 				API, TestTracciamentoCostanti.RISORSA_OUT_REQUEST_OUT_RESPONSE, 
 				getOutRequestOutResponseError(),
-				true, // expectedOk,
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE, 
+				false, // expectedOk,
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE, 
 				true, 
-				TestTracciamentoCostanti.ERRORE_DATABASE_FASE_OUT_RESPONSE);
+				TestTracciamentoCostanti.ERRORE_FILETRACE_FASE_OUT_RESPONSE);
 	}
 }
 

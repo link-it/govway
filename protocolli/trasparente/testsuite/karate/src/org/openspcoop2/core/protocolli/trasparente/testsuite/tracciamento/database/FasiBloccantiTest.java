@@ -46,6 +46,9 @@ public class FasiBloccantiTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -259,6 +262,9 @@ public class FasiBloccantiTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -339,6 +345,9 @@ public class FasiBloccantiTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -419,6 +428,9 @@ public class FasiBloccantiTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -499,6 +511,9 @@ public class FasiBloccantiTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -627,6 +642,9 @@ public class FasiBloccantiTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -755,6 +773,9 @@ public class FasiBloccantiTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.TRUE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test

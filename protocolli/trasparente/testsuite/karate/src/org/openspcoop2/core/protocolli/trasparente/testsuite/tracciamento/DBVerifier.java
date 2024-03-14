@@ -128,7 +128,7 @@ public class DBVerifier {
 		}
 		log().info(query);
 		
-		String msg = "IdTransazione: "+idTransazione;
+		String msg = "IdTransazione: "+idTransazione+" api:"+api+" operazione:"+operazione+"";
 		
 		List<Map<String, Object>> rows = idTransazione!=null ?
 				dbUtils().readRows(query, idTransazione)
@@ -294,5 +294,71 @@ public class DBVerifier {
 		else {
 			assertNull(msg,oTempiElaborazione);
 		}
+	}
+	
+	public static void verifyDumpMessaggio(String api, String operazione, String credenzialeUnivoca, FaseTracciamento faseTracciamento, boolean expected) throws Exception  {
+		verifyDumpMessaggio(null, api, operazione, credenzialeUnivoca, "RichiestaIngressoDumpBinario", expected);
+		if(FaseTracciamento.OUT_RESPONSE.equals(faseTracciamento)) {
+			verifyDumpMessaggio(null, api, operazione, credenzialeUnivoca, "RichiestaUscitaDumpBinario", expected);
+			verifyDumpMessaggio(null, api, operazione, credenzialeUnivoca, "RispostaIngressoDumpBinario", expected);
+		}
+	}
+	public static void verifyDumpMessaggio(String idTransazione, FaseTracciamento faseTracciamento, boolean expected) throws Exception  {
+		verifyDumpMessaggio(idTransazione, null, null, null, "RichiestaIngressoDumpBinario", expected);
+		if(FaseTracciamento.OUT_RESPONSE.equals(faseTracciamento) || FaseTracciamento.POST_OUT_RESPONSE.equals(faseTracciamento)) {
+			verifyDumpMessaggio(idTransazione, null, null, null, "RichiestaUscitaDumpBinario", expected);
+			verifyDumpMessaggio(idTransazione, null, null, null, "RispostaIngressoDumpBinario", expected);
+		}
+		if(FaseTracciamento.POST_OUT_RESPONSE.equals(faseTracciamento)) {
+			verifyDumpMessaggio(idTransazione, null, null, null, "RispostaUscitaDumpBinario", expected);
+		}
+	}
+	public static void verifyDumpMessaggio(String idTransazione, String api, String operazione, String credenzialeUnivoca, String tipo, boolean expected) throws Exception  {
+		
+		if(idTransazione==null) {
+			String query = "select id from transazioni where ";
+			query = query + "nome_servizio = ? AND azione = ? AND credenziali LIKE '%"+credenzialeUnivoca+"%'";
+			log().info(query);
+			
+			String msg = "api:"+api+" operazione:"+operazione+"";
+			
+			List<Map<String, Object>> rows = dbUtils().readRows(query, api, operazione);
+			assertNotNull(msg, rows);
+			assertEquals(msg, 1, rows.size());
+			
+			Map<String, Object> row = rows.get(0);
+			
+			Object oId = row.get("id");
+			assertNotNull(msg,oId);
+			assertTrue(msg+" oId classe '"+oId.getClass().getName()+"'", (oId instanceof String));
+			if(oId instanceof String) {
+				idTransazione = (String)oId;
+			}
+		}
+		
+		String query = "select * from dump_messaggi where tipo_messaggio = '"+tipo+"' and id_transazione=?";
+		log().info("EXISTS:"+expected+" -> " +query);
+		
+		String msg = "IdTransazione: "+idTransazione+ " api:"+api+" operazione:"+operazione+" dump: "+tipo;
+		
+		List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione);
+				
+		if(expected) {
+			assertNotNull(msg, rows);
+			
+			assertEquals(msg, 1, rows.size());
+			
+			Map<String, Object> row = rows.get(0);
+			
+			Object oBody = row.get("body");
+			assertNotNull(msg,oBody);
+			byte[] content = (byte[]) oBody;
+			String sContent = new String(content);
+			assertNotNull(msg,sContent);
+		}
+		else {
+			assertTrue(msg, rows==null || (rows.size()==0));
+		}
+		
 	}
 }

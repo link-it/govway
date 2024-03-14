@@ -47,6 +47,9 @@ public class BasicTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -83,6 +86,8 @@ public class BasicTest extends ConfigLoader {
 		
 		tracciamentoVerifica.faseTracciamentoErroreDB = true;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.POST_OUT_RESPONSE;
+		
+		tracciamentoVerifica.verificaContenuti = true;
 		
 		return tracciamentoVerifica;
 	}
@@ -121,6 +126,9 @@ public class BasicTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -157,6 +165,8 @@ public class BasicTest extends ConfigLoader {
 		
 		tracciamentoVerifica.faseTracciamentoErroreDB = true;
 		tracciamentoVerifica.faseTracciamentoErrore = FaseTracciamento.POST_OUT_RESPONSE;
+		
+		tracciamentoVerifica.verificaContenuti = true;		
 		
 		return tracciamentoVerifica;
 	}
@@ -271,6 +281,8 @@ public class BasicTest extends ConfigLoader {
 		
 		tracciamentoVerifica.queryParameters.put("problem", "true");
 		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -318,6 +330,9 @@ public class BasicTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
@@ -365,6 +380,9 @@ public class BasicTest extends ConfigLoader {
 		tracciamentoVerifica.verificaOutRequest = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaOutResponse = BooleanNullable.FALSE();
 		tracciamentoVerifica.verificaPostOutResponse = BooleanNullable.TRUE();
+		
+		tracciamentoVerifica.verificaContenuti = true;
+		
 		return tracciamentoVerifica;
 	}
 	@Test
