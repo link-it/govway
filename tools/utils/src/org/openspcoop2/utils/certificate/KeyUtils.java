@@ -53,7 +53,9 @@ public class KeyUtils {
 
 	public static final String ALGO_RSA = "RSA";
 	public static final String ALGO_DSA = "DSA";
-	
+	public static final String ALGO_DH = "DH"; // Diffie-Hellman
+	public static final String ALGO_EC = "EC"; // Elliptic Curve Digital Signature Algorithm o ECDH (Elliptic Curve Diffie-Hellman).
+
 	
 	public static KeyUtils getInstance() throws UtilsException {
 		return new KeyUtils();

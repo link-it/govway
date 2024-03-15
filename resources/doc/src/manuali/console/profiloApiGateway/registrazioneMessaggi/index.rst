@@ -26,7 +26,7 @@ In :numref:`regMessaggiFig` viene mostrata la pagina di configurazione.
 
     Personalizzazione della registrazione dei messaggi a livello di erogazione o fruizione
 
-Se a livello di erogazione o fruizione non viene attuata una configurazione specifica, la funzionalità di registrazione dei messaggi eredita la configurazione attuata a livello globale e descritta nella sezione :ref:`tracciamento`.
+Se a livello di erogazione o fruizione non viene attuata una configurazione specifica, la funzionalità di registrazione dei messaggi eredita la configurazione attuata a livello globale e descritta nella sezione :ref:`registrazioneMessaggiConfigurazione`.
 
 In :numref:`regMessaggiDefaultFig` viene mostrata la pagina di configurazione prima di procedere con una personalizzazione a livello di erogazione o fruizione.
 

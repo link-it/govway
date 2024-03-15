@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGeneraleHandler;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
+import org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.Dump;
@@ -70,6 +71,8 @@ import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.TracciamentoConfigurazione;
+import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace;
 import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -1556,11 +1559,79 @@ public class DriverConfigurazioneDB_configLIB {
 
 		Tracciamento t = config.getTracciamento();
 		String tracciamentoBuste = null;
-		String tracciamentoEsiti = null;
 		if (t != null) {
-			tracciamentoBuste = DriverConfigurazioneDBLib.getValue(t.getStato());
-			tracciamentoEsiti = t.getEsiti();
+			tracciamentoBuste = DriverConfigurazioneDBLib.getValue(t.getStato());			
 		}
+		
+		String tracciamentoEsitiPD = null;
+		String transazioniTempiElaborazionePD = null;
+		String transazioniTokenPD = null;
+		ConfigurazioneTracciamentoPorta tracciamentoPD = null;
+		if (t != null) {
+			tracciamentoPD =t.getPortaDelegata();
+		}
+		TracciamentoConfigurazione tracciamentoConfigurazioneDatabasePD = null;
+		TracciamentoConfigurazione tracciamentoConfigurazioneFiletracePD = null;
+		TracciamentoConfigurazioneFiletrace tracciamentoConfigurazioneFiletraceDetailsPD = null;
+		if(tracciamentoPD!=null) {
+			tracciamentoEsitiPD = tracciamentoPD.getEsiti();
+			if(tracciamentoPD.getTransazioni()!=null) {
+				transazioniTempiElaborazionePD = DriverConfigurazioneDBLib.getValue(tracciamentoPD.getTransazioni().getTempiElaborazione());
+				transazioniTokenPD = DriverConfigurazioneDBLib.getValue(tracciamentoPD.getTransazioni().getToken());
+			}
+			tracciamentoConfigurazioneDatabasePD = tracciamentoPD.getDatabase();
+			tracciamentoConfigurazioneFiletracePD = tracciamentoPD.getFiletrace();
+			tracciamentoConfigurazioneFiletraceDetailsPD = tracciamentoPD.getFiletraceConfig();
+		}
+		else {
+			// backward compatibility, lo uso sia per erogazione che per fruizione (per import package)
+			
+			if (t != null) {
+				tracciamentoEsitiPD = t.getEsiti();
+			}
+			
+			Transazioni transazioni = config.getTransazioni();
+			if(transazioni!=null) {
+				transazioniTempiElaborazionePD = DriverConfigurazioneDBLib.getValue(transazioni.getTempiElaborazione());
+				transazioniTokenPD = DriverConfigurazioneDBLib.getValue(transazioni.getToken());
+			}
+		}
+		
+		String tracciamentoEsitiPA = null;
+		String transazioniTempiElaborazionePA = null;
+		String transazioniTokenPA = null;
+		ConfigurazioneTracciamentoPorta tracciamentoPA = null;
+		if (t != null) {
+			tracciamentoPA = t.getPortaApplicativa();
+		}
+		TracciamentoConfigurazione tracciamentoConfigurazioneDatabasePA = null;
+		TracciamentoConfigurazione tracciamentoConfigurazioneFiletracePA = null;
+		TracciamentoConfigurazioneFiletrace tracciamentoConfigurazioneFiletraceDetailsPA = null;
+		if(tracciamentoPA!=null) {
+			tracciamentoEsitiPA = tracciamentoPA.getEsiti();
+			if(tracciamentoPA.getTransazioni()!=null) {
+				transazioniTempiElaborazionePA = DriverConfigurazioneDBLib.getValue(tracciamentoPA.getTransazioni().getTempiElaborazione());
+				transazioniTokenPA = DriverConfigurazioneDBLib.getValue(tracciamentoPA.getTransazioni().getToken());
+			}
+			tracciamentoConfigurazioneDatabasePA = tracciamentoPA.getDatabase();
+			tracciamentoConfigurazioneFiletracePA = tracciamentoPA.getFiletrace();
+			tracciamentoConfigurazioneFiletraceDetailsPA = tracciamentoPA.getFiletraceConfig();
+		}
+		else {
+			// backward compatibility, lo uso sia per erogazione che per fruizione (per import package)
+			
+			if (t != null) {
+				tracciamentoEsitiPA = t.getEsiti();
+			}
+			
+			Transazioni transazioni = config.getTransazioni();
+			if(transazioni!=null) {
+				transazioniTempiElaborazionePA = DriverConfigurazioneDBLib.getValue(transazioni.getTempiElaborazione());
+				transazioniTokenPA = DriverConfigurazioneDBLib.getValue(transazioni.getToken());
+			}
+		}
+		
+
 		
 		Dump d = config.getDump();
 		String dumpApplicativo = null;
@@ -1583,14 +1654,6 @@ public class DriverConfigurazioneDB_configLIB {
 				dumpConfigPA = d.getConfigurazionePortaApplicativa();
 				dumpConfigPD = d.getConfigurazionePortaDelegata();
 			}
-		}
-
-		Transazioni transazioni = config.getTransazioni();
-		String transazioniTempiElaborazione = null;
-		String transazioniToken = null;
-		if(transazioni!=null) {
-			transazioniTempiElaborazione = DriverConfigurazioneDBLib.getValue(transazioni.getTempiElaborazione());
-			transazioniToken = DriverConfigurazioneDBLib.getValue(transazioni.getToken());
 		}
 		
 		String modRisposta = CostantiConfigurazione.CONNECTION_REPLY.toString();
@@ -1645,12 +1708,18 @@ public class DriverConfigurazioneDB_configLIB {
 				sqlQueryObject.addInsertField("gestione_manifest", "?");
 				sqlQueryObject.addInsertField("validazione_manifest", "?");
 				sqlQueryObject.addInsertField("tracciamento_buste", "?");
+				// tracciamento
 				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
+				sqlQueryObject.addInsertField("tracciamento_esiti_pd", "?");
 				sqlQueryObject.addInsertField("transazioni_tempi", "?");
+				sqlQueryObject.addInsertField("transazioni_tempi_pd", "?");
 				sqlQueryObject.addInsertField("transazioni_token", "?");
+				sqlQueryObject.addInsertField("transazioni_token_pd", "?");
+				// dump
 				sqlQueryObject.addInsertField("dump", "?");
 				sqlQueryObject.addInsertField("dump_bin_pd", "?");
 				sqlQueryObject.addInsertField("dump_bin_pa", "?");
+				// validazione
 				sqlQueryObject.addInsertField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_mtom", "?");
@@ -1766,12 +1835,18 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(index++, gestioneManifest);
 				updateStmt.setString(index++, valManifest);
 				updateStmt.setString(index++, tracciamentoBuste);
-				updateStmt.setString(index++, tracciamentoEsiti);
-				updateStmt.setString(index++, transazioniTempiElaborazione);
-				updateStmt.setString(index++, transazioniToken);
+				// tracciamento
+				updateStmt.setString(index++, tracciamentoEsitiPA);
+				updateStmt.setString(index++, tracciamentoEsitiPD);
+				updateStmt.setString(index++, transazioniTempiElaborazionePA);
+				updateStmt.setString(index++, transazioniTempiElaborazionePD);
+				updateStmt.setString(index++, transazioniTokenPA);
+				updateStmt.setString(index++, transazioniTokenPD);
+				// dump
 				updateStmt.setString(index++, dumpApplicativo);
 				updateStmt.setString(index++, dumpPD);
 				updateStmt.setString(index++, dumpPA);
+				// validazione
 				updateStmt.setString(index++, validazioneContenutiStato);
 				updateStmt.setString(index++, validazioneContenutiTipo);
 				updateStmt.setString(index++, validazioneContenutiAcceptMtomMessage);
@@ -1893,7 +1968,12 @@ public class DriverConfigurazioneDB_configLIB {
 								valProfiloCollaborazione, 
 								modRisposta, utilizzoIndTelematico, 
 								routingEnabled, gestioneManifest, 
-								valManifest, tracciamentoBuste, transazioniTempiElaborazione, transazioniToken, dumpApplicativo, dumpPD, dumpPA,
+								valManifest, 
+								tracciamentoBuste, 
+								tracciamentoEsitiPA, tracciamentoEsitiPD,
+								transazioniTempiElaborazionePA, transazioniTempiElaborazionePD, 
+								transazioniTokenPA, transazioniTokenPD, 
+								dumpApplicativo, dumpPD, dumpPA,
 								validazioneContenutiStato,validazioneContenutiTipo,validazioneContenutiAcceptMtomMessage,
 								registroStatoCache, registroDimensioneCache, registroAlgoritmoCache, registroIdleCache, registroLifeCache,
 								configStatoCache, configDimensioneCache, configAlgoritmoCache, configIdleCache, configLifeCache,
@@ -2061,6 +2141,31 @@ public class DriverConfigurazioneDB_configLIB {
 				}
 				
 				
+				// tracciamentoConfigurazione
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneDatabasePA, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneDatabasePD, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneFiletracePA, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneFiletracePD, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoConfigurazioneFiletraceDetailsPA, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoConfigurazioneFiletraceDetailsPD, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
+				
+				
+				
+				
+				
 				// delete from dump appender_prop
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_APPENDER_PROP);
@@ -2111,6 +2216,7 @@ public class DriverConfigurazioneDB_configLIB {
 					}
 				}
 				
+								
 				// Cache Regole
 				n=0;
 				if(responseCacheRegole!=null && !responseCacheRegole.isEmpty()){
@@ -2311,12 +2417,18 @@ public class DriverConfigurazioneDB_configLIB {
 				sqlQueryObject.addUpdateField("gestione_manifest", "?");
 				sqlQueryObject.addUpdateField("validazione_manifest", "?");
 				sqlQueryObject.addUpdateField("tracciamento_buste", "?");
+				// tracciamento
 				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
+				sqlQueryObject.addUpdateField("tracciamento_esiti_pd", "?");
 				sqlQueryObject.addUpdateField("transazioni_tempi", "?");
+				sqlQueryObject.addUpdateField("transazioni_tempi_pd", "?");
 				sqlQueryObject.addUpdateField("transazioni_token", "?");
+				sqlQueryObject.addUpdateField("transazioni_token_pd", "?");
+				// dump
 				sqlQueryObject.addUpdateField("dump", "?");
 				sqlQueryObject.addUpdateField("dump_bin_pd", "?");
 				sqlQueryObject.addUpdateField("dump_bin_pa", "?");
+				// validazione
 				sqlQueryObject.addUpdateField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_mtom", "?");
@@ -2432,12 +2544,18 @@ public class DriverConfigurazioneDB_configLIB {
 				updateStmt.setString(index++, gestioneManifest);
 				updateStmt.setString(index++, valManifest);
 				updateStmt.setString(index++, tracciamentoBuste);
-				updateStmt.setString(index++, tracciamentoEsiti);
-				updateStmt.setString(index++, transazioniTempiElaborazione);
-				updateStmt.setString(index++, transazioniToken);
+				// tracciamento
+				updateStmt.setString(index++, tracciamentoEsitiPA);
+				updateStmt.setString(index++, tracciamentoEsitiPD);
+				updateStmt.setString(index++, transazioniTempiElaborazionePA);
+				updateStmt.setString(index++, transazioniTempiElaborazionePD);
+				updateStmt.setString(index++, transazioniTokenPA);
+				updateStmt.setString(index++, transazioniTokenPD);
+				// dump
 				updateStmt.setString(index++, dumpApplicativo);
 				updateStmt.setString(index++, dumpPD);
 				updateStmt.setString(index++, dumpPA);
+				// validazione
 				updateStmt.setString(index++, validazioneContenutiStato);
 				updateStmt.setString(index++, validazioneContenutiTipo);
 				updateStmt.setString(index++, validazioneContenutiAcceptMtomMessage);
@@ -2560,7 +2678,11 @@ public class DriverConfigurazioneDB_configLIB {
 								modRisposta, utilizzoIndTelematico, 
 								routingEnabled, gestioneManifest, 
 								valManifest, 
-								tracciamentoBuste, transazioniTempiElaborazione, transazioniToken, dumpApplicativo, dumpPD, dumpPA,
+								tracciamentoBuste, 
+								tracciamentoEsitiPA, tracciamentoEsitiPD,
+								transazioniTempiElaborazionePA, transazioniTempiElaborazionePD, 
+								transazioniTokenPA, transazioniTokenPD, 
+								dumpApplicativo, dumpPD, dumpPA,
 								validazioneContenutiStato,validazioneContenutiTipo,
 								registroStatoCache, registroDimensioneCache, registroAlgoritmoCache, registroIdleCache, registroLifeCache,
 								configStatoCache, configDimensioneCache, configAlgoritmoCache, configIdleCache, configLifeCache,
@@ -2725,6 +2847,28 @@ public class DriverConfigurazioneDB_configLIB {
 				}
 				
 				
+				// tracciamentoConfigurazione
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneDatabasePA, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneDatabasePD, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneFiletracePA, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneFiletracePD, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoConfigurazioneFiletraceDetailsPA, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoConfigurazioneFiletraceDetailsPD, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
+				
+	
 				// delete from dump appender_prop
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDBLib.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_APPENDER_PROP);
@@ -2977,6 +3121,27 @@ public class DriverConfigurazioneDB_configLIB {
 				DriverConfigurazioneDB_handlerLIB.CRUDConfigurazioneMessageHandlers(type, con, null, null, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
 				DriverConfigurazioneDB_handlerLIB.CRUDConfigurazioneMessageHandlers(type, con, null, null, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
 				DriverConfigurazioneDB_handlerLIB.CRUDConfigurazioneServiceHandlers(type, con, null, null, false, (configHandlers!=null) ? configHandlers.getService() : null);
+				
+				// Tracciamento
+
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneDatabasePA, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneDatabasePD, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneFiletracePA, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoConfigurazioneFiletracePD, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoConfigurazioneFiletraceDetailsPA, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoConfigurazioneFiletraceDetailsPD, null, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
 				
 				// Dump
 				if(config.getDump()!=null) {

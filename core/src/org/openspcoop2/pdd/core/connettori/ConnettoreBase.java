@@ -79,6 +79,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.transazioni.ConfigurazioneTracciamento;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
@@ -405,20 +406,18 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						idPA.setNome(nomePorta);
 					}
 					
-					this.logFileTrace_headers = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled();
-					this.logFileTrace_payload = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled();
+					ConfigurazioneTracciamento configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, TipoPdD.APPLICATIVA);
+					this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+					this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 					
 					if(idPA!=null) {
 						this.pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, this.requestInfo);
 						if(this.pa!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pa);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pa);
-							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.pa);
-							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.pa);
+							configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, this.pa);
+							this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+							this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 							this.proprietaPorta = this.pa.getProprietaList();
 							if(request.getTransazioneApplicativoServer()!=null) {
 								this.nomeConnettoreAsincrono = request.getTransazioneApplicativoServer().getConnettoreNome();
@@ -435,20 +434,18 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						idPD.setNome(nomePorta);
 					}
 					
-					this.logFileTrace_headers = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled() &&
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled();
-					this.logFileTrace_payload = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled() &&
-							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled();
+					ConfigurazioneTracciamento configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, TipoPdD.DELEGATA);
+					this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+					this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 					
 					if(idPD!=null) {
 						this.pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, this.requestInfo);
 						if(this.pd!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pd);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pd);
-							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.pd);
-							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(this.pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.pd);
+							configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, this.pd);
+							this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+							this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 							this.proprietaPorta = this.pd.getProprietaList();
 						}
 					}

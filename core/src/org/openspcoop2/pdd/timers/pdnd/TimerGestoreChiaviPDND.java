@@ -46,6 +46,7 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 
 	public static final String ID_MODULO = "TimerGestoreChiaviPDND";
 	
+	static final String CONNESSIONE_NON_DISPONIBILE = "Connessione al database della configurazione non disponibile";
 	
 	/** Logger utilizzato per debug. */
 	private Logger logTimer = null;

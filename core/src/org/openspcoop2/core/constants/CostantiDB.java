@@ -57,6 +57,7 @@ public final class CostantiDB {
     /*COMMONS*/
 	public static final String COLUMN_ALIAS_COUNT = "count";
     public static final String COLUMN_ID = "id";
+    public static final String COLUMN_ID_PROPRIETARIO = "id_proprietario";
     public static final String CONNETTORI = "connettori";
     public static final String CONNETTORI_CUSTOM = "connettori_custom";
     public static final String SOGGETTI = "soggetti";
@@ -358,6 +359,23 @@ public final class CostantiDB {
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA = "configpa";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PD = "pd";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PA = "pa";
+    
+    public static final String TRACCIAMENTO_CONFIGURAZIONE = "tracce_config";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_COLUMN_PROPRIETARIO = "proprietario";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_COLUMN_TIPO = "tipo";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_COLUMN_ID_PROPRIETARIO = "id_proprietario";
+    
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD = "configpd";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA = "configpa";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD = "pd";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA = "pa";
+    
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_FILETRACE = "filetrace_config";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_FILETRACE_COLUMN_PROPRIETARIO = "proprietario";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_FILETRACE_COLUMN_ID_PROPRIETARIO = "id_proprietario";
+    
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB = "db";
+    public static final String TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE = "filetrace";
     
     /*DIAGNOSTICA*/
     public static final String MSG_DIAGNOSTICI = "msgdiagnostici";
@@ -993,6 +1011,9 @@ public final class CostantiDB {
     
     public static final String STATO_FUNZIONALITA_ABILITATO = "abilitato";
     public static final String STATO_FUNZIONALITA_DISABILITATO = "disabilitato";
+    
+    public static final String STATO_FUNZIONALITA_PERSONALIZZATO = "personalizzato";
+    public static final String STATO_FUNZIONALITA_CONFIGURAZIONE_ESTERNA = "configurazioneEsterna";
     
 	
     public static final String COMPONENTE_SERVIZIO_PD = "pd";

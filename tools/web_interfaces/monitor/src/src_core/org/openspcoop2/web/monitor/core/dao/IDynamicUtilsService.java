@@ -312,4 +312,11 @@ public interface IDynamicUtilsService {
 	
 	public Plugin getPlugin(IdPlugin idPlugin);
 	
+	
+	// *** Configurazione (Tracciamento) ***
+	
+	public boolean existsFaseTracciamentoDBRequestIn(boolean erogazioni, boolean fruizioni);
+	public boolean existsFaseTracciamentoDBRequestOut(boolean erogazioni, boolean fruizioni);
+	public boolean existsFaseTracciamentoDBResponseOut(boolean erogazioni, boolean fruizioni);
+	
 }

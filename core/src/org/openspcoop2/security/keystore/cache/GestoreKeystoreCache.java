@@ -39,6 +39,7 @@ import org.openspcoop2.security.keystore.PublicKeyStore;
 import org.openspcoop2.security.keystore.RemoteStore;
 import org.openspcoop2.security.keystore.SSLConfigProps;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
+import org.openspcoop2.security.keystore.SecretKeyStore;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -68,6 +69,7 @@ public class GestoreKeystoreCache {
 	private static final JWKSetStoreCache jwkSetStoreCache = new JWKSetStoreCache();
 	private static final KeyPairStoreCache keyPairStoreCache = new KeyPairStoreCache();
 	private static final PublicKeyStoreCache publicKeyStoreCache = new PublicKeyStoreCache();
+	private static final SecretKeyStoreCache secretKeyStoreCache = new SecretKeyStoreCache();
 	private static final RemoteStoreCache remoteStoreCache = new RemoteStoreCache();
 	private static final RemoteStoreClientInfoCache remoteStoreClientInfoCache = new RemoteStoreClientInfoCache();
 	private static final HttpStoreCache httpStoreCache = new HttpStoreCache();
@@ -87,6 +89,7 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.jwkSetStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.keyPairStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.publicKeyStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
+		GestoreKeystoreCache.secretKeyStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.remoteStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.remoteStoreClientInfoCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.httpStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
@@ -105,6 +108,7 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.jwkSetStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.keyPairStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.publicKeyStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
+		GestoreKeystoreCache.secretKeyStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.remoteStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.remoteStoreClientInfoCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.httpStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
@@ -455,6 +459,52 @@ public class GestoreKeystoreCache {
 		}
 		return k;
 	}
+	
+	
+	
+	
+	
+	
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, String secretKeyPath, String algorithm) throws SecurityException{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && secretKeyPath!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getSecretKeyStore(secretKeyPath);
+			if(o instanceof SecretKeyStore) {
+				return (SecretKeyStore) o;
+			}
+		}
+		SecretKeyStore k = null;
+		if(GestoreKeystoreCache.cacheEnabled)
+			k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(secretKeyPath, algorithm);
+		else
+			k = new SecretKeyStore(secretKeyPath, algorithm);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addSecretKeyStore(secretKeyPath, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	public static SecretKeyStore getSecretKeyStore(RequestInfo requestInfo, byte[] secretKey, String algorithm) throws SecurityException{
+		String keyParam = null;
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && secretKey!=null;
+		if(useRequestInfo) {
+			keyParam = AbstractKeystoreCache.buildKeyCacheFromBytes(secretKey);
+			Object o = requestInfo.getRequestConfig().getSecretKeyStore(keyParam);
+			if(o instanceof SecretKeyStore) {
+				return (SecretKeyStore) o;
+			}
+		}
+		SecretKeyStore k = null;
+		if(GestoreKeystoreCache.cacheEnabled)
+			k = GestoreKeystoreCache.secretKeyStoreCache.getKeystoreAndCreateIfNotExists(secretKey, algorithm);
+		else
+			k = new SecretKeyStore(secretKey, algorithm);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addSecretKeyStore(keyParam, k, requestInfo.getIdTransazione());
+		}
+		return k;
+	}
+	
+	
 	
 	
 	

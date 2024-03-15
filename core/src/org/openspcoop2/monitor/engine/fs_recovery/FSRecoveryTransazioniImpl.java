@@ -21,10 +21,15 @@ package org.openspcoop2.monitor.engine.fs_recovery;
 
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.utils.serializer.JaxbDeserializer;
+import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.constants.Costanti;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.List;
 
 import org.slf4j.Logger;
 
@@ -44,8 +49,8 @@ public class FSRecoveryTransazioniImpl extends AbstractFSRecovery {
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			File directory, File directoryDLQ,
 			int tentativi,
-			int minutiAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, minutiAttesaProcessingFile);
+			long msAttesaProcessingFile) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
 		this.transazioniSM = transazioniSM;
 	}
 
@@ -65,9 +70,14 @@ public class FSRecoveryTransazioniImpl extends AbstractFSRecovery {
 	}
 
 	@Override
-	public void insertObject(File file, Connection connection) throws Exception {
+	public void insertObject(File file, Connection connection) throws UtilsException, UtilsMultiException {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
-		Transazione transazione = deserializer.readTransazione(file);
+		Transazione transazione = null;
+		try {
+			transazione = deserializer.readTransazione(file);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 		
 		// aggiungo evento transazione
 		// Non e' più possibile aggiungerlo da quando abbiamo trasformato la colonna in 'eventi'.
@@ -80,16 +90,46 @@ public class FSRecoveryTransazioniImpl extends AbstractFSRecovery {
 			}
 		}
 		
-		String id = this.transazioniSM.getTransazioneService().convertToId(transazione);
-
-		//Se esiste gia' una transazione con questo id, sposto il file direttamente nella DLQ indicando nel file README associato questo motivo
-		if(this.transazioniSM.getTransazioneService().exists(id)) {
-			String newFileName = FSRecoveryFileUtils.renameToDLQ(this.directoryDLQ, file, "Transazione con id ["+id+"] gia' presente nel database.", this.log);
-			if(this.debug)
-				this.log.warn("File ["+file.getName()+"] rinominato in ["+newFileName+"]");
-		}
-		else{
-			this.transazioniSM.getTransazioneService().create(transazione);
+		try {
+			String id = this.transazioniSM.getTransazioneService().convertToId(transazione);
+	
+			//Se esiste gia' una transazione con questo id, sposto il file direttamente nella DLQ indicando nel file README associato questo motivo
+			if(this.transazioniSM.getTransazioneService().exists(id)) {
+				
+				// Devo verificare che non abbia uno stato parziale
+				IPaginatedExpression expr = this.transazioniSM.getTransazioneServiceSearch().newPaginatedExpression();
+				expr.limit(1);
+				expr.equals(Transazione.model().ID_TRANSAZIONE, id);
+				List<Object> list = this.transazioniSM.getTransazioneServiceSearch().select(expr, Transazione.model().ESITO_CONTESTO);
+				boolean update = false;
+				String contesto = null;
+				if(list!=null && !list.isEmpty()) {
+					Object o = list.get(0);
+					if(o instanceof String) {
+						contesto = (String) o;
+						if(EsitoUtils.isFaseIntermedia(contesto)) {
+							update = true;
+						}
+					}
+				}
+				/**System.out.println("***************************** File ["+file.getName()+"] gestito tramite un aggiornamento:"+update+", precedente stato: "+contesto);*/
+				
+				if(update) {
+					this.transazioniSM.getTransazioneService().update(id,transazione);
+					if(this.debug)
+						this.logDebug("File ["+file.getName()+"] gestito tramite un aggiornamento, precedente stato: "+contesto);
+				}
+				else {
+					String newFileName = FSRecoveryFileUtils.renameToDLQ(this.directoryDLQ, file, "Transazione con id ["+id+"] gia' presente nel database.", this.log);
+					if(this.debug)
+						this.logWarn("File ["+file.getName()+"] rinominato in ["+newFileName+"]");
+				}
+			}
+			else{
+				this.transazioniSM.getTransazioneService().create(transazione);
+			}
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 

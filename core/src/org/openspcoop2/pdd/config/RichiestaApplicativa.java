@@ -28,6 +28,8 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.core.IntegrationContext;
+import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.utils.beans.BaseBean;
 
 /**
@@ -78,6 +80,11 @@ public class RichiestaApplicativa extends BaseBean implements java.io.Serializab
 	private String idCorrelazioneApplicativaRisposta;
 	/** LocalForward */
 	private boolean localForward;
+	
+	/** Informazioni protocollo */
+	private ProtocolContext protocol;
+	/** Informazioni di integrazione */
+	private IntegrationContext integrazione;
 
 
 
@@ -306,6 +313,19 @@ public class RichiestaApplicativa extends BaseBean implements java.io.Serializab
 		this.idPortaApplicativa = idPortaApplicativa;
 	}
 
+	public ProtocolContext getProtocol() {
+		return this.protocol;
+	}
+	public void setProtocol(ProtocolContext protocol) {
+		this.protocol = protocol;
+	}
+	
+	public IntegrationContext getIntegrazione() {
+		return this.integrazione;
+	}
+	public void setIntegrazione(IntegrationContext integrazione) {
+		this.integrazione = integrazione;
+	}
 }
 
 

@@ -741,8 +741,37 @@
 
 	<!-- PortaDelegata o PortaApplicativa Tracciamento -->
 	<xsd:complexType name="porta-tracciamento">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="database" type="tracciamento-configurazione"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="filetrace" type="tracciamento-configurazione"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="filetrace-config" type="tracciamento-configurazione-filetrace"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="transazioni" type="transazioni"/>
+		</xsd:sequence>
 		<xsd:attribute name="severita" type="Severita" use="optional"/>
 		<xsd:attribute name="esiti" type="xsd:string" use="optional"/>
+		<xsd:attribute default="disabilitato" name="stato" type="StatoFunzionalita" use="optional"/>
+	</xsd:complexType>
+
+	<!-- Tracciamento -->
+	<xsd:complexType name="tracciamento-configurazione">
+		<xsd:attribute name="stato" type="StatoFunzionalitaConPersonalizzazione" use="optional"/> <!-- default cambia se per database o filetrace -->
+		<xsd:attribute name="filtro-esiti" type="StatoFunzionalita" use="optional"/> <!-- default cambia se per database o filetrace -->
+		<xsd:attribute default="disabilitato" name="request-in" type="StatoFunzionalitaBloccante"/>
+		<xsd:attribute default="disabilitato" name="request-out" type="StatoFunzionalitaBloccante"/>
+		<xsd:attribute default="disabilitato" name="response-out" type="StatoFunzionalitaBloccante"/>
+		<xsd:attribute default="abilitato" name="response-out-complete" type="StatoFunzionalita"/>
+	</xsd:complexType>
+	<xsd:complexType name="tracciamento-configurazione-filetrace">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="dump-in" type="tracciamento-configurazione-filetrace-connector"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="dump-out" type="tracciamento-configurazione-filetrace-connector"/>
+		</xsd:sequence>
+		<xsd:attribute name="config" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="tracciamento-configurazione-filetrace-connector">
+		<xsd:attribute name="stato" type="StatoFunzionalita"/>
+		<xsd:attribute name="payload" type="StatoFunzionalita"/>
+		<xsd:attribute name="header" type="StatoFunzionalita"/>
 	</xsd:complexType>
 
 	<!-- GestioneErrore -->
@@ -972,7 +1001,7 @@
 			<xsd:element maxOccurs="1" minOccurs="1" name="messaggi-diagnostici" type="messaggi-diagnostici"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="tracciamento" type="tracciamento"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="dump" type="dump"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="transazioni" type="transazioni"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="transazioni" type="transazioni"/> <!-- lasciato per backward compatibility sugli archivi export/import -->
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-errore" type="configurazione-gestione-errore"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="integration-manager" type="integration-manager"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="stato-servizi-pdd" type="stato-servizi-pdd"/>
@@ -1188,8 +1217,19 @@
 		<xsd:sequence>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="openspcoop-appender" type="openspcoop-appender"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="openspcoop-sorgente-dati" type="openspcoop-sorgente-dati"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="porta-delegata" type="configurazione-tracciamento-porta"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="porta-applicativa" type="configurazione-tracciamento-porta"/>
 		</xsd:sequence>
 		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita"/>
+		<xsd:attribute name="esiti" type="xsd:string" use="optional"/> <!-- lasciato per backward compatibility sugli archivi export/import -->
+	</xsd:complexType>
+	<xsd:complexType name="configurazione-tracciamento-porta">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="database" type="tracciamento-configurazione"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="filetrace" type="tracciamento-configurazione"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="filetrace-config" type="tracciamento-configurazione-filetrace"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="transazioni" type="transazioni"/>
+		</xsd:sequence>
 		<xsd:attribute name="esiti" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
@@ -1562,6 +1602,21 @@
 			<xsd:enumeration value="abilitato"/>
 			<xsd:enumeration value="disabilitato"/>
 			<xsd:enumeration value="warningOnly"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StatoFunzionalitaConPersonalizzazione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="abilitato"/>
+			<xsd:enumeration value="disabilitato"/>
+			<xsd:enumeration value="personalizzato"/>
+			<xsd:enumeration value="configurazioneEsterna"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StatoFunzionalitaBloccante">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="abilitato"/>
+			<xsd:enumeration value="nonBloccante"/>
+			<xsd:enumeration value="disabilitato"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="MTOMProcessorType">

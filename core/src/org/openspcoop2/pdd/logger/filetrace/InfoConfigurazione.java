@@ -40,7 +40,7 @@ import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.pdd.core.handlers.transazioni.PostOutResponseHandler_TransazioneUtilities;
+import org.openspcoop2.pdd.logger.transazioni.TransazioneUtilities;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -101,7 +101,7 @@ public class InfoConfigurazione implements Serializable {
 		
 		if(contextGateway!=null) {
 			
-			this.nomeConnettoriMultipli = PostOutResponseHandler_TransazioneUtilities.getConnettoriMultipli(contextGateway);
+			this.nomeConnettoriMultipli = TransazioneUtilities.getConnettoriMultipli(contextGateway);
 			
 			if(contextGateway.containsKey(Costanti.REQUEST_INFO)) {
 				try {

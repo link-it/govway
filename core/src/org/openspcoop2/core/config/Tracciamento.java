@@ -40,6 +40,8 @@ import java.util.List;
  * 		&lt;sequence&gt;
  * 			&lt;element name="openspcoop-appender" type="{http://www.openspcoop2.org/core/config}openspcoop-appender" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="openspcoop-sorgente-dati" type="{http://www.openspcoop2.org/core/config}openspcoop-sorgente-dati" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="porta-delegata" type="{http://www.openspcoop2.org/core/config}configurazione-tracciamento-porta" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="porta-applicativa" type="{http://www.openspcoop2.org/core/config}configurazione-tracciamento-porta" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
  * 		&lt;attribute name="esiti" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -56,7 +58,9 @@ import java.util.List;
 @XmlType(name = "tracciamento", 
   propOrder = {
   	"openspcoopAppender",
-  	"openspcoopSorgenteDati"
+  	"openspcoopSorgenteDati",
+  	"portaDelegata",
+  	"portaApplicativa"
   }
 )
 
@@ -113,6 +117,22 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBeanWithId imp
 
   public int sizeOpenspcoopSorgenteDatiList() {
     return this.openspcoopSorgenteDati.size();
+  }
+
+  public ConfigurazioneTracciamentoPorta getPortaDelegata() {
+    return this.portaDelegata;
+  }
+
+  public void setPortaDelegata(ConfigurazioneTracciamentoPorta portaDelegata) {
+    this.portaDelegata = portaDelegata;
+  }
+
+  public ConfigurazioneTracciamentoPorta getPortaApplicativa() {
+    return this.portaApplicativa;
+  }
+
+  public void setPortaApplicativa(ConfigurazioneTracciamentoPorta portaApplicativa) {
+    this.portaApplicativa = portaApplicativa;
   }
 
   public void setStatoRawEnumValue(String value) {
@@ -200,6 +220,12 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBeanWithId imp
   public int sizeOpenspcoopSorgenteDati() {
   	return this.sizeOpenspcoopSorgenteDatiList();
   }
+
+  @XmlElement(name="porta-delegata",required=false,nillable=false)
+  protected ConfigurazioneTracciamentoPorta portaDelegata;
+
+  @XmlElement(name="porta-applicativa",required=false,nillable=false)
+  protected ConfigurazioneTracciamentoPorta portaApplicativa;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;

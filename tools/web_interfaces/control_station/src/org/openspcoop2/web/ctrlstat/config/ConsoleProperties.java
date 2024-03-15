@@ -704,6 +704,11 @@ public class ConsoleProperties {
 		return 60;
 	}
 	
+	public boolean isTracciamentoDatabaseRispostaConsegnataSelectEnabled() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "tracciamento.database.rispostaConsegnata.selectEnabled");
+		return parse(b, false);
+	}
+	
 	
 	/* ----- Gestione Password ------- */
 	

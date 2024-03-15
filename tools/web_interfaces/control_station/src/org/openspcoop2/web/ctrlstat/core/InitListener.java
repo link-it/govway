@@ -45,6 +45,7 @@ import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeProperties;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
@@ -89,12 +90,22 @@ public class InitListener implements ServletContextListener {
 	public static void setLog(Logger log) {
 		InitListener.log = log;
 	}
-	private static void logDebug(String msg) {
+	static void logDebug(String msg) {
 		if(InitListener.log!=null) {
 			InitListener.log.debug(msg);
 		}
 	}
-	private static void logError(String msg, Throwable e) {
+	static void logDebug(String msg, Throwable e) {
+		if(InitListener.log!=null) {
+			InitListener.log.debug(msg, e);
+		}
+	}
+	static void logError(String msg) {
+		if(InitListener.log!=null) {
+			InitListener.log.error(msg);
+		}
+	}
+	static void logError(String msg, Throwable e) {
 		if(InitListener.log!=null) {
 			InitListener.log.error(msg,e);
 		}
@@ -113,8 +124,17 @@ public class InitListener implements ServletContextListener {
 		InitListener.initialized = initialized;
 	}
 
+	private static FileTraceGovWayState fileTraceGovWayState;
+	static void setFileTraceGovWayState(FileTraceGovWayState fileTraceGovWayState) {
+		InitListener.fileTraceGovWayState = fileTraceGovWayState;
+	}
+	public static FileTraceGovWayState getFileTraceGovWayState() {
+		return fileTraceGovWayState;
+	}
+
 	private GestoriStartupThread gestoriStartupThread;
 	private GestoreConsistenzaDati gestoreConsistenzaDati;
+	private InitRuntimeConfigReader initRuntimeConfigReader;
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
@@ -134,6 +154,9 @@ public class InitListener implements ServletContextListener {
 				Utilities.sleep(1000);
 				index++;
 			}
+		}
+		if(this.initRuntimeConfigReader!=null) {
+			this.initRuntimeConfigReader.setStop(true);
 		}
 
 		// chiusura repository dei plugin
@@ -464,6 +487,18 @@ public class InitListener implements ServletContextListener {
 						//					throw new ServletException(
 						msgErrore,e);
 				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			
+			// fileTraceGovWayState
+			try{
+				this.initRuntimeConfigReader = new InitRuntimeConfigReader(consoleProperties);
+				this.initRuntimeConfigReader.start();
+				InitListener.log.info("RuntimeConfigReader avviato con successo.");
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del RuntimeConfigReader: " + e.getMessage();
+				InitListener.logError(
+						msgErrore,e);
+				//throw new UtilsRuntimeException(msgErrore,e); non sollevo l'eccezione, e' solo una informazione informativa, non voglio mettere un vincolo che serve per forza un nodo acceso
 			}
 			
 			InitListener.setInitialized(true);

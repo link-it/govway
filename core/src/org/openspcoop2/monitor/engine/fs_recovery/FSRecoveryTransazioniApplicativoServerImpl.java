@@ -29,6 +29,8 @@ import org.openspcoop2.core.transazioni.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.slf4j.Logger;
 
 /**
@@ -43,26 +45,26 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 	private DAOFactory daoFactory;
 	private Logger daoFactoryLogger;
 	private ServiceManagerProperties daoFactoryServiceManagerProperties;
-	private long gestioneSerializableDB_AttesaAttiva;
-	private int gestioneSerializableDB_CheckInterval;
+	private long gestioneSerializableDBAttesaAttiva;
+	private int gestioneSerializableDBCheckInterval;
 	
 	public FSRecoveryTransazioniApplicativoServerImpl( 
 			Logger log,
 			boolean debug,
 			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
-			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
+			long gestioneSerializableDBAttesaAttiva, int gestioneSerializableDBCheckInterval,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM, 
 			File directory, File directoryDLQ,
 			int tentativi,
-			int minutiAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, minutiAttesaProcessingFile);
+			long msAttesaProcessingFile) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
 		
 		this.transazioniSM = transazioniSM;
 		this.daoFactory = daoFactory;
 		this.daoFactoryLogger = daoFactoryLogger;
 		this.daoFactoryServiceManagerProperties = daoFactoryServiceManagerProperties;
-		this.gestioneSerializableDB_AttesaAttiva = gestioneSerializableDB_AttesaAttiva;
-		this.gestioneSerializableDB_CheckInterval = gestioneSerializableDB_CheckInterval;
+		this.gestioneSerializableDBAttesaAttiva = gestioneSerializableDBAttesaAttiva;
+		this.gestioneSerializableDBCheckInterval = gestioneSerializableDBCheckInterval;
 	}
 
 	@Override
@@ -73,10 +75,16 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 	}
 	
 	@Override
-	public void insertObject(File file, Connection connection) throws Exception {
+	public void insertObject(File file, Connection connection) throws UtilsException, UtilsMultiException {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
-		TransazioneApplicativoServer transazioneApplicativoServer = deserializer.readTransazioneApplicativoServer(file);
-		boolean ripristinato = TransactionServerUtils.recover(this.transazioniSM.getTransazioneApplicativoServerService(), transazioneApplicativoServer);
+		boolean ripristinato = false;
+		TransazioneApplicativoServer transazioneApplicativoServer = null;
+		try {
+			transazioneApplicativoServer = deserializer.readTransazioneApplicativoServer(file);
+			ripristinato = TransactionServerUtils.recover(this.transazioniSM.getTransazioneApplicativoServerService(), transazioneApplicativoServer);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 		if(ripristinato) {
 			
 			int esitoConsegnaMultipla = -1;
@@ -106,7 +114,11 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 				try{
 				
 					boolean autoCommit = false;
-					connection.setAutoCommit(autoCommit);
+					try {
+						connection.setAutoCommit(autoCommit);
+					}catch(Exception e) {
+						throw new UtilsException(e.getMessage(),e);
+					}
 					
 					@SuppressWarnings("unused")
 					boolean isMessaggioConsegnato = false;
@@ -116,11 +128,8 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 					if(transazioneApplicativoServer.isConsegnaTerminata()) {
 						isMessaggioConsegnato = true;
 					}
-					else if(transazioneApplicativoServer.getDataEliminazioneIm()!=null) {
-						isMessaggioConsegnato = true;
-						possibileTerminazioneSingleIntegrationManagerMessage = true;
-					}
-					else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
+					else if(transazioneApplicativoServer.getDataEliminazioneIm()!=null ||
+							transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
 						isMessaggioConsegnato = true;
 						possibileTerminazioneSingleIntegrationManagerMessage = true;
 					}
@@ -130,16 +139,16 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 					}
 					
 					// Grazie all'istruzione sopra 'boolean ripristinato = TransactionServerUtils.recover' entro nell'if solo se la consegna e' quella terminata
-					//if(isMessaggioConsegnato) { 
+					/**if(isMessaggioConsegnato) {*/ 
 					TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connection, 
 							this.daoFactoryServiceManagerProperties.getDatabaseType(), this.log,
 							this.daoFactory,this.daoFactoryLogger,this.daoFactoryServiceManagerProperties,
 							this.debug,
 							esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 							esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
-							this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval,
+							this.gestioneSerializableDBAttesaAttiva,this.gestioneSerializableDBCheckInterval,
 							null);
-					//}
+					/**}*/
 					
 				}finally{
 					

@@ -1,3 +1,40 @@
+2024-03-13  Andrea Poli <apoli@link.it>
+
+	Aggiunto nuovo esito che indica un tracciamento fallito
+
+	INSERT INTO transazioni_esiti (govway_status, govway_status_key, govway_status_detail, govway_status_description, govway_status_class) VALUES ( 53 , 'ERRORE_TRACCIAMENTO' , 'Tracciamento Fallito' , 'Sono emersi degli errori durante il tracciamento' , (select id from transazioni_classe_esiti WHERE govway_status=10) );
+
+	update configurazione set tracciamento_esiti = CONCAT(tracciamento_esiti, ',53') where tracciamento_esiti is not null;
+	update configurazione set tracciamento_esiti_pd = CONCAT(tracciamento_esiti_pd, ',53') where tracciamento_esiti_pd is not null;
+
+2024-02-16  Andrea Poli <apoli@link.it>
+
+	Aggiunti criterio di personalizzazione dei dati di una transazione salvata su database o tramite fileTrace.
+
+	ALTER TABLE configurazione ADD COLUMN tracciamento_esiti_pd VARCHAR(255);
+	UPDATE configurazione set tracciamento_esiti_pd=tracciamento_esiti;
+	ALTER TABLE configurazione ADD COLUMN transazioni_tempi_pd VARCHAR(255);
+	UPDATE configurazione set transazioni_tempi_pd=transazioni_tempi;
+	ALTER TABLE configurazione ADD COLUMN transazioni_token_pd VARCHAR(255);
+	UPDATE configurazione set transazioni_token_pd=transazioni_token;
+
+	ALTER TABLE porte_delegate ADD COLUMN tracciamento_stato VARCHAR(255);
+	UPDATE porte_delegate set tracciamento_stato='abilitato' WHERE tracciamento_esiti IS NOT NULL AND tracciamento_esiti <> '';
+	UPDATE porte_delegate set tracciamento_stato='disabilitato' WHERE tracciamento_esiti IS NULL OR tracciamento_esiti = '';
+	ALTER TABLE porte_delegate ADD COLUMN transazioni_tempi VARCHAR(255);
+	ALTER TABLE porte_delegate ADD COLUMN transazioni_token VARCHAR(255);
+
+	ALTER TABLE porte_applicative ADD COLUMN tracciamento_stato VARCHAR(255);
+	UPDATE porte_applicative set tracciamento_stato='abilitato' WHERE tracciamento_esiti IS NOT NULL AND tracciamento_esiti <> '';
+	UPDATE porte_applicative set tracciamento_stato='disabilitato' WHERE tracciamento_esiti IS NULL OR tracciamento_esiti = '';
+	ALTER TABLE porte_applicative ADD COLUMN transazioni_tempi VARCHAR(255);
+	ALTER TABLE porte_applicative ADD COLUMN transazioni_token VARCHAR(255);
+
+	Aggiunte nuove tracce_config e filetrace_config
+
+	INSERT INTO tracce_config (proprietario,tipo,id_proprietario,stato,filtro_esiti,request_in,request_out,response_out,response_out_complete) VALUES ('configpa','filetrace',-1,'configurazioneEsterna','disabilitato','disabilitato','disabilitato','disabilitato','abilitato');
+	INSERT INTO tracce_config (proprietario,tipo,id_proprietario,stato,filtro_esiti,request_in,request_out,response_out,response_out_complete) VALUES ('configpd','filetrace',-1,'configurazioneEsterna','disabilitato','disabilitato','disabilitato','disabilitato','abilitato');
+
 2024-01-10  Andrea Poli <apoli@link.it>
 
 	Aggiunta possibilità di riferire due credenziali tra di loro

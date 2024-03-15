@@ -135,10 +135,20 @@ public final class CostantiLabel {
 	public static final String LABEL_CONFIGURAZIONE_MESSAGE_SECURITY = "Sicurezza Messaggio";
 	public static final String LABEL_CONFIGURAZIONE_MTOM = "MTOM";
 	public static final String LABEL_CONFIGURAZIONE_TRASFORMAZIONE = "Trasformazione";
+	public static final String LABEL_CONFIGURAZIONE_TRANSAZIONI = "Tracciamento";
 	public static final String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA= "Correlazione Applicativa";
 	public static final String LABEL_CONFIGURAZIONE_TIPO_DUMP = "Registrazione Messaggi";
 	public static final String LABEL_CONFIGURAZIONE_CORS= "Gestione CORS";
 	public static final String LABEL_CONFIGURAZIONE_CORS_ORIGIN= "Allow Origins";
+	
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN = "Richiesta ricevuta";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT = "Richiesta in consegna";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT = "Risposta in consegna";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE = "Risposta consegnata";
+	
+	public static final String LABEL_ABILITATO_BLOCCANTE = "abilitato (bloccante)";
+	public static final String LABEL_ABILITATO_NON_BLOCCANTE = "abilitato (non bloccante)";
+	public static final String LABEL_DISABILITATO = "disabilitato";
 	
     /**
      * PROPRIETA CONNETTORE

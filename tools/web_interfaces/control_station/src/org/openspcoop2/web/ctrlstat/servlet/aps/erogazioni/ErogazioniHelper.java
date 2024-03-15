@@ -772,6 +772,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// filtro trasformazione
 			this.addFilterConfigurazioneTrasformazione(ricerca, idLista);
 			
+			// filtro transazioni
+			this.addFilterConfigurazioneTransazioni(ricerca, idLista, false);
+			
 			// filtro correlazione applicativa
 			this.addFilterConfigurazioneCorrelazioneApplicativa(ricerca, idLista);
 			

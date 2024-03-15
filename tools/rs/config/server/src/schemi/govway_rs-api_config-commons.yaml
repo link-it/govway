@@ -3367,7 +3367,111 @@ components:
           type: boolean
         attachments:
           type: boolean
+
+    RegistrazioneDiagnosticiConfigurazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            required:
+            - stato
+            properties:
+              stato:
+                $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
+              severita:
+                $ref: '#/components/schemas/DiagnosticiSeverita'
           
+    RegistrazioneTransazioniConfigurazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            required:
+            - stato
+            properties:
+              stato:
+                $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
+              database:
+                $ref: '#/components/schemas/RegistrazioneTransazioniConfigurazioneBase'
+              filetrace:
+                $ref: '#/components/schemas/RegistrazioneTransazioniConfigurazioneFiletrace'
+              filtro:
+                $ref: '#/components/schemas/RegistrazioneTransazioniConfigurazioneFiltroEsiti'
+              informazioni:
+                $ref: '#/components/schemas/RegistrazioneTransazioniConfigurazioneInformazioniRegistrate'
+    RegistrazioneTransazioniConfigurazioneBase:
+      type: object
+      required:
+        - stato
+      properties:
+        stato:
+          $ref: '#/components/schemas/TracciamentoTransazioniStato'
+        fasi:
+          $ref: '#/components/schemas/RegistrazioneTransazioniConfigurazioneFasi'
+        filtro_esiti:
+          $ref: '#/components/schemas/TracciamentoTransazioniStatoFase'
+    RegistrazioneTransazioniConfigurazioneFiletrace:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RegistrazioneTransazioniConfigurazioneBase'
+          - type: object
+            properties:
+              config_path:
+                type: string
+                maxLength: 255
+              dump_client:
+                $ref: '#/components/schemas/RegistrazioneTransazioniConfigurazioneFiletraceMessaggio'
+              dump_server:
+                $ref: '#/components/schemas/RegistrazioneTransazioniConfigurazioneFiletraceMessaggio'
+    RegistrazioneTransazioniConfigurazioneFiletraceMessaggio:
+      type: object
+      required:
+        - headers
+        - payload
+      properties:
+        headers:
+          type: boolean
+        payload:
+          type: boolean
+    RegistrazioneTransazioniConfigurazioneFasi:
+      type: object
+      required:
+        - richiesta_ingresso
+        - richiesta_uscita
+        - risposta_uscita
+        - risposta_consegnata
+      properties:
+        richiesta_ingresso:
+          $ref: '#/components/schemas/TracciamentoTransazioniStatoFaseBloccante'
+        richiesta_uscita:
+          $ref: '#/components/schemas/TracciamentoTransazioniStatoFaseBloccante'
+        risposta_uscita:
+          $ref: '#/components/schemas/TracciamentoTransazioniStatoFaseBloccante'
+        risposta_consegnata:
+          $ref: '#/components/schemas/TracciamentoTransazioniStatoFase'
+    RegistrazioneTransazioniConfigurazioneFiltroEsiti:
+      type: object
+      required:
+        - esiti
+      properties:
+        esiti:
+          description: Indicare i codici degli esiti richiesti
+          type: array
+          items:
+            type: integer
+            format: int32
+    RegistrazioneTransazioniConfigurazioneInformazioniRegistrate:
+      type: object
+      required:
+        - token
+        - tempi_elaborazione
+      properties:
+        token:
+          $ref: '#/components/schemas/TracciamentoTransazioniStatoFase'
+        tempi_elaborazione:
+          $ref: '#/components/schemas/TracciamentoTransazioniStatoFase'
+
+
     Proprieta:
       type: object
       required:
@@ -3591,7 +3695,21 @@ components:
     ConnettoreJmsSendAsEnum:
       type: string
       enum: ['text', 'bytes']
-      example: 'text'      
+      example: 'text'
+    DiagnosticiSeverita:
+      type: string
+      enum: ['off', 'fatal', 'error-protocol', 'error-integration', 'info-protocol', 'info-integration', 'debug-low', 'debug-medium', 'debug-high', 'all']
+      default: info-integration
+    TracciamentoTransazioniStato:
+      type: string
+      enum: ['abilitato', 'disabilitato', 'personalizzato', 'configurazioneEsterna']
+      example: 'abilitato'
+    TracciamentoTransazioniStatoFaseBloccante:
+      type: string
+      enum: ['bloccante', 'non-bloccante', 'disabilitato']
+    TracciamentoTransazioniStatoFase:
+      type: string
+      enum: ['abilitato', 'disabilitato']
     
     # ModI: Enumeration
     ModISicurezzaCanaleEnum:
@@ -3673,4 +3791,4 @@ components:
     ModISicurezzaMessaggioRestRiferimentoX509Risposta:
       type: string
       enum: ['richiesta', 'ridefinito']
-      default: richiesta     
+      default: richiesta

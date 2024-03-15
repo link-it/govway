@@ -151,6 +151,21 @@ public class GestoreHandlers  {
 	private static IntegrationManagerResponseHandler [] integrationManagerResponseHandlers = null;
 	private static String [] tipiIntegrationManagerResponseHandlers = null;
 
+	private static String [] toStringArray(Object [] tipiHandlersO) {
+		List<String> h = new ArrayList<>();
+		if(tipiHandlersO!=null && tipiHandlersO.length>0) {
+			for (Object o : tipiHandlersO) {
+				if(o instanceof String) {
+					h.add((String)o);
+				}
+			}
+		}
+		if(!h.isEmpty()) {
+			return h.toArray(new String[1]);
+		}
+		return null;
+	}
+	
 	
 	private static void initialize(MsgDiagnostico msgDiag,Logger logConsoleInit,IState state){
 		initialize(msgDiag,null,logConsoleInit, state);
@@ -159,7 +174,7 @@ public class GestoreHandlers  {
 		initialize(null,logCore,logConsoleInit, null);
 	}
 	private static synchronized void initialize(MsgDiagnostico msgDiag,Logger logCore, Logger logConsoleInit,IState state){
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			
 			GestoreHandlers.properties = OpenSPCoop2Properties.getInstance();
 			ClassNameProperties classNameProperties = ClassNameProperties.getInstance();
@@ -1255,7 +1270,7 @@ public class GestoreHandlers  {
 			List<Object[]> list =  merge(GestoreHandlers.initHandlersBuiltIn, GestoreHandlers.tipiInitHandlersBuiltIn,
 					GestoreHandlers.initHandlers, GestoreHandlers.tipiInitHandlers, new InitHandler [1]);
 			InitHandler [] handlers = (InitHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_initHandler(context, msgDiag, log, handlers, tipiHandlers, "InitHandler");
 		}
 		else {
@@ -1305,7 +1320,7 @@ public class GestoreHandlers  {
 				List<Object[]> list =  merge(GestoreHandlers.exitHandlersBuiltIn, GestoreHandlers.tipiExitHandlersBuiltIn,
 						GestoreHandlers.exitHandlers, GestoreHandlers.tipiExitHandlers, new ExitHandler [1]);
 				ExitHandler [] handlers = (ExitHandler []) list.get(0);
-				String [] tipiHandlers = (String []) list.get(1);
+				String [] tipiHandlers = toStringArray(list.get(1));
 				_exitHandler(context, log, handlers, tipiHandlers, "ExitHandler");
 			}
 			else {
@@ -1339,21 +1354,21 @@ public class GestoreHandlers  {
 	}
 	public static void _engine_preInRequest(MsgDiagnostico msgDiag, PreInAcceptRequestContext context, PdDContext pddContext,Logger logCore,Logger log) {
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(logCore,log);
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(msgDiag, context, pddContext,GestoreHandlers.preInRequestHandlers, GestoreHandlers.tipiPreInRequestHandlers, log);
-		PreInRequestHandler [] preInRequestHandlersUsers = (PreInRequestHandler []) _mergeWithImplementation.get(0);
-		String [] tipiPreInRequestHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(msgDiag, context, pddContext,GestoreHandlers.preInRequestHandlers, GestoreHandlers.tipiPreInRequestHandlers, log);
+		PreInRequestHandler [] preInRequestHandlersUsers = (PreInRequestHandler []) mergeWithImplementation.get(0);
+		String [] tipiPreInRequestHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.preInRequestHandlersBuiltIn, GestoreHandlers.tipiPreInRequestHandlersBuiltIn,
 					preInRequestHandlersUsers, tipiPreInRequestHandlersUsers, new PreInRequestHandler [1]);
 			PreInRequestHandler [] handlers = (PreInRequestHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_preInRequestHandler(msgDiag, context, pddContext, log, handlers, tipiHandlers, "PreInRequestHandler");
 		}
 		else {
@@ -1362,7 +1377,7 @@ public class GestoreHandlers  {
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(MsgDiagnostico msgDiag, PreInAcceptRequestContext context, PdDContext pddContext,
+	private static List<Object[]> mergeWithImplementationEngine(MsgDiagnostico msgDiag, PreInAcceptRequestContext context, PdDContext pddContext,
 			PreInRequestHandler [] preInRequestHandlers,String [] tipiPreInRequestHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
@@ -1376,18 +1391,18 @@ public class GestoreHandlers  {
 					idPD.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
 					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pd);
-					//System.out.println("PreInRequestContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("PreInRequestContext find PD '"+pd.getNome()+"'");*/
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
 					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pa);
-					//System.out.println("PreInRequestContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("PreInRequestContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<PreInRequestHandler> listHandler = new ArrayList<PreInRequestHandler>();
+				List<PreInRequestHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(preInRequestHandlers!=null && preInRequestHandlers.length>0) {
 					for (int i = 0; i < preInRequestHandlers.length; i++) {
@@ -1412,7 +1427,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new PreInRequestHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -1421,7 +1436,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(preInRequestHandlers);
 			mergeList.add(tipiPreInRequestHandlers);
 		}
@@ -1463,21 +1478,21 @@ public class GestoreHandlers  {
 	
 	public static void preInRequest(PreInRequestContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(msgDiag,log,null);
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.preInRequestHandlers, GestoreHandlers.tipiPreInRequestHandlers, log);
-		PreInRequestHandler [] preInRequestHandlersUsers = (PreInRequestHandler []) _mergeWithImplementation.get(0);
-		String [] tipiPreInRequestHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(context,GestoreHandlers.preInRequestHandlers, GestoreHandlers.tipiPreInRequestHandlers, log);
+		PreInRequestHandler [] preInRequestHandlersUsers = (PreInRequestHandler []) mergeWithImplementation.get(0);
+		String [] tipiPreInRequestHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.preInRequestHandlersBuiltIn, GestoreHandlers.tipiPreInRequestHandlersBuiltIn,
 					preInRequestHandlersUsers, tipiPreInRequestHandlersUsers, new PreInRequestHandler [1]);
 			PreInRequestHandler [] handlers = (PreInRequestHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_preInRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "PreInRequestHandler");
 		}
 		else {
@@ -1486,7 +1501,7 @@ public class GestoreHandlers  {
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(PreInRequestContext context,PreInRequestHandler [] preInRequestHandlers,String [] tipiPreInRequestHandlers,
+	private static List<Object[]> mergeWithImplementationEngine(PreInRequestContext context,PreInRequestHandler [] preInRequestHandlers,String [] tipiPreInRequestHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
@@ -1499,18 +1514,18 @@ public class GestoreHandlers  {
 					idPD.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
 					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pd);
-					//System.out.println("PreInRequestContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("PreInRequestContext find PD '"+pd.getNome()+"'");*/
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
 					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pa);
-					//System.out.println("PreInRequestContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("PreInRequestContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<PreInRequestHandler> listHandler = new ArrayList<PreInRequestHandler>();
+				List<PreInRequestHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(preInRequestHandlers!=null && preInRequestHandlers.length>0) {
 					for (int i = 0; i < preInRequestHandlers.length; i++) {
@@ -1535,7 +1550,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new PreInRequestHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -1544,7 +1559,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(preInRequestHandlers);
 			mergeList.add(tipiPreInRequestHandlers);
 		}
@@ -1574,7 +1589,7 @@ public class GestoreHandlers  {
 	
 	public static void inRequest(InRequestContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(msgDiag,log,context.getStato());
 		}
 	
@@ -1588,16 +1603,16 @@ public class GestoreHandlers  {
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.inRequestHandlers, GestoreHandlers.tipiInRequestHandlers, log);
-		InRequestHandler [] inRequestHandlersUsers = (InRequestHandler []) _mergeWithImplementation.get(0);
-		String [] tipiInRequestHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(context,GestoreHandlers.inRequestHandlers, GestoreHandlers.tipiInRequestHandlers, log);
+		InRequestHandler [] inRequestHandlersUsers = (InRequestHandler []) mergeWithImplementation.get(0);
+		String [] tipiInRequestHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.inRequestHandlersBuiltIn, GestoreHandlers.tipiInRequestHandlersBuiltIn,
 					inRequestHandlersUsers, tipiInRequestHandlersUsers, new InRequestHandler [1]);
 			InRequestHandler [] handlers = (InRequestHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_inRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "InRequestHandler");
 		}
 		else {
@@ -1606,13 +1621,12 @@ public class GestoreHandlers  {
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(InRequestContext context,InRequestHandler [] inRequestHandlers,String [] tipiInRequestHandlers,
+	private static List<Object[]> mergeWithImplementationEngine(InRequestContext context,InRequestHandler [] inRequestHandlers,String [] tipiInRequestHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
 			List<String> tipiPorta=null;
-			if(context!=null && context.getConnettore()!=null && context.getConnettore().getUrlProtocolContext()!=null &&
-					context.getConnettore().getUrlProtocolContext().getInterfaceName()!=null) {
+			if(context!=null) {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
 				
 				RequestInfo requestInfo = null;
@@ -1621,22 +1635,38 @@ public class GestoreHandlers  {
 				}
 				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
-					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setNome(context.getConnettore().getUrlProtocolContext().getInterfaceName());
+					IDPortaDelegata idPD = null;
+					if(context.getConnettore()!=null && context.getConnettore().getUrlProtocolContext()!=null &&
+							context.getConnettore().getUrlProtocolContext().getInterfaceName()!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(context.getConnettore().getUrlProtocolContext().getInterfaceName());
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
 					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestHandlers(pd);
-					//System.out.println("InRequestContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("InRequestContext find PD '"+pd.getNome()+"'");*/
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setNome(context.getConnettore().getUrlProtocolContext().getInterfaceName());
+					IDPortaApplicativa idPA = null;
+					if(context.getConnettore()!=null && context.getConnettore().getUrlProtocolContext()!=null &&
+							context.getConnettore().getUrlProtocolContext().getInterfaceName()!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(context.getConnettore().getUrlProtocolContext().getInterfaceName());
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
 					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestHandlers(pa);
-					//System.out.println("InRequestContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("InRequestContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<InRequestHandler> listHandler = new ArrayList<InRequestHandler>();
+				List<InRequestHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(inRequestHandlers!=null && inRequestHandlers.length>0) {
 					for (int i = 0; i < inRequestHandlers.length; i++) {
@@ -1661,7 +1691,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new InRequestHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -1670,7 +1700,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(inRequestHandlers);
 			mergeList.add(tipiInRequestHandlers);
 		}
@@ -1700,7 +1730,7 @@ public class GestoreHandlers  {
 	
 	public static void inRequestProtocol(InRequestProtocolContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(msgDiag,log,context.getStato());
 		}
 	
@@ -1714,16 +1744,16 @@ public class GestoreHandlers  {
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.inRequestProtocolHandlers, GestoreHandlers.tipiInRequestProtocolHandlers, log);
-		InRequestProtocolHandler [] inRequestProtocolHandlersUsers = (InRequestProtocolHandler []) _mergeWithImplementation.get(0);
-		String [] tipiInRequestProtocolHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(context,GestoreHandlers.inRequestProtocolHandlers, GestoreHandlers.tipiInRequestProtocolHandlers, log);
+		InRequestProtocolHandler [] inRequestProtocolHandlersUsers = (InRequestProtocolHandler []) mergeWithImplementation.get(0);
+		String [] tipiInRequestProtocolHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.inRequestProtocolHandlersBuiltIn, GestoreHandlers.tipiInRequestProtocolHandlersBuiltIn,
 					inRequestProtocolHandlersUsers, tipiInRequestProtocolHandlersUsers, new InRequestProtocolHandler [1]);
 			InRequestProtocolHandler [] handlers = (InRequestProtocolHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_inRequestProtocolHandler(context, msgDiag, log, handlers, tipiHandlers, "InRequestProtocolHandler");
 		}
 		else {
@@ -1732,12 +1762,12 @@ public class GestoreHandlers  {
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(InRequestProtocolContext context,InRequestProtocolHandler [] intRequestProtocolHandlers,String [] tipiInRequestProtocolHandlers,
+	private static List<Object[]> mergeWithImplementationEngine(InRequestProtocolContext context,InRequestProtocolHandler [] intRequestProtocolHandlers,String [] tipiInRequestProtocolHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
 			List<String> tipiPorta=null;
-			if(context!=null && context.getIntegrazione()!=null) {
+			if(context!=null) {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
 				
 				RequestInfo requestInfo = null;
@@ -1745,19 +1775,35 @@ public class GestoreHandlers  {
 					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 				}
 				
-				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
+					IDPortaDelegata idPD = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null) {
+						idPD = context.getIntegrazione().getIdPD();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestProtocolHandlers(pd);
-					//System.out.println("InRequestProtocolContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("InRequestProtocolContext find PD '"+pd.getNome()+"'");*/
 				}
-				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
+					IDPortaApplicativa idPA = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
+						idPA = context.getIntegrazione().getIdPA();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestProtocolHandlers(pa);
-					//System.out.println("InRequestProtocolContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("InRequestProtocolContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<InRequestProtocolHandler> listHandler = new ArrayList<InRequestProtocolHandler>();
+				List<InRequestProtocolHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(intRequestProtocolHandlers!=null && intRequestProtocolHandlers.length>0) {
 					for (int i = 0; i < intRequestProtocolHandlers.length; i++) {
@@ -1782,7 +1828,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new InRequestProtocolHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -1791,7 +1837,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(intRequestProtocolHandlers);
 			mergeList.add(tipiInRequestProtocolHandlers);
 		}
@@ -1821,7 +1867,7 @@ public class GestoreHandlers  {
 	
 	public static void outRequest(OutRequestContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(msgDiag,log,context.getStato());
 		}
 	
@@ -1835,16 +1881,16 @@ public class GestoreHandlers  {
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.outRequestHandlers, GestoreHandlers.tipiOutRequestHandlers, log);
-		OutRequestHandler [] outRequestHandlersUsers = (OutRequestHandler []) _mergeWithImplementation.get(0);
-		String [] tipiOutRequestHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(context,GestoreHandlers.outRequestHandlers, GestoreHandlers.tipiOutRequestHandlers, log);
+		OutRequestHandler [] outRequestHandlersUsers = (OutRequestHandler []) mergeWithImplementation.get(0);
+		String [] tipiOutRequestHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.outRequestHandlersBuiltIn, GestoreHandlers.tipiOutRequestHandlersBuiltIn,
 					outRequestHandlersUsers, tipiOutRequestHandlersUsers, new OutRequestHandler [1]);
 			OutRequestHandler [] handlers = (OutRequestHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_outRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "OutRequestHandler");
 		}
 		else {
@@ -1853,12 +1899,12 @@ public class GestoreHandlers  {
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(OutRequestContext context,OutRequestHandler [] outRequestHandlers,String [] tipiOutRequestHandlers,
+	private static List<Object[]> mergeWithImplementationEngine(OutRequestContext context,OutRequestHandler [] outRequestHandlers,String [] tipiOutRequestHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
 			List<String> tipiPorta=null;
-			if(context!=null && context.getIntegrazione()!=null) {
+			if(context!=null) {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
 				
 				RequestInfo requestInfo = null;
@@ -1866,19 +1912,35 @@ public class GestoreHandlers  {
 					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 				}
 				
-				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
+					IDPortaDelegata idPD = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null) {
+						idPD = context.getIntegrazione().getIdPD();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getOutRequestHandlers(pd);
-					//System.out.println("OutRequestContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("OutRequestContext find PD '"+pd.getNome()+"'");*/
 				}
-				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
+					IDPortaApplicativa idPA = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
+						idPA = context.getIntegrazione().getIdPA();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getOutRequestHandlers(pa);
-					//System.out.println("OutRequestContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("OutRequestContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<OutRequestHandler> listHandler = new ArrayList<OutRequestHandler>();
+				List<OutRequestHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(outRequestHandlers!=null && outRequestHandlers.length>0) {
 					for (int i = 0; i < outRequestHandlers.length; i++) {
@@ -1903,7 +1965,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new OutRequestHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -1912,7 +1974,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(outRequestHandlers);
 			mergeList.add(tipiOutRequestHandlers);
 		}
@@ -1942,7 +2004,7 @@ public class GestoreHandlers  {
 	
 	public static void postOutRequest(PostOutRequestContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(msgDiag,log,context.getStato());
 		}
 	
@@ -1956,16 +2018,16 @@ public class GestoreHandlers  {
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.postOutRequestHandlers, GestoreHandlers.tipiPostOutRequestHandlers, log);
-		PostOutRequestHandler [] postOutRequestHandlersUsers = (PostOutRequestHandler []) _mergeWithImplementation.get(0);
-		String [] tipiPostOutRequestHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(context,GestoreHandlers.postOutRequestHandlers, GestoreHandlers.tipiPostOutRequestHandlers, log);
+		PostOutRequestHandler [] postOutRequestHandlersUsers = (PostOutRequestHandler []) mergeWithImplementation.get(0);
+		String [] tipiPostOutRequestHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.postOutRequestHandlersBuiltIn, GestoreHandlers.tipiPostOutRequestHandlersBuiltIn,
 					postOutRequestHandlersUsers, tipiPostOutRequestHandlersUsers, new PostOutRequestHandler [1]);
 			PostOutRequestHandler [] handlers = (PostOutRequestHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_postOutRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "PostOutRequestHandler");
 		}
 		else {
@@ -1974,12 +2036,12 @@ public class GestoreHandlers  {
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(PostOutRequestContext context,PostOutRequestHandler [] postOutRequestHandlers,String [] tipiPostOutRequestHandlers,
+	private static List<Object[]> mergeWithImplementationEngine(PostOutRequestContext context,PostOutRequestHandler [] postOutRequestHandlers,String [] tipiPostOutRequestHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
 			List<String> tipiPorta=null;
-			if(context!=null && context.getIntegrazione()!=null) {
+			if(context!=null) {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
 				
 				RequestInfo requestInfo = null;
@@ -1987,19 +2049,35 @@ public class GestoreHandlers  {
 					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 				}
 				
-				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
+					IDPortaDelegata idPD = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null) {
+						idPD = context.getIntegrazione().getIdPD();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutRequestHandlers(pd);
-					//System.out.println("PostOutRequestContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("PostOutRequestContext find PD '"+pd.getNome()+"'");*/
 				}
-				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
+					IDPortaApplicativa idPA = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
+						idPA = context.getIntegrazione().getIdPA();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutRequestHandlers(pa);
-					//System.out.println("PostOutRequestContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("PostOutRequestContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<PostOutRequestHandler> listHandler = new ArrayList<PostOutRequestHandler>();
+				List<PostOutRequestHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(postOutRequestHandlers!=null && postOutRequestHandlers.length>0) {
 					for (int i = 0; i < postOutRequestHandlers.length; i++) {
@@ -2024,7 +2102,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new PostOutRequestHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -2033,7 +2111,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(postOutRequestHandlers);
 			mergeList.add(tipiPostOutRequestHandlers);
 		}
@@ -2063,7 +2141,7 @@ public class GestoreHandlers  {
 	
 	public static void preInResponse(PreInResponseContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(msgDiag,log,context.getStato());
 		}
 	
@@ -2077,16 +2155,16 @@ public class GestoreHandlers  {
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.preInResponseHandlers, GestoreHandlers.tipiPreInResponseHandlers, log);
-		PreInResponseHandler [] preInResponseHandlersUsers = (PreInResponseHandler []) _mergeWithImplementation.get(0);
-		String [] tipiPreInResponseHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(context,GestoreHandlers.preInResponseHandlers, GestoreHandlers.tipiPreInResponseHandlers, log);
+		PreInResponseHandler [] preInResponseHandlersUsers = (PreInResponseHandler []) mergeWithImplementation.get(0);
+		String [] tipiPreInResponseHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.preInResponseHandlersBuiltIn, GestoreHandlers.tipiPreInResponseHandlersBuiltIn,
 					preInResponseHandlersUsers, tipiPreInResponseHandlersUsers, new PreInResponseHandler [1]);
 			PreInResponseHandler [] handlers = (PreInResponseHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_preInResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "PreInResponseHandler");
 		}
 		else {
@@ -2095,12 +2173,12 @@ public class GestoreHandlers  {
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(PreInResponseContext context,PreInResponseHandler [] preInResponseHandlers,String [] tipiPreInResponseHandlers,
+	private static List<Object[]> mergeWithImplementationEngine(PreInResponseContext context,PreInResponseHandler [] preInResponseHandlers,String [] tipiPreInResponseHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
 			List<String> tipiPorta=null;
-			if(context!=null && context.getIntegrazione()!=null) {
+			if(context!=null) {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
 				
 				RequestInfo requestInfo = null;
@@ -2108,19 +2186,35 @@ public class GestoreHandlers  {
 					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 				}
 				
-				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
+					IDPortaDelegata idPD = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null) {
+						idPD = context.getIntegrazione().getIdPD();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getPreInResponseHandlers(pd);
-					//System.out.println("PreInResponseContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("PreInResponseContext find PD '"+pd.getNome()+"'");*/
 				}
-				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
+					IDPortaApplicativa idPA = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
+						idPA = context.getIntegrazione().getIdPA();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getPreInResponseHandlers(pa);
-					//System.out.println("PreInResponseContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("PreInResponseContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<PreInResponseHandler> listHandler = new ArrayList<PreInResponseHandler>();
+				List<PreInResponseHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(preInResponseHandlers!=null && preInResponseHandlers.length>0) {
 					for (int i = 0; i < preInResponseHandlers.length; i++) {
@@ -2145,7 +2239,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new PreInResponseHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -2154,7 +2248,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(preInResponseHandlers);
 			mergeList.add(tipiPreInResponseHandlers);
 		}
@@ -2184,7 +2278,7 @@ public class GestoreHandlers  {
 	
 	public static void inResponse(InResponseContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(msgDiag,log,context.getStato());
 		}
 	
@@ -2198,16 +2292,16 @@ public class GestoreHandlers  {
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.inResponseHandlers, GestoreHandlers.tipiInResponseHandlers, log);
-		InResponseHandler [] inResponseHandlersUsers = (InResponseHandler []) _mergeWithImplementation.get(0);
-		String [] tipiInResponseHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(context,GestoreHandlers.inResponseHandlers, GestoreHandlers.tipiInResponseHandlers, log);
+		InResponseHandler [] inResponseHandlersUsers = (InResponseHandler []) mergeWithImplementation.get(0);
+		String [] tipiInResponseHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.inResponseHandlersBuiltIn, GestoreHandlers.tipiInResponseHandlersBuiltIn,
 					inResponseHandlersUsers, tipiInResponseHandlersUsers, new InResponseHandler [1]);
 			InResponseHandler [] handlers = (InResponseHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_inResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "InResponseHandler");
 		}
 		else {
@@ -2216,12 +2310,12 @@ public class GestoreHandlers  {
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(InResponseContext context,InResponseHandler [] inResponseHandlers,String [] tipiInResponseHandlers,
+	private static List<Object[]> mergeWithImplementationEngine(InResponseContext context,InResponseHandler [] inResponseHandlers,String [] tipiInResponseHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
 			List<String> tipiPorta=null;
-			if(context!=null && context.getIntegrazione()!=null) {
+			if(context!=null) {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
 				
 				RequestInfo requestInfo = null;
@@ -2229,19 +2323,35 @@ public class GestoreHandlers  {
 					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 				}
 				
-				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
+					IDPortaDelegata idPD = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null) {
+						idPD = context.getIntegrazione().getIdPD();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getInResponseHandlers(pd);
-					//System.out.println("InResponseContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("InResponseContext find PD '"+pd.getNome()+"'");*/
 				}
-				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
+					IDPortaApplicativa idPA = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
+						idPA = context.getIntegrazione().getIdPA();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getInResponseHandlers(pa);
-					//System.out.println("InResponseContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("InResponseContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<InResponseHandler> listHandler = new ArrayList<InResponseHandler>();
+				List<InResponseHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(inResponseHandlers!=null && inResponseHandlers.length>0) {
 					for (int i = 0; i < inResponseHandlers.length; i++) {
@@ -2266,7 +2376,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new InResponseHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -2275,7 +2385,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(inResponseHandlers);
 			mergeList.add(tipiInResponseHandlers);
 		}
@@ -2305,7 +2415,7 @@ public class GestoreHandlers  {
 	
 	public static void outResponse(OutResponseContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(msgDiag,log,context.getStato());
 		}
 	
@@ -2319,16 +2429,16 @@ public class GestoreHandlers  {
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.outResponseHandlers, GestoreHandlers.tipiOutResponseHandlers, log);
-		OutResponseHandler [] outResponseHandlersUsers = (OutResponseHandler []) _mergeWithImplementation.get(0);
-		String [] tipiOutResponseHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(context,GestoreHandlers.outResponseHandlers, GestoreHandlers.tipiOutResponseHandlers, log);
+		OutResponseHandler [] outResponseHandlersUsers = (OutResponseHandler []) mergeWithImplementation.get(0);
+		String [] tipiOutResponseHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.outResponseHandlersBuiltIn, GestoreHandlers.tipiOutResponseHandlersBuiltIn,
 					outResponseHandlersUsers, tipiOutResponseHandlersUsers, new OutResponseHandler [1]);
 			OutResponseHandler [] handlers = (OutResponseHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_outResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "OutResponseHandler");
 		}
 		else {
@@ -2337,12 +2447,12 @@ public class GestoreHandlers  {
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(OutResponseContext context,OutResponseHandler [] outResponseHandlers,String [] tipiOutResponseHandlers,
+	private static List<Object[]> mergeWithImplementationEngine(OutResponseContext context,OutResponseHandler [] outResponseHandlers,String [] tipiOutResponseHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
 			List<String> tipiPorta=null;
-			if(context!=null && context.getIntegrazione()!=null) {
+			if(context!=null) {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
 				
 				RequestInfo requestInfo = null;
@@ -2350,19 +2460,35 @@ public class GestoreHandlers  {
 					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 				}
 				
-				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
+					IDPortaDelegata idPD = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null) {
+						idPD = context.getIntegrazione().getIdPD();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getOutResponseHandlers(pd);
-					//System.out.println("OutResponseContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("OutResponseContext find PD '"+pd.getNome()+"'");*/
 				}
-				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
+					IDPortaApplicativa idPA = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
+						idPA = context.getIntegrazione().getIdPA();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getOutResponseHandlers(pa);
-					//System.out.println("OutResponseContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("OutResponseContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<OutResponseHandler> listHandler = new ArrayList<OutResponseHandler>();
+				List<OutResponseHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(outResponseHandlers!=null && outResponseHandlers.length>0) {
 					for (int i = 0; i < outResponseHandlers.length; i++) {
@@ -2387,7 +2513,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new OutResponseHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -2396,7 +2522,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(outResponseHandlers);
 			mergeList.add(tipiOutResponseHandlers);
 		}
@@ -2426,7 +2552,7 @@ public class GestoreHandlers  {
 	
 	public static void postOutResponse(PostOutResponseContext context,MsgDiagnostico msgDiag,Logger log) {
 		
-		if(GestoreHandlers.initialize==false){
+		if(!GestoreHandlers.initialize){
 			GestoreHandlers.initialize(msgDiag,log,context.getStato());
 		}
 	
@@ -2440,16 +2566,16 @@ public class GestoreHandlers  {
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.postOutResponseHandlers, GestoreHandlers.tipiPostOutResponseHandlers, log);
-		PostOutResponseHandler [] postOutResponseHandlersUsers = (PostOutResponseHandler []) _mergeWithImplementation.get(0);
-		String [] tipiPostOutResponseHandlersUsers = (String []) _mergeWithImplementation.get(1);
+		List<Object[]> mergeWithImplementation = mergeWithImplementationEngine(context,GestoreHandlers.postOutResponseHandlers, GestoreHandlers.tipiPostOutResponseHandlers, log);
+		PostOutResponseHandler [] postOutResponseHandlersUsers = (PostOutResponseHandler []) mergeWithImplementation.get(0);
+		String [] tipiPostOutResponseHandlersUsers = (String []) mergeWithImplementation.get(1);
 		
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.postOutResponseHandlersBuiltIn, GestoreHandlers.tipiPostOutResponseHandlersBuiltIn,
 					postOutResponseHandlersUsers, tipiPostOutResponseHandlersUsers, new PostOutResponseHandler [1]);
 			PostOutResponseHandler [] handlers = (PostOutResponseHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_postOutResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "PostOutResponseHandler");
 		}
 		else {
@@ -2460,12 +2586,12 @@ public class GestoreHandlers  {
 		// Rilascio risorse per la generazione di date casuali
 		GestoreHandlers.rilasciaRisorseDemoMode((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 	}
-	private static List<Object[]> _mergeWithImplementation(PostOutResponseContext context,PostOutResponseHandler [] postOutResponseHandlers,String [] tipiPostOutResponseHandlers,
+	private static List<Object[]> mergeWithImplementationEngine(PostOutResponseContext context,PostOutResponseHandler [] postOutResponseHandlers,String [] tipiPostOutResponseHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
 			List<String> tipiPorta=null;
-			if(context!=null && context.getIntegrazione()!=null) {
+			if(context!=null) {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
 				
 				RequestInfo requestInfo = null;
@@ -2473,19 +2599,35 @@ public class GestoreHandlers  {
 					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 				}
 				
-				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
+				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
+					IDPortaDelegata idPD = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null) {
+						idPD = context.getIntegrazione().getIdPD();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutResponseHandlers(pd);
-					//System.out.println("PostOutResponseContext find PD '"+pd.getNome()+"'");
+					/**System.out.println("PostOutResponseContext find PD '"+pd.getNome()+"'");*/
 				}
-				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
+				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
+					IDPortaApplicativa idPA = null;
+					if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
+						idPA = context.getIntegrazione().getIdPA();
+					}
+					else if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+					}
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutResponseHandlers(pa);
-					//System.out.println("PostOutResponseContext find PA '"+pa.getNome()+"'");
+					/**System.out.println("PostOutResponseContext find PA '"+pa.getNome()+"'");*/
 				}
 			}
 			if(tipiPorta!=null && !tipiPorta.isEmpty()) {
-				List<PostOutResponseHandler> listHandler = new ArrayList<PostOutResponseHandler>();
+				List<PostOutResponseHandler> listHandler = new ArrayList<>();
 				List<String> listTipi = new ArrayList<>();
 				if(postOutResponseHandlers!=null && postOutResponseHandlers.length>0) {
 					for (int i = 0; i < postOutResponseHandlers.length; i++) {
@@ -2507,7 +2649,7 @@ public class GestoreHandlers  {
 					}
 				}
 				if(!listHandler.isEmpty()) {
-					mergeList = new ArrayList<Object[]>();
+					mergeList = new ArrayList<>();
 					mergeList.add(listHandler.toArray(new PostOutResponseHandler[listHandler.size()]));
 					mergeList.add(listTipi.toArray(new String[listTipi.size()]));
 				}
@@ -2516,7 +2658,7 @@ public class GestoreHandlers  {
 			log.error(t.getMessage(),t);
 		}
 		if(mergeList==null) {
-			mergeList = new ArrayList<Object[]>();
+			mergeList = new ArrayList<>();
 			mergeList.add(postOutResponseHandlers);
 			mergeList.add(tipiPostOutResponseHandlers);
 		}
@@ -2568,7 +2710,7 @@ public class GestoreHandlers  {
 			List<Object[]> list =  merge(GestoreHandlers.integrationManagerRequestHandlersBuiltIn, GestoreHandlers.tipiIntegrationManagerRequestHandlersBuiltIn,
 					GestoreHandlers.integrationManagerRequestHandlers, GestoreHandlers.tipiIntegrationManagerRequestHandlers, new IntegrationManagerRequestHandler [1]);
 			IntegrationManagerRequestHandler [] handlers = (IntegrationManagerRequestHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_integrationManagerRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "IntegrationManagerRequestHandler");
 		}
 		else {
@@ -2620,7 +2762,7 @@ public class GestoreHandlers  {
 			List<Object[]> list =  merge(GestoreHandlers.integrationManagerResponseHandlersBuiltIn, GestoreHandlers.tipiIntegrationManagerResponseHandlersBuiltIn,
 					GestoreHandlers.integrationManagerResponseHandlers, GestoreHandlers.tipiIntegrationManagerResponseHandlers, new IntegrationManagerResponseHandler [1]);
 			IntegrationManagerResponseHandler [] handlers = (IntegrationManagerResponseHandler []) list.get(0);
-			String [] tipiHandlers = (String []) list.get(1);
+			String [] tipiHandlers = toStringArray(list.get(1));
 			_integrationManagerResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "IntegrationManagerResponseHandler");
 		}
 		else {

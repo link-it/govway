@@ -3685,6 +3685,138 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
  
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/transazioni:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce la configurazione relativa alla registrazione delle transazioni
+      operationId: getErogazioneRegistrazioneTransazioni
+      description: Questa operazione consente di ottenere la configurazione relativa alla registrazione delle transazioni
+      responses:
+        "200":
+          description: Dettaglio della configurazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/RegistrazioneTransazioniConfigurazione"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni-configurazione
+      summary: Consente di modificare la configurazione relativa alla registrazione delle transazioni
+      operationId: updateErogazioneRegistrazioneTransazioni
+      description: Questa operazione consente di aggiornare la configurazione relativa alla registrazione delle transazioni
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RegistrazioneTransazioniConfigurazione'
+      responses: 
+        "204":
+          description: Configurazione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/diagnostici:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce la configurazione relativa alla registrazione dei diagnostici
+      operationId: getErogazioneRegistrazioneDiagnostici
+      description: Questa operazione consente di ottenere la configurazione relativa alla registrazione dei diagnostici
+      responses:
+        "200":
+          description: Dettaglio della configurazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/RegistrazioneDiagnosticiConfigurazione"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni-configurazione
+      summary: Consente di modificare la configurazione relativa alla registrazione dei diagnostici
+      operationId: updateErogazioneRegistrazioneDiagnostici
+      description: Questa operazione consente di aggiornare la configurazione relativa alla registrazione dei diagnostici
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RegistrazioneDiagnosticiConfigurazione'
+      responses: 
+        "204":
+          description: Configurazione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -6535,6 +6667,140 @@ paths:
           application/json:
             schema:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CachingRisposta'
+      responses: 
+        "204":
+          description: Configurazione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/transazioni:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce la configurazione relativa alla registrazione delle transazioni
+      operationId: getFruizioneRegistrazioneTransazioni
+      description: Questa operazione consente di ottenere la configurazione relativa alla registrazione delle transazioni
+      responses:
+        "200":
+          description: Dettaglio della configurazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/RegistrazioneTransazioniConfigurazione"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni-configurazione
+      summary: Consente di modificare la configurazione relativa alla registrazione delle transazioni
+      operationId: updateFruizioneRegistrazioneTransazioni
+      description: Questa operazione consente di aggiornare la configurazione relativa alla registrazione delle transazioni
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RegistrazioneTransazioniConfigurazione'
+      responses: 
+        "204":
+          description: Configurazione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/diagnostici:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce la configurazione relativa alla registrazione dei diagnostici
+      operationId: getFruizioneRegistrazioneDiagnostici
+      description: Questa operazione consente di ottenere la configurazione relativa alla registrazione dei diagnostici
+      responses:
+        "200":
+          description: Dettaglio della configurazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/RegistrazioneDiagnosticiConfigurazione"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni-configurazione
+      summary: Consente di modificare la configurazione relativa alla registrazione dei diagnostici
+      operationId: updateFruizioneRegistrazioneDiagnostici
+      description: Questa operazione consente di aggiornare la configurazione relativa alla registrazione dei diagnostici
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RegistrazioneDiagnosticiConfigurazione'
       responses: 
         "204":
           description: Configurazione aggiornata correttamente

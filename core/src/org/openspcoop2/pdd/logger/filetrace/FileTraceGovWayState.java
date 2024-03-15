@@ -180,7 +180,10 @@ public class FileTraceGovWayState {
 		return sb.toString();
 	}
 	
-	public static FileTraceGovWayState toConfig(String s) {
+	public static FileTraceGovWayState toConfig(String s, boolean checkFormatString) {
+		if(checkFormatString && !s.startsWith("Enabled:")) {
+			return null; // stringa non corretta
+		}
 		FileTraceGovWayState state = new FileTraceGovWayState();
 		state.enabled = s!=null && s.startsWith("Enabled: true");
 		if(state.enabled) {

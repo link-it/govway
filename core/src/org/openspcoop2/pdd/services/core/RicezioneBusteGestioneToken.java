@@ -231,7 +231,7 @@ public class RicezioneBusteGestioneToken {
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_GESTIONE, this.tipoGestioneToken);
 					this.msgContext.getIntegrazione().setTokenPolicy(this.tipoGestioneToken);
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_AZIONI, policyGestioneToken.getLabelAzioniGestioneToken());
-					this.msgContext.getIntegrazione().setTokenPolicy_actions(policyGestioneToken.getAzioniGestioneToken());
+					this.msgContext.getIntegrazione().setTokenPolicyActions(policyGestioneToken.getAzioniGestioneToken());
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_TIPO, policyGestioneToken.getLabelTipoToken());
 					this.msgDiag.logPersonalizzato("gestioneTokenInCorso");
 					

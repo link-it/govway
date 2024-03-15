@@ -20,6 +20,8 @@ DELETE FROM dump_appender_prop;
 DELETE FROM dump_appender;
 DELETE FROM dump_config_regola;
 DELETE FROM dump_config;
+DELETE FROM filetrace_config;
+DELETE FROM tracce_config;
 DELETE FROM tracce_appender_prop;
 DELETE FROM tracce_appender;
 DELETE FROM msgdiag_appender_prop;

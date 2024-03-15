@@ -218,8 +218,20 @@ public class JWKSet {
 		for (JWK jwkOp : this.jwkSetList) {
 			list.add(jwkOp.getJWK());
 		}
+		/** NON FUNZIONA 
 		com.nimbusds.jose.jwk.JWKSet set = new com.nimbusds.jose.jwk.JWKSet(list);
-		this.jwkSetJson = set.toString();
+		this.jwkSetJson = set.toJSONObject().toString(); */
+		StringBuilder sb = new StringBuilder("{\"keys\":[");
+		boolean first = true;
+		for (JWK jwkOp : this.jwkSetList) {
+			if(!first) {
+				sb.append(",");
+			}
+			sb.append(jwkOp.getJWK().toJSONString());
+			first = false;
+		}
+		sb.append("]}");
+		this.jwkSetJson = sb.toString();
 	}
 	private synchronized void initJsonFromJwkSetCxf() throws UtilsException {
 		try {

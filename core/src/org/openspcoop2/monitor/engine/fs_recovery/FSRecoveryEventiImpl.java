@@ -21,6 +21,8 @@ package org.openspcoop2.monitor.engine.fs_recovery;
 
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.utils.serializer.JaxbDeserializer;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 
 import java.io.File;
 import java.sql.Connection;
@@ -43,8 +45,8 @@ public class FSRecoveryEventiImpl extends AbstractFSRecovery {
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM,
 			File directory, File directoryDLQ,
 			int tentativi,
-			int minutiAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, minutiAttesaProcessingFile);
+			long msAttesaProcessingFile) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
 		this.pluginsEventiSM = pluginsEventiSM;
 	}
 
@@ -56,10 +58,14 @@ public class FSRecoveryEventiImpl extends AbstractFSRecovery {
 	}
 
 	@Override
-	public void insertObject(File file, Connection connection) throws Exception {
+	public void insertObject(File file, Connection connection) throws UtilsException, UtilsMultiException {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
-		Evento evento = deserializer.readEvento(file);
-		this.pluginsEventiSM.getEventoService().create(evento);
+		try {
+			Evento evento = deserializer.readEvento(file);
+			this.pluginsEventiSM.getEventoService().create(evento);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 
 

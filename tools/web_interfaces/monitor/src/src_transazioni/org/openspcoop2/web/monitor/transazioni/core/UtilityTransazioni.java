@@ -33,6 +33,7 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
@@ -423,8 +424,26 @@ public class UtilityTransazioni {
 		if(t.getEsitoContesto()!=null){
 			
 			Contesto contesto = new Contesto();
-			contesto.setCodice(t.getEsitoContesto());
-			contesto.setValue(UtilityTransazioni.escapeXmlValue(esitiProperties.getEsitoTransactionContextLabel(t.getEsitoContesto())));
+			String code = t.getEsitoContesto();
+			contesto.setCodice(code);
+			
+			boolean moreContext = esitiProperties.getEsitiTransactionContextCode().size()>1;
+			
+			String label = null;
+			if(EsitoUtils.isFaseRequestIn(code)) {
+				label = (moreContext ? esitiProperties.getEsitoTransactionContextLabel(EsitoUtils.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}
+			else if(EsitoUtils.isFaseRequestOut(code)) {
+				label = (moreContext ? esitiProperties.getEsitoTransactionContextLabel(EsitoUtils.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}
+			else if(EsitoUtils.isFaseResponseOut(code)) {
+				label = (moreContext ? esitiProperties.getEsitoTransactionContextLabel(EsitoUtils.getRawEsitoContext(code))+" - " : "" ) + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
+			else {
+				label = esitiProperties.getEsitoTransactionContextLabel(code);
+			}
+			
+			contesto.setValue(UtilityTransazioni.escapeXmlValue(label));
 			transazione.setContesto(contesto);
 		}
 		

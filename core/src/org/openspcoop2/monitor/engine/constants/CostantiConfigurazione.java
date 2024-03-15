@@ -28,6 +28,8 @@ package org.openspcoop2.monitor.engine.constants;
  */
 public class CostantiConfigurazione {
 	
+	private CostantiConfigurazione() {}
+	
 	public static final String CONFIG_FILENAME = "openspcoop2.monitor.properties";
 	public static final String LOG4J_FILENAME = "openspcoop2.monitor.log4j2.properties";
 	
@@ -53,7 +55,9 @@ public class CostantiConfigurazione {
 	public static final String FS_RECOVERY_REPOSITORY_DIR = "org.openspcoop2.monitor.fileSystemRecovery.repository";
 	public static final String FS_RECOVERY_MAX_ATTEMPTS = "org.openspcoop2.monitor.fileSystemRecovery.maxAttempts";
 	public static final String FS_RECOVERY_EVENTS_ENABLED = "org.openspcoop2.monitor.fileSystemRecovery.events.enabled";
+	public static final String FS_RECOVERY_EVENTS_PROCESSING_FILE_AFTER_MS = "org.openspcoop2.monitor.fileSystemRecovery.events.processingFileAfterMs";
 	public static final String FS_RECOVERY_TRANSACTION_ENABLED = "org.openspcoop2.monitor.fileSystemRecovery.transaction.enabled";
+	public static final String FS_RECOVERY_TRANSACTION_PROCESSING_FILE_AFTER_MS = "org.openspcoop2.monitor.fileSystemRecovery.transaction.processingFileAfterMs";
 	
 	public static final String PDD_MONITOR_FW_CONF_DIR = "org.openspcoop2.monitor.config_dir";
 	public static final String PDD_MONITOR_DEFAULT_PROTOCOL = "org.openspcoop2.monitor.defaultProtocol";

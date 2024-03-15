@@ -66,6 +66,7 @@ La tabella che segue riporta tutti gli esiti associabili ad una transazione gest
   Request Read Timeout                          50        Richiesta non ricevuta entro il timeout specificato                                                                                         ERRORE_REQUEST_TIMEOUT
   Connection Timeout                            51        Connessione non stabilita entro il timeout specificato                                                                                      ERRORE_CONNECTION_TIMEOUT
   Negoziazione Token Fallita                    52        Sono emersi degli errori durante la negoziazione del token                                                                                  ERRORE_NEGOZIAZIONE_TOKEN
+  Tracciamento Fallito                          53        Sono emersi degli errori durante il tracciamento                                                                                            ERRORE_TRACCIAMENTO
  ============================================= ========= =========================================================================================================================================== ================================================= 
 
 Ciascun esito riportato nella tabella precedente è riconducibile ad una tra le seguenti casistiche:
@@ -88,6 +89,6 @@ Ciascun esito riportato nella tabella precedente è riconducibile ad una tra le 
  Errori Processamento Richiesta    13,22,24,26,31,36,45
  Errori Processamento Risposta     14,23,25,27,32,37,46
  Errore Client Indisponibile       3,50
- Altri Codici di Errore            1,5
+ Altri Codici di Errore            1,5,53
  ================================= ======================================================================= 
 

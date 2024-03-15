@@ -96,7 +96,7 @@ il significato dei parametri:
 
    -  **{header:NAME}** permette di utilizzare informazioni, relative
       alla transazione in corso, inserite negli header http generati da
-      GovWay (maggiori dettagli in sezione :ref:`headerIntegrazione`). Il valore 'NAMÈ indica il nome
+      GovWay (maggiori dettagli in sezione :ref:`headerIntegrazione`). Il valore 'NAME' indica il nome
       dell'header da utilizzare. Ad esempio per utilizzare il nome del
       mittente è possibile usare {header:GovWay-Sender}. Un altro
       esempio valido nello scenario della fatturazione elettronica (sezione :ref:`profiloFatturaPA`)
@@ -105,7 +105,7 @@ il significato dei parametri:
 
    -  **{query:NAME}** permette di utilizzare informazioni, relative
       alla transazione in corso, inserite nei query parameter aggiunti
-      all'endpoint da GovWay (maggiori dettagli in sezione :ref:`headerIntegrazione`). Il valore 'NAMÈ
+      all'endpoint da GovWay (maggiori dettagli in sezione :ref:`headerIntegrazione`). Il valore 'NAME'
       indica il nome della proprietà da utilizzare. Ad esempio per
       utilizzare il nome del mittente è possibile usare
       {query:govway\_sender}.
@@ -113,7 +113,7 @@ il significato dei parametri:
    -  **{property:NAME}** permette di utilizzare informazioni, relative
       alla transazione in corso, specifiche della sezione relativa al
       profilo utilizzato all'interno della traccia (es. sezione
-      'Informazioni Fatturazione Elettronica'). Il valore 'NAMÈ indica
+      'Informazioni Fatturazione Elettronica'). Il valore 'NAME' indica
       il nome della proprietà da utilizzare. Un esempio valido nello
       scenario della fatturazione elettronica (sezione :ref:`profiloFatturaPA`) potrebbe essere quello
       di utilizzare l'identificativo sdi utilizzando la sintassi
