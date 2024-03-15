@@ -106,8 +106,10 @@
         Fruizioni:  UPDATE ct_config set pd_connection_timeout=8000, pd_read_timeout=15000; 
 	Erogazioni: UPDATE ct_config set pa_connection_timeout=9000, pa_read_timeout=16000; 
 
-- Nella console Andare su Tracciamento->Superamento Limite Richieste e impostarlo su <abilitato>
-	 Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale.
+- Nella console andare su Tracciamento 'Erogazioni' e 'Fruizioni' ed impostare su <abilitato>:
+    - Violazione Policy Rate Limiting
+    - Superamento Limite Richieste
+  Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale o quando è stata violata una policy di rate limiting.
 
 - Impostare in govway_local.properties 
 	org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi=8

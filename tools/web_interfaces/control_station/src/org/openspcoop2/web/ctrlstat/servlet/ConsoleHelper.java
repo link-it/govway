@@ -10810,10 +10810,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			transazioniFiletrace = configurazioneTracciamento.getFiletrace()!=null && configurazioneTracciamento.getFiletrace().getStato()!=null &&
 					!org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(configurazioneTracciamento.getFiletrace().getStato());
-			if(org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
+			if(configurazioneTracciamento.getFiletrace()!=null && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
 				transazioniFiletrace = (InitListener.getFileTraceGovWayState()!=null) ? InitListener.getFileTraceGovWayState().isEnabled() : transazioniFiletrace;
 			}
-			if(transazioniFiletrace && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
+			if(transazioniFiletrace && configurazioneTracciamento.getFiletrace()!=null && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
 				transazioniFiletrace = CostantiProprieta.isFileTraceEnabled(proprietaPorta, transazioniFiletrace);
 			}
 			if(transazioniFiletrace && 
@@ -16078,7 +16078,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			else{
 				if(configurazioneEsiti == null || "".equals(configurazioneEsiti.trim())){
-					// creo un default composto da tutti ad eccezione dell'esito 84 (MaxThreads)
+					// creo un default composto da tutti ad eccezione dell'esito (CONTROLLO_TRAFFICO_MAX_THREADS), delle violazioni policy di rate limiting (CONTROLLO_TRAFFICO_POLICY_VIOLATA) e delle richieste CORS OPTIONS 
 					this.getRegistrazioneEsiti(configurazioneEsiti, bf);
 					if(bf.length()>0){
 						return bf.toString();
