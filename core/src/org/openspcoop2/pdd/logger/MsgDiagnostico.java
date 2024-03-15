@@ -1163,6 +1163,79 @@ public class MsgDiagnostico {
 	}
 	
 	
+	public void addLogPersonalizzato(String idModuloFunzionale,String idDiagnostico, Transaction transaction, StringBuilder errorLog){
+
+		if(this.msgDiagPropertiesReader==null){
+			logError("MsgDiagnostico.logPersonalizzato [Risorsa non inizializzata], messaggio per idModuloFunzionale["+idModuloFunzionale+"] idDiagnostico["+idDiagnostico+"]");
+			return;
+		}
+		
+		int livelloLog = -1;
+		if(idModuloFunzionale!=null) {
+			livelloLog = this.getLivello(idModuloFunzionale,idDiagnostico);
+		}
+		else {
+			livelloLog = this.getLivello(idDiagnostico);
+		}
+		
+		int severitaLogEmessoPerFiltro = livelloLog;
+		int severitaLivelloOpenSPCoop2 = LogLevels.toIntervalloOpenSPCoop2(livelloLog);
+		if(severitaLivelloOpenSPCoop2<0 || severitaLivelloOpenSPCoop2>7){
+			logError("MsgDiagnostico.logPersonalizzato error, conversione a livello OpenSPCoop non riuscita ["+severitaLivelloOpenSPCoop2+"]");
+			return;
+		}
+		this.setEmitErrorConditionInContext(severitaLivelloOpenSPCoop2);
+		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnosticoOpenSPCoop2level7();
+		ConfigurazionePdDManager configurazionePdDReader = getConfigurazionePdDManager();
+		if(configurazionePdDReader!=null && configurazionePdDReader.isInitializedConfigurazionePdDReader()){
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(configurazionePdDReader.getSeveritaMessaggiDiagnostici());
+		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
+		}
+		
+		try{
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLog) {
+				return;
+			}
+			
+			String messaggio = null;
+			String codiceDiagnostico = null;
+			if(idModuloFunzionale!=null) {
+				messaggio = this.getMessaggio(idModuloFunzionale,idDiagnostico); 
+				codiceDiagnostico = this.getCodice(idModuloFunzionale,idDiagnostico);
+			}
+			else {
+				messaggio = this.getMessaggio(idDiagnostico); 
+				codiceDiagnostico = this.getCodice(idDiagnostico);
+			}
+			if(messaggio==null){
+				logError("MsgDiagnostico.logPersonalizzato error, messaggio non definito.");
+				return;
+			}
+						
+			// Data
+			Date gdo = DateManager.getDate();
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+			}
+			
+			// Replace keyword
+			String msgReplaceKey = this.replaceKeywords(messaggio);	
+			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = this.getMsgDiagnostico(gdo, severitaLivelloOpenSPCoop2, msgReplaceKey, codiceDiagnostico);
+			if(errorLog!=null) {
+				errorLog.append(msgDiag.getMessaggio());
+			}
+			transaction.addMsgDiagnostico(msgDiag);
+		}catch(Exception e){
+			logError("MsgDiagnostico.logPersonalizzato error "+e.getMessage(),e);
+			// log su core solamente
+			/**gestioneErroreDiagnostica(e);*/
+		}
+	}
+	
+	
 	public void logErroreGenerico(Throwable e, String posizioneErrore) {
 		String msg = e!=null ? Utilities.readFirstErrorValidMessageFromException(e) : "Internal Error";
 		this.logErroreGenerico(msg,posizioneErrore);

@@ -30,6 +30,7 @@ import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 import org.openspcoop2.core.diagnostica.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
 
 /**
@@ -49,8 +50,8 @@ public class FSRecoveryDiagnosticiImpl extends AbstractFSRecovery {
 			IDiagnosticProducer diagnosticoAppender,
 			File directory, File directoryDLQ,
 			int tentativi,
-			int minutiAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, minutiAttesaProcessingFile);
+			long msAttesaProcessingFile) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
 		this.diagnosticoAppender = diagnosticoAppender;
 	}
 
@@ -62,9 +63,9 @@ public class FSRecoveryDiagnosticiImpl extends AbstractFSRecovery {
 	}
 
 	@Override
-	public void insertObject(File file, Connection connection) throws Exception {
+	public void insertObject(File file, Connection connection) throws UtilsException, UtilsMultiException {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
-		List<MessaggioDiagnostico> msgDiagnostici = new ArrayList<MessaggioDiagnostico>();
+		List<MessaggioDiagnostico> msgDiagnostici = new ArrayList<>();
 		try {
 			ElencoMessaggiDiagnostici elencoDiagnostici = deserializer.readElencoMessaggiDiagnostici(file);
 			if(elencoDiagnostici!=null && elencoDiagnostici.sizeMessaggioDiagnosticoList()>0) {
@@ -72,19 +73,23 @@ public class FSRecoveryDiagnosticiImpl extends AbstractFSRecovery {
 					msgDiagnostici.add(diagnostico);
 				}
 			}
-		}catch(Throwable t) {
+		}catch(Exception t) {
 			// backward compatibility: si salvavano i singoli messaggi
 			try {
 				MessaggioDiagnostico diagnostico = deserializer.readMessaggioDiagnostico(file);
 				msgDiagnostici.add(diagnostico);
-			}catch(Throwable tInternal) {
+			}catch(Exception tInternal) {
 				throw new UtilsMultiException(t,tInternal);
 			}
 		}
 		if(!msgDiagnostici.isEmpty()) {
 			for (MessaggioDiagnostico diagnostico : msgDiagnostici) {
 				MsgDiagnostico msgDiagOp2 = new MsgDiagnostico(diagnostico);
-				this.diagnosticoAppender.log(connection, msgDiagOp2);	
+				try {
+					this.diagnosticoAppender.log(connection, msgDiagOp2);
+				}catch(Exception e) {
+					throw new UtilsException(e.getMessage(),e);
+				}
 			}
 		}
 	}

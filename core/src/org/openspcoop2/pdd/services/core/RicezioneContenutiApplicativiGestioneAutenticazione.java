@@ -484,7 +484,7 @@ public class RicezioneContenutiApplicativiGestioneAutenticazione {
 				String checkAuthnToken = GestoreAutenticazione.getLabel(this.gestioneTokenAutenticazione);
 				this.msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_AUTHN_CHECK, checkAuthnToken);
 				this.msgDiag.logPersonalizzato("autenticazioneTokenInCorso");
-				this.msgContext.getIntegrazione().setTokenPolicy_authn(GestoreAutenticazione.getActions(this.gestioneTokenAutenticazione));
+				this.msgContext.getIntegrazione().setTokenPolicyAuthn(GestoreAutenticazione.getActions(this.gestioneTokenAutenticazione));
 				
 				ErroreIntegrazione erroreIntegrazione = null;
 				Exception eAutenticazione = null;

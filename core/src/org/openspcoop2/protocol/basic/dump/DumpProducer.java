@@ -163,6 +163,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			ServiceManagerProperties smProperties = new ServiceManagerProperties();
 			smProperties.setDatabaseType(this.tipoDatabase);
 			smProperties.setShowSql(this.debug);
+			smProperties.setAutomaticTransactionManagement(con.getAutoCommit());
 			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, smProperties);
 			
 			org.openspcoop2.core.transazioni.dao.IDumpMessaggioService dumpMessageService = jdbcServiceManager.getDumpMessaggioService();

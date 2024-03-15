@@ -375,7 +375,7 @@ public class SignatureTest {
 			System.out.println("PKCS11 Keystore registered: "+hsmManager.getKeystoreTypes());
 			KeyStore keystoreP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_SERVER);
 			if(!KeystoreType.PKCS11.getNome().equalsIgnoreCase(keystoreP11.getKeystoreType())) {
-				throw new Exception("Atteso tipo PKCS11, trovato '"+keystoreP12.getKeystoreType()+"'");
+				throw new Exception("Atteso tipo PKCS11, trovato '"+keystoreP11.getKeystoreType()+"'");
 			}
 			KeyStore truststoreP11 = null;
 			if(useP11asTrustStore) {

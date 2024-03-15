@@ -60,6 +60,9 @@ public class Traccia implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+    // indicazione store
+    private boolean stored = false;
+	
 	// Busta
 	protected Busta busta;
 	private byte[] bustaInByte;
@@ -75,7 +78,7 @@ public class Traccia implements java.io.Serializable {
     private org.openspcoop2.core.tracciamento.Traccia traccia;
     
     // lista allegati
-    private List<Allegato> allegati = new ArrayList<Allegato>();
+    private List<Allegato> allegati = new ArrayList<>();
     
     
 	public Traccia() {
@@ -100,6 +103,17 @@ public class Traccia implements java.io.Serializable {
     	for (org.openspcoop2.core.tracciamento.Allegato allegato : traccia.getAllegati().getAllegatoList()) {
 			this.addAllegato(new Allegato(allegato),false);
 		}
+	}
+    
+    
+    
+    // stored
+    
+    public boolean isStored() {
+		return this.stored;
+	}
+	public void setStored(boolean stored) {
+		this.stored = stored;
 	}
     
     

@@ -74,9 +74,12 @@ CREATE TABLE configurazione
 	msg_diag_severita_log4j VARCHAR(255) NOT NULL,
 	-- Tracciamento Buste
 	tracciamento_buste VARCHAR(255),
+	tracciamento_esiti_pd VARCHAR(255),
 	tracciamento_esiti VARCHAR(255),
 	-- Transazione
+	transazioni_tempi_pd VARCHAR(255),
 	transazioni_tempi VARCHAR(255),
+	transazioni_token_pd VARCHAR(255),
 	transazioni_token VARCHAR(255),
 	-- Dump
 	dump VARCHAR(255),
@@ -244,7 +247,7 @@ CREATE UNIQUE INDEX index_config_url_regole_1 ON config_url_regole (nome);
 
 
 
--- **** Messaggi diagnostici Appender ****
+-- **** Messaggi diagnostici ****
 
 CREATE TABLE msgdiag_appender
 (
@@ -275,7 +278,7 @@ CREATE TABLE msgdiag_appender_prop
 
 
 
--- **** Tracciamento Appender ****
+-- **** Tracciamento ****
 
 CREATE TABLE tracce_appender
 (
@@ -306,7 +309,51 @@ CREATE TABLE tracce_appender_prop
 
 
 
--- **** Dump Appender ****
+CREATE TABLE tracce_config
+(
+	proprietario VARCHAR(255) NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	id_proprietario BIGINT NOT NULL,
+	stato VARCHAR(255),
+	filtro_esiti VARCHAR(255),
+	request_in VARCHAR(255),
+	request_out VARCHAR(255),
+	response_out VARCHAR(255),
+	response_out_complete VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_tracce_config PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX index_tracce_config_1 ON tracce_config (proprietario,tipo);
+
+
+
+CREATE TABLE filetrace_config
+(
+	proprietario VARCHAR(255) NOT NULL,
+	id_proprietario BIGINT NOT NULL,
+	config VARCHAR(255),
+	dump_in_stato VARCHAR(255),
+	dump_in_stato_hdr VARCHAR(255),
+	dump_in_stato_body VARCHAR(255),
+	dump_out_stato VARCHAR(255),
+	dump_out_stato_hdr VARCHAR(255),
+	dump_out_stato_body VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_filetrace_config PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX index_filetrace_config_1 ON filetrace_config (proprietario);
+
+
+
+-- **** Dump ****
 
 CREATE TABLE dump_config
 (

@@ -74,7 +74,10 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.TracciamentoConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -1081,6 +1084,12 @@ public class ControlStationCore {
 			return false;
 		}
 		return this.isApplicativiServerEnabled;
+	}
+	
+	/** Tracciamento */
+	private boolean isTracciamentoDatabaseRispostaConsegnataSelectEnabled;
+	public boolean isTracciamentoDatabaseRispostaConsegnataSelectEnabled() {
+		return this.isTracciamentoDatabaseRispostaConsegnataSelectEnabled;
 	}
 
 	/** Gestione Consegne Asincrone */
@@ -2579,6 +2588,9 @@ public class ControlStationCore {
 		this.isClusterAsyncUpdate = core.isClusterAsyncUpdate;
 		this.clusterAsyncUpdateCheckInterval = core.clusterAsyncUpdateCheckInterval;
 		
+		/** Tracciamento */
+		this.isTracciamentoDatabaseRispostaConsegnataSelectEnabled = core.isTracciamentoDatabaseRispostaConsegnataSelectEnabled;
+		
 		/** Opzioni di visualizzazione */
 		this.showCorrelazioneAsincronaInAccordi = core.showCorrelazioneAsincronaInAccordi;
 		this.showFlagPrivato = core.showFlagPrivato;
@@ -2993,6 +3005,7 @@ public class ControlStationCore {
 			this.verificaCertificatiSceltaClusterId = consoleProperties.isVerificaCertificatiSceltaClusterId();
 			this.isClusterAsyncUpdate = consoleProperties.isClusterAsyncUpdate();
 			this.clusterAsyncUpdateCheckInterval = consoleProperties.getClusterAsyncUpdateCheckInterval();
+			this.isTracciamentoDatabaseRispostaConsegnataSelectEnabled = consoleProperties.isTracciamentoDatabaseRispostaConsegnataSelectEnabled();
 		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
@@ -7781,5 +7794,40 @@ public class ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 		return configurazioneBean;
+	}
+	
+	
+	
+	public TracciamentoConfigurazione buildTracciamentoConfigurazioneDatabase(String dbStato,
+			String dbStatoReqIn, String dbStatoReqOut, String dbStatoResOut, String dbStatoResOutComplete,
+			boolean dbFiltroEsiti){
+		TracciamentoConfigurazione database = new TracciamentoConfigurazione();
+		database.setStato(StatoFunzionalitaConPersonalizzazione.toEnumConstant(dbStato));
+		if(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(database.getStato())) {
+			database.setRequestIn(StatoFunzionalitaBloccante.toEnumConstant(dbStatoReqIn));
+			database.setRequestOut(StatoFunzionalitaBloccante.toEnumConstant(dbStatoReqOut));
+			database.setResponseOut(StatoFunzionalitaBloccante.toEnumConstant(dbStatoResOut));
+			database.setResponseOutComplete(StatoFunzionalita.toEnumConstant(dbStatoResOutComplete));
+		}
+		if(!StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(database.getStato())) {
+			database.setFiltroEsiti(dbFiltroEsiti ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		}
+		return database;
+	}
+	public TracciamentoConfigurazione buildTracciamentoConfigurazioneFiletrace(String fsStato,
+			String fsStatoReqIn, String fsStatoReqOut, String fsStatoResOut, String fsStatoResOutComplete,
+			boolean fsFiltroEsiti){
+		TracciamentoConfigurazione filetrace = new TracciamentoConfigurazione();
+		filetrace.setStato(StatoFunzionalitaConPersonalizzazione.toEnumConstant(fsStato));
+		if(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.equals(filetrace.getStato())) {
+			filetrace.setRequestIn(StatoFunzionalitaBloccante.toEnumConstant(fsStatoReqIn));
+			filetrace.setRequestOut(StatoFunzionalitaBloccante.toEnumConstant(fsStatoReqOut));
+			filetrace.setResponseOut(StatoFunzionalitaBloccante.toEnumConstant(fsStatoResOut));
+			filetrace.setResponseOutComplete(StatoFunzionalita.toEnumConstant(fsStatoResOutComplete));
+		}
+		if(!StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(filetrace.getStato())) {
+			filetrace.setFiltroEsiti(fsFiltroEsiti ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+		}
+		return filetrace;
 	}
 }

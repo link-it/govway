@@ -69,6 +69,7 @@ Sono inoltre disponibili `report di dettaglio in vari formati <https://jenkins.l
 	trasformazione
 	mtom
 	correlazioneApplicativa
+	tracciamento
         registrazioneMessaggi
 	headerIntegrazione
 	encoding

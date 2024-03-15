@@ -179,7 +179,7 @@ public class InformazioniStatoPorta {
 		format(bf, log4j_dump ? "abilitato" : "disabilitato", "Log4J openspcoop2_dump.log");
 		FileTraceGovWayState fileTraceGovWayStateObject = null;
 		if(fileTraceGovWayState!=null && !"".equals(fileTraceGovWayState)) {
-			fileTraceGovWayStateObject = FileTraceGovWayState.toConfig(fileTraceGovWayState);
+			fileTraceGovWayStateObject = FileTraceGovWayState.toConfig(fileTraceGovWayState,false);
 			format(bf, fileTraceGovWayStateObject.isEnabled() ? "abilitato" : "disabilitato", "FileTrace");
 			if(fileTraceGovWayStateObject.isEnabled()) {
 				format(bf, fileTraceGovWayStateObject.getPath(), "FileTrace path");

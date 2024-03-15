@@ -45,13 +45,12 @@ public class FSRecoveryTransazioni {
 	private FSRecoveryTracceImpl tracceImpl;
 	private FSRecoveryDiagnosticiImpl diagnosticiImpl;
 	private FSRecoveryDumpImpl dumpImpl;
-	private static final int MINUTI_ATTESA_PROCESSING_FILE = 1;
 	
 	public FSRecoveryTransazioni( 
 			Logger log,
 			boolean debug,
 			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
-			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
+			long gestioneSerializableDBAttesaAttiva, int gestioneSerializableDBCheckInterval,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
@@ -62,20 +61,21 @@ public class FSRecoveryTransazioni {
 			File directoryTransazioniApplicativoServer, File directoryTransazioniApplicativoServerDLQ,
 			File directoryTransazioniApplicativoServerConsegnaTerminata, File directoryTransazioniApplicativoServerConsegnaTerminataDLQ,
 			File directoryTransazioni, File directoryTransazioniDLQ,
-			int tentativi) {
+			int tentativi, long msAttesaProcessingFile) {
 	
-		this.transazioniImpl = new FSRecoveryTransazioniImpl(log, debug, transazioniSM, directoryTransazioni, directoryTransazioniDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
+		this.transazioniImpl = new FSRecoveryTransazioniImpl(log, debug, transazioniSM, directoryTransazioni, directoryTransazioniDLQ, tentativi, msAttesaProcessingFile);
 		this.transazioniApplicativoServerImpl = new FSRecoveryTransazioniApplicativoServerImpl(log, debug,
 				daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
-				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
-				transazioniSM, directoryTransazioniApplicativoServer, directoryTransazioniApplicativoServerDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
+				gestioneSerializableDBAttesaAttiva, gestioneSerializableDBCheckInterval,
+				transazioniSM, directoryTransazioniApplicativoServer, directoryTransazioniApplicativoServerDLQ, tentativi, msAttesaProcessingFile);
 		this.transazioniApplicativoServerConsegnaTerminataImpl = new FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl(log, debug,
 				daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
-				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
-				transazioniSM, directoryTransazioniApplicativoServerConsegnaTerminata, directoryTransazioniApplicativoServerConsegnaTerminataDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
-		this.tracceImpl = new FSRecoveryTracceImpl(log, debug, tracciamentoAppender, directoryTracce, directoryTracceDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
-		this.dumpImpl = new FSRecoveryDumpImpl(log, debug, dumpAppender, transazioniRegistrazioneDumpHeadersCompactEnabled, directoryDump, directoryDumpDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
-		this.diagnosticiImpl = new FSRecoveryDiagnosticiImpl(log, debug, diagnosticoAppender, directoryDiagnostici, directoryDiagnosticiDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
+				gestioneSerializableDBAttesaAttiva, gestioneSerializableDBCheckInterval,
+				transazioniSM, directoryTransazioniApplicativoServerConsegnaTerminata, directoryTransazioniApplicativoServerConsegnaTerminataDLQ, tentativi, msAttesaProcessingFile);
+		this.tracceImpl = new FSRecoveryTracceImpl(log, debug, tracciamentoAppender, directoryTracce, directoryTracceDLQ, tentativi, msAttesaProcessingFile);
+		this.dumpImpl = new FSRecoveryDumpImpl(log, debug, dumpAppender, directoryDump, directoryDumpDLQ, tentativi, msAttesaProcessingFile);
+		this.dumpImpl.setTransazioniRegistrazioneDumpHeadersCompactEnabled(transazioniRegistrazioneDumpHeadersCompactEnabled);
+		this.diagnosticiImpl = new FSRecoveryDiagnosticiImpl(log, debug, diagnosticoAppender, directoryDiagnostici, directoryDiagnosticiDLQ, tentativi, msAttesaProcessingFile);
 	}
 	
 	public void process(Connection connection){

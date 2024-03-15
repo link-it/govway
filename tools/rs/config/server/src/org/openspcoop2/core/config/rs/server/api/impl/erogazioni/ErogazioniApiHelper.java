@@ -59,12 +59,14 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAutorizzazioneToken;
 import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.TracciamentoConfigurazione;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
@@ -83,6 +85,7 @@ import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.rs.server.api.impl.Enums;
+import org.openspcoop2.core.config.rs.server.api.impl.Environment;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
@@ -154,6 +157,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -161,7 +165,10 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.utils.EsitiConfigUtils;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -188,8 +195,10 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -197,6 +206,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.slf4j.Logger;
 
 
 /**
@@ -2868,6 +2878,608 @@ public class ErogazioniApiHelper {
 		
 	}
 	
+	public static final void updateTracciamento(RegistrazioneDiagnosticiConfigurazione body, PortaApplicativa pa, ErogazioniEnv env) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		
+		String tracciamentoStato = null;
+		if(pa.getTracciamento()!=null && pa.getTracciamento().getStato()!=null && StatoFunzionalita.ABILITATO.equals(pa.getTracciamento().getStato())) {
+			tracciamentoStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+		}
+		else {
+			tracciamentoStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+		}
+		
+		String statoDiagnostici = null;
+		String severita = null;
+		if(StatoDefaultRidefinitoEnum.RIDEFINITO.equals(body.getStato())) {
+			statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+			
+			if(body.getSeverita()==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Severità non indicata."); 
+			}
+			switch (body.getSeverita()) {
+			case ALL:
+				severita = org.openspcoop2.core.config.constants.Severita.ALL.getValue();
+				break;
+			case DEBUG_HIGH:
+				severita = org.openspcoop2.core.config.constants.Severita.DEBUG_HIGH.getValue();
+				break;
+			case DEBUG_MEDIUM:
+				severita = org.openspcoop2.core.config.constants.Severita.DEBUG_MEDIUM.getValue();
+				break;
+			case DEBUG_LOW:
+				severita = org.openspcoop2.core.config.constants.Severita.DEBUG_LOW.getValue();
+				break;
+			case INFO_PROTOCOL:
+				severita = org.openspcoop2.core.config.constants.Severita.INFO_PROTOCOL.getValue();
+				break;
+			case INFO_INTEGRATION:
+				severita = org.openspcoop2.core.config.constants.Severita.INFO_INTEGRATION.getValue();
+				break;
+			case ERROR_PROTOCOL:
+				severita = org.openspcoop2.core.config.constants.Severita.ERROR_PROTOCOL.getValue();
+				break;
+			case ERROR_INTEGRATION:
+				severita = org.openspcoop2.core.config.constants.Severita.ERROR_INTEGRATION.getValue();
+				break;
+			case FATAL:
+				severita = org.openspcoop2.core.config.constants.Severita.FATAL.getValue();
+				break;
+			case OFF:
+				severita = org.openspcoop2.core.config.constants.Severita.OFF.getValue();
+				break;
+			}
+		}
+		else {
+			statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+			
+			if(body.getSeverita()!=null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Severità non attesa."); 
+			}
+		}
+		
+		PorteApplicativeUtilities.initTracciamento(pa, env.paCore, null,
+				tracciamentoStato, statoDiagnostici, severita);
+	}
+	
+	public static final void updateTracciamento(RegistrazioneDiagnosticiConfigurazione body, PortaDelegata pd, ErogazioniEnv env) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		
+		String tracciamentoStato = null;
+		if(pd.getTracciamento()!=null && pd.getTracciamento().getStato()!=null && StatoFunzionalita.ABILITATO.equals(pd.getTracciamento().getStato())) {
+			tracciamentoStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+		}
+		else {
+			tracciamentoStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+		}
+		
+		String statoDiagnostici = null;
+		String severita = null;
+		if(StatoDefaultRidefinitoEnum.RIDEFINITO.equals(body.getStato())) {
+			statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+			
+			if(body.getSeverita()==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Severità non indicata."); 
+			}
+			switch (body.getSeverita()) {
+			case ALL:
+				severita = org.openspcoop2.core.config.constants.Severita.ALL.getValue();
+				break;
+			case DEBUG_HIGH:
+				severita = org.openspcoop2.core.config.constants.Severita.DEBUG_HIGH.getValue();
+				break;
+			case DEBUG_MEDIUM:
+				severita = org.openspcoop2.core.config.constants.Severita.DEBUG_MEDIUM.getValue();
+				break;
+			case DEBUG_LOW:
+				severita = org.openspcoop2.core.config.constants.Severita.DEBUG_LOW.getValue();
+				break;
+			case INFO_PROTOCOL:
+				severita = org.openspcoop2.core.config.constants.Severita.INFO_PROTOCOL.getValue();
+				break;
+			case INFO_INTEGRATION:
+				severita = org.openspcoop2.core.config.constants.Severita.INFO_INTEGRATION.getValue();
+				break;
+			case ERROR_PROTOCOL:
+				severita = org.openspcoop2.core.config.constants.Severita.ERROR_PROTOCOL.getValue();
+				break;
+			case ERROR_INTEGRATION:
+				severita = org.openspcoop2.core.config.constants.Severita.ERROR_INTEGRATION.getValue();
+				break;
+			case FATAL:
+				severita = org.openspcoop2.core.config.constants.Severita.FATAL.getValue();
+				break;
+			case OFF:
+				severita = org.openspcoop2.core.config.constants.Severita.OFF.getValue();
+				break;
+			}
+		}
+		else {
+			statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+			
+			if(body.getSeverita()!=null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Severità non attesa."); 
+			}
+		}
+		
+		PorteDelegateUtilities.initTracciamento(pd, env.pdCore, null,
+				tracciamentoStato, statoDiagnostici, severita);
+	}
+	
+	public static final void updateTracciamento(RegistrazioneTransazioniConfigurazione body, 
+			Object porta, ErogazioniEnv environment) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, ProtocolException {
+		
+		PortaApplicativa portaApplicativa = null;
+		PortaDelegata portaDelegata = null;
+		boolean applicativa = false;
+		if(porta instanceof PortaApplicativa) {
+			portaApplicativa = (PortaApplicativa) porta;
+			applicativa = true;
+		}
+		else if(porta instanceof PortaDelegata) {
+			portaDelegata = (PortaDelegata) porta;
+		}
+		else {
+			throw new ProtocolException("Oggetto '"+porta.getClass().getName()+"' non supportato");
+		}
+		
+		String statoDiagnostici = null;
+		if(applicativa) {
+			if(portaApplicativa.getTracciamento()!=null && portaApplicativa.getTracciamento().getSeverita()!=null) {
+				statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+			}
+			else {
+				statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+			}
+		}
+		else {
+			if(portaDelegata.getTracciamento()!=null && portaDelegata.getTracciamento().getSeverita()!=null) {
+				statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+			}
+			else {
+				statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+			}
+		}
+	
+		String severita = null;
+		if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(statoDiagnostici)) {
+			// prendo quella di default
+			if(applicativa && portaApplicativa.getTracciamento()!=null && portaApplicativa.getTracciamento().getSeverita()!=null) {
+				severita = portaApplicativa.getTracciamento().getSeverita().getValue();
+			}
+			else if(portaDelegata.getTracciamento()!=null && portaDelegata.getTracciamento().getSeverita()!=null) {
+				severita = portaDelegata.getTracciamento().getSeverita().getValue();	
+			}
+			
+			if(severita==null) {
+				Configurazione config = environment.configCore.getConfigurazioneGenerale();
+				severita = config.getMessaggiDiagnostici()!=null && config.getMessaggiDiagnostici().getSeverita()!=null ? 
+						config.getMessaggiDiagnostici().getSeverita().getValue() : 
+						null;
+			}
+		}
+		
+		String tracciamentoStato = null;
+		boolean ridefinito = false;
+		if(body.getStato()!=null && StatoDefaultRidefinitoEnum.RIDEFINITO.equals(body.getStato())) {
+			tracciamentoStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+			ridefinito = true;
+		}
+		else {
+			tracciamentoStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+		}
+		
+		if(applicativa) {
+			PorteApplicativeUtilities.initTracciamento(portaApplicativa, environment.paCore, null,
+					tracciamentoStato, statoDiagnostici, severita);
+		}
+		else {
+			PorteDelegateUtilities.initTracciamento(portaDelegata, environment.pdCore, null,
+					tracciamentoStato, statoDiagnostici, severita);
+		}
+		
+		String dbStato = null;
+		String dbStatoReqIn = null;
+		String dbStatoReqOut = null;
+		String dbStatoResOut = null;
+		String dbStatoResOutComplete = null;
+		boolean dbFiltroEsiti = false;
+		if(body.getDatabase()!=null) {
+			if(!ridefinito) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Stato tracciamento su db consentito solo con stato ridefinito."); 
+			}
+			if(body.getDatabase().getStato()==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Stato tracciamento su db non indicato."); 
+			}
+			String prefixDB = "Stato tracciamento su db '"+body.getDatabase().getStato()+"'";
+			
+			boolean personalizzato = false;
+			switch (body.getDatabase().getStato()) {
+			case ABILITATO:
+				dbStato = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.ABILITATO.getValue();
+				break;
+			case DISABILITATO:
+				dbStato = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.getValue();
+				break;
+			case CONFIGURAZIONEESTERNA:
+				/**dbStato = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.getValue();*/
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixDB+" non valido."); 
+			case PERSONALIZZATO:
+				dbStato = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue();
+				personalizzato = true;
+				break;
+			}
+			if(body.getDatabase().getFiltroEsiti()!=null) {
+				dbFiltroEsiti = TracciamentoTransazioniStatoFase.ABILITATO.equals(body.getDatabase().getFiltroEsiti());
+			}
+			if(body.getDatabase().getFasi()!=null) {
+				if(personalizzato) {
+					if(body.getDatabase().getFasi().getRichiestaIngresso()!=null) {
+						switch (body.getDatabase().getFasi().getRichiestaIngresso()) {
+						case BLOCCANTE:
+							dbStatoReqIn = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.getValue();
+							break;
+						case NON_BLOCCANTE:
+							dbStatoReqIn = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue();
+							break;
+						case DISABILITATO:
+							dbStatoReqIn = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+							break;
+						}
+					}
+					else {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixDB+" richiede la definizione delle fasi; fase 'richiesta ingresso' non definita"); 
+					}
+					
+					if(body.getDatabase().getFasi().getRichiestaUscita()!=null) {
+						switch (body.getDatabase().getFasi().getRichiestaUscita()) {
+						case BLOCCANTE:
+							dbStatoReqOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.getValue();
+							break;
+						case NON_BLOCCANTE:
+							dbStatoReqOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue();
+							break;
+						case DISABILITATO:
+							dbStatoReqOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+							break;
+						}
+					}
+					else {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixDB+" richiede la definizione delle fasi; fase 'richiesta uscita' non definita"); 
+					}
+					
+					if(body.getDatabase().getFasi().getRispostaUscita()!=null) {
+						switch (body.getDatabase().getFasi().getRispostaUscita()) {
+						case BLOCCANTE:
+							dbStatoResOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.getValue();
+							break;
+						case NON_BLOCCANTE:
+							dbStatoResOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue();
+							break;
+						case DISABILITATO:
+							dbStatoResOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+							break;
+						}
+					}
+					else {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixDB+" richiede la definizione delle fasi; fase 'risposta uscita' non definita"); 
+					}
+					
+					if(body.getDatabase().getFasi().getRispostaConsegnata()!=null) {
+						if(TracciamentoTransazioniStatoFase.ABILITATO.equals(body.getDatabase().getFasi().getRispostaConsegnata())) {
+							dbStatoResOutComplete = org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.getValue();
+						}else {
+							dbStatoResOutComplete = org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.getValue();
+						}
+					}
+					else {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixDB+" richiede la definizione delle fasi; fase 'risposta consegnata' non definita"); 
+					}
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixDB+" non prevede la definizione delle fasi."); 
+				}
+			}
+			else {
+				if(personalizzato) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixDB+" richiede la definizione delle fasi.");
+				}
+			}
+		}
+		
+		String fsStato = null;
+		String fsStatoReqIn = null;
+		String fsStatoReqOut = null;
+		String fsStatoResOut = null;
+		String fsStatoResOutComplete = null;
+		boolean fsFiltroEsiti = false;
+		
+		String fileTraceStato = null;
+		String fileTraceConfigFile = null;
+		String fileTraceClient = null;
+		String fileTraceClientHdr = null;
+		String fileTraceClientBody = null;
+		String fileTraceServer = null;
+		String fileTraceServerHdr = null;
+		String fileTraceServerBody = null;
+		
+		if(body.getFiletrace()!=null) {
+			
+			if(!ridefinito) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Stato tracciamento su filetrace consentito solo con stato ridefinito."); 
+			}
+			
+			if(body.getFiletrace().getStato()==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Stato tracciamento su filetrace non indicato."); 
+			}
+			String prefixFS =  "Stato tracciamento su filetrace '"+body.getFiletrace().getStato()+"'";
+			
+			boolean abilitataConf = false;
+			boolean personalizzato = false;
+			switch (body.getFiletrace().getStato()) {
+			case ABILITATO:
+				fsStato = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.ABILITATO.getValue();
+				abilitataConf = true;
+				break;
+			case DISABILITATO:
+				fsStato = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.getValue();
+				break;
+			case CONFIGURAZIONEESTERNA:
+				fsStato = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.getValue();
+				break;
+			case PERSONALIZZATO:
+				fsStato = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue();
+				personalizzato = true;
+				abilitataConf = true;
+				break;
+			}
+			if(body.getFiletrace().getFiltroEsiti()!=null) {
+				fsFiltroEsiti = TracciamentoTransazioniStatoFase.ABILITATO.equals(body.getFiletrace().getFiltroEsiti());
+			}
+			if(body.getFiletrace().getFasi()!=null) {
+				if(personalizzato) {
+					if(body.getFiletrace().getFasi().getRichiestaIngresso()!=null) {
+						switch (body.getFiletrace().getFasi().getRichiestaIngresso()) {
+						case BLOCCANTE:
+							fsStatoReqIn = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.getValue();
+							break;
+						case NON_BLOCCANTE:
+							fsStatoReqIn = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue();
+							break;
+						case DISABILITATO:
+							fsStatoReqIn = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+							break;
+						}
+					}
+					else {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixFS+" richiede la definizione delle fasi; fase 'richiesta ingresso' non definita"); 
+					}
+					
+					if(body.getFiletrace().getFasi().getRichiestaUscita()!=null) {
+						switch (body.getFiletrace().getFasi().getRichiestaUscita()) {
+						case BLOCCANTE:
+							fsStatoReqOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.getValue();
+							break;
+						case NON_BLOCCANTE:
+							fsStatoReqOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue();
+							break;
+						case DISABILITATO:
+							fsStatoReqOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+							break;
+						}
+					}
+					else {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixFS+" richiede la definizione delle fasi; fase 'richiesta uscita' non definita"); 
+					}
+					
+					if(body.getFiletrace().getFasi().getRispostaUscita()!=null) {
+						switch (body.getFiletrace().getFasi().getRispostaUscita()) {
+						case BLOCCANTE:
+							fsStatoResOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.ABILITATO.getValue();
+							break;
+						case NON_BLOCCANTE:
+							fsStatoResOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue();
+							break;
+						case DISABILITATO:
+							fsStatoResOut = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+							break;
+						}
+					}
+					else {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixFS+" richiede la definizione delle fasi; fase 'risposta uscita' non definita"); 
+					}
+					
+					if(body.getFiletrace().getFasi().getRispostaConsegnata()!=null) {
+						if(TracciamentoTransazioniStatoFase.ABILITATO.equals(body.getFiletrace().getFasi().getRispostaConsegnata())) {
+							fsStatoResOutComplete = org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.getValue();
+						}else {
+							fsStatoResOutComplete = org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.getValue();
+						}
+					}
+					else {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixFS+" richiede la definizione delle fasi; fase 'risposta consegnata' non definita"); 
+					}
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixFS+" non prevede la definizione delle fasi."); 
+				}
+			}
+			else {
+				if(personalizzato) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixFS+" richiede la definizione delle fasi.");
+				}
+			}
+			
+			if(abilitataConf) {
+				if(body.getFiletrace().getConfigPath()!=null || 
+						body.getFiletrace().getDumpClient()!=null ||
+						body.getFiletrace().getDumpServer()!=null) {
+					fileTraceStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+					
+					fileTraceConfigFile = body.getFiletrace().getConfigPath();
+					
+					if(body.getFiletrace().getDumpClient()!=null) {
+						fileTraceClient = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						
+						if(body.getFiletrace().getDumpClient().isHeaders()!=null && body.getFiletrace().getDumpClient().isHeaders().booleanValue()) {
+							fileTraceClientHdr = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						}
+						else {
+							fileTraceClientHdr = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+						}
+						
+						if(body.getFiletrace().getDumpClient().isPayload()!=null && body.getFiletrace().getDumpClient().isPayload().booleanValue()) {
+							fileTraceClientBody = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						}
+						else {
+							fileTraceClientBody = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+						}
+					}
+					else {
+						fileTraceClient = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					
+					if(body.getFiletrace().getDumpServer()!=null) {
+						fileTraceServer = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						
+						if(body.getFiletrace().getDumpServer().isHeaders()!=null && body.getFiletrace().getDumpServer().isHeaders().booleanValue()) {
+							fileTraceServerHdr = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						}
+						else {
+							fileTraceServerHdr = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+						}
+						
+						if(body.getFiletrace().getDumpServer().isPayload()!=null && body.getFiletrace().getDumpServer().isPayload().booleanValue()) {
+							fileTraceServerBody = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						}
+						else {
+							fileTraceServerBody = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+						}
+					}
+					else {
+						fileTraceServer = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+				}
+				else {
+					fileTraceStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+				}
+			}
+			else {
+				if(body.getFiletrace().getConfigPath()!=null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixFS+" non consente la definizione del path della configurazione"); 
+				}
+				if(body.getFiletrace().getDumpClient()!=null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixFS+" non consente la definizione del buffer dei messaggi scambiati con il client"); 
+				}
+				if(body.getFiletrace().getDumpServer()!=null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(prefixFS+" non consente la definizione del buffer dei messaggi scambiati con il server"); 
+				}
+				fileTraceStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+			}
+			
+		}
+		
+		
+		String nuovaConfigurazioneEsiti = null;
+		if(body.getFiltro()!=null && body.getFiltro().getEsiti()!=null && !body.getFiltro().getEsiti().isEmpty()) {
+			
+			if(!ridefinito) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Filtro esiti consentito solo con stato ridefinito."); 
+			}
+			
+			Logger log = LoggerWrapperFactory.getLogger(ErogazioniApiHelper.class);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(log, environment.protocolFactory);
+			List<Integer> esiti = esitiProperties.getEsitiCode();
+			int codeErroreProtocollo = esitiProperties.convertNameToCode(EsitoTransazioneName.ERRORE_PROTOCOLLO.name());
+			int codeFaultPdd = esitiProperties.convertNameToCode(EsitoTransazioneName.ERRORE_SERVER.name());
+			esiti.add(codeErroreProtocollo);
+			esiti.add(codeFaultPdd);
+			StringBuilder sb = new StringBuilder();
+			for (Integer esito : body.getFiltro().getEsiti()) {
+				if(sb.length()>0) {
+					sb.append(",");
+				}
+				sb.append(esito.intValue());
+				if(!existsEsito(esito, esiti )) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'esito '"+esito+"' indicato nel filtro non è supportato"); 	
+				}
+			}
+			nuovaConfigurazioneEsiti = sb.toString();
+		}
+		
+		
+		String transazioniTempiElaborazione = null;
+		String transazioniToken = null;
+		if(body.getInformazioni()!=null) {
+			
+			if(!ridefinito) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Definizione delle informazioni sulle transazioni consentita solo con stato ridefinito."); 
+			}
+			
+			if(body.getInformazioni().getTempiElaborazione()!=null) {
+				if(TracciamentoTransazioniStatoFase.ABILITATO.equals(body.getInformazioni().getTempiElaborazione())) {
+					transazioniTempiElaborazione = StatoFunzionalita.ABILITATO.getValue();
+				}
+				else {
+					transazioniTempiElaborazione = StatoFunzionalita.DISABILITATO.getValue();
+				}
+			}
+			else {
+				transazioniTempiElaborazione = StatoFunzionalita.DISABILITATO.getValue();
+			}
+			
+			if(body.getInformazioni().getToken()!=null) {
+				if(TracciamentoTransazioniStatoFase.ABILITATO.equals(body.getInformazioni().getToken())) {
+					transazioniToken = StatoFunzionalita.ABILITATO.getValue();
+				}
+				else {
+					transazioniToken = StatoFunzionalita.DISABILITATO.getValue();
+				}
+			}
+			else {
+				transazioniToken = StatoFunzionalita.DISABILITATO.getValue();
+			}
+		}				
+		
+
+		if(applicativa) {
+			PorteApplicativeUtilities.setTracciamentoTransazioni(portaApplicativa, environment.paCore,
+					dbStato,
+					dbStatoReqIn, dbStatoReqOut, dbStatoResOut, dbStatoResOutComplete,
+					dbFiltroEsiti,
+					fsStato,
+					fsStatoReqIn, fsStatoReqOut, fsStatoResOut, fsStatoResOutComplete,
+					fsFiltroEsiti,
+					nuovaConfigurazioneEsiti,
+					transazioniTempiElaborazione, transazioniToken,
+					fileTraceStato, fileTraceConfigFile,
+					fileTraceClient, fileTraceClientHdr, fileTraceClientBody,
+					fileTraceServer, fileTraceServerHdr, fileTraceServerBody);
+		}
+		else {
+			PorteDelegateUtilities.setTracciamentoTransazioni(portaDelegata, environment.pdCore,
+					dbStato,
+					dbStatoReqIn, dbStatoReqOut, dbStatoResOut, dbStatoResOutComplete,
+					dbFiltroEsiti,
+					fsStato,
+					fsStatoReqIn, fsStatoReqOut, fsStatoResOut, fsStatoResOutComplete,
+					fsFiltroEsiti,
+					nuovaConfigurazioneEsiti,
+					transazioniTempiElaborazione, transazioniToken,
+					fileTraceStato, fileTraceConfigFile,
+					fileTraceClient, fileTraceClientHdr, fileTraceClientBody,
+					fileTraceServer, fileTraceServerHdr, fileTraceServerBody);
+		}
+	}
+	private static boolean existsEsito(Integer esito, List<Integer> esiti ) {
+		if(esiti!=null && esito!=null) {
+			for (Integer e : esiti) {
+				if(e.intValue() == esito.intValue()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public static final DumpConfigurazione buildDumpConfigurazione(RegistrazioneMessaggi dumpConf, boolean isErogazione, ErogazioniEnv env) throws Exception {
 		final RegistrazioneMessaggiConfigurazione richiesta = dumpConf.getRichiesta();
 		final RegistrazioneMessaggiConfigurazione risposta = dumpConf.getRisposta();
@@ -3317,6 +3929,248 @@ public class ErogazioniApiHelper {
 		return token;
 	}
 
+	
+	
+	public static final RegistrazioneDiagnosticiConfigurazione fromDiagnosticiConfigurazione(final PortaTracciamento paTracciamento) {
+		final RegistrazioneDiagnosticiConfigurazione ret = new RegistrazioneDiagnosticiConfigurazione();
+		
+		if (paTracciamento != null && paTracciamento.getSeverita()!=null) {
+			ret.setStato(StatoDefaultRidefinitoEnum.RIDEFINITO);
+			
+			switch (paTracciamento.getSeverita()) {
+			case ALL:
+				ret.setSeverita(DiagnosticiSeverita.ALL);
+				break;
+			case DEBUG_HIGH:
+				ret.setSeverita(DiagnosticiSeverita.DEBUG_HIGH);
+				break;
+			case DEBUG_MEDIUM:
+				ret.setSeverita(DiagnosticiSeverita.DEBUG_MEDIUM);
+				break;
+			case DEBUG_LOW:
+				ret.setSeverita(DiagnosticiSeverita.DEBUG_LOW);
+				break;
+			case INFO_PROTOCOL:
+				ret.setSeverita(DiagnosticiSeverita.INFO_PROTOCOL);
+				break;
+			case INFO_INTEGRATION:
+				ret.setSeverita(DiagnosticiSeverita.INFO_INTEGRATION);
+				break;
+			case ERROR_PROTOCOL:
+				ret.setSeverita(DiagnosticiSeverita.ERROR_PROTOCOL);
+				break;
+			case ERROR_INTEGRATION:
+				ret.setSeverita(DiagnosticiSeverita.ERROR_INTEGRATION);
+				break;
+			case FATAL:
+				ret.setSeverita(DiagnosticiSeverita.FATAL);
+				break;
+			case OFF:
+				ret.setSeverita(DiagnosticiSeverita.OFF);
+				break;
+			}
+			
+		}
+		else {
+			ret.setStato(StatoDefaultRidefinitoEnum.DEFAULT);
+		}
+		return ret;
+	}
+	
+	
+	public static final RegistrazioneTransazioniConfigurazione fromTransazioniConfigurazione(final PortaTracciamento paTracciamento, Environment env) throws ProtocolException {
+		final RegistrazioneTransazioniConfigurazione ret = new RegistrazioneTransazioniConfigurazione();
+		
+		if (paTracciamento != null && 
+				(
+						paTracciamento.getDatabase()!=null || 
+						paTracciamento.getFiletrace()!=null ||
+						(
+								paTracciamento.getEsiti()!=null && StringUtils.isNoneEmpty(paTracciamento.getEsiti()) &&
+								(
+										paTracciamento.getDatabase()!=null && StatoFunzionalita.ABILITATO.equals(paTracciamento.getDatabase().getFiltroEsiti())
+										||
+										paTracciamento.getFiletrace()!=null && StatoFunzionalita.ABILITATO.equals(paTracciamento.getFiletrace().getFiltroEsiti())
+								)
+						) 
+						||
+						paTracciamento.getFiletraceConfig()!=null ||
+						paTracciamento.getTransazioni()!=null
+						)
+			) {
+			ret.setStato(StatoDefaultRidefinitoEnum.RIDEFINITO);
+			
+			if(paTracciamento.getDatabase()!=null) {
+				ret.setDatabase(fromTransazioniConfigurazioneBase(paTracciamento.getDatabase(), false));
+			}
+			if(paTracciamento.getFiletrace()!=null) {
+				RegistrazioneTransazioniConfigurazioneFiletrace f = (RegistrazioneTransazioniConfigurazioneFiletrace) fromTransazioniConfigurazioneBase(paTracciamento.getFiletrace(), true);
+				if(paTracciamento.getFiletraceConfig()!=null) {
+					f.setConfigPath(paTracciamento.getFiletraceConfig().getConfig());
+					if(paTracciamento.getFiletraceConfig().getDumpIn()!=null && StatoFunzionalita.ABILITATO.equals(paTracciamento.getFiletraceConfig().getDumpIn().getStato())) {
+						f.setDumpClient(new RegistrazioneTransazioniConfigurazioneFiletraceMessaggio());
+						f.getDumpClient().setHeaders(StatoFunzionalita.ABILITATO.equals(paTracciamento.getFiletraceConfig().getDumpIn().getHeader()));
+						f.getDumpClient().setPayload(StatoFunzionalita.ABILITATO.equals(paTracciamento.getFiletraceConfig().getDumpIn().getPayload()));
+					}
+					if(paTracciamento.getFiletraceConfig().getDumpOut()!=null && StatoFunzionalita.ABILITATO.equals(paTracciamento.getFiletraceConfig().getDumpOut().getStato())) {
+						f.setDumpServer(new RegistrazioneTransazioniConfigurazioneFiletraceMessaggio());
+						f.getDumpServer().setHeaders(StatoFunzionalita.ABILITATO.equals(paTracciamento.getFiletraceConfig().getDumpOut().getHeader()));
+						f.getDumpServer().setPayload(StatoFunzionalita.ABILITATO.equals(paTracciamento.getFiletraceConfig().getDumpOut().getPayload()));
+					}
+				}
+				ret.setFiletrace(f);
+			}
+			if((paTracciamento.getEsiti()!=null && StringUtils.isNoneEmpty(paTracciamento.getEsiti())) &&
+					(
+							paTracciamento.getDatabase()!=null && StatoFunzionalita.ABILITATO.equals(paTracciamento.getDatabase().getFiltroEsiti())
+							||
+							paTracciamento.getFiletrace()!=null && StatoFunzionalita.ABILITATO.equals(paTracciamento.getFiletrace().getFiltroEsiti())
+					)
+					) {
+				Logger log = LoggerWrapperFactory.getLogger(ErogazioniApiHelper.class); 
+				List<String> esiti  = EsitiConfigUtils.getRegistrazioneEsiti(paTracciamento.getEsiti(), log, new StringBuilder(), EsitiProperties.getInstance(log, env.protocolFactory));
+				if(esiti!=null && !esiti.isEmpty()) {
+					ret.setFiltro(new RegistrazioneTransazioniConfigurazioneFiltroEsiti());
+					for (String e : esiti) {
+						ret.getFiltro().addEsitiItem(Integer.valueOf(e));		
+					}
+				}
+			}
+			if(paTracciamento.getTransazioni()!=null) {
+				ret.setInformazioni(new RegistrazioneTransazioniConfigurazioneInformazioniRegistrate());
+				if(paTracciamento.getTransazioni().getTempiElaborazione()!=null) {
+					if(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(paTracciamento.getTransazioni().getTempiElaborazione())) {
+						ret.getInformazioni().setTempiElaborazione(TracciamentoTransazioniStatoFase.ABILITATO);						
+					}
+					else {
+						ret.getInformazioni().setTempiElaborazione(TracciamentoTransazioniStatoFase.DISABILITATO);						
+					}
+				}
+				else {
+					ret.getInformazioni().setTempiElaborazione(TracciamentoTransazioniStatoFase.DISABILITATO);				
+				}
+				if(paTracciamento.getTransazioni().getToken()!=null) {
+					if(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(paTracciamento.getTransazioni().getToken())) {
+						ret.getInformazioni().setToken(TracciamentoTransazioniStatoFase.ABILITATO);						
+					} else {
+						ret.getInformazioni().setToken(TracciamentoTransazioniStatoFase.DISABILITATO);						
+					}
+				}
+				else {
+					ret.getInformazioni().setToken(TracciamentoTransazioniStatoFase.DISABILITATO);	
+				}
+			}
+			
+			// check finale
+			if(ret.getDatabase()==null && ret.getFiletrace()==null && ret.getFiltro()==null && ret.getInformazioni()==null) {
+				ret.setStato(StatoDefaultRidefinitoEnum.DEFAULT);
+			}
+		}
+		else {
+			ret.setStato(StatoDefaultRidefinitoEnum.DEFAULT);
+		}
+		return ret;
+	}
+	private static final RegistrazioneTransazioniConfigurazioneBase fromTransazioniConfigurazioneBase(final TracciamentoConfigurazione paTracciamento, boolean fileTrace) {
+		RegistrazioneTransazioniConfigurazioneBase c = null;
+		
+		if(paTracciamento.getStato()!=null) {
+			
+			c =  fileTrace ? new RegistrazioneTransazioniConfigurazioneFiletrace() : new RegistrazioneTransazioniConfigurazioneBase();
+			
+			switch (paTracciamento.getStato()) {
+			case ABILITATO:
+				c.setStato(TracciamentoTransazioniStato.ABILITATO);
+				break;
+			case DISABILITATO:
+				c.setStato(TracciamentoTransazioniStato.DISABILITATO);
+				break;
+			case CONFIGURAZIONE_ESTERNA:
+				c.setStato(TracciamentoTransazioniStato.CONFIGURAZIONEESTERNA);
+				break;
+			case PERSONALIZZATO:
+				c.setStato(TracciamentoTransazioniStato.PERSONALIZZATO);
+				
+				c.setFasi(new RegistrazioneTransazioniConfigurazioneFasi());
+				
+				if(paTracciamento.getRequestIn()!=null) {
+					switch (paTracciamento.getRequestIn()) {
+						case ABILITATO:
+							c.getFasi().setRichiestaIngresso(TracciamentoTransazioniStatoFaseBloccante.BLOCCANTE);
+							break;
+						case NON_BLOCCANTE:
+							c.getFasi().setRichiestaIngresso(TracciamentoTransazioniStatoFaseBloccante.NON_BLOCCANTE);
+							break;
+						case DISABILITATO:
+							c.getFasi().setRichiestaIngresso(TracciamentoTransazioniStatoFaseBloccante.DISABILITATO);
+							break;
+					}
+				}
+				else {
+					c.getFasi().setRichiestaIngresso(TracciamentoTransazioniStatoFaseBloccante.DISABILITATO);
+				}
+				
+				if(paTracciamento.getRequestOut()!=null) {
+					switch (paTracciamento.getRequestOut()) {
+						case ABILITATO:
+							c.getFasi().setRichiestaUscita(TracciamentoTransazioniStatoFaseBloccante.BLOCCANTE);
+							break;
+						case NON_BLOCCANTE:
+							c.getFasi().setRichiestaUscita(TracciamentoTransazioniStatoFaseBloccante.NON_BLOCCANTE);
+							break;
+						case DISABILITATO:
+							c.getFasi().setRichiestaUscita(TracciamentoTransazioniStatoFaseBloccante.DISABILITATO);
+							break;
+					}
+				}
+				else {
+					c.getFasi().setRichiestaUscita(TracciamentoTransazioniStatoFaseBloccante.DISABILITATO);
+				}
+				
+				if(paTracciamento.getResponseOut()!=null) {
+					switch (paTracciamento.getResponseOut()) {
+						case ABILITATO:
+							c.getFasi().setRispostaUscita(TracciamentoTransazioniStatoFaseBloccante.BLOCCANTE);
+							break;
+						case NON_BLOCCANTE:
+							c.getFasi().setRispostaUscita(TracciamentoTransazioniStatoFaseBloccante.NON_BLOCCANTE);
+							break;
+						case DISABILITATO:
+							c.getFasi().setRispostaUscita(TracciamentoTransazioniStatoFaseBloccante.DISABILITATO);
+							break;
+					}
+				}
+				else {
+					c.getFasi().setRispostaUscita(TracciamentoTransazioniStatoFaseBloccante.DISABILITATO);
+				}
+				
+				if(paTracciamento.getResponseOutComplete()!=null) {
+					if(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(paTracciamento.getResponseOutComplete())) {
+						c.getFasi().setRispostaConsegnata(TracciamentoTransazioniStatoFase.ABILITATO);
+					}else {
+						c.getFasi().setRispostaConsegnata(TracciamentoTransazioniStatoFase.DISABILITATO);
+					}
+				}
+				else {
+					c.getFasi().setRispostaConsegnata(TracciamentoTransazioniStatoFase.DISABILITATO);
+				}
+				
+				break;
+			}
+						
+			if(paTracciamento.getFiltroEsiti()!=null) {
+				if(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(paTracciamento.getFiltroEsiti())) {
+					c.setFiltroEsiti(TracciamentoTransazioniStatoFase.ABILITATO);
+				}
+				else{
+					c.setFiltroEsiti(TracciamentoTransazioniStatoFase.DISABILITATO);
+				}
+			}
+			
+		}
+		
+		return c;
+	}
 
 
 	public static final RegistrazioneMessaggi fromDumpConfigurazione(final DumpConfigurazione paDump) {

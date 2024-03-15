@@ -843,6 +843,18 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="tracciamento_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tracciamento_stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il tracciamento è ridefinito sulla porta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                                <linkit:sql-column-comment><![CDATA[Tracciamento delle transazioni]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="tracciamento_esiti" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -850,6 +862,28 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tracciamento_esiti"/>
                                 <linkit:sql-ddl-column-comment>Indicazione su quali transazioni la porta deve registrare</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="transazioni_tempi_elaborazione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="transazioni_tempi"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se nella transazione vengono salvati anche i tempi di elaborazione (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="transazioni_token" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="transazioni_token"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se nella transazione viene salvato anche le informazioni sul token normalizzato (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

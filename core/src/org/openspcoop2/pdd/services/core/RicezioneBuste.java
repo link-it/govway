@@ -3661,6 +3661,8 @@ public class RicezioneBuste {
 					idModuloInAttesa,identitaPdD,idServizio); 
 		}
 		richiestaApplicativa.setFiltroProprietaPorteApplicative(this.msgContext.getProprietaFiltroPortaApplicativa());
+		richiestaApplicativa.setIntegrazione(this.msgContext.getIntegrazione());
+		richiestaApplicativa.setProtocol(this.msgContext.getProtocol());
 		
 		
 		
@@ -6153,6 +6155,8 @@ public class RicezioneBuste {
 				rd.setIdServizio(idServizio);
 				rd.setIdCorrelazioneApplicativa(correlazioneApplicativa);
 				rd.setServizioApplicativo(servizioApplicativoFruitore);
+				rd.setIntegrazione(this.msgContext.getIntegrazione());
+				rd.setProtocol(this.msgContext.getProtocol());
 				inoltroMSG.setRichiestaDelegata(rd);
 				inoltroMSG.setImplementazionePdDSoggettoMittente(implementazionePdDMittente);
 				inoltroMSG.setImplementazionePdDSoggettoDestinatario(implementazionePdDDestinatario);

@@ -25,6 +25,7 @@ import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -38,10 +39,12 @@ import java.sql.Connection;
  * @version $Rev$, $Date$
  */
 public class FSRecoveryLibrary {
+	
+	private FSRecoveryLibrary() {}
 
 	public static void generate(FSRecoveryConfig config,
 			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
-			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
+			long gestioneSerializableDBAttesaAttiva, int gestioneSerializableDBCheckInterval,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
@@ -49,14 +52,14 @@ public class FSRecoveryLibrary {
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM){
 		generate(config, 
 				daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
-				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
+				gestioneSerializableDBAttesaAttiva, gestioneSerializableDBCheckInterval,
 				transazioniSM, tracciamentoAppender, diagnosticoAppender, 
 				dumpAppender, transazioniRegistrazioneDumpHeadersCompactEnabled,
 				pluginsEventiSM, null);
 	}
 	public static void generate(FSRecoveryConfig config,
 			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
-			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
+			long gestioneSerializableDBAttesaAttiva, int gestioneSerializableDBCheckInterval,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
@@ -79,7 +82,7 @@ public class FSRecoveryLibrary {
 				checkDir(dirEventiDLQ, true, true);
 				
 				FSRecoveryEventi fs = new FSRecoveryEventi(config.getLogCore(),config.isDebug(), pluginsEventiSM,
-						dirEventi,dirEventiDLQ, config.getTentativi());
+						dirEventi,dirEventiDLQ, config.getTentativi(), config.getProcessingEventFileAfterMs());
 				fs.process();
 				
 				if(config.isDebug()){
@@ -128,7 +131,7 @@ public class FSRecoveryLibrary {
 				
 				FSRecoveryTransazioni fs = new FSRecoveryTransazioni(config.getLogCore(),config.isDebug(),
 						daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
-						gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
+						gestioneSerializableDBAttesaAttiva, gestioneSerializableDBCheckInterval,
 						transazioniSM,
 						tracciamentoAppender, diagnosticoAppender, 
 						dumpAppender, transazioniRegistrazioneDumpHeadersCompactEnabled, 
@@ -138,7 +141,7 @@ public class FSRecoveryLibrary {
 						dirTransazioniApplicativoServer, dirTransazioniApplicativoServerDLQ,
 						dirTransazioniApplicativoServerConsegnaTerminata, dirTransazioniApplicativoServerConsegnaTerminataDLQ,
 						dirTransazioni,dirTransazioniDLQ,
-						config.getTentativi());
+						config.getTentativi(), config.getProcessingTransactionFileAfterMs());
 				fs.process(connection);
 				
 				if(config.isDebug()){
@@ -155,23 +158,23 @@ public class FSRecoveryLibrary {
 		} 
 	}
 	
-	private static void checkDir(File dir, boolean checkWritable, boolean create) throws Exception{
-		if(dir.exists()==false){
+	private static void checkDir(File dir, boolean checkWritable, boolean create) throws UtilsException{
+		String prefix = "Directory ["+dir.getAbsolutePath()+"] ";
+		if(!dir.exists()){
 			if(create){
-				if(dir.mkdir()==false){
-					throw new Exception("Directory ["+dir.getAbsolutePath()+"] non esistente e creazione non riuscita");
+				if(!dir.mkdir()){
+					throw new UtilsException(prefix+"non esistente e creazione non riuscita");
 				}
 			}else{
-				throw new Exception("Directory ["+dir.getAbsolutePath()+"] non esistente");
+				throw new UtilsException(prefix+"non esistente");
 			}
 		}
-		if(dir.canRead()==false){
-			throw new Exception("Directory ["+dir.getAbsolutePath()+"] non accessibile in lettura");
+		if(!dir.canRead()){
+			throw new UtilsException(prefix+"non accessibile in lettura");
 		}
-		if(checkWritable){
-			if(dir.canWrite()==false){
-				throw new Exception("Directory ["+dir.getAbsolutePath()+"] non accessibile in scrittura");
-			}
+		if(checkWritable &&
+			!dir.canWrite()){
+			throw new UtilsException(prefix+"non accessibile in scrittura");
 		}
 	}
 	

@@ -37,6 +37,8 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.RegistroTipo;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -746,6 +748,95 @@ public class DriverConfigurazioneDB_configSearchDriver {
 			stmt.close();
 			
 			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			JDBCUtilities.closeResources(risultato, stmt);
+
+			this.driver.closeConnection(error,con);
+		}
+	}
+	
+	
+	
+	protected boolean existsFaseTracciamentoDBRequestIn(boolean erogazioni, boolean fruizioni) throws DriverConfigurazioneException { 
+		return existsFaseTracciamentoDB("existsFaseTracciamentoDBRequestIn", erogazioni, fruizioni,
+				true, false, false);
+	}
+	protected boolean existsFaseTracciamentoDBRequestOut(boolean erogazioni, boolean fruizioni) throws DriverConfigurazioneException { 
+		return existsFaseTracciamentoDB("existsFaseTracciamentoDBRequestOut", erogazioni, fruizioni,
+				false, true, false);
+	}
+	protected boolean existsFaseTracciamentoDBResponseOut(boolean erogazioni, boolean fruizioni) throws DriverConfigurazioneException { 
+		return existsFaseTracciamentoDB("existsFaseTracciamentoDBResponseOut", erogazioni, fruizioni,
+				false, false, true);
+	}
+	private boolean existsFaseTracciamentoDB(String nomeMetodo, boolean erogazioni, boolean fruizioni,
+			boolean inRequest, boolean outRequest, boolean outResponse) throws DriverConfigurazioneException { 
+		
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+
+		if (this.driver.atomica) {
+			try {
+				con = this.driver.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.driver.globalConnection;
+
+		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.TRACCIAMENTO_CONFIGURAZIONE);
+			sqlQueryObject.addSelectCountField("id", "cont");
+			sqlQueryObject.addWhereLikeCondition("stato", StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue(), false, false);
+			sqlQueryObject.addWhereLikeCondition(CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_COLUMN_TIPO, CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB, false, false);
+			List<String> valori = new ArrayList<>();
+			if(erogazioni) {
+				valori.add(CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
+				valori.add(CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PA);
+			}
+			if(fruizioni) {
+				valori.add(CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
+				valori.add(CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD);
+			}
+			sqlQueryObject.addWhereINCondition(CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_COLUMN_PROPRIETARIO, true, valori.toArray(new String[1]));
+			if(inRequest) {
+				sqlQueryObject.addWhereLikeCondition("request_in", StatoFunzionalita.ABILITATO.getValue(), false, false);
+			}
+			if(outRequest) {
+				sqlQueryObject.addWhereLikeCondition("request_out", StatoFunzionalita.ABILITATO.getValue(), false, false);
+			}
+			if(outResponse) {
+				sqlQueryObject.addWhereLikeCondition("response_out", StatoFunzionalita.ABILITATO.getValue(), false, false);
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			String queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			boolean result = false;
+			if (risultato.next()) {
+				int c = risultato.getInt(1);
+				result = c>0;
+			}
+			risultato.close();
+			stmt.close();
+
+			return result; 
 
 		} catch (Exception qe) {
 			error = true;

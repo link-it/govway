@@ -94,7 +94,11 @@ CREATE TABLE porte_applicative
 	ricerca_porta_azione_delegata VARCHAR(255),
 	-- Livello Log Messaggi Diagnostici
 	msg_diag_severita VARCHAR(255),
+	-- Tracciamento delle transazioni
+	tracciamento_stato VARCHAR(255),
 	tracciamento_esiti VARCHAR(255),
+	transazioni_tempi VARCHAR(255),
+	transazioni_token VARCHAR(255),
 	-- Gestione CORS
 	cors_stato VARCHAR(255),
 	cors_tipo VARCHAR(255),

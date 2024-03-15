@@ -18,7 +18,6 @@ Funzionalità Avanzate
 	ocsp
 	correlazione
 	opzioniAvanzate
-	fileTrace/index.rst
 	govway_proxy
         autenticazione
         generazione_claims

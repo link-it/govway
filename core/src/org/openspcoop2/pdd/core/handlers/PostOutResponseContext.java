@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 
 import java.util.Date;
 
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 
@@ -63,6 +64,9 @@ public class PostOutResponseContext extends OutResponseContext {
 	/** Data risposta spedita */
 	private Date dataRispostaSpedita;
 	
+	/** Transazione da aggiornare */
+	private Transazione transazioneDaAggiornare;
+
 
 	public EsitoTransazione getEsito() {
 		return this.esito;
@@ -142,5 +146,12 @@ public class PostOutResponseContext extends OutResponseContext {
 
 	public void setDataRispostaSpedita(Date dataRispostaSpedita) {
 		this.dataRispostaSpedita = dataRispostaSpedita;
+	}
+	
+	public Transazione getTransazioneDaAggiornare() {
+		return this.transazioneDaAggiornare;
+	}
+	public void setTransazioneDaAggiornare(Transazione transazioneDaAggiornare) {
+		this.transazioneDaAggiornare = transazioneDaAggiornare;
 	}
 }

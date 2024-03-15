@@ -4417,7 +4417,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdAsps);
 							if(visualizzazioneTabs) {
 								setStatoTracciamento(de, paAssociata.getCorrelazioneApplicativa(), 
-										paAssociata.getCorrelazioneApplicativaRisposta(), paAssociata.getTracciamento(), configurazioneGenerale);	
+										paAssociata.getCorrelazioneApplicativaRisposta(), 
+										paAssociata.getTracciamento(), 
+										(configurazioneGenerale!=null && configurazioneGenerale.getTracciamento()!=null) ? configurazioneGenerale.getTracciamento().getPortaApplicativa() : null,
+										paAssociata.getProprieta(),
+										configurazioneGenerale);	
 							}
 							else {
 								String statoTracciamento = getStatoTracciamentoPortaApplicativa(paAssociata);
@@ -6073,7 +6077,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 							if(visualizzazioneTabs) {
 								setStatoTracciamento(de, pdAssociata.getCorrelazioneApplicativa(), 
-										pdAssociata.getCorrelazioneApplicativaRisposta(), pdAssociata.getTracciamento(), configurazioneGenerale);	
+										pdAssociata.getCorrelazioneApplicativaRisposta(), pdAssociata.getTracciamento(),
+										(configurazioneGenerale!=null && configurazioneGenerale.getTracciamento()!=null) ? configurazioneGenerale.getTracciamento().getPortaDelegata() : null,
+										pdAssociata.getProprieta(), 
+										configurazioneGenerale);	
 							}
 							else {
 								String statoTracciamento = getStatoTracciamentoPortaDelegata(pdAssociata);

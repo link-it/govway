@@ -69,6 +69,7 @@ import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazionePortaHandler;
+import org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -114,7 +115,9 @@ import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
@@ -124,6 +127,7 @@ import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
+import org.openspcoop2.core.config.utils.TracciamentoCompatibilitaFiltroEsiti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
@@ -191,6 +195,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
@@ -266,6 +271,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
+import org.openspcoop2.web.ctrlstat.core.InitListener;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
@@ -2138,7 +2144,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				int dimensioneEntries = 0;
 
 
-				dimensioneEntries = 6; // configurazione, tracciamento, controllo del traffico, policy, aa e audit
+				dimensioneEntries = 7; // configurazione, controllo del traffico, tracciamento, registrazioneMessaggi, policy, aa e audit
 				
 				if(this.core.isConfigurazioneAllarmiEnabled())
 					dimensioneEntries++; // configurazione allarmi
@@ -2198,11 +2204,16 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 				
-				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU;
-				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI;
-				index++;
 				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
 				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
+				index++;
+				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU;
+				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI+"?"+
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE+"="+ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO;
+				index++;
+				entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI_MENU;
+				entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI+"?"+
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE+"="+ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_REGISTRAZIONE_MESSAGGI;
 				index++;
 				if(this.core.isConfigurazioneAllarmiEnabled()) { // configurazione allarmi
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI;
@@ -10524,28 +10535,90 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void setStatoTracciamento(DataElement de, 
 			CorrelazioneApplicativa correlazioneApplicativa,
 			CorrelazioneApplicativaRisposta correlazioneApplicativaRisposta,
-			PortaTracciamento tracciamentoConfig, Configurazione configurazioneGenerale) throws DriverControlStationException {
+			PortaTracciamento tracciamentoConfig, ConfigurazioneTracciamentoPorta configurazioneTracciamento,
+			List<Proprieta> proprietaPorta,
+			Configurazione configurazioneGenerale) throws DriverControlStationException {
 		
 		de.setType(DataElementType.MULTI_SELECT);
 				
 		String tooltipTransazioni = null;
-		boolean transazioni = false;
-		if(tracciamentoConfig!=null && tracciamentoConfig.getEsiti()!=null) {
+		boolean transazioniDB = false;
+		boolean transazioniFiletrace = false;
+		if(tracciamentoConfig!=null && tracciamentoConfig.getStato()!=null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(tracciamentoConfig.getStato())) {
+			
 			tooltipTransazioni = CostantiControlStation.LABEL_CONFIGURAZIONE_RIDEFINITA;
-			transazioni = !(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"").equals(tracciamentoConfig.getEsiti());
+			
+			transazioniDB = tracciamentoConfig.getDatabase()==null || tracciamentoConfig.getDatabase().getStato()==null ||
+					!org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(tracciamentoConfig.getDatabase().getStato());
+			if(transazioniDB && 
+					(tracciamentoConfig.getDatabase()==null || tracciamentoConfig.getDatabase().getFiltroEsiti()==null || 
+							org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(tracciamentoConfig.getDatabase().getFiltroEsiti()))
+					) {
+				transazioniDB = tracciamentoConfig.getEsiti()!=null 
+						&&!(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"").equals(tracciamentoConfig.getEsiti());
+			}
+			
+			transazioniFiletrace = tracciamentoConfig.getFiletrace()!=null && tracciamentoConfig.getFiletrace().getStato()!=null &&
+					!org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(tracciamentoConfig.getFiletrace().getStato());
+			if(transazioniFiletrace && 
+					(tracciamentoConfig.getDatabase()!=null && tracciamentoConfig.getDatabase().getFiltroEsiti()!=null && 
+							org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(tracciamentoConfig.getDatabase().getFiltroEsiti()))
+					) {
+				transazioniFiletrace = tracciamentoConfig.getEsiti()!=null 
+						&&!(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"").equals(tracciamentoConfig.getEsiti());
+			}
 		}
 		else {
 			tooltipTransazioni = CostantiControlStation.LABEL_CONFIGURAZIONE_DEFAULT;
-			String esitiTransazioni = this.readConfigurazioneRegistrazioneEsitiFromHttpParameters((configurazioneGenerale!=null && configurazioneGenerale.getTracciamento()!=null) ? configurazioneGenerale.getTracciamento().getEsiti() : null , true);
-			transazioni = (
-					esitiTransazioni!=null 
-					&& 
-					!(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"").equals(esitiTransazioni)
-			);
+			String esitiTransazioni = this.readConfigurazioneRegistrazioneEsitiFromHttpParameters((configurazioneTracciamento!=null) ? configurazioneTracciamento.getEsiti() : null , true);
+			
+			transazioniDB = configurazioneTracciamento.getDatabase()==null || configurazioneTracciamento.getDatabase().getStato()==null ||
+					!org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(configurazioneTracciamento.getDatabase().getStato());
+			if(transazioniDB && 
+					(configurazioneTracciamento.getDatabase()==null || configurazioneTracciamento.getDatabase().getFiltroEsiti()==null || 
+							org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(configurazioneTracciamento.getDatabase().getFiltroEsiti()))
+					) {
+				transazioniDB = esitiTransazioni!=null 
+						&& !(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"").equals(esitiTransazioni);
+			}	
+			
+			transazioniFiletrace = configurazioneTracciamento.getFiletrace()!=null && configurazioneTracciamento.getFiletrace().getStato()!=null &&
+					!org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(configurazioneTracciamento.getFiletrace().getStato());
+			if(org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
+				transazioniFiletrace = (InitListener.getFileTraceGovWayState()!=null) ? InitListener.getFileTraceGovWayState().isEnabled() : transazioniFiletrace;
+			}
+			if(transazioniFiletrace && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
+				transazioniFiletrace = CostantiProprieta.isFileTraceEnabled(proprietaPorta, transazioniFiletrace);
+			}
+			if(transazioniFiletrace && 
+					(configurazioneTracciamento.getFiletrace()!=null && configurazioneTracciamento.getFiletrace().getFiltroEsiti()!=null && 
+							org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(configurazioneTracciamento.getFiletrace().getFiltroEsiti()))
+					) {
+				transazioniFiletrace = esitiTransazioni!=null 
+						&& !(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"").equals(esitiTransazioni);
+			}	
 		}
+		StringBuilder sbTransazioni = new StringBuilder();
+		if(
+				//transazioniDB se solo transazioni DB non aggiungo l'informazione 
+				//|| 
+				transazioniFiletrace) {
+			sbTransazioni.append(" [ ");
+			if(transazioniDB) {
+				sbTransazioni.append("DB");
+				if(transazioniFiletrace) {
+					sbTransazioni.append(",");
+				}
+			}
+			if(transazioniFiletrace) {
+				sbTransazioni.append("FileTrace");
+			}
+			sbTransazioni.append(" ]");
+		}
+		String suffixTooltipTransazioni = sbTransazioni.length()>0 ? sbTransazioni.toString() : "";
 		de.addStatus(tooltipTransazioni, 
-				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI, 
-				transazioni? CheckboxStatusType.CONFIG_ENABLE :CheckboxStatusType.CONFIG_DISABLE);
+				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI+suffixTooltipTransazioni, 
+				transazioniDB || transazioniFiletrace? CheckboxStatusType.CONFIG_ENABLE :CheckboxStatusType.CONFIG_DISABLE);
 		
 		
 		String tooltipSeverita = null;
@@ -13255,6 +13328,41 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
+	public String addFilterConfigurazioneTransazioni(ISearch ricerca, int idLista, boolean postBack) throws DriverControlStationException{
+		String configurazioneTransazioniTipoValue = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRANSAZIONI_QUALSIASI;
+		try {
+			List<String> tipoList = new ArrayList<>();
+			tipoList.add(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_DEFAULT);
+			tipoList.add(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_O_FILETRACE);
+			tipoList.add(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_SOLO_DATABASE);
+			tipoList.add(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_SOLO_FILETRACE);
+			tipoList.add(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_ABILITATO_DATABASE_E_FILETRACE);
+			tipoList.add(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI_VALORE_RIDEFINITO_DISABILITATO);
+			
+			
+			int length = tipoList.size() + 1;
+			
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSAZIONI_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRANSAZIONI_QUALSIASI;
+			for (int i =0; i < tipoList.size() ; i ++) {
+				labels[i+1] = tipoList.get(i);
+				values[i+1] = tipoList.get(i);
+			}
+			
+			configurazioneTransazioniTipoValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI);
+			
+			this.pd.addFilter(Filtri.FILTRO_CONFIGURAZIONE_TRANSAZIONI, CostantiControlStation.LABEL_FILTRO_CONFIGURAZIONE_TRANSAZIONI, configurazioneTransazioniTipoValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.logError("Exception: " + e.getMessage(), e);
+			throw new DriverControlStationException(e);
+		}
+		
+		return configurazioneTransazioniTipoValue;
+	}
+	
 	public void addFilterConfigurazioneCorrelazioneApplicativa(ISearch ricerca, int idLista) throws DriverControlStationException{
 		try {
 			
@@ -15650,6 +15758,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.add(de);
 	}
 	
+	public void addToDatiHiddenParameter(List<DataElement> dati,String name, String value){
+		DataElement de = new DataElement();
+		de.setName(name);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(value);
+		dati.add(de);
+	}
+	
 	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws DriverControlStationException {
 		PermessiUtente pu = user.getPermessi();
 		Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
@@ -15839,529 +15955,581 @@ public class ConsoleHelper implements IConsoleHelper {
 		listCors.add(esitoCorsTrasparente);
 		return listCors;
 	}
+		
+	public void addToDatiTracciamentoTransazioni(List<DataElement> dati, TipoOperazione tipoOperazione,
+			String tracciamentoStato, 
+			String servletName, List<Parameter> listParameter,
+			String oldTracciamentoStato) {
+		
+		if(tipoOperazione!=null) {
+			// nop
+		}
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_TRACCIAMENTO_STATO);
+		de.setType(DataElementType.SELECT);
+		String [] valuesStato = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
+		String [] labelsStato = {CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
+		de.setSelected(tracciamentoStato);
+		de.setLabels(labelsStato);
+		de.setValues(valuesStato); 
+		de.setPostBack_viaPOST(true);
+		dati.add(de);
+		
+		if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(oldTracciamentoStato)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			listParameter.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE, ConfigurazioneCostanti.VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO_PORTA));
+			de.setUrl(servletName, 
+					listParameter.toArray(new Parameter[1]));
+			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_CONFIGURAZIONE);
+			dati.add(de);
+			
+		}
+		
+	}
 	
 	public void addToDatiRegistrazioneEsiti(List<DataElement> dati, TipoOperazione tipoOperazione, 
-			String tracciamentoEsitiStato,
 			String nuovaConfigurazioneEsiti,
 			boolean selectAll,
 			String tracciamentoEsitiSelezionePersonalizzataOk, String tracciamentoEsitiSelezionePersonalizzataFault, 
 			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataScartate, 
-			String tracciamentoEsitiSelezionePersonalizzataRateLimiting, String tracciamentoEsitiSelezionePersonalizzataMax, String tracciamentoEsitiSelezionePersonalizzataCors) throws DriverControlStationException {
+			String tracciamentoEsitiSelezionePersonalizzataRateLimiting, String tracciamentoEsitiSelezionePersonalizzataMax, String tracciamentoEsitiSelezionePersonalizzataCors,
+			TracciamentoCompatibilitaFiltroEsiti tracciamentoCompatibilitaFiltroEsiti) throws DriverControlStationException {
 		
-	
+		if(tipoOperazione!=null) {
+			// nop
+		}
+		
+		if(tracciamentoCompatibilitaFiltroEsiti!=null && !tracciamentoCompatibilitaFiltroEsiti.isTracciamentoEnabled()) {
+			return;
+		}
+		
+		boolean filterEnabled = tracciamentoCompatibilitaFiltroEsiti==null || tracciamentoCompatibilitaFiltroEsiti.isFilterEnabled();
+		if(!filterEnabled){
+			return;
+		}
+		
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
 		de.setType(DataElementType.TITLE);
 		dati.add(de);
-				
-		if(tracciamentoEsitiStato!=null) {
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			de.setName(CostantiControlStation.PARAMETRO_PORTE_TRACCIAMENTO_ESITO);
-			de.setType(DataElementType.SELECT);
-			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
-			String labelsStato [] = {CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
-			de.setSelected(tracciamentoEsitiStato);
-			de.setLabels(labelsStato);
-			de.setValues(valuesStato); 
-			de.setPostBack_viaPOST(true);
-			dati.add(de);
+						
+		de = new DataElement();
+		de.setValue(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
+		de.setType(DataElementType.NOTE);
+		dati.add(de);
+		
+		if(tracciamentoCompatibilitaFiltroEsiti!=null) {
+			String warningMsg = tracciamentoCompatibilitaFiltroEsiti.getWarningMessageFilter();
+			if(warningMsg!=null && StringUtils.isNotEmpty(warningMsg)) {
+				de = new DataElement();
+				de.setValue(warningMsg);
+				de.setLabel("Nota");
+				de.setBold(true);
+				de.setType(DataElementType.NOTE);
+				dati.add(de);
+			}
 		}
 		
-		if(tracciamentoEsitiStato==null || CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoEsitiStato) ) {
-			de = new DataElement();
-			de.setValue(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
-			de.setType(DataElementType.NOTE);
-			dati.add(de);
-			
-			
-			List<String> attivi = new ArrayList<>();
-			if(nuovaConfigurazioneEsiti!=null){
-				String [] tmp = nuovaConfigurazioneEsiti.split(",");
-				if(tmp!=null){
-					for (int i = 0; i < tmp.length; i++) {
-						attivi.add(tmp[i].trim());
-					}
+		List<String> attivi = new ArrayList<>();
+		if(nuovaConfigurazioneEsiti!=null){
+			String [] tmp = nuovaConfigurazioneEsiti.split(",");
+			if(tmp!=null){
+				for (int i = 0; i < tmp.length; i++) {
+					attivi.add(tmp[i].trim());
 				}
 			}
-			
-			
-			EsitiProperties esiti = null;
-			try {
-				esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
-			}catch(Exception e) {
-				throw new DriverControlStationException(e.getMessage(),e);
-			}
-			
-			List<String> values = new ArrayList<>();
-			values.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
-			values.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
-			values.add(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO);
-			
-			List<String> values_senza_personalizzato = new ArrayList<>();
-			values_senza_personalizzato.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
-			values_senza_personalizzato.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
-			
-			
-			// select all
-			
+		}
+		
+		
+		EsitiProperties esiti = null;
+		try {
+			esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		
+		List<String> values = new ArrayList<>();
+		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
+		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
+		values.add(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO);
+		
+		List<String> valuesSenzaPersonalizzato = new ArrayList<>();
+		valuesSenzaPersonalizzato.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
+		valuesSenzaPersonalizzato.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
+		
+		
+		// select all
+		
+		de = new DataElement();
+		de.setLabelRight(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
+		de.setType(DataElementType.CHECKBOX);
+		de.setSelected(selectAll);
+		de.setPostBack_viaPOST(true);
+		dati.add(de);
+		
+		
+		// ok
+		
+		List<Integer> listOk = null;
+		try {
+			listOk = getListaEsitiOkSenzaCors(esiti);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		
+		if(!selectAll) {
 			de = new DataElement();
-			de.setLabelRight(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
-			de.setType(DataElementType.CHECKBOX);
-			de.setSelected(selectAll);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+		}
+				
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
+		if(!selectAll) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
 			de.setPostBack_viaPOST(true);
-			dati.add(de);
-			
-			
-			// ok
-			
-			List<Integer> listOk = null;
-			try {
-				listOk = getListaEsitiOkSenzaCors(esiti);
-			}catch(Exception e) {
-				throw new DriverControlStationException(e.getMessage(),e);
-			}
-			
-			if(!selectAll) {
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
-				de.setType(DataElementType.SUBTITLE);
-				dati.add(de);
-			}
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
+		}
+		dati.add(de);
+				
+		if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
+				selectAll) {
+			for (Integer esito : listOk) {
+				
+				try {
+					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
 					
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
-			if(!selectAll) {
-				de.setType(DataElementType.SELECT);
-				de.setValues(values);
-				de.setLabels(values);
-				de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
-				de.setPostBack_viaPOST(true);
-			}
-			else {
-				de.setType(DataElementType.HIDDEN);
-				de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
-			}
-			dati.add(de);
-					
-			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
-					selectAll) {
-				for (Integer esito : listOk) {
-					
-					try {
-						EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
-						
-						boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
-						if(statiConsegnaMultipla) {
-							continue; // non vengono gestiti in questa configurazione
-						}
-						
-						boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
-						boolean integrationManagerSavedInMessageBox = EsitoTransazioneName.isSavedInMessageBox(esitoTransactionName);		
-											
-						de = new DataElement();
-						if(EsitoTransazioneName.CONSEGNA_MULTIPLA.equals(esitoTransactionName)) {
-							de.setLabelRight(EsitoUtils.LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI);
-						}
-						else {
-							de.setLabelRight(esiti.getEsitoLabel(esito));
-						}
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
-							if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
-								de.setType(DataElementType.HIDDEN);
-								de.setValue(attivi.contains((esito+""))+"");
-							}
-							else if(integrationManagerSavedInMessageBox && (!this.core.isIntegrationManagerEnabled())) {
-								de.setType(DataElementType.HIDDEN);
-								de.setValue(attivi.contains((esito+""))+"");
-							}
-							else {
-								de.setType(DataElementType.CHECKBOX);
-								de.setSelected(attivi.contains((esito+"")));
-							}
-						}
-						else {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue("true");
-						}
-						dati.add(de);
-					}catch(Exception e) {
-						throw new DriverControlStationException(e.getMessage(),e);
+					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+					if(statiConsegnaMultipla) {
+						continue; // non vengono gestiti in questa configurazione
 					}
-				}
-			}
-			
-			
-			
-			// fault
-			
-			List<Integer> listFault = null;
-			try {
-				listFault = esiti.getEsitiCodeFaultApplicativo();
-			}catch(Exception e) {
-				throw new DriverControlStationException(e.getMessage(),e);
-			}
-			
-			if(!selectAll) {
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
-				de.setType(DataElementType.SUBTITLE);
-				dati.add(de);
-			}
 					
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
-			if(!selectAll) {
-				de.setType(DataElementType.SELECT);
-				if(listFault.size()>1) {
-					de.setValues(values);
-					de.setLabels(values);
-				}
-				else {
-					de.setValues(values_senza_personalizzato);
-					de.setLabels(values_senza_personalizzato);
-				}
-				de.setSelected(tracciamentoEsitiSelezionePersonalizzataFault);
-				de.setPostBack_viaPOST(true);
-			}
-			else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(tracciamentoEsitiSelezionePersonalizzataFault);
-			}
-			dati.add(de);
-					
-			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
-					selectAll) {
-				for (Integer esito : listFault) {
-					try {
-						de = new DataElement();
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+					boolean integrationManagerSavedInMessageBox = EsitoTransazioneName.isSavedInMessageBox(esitoTransactionName);		
+										
+					de = new DataElement();
+					if(EsitoTransazioneName.CONSEGNA_MULTIPLA.equals(esitoTransactionName)) {
+						de.setLabelRight(EsitoUtils.LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI);
+					}
+					else {
 						de.setLabelRight(esiti.getEsitoLabel(esito));
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
+					}
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
+						if(
+								(
+										integrationManagerSpecific && 
+										(this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())
+								)
+								||
+								(
+										integrationManagerSavedInMessageBox && (!this.core.isIntegrationManagerEnabled())
+								)
+						) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
+						}
+						else {
 							de.setType(DataElementType.CHECKBOX);
 							de.setSelected(attivi.contains((esito+"")));
 						}
-						else {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue("true");
-						}
-						dati.add(de);
-					}catch(Exception e) {
-						throw new DriverControlStationException(e.getMessage(),e);
 					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue("true");
+					}
+					dati.add(de);
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
 				}
 			}
-			
-			
-			
-			// fallite
-			
-			List<Integer> listFalliteSenza_MaxThreads_Scartate = null;
-			try {
-				listFalliteSenza_MaxThreads_Scartate = getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(esiti);
-			}catch(Exception e) {
-				throw new DriverControlStationException(e.getMessage(),e);
-			}
-			
-			if(!selectAll) {
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
-				de.setType(DataElementType.SUBTITLE);
-				dati.add(de);
-			}
-					
+		}
+		
+		
+		
+		// fault
+		
+		List<Integer> listFault = null;
+		try {
+			listFault = esiti.getEsitiCodeFaultApplicativo();
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		
+		if(!selectAll) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
-			if(!selectAll) {
-				de.setType(DataElementType.SELECT);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+		}
+				
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
+		if(!selectAll) {
+			de.setType(DataElementType.SELECT);
+			if(listFault.size()>1) {
 				de.setValues(values);
 				de.setLabels(values);
-				de.setSelected(tracciamentoEsitiSelezionePersonalizzataFallite);
-				de.setPostBack_viaPOST(true);
 			}
 			else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(tracciamentoEsitiSelezionePersonalizzataFallite);
+				de.setValues(valuesSenzaPersonalizzato);
+				de.setLabels(valuesSenzaPersonalizzato);
 			}
-			dati.add(de);
-					
-			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
-					selectAll) {
-				for (Integer esito : listFalliteSenza_MaxThreads_Scartate) {
-					
-					try {
-						EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
-						
-						boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
-						if(statiConsegnaMultipla) {
-							continue; // non vengono gestiti in questa configurazione
-						}
-						
-						boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
-						
-						de = new DataElement();
-						de.setLabelRight(esiti.getEsitoLabel(esito));
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
-							if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
-								de.setType(DataElementType.HIDDEN);
-								de.setValue(attivi.contains((esito+""))+"");
-							}
-							else {
-								de.setType(DataElementType.CHECKBOX);
-								de.setSelected(attivi.contains((esito+"")));
-							}
-						}
-						else {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue("true");
-						}
-						dati.add(de);
-					}catch(Exception e) {
-						throw new DriverControlStationException(e.getMessage(),e);
+			de.setSelected(tracciamentoEsitiSelezionePersonalizzataFault);
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(tracciamentoEsitiSelezionePersonalizzataFault);
+		}
+		dati.add(de);
+				
+		if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
+				selectAll) {
+			for (Integer esito : listFault) {
+				try {
+					de = new DataElement();
+					de.setLabelRight(esiti.getEsitoLabel(esito));
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(attivi.contains((esito+"")));
 					}
-					
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue("true");
+					}
+					dati.add(de);
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
 				}
 			}
-			
-			
-			
-			// Scartate
-			
-			List<Integer> listScartate = null;
-			try {
-				listScartate = esiti.getEsitiCodeRichiestaScartate();
-			}catch(Exception e) {
-				throw new DriverControlStationException(e.getMessage(),e);
-			}
-			
-			if(!selectAll) {
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
-				de.setType(DataElementType.SUBTITLE);
-				dati.add(de);
-			}
-					
+		}
+		
+		
+		
+		// fallite
+		
+		List<Integer> listFalliteSenzaMaxThreadsScartate = null;
+		try {
+			listFalliteSenzaMaxThreadsScartate = getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(esiti);
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		
+		if(!selectAll) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
-			if(!selectAll) {
-				de.setType(DataElementType.SELECT);
-				de.setValues(values);
-				de.setLabels(values);
-				de.setSelected(tracciamentoEsitiSelezionePersonalizzataScartate);
-				de.setPostBack_viaPOST(true);
-			}
-			else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(tracciamentoEsitiSelezionePersonalizzataScartate);
-			}
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+			de.setType(DataElementType.SUBTITLE);
 			dati.add(de);
+		}
+				
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+		if(!selectAll) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(tracciamentoEsitiSelezionePersonalizzataFallite);
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(tracciamentoEsitiSelezionePersonalizzataFallite);
+		}
+		dati.add(de);
+				
+		if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
+				selectAll) {
+			for (Integer esito : listFalliteSenzaMaxThreadsScartate) {
+				
+				try {
+					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
 					
-			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
-					selectAll) {
-				for (Integer esito : listScartate) {
+					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+					if(statiConsegnaMultipla) {
+						continue; // non vengono gestiti in questa configurazione
+					}
 					
-					try {
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
 					
-						EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
-						
-						boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
-						if(statiConsegnaMultipla) {
-							continue; // non vengono gestiti in questa configurazione
-						}
-						
-						boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
-						
-						de = new DataElement();
-						de.setLabelRight(esiti.getEsitoLabel(esito));
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate)) {
-							if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
-								de.setType(DataElementType.HIDDEN);
-								de.setValue(attivi.contains((esito+""))+"");
-							}
-							else {
-								de.setType(DataElementType.CHECKBOX);
-								de.setSelected(attivi.contains((esito+"")));
-							}
+					de = new DataElement();
+					de.setLabelRight(esiti.getEsitoLabel(esito));
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
+						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
 						}
 						else {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue("true");
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(attivi.contains((esito+"")));
 						}
-						dati.add(de);
-						
-					}catch(Exception e) {
-						throw new DriverControlStationException(e.getMessage(),e);
 					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue("true");
+					}
+					dati.add(de);
+				}catch(Exception e) {
+					throw new DriverControlStationException(e.getMessage(),e);
 				}
+				
 			}
-					
-			
-			
-			
-			// rate limiting
-			
-			if(!selectAll) {
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
-				de.setType(DataElementType.SUBTITLE);
-				dati.add(de);
-			}
-			
-			String esitoViolazioneRateLimitingAsString = null;
-			try {
-				esitoViolazioneRateLimitingAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA) + "";
-			}catch(Exception e) {
-				throw new DriverControlStationException(e.getMessage(),e);
-			}
-			
+		}
+		
+		
+		
+		// Scartate
+		
+		List<Integer> listScartate = null;
+		try {
+			listScartate = esiti.getEsitiCodeRichiestaScartate();
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		
+		if(!selectAll) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
-			if(!selectAll) {
-				de.setType(DataElementType.SELECT);
-				de.setValues(values_senza_personalizzato);
-				de.setLabels(values_senza_personalizzato);
-				de.setSelected(tracciamentoEsitiSelezionePersonalizzataRateLimiting);
-				de.setPostBack_viaPOST(true);
-			}
-			else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(tracciamentoEsitiSelezionePersonalizzataRateLimiting);
-			}
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
+			de.setType(DataElementType.SUBTITLE);
 			dati.add(de);
-			
-			if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataRateLimiting) ||
-					selectAll) {
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneRateLimitingAsString);
-				de.setType(DataElementType.HIDDEN);
-				de.setValue("true");
-				dati.add(de);
-			}
-			
-			
-			
-			
-			
-			// max
-			
-			if(!selectAll) {
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
-				de.setType(DataElementType.SUBTITLE);
-				dati.add(de);
-			}
-			
-			String esitoViolazioneAsString = null;
-			try{
-				esitoViolazioneAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS) + "";
-			}catch(Exception e) {
-				throw new DriverControlStationException(e.getMessage(),e);
-			}
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
-			if(!selectAll) {
-				de.setType(DataElementType.SELECT);
-				de.setValues(values_senza_personalizzato);
-				de.setLabels(values_senza_personalizzato);
-				de.setSelected(tracciamentoEsitiSelezionePersonalizzataMax);
-				de.setPostBack_viaPOST(true);
-			}
-			else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(tracciamentoEsitiSelezionePersonalizzataMax);
-			}
-			dati.add(de);
-			
-			if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataMax) ||
-					selectAll) {
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneAsString);
-				de.setType(DataElementType.HIDDEN);
-				de.setValue("true");
-				dati.add(de);
-			}
-			
-			
-			
-			
-			// cors
-			
-			if(!selectAll) {
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
-				de.setType(DataElementType.SUBTITLE);
-				dati.add(de);
-			}
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
-			if(!selectAll) {
-				de.setType(DataElementType.SELECT);
-				de.setValues(values);
-				de.setLabels(values);
-				de.setSelected(tracciamentoEsitiSelezionePersonalizzataCors);
-				de.setPostBack_viaPOST(true);
-			}
-			else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(tracciamentoEsitiSelezionePersonalizzataCors);
-			}
-			dati.add(de);
-					
-			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
-					selectAll) {
+		}
+				
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
+		if(!selectAll) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(tracciamentoEsitiSelezionePersonalizzataScartate);
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(tracciamentoEsitiSelezionePersonalizzataScartate);
+		}
+		dati.add(de);
+				
+		if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
+				selectAll) {
+			for (Integer esito : listScartate) {
 				
 				try {
 				
-					List<Integer> listCors = this.getListaEsitiCors(esiti);
+					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
 					
-					for (Integer esito : listCors) {
-						
-						EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
-						boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
-						
-						de = new DataElement();
-						de.setLabelRight(esiti.getEsitoLabel(esito));
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-						if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
-							if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
-								de.setType(DataElementType.HIDDEN);
-								de.setValue(attivi.contains((esito+""))+"");
-							}
-							else {
-								de.setType(DataElementType.CHECKBOX);
-								de.setSelected(attivi.contains((esito+"")));
-							}
+					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+					if(statiConsegnaMultipla) {
+						continue; // non vengono gestiti in questa configurazione
+					}
+					
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+					
+					de = new DataElement();
+					de.setLabelRight(esiti.getEsitoLabel(esito));
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate)) {
+						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
 						}
 						else {
-							de.setType(DataElementType.HIDDEN);
-							de.setValue("true");
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(attivi.contains((esito+"")));
 						}
-						dati.add(de);
 					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue("true");
+					}
+					dati.add(de);
 					
 				}catch(Exception e) {
 					throw new DriverControlStationException(e.getMessage(),e);
 				}
 			}
+		}
+				
+		
+		
+		
+		// rate limiting
+		
+		if(!selectAll) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+		}
+		
+		String esitoViolazioneRateLimitingAsString = null;
+		try {
+			esitoViolazioneRateLimitingAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA) + "";
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
+		if(!selectAll) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(valuesSenzaPersonalizzato);
+			de.setLabels(valuesSenzaPersonalizzato);
+			de.setSelected(tracciamentoEsitiSelezionePersonalizzataRateLimiting);
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(tracciamentoEsitiSelezionePersonalizzataRateLimiting);
+		}
+		dati.add(de);
+		
+		if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataRateLimiting) ||
+				selectAll) {
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneRateLimitingAsString);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("true");
+			dati.add(de);
+		}
+		
+		
+		
+		
+		
+		// max
+		
+		if(!selectAll) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+		}
+		
+		String esitoViolazioneAsString = null;
+		try{
+			esitoViolazioneAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS) + "";
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
+		if(!selectAll) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(valuesSenzaPersonalizzato);
+			de.setLabels(valuesSenzaPersonalizzato);
+			de.setSelected(tracciamentoEsitiSelezionePersonalizzataMax);
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(tracciamentoEsitiSelezionePersonalizzataMax);
+		}
+		dati.add(de);
+		
+		if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataMax) ||
+				selectAll) {
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneAsString);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("true");
+			dati.add(de);
+		}
+		
+		
+		
+		
+		// cors
+		
+		if(!selectAll) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
+		if(!selectAll) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(tracciamentoEsitiSelezionePersonalizzataCors);
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(tracciamentoEsitiSelezionePersonalizzataCors);
+		}
+		dati.add(de);
+				
+		if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
+				selectAll) {
 			
+			try {
+			
+				List<Integer> listCors = this.getListaEsitiCors(esiti);
+				
+				for (Integer esito : listCors) {
+					
+					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+					
+					de = new DataElement();
+					de.setLabelRight(esiti.getEsitoLabel(esito));
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
+						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
+						}
+						else {
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(attivi.contains((esito+"")));
+						}
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue("true");
+					}
+					dati.add(de);
+				}
+				
+			}catch(Exception e) {
+				throw new DriverControlStationException(e.getMessage(),e);
+			}
 		}
 
 	}
@@ -16412,6 +16580,386 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		dati.add(de);	
 		
+	}
+	
+	
+	public void addToDatiRegistrazioneConfigurazioneFileTrace(List<DataElement> dati, 
+			String fileTraceStato, String fileTraceConfigFile,
+			String fileTraceClient, String fileTraceClientHdr, String fileTraceClientBody,
+			String fileTraceServer, String fileTraceServerHdr, String fileTraceServerBody,
+			TracciamentoCompatibilitaFiltroEsiti tracciamentoCompatibilitaFiltroEsiti) {
+		
+		if(!tracciamentoCompatibilitaFiltroEsiti.isTracciamentoFileTraceEnabled()) {
+			return;
+		}
+		if(!tracciamentoCompatibilitaFiltroEsiti.isTracciamentoFileTraceEnabled() || tracciamentoCompatibilitaFiltroEsiti.isTracciamentoFileTraceEnabledByExternalProperties() ) {
+			return;
+		}
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+			
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_STATO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_FILETRACE_STATO);
+		de.setType(DataElementType.SELECT);
+		String [] valuesStato = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
+		String [] labelsStato = {CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
+		de.setSelected(fileTraceStato);
+		de.setLabels(labelsStato);
+		de.setValues(valuesStato); 
+		de.setPostBack_viaPOST(true);
+		dati.add(de);
+		
+		boolean ridefinito = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(fileTraceStato);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_CONFIGURAZIONE);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_FILETRACE_CONFIGURAZIONE);
+		de.setValue(fileTraceConfigFile);
+		if(ridefinito) {
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(2);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		dati.add(de);	
+		
+		
+		if(ridefinito) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_REGISTRAZIONE_MESSAGGI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+			
+			de = new DataElement();
+			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_REGISTRAZIONE_MESSAGGI_NOTE);
+			de.setType(DataElementType.NOTE);
+			dati.add(de);	
+		}
+		
+		
+		List<String> values = new ArrayList<>();
+		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
+		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
+			
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_CLIENT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_FILETRACE_CLIENT);
+		if(ridefinito) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(fileTraceClient);
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(fileTraceClient);
+		}
+		dati.add(de);	
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_HEADER);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_FILETRACE_CLIENT_HEADER);
+		if(ridefinito && ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceClient)) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(fileTraceClientHdr);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(fileTraceClientHdr);
+		}
+		dati.add(de);	
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_PAYLOAD);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_FILETRACE_CLIENT_PAYLOAD);
+		if(ridefinito && ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceClient)) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(fileTraceClientBody);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(fileTraceClientBody);
+		}
+		dati.add(de);	
+		
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_SERVER);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_FILETRACE_SERVER);
+		if(ridefinito) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(fileTraceServer);
+			de.setPostBack_viaPOST(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(fileTraceServer);
+		}
+		dati.add(de);	
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_HEADER);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_FILETRACE_SERVER_HEADER);
+		if(ridefinito && ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceServer)) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(fileTraceServerHdr);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(fileTraceServerHdr);
+		}
+		dati.add(de);	
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILETRACE_PAYLOAD);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_FILETRACE_SERVER_PAYLOAD);
+		if(ridefinito && ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(fileTraceServer)) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(fileTraceServerBody);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(fileTraceServerBody);
+		}
+		dati.add(de);	
+	}
+	
+	
+	public void addToDatiConfigurazioneAvanzataTracciamento(List<DataElement> dati, TipoOperazione tipoOperazione,
+			String dbStato,
+			String dbStatoReqIn, String dbStatoReqOut, String dbStatoResOut, String dbStatoResOutComplete,
+			boolean dbFiltroEsiti,
+			String fsStato,
+			String fsStatoReqIn, String fsStatoReqOut, String fsStatoResOut, String fsStatoResOutComplete,
+			boolean fsFiltroEsiti,
+			boolean porta) {
+							
+
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+		
+		
+		// DATABASE
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE);
+		de.setType(DataElementType.SUBTITLE);
+		/**de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);*/
+		dati.add(de);
+		
+		// stato abilitazione
+		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO, 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO, 
+				false, 
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO,
+				dbStato,
+				true,
+				true,
+				false);
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_REQ_IN, 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_IN, 
+				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato), // hidden
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_IN,
+				dbStatoReqIn,
+				true);
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_REQ_OUT, 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_OUT, 
+				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato), // hidden
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_OUT,
+				dbStatoReqOut,
+				true);
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT, 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT, 
+				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato), // hidden
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT,
+				dbStatoResOut,
+				true);
+		if(this.core.isTracciamentoDatabaseRispostaConsegnataSelectEnabled()) {
+			addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT_COMPLETE, 
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE, 
+					!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato), // hidden
+					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE,
+					dbStatoResOutComplete,
+					false);
+		}
+		else {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT_COMPLETE);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE);
+			boolean hidden = !StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato);
+			if(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato)) {
+				dbStatoResOutComplete = org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.getValue();
+			}
+			if(hidden) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setType(DataElementType.TEXT);
+			}
+			de.setValue(dbStatoResOutComplete);
+			dati.add(de);
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_FILTRA_ESITI);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_FILTRA_ESITI);
+		if(StatoFunzionalitaConPersonalizzazione.DISABILITATO.getValue().equals(dbStato) ||
+				(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(dbStato) && 
+						(StatoFunzionalitaBloccante.ABILITATO.getValue().equals(dbStatoReqIn) || StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue().equals(dbStatoReqIn)))) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(null);
+		}
+		else {
+			de.setType(DataElementType.CHECKBOX);
+			de.setValoreDefaultCheckbox(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_FILTRA_ESITI);
+			de.setSelected(dbFiltroEsiti);
+		}
+		de.setPostBack_viaPOST(true);
+		dati.add(de);
+		
+		/**this.impostaAperturaTitle(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE);*/
+		
+		
+		// FILETRACE
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE);
+		de.setType(DataElementType.SUBTITLE);
+		/**de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);*/
+		dati.add(de);
+		
+		// stato abilitazione
+		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO, 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO, 
+				false, 
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO,
+				fsStato,
+				true,
+				true,
+				!porta);
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_REQ_IN, 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_IN, 
+				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato), // hidden
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_IN,
+				fsStatoReqIn,
+				true);
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_REQ_OUT, 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_OUT, 
+				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato), // hidden
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_OUT,
+				fsStatoReqOut,
+				true);
+		addTransazioniStatoElementBloccante(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_RES_OUT, 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT, 
+				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato), // hidden
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT,
+				fsStatoResOut,
+				true);
+		addTransazioniStatoElement(dati, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_RES_OUT_COMPLETE, 
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT_COMPLETE, 
+				!StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato), // hidden
+				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT_COMPLETE,
+				fsStatoResOutComplete,
+				false);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_FILTRA_ESITI);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_FILTRA_ESITI);
+		if(StatoFunzionalitaConPersonalizzazione.DISABILITATO.getValue().equals(fsStato) ||
+				(StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue().equals(fsStato) && 
+						(StatoFunzionalitaBloccante.ABILITATO.getValue().equals(fsStatoReqIn) || StatoFunzionalitaBloccante.NON_BLOCCANTE.getValue().equals(fsStatoReqIn)))) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(null);
+		}
+		else {
+			de.setType(DataElementType.CHECKBOX);
+			de.setValoreDefaultCheckbox(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_FILTRA_ESITI);
+			de.setSelected(fsFiltroEsiti);
+		}
+		de.setPostBack_viaPOST(true);
+		dati.add(de);
+		
+		/**this.impostaAperturaTitle(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE);*/
+	}
+	private void addTransazioniStatoElement(List<DataElement> dati, String label, String name, boolean hidden, String defaultValue, String value, boolean postback) {
+		addTransazioniStatoElement(dati, label, name, hidden, defaultValue, value, postback, false, false, false);
+	}
+	private void addTransazioniStatoElementBloccante(List<DataElement> dati, String label, String name, boolean hidden, String defaultValue, String value, boolean postback) {
+		addTransazioniStatoElement(dati, label, name, hidden, defaultValue, value, postback, false, false, true);
+	}
+	private void addTransazioniStatoElement(List<DataElement> dati, String label, String name, boolean hidden, String defaultValue, String value, boolean postback, 
+			boolean personalizzato, boolean configurazioneEsterna) {
+		addTransazioniStatoElement(dati, label, name, hidden, defaultValue, value, postback, 
+				personalizzato, configurazioneEsterna, false);
+	}
+	private void addTransazioniStatoElement(List<DataElement> dati, String label, String name, boolean hidden, String defaultValue, String value, boolean postback, 
+			boolean personalizzato, boolean configurazioneEsterna, boolean bloccante) {
+		
+		List<String> values = new ArrayList<>();
+		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
+		if(bloccante) {
+			values.add(ConfigurazioneCostanti.DEFAULT_VALUE_NON_BLOCCANTE);
+		}
+		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);	
+		if(personalizzato) {
+			values.add(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO);
+		}
+		if(configurazioneEsterna) {
+			values.add(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_CONFIGURAZIONE_ESTERNA);
+		}
+		
+		List<String> labels = null;
+		if(bloccante) {
+			labels = new ArrayList<>();
+			labels.add(CostantiLabel.LABEL_ABILITATO_BLOCCANTE);
+			labels.add(CostantiLabel.LABEL_ABILITATO_NON_BLOCCANTE);
+			labels.add(CostantiLabel.LABEL_DISABILITATO);
+		}
+		
+		DataElement de = new DataElement();
+		de.setLabel(label);
+		de.setName(name);
+		if(hidden) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(value);
+		}
+		else {
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			if(labels!=null) {
+				de.setLabels(labels);
+			}
+			de.setValoreDefaultSelect(defaultValue);
+			de.setPostBack_viaPOST(postback);
+			de.setSelected(value);
+		}
+		dati.add(de);
 	}
 	
 	public void addSeveritaMessaggiDiagnosticiToDati(String severita, String severita_log4j, List<DataElement> dati) {

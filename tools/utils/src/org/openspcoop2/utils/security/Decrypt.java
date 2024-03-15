@@ -24,6 +24,8 @@ package org.openspcoop2.utils.security;
 import java.security.Key;
 import java.security.cert.Certificate;
 
+import javax.crypto.spec.IvParameterSpec;
+
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -39,16 +41,28 @@ import org.openspcoop2.utils.io.HexBinaryUtilities;
 public class Decrypt extends AbstractCipher {
 
 
-	public Decrypt(byte[] secretKey, String algorithm) throws UtilsException {
+	public Decrypt(byte[] secretKey, String algorithm) {
 		super(javax.crypto.Cipher.DECRYPT_MODE, secretKey, algorithm);
 	}
+	public Decrypt(byte[] secretKey, String algorithm, IvParameterSpec ivParameterSpec) {
+		super(javax.crypto.Cipher.DECRYPT_MODE, secretKey, algorithm, ivParameterSpec);
+	}
+	public Decrypt(byte[] secretKey, String algorithm, byte[] ivParameterSpec) {
+		super(javax.crypto.Cipher.DECRYPT_MODE, secretKey, algorithm, ivParameterSpec);
+	}
 
-	public Decrypt(Certificate certificate) throws UtilsException {
+	public Decrypt(Certificate certificate) {
 		super(javax.crypto.Cipher.DECRYPT_MODE, certificate);
 	}
 
-	public Decrypt(Key key) throws UtilsException {
+	public Decrypt(Key key) {
 		super(javax.crypto.Cipher.DECRYPT_MODE, key);
+	}
+	public Decrypt(Key key, IvParameterSpec ivParameterSpec) {
+		super(javax.crypto.Cipher.DECRYPT_MODE, key, ivParameterSpec);
+	}
+	public Decrypt(Key key, byte[] ivParameterSpec) {
+		super(javax.crypto.Cipher.DECRYPT_MODE, key, ivParameterSpec);
 	}
 
 	public Decrypt(KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException {

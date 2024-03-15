@@ -56,6 +56,8 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
+import org.openspcoop2.core.config.TracciamentoConfigurazione;
+import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -187,10 +189,24 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 		CorrelazioneApplicativaRisposta corrAppRisposta = aPD.getCorrelazioneApplicativaRisposta();
 		
 		String msgDiagSeverita = null;
+		String tracciamentoStato = null;
 		String tracciamentoEsiti = null;
+		String transazioniTempiElaborazione = null;
+		String transazioniToken = null;
+		TracciamentoConfigurazione tracciamentoDatabase = null;
+		TracciamentoConfigurazione tracciamentoFiletrace = null;
+		TracciamentoConfigurazioneFiletrace tracciamentoFiletraceDetails = null;
 		if(aPD.getTracciamento()!=null){
 			msgDiagSeverita = DriverConfigurazioneDBLib.getValue(aPD.getTracciamento().getSeverita());
+			tracciamentoStato =  DriverConfigurazioneDBLib.getValue(aPD.getTracciamento().getStato());
 			tracciamentoEsiti = aPD.getTracciamento().getEsiti();
+			if(aPD.getTracciamento().getTransazioni()!=null) {
+				transazioniTempiElaborazione = DriverConfigurazioneDBLib.getValue(aPD.getTracciamento().getTransazioni().getTempiElaborazione());
+				transazioniToken = DriverConfigurazioneDBLib.getValue(aPD.getTracciamento().getTransazioni().getToken());
+			}
+			tracciamentoDatabase = aPD.getTracciamento().getDatabase();
+			tracciamentoFiletrace = aPD.getTracciamento().getFiletrace();
+			tracciamentoFiletraceDetails = aPD.getTracciamento().getFiletraceConfig();
 		}
 		
 		CorsConfigurazione corsConfigurazione = aPD.getGestioneCors();
@@ -466,7 +482,10 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("msg_diag_severita", "?");
+				sqlQueryObject.addInsertField("tracciamento_stato", "?");
 				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
+				sqlQueryObject.addInsertField("transazioni_tempi", "?");
+				sqlQueryObject.addInsertField("transazioni_token", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				// cors
 				sqlQueryObject.addInsertField("cors_stato", "?");
@@ -618,7 +637,10 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				
 				// Tracciamento
 				stm.setString(index++, msgDiagSeverita);
+				stm.setString(index++, tracciamentoStato);
 				stm.setString(index++, tracciamentoEsiti);
+				stm.setString(index++, transazioniTempiElaborazione);
+				stm.setString(index++, transazioniToken);
 				
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDBLib.getValue(aPD.getStato()) : null);
@@ -728,7 +750,7 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 								(aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
 										aPD.getScope().getMatch().getValue() : null),
 								aPD.getRicercaPortaAzioneDelegata(),
-								msgDiagSeverita,tracciamentoEsiti,
+								msgDiagSeverita,tracciamentoStato,tracciamentoEsiti,transazioniTempiElaborazione,transazioniToken,
 								aPD.getStato(),
 								corsStato, corsTipo, corsAllAllowOrigins, corsAllAllowMethods, corsAllAllowHeaders, corsAllowCredentials, corsAllowMaxAge, corsAllowMaxAgeSeconds,
 								corsAllowOrigins, corsAllowHeaders, corsAllowMethods, corsAllowExposeHeaders,
@@ -1285,6 +1307,18 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				DriverConfigurazioneDBLib.logDebug("Aggiunte " + n + " A.A. alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
+				// tracciamentoConfigurazione
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoDatabase, aPD.getId(), 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoFiletrace, aPD.getId(), 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoFiletraceDetails, aPD.getId(), 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD);
+				
 				// dumpConfigurazione
 				DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(type, con, aPD.getDump(), aPD.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				
@@ -1469,7 +1503,10 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("msg_diag_severita", "?");
+				sqlQueryObject.addUpdateField("tracciamento_stato", "?");
 				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
+				sqlQueryObject.addUpdateField("transazioni_tempi", "?");
+				sqlQueryObject.addUpdateField("transazioni_token", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				// cors
 				sqlQueryObject.addUpdateField("cors_stato", "?");
@@ -1615,7 +1652,10 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDBLib.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
 				// Tracciamento
 				stm.setString(index++, msgDiagSeverita);
+				stm.setString(index++, tracciamentoStato);
 				stm.setString(index++, tracciamentoEsiti);
+				stm.setString(index++, transazioniTempiElaborazione);
+				stm.setString(index++, transazioniToken);
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDBLib.getValue(aPD.getStato()) : null);
 				// cors
@@ -2480,6 +2520,18 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				
 				
 				
+				// tracciamentoConfigurazione
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoDatabase, idPortaDelegata, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoFiletrace, idPortaDelegata, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoFiletraceDetails, idPortaDelegata, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD);
+				
 				
 				// dumpConfigurazione
 				DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(type, con, aPD.getDump(), idPortaDelegata, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
@@ -2518,6 +2570,18 @@ public class DriverConfigurazioneDB_porteDelegateLIB {
 				if (idPortaDelegata <= 0)
 					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata(DELETE)] Non e' stato possibile recuperare l'id della Porta Delegata, necessario per effettuare la DELETE.");
 
+				// tracciamentoConfigurazione
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoDatabase, idPortaDelegata, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazione(type, con, tracciamentoFiletrace, idPortaDelegata, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				
+				DriverConfigurazioneDBTracciamentoLIB.crudTracciamentoConfigurazioneFiletrace(type, con, tracciamentoFiletraceDetails, idPortaDelegata, 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD);
+				
 				// dumpConfigurazione
 				DriverConfigurazioneDB_dumpLIB.CRUDDumpConfigurazione(type, con, aPD.getDump(), idPortaDelegata, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				

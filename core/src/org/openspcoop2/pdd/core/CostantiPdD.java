@@ -782,6 +782,8 @@ public class CostantiPdD {
     public static final String KEY_TRACCIA_TIPO = "@TIPO_TRACCIA@";
     /** Costante che indica la traccia */
     public static final String KEY_TRACCIA = "@TRACCIA@";
+    /** Costante che indica la fase di tracciamento */
+    public static final String KEY_FASE_TRACCIAMENTO = "@FASE_TRACCIAMENTO@";
    
     /** Costante che identifica una keyword per la causale di un lock */
     public static final String KEY_LOCK_CAUSALE = "@CAUSA_LOCK@";

@@ -65,6 +65,10 @@ public class GeneratorProperties {
 	
 	private StatisticsForceIndexConfig statisticheGenerazioneForceIndexConfig = null;
 	
+	private long waitMsBeforeNextInterval = -1;
+	
+	private boolean waitStatiInConsegna = false;
+	
 	private boolean generazioneStatisticheUseUnionForLatency = true;
 	
 	private boolean generazioneStatisticheCustom = false;
@@ -96,6 +100,11 @@ public class GeneratorProperties {
 		this.statisticheGenerazioneBaseSettimanaleGestioneUltimaSettimana = this.getBooleanProperty(props, "statistiche.generazione.baseSettimanale.gestioneUltimaSettimana", true);
 		this.statisticheGenerazioneBaseMensileGestioneUltimoMese = this.getBooleanProperty(props, "statistiche.generazione.baseMensile.gestioneUltimoMese", true);
 	
+		String p = this.getProperty(props, "statistiche.generazione.tradeOffSeconds", false);
+		this.waitMsBeforeNextInterval = p!=null ? Long.parseLong(p) : -1l;
+				
+		this.waitStatiInConsegna = this.getBooleanProperty(props, "statistiche.generazione.attendiCompletamentoTransazioniInFasiIntermedie", false);
+		
 		this.statisticheGenerazioneForceIndexConfig = new StatisticsForceIndexConfig(props);
 		
 		this.generazioneStatisticheUseUnionForLatency = this.getBooleanProperty(props, "statistiche.generazione.useUnionForLatency", true);
@@ -176,5 +185,12 @@ public class GeneratorProperties {
 	
 	public File getPddMonitorFrameworkRepositoryJars() {
 		return this.pddMonitorFrameworkRepositoryJars;
+	}
+	
+	public long getGenerazioneTradeOffMs() {	
+		return this.waitMsBeforeNextInterval;
+	}
+	public boolean isGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie() {	
+		return this.waitStatiInConsegna;
 	}
 }

@@ -481,6 +481,10 @@ public class CostantiControlStation {
 	public static final String LABEL_SOAP_11 = "SOAP 1.1";
 	public static final String LABEL_SOAP_12 = "SOAP 1.2";
 		
+	public static final String LABEL_TRACCIAMENTO_CONFIGURAZIONE = "Configurazione";
+	public static final String LABEL_TRACCIAMENTO_CONFIGURAZIONE_EROGAZIONI = "Configurazione Erogazioni";
+	public static final String LABEL_TRACCIAMENTO_CONFIGURAZIONE_FRUIZIONI = "Configurazione Fruizioni";
+	
 	public static final String LABEL_DUMP = "Dump";
 	public static final String LABEL_REGISTRAZIONE_MESSAGGI = "Registrazione Messaggi";
 	public static final String LABEL_REGISTRAZIONE_MESSAGGI_CONFIG_DI = "Registrazione Messaggi di ";
@@ -980,7 +984,7 @@ public class CostantiControlStation {
 	public static final String PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN = "autorizzazioneToken";
 	public static final String PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS = "autorizzazioneTokenOptions";
 	
-	public static final String PARAMETRO_PORTE_TRACCIAMENTO_ESITO = "portaEsiti";
+	public static final String PARAMETRO_PORTE_TRACCIAMENTO_STATO = "portaTrStato";
 	public static final String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public static final String PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO = "authContenutiStato";
 	public static final String PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES = "authContenutiProp";
@@ -1334,6 +1338,10 @@ public class CostantiControlStation {
 	public static final String LABEL_FILTRO_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TRASPORTO = CostantiLabel.LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_TRASPORTO;
 	public static final String LABEL_FILTRO_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_CANALE = CostantiLabel.LABEL_CONFIGURAZIONE_TIPO_AUTENTICAZIONE_CANALE;
 
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRANSAZIONI_QUALSIASI = "";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_TRANSAZIONI_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	public static final String LABEL_FILTRO_CONFIGURAZIONE_TRANSAZIONI = CostantiLabel.LABEL_CONFIGURAZIONE_TRANSAZIONI;
+	
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DUMP_QUALSIASI = "";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_DUMP_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public static final String LABEL_FILTRO_CONFIGURAZIONE_TIPO_DUMP = CostantiLabel.LABEL_CONFIGURAZIONE_TIPO_DUMP;

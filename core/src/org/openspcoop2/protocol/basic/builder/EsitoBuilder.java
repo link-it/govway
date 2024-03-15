@@ -58,6 +58,7 @@ import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
+import org.slf4j.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -85,16 +86,19 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 
 
 	protected String getTipoContext(TransportRequestContext transportRequestContext) throws ProtocolException{
+		return getTipoContext(transportRequestContext, this.esitiProperties, this.log);
+	}
+	public static String getTipoContext(TransportRequestContext transportRequestContext, EsitiProperties esitiProperties, Logger log) throws ProtocolException{
 		String tipoContext = CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD;
 	
-		if(this.esitiProperties.isSingleTransactionContextCode()) {
+		if(esitiProperties.isSingleTransactionContextCode()) {
 			return tipoContext;
 		}
 		
 		if(transportRequestContext!=null){
 		
 			if(transportRequestContext.getHeaders()!=null && transportRequestContext.getHeaders().size()>0){
-				List<EsitoTransportContextIdentification> list = this.esitiProperties.getEsitoTransactionContextHeaderTrasportoDynamicIdentification();
+				List<EsitoTransportContextIdentification> list = esitiProperties.getEsitoTransactionContextHeaderTrasportoDynamicIdentification();
 				if(list!=null && !list.isEmpty()){
 					for (EsitoTransportContextIdentification esitoTransportContextIdentification : list) {
 						if(esitoTransportContextIdentification.match(transportRequestContext.getHeaders())){
@@ -107,7 +111,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			
 			// urlBased eventualmente sovrascrive l'header
 			if(transportRequestContext.getParameters()!=null && transportRequestContext.getParameters().size()>0){
-				List<EsitoTransportContextIdentification> list = this.esitiProperties.getEsitoTransactionContextHeaderFormBasedDynamicIdentification();
+				List<EsitoTransportContextIdentification> list = esitiProperties.getEsitoTransactionContextHeaderFormBasedDynamicIdentification();
 				if(list!=null && !list.isEmpty()){
 					for (EsitoTransportContextIdentification esitoTransportContextIdentification : list) {
 						if(esitoTransportContextIdentification.match(transportRequestContext.getParameters())){
@@ -120,12 +124,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			
 			// trasporto con header openspcoop sovrascrive un valore trovato in precedenza
 			if(transportRequestContext.getHeaders()!=null && transportRequestContext.getHeaders().size()>0){
-				String headerName = this.esitiProperties.getEsitoTransactionContextHeaderTrasportoName();
+				String headerName = esitiProperties.getEsitoTransactionContextHeaderTrasportoName();
 				String value = transportRequestContext.getHeaderFirstValue(headerName);
 				if(value!=null){
-					if(!this.esitiProperties.getEsitiTransactionContextCode().contains(value)){
+					if(!esitiProperties.getEsitiTransactionContextCode().contains(value)){
 						String msg = "Trovato nell'header http un header con nome ["+headerName+"] il cui valore ["+value+"] non rientra tra i tipi di contesto supportati";
-						this.log.error(msg);
+						log.error(msg);
 					}
 					else{
 						tipoContext = value;
@@ -135,12 +139,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	
 			// urlBased eventualmente sovrascrive l'header
 			if(transportRequestContext.getParameters()!=null && transportRequestContext.getParameters().size()>0){
-				String propertyName = this.esitiProperties.getEsitoTransactionContextFormBasedPropertyName();
+				String propertyName = esitiProperties.getEsitoTransactionContextFormBasedPropertyName();
 				String value = transportRequestContext.getParameterFirstValue(propertyName);
 				if(value!=null){
-					if(!this.esitiProperties.getEsitiTransactionContextCode().contains(value)){
+					if(!esitiProperties.getEsitiTransactionContextCode().contains(value)){
 						String msg = "Trovato nella url una proprietà con nome ["+propertyName+"] il cui valore ["+value+"] non rientra tra i tipi di contesto supportati";
-						this.log.error(msg);
+						log.error(msg);
 					}
 					else{
 						tipoContext = value;

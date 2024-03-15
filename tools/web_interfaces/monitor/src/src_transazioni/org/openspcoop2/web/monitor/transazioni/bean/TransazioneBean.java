@@ -29,6 +29,7 @@ import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -42,6 +43,7 @@ import org.openspcoop2.generic_project.exception.ExpressionNotImplementedExcepti
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.info.DatiEsitoTransazione;
@@ -225,7 +227,9 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public boolean isEsitoOk(){	
-		return TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo());
+		return !isEsitoSendInCorso() && 
+				/**!isEsitoSendResponseInCorso() && rimane un esito OK, poi va aggiunta una categorizzazione*/  
+				TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo());
 	}
 	public boolean isEsitoFaultApplicativo(){	
 		return TransazioniEsitiUtils.isEsitoFaultApplicativo(this.getEsito(), this.getProtocollo());
@@ -233,8 +237,23 @@ public class TransazioneBean extends Transazione{
 	public boolean isEsitoKo(){	
 		return TransazioniEsitiUtils.isEsitoKo(this.getEsito(), this.getProtocollo());
 	}
+	public boolean isEsitoSendInCorso(){	
+		String esitoContesto = getEsitoContesto();
+		return EsitoUtils.isFaseRequestIn(esitoContesto) || EsitoUtils.isFaseRequestOut(esitoContesto);
+	}
+	public boolean isEsitoSendResponseInCorso(){	
+		String esitoContesto = getEsitoContesto();
+		return EsitoUtils.isFaseResponseOut(esitoContesto);
+	}
 	
 	public String getEsitoIcona() {
+		String esitoContesto = getEsitoContesto();
+		if(EsitoUtils.isFaseRequestIn(esitoContesto) || EsitoUtils.isFaseRequestOut(esitoContesto)) {
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_SEND_ICON_KEY);
+		}
+		if(EsitoUtils.isFaseResponseOut(esitoContesto)) {
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_SEND_RESPONSE_ICON_KEY);
+		}
 		if(TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo()))
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_OK_ICON_KEY);
 		if(TransazioniEsitiUtils.isEsitoFaultApplicativo(this.getEsito(), this.getProtocollo()))
@@ -246,44 +265,99 @@ public class TransazioneBean extends Transazione{
 	}
 
 	public java.lang.String getEsitoLabel() {
-		return TransazioniEsitiUtils.getEsitoLabel(this.getEsito(), this.getProtocollo());
+		
+		String esitoContesto = getEsitoContesto();
+		if(EsitoUtils.isFaseRequestIn(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+		}
+		else if(EsitoUtils.isFaseRequestOut(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+		}
+		else {
+		
+			return TransazioniEsitiUtils.getEsitoLabel(this.getEsito(), this.getProtocollo());
+			
+		}
 	}
 	
 	public java.lang.String getEsitoLabelSyntetic() {
-		Integer httpStatus = null;
-		if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
-			try {
-				httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
-			}catch(Exception t) {
-				// ignore
-			}
+		
+		String esitoContesto = getEsitoContesto();
+		if(EsitoUtils.isFaseRequestIn(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 		}
-		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.getEsito(), this.getProtocollo(), httpStatus, this.getTipoApi());
+		else if(EsitoUtils.isFaseRequestOut(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+		}
+		else {
+		
+			Integer httpStatus = null;
+			if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
+				try {
+					httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
+				}catch(Exception t) {
+					// ignore
+				}
+			}
+			return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.getEsito(), this.getProtocollo(), httpStatus, this.getTipoApi());
+			
+		}
 	}
 	
 	public java.lang.String getEsitoLabelDescription() {
-		Integer httpStatus = null;
-		if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
-			try {
-				httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
-			}catch(Exception t) {
-				// ignore
-			}
+		return getEsitoLabelDescription(false);
+	}
+	public java.lang.String getEsitoLabelDescriptionCheckResponseOut() {
+		return getEsitoLabelDescription(true);
+	}
+	private java.lang.String getEsitoLabelDescription(boolean verifyResponseOut) {
+		
+		String esitoContesto = getEsitoContesto();
+		if(EsitoUtils.isFaseRequestIn(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
 		}
-		Integer httpInStatus = null;
-		if(this.getCodiceRispostaIngresso()!=null && !"".equals(this.getCodiceRispostaIngresso())) {
-			try {
-				httpInStatus = Integer.valueOf(this.getCodiceRispostaIngresso());
-			}catch(Exception t) {
-				// ignore
-			}
+		else if(EsitoUtils.isFaseRequestOut(esitoContesto)) {
+			return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
 		}
-		return TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo(), httpStatus, httpInStatus, this.getTipoApi());
+		else {
+		
+			String prefixResponseOut = "";
+			if(verifyResponseOut && EsitoUtils.isFaseResponseOut(esitoContesto)) {
+				prefixResponseOut = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT+"<BR/>";
+			}
+			
+			Integer httpStatus = null;
+			if(this.getCodiceRispostaUscita()!=null && !"".equals(this.getCodiceRispostaUscita())) {
+				try {
+					httpStatus = Integer.valueOf(this.getCodiceRispostaUscita());
+				}catch(Exception t) {
+					// ignore
+				}
+			}
+			Integer httpInStatus = null;
+			if(this.getCodiceRispostaIngresso()!=null && !"".equals(this.getCodiceRispostaIngresso())) {
+				try {
+					httpInStatus = Integer.valueOf(this.getCodiceRispostaIngresso());
+				}catch(Exception t) {
+					// ignore
+				}
+			}
+			return prefixResponseOut+TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo(), httpStatus, httpInStatus, this.getTipoApi());
+			
+		}
 	}
 	
 	public boolean isShowContesto(){
 		try{
-			return EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo()).getEsitiTransactionContextCode().size()>1;
+			if(EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo()).getEsitiTransactionContextCode().size()>1) {
+				return true;
+			}
+			else {
+				String esitoContesto = getEsitoContesto();
+				/** return TransazioneUtilities.isFaseIntermedia(esitoContesto);*/
+				// la req_in e req_out viene riportata nell'esito
+				return EsitoUtils.isFaseResponseOut(esitoContesto);
+			}
 		}catch(Exception e){
 			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo dei contesti: "+e.getMessage(),e);
 			return false;
@@ -291,7 +365,45 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public java.lang.String getEsitoContestoLabel() {
-		return TransazioniEsitiUtils.getEsitoContestoLabel(this.getEsitoContesto(), this.getProtocollo());
+		String esitoContesto = getEsitoContesto();
+		boolean moreContext = false;
+		try{
+			moreContext = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo()).getEsitiTransactionContextCode().size()>1;
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo dei contesti: "+e.getMessage(),e);
+		}
+		if(EsitoUtils.isFaseRequestIn(esitoContesto)) {
+			/**
+			if(moreContext) {
+				return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}
+			else {
+				return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+			}*/
+			// la req_in e req_out viene riportata nell'esito
+			return TransazioniEsitiUtils.getEsitoContestoLabel(EsitoUtils.getRawEsitoContext(esitoContesto), this.getProtocollo());
+		}
+		else if(EsitoUtils.isFaseRequestOut(esitoContesto)) {
+			/**if(moreContext) {
+				return TransazioniEsitiUtils.getEsitoContestoLabel(TransazioneUtilities.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}
+			else {
+				return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+			}*/
+			// la req_in e req_out viene riportata nell'esito
+			return TransazioniEsitiUtils.getEsitoContestoLabel(EsitoUtils.getRawEsitoContext(esitoContesto), this.getProtocollo());
+		}
+		else if(EsitoUtils.isFaseResponseOut(esitoContesto)) {
+			if(moreContext) {
+				return TransazioniEsitiUtils.getEsitoContestoLabel(EsitoUtils.getRawEsitoContext(esitoContesto), this.getProtocollo()) + " - " + CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
+			else {
+				return CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+			}
+		}
+		else {
+			return TransazioniEsitiUtils.getEsitoContestoLabel(this.getEsitoContesto(), this.getProtocollo());
+		}
 	}
 	
 	public String getFaultCooperazionePretty(){
@@ -1296,6 +1408,10 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public String getCssColonnaEsito() {
+		String esitoContesto = getEsitoContesto();
+		if(EsitoUtils.isFaseRequestIn(esitoContesto) || EsitoUtils.isFaseRequestOut(esitoContesto)) {
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_OK;
+		}
 		if(this.isEsitoOk())
 			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_OK;
 		if(this.isEsitoFaultApplicativo())
@@ -1307,6 +1423,10 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public String getCssColonnaLatenza() {
+		String esitoContesto = getEsitoContesto();
+		if(EsitoUtils.isFaseRequestIn(esitoContesto) || EsitoUtils.isFaseRequestOut(esitoContesto)) {
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_OK;
+		}
 		if(this.isEsitoOk())
 			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_OK;
 		if(this.isEsitoFaultApplicativo())

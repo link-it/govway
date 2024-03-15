@@ -24,6 +24,8 @@ package org.openspcoop2.utils.security;
 import java.security.Key;
 import java.security.cert.Certificate;
 
+import javax.crypto.spec.IvParameterSpec;
+
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -39,16 +41,28 @@ import org.openspcoop2.utils.io.HexBinaryUtilities;
 public class Encrypt extends AbstractCipher {
 
 
-	public Encrypt(byte[] secretKey, String algorithm) throws UtilsException {
+	public Encrypt(byte[] secretKey, String algorithm) {
 		super(javax.crypto.Cipher.ENCRYPT_MODE, secretKey, algorithm);
 	}
+	public Encrypt(byte[] secretKey, String algorithm, IvParameterSpec ivParameterSpec) {
+		super(javax.crypto.Cipher.ENCRYPT_MODE, secretKey, algorithm, ivParameterSpec);
+	}
+	public Encrypt(byte[] secretKey, String algorithm, byte[] ivParameterSpec) {
+		super(javax.crypto.Cipher.ENCRYPT_MODE, secretKey, algorithm, ivParameterSpec);
+	}
 
-	public Encrypt(Certificate certificate) throws UtilsException {
+	public Encrypt(Certificate certificate) {
 		super(javax.crypto.Cipher.ENCRYPT_MODE, certificate);
 	}
 
-	public Encrypt(Key key) throws UtilsException {
+	public Encrypt(Key key) {
 		super(javax.crypto.Cipher.ENCRYPT_MODE, key);
+	}
+	public Encrypt(Key key, IvParameterSpec ivParameterSpec) {
+		super(javax.crypto.Cipher.ENCRYPT_MODE, key, ivParameterSpec);
+	}
+	public Encrypt(Key key, byte[] ivParameterSpec) {
+		super(javax.crypto.Cipher.ENCRYPT_MODE, key, ivParameterSpec);
 	}
 
 	public Encrypt(KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException {

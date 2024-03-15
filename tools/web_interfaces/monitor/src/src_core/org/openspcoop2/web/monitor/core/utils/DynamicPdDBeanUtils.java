@@ -1453,4 +1453,14 @@ public class DynamicPdDBeanUtils implements Serializable {
 	public Plugin getPlugin(IdPlugin idPlugin) {
 		return this.dynamicUtilsService.getPlugin(idPlugin);
 	}
+	
+	public boolean existsFaseTracciamentoDBRequestIn(boolean erogazioni, boolean fruizioni) {
+		return this.dynamicUtilsService.existsFaseTracciamentoDBRequestIn(erogazioni, fruizioni);
+	}
+	public boolean existsFaseTracciamentoDBRequestOut(boolean erogazioni, boolean fruizioni) {
+		return this.dynamicUtilsService.existsFaseTracciamentoDBRequestOut(erogazioni, fruizioni);
+	}
+	public boolean existsFaseTracciamentoDBResponseOut(boolean erogazioni, boolean fruizioni) {
+		return this.dynamicUtilsService.existsFaseTracciamentoDBResponseOut(erogazioni, fruizioni);
+	}
 }

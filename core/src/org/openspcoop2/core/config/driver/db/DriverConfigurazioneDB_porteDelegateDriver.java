@@ -27,6 +27,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
@@ -63,6 +64,9 @@ import org.openspcoop2.core.config.ProprietaOggetto;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
+import org.openspcoop2.core.config.TracciamentoConfigurazione;
+import org.openspcoop2.core.config.TracciamentoConfigurazioneFiletrace;
+import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -534,7 +538,10 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			sqlQueryObject.addSelectField("scope_match");
 			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("msg_diag_severita");
+			sqlQueryObject.addSelectField("tracciamento_stato");
 			sqlQueryObject.addSelectField("tracciamento_esiti");
+			sqlQueryObject.addSelectField("transazioni_tempi");
+			sqlQueryObject.addSelectField("transazioni_token");
 			sqlQueryObject.addSelectField("stato");		
 			sqlQueryObject.addSelectField("cors_stato");
 			sqlQueryObject.addSelectField("cors_tipo");
@@ -856,11 +863,56 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 				
 				// Tracciamento
 				String msgDiagSeverita = rs.getString("msg_diag_severita");
+				String tracciamentoStato = rs.getString("tracciamento_stato");
 				String tracciamentoEsiti = rs.getString("tracciamento_esiti");
-				if(msgDiagSeverita!=null || tracciamentoEsiti!=null) {
+				String transazioniTempiElaborazione = rs.getString("transazioni_tempi");
+				String transazioniToken = rs.getString("transazioni_token");
+				TracciamentoConfigurazione tracciamentoDatabase = DriverConfigurazioneDBTracciamentoLIB.readTracciamentoConfigurazione(con, pd.getId(), 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_DB);
+				TracciamentoConfigurazione tracciamentoFiletrace = DriverConfigurazioneDBTracciamentoLIB.readTracciamentoConfigurazione(con, pd.getId(), 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD,
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_TIPO_FILETRACE);
+				TracciamentoConfigurazioneFiletrace tracciamentoFiletraceDetails = DriverConfigurazioneDBTracciamentoLIB.readTracciamentoConfigurazioneFiletrace(con, pd.getId(), 
+						CostantiDB.TRACCIAMENTO_CONFIGURAZIONE_PROPRIETARIO_PD);
+				if( 
+						(msgDiagSeverita!=null && StringUtils.isNotEmpty(msgDiagSeverita))
+						||
+						(tracciamentoStato!=null && StringUtils.isNotEmpty(tracciamentoStato))
+						||
+						(tracciamentoEsiti!=null && StringUtils.isNotEmpty(tracciamentoEsiti))
+						||
+						(transazioniTempiElaborazione!=null && StringUtils.isNotEmpty(transazioniTempiElaborazione))
+						||
+						(transazioniToken!=null && StringUtils.isNotEmpty(transazioniToken))
+						||
+						tracciamentoDatabase!=null
+						||
+						tracciamentoFiletrace!=null
+						||
+						tracciamentoFiletraceDetails!=null
+						) {
 					PortaTracciamento tracciamento = new PortaTracciamento();
+					
 					tracciamento.setSeverita(DriverConfigurazioneDBLib.getEnumSeverita(msgDiagSeverita));
+					
+					tracciamento.setStato(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(tracciamentoStato));
+					
 					tracciamento.setEsiti(tracciamentoEsiti);
+					
+					if( 
+							(transazioniTempiElaborazione!=null && StringUtils.isNotEmpty(transazioniTempiElaborazione))
+							||
+							(transazioniToken!=null && StringUtils.isNotEmpty(transazioniToken))
+							) {
+						tracciamento.setTransazioni(new Transazioni());
+						tracciamento.getTransazioni().setTempiElaborazione(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(transazioniTempiElaborazione));
+						tracciamento.getTransazioni().setToken(DriverConfigurazioneDBLib.getEnumStatoFunzionalita(transazioniToken));
+					}
+					tracciamento.setDatabase(tracciamentoDatabase);
+					tracciamento.setFiletrace(tracciamentoFiletrace);
+					tracciamento.setFiletraceConfig(tracciamentoFiletraceDetails);
+					
 					pd.setTracciamento(tracciamento);
 				}
 				

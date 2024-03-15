@@ -82,9 +82,12 @@ CREATE TABLE configurazione
 	msg_diag_severita_log4j VARCHAR(255) NOT NULL,
 	-- Tracciamento Buste
 	tracciamento_buste VARCHAR(255),
+	tracciamento_esiti_pd VARCHAR(255),
 	tracciamento_esiti VARCHAR(255),
 	-- Transazione
+	transazioni_tempi_pd VARCHAR(255),
 	transazioni_tempi VARCHAR(255),
+	transazioni_token_pd VARCHAR(255),
 	transazioni_token VARCHAR(255),
 	-- Dump
 	dump VARCHAR(255),
@@ -254,7 +257,7 @@ CREATE TABLE config_url_regole
 
 
 
--- **** Messaggi diagnostici Appender ****
+-- **** Messaggi diagnostici ****
 
 CREATE SEQUENCE seq_msgdiag_appender start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
@@ -289,7 +292,7 @@ CREATE TABLE msgdiag_appender_prop
 
 
 
--- **** Tracciamento Appender ****
+-- **** Tracciamento ****
 
 CREATE SEQUENCE seq_tracce_appender start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
@@ -324,7 +327,55 @@ CREATE TABLE tracce_appender_prop
 
 
 
--- **** Dump Appender ****
+CREATE SEQUENCE seq_tracce_config start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE tracce_config
+(
+	proprietario VARCHAR(255) NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	id_proprietario BIGINT NOT NULL,
+	stato VARCHAR(255),
+	filtro_esiti VARCHAR(255),
+	request_in VARCHAR(255),
+	request_out VARCHAR(255),
+	response_out VARCHAR(255),
+	response_out_complete VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_tracce_config') NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_tracce_config PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_tracce_config_1 ON tracce_config (proprietario,tipo);
+
+
+
+CREATE SEQUENCE seq_filetrace_config start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE filetrace_config
+(
+	proprietario VARCHAR(255) NOT NULL,
+	id_proprietario BIGINT NOT NULL,
+	config VARCHAR(255),
+	dump_in_stato VARCHAR(255),
+	dump_in_stato_hdr VARCHAR(255),
+	dump_in_stato_body VARCHAR(255),
+	dump_out_stato VARCHAR(255),
+	dump_out_stato_hdr VARCHAR(255),
+	dump_out_stato_body VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_filetrace_config') NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_filetrace_config PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_filetrace_config_1 ON filetrace_config (proprietario);
+
+
+
+-- **** Dump ****
 
 CREATE SEQUENCE seq_dump_config start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 

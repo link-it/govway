@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
@@ -38,6 +40,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
@@ -69,7 +72,9 @@ public class FileTraceManager {
 			InformazioniAttributi informazioniAttributi,
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
 			SecurityToken securityToken,
-			Context context) throws ProtocolException {
+			Context context,
+			Map<String, List<String>> headerInUscita,
+			FaseTracciamento trackingPhase) throws ProtocolException {
 		
 		Messaggio richiestaIngresso = null;
 		Messaggio richiestaUscita = null;
@@ -98,6 +103,15 @@ public class FileTraceManager {
 			
 		}
 		
+		Map<String, List<String>> headerRichiestaUscita = null;
+		Map<String, List<String>> headerRispostaUscita = null;
+		if(FaseTracciamento.OUT_REQUEST.equals(trackingPhase)) {
+			headerRichiestaUscita = headerInUscita;
+		}
+		else if(FaseTracciamento.OUT_RESPONSE.equals(trackingPhase)) {
+			headerRispostaUscita = headerInUscita;
+		}
+		
 		CredenzialiMittente credenzialiMittente = transaction.getCredenzialiMittente();
 		
 		InfoConfigurazione infoConfigurazione = new InfoConfigurazione(transazioneDTO, context, credenzialiMittente);
@@ -111,10 +125,13 @@ public class FileTraceManager {
 				securityToken,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
-				richiestaIngresso, richiestaUscita,
-				rispostaIngresso, rispostaUscita,
+				richiestaIngresso, 
+				richiestaUscita, headerRichiestaUscita,
+				rispostaIngresso, 
+				rispostaUscita, headerRispostaUscita,
 				infoConfigurazione,
-				this.config, !base64);
+				this.config, trackingPhase, 
+				!base64);
 		this.tBase64 = new Info(this.log, protocolFactory, transazioneDTO, credenzialiMittente, 
 				informazioniToken,
 				informazioniAttributi,
@@ -122,10 +139,13 @@ public class FileTraceManager {
 				securityToken,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
-				richiestaIngresso, richiestaUscita,
-				rispostaIngresso, rispostaUscita,
-				infoConfigurazione,
-				this.config, base64);
+				richiestaIngresso, 
+				richiestaUscita, headerRichiestaUscita,
+				rispostaIngresso, 
+				rispostaUscita, headerRispostaUscita,
+				infoConfigurazione, 
+				this.config, trackingPhase,  
+				base64);
 		
 		this.dynamicMap.put("log", this.t);
 		this.dynamicMap.put("logBase64", this.tBase64);
@@ -208,10 +228,10 @@ public class FileTraceManager {
 
 	}
 	
-	public void invoke(TipoPdD tipoPdD, Context context) throws UtilsException {
-		this.invoke(tipoPdD, context, null);
+	public void invoke(TipoPdD tipoPdD, Context context, RequestInfo requestInfo, FaseTracciamento faseTracciamento) throws UtilsException {
+		this.invoke(tipoPdD, context, requestInfo, faseTracciamento, null);
 	}
-	public void invoke(TipoPdD tipoPdD, Context context, Map<String, String> outputMap) throws UtilsException {
+	public void invoke(TipoPdD tipoPdD, Context context, RequestInfo requestInfo, FaseTracciamento faseTracciamento, Map<String, String> outputMap) throws UtilsException {
 		List<String> topic = null;
 		Map<String, Topic> topicMap = null;
 		switch (tipoPdD) {
@@ -228,88 +248,121 @@ public class FileTraceManager {
 		}
 		if(topic!=null && !topic.isEmpty()) {
 			
-			boolean requestSent = false;
-			if(context!=null && context.containsKey(Costanti.RICHIESTA_INOLTRATA_BACKEND)) {
-				Object o = context.getObject(Costanti.RICHIESTA_INOLTRATA_BACKEND);
-				if(o instanceof String) {
-					String s = (String) o;
-					if(Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE.equals(s)) {
-						requestSent = true;
-					}
-				}
-			}
+			boolean requestSent = isRequestSent(context);
 			
 			List<Topic> topicInvoke = new ArrayList<>();
 			for (String topicName : topic) {
 				Topic topicConfig = topicMap.get(topicName);
-				
-				if(topicConfig.isOnlyRequestSent()) {
-					if(!requestSent) {
-						continue;
-					}
+				if(add(topicConfig, faseTracciamento, requestSent)) {
+					topicInvoke.add(topicConfig);
 				}
-				if(topicConfig.isOnlyInRequestContentDefined()) {
-					boolean contentDefined = this.t.getInRequestSize()>0;
-					if(!contentDefined) {
-						continue;
-					}
-				}
-				if(topicConfig.isOnlyOutRequestContentDefined()) {
-					boolean contentDefined = this.t.getOutRequestSize()>0;
-					if(!contentDefined) {
-						continue;
-					}
-				}
-				if(topicConfig.isOnlyInResponseContentDefined()) {
-					boolean contentDefined = this.t.getInResponseSize()>0;
-					if(!contentDefined) {
-						continue;
-					}
-				}
-				if(topicConfig.isOnlyOutResponseContentDefined()) {
-					boolean contentDefined = this.t.getOutResponseSize()>0;
-					if(!contentDefined) {
-						continue;
-					}
-				}
-				
-				topicInvoke.add(topicConfig);
+				/**else {
+					System.out.println("SKIP["+topicName+"] in fase ["+faseTracciamento+"]");
+				}*/
 			}
 			
-			if(topicInvoke!=null && !topicInvoke.isEmpty()) {
-				
-				this.resolveProperties();
-				
-				for (Topic topicConfig : topicInvoke) {
-					String value = this.resolve(topicConfig.getFormat());
-					if(outputMap!=null) {
-						outputMap.put(topicConfig.getNome(), value);
-					}
-					else {
-						switch (this.config.getLogSeverity()) {
-						case trace:
-							topicConfig.getLog().trace(value);		
-							break;
-						case debug:
-							topicConfig.getLog().debug(value);		
-							break;
-						case info:
-							topicConfig.getLog().info(value);		
-							break;
-						case warn:
-							topicConfig.getLog().warn(value);		
-							break;
-						case error:
-							topicConfig.getLog().error(value);		
-							break;
-						}
+			invoke(topicInvoke, requestInfo, outputMap);
+		}
+	}
+	
+	private boolean isRequestSent(Context context) {
+		boolean requestSent = false;
+		if(context!=null && context.containsKey(Costanti.RICHIESTA_INOLTRATA_BACKEND)) {
+			Object o = context.getObject(Costanti.RICHIESTA_INOLTRATA_BACKEND);
+			if(o instanceof String) {
+				String s = (String) o;
+				if(Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE.equals(s)) {
+					requestSent = true;
+				}
+			}
+		}
+		return requestSent;
+	}
+	
+	private boolean add(Topic topicConfig, FaseTracciamento faseTracciamento, boolean requestSent) {
+		if(!topicConfig.isEnabled(faseTracciamento)) {
+			/**System.out.println("R1");*/
+			return false;
+		}
+		
+		if(topicConfig.isOnlyRequestSent() &&
+			!requestSent) {
+			/**System.out.println("R1");*/
+			return false;
+		}
+		if(topicConfig.isOnlyInRequestContentDefined()) {
+			boolean contentDefined = this.t.getInRequestSize()>0;
+			if(!contentDefined) {
+				/**System.out.println("R3");*/
+				return false;
+			}
+		}
+		if(topicConfig.isOnlyOutRequestContentDefined()) {
+			boolean contentDefined = this.t.getOutRequestSize()>0;
+			if(!contentDefined) {
+				/**System.out.println("R4");*/
+				return false;
+			}
+		}
+		if(topicConfig.isOnlyInResponseContentDefined()) {
+			boolean contentDefined = this.t.getInResponseSize()>0;
+			if(!contentDefined) {
+				/**System.out.println("R5");*/
+				return false;
+			}
+		}
+		if(topicConfig.isOnlyOutResponseContentDefined()) {
+			boolean contentDefined = this.t.getOutResponseSize()>0;
+			if(!contentDefined) {
+				/**System.out.println("R6");*/
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private void invoke(List<Topic> topicInvoke, RequestInfo requestInfo, Map<String, String> outputMap) throws UtilsException {
+		if(topicInvoke!=null && !topicInvoke.isEmpty()) {
+			
+			this.resolveProperties(requestInfo);
+			
+			for (Topic topicConfig : topicInvoke) {
+				String value = this.resolve(topicConfig.getFormat());
+				if(outputMap!=null) {
+					outputMap.put(topicConfig.getNome(), value);
+				}
+				else {
+					switch (this.config.getLogSeverity()) {
+					case trace:
+						topicConfig.getLog().trace(value);		
+						break;
+					case debug:
+						topicConfig.getLog().debug(value);		
+						break;
+					case info:
+						topicConfig.getLog().info(value);		
+						break;
+					case warn:
+						topicConfig.getLog().warn(value);		
+						break;
+					case error:
+						topicConfig.getLog().error(value);		
+						break;
 					}
 				}
 			}
 		}
 	}
 		
-	private void resolveProperties() throws UtilsException {
+	private void resolveProperties(RequestInfo requestInfo) throws UtilsException {
+		
+		Map<String, String> propertiesEncryptionModes = this.config.getPropertiesEncryptionMode();
+		FileTraceEncrypt encrypt = null;
+		if(!propertiesEncryptionModes.isEmpty()) {
+			encrypt = new FileTraceEncrypt(requestInfo);
+		}
+		
 		List<String> properties = this.config.getPropertiesSortKeys();
 		if(properties!=null && !properties.isEmpty()) {
 			for (String sortKey : properties) {
@@ -317,6 +370,13 @@ public class FileTraceManager {
 				String pValue = this.config.getPropertiesValues().get(sortKey);
 				/**System.out.println("SORT ["+sortKey+"] ["+pName+"]");*/
 				String resolvedValue = this.resolve(pValue);
+				
+				String mode = propertiesEncryptionModes.get(sortKey);
+				if(encrypt!=null && mode!=null && StringUtils.isNotEmpty(mode)) {
+					FileTraceEncryptConfig encryptionConfig = this.config.getEncryptionMode().get(mode);
+					resolvedValue = encrypt.encrypt(encryptionConfig, resolvedValue);
+				}
+				
 				this.t.addProperty(pName, resolvedValue);
 				this.tBase64.addProperty(pName, resolvedValue);
 			}

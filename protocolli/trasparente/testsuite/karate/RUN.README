@@ -171,6 +171,26 @@
 - Per i test sulle credenziali aggiungere in govway_local.properties la configurazione che si trova in 'src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/govway_local.properties.adjunct'.
   Inoltre copiare il truststore src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/applicativoCertExampleTrustStore.jks in /etc/govway/keys/applicativoCertExampleTrustStore.jks
 
+- Per i test sul tracciamento aggiungere in govway_local.properties la configurazione che abilita la generazione degli errori e renda più frequente la procedura di recupero delle transazioni salvate su filesystem (failover):
+
+	# Generazione fault per test prima del commit su database
+	org.openspcoop2.pdd.transazioni.testsuite.manuallyFaultHeader.db.beforeCommit=GovWay-TestSuite-GenerateFault-TracciamentoDB-Commit
+	# Generazione fault per test prima dell'emissione del log su file trace
+	org.openspcoop2.pdd.transazioni.testsuite.manuallyFaultHeader.fileTrace.beforeLog=GovWay-TestSuite-GenerateFault-TracciamentoFileTrace-Log
+
+	# Procedura di failover (un file viene recuperato dopo org.openspcoop2.pdd.resources.fileSystemRecovery.timeout*2 secondi)
+	org.openspcoop2.pdd.resources.fileSystemRecovery.timeout=2
+	org.openspcoop2.pdd.resources.fileSystemRecovery.maxAttempts=5
+	org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled=true
+	org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled=true
+	org.openspcoop2.pdd.resources.fileSystemRecovery.debug=true
+	# Indicazione dopo quanti millisecondi iniziare a processare un file presente nel repository (inserire un valore in ms uguale a org.openspcoop2.pdd.resources.fileSystemRecovery.timeout)
+	org.openspcoop2.pdd.resources.fileSystemRecovery.events.processingFileAfterMs=2000
+	org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.processingFileAfterMs=2000
+
+	# merge handler
+	org.openspcoop2.pdd.handler.merge=true
+
 - Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444, 8445, 8450 e 8451 utilizzando le configurazioni presenti nella directory https:
   a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
         Esempio in https/base/ConnettoreHTTPS_withClientAuth.xml
@@ -520,6 +540,14 @@ Di seguito vengono descritti i test del package 'plugin':
 
 - 'test', verifica l'utilizzo dei plugins su tutti i componenti "pluggabili"
    ant run_test -Ddelete=false -Dload=false -Dpackage=plugin.test
+
+Di seguito vengono descritti i test del package 'tracciamento':
+
+- 'database', verifica il tracciamento su database
+   ant run_test -Ddelete=false -Dload=false -Dpackage=tracciamento.database
+
+- 'filetrace', verifica il tracciamento su filetrace
+   ant run_test -Ddelete=false -Dload=false -Dpackage=tracciamento.filetrace
 
 Di seguito vengono descritti i test del package 'other':
 

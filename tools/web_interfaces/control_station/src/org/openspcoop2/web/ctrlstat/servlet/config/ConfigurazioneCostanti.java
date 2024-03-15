@@ -29,7 +29,10 @@ import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoApplicabilita;
@@ -537,6 +540,7 @@ public class ConfigurazioneCostanti {
 	
 	public static final String LABEL_CONFIGURAZIONE_GENERALE_MENU = "Generale";
 	public static final String LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU = "Tracciamento";
+	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI_MENU = "Registrazione Messaggi";
 	
 	public static final String LABEL_CONFIGURAZIONE_GENERALE = "Configurazione Generale";
 	public static final String LABEL_CONFIGURAZIONE_CACHE = "Configurazione Cache";
@@ -581,6 +585,9 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_DIAGNOSTICI = "Diagnostici";
 	public static final String LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI = "Messaggi Diagnostici";
 	public static final String LABEL_CONFIGURAZIONE_TRACCIAMENTO = "Tracciamento";
+	public static final String LABEL_CONFIGURAZIONE_TRACCIAMENTO_CONFIGURAZIONE = CostantiControlStation.LABEL_TRACCIAMENTO_CONFIGURAZIONE;
+	public static final String LABEL_CONFIGURAZIONE_TRACCIAMENTO_CONFIGURAZIONE_EROGAZIONI = CostantiControlStation.LABEL_TRACCIAMENTO_CONFIGURAZIONE_EROGAZIONI;
+	public static final String LABEL_CONFIGURAZIONE_TRACCIAMENTO_CONFIGURAZIONE_FRUIZIONI = CostantiControlStation.LABEL_TRACCIAMENTO_CONFIGURAZIONE_FRUIZIONI;
 	public static final String LABEL_CONFIGURAZIONE_TRACCE = "Tracce";
 	public static final String LABEL_CONFIGURAZIONE_TRANSAZIONI_SALVATE = "Transazioni Salvate";
 	public static final String LABEL_CONFIGURAZIONE_DUMP = CostantiControlStation.LABEL_DUMP;
@@ -733,8 +740,25 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_STATO_TIMER_PREFIX = "stato del timer ";
 	
 	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
+	public static final String LABEL_CONFIGURAZIONE_OPZIONI_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
 	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
 	public static final String LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Selezionare gli esiti che verranno registrati nello storico";
+
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA = "Transazioni";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_DATABASE = "Tracciamento DB";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO = "Stato";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_REQ_IN = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_REQ_OUT = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_STATO_RES_OUT_COMPLETE = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE;
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_DATABASE_FILTRA_ESITI = "Filtra per Esiti";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE = "Tracciamento FileTrace";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO = "Stato";
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_REQ_IN = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_IN;
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_REQ_OUT = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_REQ_OUT;
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_RES_OUT = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT;
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_STATO_RES_OUT_COMPLETE = CostantiLabel.LABEL_CONFIGURAZIONE_AVANZATA_RES_OUT_COMPLETE;
+	public static final String LABEL_CONFIGURAZIONE_AVANZATA_FILETRACE_FILTRA_ESITI = "Filtra per Esiti";
 	
 	public static final String LABEL_SEVERITA = "Severità";
 	
@@ -750,7 +774,18 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "Stato";
 	public static final String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS = "CORS Preflight";
 	
-	public static final String LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE = "Informazioni Transazione";
+	public static final String LABEL_CONFIGURAZIONE_FILETRACE = "Configurazione FileTrace";
+	public static final String LABEL_CONFIGURAZIONE_FILETRACE_STATO = "Stato";
+	public static final String LABEL_CONFIGURAZIONE_FILETRACE_CONFIGURAZIONE = "File Configurazione";
+	
+	public static final String LABEL_CONFIGURAZIONE_FILETRACE_REGISTRAZIONE_MESSAGGI = "Buffer dei Messaggi";
+	public static final String LABEL_CONFIGURAZIONE_FILETRACE_REGISTRAZIONE_MESSAGGI_NOTE = "Solamente se abilitato sarà possibile accedere ai contenuti dei messaggi";
+	public static final String LABEL_CONFIGURAZIONE_FILETRACE_CLIENT = "Scambiati con il client";
+	public static final String LABEL_CONFIGURAZIONE_FILETRACE_SERVER = "Scambiati con il server";
+	public static final String LABEL_CONFIGURAZIONE_FILETRACE_HEADER = "Header";
+	public static final String LABEL_CONFIGURAZIONE_FILETRACE_PAYLOAD = "Payload";
+	
+	public static final String LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE = "Informazioni Registrate";
 	public static final String LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TEMPI_ELABORAZIONE = "Tempi Elaborazione";
 	public static final String LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TOKEN = "Token";
 	
@@ -907,6 +942,13 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD = "statoServizioPD";
 	public static final String PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA = "statoServizioPA";
 	public static final String PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM = "statoServizioIM";
+	
+	public static final String PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE = "tipo_configurazione";
+	public static final String VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO = "trace";
+	public static final String VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO_PORTA = "tracePort";
+	public static final String VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO_PD = "tracePD";
+	public static final String VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_TRACCIAMENTO_PA = "tracePA";
+	public static final String VALORE_PARAMETRO_CONFIGURAZIONE_TIPO_OPERAZIONE_REGISTRAZIONE_MESSAGGI = "dump";
 	
 	public static final String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME = "protocolConfigName";
 	public static final String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO = "protocolConfigSoggetto";
@@ -1068,8 +1110,33 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST = "RecEsitiStatoMaxRequests";
 	public static final String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS = "RecEsitiStatoCORS";
 	
+	public static final String PARAMETRO_FILETRACE_STATO = "fileTraceStato";
+	public static final String PARAMETRO_FILETRACE_CONFIGURAZIONE = "fileTraceConfig";
+	public static final String PARAMETRO_FILETRACE_CLIENT = "fileTraceClient";
+	public static final String PARAMETRO_FILETRACE_CLIENT_HEADER = "fileTraceClientHdr";
+	public static final String PARAMETRO_FILETRACE_CLIENT_PAYLOAD = "fileTraceClientBody";
+	public static final String PARAMETRO_FILETRACE_SERVER = "fileTraceServer";
+	public static final String PARAMETRO_FILETRACE_SERVER_HEADER = "fileTraceServerHdr";
+	public static final String PARAMETRO_FILETRACE_SERVER_PAYLOAD = "fileTraceServerBody";
+	
 	public static final String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TEMPI = "TransazioneRecTempi";
 	public static final String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TOKEN = "TransazioneRecToken";
+	
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO = "TracConfAvanz";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE = "TracConfAvanzDB";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO = "TracConfAvanzDBStato";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_IN = "TracConfAvanzDBStatoReqIn";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_OUT = "TracConfAvanzDBStatoReqOut";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT = "TracConfAvanzDBStatoResOut";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE = "TracConfAvanzDBStatoResOutEnd";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_FILTRA_ESITI = "TracConfAvanzDBFiltroEsiti";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE = "TracConfAvanzFS";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO = "TracConfAvanzFSStato";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_IN = "TracConfAvanzFSStatoReqIn";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_OUT = "TracConfAvanzFSStatoReqOut";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT = "TracConfAvanzFSStatoResOut";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT_COMPLETE = "TracConfAvanzFSStatoResOutEnd";
+	public static final String PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_FILTRA_ESITI = "TracConfAvanzFSFiltroEsiti";
 	
 	public static final String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_JMX_STATE = "CTViewJmxState";
 	
@@ -2090,7 +2157,10 @@ public class ConfigurazioneCostanti {
 	public static final String DEFAULT_VALUE_ABILITATO = StatoFunzionalita.ABILITATO.toString();
 	public static final String DEFAULT_VALUE_DISABILITATO = StatoFunzionalita.DISABILITATO.toString();
 	
-	public static final String TRACCIAMENTO_ESITI_PERSONALIZZATO = "personalizzato";
+	public static final String DEFAULT_VALUE_NON_BLOCCANTE = StatoFunzionalitaBloccante.NON_BLOCCANTE.toString();
+	
+	public static final String TRACCIAMENTO_ESITI_PERSONALIZZATO = StatoFunzionalitaConPersonalizzazione.PERSONALIZZATO.getValue();
+	public static final String TRACCIAMENTO_ESITI_CONFIGURAZIONE_ESTERNA = StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.getValue();
 	
 		
 	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL = TipoAutenticazione.SSL.getValue();
@@ -2140,6 +2210,21 @@ public class ConfigurazioneCostanti {
 		DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN_SELEZIONATE
 	};
 		
+	
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.ABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_IN = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_REQ_OUT = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_STATO_RES_OUT_COMPLETE = org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.getValue();
+	public static final boolean DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_DATABASE_FILTRA_ESITI = true;
+
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO = org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_IN = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_REQ_OUT = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT = org.openspcoop2.core.config.constants.StatoFunzionalitaBloccante.DISABILITATO.getValue();
+	public static final String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_STATO_RES_OUT_COMPLETE = org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.getValue();
+	public static final boolean DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_AVANZATA_TRACCIAMENTO_FILETRACE_FILTRA_ESITI = false;
+	
 	
 	public static final String CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_ELEMENTI_IN_CACHE = "ElementiInCache";
 	public static final String CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_MEMORIA_OCCUPATA = "MemoriaOccupata";

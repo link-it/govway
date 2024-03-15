@@ -36,6 +36,12 @@ public class RandomUtilities {
 			_rnd = new SecureRandom();
 		}
 	}
+	public static SecureRandom getSecureRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
 	public static java.util.Random getRandom() {
 		if(_rnd==null) {
 			initRandom();

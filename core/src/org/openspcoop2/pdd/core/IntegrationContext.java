@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +36,10 @@ import org.openspcoop2.core.id.IDPortaDelegata;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class IntegrationContext {
+public class IntegrationContext implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	/** Identificativo di correlazione applicativa */
 	private String idCorrelazioneApplicativa;
 	/** Identificativo di correlazione applicativa risposta */
@@ -108,12 +111,12 @@ public class IntegrationContext {
 	/**
 	 * Azioni intraprese per validare il token;
 	 */
-	private String tokenPolicy_actions;
+	private String tokenPolicyActions;
 	
 	/**
 	 * Azioni intraprese per autenticare il token;
 	 */
-	private String tokenPolicy_authn;
+	private String tokenPolicyAuthn;
 	
 	/**
 	 * Lista di AttributeAuthority utilizzate
@@ -217,7 +220,9 @@ public class IntegrationContext {
 	}
 	
 	public void addServizioApplicativoErogatore(String servizioApplicativo){
-		this.serviziApplicativiErogatori.add(servizioApplicativo);
+		if(!this.serviziApplicativiErogatori.contains(servizioApplicativo)) {
+			this.serviziApplicativiErogatori.add(servizioApplicativo);
+		}
 	}
 	public int sizeServiziApplicativiErogatori(){
 		return this.serviziApplicativiErogatori.size();
@@ -260,17 +265,17 @@ public class IntegrationContext {
 	public void setTokenPolicy(String tokenPolicy) {
 		this.tokenPolicy = tokenPolicy;
 	}
-	public String getTokenPolicy_actions() {
-		return this.tokenPolicy_actions;
+	public String getTokenPolicyActions() {
+		return this.tokenPolicyActions;
 	}
-	public void setTokenPolicy_actions(String tokenPolicy_actions) {
-		this.tokenPolicy_actions = tokenPolicy_actions;
+	public void setTokenPolicyActions(String tokenPolicyActions) {
+		this.tokenPolicyActions = tokenPolicyActions;
 	}
-	public String getTokenPolicy_authn() {
-		return this.tokenPolicy_authn;
+	public String getTokenPolicyAuthn() {
+		return this.tokenPolicyAuthn;
 	}
-	public void setTokenPolicy_authn(String tokenPolicy_authn) {
-		this.tokenPolicy_authn = tokenPolicy_authn;
+	public void setTokenPolicyAuthn(String tokenPolicyAuthn) {
+		this.tokenPolicyAuthn = tokenPolicyAuthn;
 	}
 	
 	public List<String> getAttributeAuthorities() {

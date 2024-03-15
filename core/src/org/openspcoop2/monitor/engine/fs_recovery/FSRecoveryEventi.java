@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 public class FSRecoveryEventi {
 
 	private FSRecoveryEventiImpl impl;
-	private static final int MINUTI_ATTESA_PROCESSING_FILE = 5;
 	
 	
 	public FSRecoveryEventi( 
@@ -42,8 +41,8 @@ public class FSRecoveryEventi {
 			boolean debug,
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM,
 			File directory, File directoryDLQ,
-			int tentativi) {
-		this.impl = new FSRecoveryEventiImpl(log, debug, pluginsEventiSM, directory, directoryDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
+			int tentativi, long msAttesaProcessingFile) {
+		this.impl = new FSRecoveryEventiImpl(log, debug, pluginsEventiSM, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
 	}
 
 	public void process(){
