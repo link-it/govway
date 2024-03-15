@@ -1,5 +1,13 @@
 2024-03-15  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug
+	La modifica del nome di un soggetto non veniva riflessa correttamente sul nome dell'erogazione. 
+	Nella denominazione del componente 'porta_applicativa', veniva erroneamente aggiunto un carattere '/' finale, 
+	causando l'impossibilità di riconoscere l'erogazione al momento della sua invocazione e generando un errore '404 NotFound' restituito al chiamante.
+
+2024-03-15  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Modificato il comportamento predefinito in modo che il tracciamento delle richieste che violano una politica di RateLimiting sia disabilitato.
 

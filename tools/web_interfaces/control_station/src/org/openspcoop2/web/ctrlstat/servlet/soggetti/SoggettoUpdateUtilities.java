@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
@@ -1240,7 +1241,7 @@ public class SoggettoUpdateUtilities {
 						}
 
 						newNome = patErogatore + "/" + patServizio + "/" + patVersioneServizio ;
-						if(patAzione!=null){
+						if(patAzione!=null && StringUtils.isNotEmpty(patAzione)){
 							newNome = newNome + "/" + patAzione;
 						}
 						
@@ -1367,7 +1368,7 @@ public class SoggettoUpdateUtilities {
 								}
 
 								String newNomeDelegante = patErogatoreDelegante + "/" + patServizioDelegante + "/" + patVersioneServizioDelegante ;
-								if(patAzioneDelegante!=null){
+								if(patAzioneDelegante!=null && StringUtils.isNotEmpty(patAzioneDelegante)){
 									newNomeDelegante = newNomeDelegante + "/" + patAzioneDelegante;
 								}
 								
