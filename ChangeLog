@@ -1,5 +1,10 @@
 2024-03-15  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Modificato il comportamento predefinito in modo che il tracciamento delle richieste che violano una politica di RateLimiting sia disabilitato.
+
+2024-03-15  Andrea Poli <apoli@link.it>
+
 	* [BatchStatistiche]
 	Risolto Bug
 	Le transazioni da inserire in un intervallo temporale potrebbero non essere ancora tutte presenti nella base dati nel caso in cui il generatore di statistiche 

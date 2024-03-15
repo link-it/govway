@@ -50,6 +50,7 @@ public class EsitiConfigUtils {
 	// esiti indipendenti dal protocollo. Li inizializzo una volta sola per questione di performance.
 	
 	private static int esitoMaxThreads = -1;
+	private static int esitoViolazionePolicyRateLimiting = -1;
 	private static int esitoCorsGateway = -1;
 	private static int esitoCorsTrasparente = -1;
 	private static void checkInitEsiti(EsitiProperties esiti) throws ProtocolException {
@@ -60,6 +61,7 @@ public class EsitiConfigUtils {
 	private static synchronized void initEsiti(EsitiProperties esiti) throws ProtocolException {
 		if(esitoMaxThreads<0) {
 			esitoMaxThreads = esiti.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS.name());
+			esitoViolazionePolicyRateLimiting = esiti.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA.name());
 			esitoCorsGateway = esiti.convertNameToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY.name());
 			esitoCorsTrasparente = esiti.convertNameToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_TRASPARENTE.name());
 		}
@@ -77,14 +79,17 @@ public class EsitiConfigUtils {
 		
 		if(esitiConfig==null || "".equals(esitiConfig.trim())){
 			
-			// creo un default composto da tutti ad eccezione dell'esito (MaxThreads) e delle richieste CORS OPTIONS
+			// creo un default composto da tutti ad eccezione dell'esito (CONTROLLO_TRAFFICO_MAX_THREADS), delle violazioni policy di rate limiting (CONTROLLO_TRAFFICO_POLICY_VIOLATA) e delle richieste CORS OPTIONS 
 			List<Integer> esitiCodes = esiti.getEsitiCode();
 			
 			if(esitiCodes!=null && !esitiCodes.isEmpty()){
 				List<String> esitiDaRegistrare = new ArrayList<>();
 				for (Integer esito : esitiCodes) {
 					checkInitEsiti(esiti);
-					if(esito!=esitoMaxThreads && esito!=esitoCorsGateway && esito!=esitoCorsTrasparente){
+					if(esito.intValue()!=esitoMaxThreads &&
+							esito.intValue()!=esitoViolazionePolicyRateLimiting && 
+							esito.intValue()!=esitoCorsGateway && 
+							esito.intValue()!=esitoCorsTrasparente){
 						if(bf.length()>0){
 							bf.append(",");
 						}
