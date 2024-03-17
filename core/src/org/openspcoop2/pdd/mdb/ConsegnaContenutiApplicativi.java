@@ -2426,7 +2426,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				msgDiag.logPersonalizzato("consegnaInCorso");
 				
 				// se il tracciamento lo prevedo emetto un log
-				registraTracciaOutRequest(outRequestContext, this.log, msgDiag);
+				if(transazioneApplicativoServer==null) {
+					registraTracciaOutRequest(outRequestContext, this.log, msgDiag);
+				}
 				
 				// utilizzo connettore
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
@@ -4393,12 +4395,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "ErroreGenerale");
 				}catch(Exception er){
 					msgDiag.logErroreGenerico(er,"ejbUtils.sendErroreGenerale(profiloConRisposta)");
-					ejbUtils.rollbackMessage("Spedizione Errore al Mittente durante una richiesta con gestione della risposta non riuscita",servizioApplicativo, esito);
+					ejbUtils.rollbackMessage("Spedizione Errore al Mittente durante una richiesta con gestione della risposta non riuscita",servizioApplicativo, esito, false);
 					esito.setEsitoInvocazione(false); 
 					esito.setStatoInvocazioneErroreNonGestito(er);
 				}
 			}else{
-				ejbUtils.rollbackMessage("ErroreGenerale:"+e.getMessage(), servizioApplicativo, esito);
+				ejbUtils.rollbackMessage("ErroreGenerale:"+e.getMessage(), servizioApplicativo, esito, false);
 				esito.setEsitoInvocazione(false); 
 				esito.setStatoInvocazioneErroreNonGestito(e);
 			}

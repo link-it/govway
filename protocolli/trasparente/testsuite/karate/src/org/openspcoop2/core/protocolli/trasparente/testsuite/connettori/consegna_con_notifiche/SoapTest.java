@@ -1290,7 +1290,8 @@ public class SoapTest extends ConfigLoader {
 						}
 
 						checkStatoConsegna(response, requestAndExpectation.esitoPrincipale,
-								requestAndExpectation.connettoriFallimento.size());
+								requestAndExpectation.connettoriFallimento.size(), requestAndExpectation.connettoriSuccesso.size(),
+								requestAndExpectation);
 					}
 				}
 			}
@@ -1312,7 +1313,8 @@ public class SoapTest extends ConfigLoader {
 							}
 						}
 	
-						checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
+						checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size(), requestAndExpectation.connettoriSuccesso.size(),
+								requestAndExpectation);
 					}
 				}
 			}

@@ -414,17 +414,31 @@ public class CommonConsegnaMultipla {
 	 * Controlla che la transazione principale abbia un determinato esito e determinate consegne da fare
 	 */
 	public static void checkStatoConsegna(HttpResponse response, int esito, int consegneMultipleRimanenti) {
+		checkStatoConsegna(response, esito, consegneMultipleRimanenti, -1,
+				null);
+	}
+	public static void checkStatoConsegna(HttpResponse response, int esito, int consegneMultipleRimanenti, int consegneMultipleCompletate,
+			RequestAndExpectations requestAndExpectation) {
 		
-		// Provo 5 tentativi
-		int tentativi = 5;
+		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		if(requestAndExpectation!=null){
+			ConfigLoader.getLoggerCore().info("*** Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + requestAndExpectation.connettoriFallimento.size()+
+					" connettoriFalliti:"+requestAndExpectation.connettoriFallimento+" connettoriConSuccesso:"+requestAndExpectation.connettoriSuccesso);
+		}
+		else {
+			ConfigLoader.getLoggerCore().info("*** Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " consegne-rimanenti:"+consegneMultipleRimanenti);
+		}
+				
+		// Provo 10 tentativi
+		int tentativi = 10;
 		int index = 0;
 		Integer count = null;
 		
 		while(index<tentativi) {
 			
 			String query = "select count(*) from transazioni where id=? and esito = ? and consegne_multiple = ?";
-			String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-			ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti);
+			ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + 
+					" AND consegne-completate:"+consegneMultipleCompletate+" consegne-rimanenti: " + consegneMultipleRimanenti);
 			count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, consegneMultipleRimanenti);
 			
 			// debug for error
@@ -692,7 +706,8 @@ public class CommonConsegnaMultipla {
 		Set<String> wholeConnettori = setSum(requestAndExpectation.connettoriSuccesso,requestAndExpectation.connettoriFallimento);
 		checkConnettoriRaggiuntiEsclusivamente(response, wholeConnettori);
 		
-		checkStatoConsegna(response,requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
+		checkStatoConsegna(response,requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size(), requestAndExpectation.connettoriSuccesso.size(),
+				requestAndExpectation);
 	}
 
 	
@@ -749,7 +764,8 @@ public class CommonConsegnaMultipla {
 		Set<String> wholeConnettori = setSum(requestAndExpectation.connettoriSuccesso,requestAndExpectation.connettoriFallimento);
 		checkConnettoriRaggiuntiEsclusivamente(response, wholeConnettori);
 		
-		checkStatoConsegna(response,requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
+		checkStatoConsegna(response,requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size(), requestAndExpectation.connettoriSuccesso.size(),
+				requestAndExpectation);
 	}
 	
 	

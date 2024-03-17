@@ -644,7 +644,8 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 					}
 				}
 
-				checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
+				checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size(), requestAndExpectation.connettoriSuccesso.size(),
+						requestAndExpectation);
 			}
 		}
 		
@@ -664,7 +665,8 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 					}
 				}
 
-				checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
+				checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size(), requestAndExpectation.connettoriSuccesso.size(),
+						requestAndExpectation);
 			}
 		}
 		

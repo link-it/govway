@@ -506,7 +506,7 @@ public class TracciamentoManager {
 						transaction.getRequestInfo().getProtocolContext().getInterfaceName()!=null) {
 					nomePorta = transaction.getRequestInfo().getProtocolContext().getInterfaceName();
 				}
-				RequestInfo requestInfo = transaction.getRequestInfo();
+				RequestInfo requestInfo = transaction!=null ? transaction.getRequestInfo() : null;
 				msgdiagErrore = org.openspcoop2.pdd.logger.MsgDiagnostico.newInstance(info.getTipoPorta(),info.getIdModulo(), nomePorta, requestInfo, this.configPdDManager);
 				msgdiagErrore.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
 				msgdiagErrore.setPddContext(info.getContext(), info.getProtocolFactory());
