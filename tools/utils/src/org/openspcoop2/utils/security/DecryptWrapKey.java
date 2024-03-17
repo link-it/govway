@@ -44,8 +44,6 @@ public class DecryptWrapKey  {
 	private java.security.Key key;
 	private java.security.cert.Certificate certificate;
 	
-	private byte[] wrappedKey;
-
 	public DecryptWrapKey(Certificate certificate) {
 		this.certificate = certificate;
 	}
@@ -100,16 +98,6 @@ public class DecryptWrapKey  {
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
-	}
-	
-	public String getWrappedKeyBase64() {
-		return Base64Utilities.encodeAsString(this.wrappedKey);
-	}
-	public String getWrappedKeyHexBinary() throws UtilsException {
-		return HexBinaryUtilities.encodeAsString(this.wrappedKey);
-	}
-	public byte[] getWrappedKey() {
-		return this.wrappedKey;
 	}
 	
 	

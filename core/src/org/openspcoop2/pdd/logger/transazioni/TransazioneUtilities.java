@@ -383,7 +383,7 @@ public class TransazioneUtilities {
 			// ** dimensione_ingresso_risposta **
 			if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
 				if (info.getInputResponseMessageSize()!=null && info.getInputResponseMessageSize()>0 &&
-					transactionDTO.getDataIngressoRisposta()!=null) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
+					transaction!=null && transaction.getDataIngressoRisposta()!=null) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
 					transactionDTO.setRispostaIngressoBytes(info.getInputResponseMessageSize());
 				}
 	

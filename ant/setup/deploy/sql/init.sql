@@ -105,6 +105,12 @@ UPDATE configurazione set validazione_profilo='abilitato';
 -- Disabilito per default la validazione con schema xsd dei protocolli
 UPDATE configurazione set validazione_controllo='normale';
 
+-- Configurazione informazioni transazioni
+update configurazione set transazioni_tempi_pd='disabilitato' where transazioni_tempi_pd is null;
+update configurazione set transazioni_tempi='disabilitato' where transazioni_tempi is null;
+update configurazione set transazioni_token_pd='abilitato' where transazioni_token_pd is null;
+update configurazione set transazioni_token='abilitato' where transazioni_token is null;
+
 -- MaxConnections di default
 INSERT INTO pdd_sys_props (nome, valore) VALUES ('http.maxConnections','200');
 

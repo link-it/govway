@@ -420,6 +420,9 @@ public class EJBUtils {
 	}
 
 	public void rollbackMessage(String motivoRollbackEJB, String servizioApplicativo, EsitoLib esito){
+		rollbackMessage(motivoRollbackEJB, servizioApplicativo, esito, true);
+	}
+	public void rollbackMessage(String motivoRollbackEJB, String servizioApplicativo, EsitoLib esito, boolean throwExceptionConnectionNull){
 
 		this.setEJBSuffixFunctionName();
 		try{
@@ -427,7 +430,7 @@ public class EJBUtils {
 			// Imposto Motivo dell'errore - lavora sempre sulla richiesta
 			GestoreMessaggi msg = new GestoreMessaggi(this.openSPCoopState, true ,this.idMessage,this.tipo,this.msgDiag,this.pddContext);
 			msg.setOneWayVersione11(this.oneWayVersione11);
-			msg.aggiornaErroreProcessamentoMessaggio(motivoRollbackEJB, servizioApplicativo);
+			msg.aggiornaErroreProcessamentoMessaggio(motivoRollbackEJB, servizioApplicativo, throwExceptionConnectionNull);
 
 			esito.setErroreProcessamentoMessaggioAggiornato(true);
 			

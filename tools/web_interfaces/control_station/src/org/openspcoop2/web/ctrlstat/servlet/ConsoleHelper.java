@@ -10798,26 +10798,26 @@ public class ConsoleHelper implements IConsoleHelper {
 			tooltipTransazioni = CostantiControlStation.LABEL_CONFIGURAZIONE_DEFAULT;
 			String esitiTransazioni = this.readConfigurazioneRegistrazioneEsitiFromHttpParameters((configurazioneTracciamento!=null) ? configurazioneTracciamento.getEsiti() : null , true);
 			
-			transazioniDB = configurazioneTracciamento.getDatabase()==null || configurazioneTracciamento.getDatabase().getStato()==null ||
+			transazioniDB = configurazioneTracciamento==null || configurazioneTracciamento.getDatabase()==null || configurazioneTracciamento.getDatabase().getStato()==null ||
 					!org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(configurazioneTracciamento.getDatabase().getStato());
-			if(transazioniDB && 
-					(configurazioneTracciamento.getDatabase()==null || configurazioneTracciamento.getDatabase().getFiltroEsiti()==null || 
+			if(transazioniDB &&  
+					(configurazioneTracciamento==null || configurazioneTracciamento.getDatabase()==null || configurazioneTracciamento.getDatabase().getFiltroEsiti()==null || 
 							org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(configurazioneTracciamento.getDatabase().getFiltroEsiti()))
 					) {
 				transazioniDB = esitiTransazioni!=null 
 						&& !(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"").equals(esitiTransazioni);
 			}	
 			
-			transazioniFiletrace = configurazioneTracciamento.getFiletrace()!=null && configurazioneTracciamento.getFiletrace().getStato()!=null &&
+			transazioniFiletrace = configurazioneTracciamento!=null && configurazioneTracciamento.getFiletrace()!=null && configurazioneTracciamento.getFiletrace().getStato()!=null &&
 					!org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.DISABILITATO.equals(configurazioneTracciamento.getFiletrace().getStato());
-			if(configurazioneTracciamento.getFiletrace()!=null && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
+			if(configurazioneTracciamento!=null && configurazioneTracciamento.getFiletrace()!=null && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
 				transazioniFiletrace = (InitListener.getFileTraceGovWayState()!=null) ? InitListener.getFileTraceGovWayState().isEnabled() : transazioniFiletrace;
 			}
-			if(transazioniFiletrace && configurazioneTracciamento.getFiletrace()!=null && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
+			if(transazioniFiletrace && configurazioneTracciamento!=null && configurazioneTracciamento.getFiletrace()!=null && org.openspcoop2.core.config.constants.StatoFunzionalitaConPersonalizzazione.CONFIGURAZIONE_ESTERNA.equals(configurazioneTracciamento.getFiletrace().getStato())) {
 				transazioniFiletrace = CostantiProprieta.isFileTraceEnabled(proprietaPorta, transazioniFiletrace);
 			}
 			if(transazioniFiletrace && 
-					(configurazioneTracciamento.getFiletrace()!=null && configurazioneTracciamento.getFiletrace().getFiltroEsiti()!=null && 
+					(configurazioneTracciamento!=null && configurazioneTracciamento.getFiletrace()!=null && configurazioneTracciamento.getFiletrace().getFiltroEsiti()!=null && 
 							org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(configurazioneTracciamento.getFiletrace().getFiltroEsiti()))
 					) {
 				transazioniFiletrace = esitiTransazioni!=null 

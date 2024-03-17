@@ -166,7 +166,7 @@ public class FileTraceParser {
 					throw new UtilsException("TokenInfo non atteso: ["+tokenInfo+"]");
 				}
 				String c = new String(Base64Utilities.decode(tokenInfo));
-				if(!c.contains("client_id")) {
+				if(!(c.toLowerCase().contains("client_id".toLowerCase()))) {
 					throw new UtilsException("TokenInfo claim 'client_id' non trovato in: "+c);
 				}
 			}
@@ -255,7 +255,7 @@ public class FileTraceParser {
 				throw new UtilsException("Header '"+header+"' non attesi");
 			}
 			String c = new String(Base64Utilities.decode(headersFound));
-			if(!c.contains("GovWay-Transaction-ID") && !c.contains("Content-Type")) {
+			if(!(c.toLowerCase().contains("GovWay-Transaction-ID".toLowerCase())) && !(c.toLowerCase().contains("Content-Type".toLowerCase()))) {
 				throw new UtilsException("Header 'GovWay-Transaction-ID' o 'Content-Type' non trovato in ["+c+"]");
 			}
 		}

@@ -4,6 +4,10 @@ ALTER TABLE configurazione ADD transazioni_tempi_pd VARCHAR(255);
 UPDATE configurazione set transazioni_tempi_pd=transazioni_tempi;
 ALTER TABLE configurazione ADD transazioni_token_pd VARCHAR(255);
 UPDATE configurazione set transazioni_token_pd=transazioni_token;
+update configurazione set transazioni_tempi_pd='disabilitato' where transazioni_tempi_pd is null;
+update configurazione set transazioni_tempi='disabilitato' where transazioni_tempi is null;
+update configurazione set transazioni_token_pd='abilitato' where transazioni_token_pd is null;
+update configurazione set transazioni_token='abilitato' where transazioni_token is null;
 
 ALTER TABLE porte_delegate ADD tracciamento_stato VARCHAR(255);
 UPDATE porte_delegate set tracciamento_stato='abilitato' WHERE tracciamento_esiti IS NOT NULL AND tracciamento_esiti <> '';
