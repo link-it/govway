@@ -1136,7 +1136,7 @@ public class FileTraceTest {
 		
 		String fileRequest = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+".request"+""+fileSuffix;
 		String request = getContentFile(fileRequest,false, true);
-		String sizeRequest = Utilities.convertBytesToFormatString(request.length());
+		String sizeRequest = request!=null ? Utilities.convertBytesToFormatString(request.length()) : null;
 		
 		String fileRequestCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".request"+dateFileCompress+fileGzSuffix;
 		String requestCompress = getContentFile(fileRequestCompress,true,compressExpected);
@@ -1144,7 +1144,7 @@ public class FileTraceTest {
 		
 		String fileRequestBody = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+".requestBody"+""+fileSuffix;
 		String requestBody = getContentFile(fileRequestBody,false,true);
-		String sizeRequestBody = Utilities.convertBytesToFormatString(requestBody.length());
+		String sizeRequestBody = requestBody!=null ? Utilities.convertBytesToFormatString(requestBody.length()) : null;
 		
 		String fileRequestBodyCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".requestBody"+dateFileCompress+fileGzSuffix;
 		String requestBodyCompress = null;
@@ -1158,7 +1158,7 @@ public class FileTraceTest {
 		
 		String fileResponse = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+".response"+""+fileSuffix;
 		String response = getContentFile(fileResponse,false, true);
-		String sizeResponse = Utilities.convertBytesToFormatString(response.length());
+		String sizeResponse = response!=null ? Utilities.convertBytesToFormatString(response.length()) : null;
 		
 		String fileResponseCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".response"+dateFileCompress+fileGzSuffix;
 		String responseCompress = getContentFile(fileResponseCompress,true,compressExpected);
@@ -1170,7 +1170,7 @@ public class FileTraceTest {
 		
 		String fileResponseBody = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+".responseBody"+""+fileSuffix;
 		String responseBody = getContentFile(fileResponseBody,false, true);
-		String sizeResponseBody = Utilities.convertBytesToFormatString(responseBody.length());
+		String sizeResponseBody = responseBody!=null ? Utilities.convertBytesToFormatString(responseBody.length()) : null;
 		
 		String fileResponseBodyCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+".responseBody"+dateFileCompress+fileGzSuffix;
 		String responseBodyCompress = getContentFile(fileResponseBodyCompress,true,compressExpected);
@@ -1402,7 +1402,7 @@ public class FileTraceTest {
 		
 		String fileRequest = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+"."+topicName+""+""+fileSuffix;
 		String request = getContentFile(fileRequest,false, fileExpected);
-		String sizeRequest = Utilities.convertBytesToFormatString(request.length());
+		String sizeRequest = request!=null ? Utilities.convertBytesToFormatString(request.length()) : null;
 		
 		String fileRequestCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+"."+topicName+""+dateFileCompress+fileGzSuffix;
 		String requestCompress = getContentFile(fileRequestCompress,true,compressExpected);
@@ -1498,7 +1498,7 @@ public class FileTraceTest {
 		
 		String fileRequest = DIR_TMP+""+"fileTrace-"+ENV_VALUE_1+"."+tipoTest+""+""+fileSuffix;
 		String request = getContentFile(fileRequest,false, true);
-		String sizeRequest = Utilities.convertBytesToFormatString(request.length());
+		String sizeRequest = request!=null ? Utilities.convertBytesToFormatString(request.length()) : null;
 		
 		String fileRequestCompress = DIR_TMP+dirCompress+"fileTrace-"+ENV_VALUE_1+"."+tipoTest+""+dateFileCompress+fileGzSuffix;
 		String requestCompress = getContentFile(fileRequestCompress,true,compressExpected);
