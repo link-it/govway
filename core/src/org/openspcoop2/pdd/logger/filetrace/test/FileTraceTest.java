@@ -1522,11 +1522,11 @@ public class FileTraceTest {
 		String atteso = getExpectedEncryptContent(tipoTest, requestWithPayload);
 		
 		
-		if(request.contains(atteso)) {
+		if(request!=null && request.contains(atteso)) {
 			throw new UtilsException(MSG_FAILED_PREFIX+atteso+nonTrovatoInFileMessage+fileRequest);
 		}
 		if(compressExpected &&
-			requestCompress.contains(atteso)) {
+			requestCompress!=null && requestCompress.contains(atteso)) {
 			throw new UtilsException(MSG_FAILED_PREFIX+atteso+nonTrovatoInFileCompressMessage+fileRequestDecompressed);
 		}
 		
